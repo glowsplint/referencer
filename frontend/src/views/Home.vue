@@ -1,7 +1,5 @@
 <template>
-  <div class="home">
-    <Login msg="Welcome to Your Vue.js + TypeScript App" />
-  </div>
+  <Login />
 </template>
 
 <script lang="ts">
