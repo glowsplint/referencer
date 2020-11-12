@@ -36,6 +36,12 @@
         <v-list-item>
           <v-icon @click="toggleDarkMode">mdi-invert-colors</v-icon>
         </v-list-item>
+        <v-list-item>
+          <v-icon @click="toggleUsers">mdi-account-multiple</v-icon>
+        </v-list-item>
+        <v-list-item>
+          <v-icon @click="toggleColours">mdi-palette</v-icon>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -43,7 +49,7 @@
     <v-navigation-drawer v-model="drawer" app width="300" clipped>
       <v-list class="pl-14" height="0" shaped dense>
         <v-subheader>Users</v-subheader>
-        <v-list-item-group v-model="selectionUser" multiple active-class="">
+        <v-list-item-group v-model="selectionUsers" multiple active-class="">
           <v-list-item v-for="n in users.length" :key="n" link dense>
             <template v-slot:default="{ active }">
               <v-list-item-action>
@@ -116,7 +122,7 @@
         solo-inverted
         label="Add a passage"
         hide-no-data
-        clearable
+        toggleable
         @keyup.enter="submitSearch"
       >
       </v-combobox>
@@ -143,9 +149,11 @@ export default {
       colours: ["Red", "Green", "Blue", "Yellow", "Cyan", "Indigo"],
       coloursValue: ["red", "green", "blue", "yellow darken-3", "cyan", "indigo lighten-1"],
       users: ["Jon", "Mel", "Sean"],
-      selectionUser: [],
+      selectionUsers: [],
       selectionTexts: [],
       selectionColours: [],
+      storedUsers: [],
+      storedColours: [],
     };
   },
   computed: {
@@ -188,6 +196,24 @@ export default {
     },
     releaseEntryCode() {
       this.displayedEntryCode = this.entryCode;
+    },
+    toggleColours() {
+      // I have colours selected, and I also have colours stored, I overwrite my stored colours
+      // with my currently selected colours
+      if (this.selectionColours.length > 0 && this.storedColours.length > 0) {
+        this.storedColours = this.selectionColours
+        this.selectionColours = []
+      } else {
+        [this.storedColours, this.selectionColours] = [this.selectionColours, this.storedColours]
+      }
+    },
+    toggleUsers() {
+      if (this.selectionUsers.length > 0 && this.storedUsers.length > 0) {
+        this.storedUsers = this.selectionUsers
+        this.selectionUsers = []
+      } else {
+        [this.storedUsers, this.selectionUsers] = [this.selectionUsers, this.storedUsers]
+      }
     }
   }
 };
