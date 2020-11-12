@@ -34,13 +34,36 @@
       <v-divider />
       <v-list dense nav>
         <v-list-item>
-          <v-icon @click="toggleDarkMode">mdi-invert-colors</v-icon>
+          <v-tooltip right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-bind="attrs" v-on="on" @click="toggleDarkMode">
+                mdi-invert-colors
+              </v-icon>
+            </template>
+            <span>Toggle dark mode</span>
+          </v-tooltip>
         </v-list-item>
+
         <v-list-item>
-          <v-icon @click="toggleUsers">mdi-account-multiple</v-icon>
+          <v-tooltip right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-bind="attrs" v-on="on" @click="toggleUsers">
+                mdi-account-multiple
+              </v-icon>
+            </template>
+            <span>Toggle users</span>
+          </v-tooltip>
         </v-list-item>
+
         <v-list-item>
-          <v-icon @click="toggleColours">mdi-palette</v-icon>
+          <v-tooltip right>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-bind="attrs" v-on="on" @click="toggleColours">
+                mdi-palette
+              </v-icon>
+            </template>
+            <span>Toggle colours</span>
+          </v-tooltip>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -53,7 +76,7 @@
           <v-list-item v-for="n in users.length" :key="n" link dense>
             <template v-slot:default="{ active }">
               <v-list-item-action>
-                <v-checkbox :input-value="active" color="grey"></v-checkbox>
+                <v-checkbox :input-value="active" light></v-checkbox>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>{{ users[n - 1] }}</v-list-item-title>
@@ -85,7 +108,10 @@
           <v-list-item v-for="n in colours.length" :key="n" link dense>
             <template v-slot:default="{ active }">
               <v-list-item-action>
-                <v-checkbox :input-value="active" :color="coloursValue[n-1]"></v-checkbox>
+                <v-checkbox
+                  :input-value="active"
+                  :color="coloursValue[n - 1]"
+                ></v-checkbox>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>{{ colours[n - 1] }}</v-list-item-title>
@@ -147,13 +173,20 @@ export default {
       sectionB: null,
       spaceID: "space-1",
       colours: ["Red", "Green", "Blue", "Yellow", "Cyan", "Indigo"],
-      coloursValue: ["red", "green", "blue", "yellow darken-3", "cyan", "indigo lighten-1"],
+      coloursValue: [
+        "red",
+        "green",
+        "blue lighten-1",
+        "yellow darken-3",
+        "cyan",
+        "indigo lighten-1"
+      ],
       users: ["Jon", "Mel", "Sean"],
       selectionUsers: [],
       selectionTexts: [],
       selectionColours: [],
       storedUsers: [],
-      storedColours: [],
+      storedColours: []
     };
   },
   computed: {
@@ -201,18 +234,24 @@ export default {
       // I have colours selected, and I also have colours stored, I overwrite my stored colours
       // with my currently selected colours
       if (this.selectionColours.length > 0 && this.storedColours.length > 0) {
-        this.storedColours = this.selectionColours
-        this.selectionColours = []
+        this.storedColours = this.selectionColours;
+        this.selectionColours = [];
       } else {
-        [this.storedColours, this.selectionColours] = [this.selectionColours, this.storedColours]
+        [this.storedColours, this.selectionColours] = [
+          this.selectionColours,
+          this.storedColours
+        ];
       }
     },
     toggleUsers() {
       if (this.selectionUsers.length > 0 && this.storedUsers.length > 0) {
-        this.storedUsers = this.selectionUsers
-        this.selectionUsers = []
+        this.storedUsers = this.selectionUsers;
+        this.selectionUsers = [];
       } else {
-        [this.storedUsers, this.selectionUsers] = [this.selectionUsers, this.storedUsers]
+        [this.storedUsers, this.selectionUsers] = [
+          this.selectionUsers,
+          this.storedUsers
+        ];
       }
     }
   }
