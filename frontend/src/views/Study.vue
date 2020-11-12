@@ -41,12 +41,52 @@
 
     <!-- Layer pane -->
     <v-navigation-drawer v-model="drawer" app width="300" clipped>
-      <v-list class="pl-14" height="0" shaped>
-        <v-list-item v-for="n in 3" :key="n" link>
-          <v-list-item-content>
-            <v-list-item-title>Item {{ n }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+      <v-list class="pl-14" height="0" shaped dense>
+        <v-subheader>Users</v-subheader>
+        <v-list-item-group v-model="selectionUser" multiple active-class="">
+          <v-list-item v-for="n in users.length" :key="n" link dense>
+            <template v-slot:default="{ active }">
+              <v-list-item-action>
+                <v-checkbox :input-value="active" color="grey"></v-checkbox>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ users[n - 1] }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
+          </v-list-item>
+        </v-list-item-group>
+
+        <v-divider />
+
+        <v-subheader>Texts</v-subheader>
+        <v-list-item-group v-model="selectionTexts" multiple active-class="">
+          <v-list-item v-for="n in passages.length" :key="n" link dense>
+            <template v-slot:default="{ active }">
+              <v-list-item-action>
+                <v-checkbox :input-value="active" color="grey"></v-checkbox>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ passages[n - 1] }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
+          </v-list-item>
+        </v-list-item-group>
+
+        <v-divider />
+
+        <v-subheader>Colours</v-subheader>
+        <v-list-item-group v-model="selectionColours" multiple active-class="">
+          <v-list-item v-for="n in colours.length" :key="n" link dense>
+            <template v-slot:default="{ active }">
+              <v-list-item-action>
+                <v-checkbox :input-value="active" :color="coloursValue[n-1]"></v-checkbox>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ colours[n - 1] }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
 
@@ -55,7 +95,6 @@
         <!-- Section A -->
         <v-col>
           {{ sectionA }}
-          {{ searchText }}
         </v-col>
 
         <!-- Section B -->
@@ -91,19 +130,30 @@ import { allBooks } from "./allBooks";
 export default {
   data() {
     return {
-      drawer: null,
-      searchText: null,
-      darkMode: false,
-      spaceID: "space-1",
-      entryCode: "139267",
       allBooks: allBooks,
+      darkMode: false,
+      displayedEntryCode: "139267",
+      displayedSpaceID: "space-1",
+      drawer: null,
+      entryCode: "139267",
+      searchText: null,
       sectionA: null,
       sectionB: null,
-      displayedSpaceID: "space-1",
-      displayedEntryCode: "139267"
+      spaceID: "space-1",
+      colours: ["Red", "Green", "Blue", "Yellow", "Cyan", "Indigo"],
+      coloursValue: ["red", "green", "blue", "yellow darken-3", "cyan", "indigo lighten-1"],
+      users: ["Jon", "Mel", "Sean"],
+      selectionUser: [],
+      selectionTexts: [],
+      selectionColours: [],
     };
   },
-  computed: {},
+  computed: {
+    passages() {
+      const allPassages = [this.sectionA, this.sectionB];
+      return allPassages.filter(section => section !== null);
+    }
+  },
   methods: {
     toggleDrawer() {
       this.drawer = !this.drawer;

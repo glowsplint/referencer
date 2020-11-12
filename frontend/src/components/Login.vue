@@ -75,6 +75,8 @@ export default Vue.extend({
   name: "HelloWorld",
 
   data: () => ({
+    entryCode: "",
+    roomID: "",
     tab: null
   })
 });
