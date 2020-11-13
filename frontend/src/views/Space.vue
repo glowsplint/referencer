@@ -89,14 +89,25 @@
 
         <v-subheader>Texts</v-subheader>
         <v-list-item-group v-model="selectionTexts" multiple active-class="">
-          <v-list-item v-for="n in passages.length" :key="n" link dense>
+          <v-list-item
+            v-for="n in passages.length"
+            :key="n"
+            v-model="showSection[n - 1]"
+            link
+            dense
+          >
             <template v-slot:default="{ active }">
               <v-list-item-action>
-                <v-checkbox :input-value="active" color="grey"></v-checkbox>
+                <v-checkbox :input-value="active" color="grey" />
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>{{ passages[n - 1] }}</v-list-item-title>
               </v-list-item-content>
+              <v-list-item-icon>
+                <v-icon>
+                  mdi-close
+                </v-icon>
+              </v-list-item-icon>
             </template>
           </v-list-item>
         </v-list-item-group>
@@ -111,7 +122,7 @@
                 <v-checkbox
                   :input-value="active"
                   :color="coloursValue[n - 1]"
-                ></v-checkbox>
+                />
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>{{ colours[n - 1] }}</v-list-item-title>
@@ -124,15 +135,12 @@
 
     <v-main>
       <v-row>
+        {{ showSection }}
         <!-- Section A -->
-        <v-col>
-          {{ sectionA }}
-        </v-col>
+        <v-col> {{ sectionATitle }} {{ sectionAText }} </v-col>
 
         <!-- Section B -->
-        <v-col>
-          {{ sectionB }}
-        </v-col>
+        <v-col> {{ sectionBTitle }} {{ sectionBText }} </v-col>
       </v-row>
     </v-main>
 
@@ -141,6 +149,7 @@
         id="searchBar"
         v-model="searchText"
         :items="allBooks"
+        prepend-inner-icon="mdi-magnify"
         dense
         flat
         hide-details
@@ -156,21 +165,26 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { allBooks } from "./allBooks";
+import { bibleText } from "./bible";
+import * as _ from "lodash";
 
 export default {
   data() {
     return {
       allBooks: allBooks,
+      bibleText: bibleText,
       darkMode: false,
       displayedEntryCode: "139267",
       displayedSpaceID: "space-1",
       drawer: null,
       entryCode: "139267",
       searchText: null,
-      sectionA: null,
-      sectionB: null,
+      sectionATitle: null,
+      sectionBTitle: null,
+      sectionAText: null,
+      sectionBText: null,
       spaceID: "space-1",
       colours: ["Red", "Green", "Blue", "Yellow", "Cyan", "Indigo"],
       coloursValue: [
@@ -186,32 +200,19 @@ export default {
       selectionTexts: [],
       selectionColours: [],
       storedUsers: [],
-      storedColours: []
+      storedColours: [],
+      showSection: [true, true]
     };
   },
   computed: {
     passages() {
-      const allPassages = [this.sectionA, this.sectionB];
+      const allPassages = [this.sectionATitle, this.sectionBTitle];
       return allPassages.filter(section => section !== null);
     }
   },
   methods: {
     toggleDrawer() {
       this.drawer = !this.drawer;
-    },
-    submitSearch() {
-      // First, check if searchText is not null
-      if (this.searchText !== null) {
-        // If sectionA is not filled, fill it with searchText.
-        // Else, if sectionB is not same as searchText, replace sectionB with searchText
-        // (Prevents two of the same passage in both sectionA and sectionB)
-        if (this.sectionA === null) {
-          this.sectionA = this.searchText;
-        } else if (this.sectionA !== this.searchText) {
-          this.sectionB = this.searchText;
-        }
-        this.searchText = null;
-      }
     },
     toggleDarkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
@@ -229,6 +230,52 @@ export default {
     },
     releaseEntryCode() {
       this.displayedEntryCode = this.entryCode;
+    },
+    submitSearch() {
+      // First, check if searchText is not null
+      if (this.searchText !== null) {
+        // If sectionATitle is not filled, fill it with searchText.
+        // Else, if sectionBTitle is not same as searchText, replace sectionBTitle with searchText
+        // (Prevents two of the same passage in both sectionATitle and sectionBTitle)
+        if (this.sectionATitle === null) {
+          [this.sectionATitle, this.sectionAText] = this.parseSearch(
+            this.searchText
+          );
+        } else if (this.sectionATitle !== this.searchText) {
+          [this.sectionBTitle, this.sectionBText] = this.parseSearch(
+            this.searchText
+          );
+        }
+        this.searchText = null;
+      }
+    },
+    parseVerseSingle(searchText: string): object {
+      // Single verse search, returns Array[textName, text]
+      searchText = searchText.toLowerCase();
+      return [_.capitalize(searchText), bibleText[searchText]];
+    },
+    parseVerseMultiple(searchText: string): object {
+      // Multiple verse search
+      return [];
+    },
+    parseChapterSingle(searchText: string): object {
+      return [];
+    },
+    parseChapterMultiple(searchText: string): object {
+      return [];
+    },
+    parseSearch(searchText: string): object {
+      // Parses searchText and returns Array[textName, text]
+      // Handles single-verse searches
+      // Needs to handle multi-verse searches
+      // Needs to handle chapter-level searches
+
+      // Can consider using regex to handle - if regex of xx pattern...
+      if (searchText.includes("-")) {
+        return this.parseVerseMultiple(searchText);
+      } else {
+        return this.parseVerseSingle(searchText);
+      }
     },
     toggleColours() {
       // I have colours selected, and I also have colours stored, I overwrite my stored colours
