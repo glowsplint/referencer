@@ -200,7 +200,7 @@ export default {
       ],
       users: ["Jon", "Mel", "Sean"],
       activeUsers: [],
-      activeTexts: [0, 1],
+      activeTexts: [0, 1], // defaults to display texts on addition
       activeColours: [],
       storedUsers: [],
       storedColours: []
@@ -235,7 +235,7 @@ export default {
     },
     submitSearch() {
       // First, check if searchText is not null
-      const searchText = this.searchText.toLowerCase();
+      const searchText = _.capitalize(this.searchText);
       if (searchText !== null) {
         // If sectionATitle is not filled, fill it with searchText.
         // Else, if sectionBTitle is not same as searchText, replace sectionBTitle with searchText
@@ -254,7 +254,7 @@ export default {
     },
     parseVerseSingle(searchText: string): object {
       // Single verse search, returns Array[textName, text]
-      return [_.capitalize(searchText), bibleText[searchText]];
+      return [searchText, bibleText[searchText]];
     },
     parseVerseMultiple(searchText: string): object {
       // Multiple verse search

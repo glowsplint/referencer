@@ -14,7 +14,6 @@ Referencer is a Bible study annotation tool which makes it easy to cross-referen
 
 - As a user, when I type into the search bar, I want to be able to add the passage into Section A/B of the screen.
 - As a user, I want to be able to select a chapter of the Bible and have it displayed.
-- As a user, I want to be able to select a verse of the Bible and have it displayed.
 - As a user, I want to be able to have a selection of verses from the Bible and have it displayed.
 
 ### Layer navigation pane
@@ -30,3 +29,8 @@ Referencer is a Bible study annotation tool which makes it easy to cross-referen
 ### Completed
 
 - As a user, when I type into the search bar, I want to have autocomplete on my book names.
+- As a user, I want to be able to select a verse of the Bible and have it displayed.
+
+### Known Issues
+
+- ESV Dataset is incomplete; missing verse one of for all books, Chapter 2 onwards (i.e. Any 2:1)
