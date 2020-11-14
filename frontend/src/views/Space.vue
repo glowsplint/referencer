@@ -72,7 +72,7 @@
     <v-navigation-drawer v-model="drawer" app width="300" clipped>
       <v-list class="pl-14" height="0" shaped dense>
         <v-subheader>Users</v-subheader>
-        <v-list-item-group v-model="selectionUsers" multiple active-class="">
+        <v-list-item-group v-model="activeUsers" multiple active-class="">
           <v-list-item v-for="n in users.length" :key="n" link dense>
             <template v-slot:default="{ active }">
               <v-list-item-action>
@@ -88,14 +88,8 @@
         <v-divider />
 
         <v-subheader>Texts</v-subheader>
-        <v-list-item-group v-model="selectionTexts" multiple active-class="">
-          <v-list-item
-            v-for="n in passages.length"
-            :key="n"
-            v-model="showSection[n - 1]"
-            link
-            dense
-          >
+        <v-list-item-group v-model="activeTexts" multiple active-class="">
+          <v-list-item v-for="n in passages.length" :key="n" link dense>
             <template v-slot:default="{ active }">
               <v-list-item-action>
                 <v-checkbox :input-value="active" color="grey" />
@@ -115,7 +109,7 @@
         <v-divider />
 
         <v-subheader>Colours</v-subheader>
-        <v-list-item-group v-model="selectionColours" multiple active-class="">
+        <v-list-item-group v-model="activeColours" multiple active-class="">
           <v-list-item v-for="n in colours.length" :key="n" link dense>
             <template v-slot:default="{ active }">
               <v-list-item-action>
@@ -135,12 +129,21 @@
 
     <v-main>
       <v-row>
-        {{ showSection }}
         <!-- Section A -->
-        <v-col> {{ sectionATitle }} {{ sectionAText }} </v-col>
+        <v-col v-show="activeTexts.includes(0)">
+          <h1>
+            {{ sectionATitle }}
+          </h1>
+          {{ sectionAText }}
+        </v-col>
 
         <!-- Section B -->
-        <v-col> {{ sectionBTitle }} {{ sectionBText }} </v-col>
+        <v-col v-show="activeTexts.includes(1)">
+          <h1>
+            {{ sectionBTitle }}
+          </h1>
+          {{ sectionBText }}
+        </v-col>
       </v-row>
     </v-main>
 
@@ -196,12 +199,11 @@ export default {
         "indigo lighten-1"
       ],
       users: ["Jon", "Mel", "Sean"],
-      selectionUsers: [],
-      selectionTexts: [],
-      selectionColours: [],
+      activeUsers: [],
+      activeTexts: [0, 1],
+      activeColours: [],
       storedUsers: [],
-      storedColours: [],
-      showSection: [true, true]
+      storedColours: []
     };
   },
   computed: {
@@ -233,17 +235,18 @@ export default {
     },
     submitSearch() {
       // First, check if searchText is not null
-      if (this.searchText !== null) {
+      const searchText = this.searchText.toLowerCase();
+      if (searchText !== null) {
         // If sectionATitle is not filled, fill it with searchText.
         // Else, if sectionBTitle is not same as searchText, replace sectionBTitle with searchText
         // (Prevents two of the same passage in both sectionATitle and sectionBTitle)
         if (this.sectionATitle === null) {
           [this.sectionATitle, this.sectionAText] = this.parseSearch(
-            this.searchText
+            searchText
           );
         } else if (this.sectionATitle !== this.searchText) {
           [this.sectionBTitle, this.sectionBText] = this.parseSearch(
-            this.searchText
+            searchText
           );
         }
         this.searchText = null;
@@ -251,7 +254,6 @@ export default {
     },
     parseVerseSingle(searchText: string): object {
       // Single verse search, returns Array[textName, text]
-      searchText = searchText.toLowerCase();
       return [_.capitalize(searchText), bibleText[searchText]];
     },
     parseVerseMultiple(searchText: string): object {
@@ -280,23 +282,23 @@ export default {
     toggleColours() {
       // I have colours selected, and I also have colours stored, I overwrite my stored colours
       // with my currently selected colours
-      if (this.selectionColours.length > 0 && this.storedColours.length > 0) {
-        this.storedColours = this.selectionColours;
-        this.selectionColours = [];
+      if (this.activeColours.length > 0 && this.storedColours.length > 0) {
+        this.storedColours = this.activeColours;
+        this.activeColours = [];
       } else {
-        [this.storedColours, this.selectionColours] = [
-          this.selectionColours,
+        [this.storedColours, this.activeColours] = [
+          this.activeColours,
           this.storedColours
         ];
       }
     },
     toggleUsers() {
-      if (this.selectionUsers.length > 0 && this.storedUsers.length > 0) {
-        this.storedUsers = this.selectionUsers;
-        this.selectionUsers = [];
+      if (this.activeUsers.length > 0 && this.storedUsers.length > 0) {
+        this.storedUsers = this.activeUsers;
+        this.activeUsers = [];
       } else {
-        [this.storedUsers, this.selectionUsers] = [
-          this.selectionUsers,
+        [this.storedUsers, this.activeUsers] = [
+          this.activeUsers,
           this.storedUsers
         ];
       }
