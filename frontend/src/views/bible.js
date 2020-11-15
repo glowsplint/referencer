@@ -51612,5 +51612,5 @@ export const bibleText = {
     "and if anyone takes away from the words of the book of this prophecy, God will take away his share in the tree of life and in the holy city, which are described in this book.",
   "Revelation 22:20":
     "He who testifies to these things says, \u201cSurely I am coming soon.\u201d Amen. Come, Lord Jesus!",
-  "Revelation 22:21": "The grace of the Lord Jesus be with all. Amen.",
+  "Revelation 22:21": "The grace of the Lord Jesus be with all. Amen."
 };

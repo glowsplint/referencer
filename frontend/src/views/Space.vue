@@ -207,33 +207,34 @@ export default {
     };
   },
   computed: {
-    passages() {
+    passages(): object {
       const allPassages = [this.sectionATitle, this.sectionBTitle];
       return allPassages.filter(section => section !== null);
     }
   },
   methods: {
-    toggleDrawer() {
+    toggleDrawer(): void {
       this.drawer = !this.drawer;
     },
-    toggleDarkMode() {
+    toggleDarkMode(): void {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     },
-    copySpaceID() {
+    copySpaceID(): void {
       navigator.clipboard.writeText(this.spaceID);
       this.displayedSpaceID = "Copied!";
     },
-    releaseSpaceID() {
+    releaseSpaceID(): void {
       this.displayedSpaceID = this.spaceID;
     },
-    copyEntryCode() {
+    copyEntryCode(): void {
       navigator.clipboard.writeText(this.entryCode);
       this.displayedEntryCode = "Copied!";
     },
-    releaseEntryCode() {
+    releaseEntryCode(): void {
       this.displayedEntryCode = this.entryCode;
     },
     submitSearch() {
+      // Entry method when search is submitted (Enter key is pressed)
       // First, check if searchText is not null
       const searchText = _.capitalize(this.searchText);
       if (searchText !== null) {
@@ -252,34 +253,50 @@ export default {
         this.searchText = null;
       }
     },
-    parseVerseSingle(searchText: string): object {
-      // Single verse search, returns Array[textName, text]
+    parseSingleVerse(searchText: string): object {
+      // 1 John 1:1, Genesis 1:1
       return [searchText, bibleText[searchText]];
     },
-    parseVerseMultiple(searchText: string): object {
-      // Multiple verse search
+    parseSingleChapter(searchText: string): object {
+      // 1 John 1, Genesis 1
       return [];
     },
-    parseChapterSingle(searchText: string): object {
+    parseWithinChapter(searchText: string): object {
+      // 1 John 1:1-3, Genesis 1:1-3
       return [];
     },
-    parseChapterMultiple(searchText: string): object {
+    parseAcrossChapters(searchText: string): object {
+      // 1 John 1:1-2:3, Genesis 1:1-2:3
+      return [];
+    },
+    parseMultipleChapters(searchText: string): object {
+      // 1 John 1-2
       return [];
     },
     parseSearch(searchText: string): object {
       // Parses searchText and returns Array[textName, text]
-      // Handles single-verse searches
-      // Needs to handle multi-verse searches
-      // Needs to handle chapter-level searches
+      const singleVerseRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)$/; // 1 John 1:1, Genesis 1:1
+      const singleChapterRegExp = /^((?:[0-9][\s]?)(?:[A-Za-z]+))\s([0-9]+)$/; // 1 John 1, Genesis 1
+      const withinChapterRegExp = /^((?:[0-9][\s]?)(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+)$/; // 1 John 1:1-3, Genesis 1:1-3
+      const acrossChaptersRegExp = /^((?:[0-9][\s]?)(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+):([0-9]+)$/; // 1 John 1:1-2:3, Genesis 1:1-2:3
+      const multipleChaptersRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)-([0-9]+)$/; // 1 John 1-2
 
-      // Can consider using regex to handle - if regex of xx pattern...
-      if (searchText.includes("-")) {
-        return this.parseVerseMultiple(searchText);
-      } else {
-        return this.parseVerseSingle(searchText);
+      const result = searchText.match(singleVerseRegExp);
+      console.log(result);
+
+      if (searchText.match(singleVerseRegExp) !== null) {
+        return this.parseSingleVerse(searchText);
+      } else if (searchText.match(singleChapterRegExp) !== null) {
+        return this.parseSingleChapter(searchText);
+      } else if (searchText.match(withinChapterRegExp) !== null) {
+        return this.parseWithinChapter(searchText);
+      } else if (searchText.match(acrossChaptersRegExp) !== null) {
+        return this.parseAcrossChapters(searchText);
+      } else if (searchText.match(multipleChaptersRegExp) !== null) {
+        return this.parseMultipleChapters(searchText);
       }
     },
-    toggleColours() {
+    toggleColours(): void {
       // I have colours selected, and I also have colours stored, I overwrite my stored colours
       // with my currently selected colours
       if (this.activeColours.length > 0 && this.storedColours.length > 0) {
@@ -292,7 +309,7 @@ export default {
         ];
       }
     },
-    toggleUsers() {
+    toggleUsers(): void {
       if (this.activeUsers.length > 0 && this.storedUsers.length > 0) {
         this.storedUsers = this.activeUsers;
         this.activeUsers = [];
