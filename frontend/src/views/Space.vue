@@ -173,22 +173,25 @@ import { allBooks } from "./allBooks";
 import { bibleText } from "./bible";
 import * as _ from "lodash";
 
+const entryCode = "139267"
+const spaceID = "space-1"
+
 export default {
   data() {
     return {
       allBooks: allBooks,
       bibleText: bibleText,
       darkMode: false,
-      displayedEntryCode: "139267",
-      displayedSpaceID: "space-1",
+      displayedEntryCode: entryCode,
+      displayedSpaceID: spaceID,
       drawer: null,
-      entryCode: "139267",
+      entryCode: entryCode,
       searchText: null,
       sectionATitle: null,
       sectionBTitle: null,
       sectionAText: null,
       sectionBText: null,
-      spaceID: "space-1",
+      spaceID: spaceID,
       colours: ["Red", "Green", "Blue", "Yellow", "Cyan", "Indigo"],
       coloursValue: [
         "red",
