@@ -300,17 +300,20 @@ export default {
     },
     parseSearch(searchText: string): object {
       // Parses searchText and returns Array[textName, text]
-      const singleVerseRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)$/; // 1 John 1:1, Genesis 1:1
-      const singleChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)$/; // 1 John 1, Genesis 1
-      const withinChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+)$/; // 1 John 1:1-3, Genesis 1:1-3
-      const acrossChaptersRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+):([0-9]+)$/; // 1 John 1:1-2:3, Genesis 1:1-2:3
-      const multipleChaptersRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)-([0-9]+)$/; // 1 John 1-2
+      const singleVerseRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)$/;
+      const singleChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)$/;
+      const withinChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+)$/;
+      const acrossChaptersRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+):([0-9]+)$/;
+      const multipleChaptersRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)-([0-9]+)$/;
 
       const singleVerseMatch = searchText.match(singleVerseRegExp);
       const singleChapterMatch = searchText.match(singleChapterRegExp);
       const withinChapterMatch = searchText.match(withinChapterRegExp);
       const acrossChaptersMatch = searchText.match(acrossChaptersRegExp);
       const multipleChaptersMatch = searchText.match(multipleChaptersRegExp);
+
+      // console.log(searchText)
+      // console.log(withinChapterMatch)
 
       if (singleVerseMatch !== null) {
         return this.parseSingleVerse(searchText);

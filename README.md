@@ -1,6 +1,6 @@
 # Referencer
 
-Referencer is a Bible study annotation tool which makes it easy to cross-reference multiple passages from different parts of the Bible. It is written in Vue, Python and TypeScript.
+Referencer is a Bible study annotation tool which makes it easy to cross-reference multiple passages from different parts of the Bible. It is written in Vue, TypeScript and Python.
 
 ## To-do
 
@@ -9,12 +9,9 @@ Referencer is a Bible study annotation tool which makes it easy to cross-referen
 - As a user, I want to be able to create a room so that I can collaborate in real-time with other people.
 
   - Requires websocket support
-  - Requires vuex support
   - Requires backend room design
 
 - As a user, when I type into the search bar, I want to be able to add the passage into Section A/B of the screen.
-- As a user, I want to be able to select a chapter of the Bible and have it displayed.
-- As a user, I want to be able to have a selection of verses from the Bible and have it displayed.
 
 ### Layer navigation pane
 
@@ -33,4 +30,5 @@ Referencer is a Bible study annotation tool which makes it easy to cross-referen
 
 ### Known Issues
 
-- ESV Dataset is incomplete; missing verse one of for all books, Chapter 2 onwards (i.e. Any 2:1)
+- ESV Dataset is incomplete; missing verse one of for all books, Chapter 2 onwards (i.e. Any x:1 where x>1)
+- Text needs to be without quotes around it
