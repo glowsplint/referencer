@@ -31092,5 +31092,5 @@ export const textArray = [
   "I warn everyone who hears the words of the prophecy of this book: if anyone adds to them, God will add to him the plagues described in this book,",
   "and if anyone takes away from the words of the book of this prophecy, God will take away his share in the tree of life and in the holy city, which are described in this book.",
   "He who testifies to these things says, \u201cSurely I am coming soon.\u201d Amen. Come, Lord Jesus!",
-  "The grace of the Lord Jesus be with all. Amen.",
+  "The grace of the Lord Jesus be with all. Amen."
 ];

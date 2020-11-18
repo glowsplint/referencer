@@ -169,18 +169,22 @@
 </template>
 
 <script lang="ts">
-import { allBooks } from "./allBooks";
-import { bibleText } from "./bible";
 import * as _ from "lodash";
+import { allBooks } from "./allBooks";
+import { verseIndexer } from "./verseIndexer";
+import { lastVerse } from "./lastVerse";
+import { textArray } from "./textArray";
 
-const entryCode = "139267"
-const spaceID = "space-1"
+const entryCode = "139267";
+const spaceID = "space-1";
 
 export default {
   data() {
     return {
-      allBooks: allBooks,
-      bibleText: bibleText,
+      allBooks,
+      lastVerse,
+      textArray,
+      verseIndexer,
       darkMode: false,
       displayedEntryCode: entryCode,
       displayedSpaceID: spaceID,
@@ -239,7 +243,13 @@ export default {
     submitSearch() {
       // Entry method when search is submitted (Enter key is pressed)
       // First, check if searchText is not null
-      const searchText = _.capitalize(this.searchText);
+      function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function(txt) {
+          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+      }
+
+      const searchText = toTitleCase(this.searchText);
       if (searchText !== null) {
         // If sectionATitle is not filled, fill it with searchText.
         // Else, if sectionBTitle is not same as searchText, replace sectionBTitle with searchText
@@ -258,45 +268,60 @@ export default {
     },
     parseSingleVerse(searchText: string): object {
       // 1 John 1:1, Genesis 1:1
-      return [searchText, bibleText[searchText]];
+      return [searchText, textArray[verseIndexer[searchText]]];
     },
     parseSingleChapter(searchText: string): object {
       // 1 John 1, Genesis 1
-      return [];
+      const firstIndex = verseIndexer[searchText + ":1"];
+      const lastIndex = verseIndexer[lastVerse[searchText + ":1"]];
+      return [searchText, textArray.slice(firstIndex, lastIndex)];
     },
-    parseWithinChapter(searchText: string): object {
-      // 1 John 1:1-3, Genesis 1:1-3
-      return [];
+    parseWithinChapter(searchText: string, match: RegExpMatchArray): object {
+      // 1 John 1:1-3, {Genesis} {1}:{1}-{3}
+      const chapter = match[1] + " " + match[2] + ":";
+      const firstIndex = verseIndexer[chapter + match[3]];
+      const lastIndex = verseIndexer[chapter + match[4]];
+      return [searchText, textArray.slice(firstIndex, lastIndex)];
     },
-    parseAcrossChapters(searchText: string): object {
-      // 1 John 1:1-2:3, Genesis 1:1-2:3
-      return [];
+    parseAcrossChapters(searchText: string, match: RegExpMatchArray): object {
+      // 1 John 1:1-2:3, {Genesis} {1}:{1}-{2}:{3}
+      const firstIndex =
+        verseIndexer[match[1] + " " + match[2] + ":" + match[3]];
+      const lastIndex =
+        verseIndexer[match[1] + " " + match[4] + ":" + match[5]];
+      return [searchText, textArray.slice(firstIndex, lastIndex)];
     },
-    parseMultipleChapters(searchText: string): object {
-      // 1 John 1-2
-      return [];
+    parseMultipleChapters(searchText: string, match: RegExpMatchArray): object {
+      // 1 John 1-2, {Genesis} {1}-{2}
+      const firstIndex = verseIndexer[match[1] + " " + match[2] + ":1"];
+      const lastIndex =
+        verseIndexer[lastVerse[match[1] + " " + match[3] + ":1"]];
+      return [searchText, textArray.slice(firstIndex, lastIndex)];
     },
     parseSearch(searchText: string): object {
       // Parses searchText and returns Array[textName, text]
       const singleVerseRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)$/; // 1 John 1:1, Genesis 1:1
-      const singleChapterRegExp = /^((?:[0-9][\s]?)(?:[A-Za-z]+))\s([0-9]+)$/; // 1 John 1, Genesis 1
-      const withinChapterRegExp = /^((?:[0-9][\s]?)(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+)$/; // 1 John 1:1-3, Genesis 1:1-3
-      const acrossChaptersRegExp = /^((?:[0-9][\s]?)(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+):([0-9]+)$/; // 1 John 1:1-2:3, Genesis 1:1-2:3
+      const singleChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)$/; // 1 John 1, Genesis 1
+      const withinChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+)$/; // 1 John 1:1-3, Genesis 1:1-3
+      const acrossChaptersRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+):([0-9]+)$/; // 1 John 1:1-2:3, Genesis 1:1-2:3
       const multipleChaptersRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)-([0-9]+)$/; // 1 John 1-2
 
-      const result = searchText.match(singleVerseRegExp);
-      console.log(result);
+      const singleVerseMatch = searchText.match(singleVerseRegExp);
+      const singleChapterMatch = searchText.match(singleChapterRegExp);
+      const withinChapterMatch = searchText.match(withinChapterRegExp);
+      const acrossChaptersMatch = searchText.match(acrossChaptersRegExp);
+      const multipleChaptersMatch = searchText.match(multipleChaptersRegExp);
 
-      if (searchText.match(singleVerseRegExp) !== null) {
+      if (singleVerseMatch !== null) {
         return this.parseSingleVerse(searchText);
-      } else if (searchText.match(singleChapterRegExp) !== null) {
+      } else if (singleChapterMatch !== null) {
         return this.parseSingleChapter(searchText);
-      } else if (searchText.match(withinChapterRegExp) !== null) {
-        return this.parseWithinChapter(searchText);
-      } else if (searchText.match(acrossChaptersRegExp) !== null) {
-        return this.parseAcrossChapters(searchText);
-      } else if (searchText.match(multipleChaptersRegExp) !== null) {
-        return this.parseMultipleChapters(searchText);
+      } else if (withinChapterMatch !== null) {
+        return this.parseWithinChapter(searchText, withinChapterMatch);
+      } else if (acrossChaptersMatch !== null) {
+        return this.parseAcrossChapters(searchText, acrossChaptersMatch);
+      } else if (multipleChaptersMatch !== null) {
+        return this.parseMultipleChapters(searchText, multipleChaptersMatch);
       }
     },
     toggleColours(): void {
