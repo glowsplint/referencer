@@ -62,22 +62,19 @@
   </v-container>
 </template>
 
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+
+@Component
+export default class Login extends Vue {
+  entryCode = "";
+  roomID = "";
+  tab = null;
+}
+</script>
+
 <style scoped>
 h1 {
   margin: 0px;
 }
 </style>
-
-<script lang="ts">
-import Vue from "vue";
-
-export default Vue.extend({
-  name: "HelloWorld",
-
-  data: () => ({
-    entryCode: "",
-    roomID: "",
-    tab: null
-  })
-});
-</script>

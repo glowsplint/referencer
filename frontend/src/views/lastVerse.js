@@ -1187,5 +1187,5 @@ export const lastVerse = {
   "Zechariah 14:1": "Zechariah 14:21",
   "Zephaniah 1:1": "Zephaniah 1:18",
   "Zephaniah 2:1": "Zephaniah 2:15",
-  "Zephaniah 3:1": "Zephaniah 3:20"
+  "Zephaniah 3:1": "Zephaniah 3:20",
 };

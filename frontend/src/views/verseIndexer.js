@@ -30291,5 +30291,5 @@ export const verseIndexer = {
   "Revelation 22:18": 31090,
   "Revelation 22:19": 31091,
   "Revelation 22:20": 31092,
-  "Revelation 22:21": 31093
+  "Revelation 22:21": 31093,
 };

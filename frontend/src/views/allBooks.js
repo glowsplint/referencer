@@ -64,5 +64,5 @@ export const allBooks = [
   "2 John",
   "3 John",
   "Jude",
-  "Revelation"
+  "Revelation",
 ];
