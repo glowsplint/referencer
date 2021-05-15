@@ -1,0 +1,41 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  flex: 0.75;
+}
+
+.editor_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: gray;
+}
+
+.editor_header_left {
+  display: flex;
+  align-items: center;
+  color: gray;
+  padding: 10px;
+}
+
+.editor_header_left > .header_left_text {
+  padding-left: 5px;
+}
+
+.editor_header_right {
+  display: flex;
+  align-items: center;
+  flex: 0;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.editor_header_right > svg:hover {
+  cursor: pointer;
+  color: black;
+}
+
+.editor_textarea {
+  flex: 1;
+  padding: 10px;
+}
