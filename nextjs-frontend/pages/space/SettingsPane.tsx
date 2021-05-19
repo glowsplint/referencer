@@ -7,8 +7,8 @@ function Collapsible({ text }) {
   return (
     <div className={styles.sidebar_participants}>
       <div className={styles.sidebar_header}>
-        <ExpandMore />
-        <Typography variant="overline" display="block" gutterBottom>
+        <ExpandMore fontSize="small" />
+        <Typography variant="overline" display="block">
           {text}
         </Typography>
       </div>

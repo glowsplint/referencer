@@ -11,10 +11,22 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
 export default function App() {
   let prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  let settingsOpen = true;
+  let paletteToggle = true;
 
   function toggleDarkMode() {
     prefersDarkMode = !prefersDarkMode;
     console.log("Inverted Colors.");
+  }
+
+  function toggleSettingsPane() {
+    settingsOpen = !settingsOpen;
+    console.log("Closed/Opened settings pane.");
+  }
+
+  function togglePalette() {
+    paletteToggle = !paletteToggle;
+    console.log("Toggled palette.");
   }
 
   let theme = React.useMemo(
@@ -38,9 +50,9 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <div className={styles.app}>
           <ButtonPane
-            menu={toggleDarkMode}
+            menu={toggleSettingsPane}
             invertColors={toggleDarkMode}
-            palette={toggleDarkMode}
+            palette={togglePalette}
           />
           <SettingsPane />
           <Editor />
