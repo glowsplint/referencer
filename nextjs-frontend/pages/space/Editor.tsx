@@ -7,27 +7,40 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import books from "./autocomplete";
 
-function SearchBar() {
+function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
   return (
-    <Autocomplete
-      id="autocomplete"
-      freeSolo
-      fullWidth
-      options={books}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Search"
-          size="small"
-          margin="normal"
-          variant="outlined"
-        />
-      )}
-    />
+    <form className={styles.container} onSubmit={handleSubmit}>
+      <Autocomplete
+        id="autocomplete"
+        freeSolo
+        fullWidth
+        options={books}
+        inputValue={searchQuery}
+        onInputChange={handleInputChange}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Search"
+            size="small"
+            margin="normal"
+            variant="outlined"
+          />
+        )}
+      />
+    </form>
   );
 }
 
-export default function App() {
+function TextArea({ textName }) {
+  return <div className={styles.editor_textarea}>{textName}</div>;
+}
+
+export default function Editor({
+  texts,
+  handleInputChange,
+  handleSubmit,
+  searchQuery,
+}) {
   return (
     <div className={styles.editor}>
       <div className={styles.editor_header}>
@@ -43,9 +56,13 @@ export default function App() {
         </div>
       </div>
 
-      <div className={styles.editor_textarea}>Text Area</div>
+      <TextArea textName={texts[0]} />
       <div className={styles.editor_searchbar}>
-        <SearchBar />
+        <SearchBar
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          searchQuery={searchQuery}
+        />
       </div>
     </div>
   );

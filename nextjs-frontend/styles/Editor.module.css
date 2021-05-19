@@ -47,3 +47,7 @@
   margin-right: 15px;
   flex: 0;
 }
+
+.container {
+  flex-grow: 1;
+}

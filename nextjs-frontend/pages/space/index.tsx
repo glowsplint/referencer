@@ -1,33 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import ButtonPane from "./ButtonPane";
 import SettingsPane from "./SettingsPane";
 import Editor from "./Editor";
-import styles from "../../styles/App.module.css";
+import styles from "../../styles/Workspace.module.css";
 import "@fontsource/roboto";
 
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
-export default function App() {
+export default function Workspace() {
   let prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   let settingsOpen = true;
   let paletteToggle = true;
+  const [people, setPeople] = useState([]);
+  const [texts, setTexts] = useState([]);
+  const [layers, setLayers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  function toggleDarkMode() {
+  const toggleDarkMode = () => {
     prefersDarkMode = !prefersDarkMode;
-    console.log("Inverted Colors.");
-  }
+    console.log(`Inverted Colors: prefersDarkMode is: ${prefersDarkMode}`);
+  };
 
-  function toggleSettingsPane() {
+  const toggleSettingsPane = () => {
     settingsOpen = !settingsOpen;
     console.log("Closed/Opened settings pane.");
-  }
+  };
 
-  function togglePalette() {
+  const togglePalette = () => {
     paletteToggle = !paletteToggle;
     console.log("Toggled palette.");
-  }
+  };
+
+  const handleInputChange = (_event, newValue: string) => {
+    setSearchQuery(newValue);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setSearchQuery("");
+  };
 
   let theme = React.useMemo(
     () =>
@@ -55,7 +68,12 @@ export default function App() {
             palette={togglePalette}
           />
           <SettingsPane />
-          <Editor />
+          <Editor
+            texts={texts}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+            searchQuery={searchQuery}
+          />
         </div>
       </ThemeProvider>
     </div>
