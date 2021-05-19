@@ -3,7 +3,7 @@ import Head from "next/head";
 import ButtonPane from "./ButtonPane";
 import SettingsPane from "./SettingsPane";
 import Editor from "./Editor";
-import styles from "./App.module.css";
+import styles from "../../styles/App.module.css";
 import "@fontsource/roboto";
 
 import useMediaQuery from "@material-ui/core/useMediaQuery";

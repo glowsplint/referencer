@@ -1,4 +1,4 @@
-import styles from "./SettingsPane.module.css";
+import styles from "../../styles/SettingsPane.module.css";
 import Typography from "@material-ui/core/Typography";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
