@@ -44,7 +44,7 @@ function SectionHeader({ text }) {
   );
 }
 
-function TextItem({ text }) {
+function TextItem({ text, handleClose, id }) {
   return (
     <div className={styles.texts_item}>
       <Checkbox />
@@ -53,21 +53,28 @@ function TextItem({ text }) {
           {text}
         </Typography>
       </div>
-      <div className={styles.texts_icon}>
-        <CloseIcon fontSize="small" />
-      </div>
+      <IconButton
+        size="small"
+        color="primary"
+        disableRipple
+        onClick={() => handleClose(id)}
+      >
+        <div className={styles.texts_icon}>
+          <CloseIcon fontSize="small" />
+        </div>
+      </IconButton>
     </div>
   );
 }
 
-function TextItems({ texts }) {
+function TextItems({ texts, handleClose }) {
   const items = texts.map((text: string, index: number) => (
-    <TextItem text={text} key={index} />
+    <TextItem text={text} handleClose={handleClose} key={index} id={index} />
   ));
   return <div className={styles.texts_items}>{items}</div>;
 }
 
-export default function SettingsPane({ texts }) {
+export default function SettingsPane({ texts, handleClose }) {
   return (
     <div className={styles.sidebar}>
       <div className={styles.sidebar_top}>
@@ -76,7 +83,7 @@ export default function SettingsPane({ texts }) {
       </div>
       <SectionHeader text="In Workspace" />
       <SectionHeader text="Texts" />
-      <TextItems texts={texts} />
+      <TextItems texts={texts} handleClose={handleClose} />
       <SectionHeader text="Layers" />
     </div>
   );
