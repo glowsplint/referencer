@@ -3,9 +3,12 @@ import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import ZoomInIcon from "@material-ui/icons/ZoomIn";
 import ZoomOutIcon from "@material-ui/icons/ZoomOut";
 import HelpIcon from "@material-ui/icons/Help";
+import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import books from "./autocomplete";
+import { grey } from "@material-ui/core/colors";
 
 function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
   return (
@@ -20,9 +23,16 @@ function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
         renderInput={(params) => (
           <TextField
             {...params}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon style={{ color: grey[500] }} />
+                </InputAdornment>
+              ),
+            }}
             label="Search"
             size="small"
-            margin="normal"
+            margin="none"
             variant="outlined"
           />
         )}
@@ -57,7 +67,7 @@ export default function Editor({
       </div>
 
       <TextArea textName={texts[0]} />
-      <div className={styles.editor_searchbar}>
+      <div className={styles.editor_search}>
         <SearchBar
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}

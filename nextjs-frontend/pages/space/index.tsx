@@ -39,6 +39,10 @@ export default function Workspace() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    // Handling the texts: Replaces second text if we will have more than 2 texts
+    let newTexts: string[] = [...texts, searchQuery];
+    setTexts(newTexts);
     setSearchQuery("");
   };
 
@@ -67,7 +71,7 @@ export default function Workspace() {
             invertColors={toggleDarkMode}
             palette={togglePalette}
           />
-          <SettingsPane />
+          <SettingsPane texts={texts} />
           <Editor
             texts={texts}
             handleInputChange={handleInputChange}

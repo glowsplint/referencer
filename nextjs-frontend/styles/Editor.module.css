@@ -40,12 +40,12 @@
   padding: 10px;
 }
 
-.editor_searchbar {
+.editor_search {
   display: flex;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 15px;
   margin-left: 15px;
   margin-right: 15px;
-  flex: 0;
 }
 
 .container {
