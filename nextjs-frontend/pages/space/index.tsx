@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import Head from "next/head";
+import styles from "../../styles/Workspace.module.css";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+
 import ButtonPane from "./ButtonPane";
 import SettingsPane from "./SettingsPane";
 import Editor from "./Editor";
-import styles from "../../styles/Workspace.module.css";
-import "@fontsource/roboto";
-
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
 export default function Workspace() {
   let prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");

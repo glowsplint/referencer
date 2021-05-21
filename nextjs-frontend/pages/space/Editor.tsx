@@ -1,14 +1,15 @@
 import styles from "../../styles/Editor.module.css";
-import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
-import ZoomInIcon from "@material-ui/icons/ZoomIn";
-import ZoomOutIcon from "@material-ui/icons/ZoomOut";
-import HelpIcon from "@material-ui/icons/Help";
-import SearchIcon from "@material-ui/icons/Search";
-import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import TextField from "@material-ui/core/TextField";
 import books from "./autocomplete";
 import { grey } from "@material-ui/core/colors";
+
+import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
+import HelpIcon from "@material-ui/icons/Help";
+import SearchIcon from "@material-ui/icons/Search";
+import ZoomInIcon from "@material-ui/icons/ZoomIn";
+import ZoomOutIcon from "@material-ui/icons/ZoomOut";
 
 function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
   return (

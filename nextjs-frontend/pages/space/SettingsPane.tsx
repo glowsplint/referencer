@@ -1,13 +1,16 @@
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import styles from "../../styles/SettingsPane.module.css";
 import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+
+// Icons
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import CloseIcon from "@material-ui/icons/Close";
 import { Checkbox as MUICheckBox } from "@material-ui/core";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
   input: {
