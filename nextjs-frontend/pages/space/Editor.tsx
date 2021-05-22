@@ -2,8 +2,9 @@ import styles from "../../styles/Editor.module.css";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
-import lastVerse from "./text/endings";
+import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
+import lastVerse from "./text/endings";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import HelpIcon from "@material-ui/icons/Help";
@@ -47,7 +48,8 @@ function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
 function TextArea({ textName, textBody }) {
   return (
     <div className={styles.editor_textarea}>
-      {textName} | {textBody}{" "}
+      <Typography variant="h6">{textName}</Typography>
+      {textBody.join(" ")}
     </div>
   );
 }
@@ -75,8 +77,13 @@ export default function Editor({
       </div>
 
       <div className={styles.editor_textareas}>
-        <TextArea textName={textHeaders[0]} textBody={textBodies[0]} />
-        <TextArea textName={textHeaders[1]} textBody={textBodies[1]} />
+        {textHeaders.map((textHeader: string, index: number) => (
+          <TextArea
+            textName={textHeader}
+            textBody={textBodies[index]}
+            key={index}
+          />
+        ))}
       </div>
 
       <div className={styles.editor_search}>

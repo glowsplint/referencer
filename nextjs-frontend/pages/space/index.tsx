@@ -17,10 +17,8 @@ export default function Workspace() {
   let paletteToggle = true;
   const [people, setPeople] = useState([]);
   const [texts, setTexts] = useState([]);
-  const [textOneHeader, setTextOneHeader] = useState("");
-  const [textOneBody, setTextOneBody] = useState([]);
-  const [textTwoHeader, setTextTwoHeader] = useState("");
-  const [textTwoBody, setTextTwoBody] = useState([]);
+  const [textHeaders, setTextHeaders] = useState([]);
+  const [textBodies, setTextBodies] = useState([]);
   const [layers, setLayers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -60,22 +58,20 @@ export default function Workspace() {
     // Handling the texts: Replaces second text if we will have more than 2 texts
     let newTexts: string[];
     const [query, textBody] = parseSearch(toTitleCase(searchQuery));
-    console.log(query, textBody);
 
     if (query !== undefined) {
       newTexts = [...texts, query];
       setTexts(newTexts);
 
       // Fill any available empty text area, starting with textOne
-      if (textOneHeader === "") {
-        setTextOneHeader(query);
-        setTextOneBody(textBody);
-      } else if (textTwoHeader === "") {
-        setTextTwoHeader(query);
-        setTextTwoBody(textBody);
+      if (textHeaders[0] === undefined) {
+        setTextHeaders([query]);
+        setTextBodies([textBody]);
+      } else if (textHeaders[1] === undefined) {
+        setTextHeaders([textHeaders[0], query]);
+        setTextBodies([textBodies[0], textBody]);
       }
     }
-
     // Clear the search bar
     setSearchQuery("");
   };
@@ -210,8 +206,8 @@ export default function Workspace() {
           />
           <SettingsPane texts={texts} handleClose={handleClose} />
           <Editor
-            textHeaders={[textOneHeader, textTwoHeader]}
-            textBodies={[textOneBody, textTwoBody]}
+            textHeaders={textHeaders}
+            textBodies={textBodies}
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
             searchQuery={searchQuery}
