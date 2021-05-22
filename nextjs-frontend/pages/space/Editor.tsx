@@ -2,7 +2,7 @@ import styles from "../../styles/Editor.module.css";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
-import { lastVerse } from "./text/endings";
+import lastVerse from "./text/endings";
 import { grey } from "@material-ui/core/colors";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";

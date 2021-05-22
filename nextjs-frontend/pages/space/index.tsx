@@ -7,8 +7,8 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import ButtonPane from "./ButtonPane";
 import SettingsPane from "./SettingsPane";
 import Editor from "./Editor";
-import { lastVerse, lastChapter } from "./text/endings";
-import { verseIndexer } from "./text/verseIndexer";
+import lastVerse from "./text/endings";
+import verseIndexer from "./text/verseIndexer";
 import textArray from "./text/esv";
 
 export default function Workspace() {
@@ -80,10 +80,17 @@ export default function Workspace() {
     setSearchQuery("");
   };
 
-  const parseSingleVerse = (query: string): [string, string[]] => {
+  const parseSingleVerse = (
+    query: string,
+    match: RegExpMatchArray
+  ): [string, string[]] => {
     // 1 John 1:1, Genesis 1:1
-    return [query, [textArray[verseIndexer[query]]]];
+    const book = match[1];
+    const chapter = match[2];
+    const verse = match[3];
+    return [query, [textArray[verseIndexer[book][chapter][verse]]]];
   };
+
   const parseSingleChapter = (
     query: string,
     match: RegExpMatchArray
@@ -91,35 +98,39 @@ export default function Workspace() {
     // 1 John 1, {Genesis} {1}
     const book = match[1];
     const chapter = match[2];
-    const firstIndex: number = verseIndexer[query + ":1"];
+    const firstIndex: number = verseIndexer[book][chapter]["1"];
     const lastIndex: number =
-      verseIndexer[book + " " + chapter + ":" + lastVerse[book][chapter]];
+      verseIndexer[book][chapter][lastVerse[book][chapter]] + 1;
     return [query, textArray.slice(firstIndex, lastIndex)];
   };
+
   const parseWithinChapter = (
     query: string,
     match: RegExpMatchArray
   ): [string, string[]] => {
     // 1 John 1:1-3, {Genesis} {1}:{1}-{3}
-    const chapter = match[1] + " " + match[2] + ":";
-    const firstIndex = verseIndexer[chapter + match[3]];
-    const lastIndex = verseIndexer[chapter + match[4]];
+    const book = match[1];
+    const chapter = match[2];
+    const verseStart = match[3];
+    const verseEnd = match[4];
+    const firstIndex = verseIndexer[book][chapter][verseStart];
+    const lastIndex = verseIndexer[book][chapter][verseEnd] + 1;
     return [query, textArray.slice(firstIndex, lastIndex)];
   };
+
   const parseAcrossChapters = (
     query: string,
     match: RegExpMatchArray
   ): [string, string[]] => {
     // 1 John 1:1-2:3, {Genesis} {1}:{1}-{2}:{3}
     const book = match[1];
-    const verseStart = [match[2], match[4]];
-    const verseEnd = [match[3], match[5]];
-    const firstIndex =
-      verseIndexer[book + " " + verseStart[0] + ":" + verseStart[1]];
-    const lastIndex =
-      verseIndexer[book + " " + verseEnd[0] + ":" + verseEnd[1]];
+    const [chapterStart, verseStart] = [match[2], match[3]];
+    const [chapterEnd, verseEnd] = [match[4], match[5]];
+    const firstIndex = verseIndexer[book][chapterStart][verseStart];
+    const lastIndex = verseIndexer[book][chapterEnd][verseEnd] + 1;
     return [query, textArray.slice(firstIndex, lastIndex)];
   };
+
   const parseMultipleChapters = (
     query: string,
     match: RegExpMatchArray
@@ -128,9 +139,10 @@ export default function Workspace() {
     const book = match[1];
     const chapterStart = match[2];
     const chapterEnd = match[3];
-    const firstIndex = verseIndexer[book + " " + chapterStart + ":1"];
+    const firstIndex = verseIndexer[book][chapterStart]["1"];
     const lastIndex =
-      verseIndexer[book + " " + chapterEnd + ":" + lastVerse[book][chapterEnd]];
+      verseIndexer[book][chapterEnd][lastVerse[book][chapterEnd]] + 1;
+    console.log(firstIndex, lastIndex);
     return [query, textArray.slice(firstIndex, lastIndex)];
   };
 
@@ -152,7 +164,7 @@ export default function Workspace() {
     const multipleChaptersMatch = query.match(multipleChaptersRegExp);
 
     if (singleVerseMatch !== null) {
-      return parseSingleVerse(query);
+      return parseSingleVerse(query, singleVerseMatch);
     } else if (singleChapterMatch !== null) {
       return parseSingleChapter(query, singleChapterMatch);
     } else if (withinChapterMatch !== null) {

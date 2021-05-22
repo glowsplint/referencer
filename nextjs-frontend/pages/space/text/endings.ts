@@ -1,12 +1,4 @@
-interface lastVerseInner {
-  [key: number]: number;
-}
-
-interface lastVerseObject {
-  [key: string]: lastVerseInner;
-}
-
-export const lastVerse: lastVerseObject = {
+export default {
   "1 Chronicles": {
     1: 54,
     2: 55,

@@ -27765,6 +27765,7 @@ export default [
   "But, to detain you no further, I beg you in your kindness to hear us briefly.",
   "For we have found this man a plague, one who stirs up riots among all the Jews throughout the world and is a ringleader of the sect of the Nazarenes.",
   "He even tried to profane the temple, but we seized him.",
+  "",
   "By examining him yourself you will be able to find out from him about everything of which we accuse him.\u201d",
   "The Jews also joined in the charge, affirming that all these things were so.",
   "And when the governor had nodded to him to speak, Paul replied:",
