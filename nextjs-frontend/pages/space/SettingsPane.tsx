@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-function Checkbox() {
+function Checkbox({ handleCheckBoxToggle }) {
   const classes = useStyles();
   return (
     <MUICheckBox
@@ -27,6 +27,7 @@ function Checkbox() {
       classes={{ root: classes.input }}
       icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
       checkedIcon={<CheckBoxIcon fontSize="small" />}
+      onChange={handleCheckBoxToggle}
     />
   );
 }
@@ -44,10 +45,10 @@ function SectionHeader({ text }) {
   );
 }
 
-function TextItem({ text, handleClose, id }) {
+function TextItem({ text, handleClose, id, handleCheckBoxToggle }) {
   return (
     <div className={styles.texts_item}>
-      <Checkbox />
+      <Checkbox handleCheckBoxToggle={handleCheckBoxToggle} />
       <div className={styles.texts_text}>
         <Typography variant="overline" display="block">
           {text}
@@ -67,14 +68,24 @@ function TextItem({ text, handleClose, id }) {
   );
 }
 
-function TextItems({ texts, handleClose }) {
+function TextItems({ texts, handleClose, handleCheckBoxToggle }) {
   const items = texts.map((text: string, index: number) => (
-    <TextItem text={text} handleClose={handleClose} key={index} id={index} />
+    <TextItem
+      text={text}
+      handleClose={handleClose}
+      key={index}
+      id={index}
+      handleCheckBoxToggle={handleCheckBoxToggle}
+    />
   ));
   return <div className={styles.texts_items}>{items}</div>;
 }
 
-export default function SettingsPane({ texts, handleClose }) {
+export default function SettingsPane({
+  texts,
+  handleClose,
+  handleCheckBoxToggle,
+}) {
   return (
     <div className={styles.sidebar}>
       <div className={styles.sidebar_top}>
@@ -83,7 +94,11 @@ export default function SettingsPane({ texts, handleClose }) {
       </div>
       <SectionHeader text="In Workspace" />
       <SectionHeader text="Texts" />
-      <TextItems texts={texts} handleClose={handleClose} />
+      <TextItems
+        texts={texts}
+        handleClose={handleClose}
+        handleCheckBoxToggle={handleCheckBoxToggle}
+      />
       <SectionHeader text="Layers" />
     </div>
   );

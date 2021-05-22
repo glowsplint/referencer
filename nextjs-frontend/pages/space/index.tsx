@@ -17,25 +17,40 @@ export default function Workspace() {
   let paletteToggle = true;
   const [people, setPeople] = useState([]);
   const [texts, setTexts] = useState([]);
-  const [textHeaders, setTextHeaders] = useState([]);
-  const [textBodies, setTextBodies] = useState([]);
+  const [textHeaders, setTextHeaders] = useState<string[]>([]);
+  const [textBodies, setTextBodies] = useState<string[][]>([]);
   const [layers, setLayers] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const [isDisplayed, setIsDisplayed] = useState<string[]>([]);
+  const displayedText = (): [string[], string[][]] => {
+    const indexLeft = isDisplayed.findIndex((x) => x === "left");
+    const indexRight = isDisplayed.findIndex((x) => x === "right");
+    const displayedTextHeaders = [
+      textHeaders[indexLeft],
+      textHeaders[indexRight],
+    ].filter((x) => x !== undefined);
+    const displayedTextBodies = [
+      textBodies[indexLeft],
+      textBodies[indexRight],
+    ].filter((x) => x !== undefined);
+    return [displayedTextHeaders, displayedTextBodies];
+  };
+
+  const displayedTextHeaders = () => displayedText()[0];
+  const displayedTextBodies = () => displayedText()[1];
 
   // Button Pane Functionality
   const toggleDarkMode = () => {
     prefersDarkMode = !prefersDarkMode;
-    console.log(`Inverted Colors: prefersDarkMode is: ${prefersDarkMode}`);
   };
 
   const toggleSettingsPane = () => {
     settingsOpen = !settingsOpen;
-    console.log("Closed/Opened settings pane.");
   };
 
   const togglePalette = () => {
     paletteToggle = !paletteToggle;
-    console.log("Toggled palette.");
   };
 
   let theme = React.useMemo(
@@ -49,11 +64,14 @@ export default function Workspace() {
   );
 
   // Search Bar Functionality
-  const handleInputChange = (_event, newValue: string) => {
+  const handleInputChange = (
+    _event: React.ChangeEvent<HTMLInputElement>,
+    newValue: string
+  ) => {
     setSearchQuery(newValue);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     // Handling the texts: Replaces second text if we will have more than 2 texts
     let newTexts: string[];
@@ -64,12 +82,16 @@ export default function Workspace() {
       setTexts(newTexts);
 
       // Fill any available empty text area, starting with textOne
-      if (textHeaders[0] === undefined) {
+      if (displayedTextHeaders()[0] === undefined) {
         setTextHeaders([query]);
         setTextBodies([textBody]);
-      } else if (textHeaders[1] === undefined) {
-        setTextHeaders([textHeaders[0], query]);
-        setTextBodies([textBodies[0], textBody]);
+        setIsDisplayed(["left"]);
+      } else if (displayedTextHeaders()[1] === undefined) {
+        setTextHeaders([displayedTextHeaders()[0], query]);
+        setTextBodies([textBodies[0], [...textBody]]);
+        setIsDisplayed(["left", "right"]);
+      } else {
+        setIsDisplayed([...isDisplayed, "false"]);
       }
     }
     // Clear the search bar
@@ -138,7 +160,6 @@ export default function Workspace() {
     const firstIndex = verseIndexer[book][chapterStart]["1"];
     const lastIndex =
       verseIndexer[book][chapterEnd][lastVerse[book][chapterEnd]] + 1;
-    console.log(firstIndex, lastIndex);
     return [query, textArray.slice(firstIndex, lastIndex)];
   };
 
@@ -186,7 +207,18 @@ export default function Workspace() {
       ...texts.slice(0, key),
       ...texts.slice(key + 1, texts.length),
     ];
+    const newIsDisplayed: string[] = [
+      ...isDisplayed.slice(0, key),
+      ...isDisplayed.slice(key + 1, isDisplayed.length),
+    ];
     setTexts(newTexts);
+    setIsDisplayed(newIsDisplayed);
+  };
+
+  const handleCheckBoxToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // If target is newly checked, move the text from
+    console.log(event.target.checked);
+    return;
   };
 
   return (
@@ -204,10 +236,14 @@ export default function Workspace() {
             invertColors={toggleDarkMode}
             palette={togglePalette}
           />
-          <SettingsPane texts={texts} handleClose={handleClose} />
+          <SettingsPane
+            texts={texts}
+            handleClose={handleClose}
+            handleCheckBoxToggle={handleCheckBoxToggle}
+          />
           <Editor
-            textHeaders={textHeaders}
-            textBodies={textBodies}
+            textHeaders={displayedTextHeaders()}
+            textBodies={displayedTextBodies()}
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
             searchQuery={searchQuery}

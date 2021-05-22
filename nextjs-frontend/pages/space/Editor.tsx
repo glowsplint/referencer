@@ -14,7 +14,18 @@ import ZoomOutIcon from "@material-ui/icons/ZoomOut";
 
 const books = Object.keys(lastVerse);
 
-function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
+function SearchBar({
+  handleInputChange,
+  handleSubmit,
+  searchQuery,
+}: {
+  handleInputChange: (
+    _event: React.ChangeEvent<HTMLInputElement>,
+    newValue: string
+  ) => void;
+  handleSubmit: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  searchQuery: string;
+}) {
   return (
     <form className={styles.container} onSubmit={handleSubmit}>
       <Autocomplete
@@ -45,11 +56,17 @@ function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
   );
 }
 
-function TextArea({ textName, textBody }) {
+function TextArea({
+  textName,
+  textBody,
+}: {
+  textName: string;
+  textBody: string[];
+}) {
   return (
     <div className={styles.editor_textarea}>
       <Typography variant="h6">{textName}</Typography>
-      {textBody.join(" ")}
+      <Typography align="justify">{textBody.join(" ")}</Typography>
     </div>
   );
 }
@@ -60,6 +77,15 @@ export default function Editor({
   handleInputChange,
   handleSubmit,
   searchQuery,
+}: {
+  textHeaders: string[];
+  textBodies: string[][];
+  handleInputChange: (
+    _event: React.ChangeEvent<HTMLInputElement>,
+    newValue: string
+  ) => void;
+  handleSubmit: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  searchQuery: string;
 }) {
   return (
     <div className={styles.editor}>
