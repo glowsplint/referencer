@@ -2,7 +2,7 @@ import styles from "../../styles/Editor.module.css";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
-import books from "./autocomplete";
+import { lastVerse } from "./text/endings";
 import { grey } from "@material-ui/core/colors";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
@@ -10,6 +10,8 @@ import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
 import ZoomInIcon from "@material-ui/icons/ZoomIn";
 import ZoomOutIcon from "@material-ui/icons/ZoomOut";
+
+const books = Object.keys(lastVerse);
 
 function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
   return (
@@ -42,12 +44,17 @@ function SearchBar({ handleInputChange, handleSubmit, searchQuery }) {
   );
 }
 
-function TextArea({ textName }) {
-  return <div className={styles.editor_textarea}>{textName}</div>;
+function TextArea({ textName, textBody }) {
+  return (
+    <div className={styles.editor_textarea}>
+      {textName} | {textBody}{" "}
+    </div>
+  );
 }
 
 export default function Editor({
-  texts,
+  textHeaders,
+  textBodies,
   handleInputChange,
   handleSubmit,
   searchQuery,
@@ -67,7 +74,11 @@ export default function Editor({
         </div>
       </div>
 
-      <TextArea textName={texts[0]} />
+      <div className={styles.editor_textareas}>
+        <TextArea textName={textHeaders[0]} textBody={textBodies[0]} />
+        <TextArea textName={textHeaders[1]} textBody={textBodies[1]} />
+      </div>
+
       <div className={styles.editor_search}>
         <SearchBar
           handleInputChange={handleInputChange}

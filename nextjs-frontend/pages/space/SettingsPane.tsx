@@ -15,7 +15,7 @@ import CheckBoxIcon from "@material-ui/icons/CheckBox";
 const useStyles = makeStyles({
   input: {
     height: "20px",
-    boxSizing: "border-box", // <-- add this
+    boxSizing: "border-box",
   },
 });
 

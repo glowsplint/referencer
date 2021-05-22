@@ -35,8 +35,12 @@
   color: black;
 }
 
-.editor_textarea {
+.editor_textareas {
   flex: 1;
+}
+
+.editor_textarea {
+  flex: 0.5;
   padding: 10px;
 }
 
