@@ -13,7 +13,6 @@ import textArray from "./text/esv";
 
 export default function Workspace() {
   const [people, setPeople] = useState([]);
-  const [texts, setTexts] = useState([]);
   const [textHeaders, setTextHeaders] = useState<string[]>([]);
   const [textBodies, setTextBodies] = useState<string[][]>([]);
   const [layers, setLayers] = useState([]);
@@ -26,19 +25,22 @@ export default function Workspace() {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(
     useMediaQuery("(prefers-color-scheme: dark)")
   );
-  const [isDisplayed, setIsDisplayed] = useState<string[]>([]);
+  const [isDisplayed, setIsDisplayed] = useState<boolean[]>([]);
 
   const displayedText = (): [string[], string[][]] => {
-    const indexLeft = isDisplayed.findIndex((x) => x === "left");
-    const indexRight = isDisplayed.findIndex((x) => x === "right");
-    const displayedTextHeaders = [
-      textHeaders[indexLeft],
-      textHeaders[indexRight],
-    ].filter((x) => x !== undefined);
-    const displayedTextBodies = [
-      textBodies[indexLeft],
-      textBodies[indexRight],
-    ].filter((x) => x !== undefined);
+    const indices: number[] = isDisplayed.map((item, index) => {
+      if (item === true) {
+        return index;
+      }
+    });
+
+    let displayedTextHeaders: string[] = [];
+    let displayedTextBodies: string[][] = [];
+
+    for (let item of indices) {
+      displayedTextHeaders.push(textHeaders[item]);
+      displayedTextBodies.push(textBodies[item]);
+    }
     return [displayedTextHeaders, displayedTextBodies];
   };
 
@@ -82,26 +84,14 @@ export default function Workspace() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Handling the texts: Replaces second text if we will have more than 2 texts
-    let newTexts: string[];
-    const [query, textBody] = parseSearch(toTitleCase(searchQuery));
+    const [query, textBody] = checkInvalidInput(
+      parseSearch(toTitleCase(searchQuery))
+    );
 
     if (query !== undefined) {
-      newTexts = [...texts, query];
-      setTexts(newTexts);
-
-      // Fill any available empty text area, starting with textOne
-      if (displayedTextHeaders()[0] === undefined) {
-        setTextHeaders([query]);
-        setTextBodies([textBody]);
-        setIsDisplayed(["left"]);
-      } else if (displayedTextHeaders()[1] === undefined) {
-        setTextHeaders([displayedTextHeaders()[0], query]);
-        setTextBodies([textBodies[0], [...textBody]]);
-        setIsDisplayed(["left", "right"]);
-      } else {
-        setIsDisplayed([...isDisplayed, "false"]);
-      }
+      setTextHeaders([...textHeaders, query]);
+      setTextBodies([...textBodies, textBody]);
+      setIsDisplayed([...isDisplayed, true]);
     }
     // Clear the search bar
     setSearchQuery("");
@@ -114,7 +104,7 @@ export default function Workspace() {
     query: string;
     mainText: (string | undefined)[];
   }): [string | undefined, string[] | undefined] => {
-    if (typeof mainText[0] === "undefined") {
+    if (typeof mainText === "undefined") {
       query = undefined;
       mainText = undefined;
     }
@@ -124,7 +114,7 @@ export default function Workspace() {
   const parseSingleVerse = (
     query: string,
     match: RegExpMatchArray
-  ): [string, string[]] => {
+  ): { query: string; mainText: string[] } => {
     // 1 John 1:1, Genesis 1:1
     const book = match[1];
     const chapter = match[2];
@@ -132,13 +122,16 @@ export default function Workspace() {
     const mainText: (string | undefined)[] = [
       textArray[verseIndexer[book]?.[chapter]?.[verse]],
     ];
-    return checkInvalidInput({ query, mainText });
+    return { query, mainText };
   };
 
   const parseSingleChapter = (
     query: string,
     match: RegExpMatchArray
-  ): [string, string[]] => {
+  ): {
+    query: string;
+    mainText: (string | undefined)[];
+  } => {
     // 1 John 1, {Genesis} {1}
     const book = match[1];
     const chapter = match[2];
@@ -149,13 +142,16 @@ export default function Workspace() {
       firstIndex,
       lastIndex
     );
-    return checkInvalidInput({ query, mainText });
+    return { query, mainText };
   };
 
   const parseWithinChapter = (
     query: string,
     match: RegExpMatchArray
-  ): [string, string[]] => {
+  ): {
+    query: string;
+    mainText: (string | undefined)[];
+  } => {
     // 1 John 1:1-3, {Genesis} {1}:{1}-{3}
     const book = match[1];
     const chapter = match[2];
@@ -167,13 +163,16 @@ export default function Workspace() {
       firstIndex,
       lastIndex
     );
-    return checkInvalidInput({ query, mainText });
+    return { query, mainText };
   };
 
   const parseAcrossChapters = (
     query: string,
     match: RegExpMatchArray
-  ): [string, string[]] => {
+  ): {
+    query: string;
+    mainText: (string | undefined)[];
+  } => {
     // 1 John 1:1-2:3, {Genesis} {1}:{1}-{2}:{3}
     const book = match[1];
     const [chapterStart, verseStart] = [match[2], match[3]];
@@ -184,13 +183,16 @@ export default function Workspace() {
       firstIndex,
       lastIndex
     );
-    return checkInvalidInput({ query, mainText });
+    return { query, mainText };
   };
 
   const parseMultipleChapters = (
     query: string,
     match: RegExpMatchArray
-  ): [string, string[]] => {
+  ): {
+    query: string;
+    mainText: (string | undefined)[];
+  } => {
     // 1 John 1-2, {Genesis} {1}-{2}
     const book = match[1];
     const chapterStart = match[2];
@@ -202,13 +204,16 @@ export default function Workspace() {
       firstIndex,
       lastIndex
     );
-    return checkInvalidInput({ query, mainText });
+    return { query, mainText };
   };
 
   // Write a function that returns the match and the parsing function as an object
   const parseSearch = (
     query: string
-  ): [string, string[]] | [undefined, undefined] => {
+  ): {
+    query: string;
+    mainText: (string | undefined)[];
+  } => {
     const singleVerseRegExp =
       /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)$/;
     const singleChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)$/;
@@ -235,7 +240,7 @@ export default function Workspace() {
     } else if (multipleChaptersMatch !== null) {
       return parseMultipleChapters(query, multipleChaptersMatch);
     }
-    return [undefined, undefined];
+    return { query: undefined, mainText: undefined };
   };
 
   const toTitleCase = (str: string) => {
@@ -248,16 +253,13 @@ export default function Workspace() {
 
   // Settings Pane Functionality
   const handleClose = (key: number) => {
-    const newTexts: string[] = [
-      ...texts.slice(0, key),
-      ...texts.slice(key + 1, texts.length),
+    const getNew = (oldArray: any[]) => [
+      ...oldArray.slice(0, key),
+      ...oldArray.slice(key + 1, oldArray.length),
     ];
-    const newIsDisplayed: string[] = [
-      ...isDisplayed.slice(0, key),
-      ...isDisplayed.slice(key + 1, isDisplayed.length),
-    ];
-    setTexts(newTexts);
-    setIsDisplayed(newIsDisplayed);
+    setTextHeaders(getNew(textHeaders));
+    setTextBodies(getNew(textBodies));
+    setIsDisplayed(getNew(isDisplayed));
   };
 
   const handleCheckBoxToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -286,7 +288,7 @@ export default function Workspace() {
             toggleEditorLayout={toggleEditorLayout}
           />
           <SettingsPane
-            texts={texts}
+            textHeaders={textHeaders}
             handleClose={handleClose}
             handleCheckBoxToggle={handleCheckBoxToggle}
             isSettingsOpen={isSettingsOpen}

@@ -63,8 +63,8 @@ function TextItem({ text, handleClose, id, handleCheckBoxToggle }) {
   );
 }
 
-function TextItems({ texts, handleClose, handleCheckBoxToggle }) {
-  const items = texts.map((text: string, index: number) => (
+function TextItems({ textHeaders, handleClose, handleCheckBoxToggle }) {
+  const items = textHeaders.map((text: string, index: number) => (
     <TextItem
       text={text}
       handleClose={handleClose}
@@ -77,12 +77,12 @@ function TextItems({ texts, handleClose, handleCheckBoxToggle }) {
 }
 
 export default function SettingsPane({
-  texts,
+  textHeaders,
   handleClose,
   handleCheckBoxToggle,
   isSettingsOpen,
 }: {
-  texts;
+  textHeaders;
   handleClose;
   handleCheckBoxToggle;
   isSettingsOpen: boolean;
@@ -100,7 +100,7 @@ export default function SettingsPane({
       <SectionHeader text="In Workspace" />
       <SectionHeader text="Texts" />
       <TextItems
-        texts={texts}
+        textHeaders={textHeaders}
         handleClose={handleClose}
         handleCheckBoxToggle={handleCheckBoxToggle}
       />
