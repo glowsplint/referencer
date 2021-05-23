@@ -107,6 +107,20 @@ export default function Workspace() {
     setSearchQuery("");
   };
 
+  const checkInvalidInput = ({
+    query,
+    mainText,
+  }: {
+    query: string;
+    mainText: (string | undefined)[];
+  }): [string | undefined, string[] | undefined] => {
+    if (typeof mainText[0] === "undefined") {
+      query = undefined;
+      mainText = undefined;
+    }
+    return [query, mainText];
+  };
+
   const parseSingleVerse = (
     query: string,
     match: RegExpMatchArray
@@ -115,7 +129,10 @@ export default function Workspace() {
     const book = match[1];
     const chapter = match[2];
     const verse = match[3];
-    return [query, [textArray[verseIndexer[book][chapter][verse]]]];
+    const mainText: (string | undefined)[] = [
+      textArray[verseIndexer[book]?.[chapter]?.[verse]],
+    ];
+    return checkInvalidInput({ query, mainText });
   };
 
   const parseSingleChapter = (
@@ -125,10 +142,14 @@ export default function Workspace() {
     // 1 John 1, {Genesis} {1}
     const book = match[1];
     const chapter = match[2];
-    const firstIndex: number = verseIndexer[book][chapter]["1"];
+    const firstIndex: number = verseIndexer[book]?.[chapter]?.["1"];
     const lastIndex: number =
-      verseIndexer[book][chapter][lastVerse[book][chapter]] + 1;
-    return [query, textArray.slice(firstIndex, lastIndex)];
+      verseIndexer[book]?.[chapter]?.[lastVerse[book]?.[chapter]] + 1;
+    const mainText: (string | undefined)[] = textArray.slice(
+      firstIndex,
+      lastIndex
+    );
+    return checkInvalidInput({ query, mainText });
   };
 
   const parseWithinChapter = (
@@ -140,9 +161,13 @@ export default function Workspace() {
     const chapter = match[2];
     const verseStart = match[3];
     const verseEnd = match[4];
-    const firstIndex = verseIndexer[book][chapter][verseStart];
-    const lastIndex = verseIndexer[book][chapter][verseEnd] + 1;
-    return [query, textArray.slice(firstIndex, lastIndex)];
+    const firstIndex = verseIndexer[book]?.[chapter]?.[verseStart];
+    const lastIndex = verseIndexer[book]?.[chapter]?.[verseEnd] + 1;
+    const mainText: (string | undefined)[] = textArray.slice(
+      firstIndex,
+      lastIndex
+    );
+    return checkInvalidInput({ query, mainText });
   };
 
   const parseAcrossChapters = (
@@ -153,9 +178,13 @@ export default function Workspace() {
     const book = match[1];
     const [chapterStart, verseStart] = [match[2], match[3]];
     const [chapterEnd, verseEnd] = [match[4], match[5]];
-    const firstIndex = verseIndexer[book][chapterStart][verseStart];
-    const lastIndex = verseIndexer[book][chapterEnd][verseEnd] + 1;
-    return [query, textArray.slice(firstIndex, lastIndex)];
+    const firstIndex = verseIndexer[book]?.[chapterStart]?.[verseStart];
+    const lastIndex = verseIndexer[book]?.[chapterEnd]?.[verseEnd] + 1;
+    const mainText: (string | undefined)[] = textArray.slice(
+      firstIndex,
+      lastIndex
+    );
+    return checkInvalidInput({ query, mainText });
   };
 
   const parseMultipleChapters = (
@@ -166,10 +195,14 @@ export default function Workspace() {
     const book = match[1];
     const chapterStart = match[2];
     const chapterEnd = match[3];
-    const firstIndex = verseIndexer[book][chapterStart]["1"];
+    const firstIndex = verseIndexer[book]?.[chapterStart]?.["1"];
     const lastIndex =
-      verseIndexer[book][chapterEnd][lastVerse[book][chapterEnd]] + 1;
-    return [query, textArray.slice(firstIndex, lastIndex)];
+      verseIndexer[book]?.[chapterEnd]?.[lastVerse[book]?.[chapterEnd]] + 1;
+    const mainText: (string | undefined)[] = textArray.slice(
+      firstIndex,
+      lastIndex
+    );
+    return checkInvalidInput({ query, mainText });
   };
 
   // Write a function that returns the match and the parsing function as an object
