@@ -256,6 +256,7 @@ export default function Workspace() {
             texts={texts}
             handleClose={handleClose}
             handleCheckBoxToggle={handleCheckBoxToggle}
+            isSettingsOpen={isSettingsOpen}
           />
           <Editor
             textHeaders={displayedTextHeaders()}

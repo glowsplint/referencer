@@ -80,9 +80,17 @@ export default function SettingsPane({
   texts,
   handleClose,
   handleCheckBoxToggle,
+  isSettingsOpen,
+}: {
+  texts;
+  handleClose;
+  handleCheckBoxToggle;
+  isSettingsOpen: boolean;
 }) {
   return (
-    <div className={styles.sidebar}>
+    <div
+      className={isSettingsOpen ? styles.sidebar_open : styles.sidebar_closed}
+    >
       <div className={styles.sidebar_top}>
         <Typography variant="button">space-1</Typography>
         <IconButton size="small" onClick={() => {}}>

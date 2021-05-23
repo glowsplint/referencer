@@ -1,9 +1,20 @@
-.sidebar {
-  display: flex;
+.sidebar_open {
   flex-direction: column;
-  flex: 0.25;
+  width: 240px;
   background-color: #2f3135;
   color: gray;
+  opacity: 1;
+  transition: width 0.5s, opacity 0.3s;
+}
+
+.sidebar_closed {
+  display: flex;
+  flex-direction: column;
+  width: 0;
+  background-color: #2f3135;
+  color: gray;
+  opacity: 0;
+  transition: width 0.5s, opacity 0.3s;
 }
 
 .sidebar_top {
