@@ -37,9 +37,16 @@
   color: black;
 }
 
-.editor_textareas {
+.editor_textareas_row {
   flex: 1;
   flex-direction: row;
+  display: flex;
+  overflow-y: auto;
+}
+
+.editor_textareas_col {
+  flex: 1;
+  flex-direction: column;
   display: flex;
   overflow-y: auto;
 }

@@ -5,13 +5,12 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
 import lastVerse from "./text/endings";
+import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
-import ZoomInIcon from "@material-ui/icons/ZoomIn";
-import ZoomOutIcon from "@material-ui/icons/ZoomOut";
 
 const books = Object.keys(lastVerse);
 
@@ -78,6 +77,7 @@ export default function Editor({
   handleInputChange,
   handleSubmit,
   searchQuery,
+  isMultipleRowsLayout,
 }: {
   textHeaders: string[];
   textBodies: string[][];
@@ -87,6 +87,7 @@ export default function Editor({
   ) => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   searchQuery: string;
+  isMultipleRowsLayout: boolean;
 }) {
   return (
     <div className={styles.editor}>
@@ -99,19 +100,21 @@ export default function Editor({
         </div>
 
         <div className={styles.editor_header_right}>
-          <IconButton size="small" onClick={() => {}}>
-            <ZoomInIcon />
-          </IconButton>
-          <IconButton size="small" onClick={() => {}}>
-            <ZoomOutIcon />
-          </IconButton>
-          <IconButton size="small" onClick={() => {}}>
-            <HelpIcon />
-          </IconButton>
+          <Tooltip title="Help" placement="left">
+            <IconButton size="small" onClick={() => {}}>
+              <HelpIcon />
+            </IconButton>
+          </Tooltip>
         </div>
       </div>
 
-      <div className={styles.editor_textareas}>
+      <div
+        className={
+          isMultipleRowsLayout
+            ? styles.editor_textareas_row
+            : styles.editor_textareas_col
+        }
+      >
         {textHeaders.map((textHeader: string, index: number) => (
           <TextArea
             textName={textHeader}

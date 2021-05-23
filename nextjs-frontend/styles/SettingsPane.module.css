@@ -51,6 +51,10 @@
   align-items: center;
 }
 
+.sidebar_main_header > svg {
+  margin-bottom: 2px;
+}
+
 .texts_items {
   display: flex;
   flex-direction: column;

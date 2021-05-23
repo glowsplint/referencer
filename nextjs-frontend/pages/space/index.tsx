@@ -7,15 +7,17 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import ButtonPane from "./ButtonPane";
 import SettingsPane from "./SettingsPane";
 import Editor from "./Editor";
+import TransitionSnackbar from "./TransitionSnackbar";
+
 import lastVerse from "./text/endings";
 import verseIndexer from "./text/verseIndexer";
 import textArray from "./text/esv";
 
 export default function Workspace() {
-  const [people, setPeople] = useState([]);
+  const [people, setPeople] = useState<string[]>([]);
   const [textHeaders, setTextHeaders] = useState<string[]>([]);
   const [textBodies, setTextBodies] = useState<string[][]>([]);
-  const [layers, setLayers] = useState([]);
+  const [layers, setLayers] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [isMultipleRowsLayout, setIsMultipleRowsLayout] =
@@ -26,6 +28,10 @@ export default function Workspace() {
     useMediaQuery("(prefers-color-scheme: dark)")
   );
   const [isDisplayed, setIsDisplayed] = useState<boolean[]>([]);
+  const [snackbar, setSnackbar] = useState<{ isOpen: boolean; text: string }>({
+    isOpen: false,
+    text: "",
+  });
 
   const displayedText = (): [string[], string[][]] => {
     const indices: number[] = isDisplayed.map((item, index) => {
@@ -50,6 +56,10 @@ export default function Workspace() {
   // Button Pane Functionality
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+    setSnackbar({
+      isOpen: true,
+      text: `Dark mode: ${isDarkMode ? "On" : "Off"}`,
+    });
   };
 
   const toggleSettingsPane = () => {
@@ -58,10 +68,28 @@ export default function Workspace() {
 
   const toggleLayers = () => {
     setIsLayersOn(!isLayersOn);
+    setSnackbar({
+      isOpen: true,
+      text: `Layers: ${isLayersOn ? "On" : "Off"}`,
+    });
   };
 
   const toggleEditorLayout = () => {
     setIsMultipleRowsLayout(!isMultipleRowsLayout);
+    setSnackbar({
+      isOpen: true,
+      text: `Layout: ${isMultipleRowsLayout ? "Rows" : "Columns"}`,
+    });
+  };
+
+  const handleCloseSnackbar = (
+    event: React.SyntheticEvent | React.MouseEvent,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ isOpen: false, text: "" });
   };
 
   let theme = React.useMemo(
@@ -298,9 +326,15 @@ export default function Workspace() {
             textBodies={displayedTextBodies()}
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
+            isMultipleRowsLayout={isMultipleRowsLayout}
             searchQuery={searchQuery}
           />
         </div>
+        <TransitionSnackbar
+          open={snackbar.isOpen}
+          onClose={handleCloseSnackbar}
+          message={snackbar.text}
+        />
       </ThemeProvider>
     </div>
   );

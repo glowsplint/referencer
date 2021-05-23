@@ -11,6 +11,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { Checkbox as MUICheckBox } from "@material-ui/core";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles({
   input: {
@@ -93,9 +94,11 @@ export default function SettingsPane({
     >
       <div className={styles.sidebar_top}>
         <Typography variant="button">space-1</Typography>
-        <IconButton size="small" onClick={() => {}}>
-          <PersonAddIcon />
-        </IconButton>
+        <Tooltip title="Add users" placement="left">
+          <IconButton size="small" onClick={() => {}}>
+            <PersonAddIcon />
+          </IconButton>
+        </Tooltip>
       </div>
       <SectionHeader text="In Workspace" />
       <SectionHeader text="Texts" />

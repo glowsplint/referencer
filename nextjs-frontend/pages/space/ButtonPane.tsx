@@ -1,5 +1,6 @@
 import styles from "../../styles/ButtonPane.module.css";
 import Fab from "@material-ui/core/Fab";
+import Tooltip from "@material-ui/core/Tooltip";
 
 import MenuIcon from "@material-ui/icons/Menu";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
@@ -24,17 +25,21 @@ function SwitchingButtonIcon({
   iconTwo,
   bool,
   callback,
+  title,
 }: {
   iconOne: JSX.Element;
   iconTwo: JSX.Element;
   bool: boolean;
   callback;
+  title;
 }) {
   return (
     <div className={styles.leftpane_icon}>
-      <Fab size="small" color="primary" aria-label="add" onClick={callback}>
-        {bool ? iconOne : iconTwo}
-      </Fab>
+      <Tooltip title={title} placement="right">
+        <Fab size="small" color="primary" aria-label="add" onClick={callback}>
+          {bool ? iconOne : iconTwo}
+        </Fab>
+      </Tooltip>
     </div>
   );
 }
@@ -64,18 +69,21 @@ export default function ButtonPane({
         iconTwo={<InvertColorsOffIcon />}
         bool={isDarkMode}
         callback={toggleDarkMode}
+        title="Toggle dark mode"
       />
       <SwitchingButtonIcon
         iconOne={<LayersIcon />}
         iconTwo={<LayersClearIcon />}
         bool={isLayersOn}
         callback={toggleLayers}
+        title="Toggle visibility of layers"
       />
       <SwitchingButtonIcon
-        iconOne={<TextRotationNoneIcon />}
-        iconTwo={<TextRotateVerticalIcon />}
+        iconTwo={<TextRotationNoneIcon />}
+        iconOne={<TextRotateVerticalIcon />}
         bool={isMultipleRowsLayout}
         callback={toggleEditorLayout}
+        title="Toggle editor layout"
       />
     </div>
   );
