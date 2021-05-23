@@ -12,9 +12,6 @@ import verseIndexer from "./text/verseIndexer";
 import textArray from "./text/esv";
 
 export default function Workspace() {
-  let prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  let settingsOpen = true;
-  let paletteToggle = true;
   const [people, setPeople] = useState([]);
   const [texts, setTexts] = useState([]);
   const [textHeaders, setTextHeaders] = useState<string[]>([]);
@@ -22,7 +19,15 @@ export default function Workspace() {
   const [layers, setLayers] = useState([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const [isMultipleRowsLayout, setIsMultipleRowsLayout] =
+    useState<boolean>(true);
+  const [isLayersOn, setIsLayersOn] = useState<boolean>(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(true);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(
+    useMediaQuery("(prefers-color-scheme: dark)")
+  );
   const [isDisplayed, setIsDisplayed] = useState<string[]>([]);
+
   const displayedText = (): [string[], string[][]] => {
     const indexLeft = isDisplayed.findIndex((x) => x === "left");
     const indexRight = isDisplayed.findIndex((x) => x === "right");
@@ -42,25 +47,29 @@ export default function Workspace() {
 
   // Button Pane Functionality
   const toggleDarkMode = () => {
-    prefersDarkMode = !prefersDarkMode;
+    setIsDarkMode(!isDarkMode);
   };
 
   const toggleSettingsPane = () => {
-    settingsOpen = !settingsOpen;
+    setIsSettingsOpen(!isSettingsOpen);
   };
 
-  const togglePalette = () => {
-    paletteToggle = !paletteToggle;
+  const toggleLayers = () => {
+    setIsLayersOn(!isLayersOn);
+  };
+
+  const toggleEditorLayout = () => {
+    setIsMultipleRowsLayout(!isMultipleRowsLayout);
   };
 
   let theme = React.useMemo(
     () =>
       createMuiTheme({
         palette: {
-          type: prefersDarkMode ? "dark" : "light",
+          type: isDarkMode ? "dark" : "light",
         },
       }),
-    [prefersDarkMode]
+    [isDarkMode]
   );
 
   // Search Bar Functionality
@@ -71,7 +80,7 @@ export default function Workspace() {
     setSearchQuery(newValue);
   };
 
-  const handleSubmit = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Handling the texts: Replaces second text if we will have more than 2 texts
     let newTexts: string[];
@@ -164,7 +173,9 @@ export default function Workspace() {
   };
 
   // Write a function that returns the match and the parsing function as an object
-  const parseSearch = (query: string) => {
+  const parseSearch = (
+    query: string
+  ): [string, string[]] | [undefined, undefined] => {
     const singleVerseRegExp =
       /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)$/;
     const singleChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)$/;
@@ -191,6 +202,7 @@ export default function Workspace() {
     } else if (multipleChaptersMatch !== null) {
       return parseMultipleChapters(query, multipleChaptersMatch);
     }
+    return [undefined, undefined];
   };
 
   const toTitleCase = (str: string) => {
@@ -232,9 +244,13 @@ export default function Workspace() {
       <ThemeProvider theme={theme}>
         <div className={styles.app}>
           <ButtonPane
-            menu={toggleSettingsPane}
-            invertColors={toggleDarkMode}
-            palette={togglePalette}
+            toggleSettingsPane={toggleSettingsPane}
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+            isLayersOn={isLayersOn}
+            toggleLayers={toggleLayers}
+            isMultipleRowsLayout={isMultipleRowsLayout}
+            toggleEditorLayout={toggleEditorLayout}
           />
           <SettingsPane
             texts={texts}

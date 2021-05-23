@@ -5,6 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
 import lastVerse from "./text/endings";
+import IconButton from "@material-ui/core/IconButton";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import HelpIcon from "@material-ui/icons/Help";
@@ -23,7 +24,7 @@ function SearchBar({
     _event: React.ChangeEvent<HTMLInputElement>,
     newValue: string
   ) => void;
-  handleSubmit: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   searchQuery: string;
 }) {
   return (
@@ -84,7 +85,7 @@ export default function Editor({
     _event: React.ChangeEvent<HTMLInputElement>,
     newValue: string
   ) => void;
-  handleSubmit: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   searchQuery: string;
 }) {
   return (
@@ -92,13 +93,21 @@ export default function Editor({
       <div className={styles.editor_header}>
         <div className={styles.editor_header_left}>
           <DesktopWindowsIcon />
-          <div className={styles.header_left_text}>Your Workspace</div>
+          <div className={styles.header_left_text}>
+            <Typography variant="subtitle2">Your Workspace</Typography>
+          </div>
         </div>
 
         <div className={styles.editor_header_right}>
-          <ZoomInIcon />
-          <ZoomOutIcon />
-          <HelpIcon />
+          <IconButton size="small" onClick={() => {}}>
+            <ZoomInIcon />
+          </IconButton>
+          <IconButton size="small" onClick={() => {}}>
+            <ZoomOutIcon />
+          </IconButton>
+          <IconButton size="small" onClick={() => {}}>
+            <HelpIcon />
+          </IconButton>
         </div>
       </div>
 

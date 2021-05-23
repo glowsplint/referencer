@@ -54,12 +54,7 @@ function TextItem({ text, handleClose, id, handleCheckBoxToggle }) {
           {text}
         </Typography>
       </div>
-      <IconButton
-        size="small"
-        color="primary"
-        disableRipple
-        onClick={() => handleClose(id)}
-      >
+      <IconButton size="small" disableRipple onClick={() => handleClose(id)}>
         <div className={styles.texts_icon}>
           <CloseIcon fontSize="small" />
         </div>
@@ -90,7 +85,9 @@ export default function SettingsPane({
     <div className={styles.sidebar}>
       <div className={styles.sidebar_top}>
         <Typography variant="button">space-1</Typography>
-        <PersonAddIcon />
+        <IconButton size="small" onClick={() => {}}>
+          <PersonAddIcon />
+        </IconButton>
       </div>
       <SectionHeader text="In Workspace" />
       <SectionHeader text="Texts" />
