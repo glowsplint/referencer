@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "../../styles/SettingsPane.module.css";
 import Typography from "@material-ui/core/Typography";
@@ -20,20 +20,33 @@ const useStyles = makeStyles({
   },
 });
 
-function Checkbox({ handleCheckBoxToggle }) {
+function Checkbox({
+  handleCheckBoxToggle,
+  textHeader,
+}: {
+  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  textHeader: string;
+}) {
   const classes = useStyles();
+  const [checked, setChecked] = useState(true);
+  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleCheckBoxToggle(event);
+    setChecked(!checked);
+  };
   return (
     <MUICheckBox
       color="primary"
       classes={{ root: classes.input }}
       icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
       checkedIcon={<CheckBoxIcon fontSize="small" />}
-      onChange={handleCheckBoxToggle}
+      onChange={handleToggle}
+      name={textHeader}
+      checked={checked}
     />
   );
 }
 
-function SectionHeader({ text }) {
+function SectionHeader({ text }: { text: string }) {
   return (
     <div className={styles.sidebar_main}>
       <div className={styles.sidebar_main_header}>
@@ -46,13 +59,26 @@ function SectionHeader({ text }) {
   );
 }
 
-function TextItem({ text, handleClose, id, handleCheckBoxToggle }) {
+function TextItem({
+  textHeader,
+  handleClose,
+  id,
+  handleCheckBoxToggle,
+}: {
+  textHeader: string;
+  handleClose: (key: number) => void;
+  id: number;
+  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
   return (
     <div className={styles.texts_item}>
-      <Checkbox handleCheckBoxToggle={handleCheckBoxToggle} />
+      <Checkbox
+        handleCheckBoxToggle={handleCheckBoxToggle}
+        textHeader={textHeader}
+      />
       <div className={styles.texts_text}>
         <Typography variant="overline" display="block">
-          {text}
+          {textHeader}
         </Typography>
       </div>
       <IconButton size="small" disableRipple onClick={() => handleClose(id)}>
@@ -64,10 +90,18 @@ function TextItem({ text, handleClose, id, handleCheckBoxToggle }) {
   );
 }
 
-function TextItems({ textHeaders, handleClose, handleCheckBoxToggle }) {
+function TextItems({
+  textHeaders,
+  handleClose,
+  handleCheckBoxToggle,
+}: {
+  textHeaders: string[];
+  handleClose: (key: number) => void;
+  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
   const items = textHeaders.map((text: string, index: number) => (
     <TextItem
-      text={text}
+      textHeader={text}
       handleClose={handleClose}
       key={index}
       id={index}
@@ -83,9 +117,9 @@ export default function SettingsPane({
   handleCheckBoxToggle,
   isSettingsOpen,
 }: {
-  textHeaders;
-  handleClose;
-  handleCheckBoxToggle;
+  textHeaders: string[];
+  handleClose: (key: number) => void;
+  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
   isSettingsOpen: boolean;
 }) {
   return (

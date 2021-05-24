@@ -15,8 +15,15 @@ import textArray from "./text/esv";
 
 export default function Workspace() {
   const [people, setPeople] = useState<string[]>([]);
-  const [textHeaders, setTextHeaders] = useState<string[]>([]);
-  const [textBodies, setTextBodies] = useState<string[][]>([]);
+  const [texts, setTexts] = useState<{
+    headers: string[];
+    bodies: string[][];
+    isDisplayed: boolean[];
+  }>({
+    headers: [],
+    bodies: [],
+    isDisplayed: [],
+  });
   const [layers, setLayers] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -27,25 +34,22 @@ export default function Workspace() {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(
     useMediaQuery("(prefers-color-scheme: dark)")
   );
-  const [isDisplayed, setIsDisplayed] = useState<boolean[]>([]);
   const [snackbar, setSnackbar] = useState<{ isOpen: boolean; text: string }>({
     isOpen: false,
     text: "",
   });
 
   const displayedText = (): [string[], string[][]] => {
-    const indices: number[] = isDisplayed.map((item, index) => {
-      if (item === true) {
-        return index;
-      }
-    });
+    const indices: number[] = texts.isDisplayed.flatMap((bool, index) =>
+      bool ? index : []
+    );
 
     let displayedTextHeaders: string[] = [];
     let displayedTextBodies: string[][] = [];
 
     for (let item of indices) {
-      displayedTextHeaders.push(textHeaders[item]);
-      displayedTextBodies.push(textBodies[item]);
+      displayedTextHeaders.push(texts.headers[item]);
+      displayedTextBodies.push(texts.bodies[item]);
     }
     return [displayedTextHeaders, displayedTextBodies];
   };
@@ -117,9 +121,11 @@ export default function Workspace() {
     );
 
     if (query !== undefined) {
-      setTextHeaders([...textHeaders, query]);
-      setTextBodies([...textBodies, textBody]);
-      setIsDisplayed([...isDisplayed, true]);
+      setTexts({
+        headers: [...texts.headers, query],
+        bodies: [...texts.bodies, textBody],
+        isDisplayed: [...texts.isDisplayed, true],
+      });
     }
     // Clear the search bar
     setSearchQuery("");
@@ -285,15 +291,18 @@ export default function Workspace() {
       ...oldArray.slice(0, key),
       ...oldArray.slice(key + 1, oldArray.length),
     ];
-    setTextHeaders(getNew(textHeaders));
-    setTextBodies(getNew(textBodies));
-    setIsDisplayed(getNew(isDisplayed));
+    setTexts({
+      headers: getNew(texts.headers),
+      bodies: getNew(texts.bodies),
+      isDisplayed: getNew(texts.isDisplayed),
+    });
   };
 
   const handleCheckBoxToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // If target is newly checked, move the text from
-    console.log(event.target.checked);
-    return;
+    const index = texts.headers.indexOf(event.target.name);
+    let newIsDisplayed = [...texts.isDisplayed];
+    newIsDisplayed[index] = !newIsDisplayed[index];
+    setTexts({ ...texts, isDisplayed: newIsDisplayed });
   };
 
   return (
@@ -316,7 +325,7 @@ export default function Workspace() {
             toggleEditorLayout={toggleEditorLayout}
           />
           <SettingsPane
-            textHeaders={textHeaders}
+            textHeaders={texts.headers}
             handleClose={handleClose}
             handleCheckBoxToggle={handleCheckBoxToggle}
             isSettingsOpen={isSettingsOpen}
