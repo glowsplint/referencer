@@ -27,16 +27,19 @@ export default function Workspace() {
   const [layers, setLayers] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const [isMultipleRowsLayout, setIsMultipleRowsLayout] =
-    useState<boolean>(true);
-  const [isLayersOn, setIsLayersOn] = useState<boolean>(true);
-  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(true);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(
-    useMediaQuery("(prefers-color-scheme: dark)")
-  );
-  const [snackbar, setSnackbar] = useState<{ isOpen: boolean; text: string }>({
+  const [settings, setSettings] = useState({
+    isLayersOn: true,
+    isSettingsOpen: true,
+    isDarkMode: useMediaQuery("(prefers-color-scheme: dark)"),
+    isMultipleRowsLayout: true,
+  });
+
+  const [snackbar, setSnackbar] = useState<{
+    isOpen: boolean;
+    message: string;
+  }>({
     isOpen: false,
-    text: "",
+    message: "",
   });
 
   const displayedText = (): [string[], string[][]] => {
@@ -58,52 +61,59 @@ export default function Workspace() {
   const displayedTextBodies = () => displayedText()[1];
 
   // Button Pane Functionality
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+  const toggleDarkMode = (): void => {
+    setSettings({ ...settings, isDarkMode: !settings.isDarkMode });
     setSnackbar({
       isOpen: true,
-      text: `Dark mode: ${isDarkMode ? "On" : "Off"}`,
+      message: `Dark mode: ${settings.isDarkMode ? "On" : "Off"}`,
     });
   };
 
-  const toggleSettingsPane = () => {
-    setIsSettingsOpen(!isSettingsOpen);
+  const toggleSettingsPane = (): void => {
+    setSettings({ ...settings, isSettingsOpen: !settings.isSettingsOpen });
   };
 
-  const toggleLayers = () => {
-    setIsLayersOn(!isLayersOn);
+  const toggleLayers = (): void => {
+    setSettings({ ...settings, isLayersOn: !settings.isLayersOn });
     setSnackbar({
       isOpen: true,
-      text: `Layers: ${isLayersOn ? "On" : "Off"}`,
+      message: `Layers: ${settings.isLayersOn ? "On" : "Off"}`,
     });
   };
 
-  const toggleEditorLayout = () => {
-    setIsMultipleRowsLayout(!isMultipleRowsLayout);
+  const toggleEditorLayout = (): void => {
+    setSettings({
+      ...settings,
+      isMultipleRowsLayout: !settings.isMultipleRowsLayout,
+    });
     setSnackbar({
       isOpen: true,
-      text: `Layout: ${isMultipleRowsLayout ? "Rows" : "Columns"}`,
+      message: `Layout: ${
+        settings.isMultipleRowsLayout
+          ? "Texts stacked vertically"
+          : "Texts side-by-side"
+      }`,
     });
   };
 
   const handleCloseSnackbar = (
     event: React.SyntheticEvent | React.MouseEvent,
     reason?: string
-  ) => {
+  ): void => {
     if (reason === "clickaway") {
       return;
     }
-    setSnackbar({ isOpen: false, text: "" });
+    setSnackbar({ isOpen: false, message: "" });
   };
 
   let theme = React.useMemo(
     () =>
       createMuiTheme({
         palette: {
-          type: isDarkMode ? "dark" : "light",
+          type: settings.isDarkMode ? "dark" : "light",
         },
       }),
-    [isDarkMode]
+    [settings.isDarkMode]
   );
 
   // Search Bar Functionality
@@ -316,33 +326,31 @@ export default function Workspace() {
       <ThemeProvider theme={theme}>
         <div className={styles.app}>
           <ButtonPane
+            settings={settings}
             toggleSettingsPane={toggleSettingsPane}
-            isDarkMode={isDarkMode}
             toggleDarkMode={toggleDarkMode}
-            isLayersOn={isLayersOn}
             toggleLayers={toggleLayers}
-            isMultipleRowsLayout={isMultipleRowsLayout}
             toggleEditorLayout={toggleEditorLayout}
           />
           <SettingsPane
             textHeaders={texts.headers}
             handleClose={handleClose}
             handleCheckBoxToggle={handleCheckBoxToggle}
-            isSettingsOpen={isSettingsOpen}
+            isSettingsOpen={settings.isSettingsOpen}
           />
           <Editor
             textHeaders={displayedTextHeaders()}
             textBodies={displayedTextBodies()}
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
-            isMultipleRowsLayout={isMultipleRowsLayout}
+            isMultipleRowsLayout={settings.isMultipleRowsLayout}
             searchQuery={searchQuery}
           />
         </div>
         <TransitionSnackbar
           open={snackbar.isOpen}
           onClose={handleCloseSnackbar}
-          message={snackbar.text}
+          message={snackbar.message}
         />
       </ThemeProvider>
     </div>

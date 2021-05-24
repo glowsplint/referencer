@@ -10,7 +10,10 @@ export default function TransitionSnackbar({
   message,
 }: {
   open: boolean;
-  onClose;
+  onClose: (
+    event: React.SyntheticEvent | React.MouseEvent,
+    reason?: string
+  ) => void;
   message: string;
 }) {
   return (

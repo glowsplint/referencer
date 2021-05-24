@@ -10,7 +10,13 @@ import LayersClearIcon from "@material-ui/icons/LayersClear";
 import TextRotateVerticalIcon from "@material-ui/icons/TextRotateVertical";
 import TextRotationNoneIcon from "@material-ui/icons/TextRotationNone";
 
-function ButtonIcon({ icon, callback }: { icon: JSX.Element; callback }) {
+function ButtonIcon({
+  icon,
+  callback,
+}: {
+  icon: JSX.Element;
+  callback: () => void;
+}) {
   return (
     <div className={styles.leftpane_icon}>
       <Fab size="small" color="primary" aria-label="add" onClick={callback}>
@@ -30,8 +36,8 @@ function SwitchingButtonIcon({
   iconOne: JSX.Element;
   iconTwo: JSX.Element;
   bool: boolean;
-  callback;
-  title;
+  callback: () => void;
+  title: string;
 }) {
   return (
     <div className={styles.leftpane_icon}>
@@ -45,21 +51,21 @@ function SwitchingButtonIcon({
 }
 
 export default function ButtonPane({
+  settings,
   toggleSettingsPane,
   toggleDarkMode,
   toggleLayers,
   toggleEditorLayout,
-  isDarkMode,
-  isLayersOn,
-  isMultipleRowsLayout,
 }: {
-  toggleSettingsPane;
-  toggleDarkMode;
-  toggleLayers;
-  toggleEditorLayout;
-  isDarkMode: boolean;
-  isLayersOn: boolean;
-  isMultipleRowsLayout: boolean;
+  settings: {
+    isDarkMode: boolean;
+    isLayersOn: boolean;
+    isMultipleRowsLayout: boolean;
+  };
+  toggleSettingsPane: () => void;
+  toggleDarkMode: () => void;
+  toggleLayers: () => void;
+  toggleEditorLayout: () => void;
 }) {
   return (
     <div className={styles.leftpane}>
@@ -67,21 +73,21 @@ export default function ButtonPane({
       <SwitchingButtonIcon
         iconOne={<InvertColorsIcon />}
         iconTwo={<InvertColorsOffIcon />}
-        bool={isDarkMode}
+        bool={settings.isDarkMode}
         callback={toggleDarkMode}
         title="Toggle dark mode"
       />
       <SwitchingButtonIcon
-        iconOne={<LayersIcon />}
-        iconTwo={<LayersClearIcon />}
-        bool={isLayersOn}
+        iconOne={<LayersClearIcon />}
+        iconTwo={<LayersIcon />}
+        bool={settings.isLayersOn}
         callback={toggleLayers}
         title="Toggle visibility of layers"
       />
       <SwitchingButtonIcon
         iconTwo={<TextRotationNoneIcon />}
         iconOne={<TextRotateVerticalIcon />}
-        bool={isMultipleRowsLayout}
+        bool={settings.isMultipleRowsLayout}
         callback={toggleEditorLayout}
         title="Toggle editor layout"
       />
