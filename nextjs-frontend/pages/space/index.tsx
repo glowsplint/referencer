@@ -9,10 +9,6 @@ import SettingsPane from "./SettingsPane";
 import Editor from "./Editor";
 import TransitionSnackbar from "./TransitionSnackbar";
 
-import lastVerse from "./text/endings";
-import verseIndexer from "./text/verseIndexer";
-import textArray from "./text/esv";
-
 export default function Workspace() {
   const [people, setPeople] = useState<string[]>([]);
   const [texts, setTexts] = useState<{
@@ -124,167 +120,31 @@ export default function Workspace() {
     setSearchQuery(newValue);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const [query, textBody] = checkInvalidInput(
-      parseSearch(toTitleCase(searchQuery))
-    );
-
-    if (query !== undefined) {
-      setTexts({
-        headers: [...texts.headers, query],
-        bodies: [...texts.bodies, textBody],
-        isDisplayed: [...texts.isDisplayed, true],
-      });
-    }
-    // Clear the search bar
     setSearchQuery("");
+    const payload = await getText(toTitleCase(searchQuery));
+    // To-do: Track how the search bar is being used
+    setTexts({
+      headers: [...texts.headers, payload.query],
+      bodies: [...texts.bodies, payload.passages],
+      isDisplayed: [...texts.isDisplayed, true],
+    });
   };
 
-  const checkInvalidInput = ({
-    query,
-    mainText,
-  }: {
-    query: string;
-    mainText: (string | undefined)[];
-  }): [string | undefined, string[] | undefined] => {
-    if (typeof mainText === "undefined") {
-      query = undefined;
-      mainText = undefined;
-    }
-    return [query, mainText];
-  };
-
-  const parseSingleVerse = (
-    query: string,
-    match: RegExpMatchArray
-  ): { query: string; mainText: string[] } => {
-    // 1 John 1:1, Genesis 1:1
-    const book = match[1];
-    const chapter = match[2];
-    const verse = match[3];
-    const mainText: (string | undefined)[] = [
-      textArray[verseIndexer[book]?.[chapter]?.[verse]],
-    ];
-    return { query, mainText };
-  };
-
-  const parseSingleChapter = (
-    query: string,
-    match: RegExpMatchArray
-  ): {
-    query: string;
-    mainText: (string | undefined)[];
-  } => {
-    // 1 John 1, {Genesis} {1}
-    const book = match[1];
-    const chapter = match[2];
-    const firstIndex: number = verseIndexer[book]?.[chapter]?.["1"];
-    const lastIndex: number =
-      verseIndexer[book]?.[chapter]?.[lastVerse[book]?.[chapter]] + 1;
-    const mainText: (string | undefined)[] = textArray.slice(
-      firstIndex,
-      lastIndex
-    );
-    return { query, mainText };
-  };
-
-  const parseWithinChapter = (
-    query: string,
-    match: RegExpMatchArray
-  ): {
-    query: string;
-    mainText: (string | undefined)[];
-  } => {
-    // 1 John 1:1-3, {Genesis} {1}:{1}-{3}
-    const book = match[1];
-    const chapter = match[2];
-    const verseStart = match[3];
-    const verseEnd = match[4];
-    const firstIndex = verseIndexer[book]?.[chapter]?.[verseStart];
-    const lastIndex = verseIndexer[book]?.[chapter]?.[verseEnd] + 1;
-    const mainText: (string | undefined)[] = textArray.slice(
-      firstIndex,
-      lastIndex
-    );
-    return { query, mainText };
-  };
-
-  const parseAcrossChapters = (
-    query: string,
-    match: RegExpMatchArray
-  ): {
-    query: string;
-    mainText: (string | undefined)[];
-  } => {
-    // 1 John 1:1-2:3, {Genesis} {1}:{1}-{2}:{3}
-    const book = match[1];
-    const [chapterStart, verseStart] = [match[2], match[3]];
-    const [chapterEnd, verseEnd] = [match[4], match[5]];
-    const firstIndex = verseIndexer[book]?.[chapterStart]?.[verseStart];
-    const lastIndex = verseIndexer[book]?.[chapterEnd]?.[verseEnd] + 1;
-    const mainText: (string | undefined)[] = textArray.slice(
-      firstIndex,
-      lastIndex
-    );
-    return { query, mainText };
-  };
-
-  const parseMultipleChapters = (
-    query: string,
-    match: RegExpMatchArray
-  ): {
-    query: string;
-    mainText: (string | undefined)[];
-  } => {
-    // 1 John 1-2, {Genesis} {1}-{2}
-    const book = match[1];
-    const chapterStart = match[2];
-    const chapterEnd = match[3];
-    const firstIndex = verseIndexer[book]?.[chapterStart]?.["1"];
-    const lastIndex =
-      verseIndexer[book]?.[chapterEnd]?.[lastVerse[book]?.[chapterEnd]] + 1;
-    const mainText: (string | undefined)[] = textArray.slice(
-      firstIndex,
-      lastIndex
-    );
-    return { query, mainText };
-  };
-
-  // Write a function that returns the match and the parsing function as an object
-  const parseSearch = (
-    query: string
-  ): {
-    query: string;
-    mainText: (string | undefined)[];
-  } => {
-    const singleVerseRegExp =
-      /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)$/;
-    const singleChapterRegExp = /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)$/;
-    const withinChapterRegExp =
-      /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+)$/;
-    const acrossChaptersRegExp =
-      /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+):([0-9]+)-([0-9]+):([0-9]+)$/;
-    const multipleChaptersRegExp =
-      /^((?:[0-9][\s])?(?:[A-Za-z]+))\s([0-9]+)-([0-9]+)$/;
-    const singleVerseMatch = query.match(singleVerseRegExp);
-    const singleChapterMatch = query.match(singleChapterRegExp);
-    const withinChapterMatch = query.match(withinChapterRegExp);
-    const acrossChaptersMatch = query.match(acrossChaptersRegExp);
-    const multipleChaptersMatch = query.match(multipleChaptersRegExp);
-
-    if (singleVerseMatch !== null) {
-      return parseSingleVerse(query, singleVerseMatch);
-    } else if (singleChapterMatch !== null) {
-      return parseSingleChapter(query, singleChapterMatch);
-    } else if (withinChapterMatch !== null) {
-      return parseWithinChapter(query, withinChapterMatch);
-    } else if (acrossChaptersMatch !== null) {
-      return parseAcrossChapters(query, acrossChaptersMatch);
-    } else if (multipleChaptersMatch !== null) {
-      return parseMultipleChapters(query, multipleChaptersMatch);
-    }
-    return { query: undefined, mainText: undefined };
+  const getText = async (query: string) => {
+    const url = "http://localhost:3000/api/";
+    // const url = 'https://api.esv.org/v3/passage/text/?q=John 7'
+    // fetch(url + new URLSearchParams({ q: query }))
+    const response = await fetch(url + query);
+    const payload: {
+      query: string;
+      canonical: string;
+      parsed: number[][];
+      passage_meta: object[];
+      passages: string[];
+    } = await response.json();
+    return payload;
   };
 
   const toTitleCase = (str: string) => {
