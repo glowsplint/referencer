@@ -55,11 +55,21 @@ function SearchBar({
 }
 
 function VerseNumberComponent({ text }: { text: string }) {
-  return <Typography variant="button">{text}</Typography>;
+  return (
+    <Typography variant="button">
+      <b>
+        <sup>{text}</sup>
+      </b>
+    </Typography>
+  );
 }
 
 function SectionHeaderComponent({ text }: { text: string }) {
-  return <Typography variant="h6">{text}</Typography>;
+  return (
+    <div className={styles.section_header}>
+      <b>{text}</b>
+    </div>
+  );
 }
 
 function InlineFootnoteComponent({ text }: { text: string }) {
@@ -67,7 +77,25 @@ function InlineFootnoteComponent({ text }: { text: string }) {
 }
 
 function StandardTextComponent({ text }: { text: string }) {
-  return <span>{text}</span>;
+  return <span className={styles.standard_text}>{text}</span>;
+}
+
+function QuoteStartComponent({ text }: { text: string }) {
+  return (
+    <>
+      <br />
+      <br />
+      <span className={styles.standard_text}>{text}</span>
+    </>
+  );
+}
+
+function SpecialNoteComponent({ text }: { text: string }) {
+  return <div className={styles.special_note}>{text}</div>;
+}
+
+function FootnoteTextComponent({ text }: { text: string }) {
+  return <div className={styles.standard_text}>{text}</div>;
 }
 
 function TextArea({
@@ -82,6 +110,11 @@ function TextArea({
     VerseNumber = "VerseNumber",
     InlineFootnote = "InlineFootnote",
     StandardText = "StandardText",
+    QuoteStart = "QuoteStart",
+    QuoteEnd = "QuoteEnd",
+    SpecialNote = "SpecialNote",
+    HasLineFeed = "HasLineFeed",
+    FootnoteText = "FootnoteText",
   }
 
   const removeParagraphs = (text: string): string[] => text.split("\n\n");
@@ -98,13 +131,16 @@ function TextArea({
 
   const matchVerseNumber = (text: string) => text.match(/^\d+$/);
   const matchInlineFootnote = (text: string) => text.match(/^\(\d+\)$/);
+  const matchSpecialNote = (text: string) => text.match(/^(\[.*?\])$/);
+  const matchQuotes = (text: string) => text.match(/^\s*“.*?$/);
+  const matchHasLineFeed = (text: string) => text.match(/(\n)/g);
 
   const splitOnVerseNumbers = (text: string): string[] =>
     text.split(/\[(\d+)\]/);
   const splitOnFootnotes = (text: string): string[] => text.split(/(\(\d+\))/);
-  // console.log(footnotes);
-  const findFormat = (mainText: string[]) => {
-    let brokenText = mainText
+
+  const getFormatMainText = (mainText: string[]) => {
+    const brokenText = mainText
       .slice(1)
       .flatMap((a) =>
         splitOnVerseNumbers(a).flatMap((b) => splitOnFootnotes(b))
@@ -126,6 +162,13 @@ function TextArea({
           format[index] = Format.SectionHeader;
         } else if (matchInlineFootnote(item) !== null) {
           format[index] = Format.InlineFootnote;
+        } else if (matchSpecialNote(item) !== null) {
+          format[index] = Format.SpecialNote;
+        } else if (matchQuotes(item) !== null) {
+          format[index] = Format.QuoteStart;
+        } else if (matchHasLineFeed(item) !== null) {
+          console.log(matchHasLineFeed(item));
+          format[index] = Format.HasLineFeed;
         } else if (format[index - 1] === Format.StandardText) {
           format[index] = Format.SectionHeader;
         } else {
@@ -137,26 +180,43 @@ function TextArea({
     return [format, brokenText];
   };
 
+  const getFormatFootnotes = (footnotes: string[]) => {
+    let format: string[] = Array(footnotes.length).fill(Format.FootnoteText);
+    format[0] = Format.SectionHeader;
+    return [format, footnotes];
+  };
+
   let [mainText, footnotes] = splitTexts(textBody[0]);
-  const [format, brokenText] = findFormat(mainText);
+  const [formatMainText, brokenText] = getFormatMainText(mainText);
+  const [formatFootnotes, brokenFootnotes] = getFormatFootnotes(footnotes);
   // console.log(brokenText);
+  // console.log(brokenFootnotes);
 
   return (
     <div className={styles.editor_textarea}>
       <Typography variant="h6">{textName}</Typography>
       {brokenText.map((text, index) => {
-        if (format[index] === Format.SectionHeader) {
-          return <SectionHeaderComponent text={text} />;
-        } else if (format[index] === Format.VerseNumber) {
-          return <VerseNumberComponent text={text} />;
-        } else if (format[index] === Format.InlineFootnote) {
-          return <InlineFootnoteComponent text={text} />;
+        if (formatMainText[index] === Format.SectionHeader) {
+          return <SectionHeaderComponent text={text} key={index} />;
+        } else if (formatMainText[index] === Format.VerseNumber) {
+          return <VerseNumberComponent text={text} key={index} />;
+        } else if (formatMainText[index] === Format.InlineFootnote) {
+          return <InlineFootnoteComponent text={text} key={index} />;
+        } else if (formatMainText[index] === Format.SpecialNote) {
+          return <SpecialNoteComponent text={text} key={index} />;
+        } else if (formatMainText[index] === Format.QuoteStart) {
+          return <QuoteStartComponent text={text} key={index} />;
         } else {
-          return <StandardTextComponent text={text} />;
+          return <StandardTextComponent text={text} key={index} />;
         }
       })}
-      {/* <Typography align="justify">{mainText.join(" ")}</Typography> */}
-      {/* <Typography align="justify">{footnotes.join(" ")}</Typography> */}
+      {brokenFootnotes.map((text, index) => {
+        if (formatFootnotes[index] === Format.SectionHeader) {
+          return <SectionHeaderComponent text={text} key={index} />;
+        } else {
+          return <FootnoteTextComponent text={text} key={index} />;
+        }
+      })}
     </div>
   );
 }
@@ -179,20 +239,6 @@ export default function Editor({
   searchQuery: string;
   isMultipleRowsLayout: boolean;
 }) {
-  const parsePassages = (passages): [string[], string[]] => {
-    const removeParagraphs = (text) => text.split("\n\n");
-    const splitTexts = (text: string): [string[], string[]] => {
-      const footnoteIndex: number = removeParagraphs(text).indexOf("Footnotes");
-      let footnotes = [];
-      let mainText = removeParagraphs(text);
-      if (footnoteIndex !== -1) {
-        footnotes = removeParagraphs(text).slice(footnoteIndex);
-        mainText = removeParagraphs(text).slice(0, footnoteIndex);
-      }
-      return [mainText, footnotes];
-    };
-    return splitTexts(passages[0]);
-  };
   return (
     <div className={styles.editor}>
       <div className={styles.editor_header}>

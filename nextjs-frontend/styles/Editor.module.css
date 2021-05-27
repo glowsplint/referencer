@@ -67,3 +67,18 @@
 .container {
   flex-grow: 1;
 }
+
+.section_header {
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.special_note {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.standard_text {
+  line-height: 180%;
+}
