@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import styles from "../../styles/Editor.module.css";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -7,10 +8,35 @@ import { grey } from "@material-ui/core/colors";
 import books from "./text/books";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
+import { get } from "./helperFunctions";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
+
+const regex = {
+  whitespace: /(\s)/,
+  italics: /(\*.*?\*)/,
+  verseNumber: /^\d+$/,
+  verseNumberInText: /\[(\d+)\]/,
+  inlineFootnote: /^\(\d+\)$/,
+  footnoteInText: /(\(\d+\))/,
+  specialNote: /^(\[.*?\])$/,
+  quotes: /^\s*“.*?$/,
+  hasLineFeed: /(\n)/g,
+  paragraphs: /\n\n/,
+};
+
+enum Format {
+  SectionHeader = "SectionHeader",
+  VerseNumber = "VerseNumber",
+  InlineFootnote = "InlineFootnote",
+  StandardText = "StandardText",
+  Quotes = "Quotes",
+  SpecialNote = "SpecialNote",
+  HasLineFeed = "HasLineFeed",
+  FootnoteText = "FootnoteText",
+}
 
 function SearchBar({
   handleInputChange,
@@ -54,7 +80,81 @@ function SearchBar({
   );
 }
 
-function VerseNumberComponent({ text }: { text: string }) {
+function Whitespace() {
+  return <> </>;
+}
+
+function Highlightable({ word }: { word: string }) {
+  const [hoverClass, setHoverClass] = useState(styles.unhighlighted);
+  return (
+    <span
+      className={hoverClass}
+      onMouseOver={() => setHoverClass(styles.highlighted)}
+      onMouseLeave={() => setHoverClass(styles.unhighlighted)}
+    >
+      {word}
+    </span>
+  );
+}
+
+function Decider({ word }: { word: string }) {
+  return (
+    <>
+      {word.match(regex.whitespace) ? (
+        <Whitespace />
+      ) : (
+        <Highlightable word={word} />
+      )}
+    </>
+  );
+}
+
+function StandardText({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(regex.whitespace).map((word, index) => (
+        <Decider word={word} key={index} />
+      ))}
+    </>
+  );
+}
+
+function SectionHeader({ text }: { text: string }) {
+  return (
+    <div className={styles.section_header}>
+      <b>
+        <StandardText text={text} />
+      </b>
+    </div>
+  );
+}
+
+function SpecialNote({ text }: { text: string }) {
+  return (
+    <div className={styles.special_note}>
+      <StandardText text={text} />
+    </div>
+  );
+}
+
+function InlineFootnote({ text }: { text: string }) {
+  return (
+    <sup>
+      <StandardText text={text} />
+    </sup>
+  );
+}
+
+function Italics({ text }: { text: string }) {
+  const textWithoutAsterisks = text.slice(1, text.length - 1);
+  return (
+    <i>
+      <StandardText text={textWithoutAsterisks} />
+    </i>
+  );
+}
+
+function VerseNumber({ text }: { text: string }) {
   return (
     <Typography variant="button">
       <b>
@@ -64,38 +164,31 @@ function VerseNumberComponent({ text }: { text: string }) {
   );
 }
 
-function SectionHeaderComponent({ text }: { text: string }) {
+function FootnoteText({ text }: { text: string }) {
   return (
-    <div className={styles.section_header}>
-      <b>{text}</b>
+    <div>
+      {text
+        .split(regex.italics)
+        .map((text, index) =>
+          text.match(regex.italics) ? (
+            <Italics text={text} key={index} />
+          ) : (
+            <StandardText text={text} key={index} />
+          )
+        )}
     </div>
   );
 }
 
-function InlineFootnoteComponent({ text }: { text: string }) {
-  return <sup>{text}</sup>;
-}
-
-function StandardTextComponent({ text }: { text: string }) {
-  return <span className={styles.standard_text}>{text}</span>;
-}
-
-function QuoteStartComponent({ text }: { text: string }) {
+// Older component -- need to migrate
+function Quotes({ text }: { text: string }) {
   return (
     <>
       <br />
       <br />
-      <span className={styles.standard_text}>{text}</span>
+      <StandardText text={text} />
     </>
   );
-}
-
-function SpecialNoteComponent({ text }: { text: string }) {
-  return <div className={styles.special_note}>{text}</div>;
-}
-
-function FootnoteTextComponent({ text }: { text: string }) {
-  return <div className={styles.standard_text}>{text}</div>;
 }
 
 function TextArea({
@@ -105,19 +198,8 @@ function TextArea({
   textName: string;
   textBody: string[];
 }) {
-  enum Format {
-    SectionHeader = "SectionHeader",
-    VerseNumber = "VerseNumber",
-    InlineFootnote = "InlineFootnote",
-    StandardText = "StandardText",
-    QuoteStart = "QuoteStart",
-    QuoteEnd = "QuoteEnd",
-    SpecialNote = "SpecialNote",
-    HasLineFeed = "HasLineFeed",
-    FootnoteText = "FootnoteText",
-  }
-
-  const removeParagraphs = (text: string): string[] => text.split("\n\n");
+  const removeParagraphs = (text: string): string[] =>
+    text.split(regex.paragraphs);
   const splitTexts = (text: string): [string[], string[]] => {
     const footnoteIndex = removeParagraphs(text).indexOf("Footnotes");
     let footnotes = [];
@@ -129,21 +211,13 @@ function TextArea({
     return [mainText, footnotes];
   };
 
-  const matchVerseNumber = (text: string) => text.match(/^\d+$/);
-  const matchInlineFootnote = (text: string) => text.match(/^\(\d+\)$/);
-  const matchSpecialNote = (text: string) => text.match(/^(\[.*?\])$/);
-  const matchQuotes = (text: string) => text.match(/^\s*“.*?$/);
-  const matchHasLineFeed = (text: string) => text.match(/(\n)/g);
-
-  const splitOnVerseNumbers = (text: string): string[] =>
-    text.split(/\[(\d+)\]/);
-  const splitOnFootnotes = (text: string): string[] => text.split(/(\(\d+\))/);
-
   const getFormatMainText = (mainText: string[]) => {
     const brokenText = mainText
       .slice(1)
       .flatMap((a) =>
-        splitOnVerseNumbers(a).flatMap((b) => splitOnFootnotes(b))
+        a
+          .split(regex.verseNumberInText)
+          .flatMap((b) => b.split(regex.footnoteInText))
       );
     let format: string[] = [];
     let firstVerseNumberFound: boolean = false;
@@ -152,7 +226,7 @@ function TextArea({
     // After that, if you find text after text (as opposed to text after versenumber), then the 2nd text is also a section header.
     // If it's not a special case, then it is just text.
     for (let [index, item] of brokenText.entries()) {
-      if (matchVerseNumber(item) !== null) {
+      if (item.match(regex.verseNumber) !== null) {
         format[index] = Format.VerseNumber;
         if (!firstVerseNumberFound) {
           firstVerseNumberFound = true;
@@ -160,14 +234,13 @@ function TextArea({
       } else {
         if (!firstVerseNumberFound) {
           format[index] = Format.SectionHeader;
-        } else if (matchInlineFootnote(item) !== null) {
+        } else if (item.match(regex.inlineFootnote) !== null) {
           format[index] = Format.InlineFootnote;
-        } else if (matchSpecialNote(item) !== null) {
+        } else if (item.match(regex.specialNote) !== null) {
           format[index] = Format.SpecialNote;
-        } else if (matchQuotes(item) !== null) {
-          format[index] = Format.QuoteStart;
-        } else if (matchHasLineFeed(item) !== null) {
-          console.log(matchHasLineFeed(item));
+        } else if (item.match(regex.quotes) !== null) {
+          format[index] = Format.Quotes;
+        } else if (item.match(regex.hasLineFeed) !== null) {
           format[index] = Format.HasLineFeed;
         } else if (format[index - 1] === Format.StandardText) {
           format[index] = Format.SectionHeader;
@@ -176,7 +249,6 @@ function TextArea({
         }
       }
     }
-    // console.log(format);
     return [format, brokenText];
   };
 
@@ -189,32 +261,45 @@ function TextArea({
   let [mainText, footnotes] = splitTexts(textBody[0]);
   const [formatMainText, brokenText] = getFormatMainText(mainText);
   const [formatFootnotes, brokenFootnotes] = getFormatFootnotes(footnotes);
-  // console.log(brokenText);
-  // console.log(brokenFootnotes);
 
+  const getComponent = (format: string, text: string, index: number) => {
+    const componentMap = {
+      [Format.SectionHeader]: React.createElement(SectionHeader, {
+        text: text,
+        key: index,
+      }),
+      [Format.VerseNumber]: React.createElement(VerseNumber, {
+        text: text,
+        key: index,
+      }),
+      [Format.InlineFootnote]: React.createElement(InlineFootnote, {
+        text: text,
+        key: index,
+      }),
+      [Format.SpecialNote]: React.createElement(SpecialNote, {
+        text: text,
+        key: index,
+      }),
+      [Format.Quotes]: React.createElement(Quotes, { text: text, key: index }),
+      [Format.StandardText]: React.createElement(StandardText, {
+        text: text,
+        key: index,
+      }),
+    };
+    return get(componentMap, format, componentMap[Format.StandardText]);
+  };
+  console.log(brokenText);
   return (
     <div className={styles.editor_textarea}>
       <Typography variant="h6">{textName}</Typography>
-      {brokenText.map((text, index) => {
-        if (formatMainText[index] === Format.SectionHeader) {
-          return <SectionHeaderComponent text={text} key={index} />;
-        } else if (formatMainText[index] === Format.VerseNumber) {
-          return <VerseNumberComponent text={text} key={index} />;
-        } else if (formatMainText[index] === Format.InlineFootnote) {
-          return <InlineFootnoteComponent text={text} key={index} />;
-        } else if (formatMainText[index] === Format.SpecialNote) {
-          return <SpecialNoteComponent text={text} key={index} />;
-        } else if (formatMainText[index] === Format.QuoteStart) {
-          return <QuoteStartComponent text={text} key={index} />;
-        } else {
-          return <StandardTextComponent text={text} key={index} />;
-        }
-      })}
+      {brokenText.map((text, index) =>
+        getComponent(formatMainText[index], text, index)
+      )}
       {brokenFootnotes.map((text, index) => {
         if (formatFootnotes[index] === Format.SectionHeader) {
-          return <SectionHeaderComponent text={text} key={index} />;
+          return <SectionHeader text={text} key={index} />;
         } else {
-          return <FootnoteTextComponent text={text} key={index} />;
+          return <FootnoteText text={text} key={index} />;
         }
       })}
     </div>

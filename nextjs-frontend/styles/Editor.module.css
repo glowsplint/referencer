@@ -55,6 +55,7 @@
   flex: 1;
   padding: 10px;
   margin: 10px;
+  user-select: none;
 }
 
 .editor_search {
@@ -79,6 +80,13 @@
   text-align: center;
 }
 
-.standard_text {
-  line-height: 180%;
+.unhighlighted {
+  line-height: 8mm;
+  user-select: none;
+}
+
+.highlighted {
+  line-height: 8mm;
+  background-color: yellow;
+  text-decoration: underline;
 }
