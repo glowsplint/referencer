@@ -15,16 +15,17 @@ import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
 
 const regex = {
-  whitespace: /(\s)/,
-  italics: /(\*.*?\*)/,
-  verseNumber: /^\d+$/,
+  footnoteInText: /(?<!])(\(\d+\))/,
+  specialNoteInText: /^(\[.*?\]\(\d+\))$/,
   verseNumberInText: /\[(\d+)\]/,
-  inlineFootnote: /^\(\d+\)$/,
-  footnoteInText: /(\(\d+\))/,
-  specialNote: /^(\[.*?\])$/,
-  quotes: /^\s*“.*?$/,
   hasLineFeed: /(\n)/g,
+  inlineFootnote: /^\(\d+\)$/,
+  italics: /(\*.*?\*)/,
   paragraphs: /\n\n/,
+  quotes: /^\s*“.*?$/,
+  specialNote: /(\[.*?\])/,
+  verseNumber: /^\d+$/,
+  whitespace: /(\s)/,
 };
 
 enum Format {
@@ -130,9 +131,13 @@ function SectionHeader({ text }: { text: string }) {
 }
 
 function SpecialNote({ text }: { text: string }) {
+  const [textInSquareBrackets, textinParantheses] = text
+    .split(regex.specialNote)
+    .slice(1);
   return (
     <div className={styles.special_note}>
-      <StandardText text={text} />
+      <StandardText text={textInSquareBrackets} />
+      <InlineFootnote text={textinParantheses} />
     </div>
   );
 }
@@ -212,13 +217,12 @@ function TextArea({
   };
 
   const getFormatMainText = (mainText: string[]) => {
-    const brokenText = mainText
-      .slice(1)
-      .flatMap((a) =>
-        a
-          .split(regex.verseNumberInText)
-          .flatMap((b) => b.split(regex.footnoteInText))
-      );
+    const brokenText = mainText.slice(1).flatMap((a) =>
+      a
+        .split(regex.verseNumberInText)
+        .flatMap((c) => c.split(regex.specialNoteInText))
+        .flatMap((b) => b.split(regex.footnoteInText))
+    );
     let format: string[] = [];
     let firstVerseNumberFound: boolean = false;
 
@@ -234,15 +238,23 @@ function TextArea({
       } else {
         if (!firstVerseNumberFound) {
           format[index] = Format.SectionHeader;
+        } else if (item.match(regex.specialNoteInText) !== null) {
+          format[index] = Format.SpecialNote;
         } else if (item.match(regex.inlineFootnote) !== null) {
           format[index] = Format.InlineFootnote;
-        } else if (item.match(regex.specialNote) !== null) {
-          format[index] = Format.SpecialNote;
         } else if (item.match(regex.quotes) !== null) {
-          format[index] = Format.Quotes;
+          // Specific fix for John 7:51
+          if (format[index - 1] === Format.VerseNumber) {
+            format[index] = Format.StandardText;
+          } else {
+            format[index] = Format.Quotes;
+          }
         } else if (item.match(regex.hasLineFeed) !== null) {
           format[index] = Format.HasLineFeed;
-        } else if (format[index - 1] === Format.StandardText) {
+        } else if (
+          format[index - 1] === Format.StandardText ||
+          format[index - 4] === Format.SpecialNote
+        ) {
           format[index] = Format.SectionHeader;
         } else {
           format[index] = Format.StandardText;
@@ -288,7 +300,6 @@ function TextArea({
     };
     return get(componentMap, format, componentMap[Format.StandardText]);
   };
-  console.log(brokenText);
   return (
     <div className={styles.editor_textarea}>
       <Typography variant="h6">{textName}</Typography>
