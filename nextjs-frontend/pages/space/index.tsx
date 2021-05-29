@@ -28,6 +28,7 @@ export default function Workspace() {
     isSettingsOpen: true,
     isDarkMode: useMediaQuery("(prefers-color-scheme: dark)"),
     isMultipleRowsLayout: true,
+    isJustified: true,
   });
 
   const [snackbar, setSnackbar] = useState<{
@@ -92,6 +93,19 @@ export default function Workspace() {
     });
   };
 
+  const toggleJustify = (): void => {
+    setSettings({
+      ...settings,
+      isJustified: !settings.isJustified,
+    });
+    setSnackbar({
+      isOpen: true,
+      message: `Layout: ${
+        settings.isJustified ? "Texts justified" : "Texts left-aligned"
+      }`,
+    });
+  };
+
   const handleCloseSnackbar = (
     event: React.SyntheticEvent | React.MouseEvent,
     reason?: string
@@ -126,7 +140,7 @@ export default function Workspace() {
     const payload = await getText(toTitleCase(searchQuery));
     // To-do: Track how the search bar is being used
     setTexts({
-      headers: [...texts.headers, payload.query],
+      headers: [...texts.headers, payload.query + " ESV"],
       bodies: [...texts.bodies, payload.passages],
       isDisplayed: [...texts.isDisplayed, true],
     });
@@ -191,6 +205,7 @@ export default function Workspace() {
             toggleDarkMode={toggleDarkMode}
             toggleLayers={toggleLayers}
             toggleEditorLayout={toggleEditorLayout}
+            toggleJustify={toggleJustify}
           />
           <SettingsPane
             textHeaders={texts.headers}
@@ -205,6 +220,7 @@ export default function Workspace() {
             handleSubmit={handleSubmit}
             isMultipleRowsLayout={settings.isMultipleRowsLayout}
             searchQuery={searchQuery}
+            isJustified={settings.isJustified}
           />
         </div>
         <TransitionSnackbar

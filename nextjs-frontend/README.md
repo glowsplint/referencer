@@ -2,7 +2,21 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+### Requirements
+
+You will need Node.js installed on your computer to run the development server. You can get the latest version from [here](https://nodejs.org/en/).
+
+### Run
+
+Once Node.js is installed, navigate to the repo. You will need to install the JavaScript dependencies by running:
+
+```bash
+npm install
+# or
+yarn install (preferred)
+```
+
+If you don't have `yarn` installed, run `npm install -g yarn`.
 
 ```bash
 npm run dev

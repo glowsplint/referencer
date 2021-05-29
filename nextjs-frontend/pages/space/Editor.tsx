@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import styles from "../../styles/Editor.module.css";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
-import books from "./text/books";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
+import styles from "../../styles/Editor.module.css";
 import { get } from "./helperFunctions";
+import books from "./text/books";
+import clsx from "clsx";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import HelpIcon from "@material-ui/icons/Help";
@@ -17,15 +18,17 @@ import SearchIcon from "@material-ui/icons/Search";
 const regex = {
   footnoteInText: /(?<!])(\(\d+\))/,
   specialNoteInText: /^(\[.*?\]\(\d+\))$/,
-  verseNumberInText: /\[(\d+)\]/,
-  hasLineFeed: /(\n)/g,
+  verseNumberInText: /[ ]*\[(\d+)\]/,
+  hasLineFeed: /(\n)(?:\s*$)*/,
+  hasLineFeedAtEnd: /(?:\n\s+){3}$/,
   inlineFootnote: /^\(\d+\)$/,
   italics: /(\*.*?\*)/,
   paragraphs: /\n\n/,
   quotes: /^\s*“.*?$/,
   specialNote: /(\[.*?\])/,
   verseNumber: /^\d+$/,
-  whitespace: /(\s)/,
+  whitespace: /^(\s+)$/,
+  whitespaceAfterWord: /(?!\B)([.,!?\\-]*)(\s)/,
 };
 
 enum Format {
@@ -82,16 +85,19 @@ function SearchBar({
 }
 
 function Whitespace() {
-  return <> </>;
+  return <span className={styles.span}> </span>;
 }
 
 function Highlightable({ word }: { word: string }) {
-  const [hoverClass, setHoverClass] = useState(styles.unhighlighted);
+  const [hoverClass, setHoverClass] = useState(styles.highlightable);
+
   return (
     <span
       className={hoverClass}
-      onMouseOver={() => setHoverClass(styles.highlighted)}
-      onMouseLeave={() => setHoverClass(styles.unhighlighted)}
+      onMouseOver={() =>
+        setHoverClass(clsx(styles.highlightable, styles.highlighted))
+      }
+      onMouseLeave={() => setHoverClass(styles.highlightable)}
     >
       {word}
     </span>
@@ -99,13 +105,29 @@ function Highlightable({ word }: { word: string }) {
 }
 
 function Decider({ word }: { word: string }) {
+  const whitespaceIndex = word.search(/\S|$/);
+  const indents = word.slice(0, whitespaceIndex);
+  const characters = word.slice(whitespaceIndex);
   return (
     <>
       {word.match(regex.whitespace) ? (
         <Whitespace />
       ) : (
-        <Highlightable word={word} />
+        <>
+          <Indent whitespace={indents} />
+          <Highlightable word={characters} />
+        </>
       )}
+    </>
+  );
+}
+
+function Indent({ whitespace }: { whitespace: string }) {
+  return (
+    <>
+      {[...Array(whitespace.length).keys()].map((_, index) => (
+        <Whitespace key={index} />
+      ))}
     </>
   );
 }
@@ -113,7 +135,7 @@ function Decider({ word }: { word: string }) {
 function StandardText({ text }: { text: string }) {
   return (
     <>
-      {text.split(regex.whitespace).map((word, index) => (
+      {text.split(regex.whitespaceAfterWord).map((word, index) => (
         <Decider word={word} key={index} />
       ))}
     </>
@@ -144,9 +166,11 @@ function SpecialNote({ text }: { text: string }) {
 
 function InlineFootnote({ text }: { text: string }) {
   return (
-    <sup>
-      <StandardText text={text} />
-    </sup>
+    <Typography variant="overline">
+      <sup>
+        <StandardText text={text} />
+      </sup>
+    </Typography>
   );
 }
 
@@ -185,23 +209,28 @@ function FootnoteText({ text }: { text: string }) {
   );
 }
 
-// Older component -- need to migrate
 function Quotes({ text }: { text: string }) {
   return (
     <>
-      <br />
-      <br />
-      <StandardText text={text} />
+      <HasLineFeed text="" />
+      <HasLineFeed text="" />
+      <StandardText text={text.slice(2)} />
     </>
   );
+}
+
+function HasLineFeed({ text }: { text: string }) {
+  return <br />;
 }
 
 function TextArea({
   textName,
   textBody,
+  isJustified,
 }: {
   textName: string;
   textBody: string[];
+  isJustified: boolean;
 }) {
   const removeParagraphs = (text: string): string[] =>
     text.split(regex.paragraphs);
@@ -220,8 +249,10 @@ function TextArea({
     const brokenText = mainText.slice(1).flatMap((a) =>
       a
         .split(regex.verseNumberInText)
-        .flatMap((c) => c.split(regex.specialNoteInText))
-        .flatMap((b) => b.split(regex.footnoteInText))
+        .flatMap((b) => b.split(regex.specialNoteInText))
+        .flatMap((c) => c.split(regex.footnoteInText))
+        .flatMap((d) => d.split(regex.hasLineFeedAtEnd))
+        .flatMap((e) => e.split(regex.hasLineFeed))
     );
     let format: string[] = [];
     let firstVerseNumberFound: boolean = false;
@@ -242,8 +273,11 @@ function TextArea({
           format[index] = Format.SpecialNote;
         } else if (item.match(regex.inlineFootnote) !== null) {
           format[index] = Format.InlineFootnote;
+          brokenText[index - 1] = brokenText[index - 1].slice(
+            0,
+            brokenText[index - 1].length - 1
+          );
         } else if (item.match(regex.quotes) !== null) {
-          // Specific fix for John 7:51
           if (format[index - 1] === Format.VerseNumber) {
             format[index] = Format.StandardText;
           } else {
@@ -253,11 +287,15 @@ function TextArea({
           format[index] = Format.HasLineFeed;
         } else if (
           format[index - 1] === Format.StandardText ||
-          format[index - 4] === Format.SpecialNote
+          (format[index - 4] === Format.SpecialNote &&
+            item.match(regex.whitespace) === null)
         ) {
           format[index] = Format.SectionHeader;
         } else {
           format[index] = Format.StandardText;
+          if (brokenText[index] !== "") {
+            brokenText[index] = brokenText[index] + " ";
+          }
         }
       }
     }
@@ -297,11 +335,20 @@ function TextArea({
         text: text,
         key: index,
       }),
+      [Format.HasLineFeed]: React.createElement(HasLineFeed, {
+        text: text,
+        key: index,
+      }),
     };
     return get(componentMap, format, componentMap[Format.StandardText]);
   };
   return (
-    <div className={styles.editor_textarea}>
+    <div
+      className={clsx(styles.editor_textarea, {
+        [styles.justify]: isJustified,
+        [""]: !isJustified,
+      })}
+    >
       <Typography variant="h6">{textName}</Typography>
       {brokenText.map((text, index) =>
         getComponent(formatMainText[index], text, index)
@@ -324,6 +371,7 @@ export default function Editor({
   handleSubmit,
   searchQuery,
   isMultipleRowsLayout,
+  isJustified,
 }: {
   textHeaders: string[];
   textBodies: string[][];
@@ -334,6 +382,7 @@ export default function Editor({
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   searchQuery: string;
   isMultipleRowsLayout: boolean;
+  isJustified: boolean;
 }) {
   return (
     <div className={styles.editor}>
@@ -365,6 +414,7 @@ export default function Editor({
           <TextArea
             textName={textHeader}
             textBody={textBodies[index]}
+            isJustified={isJustified}
             key={index}
           />
         ))}

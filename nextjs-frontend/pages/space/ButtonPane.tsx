@@ -9,6 +9,8 @@ import LayersIcon from "@material-ui/icons/Layers";
 import LayersClearIcon from "@material-ui/icons/LayersClear";
 import TextRotateVerticalIcon from "@material-ui/icons/TextRotateVertical";
 import TextRotationNoneIcon from "@material-ui/icons/TextRotationNone";
+import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
+import FormatAlignJustifyIcon from "@material-ui/icons/FormatAlignJustify";
 
 function ButtonIcon({
   icon,
@@ -56,16 +58,20 @@ export default function ButtonPane({
   toggleDarkMode,
   toggleLayers,
   toggleEditorLayout,
+  toggleJustify,
 }: {
   settings: {
-    isDarkMode: boolean;
     isLayersOn: boolean;
+    isSettingsOpen: boolean;
+    isDarkMode: boolean;
     isMultipleRowsLayout: boolean;
+    isJustified: boolean;
   };
   toggleSettingsPane: () => void;
   toggleDarkMode: () => void;
   toggleLayers: () => void;
   toggleEditorLayout: () => void;
+  toggleJustify: () => void;
 }) {
   return (
     <div className={styles.leftpane}>
@@ -90,6 +96,13 @@ export default function ButtonPane({
         bool={settings.isMultipleRowsLayout}
         callback={toggleEditorLayout}
         title="Toggle editor layout"
+      />
+      <SwitchingButtonIcon
+        iconTwo={<FormatAlignJustifyIcon />}
+        iconOne={<FormatAlignLeftIcon />}
+        bool={settings.isJustified}
+        callback={toggleJustify}
+        title="Toggle left-align/justify"
       />
     </div>
   );

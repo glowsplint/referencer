@@ -58,6 +58,10 @@
   user-select: none;
 }
 
+.justify {
+  text-align: justify;
+}
+
 .editor_search {
   display: flex;
   align-items: center;
@@ -80,13 +84,20 @@
   text-align: center;
 }
 
-.unhighlighted {
-  line-height: 8mm;
-  user-select: none;
-}
-
 .highlighted {
-  line-height: 8mm;
   background-color: yellow;
   text-decoration: underline;
+}
+
+.highlightable {
+  line-height: 8mm;
+}
+
+.span {
+  white-space: pre-wrap;
+}
+
+.superscript {
+  vertical-align: super;
+  font-size: 75%;
 }
