@@ -4,10 +4,10 @@ import styles from "../../styles/Workspace.module.css";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-import ButtonPane from "./ButtonPane";
-import SettingsPane from "./SettingsPane";
-import Editor from "./Editor";
-import TransitionSnackbar from "./TransitionSnackbar";
+import ButtonPane from "../../components/ButtonPane";
+import SettingsPane from "../../components/SettingsPane";
+import Editor from "../../components/Editor";
+import TransitionSnackbar from "../../components/TransitionSnackbar";
 
 export default function Workspace() {
   const [people, setPeople] = useState<string[]>([]);
@@ -148,9 +148,9 @@ export default function Workspace() {
 
   const getText = async (query: string) => {
     const url = "http://localhost:3000/api/";
-    // const url = 'https://api.esv.org/v3/passage/text/?q=John 7'
-    // fetch(url + new URLSearchParams({ q: query }))
     const response = await fetch(url + query);
+    // const url = `https://api.esv.org/v3/passage/text/`;
+    // const response = await fetch(url + new URLSearchParams({ q: query }));
     const payload: {
       query: string;
       canonical: string;

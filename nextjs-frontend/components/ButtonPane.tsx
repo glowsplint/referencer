@@ -1,4 +1,4 @@
-import styles from "../../styles/ButtonPane.module.css";
+import styles from "../styles/ButtonPane.module.css";
 import Fab from "@material-ui/core/Fab";
 import Tooltip from "@material-ui/core/Tooltip";
 

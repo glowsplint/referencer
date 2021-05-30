@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import styles from "../../styles/SettingsPane.module.css";
+import styles from "../styles/SettingsPane.module.css";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 
-// Icons
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import CloseIcon from "@material-ui/icons/Close";

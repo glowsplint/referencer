@@ -6,9 +6,9 @@ import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import styles from "../../styles/Editor.module.css";
+import styles from "../styles/Editor.module.css";
 import { get } from "./helperFunctions";
-import books from "./text/books";
+import books from "./books";
 import clsx from "clsx";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
