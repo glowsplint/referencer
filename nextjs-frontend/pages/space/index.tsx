@@ -194,7 +194,7 @@ export default function Workspace() {
       <Head>
         <title>space-1</title>
         <meta name="description" content="Space" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/public/favicon.ico" />
       </Head>
 
       <ThemeProvider theme={theme}>

@@ -9,7 +9,6 @@ import KeyboardIcon from "@material-ui/icons/Keyboard";
 import FaceIcon from "@material-ui/icons/Face";
 import CreateIcon from "@material-ui/icons/Create";
 import InputIcon from "@material-ui/icons/Input";
-import { count } from "console";
 
 function InputField({
   name,
@@ -90,11 +89,11 @@ export default function Home() {
       <Head>
         <title>Referencer</title>
         <meta name="description" content="Referencer" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/public/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <img src="logo.png" height={130} alt="Logo" />
+        <img src="/public/logo.png" height="125" width="475" alt="Logo" />
         <form className={styles.form}>
           <span className={styles.row}>
             <InputField
