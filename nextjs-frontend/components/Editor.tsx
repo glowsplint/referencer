@@ -21,21 +21,20 @@ const regex = {
   verseNumberInText: /[ ]*\[(\d+)\]/,
   hasLineFeed: /(\n)(?:[ ]*$)*/,
   hasLineFeedAtEnd: /(?:\n[ ]{4}){2}/,
-  inlineFootnote: /^\(\d+\)$/,
+  inlineFootnote: /(\(\d+\))/,
   italics: /(\*.*?\*)/,
   paragraphs: /\n\n/,
   quotes: /^[ ]*“.*?$/,
   specialNote: /(\[.*?\])/,
   verseNumber: /^\d+$/,
   whitespace: /^([ ]+)$/,
-  whitespaceAfterWord: /(?!\B)([.,!?\\-]*)([ ])/,
+  whitespaceAfterWord: /([ ])/,
   isPsalm: /^(Psalm)/,
 };
 
 enum Format {
   SectionHeader = "SectionHeader",
   VerseNumber = "VerseNumber",
-  InlineFootnote = "InlineFootnote",
   StandardText = "StandardText",
   Quotes = "Quotes",
   SpecialNote = "SpecialNote",
@@ -89,8 +88,18 @@ function Whitespace() {
   return <span className={styles.span}> </span>;
 }
 
+function Italics({ word }: { word: string }) {
+  return <i>{word}</i>;
+}
+
 function Highlightable({ word }: { word: string }) {
   const [hoverClass, setHoverClass] = useState(styles.highlightable);
+  const item = (word: string) => {
+    if (word === "Higgaion." || word === "Selah") {
+      return <Italics word={word} />;
+    }
+    return word;
+  };
 
   return (
     <span
@@ -100,8 +109,16 @@ function Highlightable({ word }: { word: string }) {
       }
       onMouseLeave={() => setHoverClass(styles.highlightable)}
     >
-      {word}
+      {item(word)}
     </span>
+  );
+}
+
+function InlineFootnote({ word }: { word: string }) {
+  return (
+    <Typography variant="overline">
+      <sup>{word}</sup>
+    </Typography>
   );
 }
 
@@ -109,18 +126,20 @@ function Decider({ word }: { word: string }) {
   const whitespaceIndex = word.search(/\S|$/);
   const indents = word.slice(0, whitespaceIndex);
   const characters = word.slice(whitespaceIndex);
-  return (
-    <>
-      {word.match(regex.whitespace) ? (
-        <Whitespace />
-      ) : (
-        <>
-          <Indent whitespace={indents} />
-          <Highlightable word={characters} />
-        </>
-      )}
-    </>
-  );
+  const logic = () => {
+    if (word.match(regex.whitespace)) {
+      return <Whitespace />;
+    } else if (word.match(regex.inlineFootnote)) {
+      return <InlineFootnote word={word} />;
+    }
+    return (
+      <>
+        <Indent whitespace={indents} />
+        <Highlightable word={characters} />
+      </>
+    );
+  };
+  return <>{logic()}</>;
 }
 
 function Indent({ whitespace }: { whitespace: string }) {
@@ -136,9 +155,13 @@ function Indent({ whitespace }: { whitespace: string }) {
 function StandardText({ text }: { text: string }) {
   return (
     <>
-      {text.split(regex.whitespaceAfterWord).map((word, index) => (
-        <Decider word={word} key={index} />
-      ))}
+      {text
+        .split(regex.inlineFootnote)
+        .flatMap((a) => a.split(regex.whitespaceAfterWord))
+        .filter(Boolean)
+        .map((word, index) => (
+          <Decider word={word} key={index} />
+        ))}
     </>
   );
 }
@@ -154,24 +177,14 @@ function SectionHeader({ text }: { text: string }) {
 }
 
 function SpecialNote({ text }: { text: string }) {
-  const [textInSquareBrackets, textinParantheses] = text
+  const [textInSquareBrackets, footnote] = text
     .split(regex.specialNote)
     .slice(1);
   return (
     <div className={styles.special_note}>
       <StandardText text={textInSquareBrackets} />
-      <InlineFootnote text={textinParantheses} />
+      <InlineFootnote word={footnote} />
     </div>
-  );
-}
-
-function InlineFootnote({ text }: { text: string }) {
-  return (
-    <Typography variant="overline">
-      <sup>
-        <StandardText text={text} />
-      </sup>
-    </Typography>
   );
 }
 
@@ -251,7 +264,6 @@ function TextArea({
       a
         .split(regex.verseNumberInText)
         .flatMap((b) => b.split(regex.specialNoteInText))
-        .flatMap((c) => c.split(regex.footnoteInText))
         .flatMap((d) => d.split(regex.hasLineFeedAtEnd))
         .flatMap((e) => e.split(regex.hasLineFeed))
     );
@@ -268,7 +280,7 @@ function TextArea({
     // After that, if you find text after text (as opposed to text after versenumber), then the 2nd text is also a section header.
     // If it's not a special case, then it is just text.
     for (let [index, item] of brokenText.entries()) {
-      if (item.match(regex.verseNumber) !== null) {
+      if (item.match(regex.verseNumber)) {
         format[index] = Format.VerseNumber;
         if (!firstVerseNumberFound) {
           firstVerseNumberFound = true;
@@ -276,25 +288,19 @@ function TextArea({
       } else {
         if (!firstVerseNumberFound) {
           format[index] = Format.SectionHeader;
-        } else if (item.match(regex.specialNoteInText) !== null) {
+        } else if (item.match(regex.specialNoteInText)) {
           format[index] = Format.SpecialNote;
-        } else if (item.match(regex.inlineFootnote) !== null) {
-          format[index] = Format.InlineFootnote;
-          brokenText[index - 1] = brokenText[index - 1].slice(
-            0,
-            brokenText[index - 1].length - 1
-          );
-        } else if (item.match(regex.quotes) !== null) {
+        } else if (item.match(regex.quotes)) {
           if (format[index - 1] === Format.VerseNumber) {
             format[index] = Format.StandardText;
             brokenText[index] = addSpace(brokenText[index]);
-          } else if (mainText[0].match(regex.isPsalm) !== null) {
+          } else if (mainText[0].match(regex.isPsalm)) {
             format[index] = Format.StandardText;
             brokenText[index] = addSpace(brokenText[index]);
           } else {
             format[index] = Format.Quotes;
           }
-        } else if (item.match(regex.hasLineFeed) !== null) {
+        } else if (item.match(regex.hasLineFeed)) {
           format[index] = Format.HasLineFeed;
         } else if (format[index - 1] === Format.StandardText) {
           format[index] = Format.SectionHeader;
@@ -304,8 +310,6 @@ function TextArea({
         }
       }
     }
-    // console.log(format);
-    // console.log(brokenText);
     return [format, brokenText];
   };
 
@@ -326,10 +330,6 @@ function TextArea({
         key: index,
       }),
       [Format.VerseNumber]: React.createElement(VerseNumber, {
-        text: text,
-        key: index,
-      }),
-      [Format.InlineFootnote]: React.createElement(InlineFootnote, {
         text: text,
         key: index,
       }),
