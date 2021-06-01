@@ -19,16 +19,17 @@ const regex = {
   footnoteInText: /(?<!])(\(\d+\))/,
   specialNoteInText: /^(\[.*?\]\(\d+\))$/,
   verseNumberInText: /[ ]*\[(\d+)\]/,
-  hasLineFeed: /(\n)(?:\s*$)*/,
-  hasLineFeedAtEnd: /(?:\n\s+){3}$/,
+  hasLineFeed: /(\n)(?:[ ]*$)*/,
+  hasLineFeedAtEnd: /(?:\n[ ]{4}){2}/,
   inlineFootnote: /^\(\d+\)$/,
   italics: /(\*.*?\*)/,
   paragraphs: /\n\n/,
-  quotes: /^\s*“.*?$/,
+  quotes: /^[ ]*“.*?$/,
   specialNote: /(\[.*?\])/,
   verseNumber: /^\d+$/,
-  whitespace: /^(\s+)$/,
-  whitespaceAfterWord: /(?!\B)([.,!?\\-]*)(\s)/,
+  whitespace: /^([ ]+)$/,
+  whitespaceAfterWord: /(?!\B)([.,!?\\-]*)([ ])/,
+  isPsalm: /^(Psalm)/,
 };
 
 enum Format {
@@ -174,7 +175,7 @@ function InlineFootnote({ text }: { text: string }) {
   );
 }
 
-function Italics({ text }: { text: string }) {
+function ItalicsBlock({ text }: { text: string }) {
   const textWithoutAsterisks = text.slice(1, text.length - 1);
   return (
     <i>
@@ -200,7 +201,7 @@ function FootnoteText({ text }: { text: string }) {
         .split(regex.italics)
         .map((text, index) =>
           text.match(regex.italics) ? (
-            <Italics text={text} key={index} />
+            <ItalicsBlock text={text} key={index} />
           ) : (
             <StandardText text={text} key={index} />
           )
@@ -257,6 +258,12 @@ function TextArea({
     let format: string[] = [];
     let firstVerseNumberFound: boolean = false;
 
+    const addSpace = (brokenTextIndex: string): string => {
+      if (brokenTextIndex !== "") {
+        return brokenTextIndex + " ";
+      }
+      return brokenTextIndex;
+    };
     // Everything before the first verse number is found is a section header.
     // After that, if you find text after text (as opposed to text after versenumber), then the 2nd text is also a section header.
     // If it's not a special case, then it is just text.
@@ -280,25 +287,25 @@ function TextArea({
         } else if (item.match(regex.quotes) !== null) {
           if (format[index - 1] === Format.VerseNumber) {
             format[index] = Format.StandardText;
+            brokenText[index] = addSpace(brokenText[index]);
+          } else if (mainText[0].match(regex.isPsalm) !== null) {
+            format[index] = Format.StandardText;
+            brokenText[index] = addSpace(brokenText[index]);
           } else {
             format[index] = Format.Quotes;
           }
         } else if (item.match(regex.hasLineFeed) !== null) {
           format[index] = Format.HasLineFeed;
-        } else if (
-          format[index - 1] === Format.StandardText ||
-          (format[index - 4] === Format.SpecialNote &&
-            item.match(regex.whitespace) === null)
-        ) {
+        } else if (format[index - 1] === Format.StandardText) {
           format[index] = Format.SectionHeader;
         } else {
           format[index] = Format.StandardText;
-          if (brokenText[index] !== "") {
-            brokenText[index] = brokenText[index] + " ";
-          }
+          brokenText[index] = addSpace(brokenText[index]);
         }
       }
     }
+    // console.log(format);
+    // console.log(brokenText);
     return [format, brokenText];
   };
 

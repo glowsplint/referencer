@@ -147,10 +147,12 @@ export default function Workspace() {
   };
 
   const getText = async (query: string) => {
-    const url = "http://localhost:3000/api/";
-    const response = await fetch(url + query);
-    // const url = `https://api.esv.org/v3/passage/text/`;
-    // const response = await fetch(url + new URLSearchParams({ q: query }));
+    let url = "http://localhost:3000/api/";
+    if (process.env.NODE_ENV === "production") {
+      url = "http://localhost:5000/api/";
+    }
+    // const response = await fetch(url + query);
+    const response = await fetch(url + encodeURIComponent(query));
     const payload: {
       query: string;
       canonical: string;
