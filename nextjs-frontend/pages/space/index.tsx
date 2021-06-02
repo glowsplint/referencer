@@ -3,11 +3,11 @@ import Head from "next/head";
 import styles from "../../styles/Workspace.module.css";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 import ButtonPane from "../../components/ButtonPane";
 import SettingsPane from "../../components/SettingsPane";
 import Editor from "../../components/Editor";
-import TransitionSnackbar from "../../components/TransitionSnackbar";
 
 export default function Workspace() {
   const [people, setPeople] = useState<string[]>([]);
@@ -31,14 +31,6 @@ export default function Workspace() {
     isJustified: true,
   });
 
-  const [snackbar, setSnackbar] = useState<{
-    isOpen: boolean;
-    message: string;
-  }>({
-    isOpen: false,
-    message: "",
-  });
-
   const displayedText = (): [string[], string[][]] => {
     const indices: number[] = texts.isDisplayed.flatMap((bool, index) =>
       bool ? index : []
@@ -60,10 +52,6 @@ export default function Workspace() {
   // Button Pane Functionality
   const toggleDarkMode = (): void => {
     setSettings({ ...settings, isDarkMode: !settings.isDarkMode });
-    setSnackbar({
-      isOpen: true,
-      message: `Dark mode: ${settings.isDarkMode ? "On" : "Off"}`,
-    });
   };
 
   const toggleSettingsPane = (): void => {
@@ -72,24 +60,12 @@ export default function Workspace() {
 
   const toggleLayers = (): void => {
     setSettings({ ...settings, isLayersOn: !settings.isLayersOn });
-    setSnackbar({
-      isOpen: true,
-      message: `Layers: ${settings.isLayersOn ? "On" : "Off"}`,
-    });
   };
 
   const toggleEditorLayout = (): void => {
     setSettings({
       ...settings,
       isMultipleRowsLayout: !settings.isMultipleRowsLayout,
-    });
-    setSnackbar({
-      isOpen: true,
-      message: `Layout: ${
-        settings.isMultipleRowsLayout
-          ? "Texts stacked vertically"
-          : "Texts side-by-side"
-      }`,
     });
   };
 
@@ -98,22 +74,6 @@ export default function Workspace() {
       ...settings,
       isJustified: !settings.isJustified,
     });
-    setSnackbar({
-      isOpen: true,
-      message: `Layout: ${
-        settings.isJustified ? "Texts justified" : "Texts left-aligned"
-      }`,
-    });
-  };
-
-  const handleCloseSnackbar = (
-    event: React.SyntheticEvent | React.MouseEvent,
-    reason?: string
-  ): void => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbar({ isOpen: false, message: "" });
   };
 
   let theme = React.useMemo(
@@ -136,14 +96,15 @@ export default function Workspace() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSearchQuery("");
-    const payload = await getText(toTitleCase(searchQuery));
-    // To-do: Track how the search bar is being used
-    setTexts({
-      headers: [...texts.headers, payload.query + " ESV"],
-      bodies: [...texts.bodies, payload.passages],
-      isDisplayed: [...texts.isDisplayed, true],
-    });
+    if (searchQuery !== "") {
+      setSearchQuery("");
+      const payload = await getText(toTitleCase(searchQuery));
+      setTexts({
+        headers: [...texts.headers, payload.query + " ESV"],
+        bodies: [...texts.bodies, payload.passages],
+        isDisplayed: [...texts.isDisplayed, true],
+      });
+    }
   };
 
   const getText = async (query: string) => {
@@ -151,7 +112,6 @@ export default function Workspace() {
     if (process.env.NODE_ENV === "production") {
       url = "http://localhost:5000/api/";
     }
-    // const response = await fetch(url + query);
     const response = await fetch(url + encodeURIComponent(query));
     const payload: {
       query: string;
@@ -200,6 +160,7 @@ export default function Workspace() {
       </Head>
 
       <ThemeProvider theme={theme}>
+        <CssBaseline />
         <div className={styles.app}>
           <ButtonPane
             settings={settings}
@@ -225,11 +186,6 @@ export default function Workspace() {
             isJustified={settings.isJustified}
           />
         </div>
-        <TransitionSnackbar
-          open={snackbar.isOpen}
-          onClose={handleCloseSnackbar}
-          message={snackbar.message}
-        />
       </ThemeProvider>
     </div>
   );

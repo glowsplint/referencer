@@ -1,6 +1,7 @@
 import styles from "../styles/ButtonPane.module.css";
 import Fab from "@material-ui/core/Fab";
 import Tooltip from "@material-ui/core/Tooltip";
+import Paper from "@material-ui/core/Paper";
 
 import MenuIcon from "@material-ui/icons/Menu";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
@@ -74,11 +75,11 @@ export default function ButtonPane({
   toggleJustify: () => void;
 }) {
   return (
-    <div className={styles.leftpane}>
+    <Paper className={styles.leftpane}>
       <ButtonIcon icon={<MenuIcon />} callback={toggleSettingsPane} />
       <SwitchingButtonIcon
-        iconOne={<InvertColorsIcon />}
-        iconTwo={<InvertColorsOffIcon />}
+        iconOne={<InvertColorsOffIcon />}
+        iconTwo={<InvertColorsIcon />}
         bool={settings.isDarkMode}
         callback={toggleDarkMode}
         title="Toggle dark mode"
@@ -98,12 +99,12 @@ export default function ButtonPane({
         title="Toggle editor layout"
       />
       <SwitchingButtonIcon
-        iconTwo={<FormatAlignJustifyIcon />}
         iconOne={<FormatAlignLeftIcon />}
+        iconTwo={<FormatAlignJustifyIcon />}
         bool={settings.isJustified}
         callback={toggleJustify}
         title="Toggle left-align/justify"
       />
-    </div>
+    </Paper>
   );
 }

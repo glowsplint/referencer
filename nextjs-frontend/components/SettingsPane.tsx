@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "../styles/SettingsPane.module.css";
 import Typography from "@material-ui/core/Typography";
@@ -7,7 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import CloseIcon from "@material-ui/icons/Close";
-import { Checkbox as MUICheckBox } from "@material-ui/core";
+import { Checkbox as MUICheckBox, Paper } from "@material-ui/core";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -48,12 +49,10 @@ function Checkbox({
 function SectionHeader({ text }: { text: string }) {
   return (
     <div className={styles.sidebar_main}>
-      <div className={styles.sidebar_main_header}>
-        <ExpandMore fontSize="small" />
-        <Typography variant="overline" display="block">
-          {text}
-        </Typography>
-      </div>
+      <ExpandMore fontSize="small" />
+      <Typography variant="overline" display="block">
+        {text}
+      </Typography>
     </div>
   );
 }
@@ -81,9 +80,7 @@ function TextItem({
         </Typography>
       </div>
       <IconButton size="small" disableRipple onClick={() => handleClose(id)}>
-        <div className={styles.texts_icon}>
-          <CloseIcon fontSize="small" />
-        </div>
+        <CloseIcon fontSize="small" />
       </IconButton>
     </div>
   );
@@ -110,6 +107,19 @@ function TextItems({
   return <div className={styles.texts_items}>{items}</div>;
 }
 
+function Header() {
+  return (
+    <div className={styles.sidebar_top}>
+      <Typography variant="button">space-1</Typography>
+      <Tooltip title="Add users" placement="left">
+        <IconButton size="small" onClick={() => {}}>
+          <PersonAddIcon />
+        </IconButton>
+      </Tooltip>
+    </div>
+  );
+}
+
 export default function SettingsPane({
   textHeaders,
   handleClose,
@@ -123,24 +133,22 @@ export default function SettingsPane({
 }) {
   return (
     <div
-      className={isSettingsOpen ? styles.sidebar_open : styles.sidebar_closed}
+      className={clsx(styles.sidebar, {
+        [styles.open]: isSettingsOpen,
+        [styles.closed]: !isSettingsOpen,
+      })}
     >
-      <div className={styles.sidebar_top}>
-        <Typography variant="button">space-1</Typography>
-        <Tooltip title="Add users" placement="left">
-          <IconButton size="small" onClick={() => {}}>
-            <PersonAddIcon />
-          </IconButton>
-        </Tooltip>
-      </div>
-      <SectionHeader text="In Workspace" />
-      <SectionHeader text="Texts" />
-      <TextItems
-        textHeaders={textHeaders}
-        handleClose={handleClose}
-        handleCheckBoxToggle={handleCheckBoxToggle}
-      />
-      <SectionHeader text="Layers" />
+      <Paper className={styles.paper}>
+        <Header />
+        <SectionHeader text="In Workspace" />
+        <SectionHeader text="Texts" />
+        <TextItems
+          textHeaders={textHeaders}
+          handleClose={handleClose}
+          handleCheckBoxToggle={handleCheckBoxToggle}
+        />
+        <SectionHeader text="Layers" />
+      </Paper>
     </div>
   );
 }

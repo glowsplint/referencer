@@ -1,10 +1,10 @@
 .leftpane {
   display: flex;
   flex-direction: column;
-  background-color: #434b5a;
-  padding: 5px;
 }
 
 .leftpane_icon {
-  padding: 5px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 10px;
 }

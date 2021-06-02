@@ -20,7 +20,7 @@ const regex = {
   specialNoteInText: /^(\[.*?\]\(\d+\))$/,
   verseNumberInText: /[ ]*\[(\d+)\]/,
   hasLineFeed: /(\n)(?:[ ]*$)*/,
-  hasLineFeedAtEnd: /(?:\n[ ]{4}){2}/,
+  hasLineFeedAtEnd: /(?:\n[ ]{4}){3}/,
   inlineFootnote: /(\(\d+\))/,
   italics: /(\*.*?\*)/,
   paragraphs: /\n\n/,
@@ -40,6 +40,7 @@ enum Format {
   SpecialNote = "SpecialNote",
   HasLineFeed = "HasLineFeed",
   FootnoteText = "FootnoteText",
+  Psalm426 = "Psalm426",
 }
 
 function SearchBar({
@@ -55,32 +56,34 @@ function SearchBar({
   searchQuery: string;
 }) {
   return (
-    <form className={styles.container} onSubmit={handleSubmit}>
-      <Autocomplete
-        id="autocomplete"
-        freeSolo
-        fullWidth
-        options={books}
-        inputValue={searchQuery}
-        onInputChange={handleInputChange}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon style={{ color: grey[500] }} />
-                </InputAdornment>
-              ),
-            }}
-            label="Search"
-            size="small"
-            margin="none"
-            variant="outlined"
-          />
-        )}
-      />
-    </form>
+    <div className={styles.editor_search}>
+      <form className={styles.container} onSubmit={handleSubmit}>
+        <Autocomplete
+          id="autocomplete"
+          freeSolo
+          fullWidth
+          options={books}
+          inputValue={searchQuery}
+          onInputChange={handleInputChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon style={{ color: grey[500] }} />
+                  </InputAdornment>
+                ),
+              }}
+              label="Search"
+              size="small"
+              margin="none"
+              variant="outlined"
+            />
+          )}
+        />
+      </form>
+    </div>
   );
 }
 
@@ -226,15 +229,25 @@ function FootnoteText({ text }: { text: string }) {
 function Quotes({ text }: { text: string }) {
   return (
     <>
-      <HasLineFeed text="" />
-      <HasLineFeed text="" />
+      <HasLineFeed />
+      <HasLineFeed />
       <StandardText text={text.slice(2)} />
     </>
   );
 }
 
-function HasLineFeed({ text }: { text: string }) {
+function HasLineFeed() {
   return <br />;
+}
+
+function Psalm426({ text }: { text: string }) {
+  return (
+    <>
+      <HasLineFeed />
+      <HasLineFeed />
+      <StandardText text={text} />
+    </>
+  );
 }
 
 function TextArea({
@@ -303,7 +316,11 @@ function TextArea({
         } else if (item.match(regex.hasLineFeed)) {
           format[index] = Format.HasLineFeed;
         } else if (format[index - 1] === Format.StandardText) {
-          format[index] = Format.SectionHeader;
+          if (item.endsWith(";")) {
+            format[index] = Format.Psalm426;
+          } else {
+            format[index] = Format.SectionHeader;
+          }
         } else {
           format[index] = Format.StandardText;
           brokenText[index] = addSpace(brokenText[index]);
@@ -346,6 +363,10 @@ function TextArea({
         text: text,
         key: index,
       }),
+      [Format.Psalm426]: React.createElement(Psalm426, {
+        text: text,
+        key: index,
+      }),
     };
     return get(componentMap, format, componentMap[Format.StandardText]);
   };
@@ -367,6 +388,29 @@ function TextArea({
           return <FootnoteText text={text} key={index} />;
         }
       })}
+    </div>
+  );
+}
+
+function HeaderLeft() {
+  return (
+    <div className={styles.editor_header_left}>
+      <DesktopWindowsIcon />
+      <div className={styles.header_left_text}>
+        <Typography variant="subtitle2">Your Workspace</Typography>
+      </div>
+    </div>
+  );
+}
+
+function HeaderRight() {
+  return (
+    <div className={styles.editor_header_right}>
+      <Tooltip title="Help" placement="left">
+        <IconButton size="small" onClick={() => {}}>
+          <HelpIcon />
+        </IconButton>
+      </Tooltip>
     </div>
   );
 }
@@ -394,20 +438,8 @@ export default function Editor({
   return (
     <div className={styles.editor}>
       <div className={styles.editor_header}>
-        <div className={styles.editor_header_left}>
-          <DesktopWindowsIcon />
-          <div className={styles.header_left_text}>
-            <Typography variant="subtitle2">Your Workspace</Typography>
-          </div>
-        </div>
-
-        <div className={styles.editor_header_right}>
-          <Tooltip title="Help" placement="left">
-            <IconButton size="small" onClick={() => {}}>
-              <HelpIcon />
-            </IconButton>
-          </Tooltip>
-        </div>
+        <HeaderLeft />
+        <HeaderRight />
       </div>
 
       <div
@@ -427,13 +459,11 @@ export default function Editor({
         ))}
       </div>
 
-      <div className={styles.editor_search}>
-        <SearchBar
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-          searchQuery={searchQuery}
-        />
-      </div>
+      <SearchBar
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        searchQuery={searchQuery}
+      />
     </div>
   );
 }
