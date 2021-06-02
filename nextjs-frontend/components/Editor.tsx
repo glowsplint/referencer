@@ -10,6 +10,7 @@ import styles from "../styles/Editor.module.css";
 import { get } from "./helperFunctions";
 import books from "./books";
 import clsx from "clsx";
+import { Scrollbars } from "react-custom-scrollbars";
 
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import HelpIcon from "@material-ui/icons/Help";
@@ -442,22 +443,23 @@ export default function Editor({
         <HeaderRight />
       </div>
 
-      <div
-        className={
-          isMultipleRowsLayout
-            ? styles.editor_textareas_row
-            : styles.editor_textareas_col
-        }
-      >
-        {textHeaders.map((textHeader: string, index: number) => (
-          <TextArea
-            textName={textHeader}
-            textBody={textBodies[index]}
-            isJustified={isJustified}
-            key={index}
-          />
-        ))}
-      </div>
+      <Scrollbars style={{ width: "100%", height: "100%" }} universal>
+        <div
+          className={clsx(styles.editor_textareas, {
+            [styles.row]: isMultipleRowsLayout,
+            [styles.col]: !isMultipleRowsLayout,
+          })}
+        >
+          {textHeaders.map((textHeader: string, index: number) => (
+            <TextArea
+              textName={textHeader}
+              textBody={textBodies[index]}
+              isJustified={isJustified}
+              key={index}
+            />
+          ))}
+        </div>
+      </Scrollbars>
 
       <SearchBar
         handleInputChange={handleInputChange}

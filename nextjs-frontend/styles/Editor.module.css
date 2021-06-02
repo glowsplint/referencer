@@ -37,18 +37,18 @@
   color: black;
 }
 
-.editor_textareas_row {
+.editor_textareas {
   flex: 1;
-  flex-direction: row;
   display: flex;
   overflow-y: auto;
 }
 
-.editor_textareas_col {
-  flex: 1;
+.row {
+  flex-direction: row;
+}
+
+.col {
   flex-direction: column;
-  display: flex;
-  overflow-y: auto;
 }
 
 .editor_textarea {
