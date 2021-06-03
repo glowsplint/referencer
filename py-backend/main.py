@@ -1,5 +1,5 @@
 import requests
-#from config import API_KEY
+from config import API_KEY
 from fastapi import FastAPI, Request, WebSocket, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
