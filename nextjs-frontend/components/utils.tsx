@@ -9,3 +9,11 @@ export const get = (obj: object, path, defValue) => {
     pathArray.reduce((prevObj, key) => prevObj && prevObj[key], obj) || defValue
   );
 };
+
+export const toTitleCase = (str: string) => {
+  return str.replace(
+    /\w\S*/g,
+    (text: string) =>
+      text.charAt(0).toUpperCase() + text.substr(1).toLowerCase()
+  );
+};

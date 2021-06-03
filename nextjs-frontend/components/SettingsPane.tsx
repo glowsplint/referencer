@@ -20,13 +20,13 @@ const useStyles = makeStyles({
   },
 });
 
-function Checkbox({
+const Checkbox = ({
   handleCheckBoxToggle,
   textHeader,
 }: {
   handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
   textHeader: string;
-}) {
+}) => {
   const classes = useStyles();
   const [checked, setChecked] = useState(true);
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,9 +44,9 @@ function Checkbox({
       checked={checked}
     />
   );
-}
+};
 
-function SectionHeader({ text }: { text: string }) {
+const SectionHeader = ({ text }: { text: string }) => {
   return (
     <div className={styles.sidebar_main}>
       <ExpandMore fontSize="small" />
@@ -55,9 +55,9 @@ function SectionHeader({ text }: { text: string }) {
       </Typography>
     </div>
   );
-}
+};
 
-function TextItem({
+const TextItem = ({
   textHeader,
   handleClose,
   id,
@@ -67,7 +67,7 @@ function TextItem({
   handleClose: (key: number) => void;
   id: number;
   handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
+}) => {
   return (
     <div className={styles.texts_item}>
       <Checkbox
@@ -84,9 +84,9 @@ function TextItem({
       </IconButton>
     </div>
   );
-}
+};
 
-function TextItems({
+const TextItems = ({
   textHeaders,
   handleClose,
   handleCheckBoxToggle,
@@ -94,7 +94,7 @@ function TextItems({
   textHeaders: string[];
   handleClose: (key: number) => void;
   handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
+}) => {
   const items = textHeaders.map((text: string, index: number) => (
     <TextItem
       textHeader={text}
@@ -105,9 +105,9 @@ function TextItems({
     />
   ));
   return <div className={styles.texts_items}>{items}</div>;
-}
+};
 
-function Header() {
+const Header = () => {
   return (
     <div className={styles.sidebar_top}>
       <Typography variant="button">space-1</Typography>
@@ -118,37 +118,39 @@ function Header() {
       </Tooltip>
     </div>
   );
-}
+};
 
-export default function SettingsPane({
-  textHeaders,
-  handleClose,
-  handleCheckBoxToggle,
-  isSettingsOpen,
-}: {
-  textHeaders: string[];
-  handleClose: (key: number) => void;
-  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  isSettingsOpen: boolean;
-}) {
-  return (
-    <div
-      className={clsx(styles.sidebar, {
-        [styles.open]: isSettingsOpen,
-        [styles.closed]: !isSettingsOpen,
-      })}
-    >
-      <Paper className={styles.paper}>
-        <Header />
-        <SectionHeader text="In Workspace" />
-        <SectionHeader text="Texts" />
-        <TextItems
-          textHeaders={textHeaders}
-          handleClose={handleClose}
-          handleCheckBoxToggle={handleCheckBoxToggle}
-        />
-        <SectionHeader text="Layers" />
-      </Paper>
-    </div>
-  );
-}
+export default React.memo(
+  ({
+    textHeaders,
+    handleClose,
+    handleCheckBoxToggle,
+    isSettingsOpen,
+  }: {
+    textHeaders: string[];
+    handleClose: (key: number) => void;
+    handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    isSettingsOpen: boolean;
+  }) => {
+    return (
+      <div
+        className={clsx(styles.sidebar, {
+          [styles.open]: isSettingsOpen,
+          [styles.closed]: !isSettingsOpen,
+        })}
+      >
+        <Paper className={styles.paper}>
+          <Header />
+          <SectionHeader text="In Workspace" />
+          <SectionHeader text="Texts" />
+          <TextItems
+            textHeaders={textHeaders}
+            handleClose={handleClose}
+            handleCheckBoxToggle={handleCheckBoxToggle}
+          />
+          <SectionHeader text="Layers" />
+        </Paper>
+      </div>
+    );
+  }
+);

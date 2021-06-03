@@ -4,6 +4,7 @@ import styles from "../../styles/Workspace.module.css";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { toTitleCase } from "../../components/utils";
 
 import ButtonPane from "../../components/ButtonPane";
 import SettingsPane from "../../components/SettingsPane";
@@ -31,50 +32,47 @@ export default function Workspace() {
     isJustified: true,
   });
 
-  const displayedText = (): [string[], string[][]] => {
+  const displayedText = (textComponent: string[] | string[][]) => {
     const indices: number[] = texts.isDisplayed.flatMap((bool, index) =>
       bool ? index : []
     );
 
-    let displayedTextHeaders: string[] = [];
-    let displayedTextBodies: string[][] = [];
-
+    let displayedText = [];
     for (let item of indices) {
-      displayedTextHeaders.push(texts.headers[item]);
-      displayedTextBodies.push(texts.bodies[item]);
+      displayedText.push(textComponent[item]);
     }
-    return [displayedTextHeaders, displayedTextBodies];
+    return displayedText;
   };
 
-  const displayedTextHeaders = () => displayedText()[0];
-  const displayedTextBodies = () => displayedText()[1];
+  const displayedTextHeaders = () => displayedText(texts.headers);
+  const displayedTextBodies = () => displayedText(texts.bodies);
 
-  // Button Pane Functionality
-  const toggleDarkMode = (): void => {
-    setSettings({ ...settings, isDarkMode: !settings.isDarkMode });
-  };
-
-  const toggleSettingsPane = (): void => {
-    setSettings({ ...settings, isSettingsOpen: !settings.isSettingsOpen });
-  };
-
-  const toggleLayers = (): void => {
-    setSettings({ ...settings, isLayersOn: !settings.isLayersOn });
-  };
-
-  const toggleEditorLayout = (): void => {
-    setSettings({
-      ...settings,
-      isMultipleRowsLayout: !settings.isMultipleRowsLayout,
-    });
-  };
-
-  const toggleJustify = (): void => {
-    setSettings({
-      ...settings,
-      isJustified: !settings.isJustified,
-    });
-  };
+  const toggle = React.useMemo(
+    () => ({
+      darkMode: (): void => {
+        setSettings({ ...settings, isDarkMode: !settings.isDarkMode });
+      },
+      settingsPane: (): void => {
+        setSettings({ ...settings, isSettingsOpen: !settings.isSettingsOpen });
+      },
+      layers: (): void => {
+        setSettings({ ...settings, isLayersOn: !settings.isLayersOn });
+      },
+      editorLayout: (): void => {
+        setSettings({
+          ...settings,
+          isMultipleRowsLayout: !settings.isMultipleRowsLayout,
+        });
+      },
+      justify: (): void => {
+        setSettings({
+          ...settings,
+          isJustified: !settings.isJustified,
+        });
+      },
+    }),
+    [settings]
+  );
 
   let theme = React.useMemo(
     () =>
@@ -86,26 +84,52 @@ export default function Workspace() {
     [settings.isDarkMode]
   );
 
-  // Search Bar Functionality
-  const handleInputChange = (
-    _event: React.ChangeEvent<HTMLInputElement>,
-    newValue: string
-  ) => {
-    setSearchQuery(newValue);
-  };
+  const handleSearch = React.useMemo(
+    () => ({
+      inputChange: (
+        _event: React.ChangeEvent<HTMLInputElement>,
+        newValue: string
+      ) => {
+        setSearchQuery(newValue);
+      },
+      submit: async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (searchQuery !== "") {
+          setSearchQuery("");
+          const payload = await getText(toTitleCase(searchQuery));
+          setTexts({
+            headers: [...texts.headers, payload.query + " ESV"],
+            bodies: [...texts.bodies, payload.passages],
+            isDisplayed: [...texts.isDisplayed, true],
+          });
+        }
+      },
+    }),
+    [searchQuery]
+  );
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (searchQuery !== "") {
-      setSearchQuery("");
-      const payload = await getText(toTitleCase(searchQuery));
-      setTexts({
-        headers: [...texts.headers, payload.query + " ESV"],
-        bodies: [...texts.bodies, payload.passages],
-        isDisplayed: [...texts.isDisplayed, true],
-      });
-    }
-  };
+  const handleSettingsTexts = React.useMemo(
+    () => ({
+      close: (key: number) => {
+        const getNew = (oldArray: any[]) => [
+          ...oldArray.slice(0, key),
+          ...oldArray.slice(key + 1, oldArray.length),
+        ];
+        setTexts({
+          headers: getNew(texts.headers),
+          bodies: getNew(texts.bodies),
+          isDisplayed: getNew(texts.isDisplayed),
+        });
+      },
+      checkBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => {
+        const index = texts.headers.indexOf(event.target.name);
+        let newIsDisplayed = [...texts.isDisplayed];
+        newIsDisplayed[index] = !newIsDisplayed[index];
+        setTexts({ ...texts, isDisplayed: newIsDisplayed });
+      },
+    }),
+    [texts]
+  );
 
   const getText = async (query: string) => {
     let url = "http://localhost:3000/api/";
@@ -123,34 +147,6 @@ export default function Workspace() {
     return payload;
   };
 
-  const toTitleCase = (str: string) => {
-    return str.replace(
-      /\w\S*/g,
-      (text: string) =>
-        text.charAt(0).toUpperCase() + text.substr(1).toLowerCase()
-    );
-  };
-
-  // Settings Pane Functionality
-  const handleClose = (key: number) => {
-    const getNew = (oldArray: any[]) => [
-      ...oldArray.slice(0, key),
-      ...oldArray.slice(key + 1, oldArray.length),
-    ];
-    setTexts({
-      headers: getNew(texts.headers),
-      bodies: getNew(texts.bodies),
-      isDisplayed: getNew(texts.isDisplayed),
-    });
-  };
-
-  const handleCheckBoxToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const index = texts.headers.indexOf(event.target.name);
-    let newIsDisplayed = [...texts.isDisplayed];
-    newIsDisplayed[index] = !newIsDisplayed[index];
-    setTexts({ ...texts, isDisplayed: newIsDisplayed });
-  };
-
   return (
     <div>
       <Head>
@@ -164,23 +160,23 @@ export default function Workspace() {
         <div className={styles.app}>
           <ButtonPane
             settings={settings}
-            toggleSettingsPane={toggleSettingsPane}
-            toggleDarkMode={toggleDarkMode}
-            toggleLayers={toggleLayers}
-            toggleEditorLayout={toggleEditorLayout}
-            toggleJustify={toggleJustify}
+            toggleSettingsPane={toggle.settingsPane}
+            toggleDarkMode={toggle.darkMode}
+            toggleLayers={toggle.layers}
+            toggleEditorLayout={toggle.editorLayout}
+            toggleJustify={toggle.justify}
           />
           <SettingsPane
             textHeaders={texts.headers}
-            handleClose={handleClose}
-            handleCheckBoxToggle={handleCheckBoxToggle}
+            handleClose={handleSettingsTexts.close}
+            handleCheckBoxToggle={handleSettingsTexts.checkBoxToggle}
             isSettingsOpen={settings.isSettingsOpen}
           />
           <Editor
             textHeaders={displayedTextHeaders()}
             textBodies={displayedTextBodies()}
-            handleInputChange={handleInputChange}
-            handleSubmit={handleSubmit}
+            handleInputChange={handleSearch.inputChange}
+            handleSubmit={handleSearch.submit}
             isMultipleRowsLayout={settings.isMultipleRowsLayout}
             searchQuery={searchQuery}
             isJustified={settings.isJustified}
