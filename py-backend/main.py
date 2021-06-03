@@ -1,9 +1,11 @@
 import requests
-from config import API_KEY
-from fastapi import FastAPI, Request
+#from config import API_KEY
+from fastapi import FastAPI, Request, WebSocket, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from .spaces import SpacesServer
+from typing import Optional
 
 LANDING_PAGE = 'index.html'
 WORKSPACE_PAGE = 'space.html'
@@ -36,6 +38,8 @@ app.add_middleware(CORSMiddleware,
     allow_headers=["*"],
 )
 
+svr = SpacesServer()
+
 @app.get('/')
 async def index(request: Request):
     return templates.TemplateResponse(LANDING_PAGE, {'request': request})
@@ -59,3 +63,15 @@ def get_passages(query: str):
     }
     response = requests.get(url, headers=headers, params=params)
     return response.json()
+
+@app.websocket("/ws")
+async def websocket_endpoint(
+    websocket: WebSocket,
+    username : Optional[str] = Query(None),
+    space_id : Optional[str] = Query(None)
+):
+    await websocket.accept()
+    if space_id is None:
+        space_id = svr.space_create()
+    usr = await svr.user_connect(websocket, space_id, username)
+    await usr.listen()
