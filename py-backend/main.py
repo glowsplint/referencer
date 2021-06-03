@@ -48,10 +48,6 @@ async def index(request: Request):
 async def index(request: Request):
     return templates.TemplateResponse(WORKSPACE_PAGE, {'request': request})
 
-@app.get('/space')
-async def index(request: Request):
-    return templates.TemplateResponse(WORKSPACE_PAGE, {'request': request})
-
 @app.get("/api/{query}")
 def get_passages(query: str):
     url = f"https://api.esv.org/v3/passage/text/?q={query}"
