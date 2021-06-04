@@ -12,7 +12,6 @@ import books from "./books";
 import clsx from "clsx";
 import { Scrollbars } from "react-custom-scrollbars";
 
-import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -401,9 +400,8 @@ const TextArea = React.memo(
 const HeaderLeft = React.memo(() => {
   return (
     <div className={styles.editor_header_left}>
-      <DesktopWindowsIcon />
       <div className={styles.header_left_text}>
-        <Typography variant="subtitle2">Your Workspace</Typography>
+        <Typography variant="subtitle2">Workspace</Typography>
       </div>
     </div>
   );
@@ -427,14 +425,37 @@ const MainRegion = React.memo(
     textHeaders,
     textBodies,
     isJustified,
+    isDarkMode,
   }: {
     textHeaders: string[];
     textBodies: string[][];
     isMultipleRowsLayout: boolean;
     isJustified: boolean;
+    isDarkMode: boolean;
   }) => {
     return (
-      <Scrollbars style={{ width: "100%", height: "100%" }} universal>
+      <Scrollbars
+        style={{ width: "100%", height: "100%" }}
+        universal
+        renderThumbVertical={({ style, ...props }) => (
+          <div
+            {...props}
+            style={
+              isDarkMode
+                ? {
+                    ...style,
+                    backgroundColor: "rgba(256, 256, 256, 0.2)",
+                    borderRadius: "inherit",
+                  }
+                : {
+                    ...style,
+                    backgroundColor: "rgba(0, 0, 0, 0.2)",
+                    borderRadius: "inherit",
+                  }
+            }
+          />
+        )}
+      >
         <div
           className={clsx(styles.editor_textareas, {
             [styles.row]: isMultipleRowsLayout,
@@ -464,6 +485,7 @@ export default React.memo(
     searchQuery,
     isMultipleRowsLayout,
     isJustified,
+    isDarkMode,
   }: {
     textHeaders: string[];
     textBodies: string[][];
@@ -475,6 +497,7 @@ export default React.memo(
     searchQuery: string;
     isMultipleRowsLayout: boolean;
     isJustified: boolean;
+    isDarkMode: boolean;
   }) => {
     return (
       <div className={styles.editor}>
@@ -488,6 +511,7 @@ export default React.memo(
           textHeaders={textHeaders}
           textBodies={textBodies}
           isJustified={isJustified}
+          isDarkMode={isDarkMode}
         />
         <SearchBar
           handleInputChange={handleInputChange}

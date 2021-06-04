@@ -11,6 +11,7 @@ import SettingsPane from "../../components/SettingsPane";
 import Editor from "../../components/Editor";
 
 export default function Workspace() {
+  const [displayName, setDisplayName] = useState<string>("userOne");
   const [people, setPeople] = useState<string[]>([]);
   const [texts, setTexts] = useState<{
     headers: string[];
@@ -171,6 +172,7 @@ export default function Workspace() {
             handleClose={handleSettingsTexts.close}
             handleCheckBoxToggle={handleSettingsTexts.checkBoxToggle}
             isSettingsOpen={settings.isSettingsOpen}
+            displayName={displayName}
           />
           <Editor
             textHeaders={displayedTextHeaders()}
@@ -180,6 +182,7 @@ export default function Workspace() {
             isMultipleRowsLayout={settings.isMultipleRowsLayout}
             searchQuery={searchQuery}
             isJustified={settings.isJustified}
+            isDarkMode={settings.isDarkMode}
           />
         </div>
       </ThemeProvider>

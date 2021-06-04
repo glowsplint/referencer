@@ -85,7 +85,7 @@
 }
 
 .highlighted {
-  background-color: rgb(170, 170, 49);
+  background-color: rgba(204, 204, 0, 0.658);
   text-decoration: underline;
 }
 
