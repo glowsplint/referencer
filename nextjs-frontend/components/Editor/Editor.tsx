@@ -107,7 +107,7 @@ const Highlightable = ({ word }: { word: string }) => {
   return (
     <span
       className={hoverClass}
-      onMouseOver={() =>
+      onMouseEnter={() =>
         setHoverClass(clsx(styles.highlightable, styles.highlighted))
       }
       onMouseLeave={() => setHoverClass(styles.highlightable)}
@@ -307,13 +307,12 @@ const TextArea = React.memo(
           } else if (item.match(regex.quotes)) {
             if (format[index - 1] === Format.VerseNumber) {
               format[index] = Format.StandardText;
-              brokenText[index] = addSpace(brokenText[index]);
             } else if (mainText[0].match(regex.isPsalm)) {
               format[index] = Format.StandardText;
-              brokenText[index] = addSpace(brokenText[index]);
             } else {
               format[index] = Format.Quotes;
             }
+            brokenText[index] = addSpace(brokenText[index]);
           } else if (item.match(regex.hasLineFeed)) {
             format[index] = Format.HasLineFeed;
           } else if (format[index - 1] === Format.StandardText) {
