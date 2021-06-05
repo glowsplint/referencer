@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../styles/ButtonPane.module.css";
+import styles from "./ButtonPane.module.css";
 import Fab from "@material-ui/core/Fab";
 import Tooltip from "@material-ui/core/Tooltip";
 import Paper from "@material-ui/core/Paper";

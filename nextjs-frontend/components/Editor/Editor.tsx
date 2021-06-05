@@ -6,9 +6,9 @@ import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import styles from "../styles/Editor.module.css";
-import { get } from "./utils";
-import books from "./books";
+import styles from "./Editor.module.css";
+import { get } from "../utils";
+import books from "../books";
 import clsx from "clsx";
 import { Scrollbars } from "react-custom-scrollbars";
 
