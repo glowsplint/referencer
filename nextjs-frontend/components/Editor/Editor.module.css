@@ -84,11 +84,6 @@
   text-align: center;
 }
 
-.highlighted {
-  background-color: rgba(204, 204, 0, 0.658);
-  text-decoration: underline;
-}
-
 .highlightable {
   line-height: 8mm;
 }

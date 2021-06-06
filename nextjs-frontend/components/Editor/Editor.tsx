@@ -96,7 +96,6 @@ const Italics = ({ word }: { word: string }) => {
 };
 
 const Highlightable = ({ word }: { word: string }) => {
-  const [hoverClass, setHoverClass] = useState(styles.highlightable);
   const item = (word: string) => {
     if (word === "Higgaion." || word === "Selah") {
       return <Italics word={word} />;
@@ -104,17 +103,7 @@ const Highlightable = ({ word }: { word: string }) => {
     return word;
   };
 
-  return (
-    <span
-      className={hoverClass}
-      onMouseEnter={() =>
-        setHoverClass(clsx(styles.highlightable, styles.highlighted))
-      }
-      onMouseLeave={() => setHoverClass(styles.highlightable)}
-    >
-      {item(word)}
-    </span>
-  );
+  return <span className={styles.highlightable}>{item(word)}</span>;
 };
 
 const InlineFootnote = ({ word }: { word: string }) => {

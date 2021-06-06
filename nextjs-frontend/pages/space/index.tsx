@@ -172,7 +172,6 @@ export default function Workspace() {
             handleClose={handleSettingsTexts.close}
             handleCheckBoxToggle={handleSettingsTexts.checkBoxToggle}
             isSettingsOpen={settings.isSettingsOpen}
-            displayName={displayName}
           />
           <Editor
             textHeaders={displayedTextHeaders()}

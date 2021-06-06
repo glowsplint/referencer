@@ -1,6 +1,7 @@
 .sidebar {
   display: flex;
   transition: width 0.3s, opacity 0.1s;
+  user-select: none;
 }
 
 .open {
@@ -68,6 +69,19 @@
 
 .texts_text {
   flex: 1;
+}
+
+.layer_items {
+  margin-left: 30px;
+}
+
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: greenyellow;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 .profile {

@@ -11,6 +11,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { LoginProvider, useLogin } from "../../contexts/Login";
 
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
@@ -21,6 +22,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CreateIcon from "@material-ui/icons/Create";
 import ShareIcon from "@material-ui/icons/Share";
+import { blue, green, orange, purple, yellow } from "@material-ui/core/colors";
 
 const useStyles = makeStyles({
   input: {
@@ -117,10 +119,19 @@ const TextItems = ({
 };
 
 const Header = () => {
+  const { spaceID } = useLogin();
+  const copyToClipboard = () => {
+    const el = document.createElement("textarea");
+    el.value = spaceID;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
+  };
   return (
     <div className={styles.top}>
-      <Button onClick={() => {}} size="small">
-        <span className={styles.top_spaceName}>space-1</span>{" "}
+      <Button onClick={copyToClipboard} size="small">
+        <span className={styles.top_spaceName}>{spaceID}</span>
         <span className={styles.top_icon}>
           <ShareIcon fontSize="small" />
         </span>
@@ -129,8 +140,26 @@ const Header = () => {
   );
 };
 
+const dotColours = [
+  orange[400],
+  yellow[500],
+  green[300],
+  blue[300],
+  purple[300],
+];
+
+const Dot = ({ colour }) => {
+  return <div className={styles.dot} style={{ backgroundColor: colour }}></div>;
+};
+
 const LayerItems = () => {
-  return <div></div>;
+  return (
+    <div className={styles.layer_items}>
+      {dotColours.map((item, index) => {
+        return <Dot colour={item} key={index} />;
+      })}
+    </div>
+  );
 };
 
 const MainRegion = ({
@@ -157,7 +186,8 @@ const MainRegion = ({
   );
 };
 
-const Profile = ({ displayName }: { displayName: string }) => {
+const Profile = () => {
+  const { displayName } = useLogin();
   return (
     <div className={styles.profile}>
       <FaceIcon fontSize="small" />{" "}
@@ -169,6 +199,10 @@ const Profile = ({ displayName }: { displayName: string }) => {
 
 const ChangeNameButton = () => {
   const [open, setOpen] = React.useState(false);
+  const login = useLogin();
+  const [currentDisplayName, setCurrentDisplayName] = React.useState(
+    login.displayName
+  );
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -179,7 +213,19 @@ const ChangeNameButton = () => {
   };
 
   const handleDone = () => {
+    login.setDisplayName(currentDisplayName);
     setOpen(false);
+  };
+
+  const onChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setCurrentDisplayName(event.target.value);
+  };
+
+  const handleChangeName = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleDone();
   };
 
   return (
@@ -194,21 +240,20 @@ const ChangeNameButton = () => {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">
-          Change your screen display name
-        </DialogTitle>
+        <DialogTitle id="form-dialog-title">Change display name</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Enter a new name for the current workspace.
-          </DialogContentText>
-          <TextField
-            variant="outlined"
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Display Name"
-            fullWidth
-          />
+          <DialogContentText>Enter a new name.</DialogContentText>
+          <form onSubmit={handleChangeName}>
+            <TextField
+              variant="outlined"
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Display Name"
+              fullWidth
+              onChange={onChange}
+            />
+          </form>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
@@ -227,31 +272,31 @@ export default React.memo(
     handleClose,
     handleCheckBoxToggle,
     isSettingsOpen,
-    displayName,
   }: {
     textHeaders: string[];
     handleClose: (key: number) => void;
     handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
     isSettingsOpen: boolean;
-    displayName: string;
   }) => {
     return (
-      <div
-        className={clsx(styles.sidebar, {
-          [styles.open]: isSettingsOpen,
-          [styles.closed]: !isSettingsOpen,
-        })}
-      >
-        <Paper className={styles.paper}>
-          <Header />
-          <MainRegion
-            textHeaders={textHeaders}
-            handleClose={handleClose}
-            handleCheckBoxToggle={handleCheckBoxToggle}
-          />
-          <Profile displayName={displayName} />
-        </Paper>
-      </div>
+      <LoginProvider>
+        <div
+          className={clsx(styles.sidebar, {
+            [styles.open]: isSettingsOpen,
+            [styles.closed]: !isSettingsOpen,
+          })}
+        >
+          <Paper className={styles.paper}>
+            <Header />
+            <MainRegion
+              textHeaders={textHeaders}
+              handleClose={handleClose}
+              handleCheckBoxToggle={handleCheckBoxToggle}
+            />
+            <Profile />
+          </Paper>
+        </div>
+      </LoginProvider>
     );
   }
 );
