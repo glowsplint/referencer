@@ -43,6 +43,15 @@ enum Format {
   Psalm426 = "Psalm426",
 }
 
+enum Highlight {
+  Orange = "Orange",
+  Yellow = "Yellow",
+  Green = "Green",
+  Blue = "Blue",
+  Purple = "Purple",
+  None = "None",
+}
+
 const SearchBar = ({
   handleInputChange,
   handleSubmit,
@@ -95,7 +104,13 @@ const Italics = ({ word }: { word: string }) => {
   return <i>{word}</i>;
 };
 
-const Highlightable = ({ word }: { word: string }) => {
+const Highlightable = ({
+  word,
+  highlight,
+}: {
+  word: string;
+  highlight: string;
+}) => {
   const item = (word: string) => {
     if (word === "Higgaion." || word === "Selah") {
       return <Italics word={word} />;
@@ -103,7 +118,26 @@ const Highlightable = ({ word }: { word: string }) => {
     return word;
   };
 
-  return <span className={styles.highlightable}>{item(word)}</span>;
+  const nullify = (word: string) => {
+    if (word === "") {
+      return null;
+    }
+    return (
+      <span
+        className={clsx(styles.highlightable, {
+          [styles.orange]: highlight === Highlight.Orange,
+          [styles.yellow]: highlight === Highlight.Yellow,
+          [styles.green]: highlight === Highlight.Green,
+          [styles.blue]: highlight === Highlight.Blue,
+          [styles.purple]: highlight === Highlight.Purple,
+        })}
+      >
+        {item(word)}
+      </span>
+    );
+  };
+
+  return nullify(word);
 };
 
 const InlineFootnote = ({ word }: { word: string }) => {
@@ -114,20 +148,18 @@ const InlineFootnote = ({ word }: { word: string }) => {
   );
 };
 
-const Decider = ({ word }: { word: string }) => {
+const Decider = ({ word, highlight }: { word: string; highlight: string }) => {
   const whitespaceIndex = word.search(/\S|$/);
   const indents = word.slice(0, whitespaceIndex);
   const characters = word.slice(whitespaceIndex);
   const logic = () => {
-    if (word.match(regex.whitespace)) {
-      return <Whitespace />;
-    } else if (word.match(regex.inlineFootnote)) {
+    if (word.match(regex.inlineFootnote)) {
       return <InlineFootnote word={word} />;
     }
     return (
       <>
         <Indent whitespace={indents} />
-        <Highlightable word={characters} />
+        <Highlightable word={characters} highlight={highlight} />
       </>
     );
   };
@@ -144,56 +176,67 @@ const Indent = ({ whitespace }: { whitespace: string }) => {
   );
 };
 
-const StandardText = ({ text }: { text: string }) => {
+const StandardText = ({
+  textArray,
+  highlight,
+}: {
+  textArray: string[];
+  highlight: string[];
+}) => {
   return (
     <>
-      {text
-        .split(regex.inlineFootnote)
-        .flatMap((a) => a.split(regex.whitespaceAfterWord))
-        .filter(Boolean)
-        .map((word, index) => (
-          <Decider word={word} key={index} />
-        ))}
+      {textArray.map((word, index) => (
+        <Decider word={word} key={index} highlight={highlight[index]} />
+      ))}
     </>
   );
 };
 
-const SectionHeader = ({ text }: { text: string }) => {
+const SectionHeader = ({
+  textArray,
+  highlight,
+}: {
+  textArray: string[];
+  highlight: string[];
+}) => {
   return (
     <div className={styles.section_header}>
       <b>
-        <StandardText text={text} />
+        <StandardText textArray={textArray} highlight={highlight} />
       </b>
     </div>
   );
 };
 
-const SpecialNote = ({ text }: { text: string }) => {
-  const [textInSquareBrackets, footnote] = text
-    .split(regex.specialNote)
-    .slice(1);
+const SpecialNote = ({
+  textArray,
+  highlight,
+}: {
+  textArray: string[];
+  highlight: string[];
+}) => {
+  const [textInSquareBrackets, footnote] = [
+    textArray.slice(0, textArray.length - 1),
+    textArray.slice(-1),
+  ];
   return (
     <div className={styles.special_note}>
-      <StandardText text={textInSquareBrackets} />
-      <InlineFootnote word={footnote} />
+      <StandardText textArray={textInSquareBrackets} highlight={highlight} />
+      <InlineFootnote word={footnote[0]} />
     </div>
   );
 };
 
 const ItalicsBlock = ({ text }: { text: string }) => {
   const textWithoutAsterisks = text.slice(1, text.length - 1);
-  return (
-    <i>
-      <StandardText text={textWithoutAsterisks} />
-    </i>
-  );
+  return <i>{textWithoutAsterisks}</i>;
 };
 
-const VerseNumber = ({ text }: { text: string }) => {
+const VerseNumber = ({ textArray }: { textArray: string[] }) => {
   return (
     <Typography variant="button">
       <b>
-        <sup>{text}</sup>
+        <sup>{textArray}</sup>
       </b>
     </Typography>
   );
@@ -201,26 +244,32 @@ const VerseNumber = ({ text }: { text: string }) => {
 
 const FootnoteText = ({ text }: { text: string }) => {
   return (
-    <div>
+    <div className={styles.footnote_text}>
       {text
         .split(regex.italics)
         .map((text, index) =>
           text.match(regex.italics) ? (
             <ItalicsBlock text={text} key={index} />
           ) : (
-            <StandardText text={text} key={index} />
+            text
           )
         )}
     </div>
   );
 };
 
-const Quotes = ({ text }: { text: string }) => {
+const Quotes = ({
+  textArray,
+  highlight,
+}: {
+  textArray: string[];
+  highlight: string[];
+}) => {
   return (
     <>
       <HasLineFeed />
       <HasLineFeed />
-      <StandardText text={text.slice(2)} />
+      <StandardText textArray={textArray.slice(4)} highlight={highlight} />
     </>
   );
 };
@@ -229,12 +278,18 @@ const HasLineFeed = () => {
   return <br />;
 };
 
-const Psalm426 = ({ text }: { text: string }) => {
+const Psalm426 = ({
+  textArray,
+  highlight,
+}: {
+  textArray: string[];
+  highlight: string[];
+}) => {
   return (
     <>
       <HasLineFeed />
       <HasLineFeed />
-      <StandardText text={text} />
+      <StandardText textArray={textArray} highlight={highlight} />
     </>
   );
 };
@@ -251,6 +306,7 @@ const TextArea = React.memo(
   }) => {
     const removeParagraphs = (text: string): string[] =>
       text.split(regex.paragraphs);
+
     const splitTexts = (text: string): [string[], string[]] => {
       const footnoteIndex = removeParagraphs(text).indexOf("Footnotes");
       let footnotes = [];
@@ -262,7 +318,7 @@ const TextArea = React.memo(
       return [mainText, footnotes];
     };
 
-    const getFormatMainText = (mainText: string[]) => {
+    const getFormatMainText = (mainText: string[]): [string[], string[][]] => {
       const brokenText = mainText.slice(1).flatMap((a) =>
         a
           .split(regex.verseNumberInText)
@@ -279,9 +335,7 @@ const TextArea = React.memo(
         }
         return brokenTextIndex;
       };
-      // Everything before the first verse number is found is a section header.
-      // After that, if you find text after text (as opposed to text after versenumber), then the 2nd text is also a section header.
-      // If it's not a special case, then it is just text.
+
       for (let [index, item] of brokenText.entries()) {
         if (item.match(regex.verseNumber)) {
           format[index] = Format.VerseNumber;
@@ -316,7 +370,15 @@ const TextArea = React.memo(
           }
         }
       }
-      return [format, brokenText];
+
+      return [
+        format,
+        brokenText.map((item, index) =>
+          item
+            .split(regex.inlineFootnote)
+            .flatMap((a) => a.split(regex.whitespaceAfterWord))
+        ),
+      ];
     };
 
     const getFormatFootnotes = (footnotes: string[]) => {
@@ -329,39 +391,57 @@ const TextArea = React.memo(
     const [formatMainText, brokenText] = getFormatMainText(mainText);
     const [formatFootnotes, brokenFootnotes] = getFormatFootnotes(footnotes);
 
-    const getComponent = (format: string, text: string, index: number) => {
+    const getComponent = (
+      format: string,
+      textArray: string[],
+      index: number,
+      highlights: string[][]
+    ) => {
       const componentMap = {
         [Format.SectionHeader]: React.createElement(SectionHeader, {
-          text: text,
+          textArray: textArray,
           key: index,
+          highlight: highlights[index],
         }),
         [Format.VerseNumber]: React.createElement(VerseNumber, {
-          text: text,
+          textArray: textArray,
           key: index,
         }),
         [Format.SpecialNote]: React.createElement(SpecialNote, {
-          text: text,
+          textArray: textArray,
           key: index,
+          highlight: highlights[index],
         }),
         [Format.Quotes]: React.createElement(Quotes, {
-          text: text,
+          textArray: textArray,
           key: index,
+          highlight: highlights[index],
         }),
         [Format.StandardText]: React.createElement(StandardText, {
-          text: text,
+          textArray: textArray,
           key: index,
+          highlight: highlights[index],
         }),
         [Format.HasLineFeed]: React.createElement(HasLineFeed, {
-          text: text,
+          textArray: textArray,
           key: index,
         }),
         [Format.Psalm426]: React.createElement(Psalm426, {
-          text: text,
+          textArray: textArray,
           key: index,
+          highlight: highlights[index],
         }),
       };
       return get(componentMap, format, componentMap[Format.StandardText]);
     };
+
+    let highlights = Array(brokenText.length);
+    for (let [index, value] of highlights.entries()) {
+      highlights[index] = Array(brokenText[index].length).fill(Highlight.None);
+    }
+    highlights[0][0] = Highlight.Yellow;
+    highlights[0][2] = Highlight.Green;
+
     return (
       <div
         className={clsx(styles.editor_textarea, {
@@ -370,12 +450,18 @@ const TextArea = React.memo(
         })}
       >
         <Typography variant="h6">{textName}</Typography>
-        {brokenText.map((text, index) =>
-          getComponent(formatMainText[index], text, index)
+        {brokenText.map((textArray, index) =>
+          getComponent(formatMainText[index], textArray, index, highlights)
         )}
         {brokenFootnotes.map((text, index) => {
           if (formatFootnotes[index] === Format.SectionHeader) {
-            return <SectionHeader text={text} key={index} />;
+            return (
+              <SectionHeader
+                textArray={text.split(regex.whitespaceAfterWord)}
+                key={index}
+                highlight={Array(brokenFootnotes.length).fill(Highlight.None)}
+              />
+            );
           } else {
             return <FootnoteText text={text} key={index} />;
           }

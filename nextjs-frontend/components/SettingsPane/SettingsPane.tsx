@@ -120,6 +120,8 @@ const TextItems = ({
 
 const Header = () => {
   const { spaceID } = useLogin();
+  const [displayedSpace, setDisplayedSpace] = useState(spaceID);
+
   const copyToClipboard = () => {
     const el = document.createElement("textarea");
     el.value = spaceID;
@@ -128,10 +130,22 @@ const Header = () => {
     document.execCommand("copy");
     document.body.removeChild(el);
   };
+  const onMouseDown = () => {
+    setDisplayedSpace("Copied!");
+  };
+  const onMouseUp = () => {
+    setDisplayedSpace(spaceID);
+  };
+
   return (
     <div className={styles.top}>
-      <Button onClick={copyToClipboard} size="small">
-        <span className={styles.top_spaceName}>{spaceID}</span>
+      <Button
+        onClick={copyToClipboard}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        size="small"
+      >
+        <span className={styles.top_spaceName}>{displayedSpace}</span>
         <span className={styles.top_icon}>
           <ShareIcon fontSize="small" />
         </span>
@@ -199,10 +213,9 @@ const Profile = () => {
 
 const ChangeNameButton = () => {
   const [open, setOpen] = React.useState(false);
-  const login = useLogin();
-  const [currentDisplayName, setCurrentDisplayName] = React.useState(
-    login.displayName
-  );
+  const { displayName, setDisplayName } = useLogin();
+  const [currentDisplayName, setCurrentDisplayName] =
+    React.useState(displayName);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -213,7 +226,7 @@ const ChangeNameButton = () => {
   };
 
   const handleDone = () => {
-    login.setDisplayName(currentDisplayName);
+    setDisplayName(currentDisplayName);
     setOpen(false);
   };
 

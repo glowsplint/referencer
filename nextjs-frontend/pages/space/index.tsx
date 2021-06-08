@@ -10,7 +10,7 @@ import ButtonPane from "../../components/ButtonPane";
 import SettingsPane from "../../components/SettingsPane";
 import Editor from "../../components/Editor";
 
-export default function Workspace() {
+export default function Space() {
   const [displayName, setDisplayName] = useState<string>("userOne");
   const [people, setPeople] = useState<string[]>([]);
   const [texts, setTexts] = useState<{
@@ -151,7 +151,7 @@ export default function Workspace() {
   return (
     <div>
       <Head>
-        <title>space-1</title>
+        <title>Referencer</title>
         <meta name="description" content="Space" />
         <link rel="icon" href="/public/favicon.ico" />
       </Head>

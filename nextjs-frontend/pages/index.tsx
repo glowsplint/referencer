@@ -86,7 +86,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <LoginProvider>
       <Head>
         <title>Referencer</title>
         <meta name="description" content="Referencer" />
@@ -95,64 +95,62 @@ export default function Home() {
 
       <main className={styles.main}>
         <img src="/public/logo.png" height="125" width="475" alt="Logo" />
-        <LoginProvider>
-          <form className={styles.form}>
-            <span className={styles.row}>
-              <InputField
-                name="displayName"
-                label="Display Name"
-                margin="none"
-                variant="outlined"
-                size="small"
-                prependIcon={<FaceIcon />}
-                handleChange={handleInputChange}
-                error={displayNameError}
-                helperText={
-                  displayNameError ? "You must provide a display name." : ""
-                }
-                autoFocus
-                required
-              />
-              <span className={styles.button}>
-                <Button
-                  variant="contained"
-                  size="medium"
-                  color="secondary"
-                  startIcon={<CreateIcon />}
-                  onClick={handleCreate}
-                >
-                  Create
-                </Button>
-              </span>
+        <form className={styles.form}>
+          <span className={styles.row}>
+            <InputField
+              name="displayName"
+              label="Display Name"
+              margin="none"
+              variant="outlined"
+              size="small"
+              prependIcon={<FaceIcon />}
+              handleChange={handleInputChange}
+              error={displayNameError}
+              helperText={
+                displayNameError ? "You must provide a display name." : ""
+              }
+              autoFocus
+              required
+            />
+            <span className={styles.button}>
+              <Button
+                variant="contained"
+                size="medium"
+                color="secondary"
+                startIcon={<CreateIcon />}
+                onClick={handleCreate}
+              >
+                Create
+              </Button>
             </span>
-            <span className={styles.row}>
-              <InputField
-                name="spaceID"
-                label="Enter a code or link"
-                margin="none"
-                variant="outlined"
-                size="small"
-                prependIcon={<KeyboardIcon />}
-                handleChange={handleInputChange}
-                error={spaceIDError}
-                helperText={
-                  spaceIDError ? "Please provide a valid code or link." : ""
-                }
-              />
-              <span className={styles.button}>
-                <Button
-                  variant="contained"
-                  size="medium"
-                  startIcon={<InputIcon />}
-                  onClick={handleJoin}
-                >
-                  Join
-                </Button>
-              </span>
+          </span>
+          <span className={styles.row}>
+            <InputField
+              name="spaceID"
+              label="Enter a code or link"
+              margin="none"
+              variant="outlined"
+              size="small"
+              prependIcon={<KeyboardIcon />}
+              handleChange={handleInputChange}
+              error={spaceIDError}
+              helperText={
+                spaceIDError ? "Please provide a valid code or link." : ""
+              }
+            />
+            <span className={styles.button}>
+              <Button
+                variant="contained"
+                size="medium"
+                startIcon={<InputIcon />}
+                onClick={handleJoin}
+              >
+                Join
+              </Button>
             </span>
-          </form>
-        </LoginProvider>
+          </span>
+        </form>
       </main>
-    </div>
+    </LoginProvider>
   );
 }

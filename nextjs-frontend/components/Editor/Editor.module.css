@@ -88,6 +88,26 @@
   line-height: 8mm;
 }
 
+.orange {
+  background-color: #ffa726;
+}
+
+.yellow {
+  background-color: #ffeb3b;
+}
+
+.green {
+  background-color: #81c784;
+}
+
+.blue {
+  background-color: #64b5f6;
+}
+
+.purple {
+  background-color: #ba68c8;
+}
+
 .span {
   white-space: pre-wrap;
 }
@@ -95,4 +115,10 @@
 .superscript {
   vertical-align: super;
   font-size: 75%;
+}
+
+.footnote_text {
+  padding-left: 2em;
+  text-indent: -2em;
+  margin-bottom: 0.5em;
 }
