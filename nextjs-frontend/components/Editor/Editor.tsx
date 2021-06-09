@@ -11,6 +11,7 @@ import { get } from "../utils";
 import books from "../books";
 import clsx from "clsx";
 import { Scrollbars } from "react-custom-scrollbars";
+import { Highlight, Format } from "../../enums/enums";
 
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
@@ -32,27 +33,6 @@ const regex = {
   whitespaceAfterWord: /([ ])/,
   isPsalm: /^(Psalm)/,
 };
-
-enum Format {
-  SectionHeader = "SectionHeader",
-  VerseNumber = "VerseNumber",
-  StandardText = "StandardText",
-  Quotes = "Quotes",
-  SpecialNote = "SpecialNote",
-  HasLineFeed = "HasLineFeed",
-  FootnoteText = "FootnoteText",
-  Psalm426 = "Psalm426",
-  hasTripleLineFeedAtEnd = "hasTripleLineFeedAtEnd",
-}
-
-enum Highlight {
-  Orange = "Orange",
-  Yellow = "Yellow",
-  Green = "Green",
-  Blue = "Blue",
-  Purple = "Purple",
-  None = "None",
-}
 
 const SearchBar = ({
   handleInputChange,
@@ -102,8 +82,8 @@ const Italics = ({ word }: { word: string }) => {
   return <i>{word}</i>;
 };
 
-const Highlightable = ({ word }: { word: string }) => {
-  const item = (word: string) => {
+const Word = ({ word }: { word: string }) => {
+  const italicise = (word: string) => {
     if (word === "Higgaion." || word === "Selah") {
       return <Italics word={word} />;
     }
@@ -115,9 +95,7 @@ const Highlightable = ({ word }: { word: string }) => {
       return null;
     }
     return (
-      <span className={clsx(styles.highlightable, styles.span)}>
-        {item(word)}
-      </span>
+      <span className={clsx(styles.word, styles.span)}>{italicise(word)}</span>
     );
   };
 
@@ -132,24 +110,18 @@ const InlineFootnote = ({ text }: { text: string }) => {
   );
 };
 
-const Decider = ({ text }: { text: string }) => {
-  const charArray = text.split(regex.inlineFootnote);
-
-  const logic = (text: string, index: number) => {
-    if (text.match(regex.inlineFootnote)) {
-      return <InlineFootnote text={text} key={index} />;
-    }
-    return (
-      <>
-        <Highlightable word={text} key={index} />
-      </>
-    );
-  };
-  return <>{charArray.map((text, index) => logic(text, index))}</>;
-};
-
 const StandardText = ({ text }: { text: string }) => {
-  return <>{<Decider text={text} />}</>;
+  const charArray = text.split(regex.inlineFootnote);
+  return (
+    <>
+      {charArray.map((text, index) => {
+        if (text.match(regex.inlineFootnote)) {
+          return <InlineFootnote text={text} key={index} />;
+        }
+        return <Word word={text} key={index} />;
+      })}
+    </>
+  );
 };
 
 const SectionHeader = ({ text }: { text: string }) => {
@@ -207,19 +179,13 @@ const FootnoteText = ({ text }: { text: string }) => {
 const Quotes = ({ text }: { text: string }) => {
   return (
     <>
-      <ParagraphSpacer text={""} />
+      <ParagraphSpacer />
       <StandardText text={text.slice(4)} />
     </>
   );
 };
 
-const ParagraphSpacer = ({ text }: { text: string }) => {
-  return (
-    <>
-      <SectionHeader text={""} />
-    </>
-  );
-};
+const ParagraphSpacer = () => <SectionHeader text="" />;
 
 const HasLineFeed = () => {
   return <br />;
@@ -228,7 +194,7 @@ const HasLineFeed = () => {
 const Psalm426 = ({ text }: { text: string }) => {
   return (
     <>
-      <ParagraphSpacer text={""} />
+      <ParagraphSpacer />
       <StandardText text={text} />
     </>
   );
@@ -263,8 +229,8 @@ const TextArea = React.memo(
         a
           .split(regex.verseNumberInText)
           .flatMap((b) => b.split(regex.specialNoteInText))
-          .flatMap((d) => d.split(regex.hasTripleLineFeed))
-          .flatMap((f) => f.split(regex.hasTripleLineFeedAtEnd))
+          .flatMap((c) => c.split(regex.hasTripleLineFeed))
+          .flatMap((d) => d.split(regex.hasTripleLineFeedAtEnd))
       );
       let format: string[] = [];
       let firstVerseNumberFound: boolean = false;
@@ -297,7 +263,7 @@ const TextArea = React.memo(
             }
             brokenText[index] = addSpace(brokenText[index]);
           } else if (item.match(regex.hasTripleLineFeedAtEnd)) {
-            format[index] = Format.hasTripleLineFeedAtEnd;
+            format[index] = Format.HasTripleLineFeedAtEnd;
           } else if (item.match(regex.hasLineFeed)) {
             format[index] = Format.HasLineFeed;
           } else if (format[index - 1] === Format.StandardText) {
@@ -352,10 +318,7 @@ const TextArea = React.memo(
           text: text,
           key: index,
         }),
-        [Format.hasTripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
-          text: text,
-          key: index,
-        }),
+        [Format.HasTripleLineFeedAtEnd]: React.createElement(ParagraphSpacer),
         [Format.Psalm426]: React.createElement(Psalm426, {
           text: text,
           key: index,

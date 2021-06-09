@@ -11,6 +11,7 @@
   align-items: center;
   color: gray;
   border-bottom: 3px solid #76777a;
+  user-select: none;
 }
 
 .editor_header_left {
@@ -55,7 +56,6 @@
   flex: 1;
   padding: 10px;
   margin: 10px;
-  /* user-select: none; */
 }
 
 .justify {
@@ -84,8 +84,8 @@
   text-align: center;
 }
 
-.highlightable {
-  line-height: 8mm;
+.word {
+  line-height: 2.2em;
 }
 
 .orange {

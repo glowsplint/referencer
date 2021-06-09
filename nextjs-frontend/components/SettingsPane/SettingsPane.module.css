@@ -82,6 +82,7 @@
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
+  cursor: pointer;
 }
 
 .profile {

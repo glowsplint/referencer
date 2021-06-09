@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 
-const Login = React.createContext({
+const LoginContext = React.createContext({
   displayName: "",
   spaceID: "",
   setDisplayName: (_: string) => {},
@@ -17,9 +17,13 @@ export const LoginProvider = ({ children }) => {
     setDisplayName: setDisplayName,
   });
 
-  return <Login.Provider value={loginDetails}>{children}</Login.Provider>;
+  return (
+    <LoginContext.Provider value={loginDetails}>
+      {children}
+    </LoginContext.Provider>
+  );
 };
 
 export const useLogin = () => {
-  return React.useContext(Login);
+  return React.useContext(LoginContext);
 };

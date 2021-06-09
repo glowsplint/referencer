@@ -163,7 +163,15 @@ const dotColours = [
 ];
 
 const Dot = ({ colour }) => {
-  return <div className={styles.dot} style={{ backgroundColor: colour }}></div>;
+  return (
+    <button
+      className={styles.dot}
+      onClick={() => {
+        console.log(window.getSelection());
+      }}
+      style={{ backgroundColor: colour }}
+    ></button>
+  );
 };
 
 const LayerItems = () => {
