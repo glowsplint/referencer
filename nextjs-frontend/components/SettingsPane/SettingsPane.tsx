@@ -11,7 +11,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { LoginProvider, useLogin } from "../../contexts/Login";
+import { useLogin } from "../../contexts/Login";
+import { useTexts } from "../../contexts/Texts";
 
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
@@ -34,23 +35,22 @@ const useStyles = makeStyles({
 const Checkbox = ({
   handleCheckBoxToggle,
   textHeader,
+  id,
 }: {
   handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  id: number;
   textHeader: string;
 }) => {
-  const classes = useStyles();
-  const [checked, setChecked] = useState(true);
-  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleCheckBoxToggle(event);
-    setChecked(!checked);
-  };
+  const { isDisplayed } = useTexts().texts;
+  const checked = isDisplayed[id];
+  const root = { root: useStyles().input };
   return (
     <MUICheckBox
       color="primary"
-      classes={{ root: classes.input }}
+      classes={root}
       icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
       checkedIcon={<CheckBoxIcon fontSize="small" />}
-      onChange={handleToggle}
+      onChange={handleCheckBoxToggle}
       name={textHeader}
       checked={checked}
     />
@@ -84,6 +84,7 @@ const TextItem = ({
       <Checkbox
         handleCheckBoxToggle={handleCheckBoxToggle}
         textHeader={textHeader}
+        id={id}
       />
       <div className={styles.texts_text}>
         <Typography variant="overline" display="block">
@@ -163,13 +164,22 @@ const dotColours = [
 ];
 
 const Dot = ({ colour }) => {
+  const { texts, setTexts } = useTexts();
+  const colourStyle = { backgroundColor: colour };
+  // We determine which sections of the text to re-render with highlights here.
+  // 1. Create a baseline to account for selection in the opposite direction
+  // 2. Identify the splits for both the anchor and focus components
+  // 3. If the anchor and focus components are the same component, then we only need to re-render one of the components
+  // 4. If they are not, then we have to render the following groups of components: [Start, Middle (can be more than 1 component), End]
+  // Clicking this button will update the Highlight Context which MainRegion is dependent on (need to configure this), triggering a re-render
+  // First we need to determine how the render side will take in props
   return (
     <button
       className={styles.dot}
       onClick={() => {
         console.log(window.getSelection());
       }}
-      style={{ backgroundColor: colour }}
+      style={colourStyle}
     ></button>
   );
 };
@@ -287,37 +297,32 @@ const ChangeNameButton = () => {
   );
 };
 
-export default React.memo(
-  ({
-    textHeaders,
-    handleClose,
-    handleCheckBoxToggle,
-    isSettingsOpen,
-  }: {
-    textHeaders: string[];
-    handleClose: (key: number) => void;
-    handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    isSettingsOpen: boolean;
-  }) => {
-    return (
-      <LoginProvider>
-        <div
-          className={clsx(styles.sidebar, {
-            [styles.open]: isSettingsOpen,
-            [styles.closed]: !isSettingsOpen,
-          })}
-        >
-          <Paper className={styles.paper}>
-            <Header />
-            <MainRegion
-              textHeaders={textHeaders}
-              handleClose={handleClose}
-              handleCheckBoxToggle={handleCheckBoxToggle}
-            />
-            <Profile />
-          </Paper>
-        </div>
-      </LoginProvider>
-    );
-  }
-);
+export default function Settings({
+  handleClose,
+  handleCheckBoxToggle,
+  isSettingsOpen,
+}: {
+  handleClose: (key: number) => void;
+  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isSettingsOpen: boolean;
+}) {
+  const textHeaders = useTexts().texts.headers;
+  return (
+    <div
+      className={clsx(styles.sidebar, {
+        [styles.open]: isSettingsOpen,
+        [styles.closed]: !isSettingsOpen,
+      })}
+    >
+      <Paper className={styles.paper}>
+        <Header />
+        <MainRegion
+          textHeaders={textHeaders}
+          handleClose={handleClose}
+          handleCheckBoxToggle={handleCheckBoxToggle}
+        />
+        <Profile />
+      </Paper>
+    </div>
+  );
+}

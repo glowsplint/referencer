@@ -12,6 +12,7 @@ import books from "../books";
 import clsx from "clsx";
 import { Scrollbars } from "react-custom-scrollbars";
 import { Highlight, Format } from "../../enums/enums";
+import { useTexts } from "../../contexts/Texts";
 
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
@@ -20,7 +21,6 @@ const regex = {
   footnoteInText: /(?<!])(\(\d+\))/,
   specialNoteInText: /^(\[.*?\]\(\d+\))$/,
   verseNumberInText: /[ ]*\[(\d+)\]/,
-  hasLineFeed: /(^\n[ ]*$)/,
   hasTripleLineFeed: /(?:\n[ ]{4}){3}/,
   hasTripleLineFeedAtEnd: /((?:\n[ ]{4}){2}\n)/,
   inlineFootnote: /(\(\d+\))/,
@@ -83,6 +83,8 @@ const Italics = ({ word }: { word: string }) => {
 };
 
 const Word = ({ word }: { word: string }) => {
+  // Italicises the word if it is one of the special words from Psalms
+  // If not, simply returns the original word
   const italicise = (word: string) => {
     if (word === "Higgaion." || word === "Selah") {
       return <Italics word={word} />;
@@ -90,6 +92,7 @@ const Word = ({ word }: { word: string }) => {
     return word;
   };
 
+  // Will not render a component if empty string
   const nullify = (word: string) => {
     if (word === "") {
       return null;
@@ -111,6 +114,11 @@ const InlineFootnote = ({ text }: { text: string }) => {
 };
 
 const StandardText = ({ text }: { text: string }) => {
+  // Splits the text into several chunks comprising:
+  // 1. Normal text to be rendered
+  // 2. Inline footnotes to be italicised
+  // Dispatches to their respective component for rendering
+  console.log(text);
   const charArray = text.split(regex.inlineFootnote);
   return (
     <>
@@ -135,6 +143,7 @@ const SectionHeader = ({ text }: { text: string }) => {
 };
 
 const SpecialNote = ({ text }: { text: string }) => {
+  // Matches special notes in John 7 and Mark 16
   const textArray = text.split(regex.inlineFootnote);
   const [textInSquareBrackets, footnote] = [textArray[0], textArray[1]];
   return (
@@ -146,6 +155,7 @@ const SpecialNote = ({ text }: { text: string }) => {
 };
 
 const ItalicsBlock = ({ text }: { text: string }) => {
+  // Removes the asterisks on the ends before rendering
   const textWithoutAsterisks = text.slice(1, text.length - 1);
   return <i>{textWithoutAsterisks}</i>;
 };
@@ -161,6 +171,10 @@ const VerseNumber = ({ text }: { text: string }) => {
 };
 
 const FootnoteText = ({ text }: { text: string }) => {
+  // Splits the text into several chunks comprising:
+  // 1. Words to be italicised
+  // 2. Words in standard formatting
+  // Dispatches to their respective component for rendering
   return (
     <div className={styles.footnote_text}>
       {text
@@ -177,6 +191,7 @@ const FootnoteText = ({ text }: { text: string }) => {
 };
 
 const Quotes = ({ text }: { text: string }) => {
+  // Adds a new paragraph before the start of a quote
   return (
     <>
       <ParagraphSpacer />
@@ -187,11 +202,10 @@ const Quotes = ({ text }: { text: string }) => {
 
 const ParagraphSpacer = () => <SectionHeader text="" />;
 
-const HasLineFeed = () => {
-  return <br />;
-};
-
 const Psalm426 = ({ text }: { text: string }) => {
+  // Special handling for Psalm 42:6
+  // The parsing engine assumes that text appearing after text should be formatted as a SectionHeader
+  // This is a special case hardcoded as an exception.
   return (
     <>
       <ParagraphSpacer />
@@ -207,24 +221,26 @@ const TextArea = React.memo(
     isJustified,
   }: {
     textName: string;
-    textBody: string[];
+    textBody: string;
     isJustified: boolean;
   }) => {
-    const removeParagraphs = (text: string): string[] =>
+    const splitOnParagraphs = (text: string): string[] =>
       text.split(regex.paragraphs);
 
     const splitTexts = (text: string): [string[], string[]] => {
-      const footnoteIndex = removeParagraphs(text).indexOf("Footnotes");
+      // Splits the original string into the main body of text, and also footnotes
+      const footnoteIndex = splitOnParagraphs(text).indexOf("Footnotes");
       let footnotes = [];
-      let mainText = removeParagraphs(text);
+      let mainText = splitOnParagraphs(text);
       if (footnoteIndex !== -1) {
-        footnotes = removeParagraphs(text).slice(footnoteIndex);
-        mainText = removeParagraphs(text).slice(0, footnoteIndex);
+        footnotes = splitOnParagraphs(text).slice(footnoteIndex);
+        mainText = splitOnParagraphs(text).slice(0, footnoteIndex);
       }
       return [mainText, footnotes];
     };
 
     const getFormatMainText = (mainText: string[]): [string[], string[]] => {
+      // The primary parsing engine that creates an array that contains the formatting information for each block of text
       const brokenText = mainText.slice(1).flatMap((a) =>
         a
           .split(regex.verseNumberInText)
@@ -242,6 +258,7 @@ const TextArea = React.memo(
         return brokenTextIndex;
       };
 
+      // Spaces are added at the end of strings (via addSpace) to have proper spacing around verse numbers
       for (let [index, item] of brokenText.entries()) {
         if (item.match(regex.verseNumber)) {
           format[index] = Format.VerseNumber;
@@ -249,23 +266,29 @@ const TextArea = React.memo(
             firstVerseNumberFound = true;
           }
         } else {
+          // Everything before the first verse number is found is a SectionHeader
+          // firstVerseNumberFound is a flag to track that
           if (!firstVerseNumberFound) {
             format[index] = Format.SectionHeader;
           } else if (item.match(regex.specialNoteInText)) {
             format[index] = Format.SpecialNote;
           } else if (item.match(regex.quotes)) {
-            if (format[index - 1] === Format.VerseNumber) {
-              format[index] = Format.StandardText;
-            } else if (mainText[0].match(regex.isPsalm)) {
+            // If the quote (") begins at the start of the verse, format as StandardText
+            // or, if the quote (") is in Psalms, format as StandardText
+            if (
+              format[index - 1] === Format.VerseNumber ||
+              mainText[0].match(regex.isPsalm)
+            ) {
               format[index] = Format.StandardText;
             } else {
               format[index] = Format.Quotes;
             }
             brokenText[index] = addSpace(brokenText[index]);
+            // Triple Line Feeds at the end of the string are parsed as new paragraphs
           } else if (item.match(regex.hasTripleLineFeedAtEnd)) {
             format[index] = Format.HasTripleLineFeedAtEnd;
-          } else if (item.match(regex.hasLineFeed)) {
-            format[index] = Format.HasLineFeed;
+            // If the previous item in the array is StandardText, this one should be a SectionHeader
+            // if it is not Psalm 42:6 (exception to the rule)
           } else if (format[index - 1] === Format.StandardText) {
             if (item.endsWith("\n")) {
               format[index] = Format.Psalm426;
@@ -278,17 +301,17 @@ const TextArea = React.memo(
           }
         }
       }
-
       return [format, brokenText];
     };
 
     const getFormatFootnotes = (footnotes: string[]) => {
+      // The secondary parsing engine (for footnotes only) that creates an array with formatting information
       let format: string[] = Array(footnotes.length).fill(Format.FootnoteText);
       format[0] = Format.SectionHeader;
       return [format, footnotes];
     };
 
-    let [mainText, footnotes] = splitTexts(textBody[0]);
+    let [mainText, footnotes] = splitTexts(textBody);
     const [formatMainText, brokenText] = getFormatMainText(mainText);
     const [formatFootnotes, brokenFootnotes] = getFormatFootnotes(footnotes);
 
@@ -314,16 +337,16 @@ const TextArea = React.memo(
           text: text,
           key: index,
         }),
-        [Format.HasLineFeed]: React.createElement(HasLineFeed, {
-          text: text,
+        [Format.HasTripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
           key: index,
         }),
-        [Format.HasTripleLineFeedAtEnd]: React.createElement(ParagraphSpacer),
         [Format.Psalm426]: React.createElement(Psalm426, {
           text: text,
           key: index,
         }),
       };
+
+      // Defaults to StandardText if no matching format found from componentMap
       return get(componentMap, format, componentMap[Format.StandardText]);
     };
 
@@ -372,67 +395,64 @@ const HeaderRight = React.memo(() => {
   );
 });
 
-const MainRegion = React.memo(
-  ({
-    isMultipleRowsLayout,
-    textHeaders,
-    textBodies,
-    isJustified,
-    isDarkMode,
-  }: {
-    textHeaders: string[];
-    textBodies: string[][];
-    isMultipleRowsLayout: boolean;
-    isJustified: boolean;
-    isDarkMode: boolean;
-  }) => {
-    return (
-      <Scrollbars
-        style={{ width: "100%", height: "100%" }}
-        universal
-        renderThumbVertical={({ style, ...props }) => (
-          <div
-            {...props}
-            style={
-              isDarkMode
-                ? {
-                    ...style,
-                    backgroundColor: "rgba(256, 256, 256, 0.2)",
-                    borderRadius: "inherit",
-                  }
-                : {
-                    ...style,
-                    backgroundColor: "rgba(0, 0, 0, 0.2)",
-                    borderRadius: "inherit",
-                  }
-            }
-          />
-        )}
+const MainRegion = ({
+  isMultipleRowsLayout,
+  isJustified,
+  isDarkMode,
+}: {
+  isMultipleRowsLayout: boolean;
+  isJustified: boolean;
+  isDarkMode: boolean;
+}) => {
+  const { headers, bodies } = useTexts().displayedTexts;
+
+  const dark = (style: any) => {
+    return {
+      ...style,
+      backgroundColor: "rgba(256, 256, 256, 0.2)",
+      borderRadius: "inherit",
+    };
+  };
+
+  const light = (style: any) => {
+    return {
+      ...style,
+      backgroundColor: "rgba(0, 0, 0, 0.2)",
+      borderRadius: "inherit",
+    };
+  };
+
+  const maxWidth = { width: "100%", height: "100%" };
+
+  return (
+    <Scrollbars
+      style={maxWidth}
+      universal
+      renderThumbVertical={({ style, ...props }) => (
+        <div {...props} style={isDarkMode ? dark(style) : light(style)} />
+      )}
+    >
+      <div
+        className={clsx(styles.editor_textareas, {
+          [styles.row]: isMultipleRowsLayout,
+          [styles.col]: !isMultipleRowsLayout,
+        })}
       >
-        <div
-          className={clsx(styles.editor_textareas, {
-            [styles.row]: isMultipleRowsLayout,
-            [styles.col]: !isMultipleRowsLayout,
-          })}
-        >
-          {textHeaders.map((textHeader: string, index: number) => (
-            <TextArea
-              textName={textHeader}
-              textBody={textBodies[index]}
-              isJustified={isJustified}
-              key={index}
-            />
-          ))}
-        </div>
-      </Scrollbars>
-    );
-  }
-);
+        {headers.map((textHeader: string, index: number) => (
+          <TextArea
+            textName={textHeader}
+            textBody={bodies[index]}
+            isJustified={isJustified}
+            key={index}
+          />
+        ))}
+      </div>
+    </Scrollbars>
+  );
+};
 
 export default React.memo(
   ({
-    textHeaders,
-    textBodies,
     handleInputChange,
     handleSubmit,
     searchQuery,
@@ -440,8 +460,6 @@ export default React.memo(
     isJustified,
     isDarkMode,
   }: {
-    textHeaders: string[];
-    textBodies: string[][];
     handleInputChange: (
       _event: React.ChangeEvent<HTMLInputElement>,
       newValue: string
@@ -461,8 +479,6 @@ export default React.memo(
 
         <MainRegion
           isMultipleRowsLayout={isMultipleRowsLayout}
-          textHeaders={textHeaders}
-          textBodies={textBodies}
           isJustified={isJustified}
           isDarkMode={isDarkMode}
         />

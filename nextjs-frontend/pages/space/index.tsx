@@ -9,20 +9,11 @@ import { toTitleCase } from "../../components/utils";
 import ButtonPane from "../../components/ButtonPane";
 import SettingsPane from "../../components/SettingsPane";
 import Editor from "../../components/Editor";
+import { LoginProvider } from "../../contexts/Login";
+import { TextsProvider, useTexts } from "../../contexts/Texts";
 
-export default function Space() {
-  const [displayName, setDisplayName] = useState<string>("userOne");
-  const [people, setPeople] = useState<string[]>([]);
-  const [texts, setTexts] = useState<{
-    headers: string[];
-    bodies: string[][];
-    isDisplayed: boolean[];
-  }>({
-    headers: [],
-    bodies: [],
-    isDisplayed: [],
-  });
-  const [layers, setLayers] = useState<string[]>([]);
+export function Space() {
+  const { texts, setTexts } = useTexts();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [settings, setSettings] = useState({
@@ -32,21 +23,6 @@ export default function Space() {
     isMultipleRowsLayout: true,
     isJustified: true,
   });
-
-  const displayedText = (textComponent: string[] | string[][]) => {
-    const indices: number[] = texts.isDisplayed.flatMap((bool, index) =>
-      bool ? index : []
-    );
-
-    let displayedText = [];
-    for (let item of indices) {
-      displayedText.push(textComponent[item]);
-    }
-    return displayedText;
-  };
-
-  const displayedTextHeaders = () => displayedText(texts.headers);
-  const displayedTextBodies = () => displayedText(texts.bodies);
 
   const toggle = React.useMemo(
     () => ({
@@ -100,7 +76,7 @@ export default function Space() {
           const payload = await getText(toTitleCase(searchQuery));
           setTexts({
             headers: [...texts.headers, payload.query + " ESV"],
-            bodies: [...texts.bodies, payload.passages],
+            bodies: [...texts.bodies, payload.passages[0]],
             isDisplayed: [...texts.isDisplayed, true],
           });
         }
@@ -168,14 +144,11 @@ export default function Space() {
             toggleJustify={toggle.justify}
           />
           <SettingsPane
-            textHeaders={texts.headers}
             handleClose={handleSettingsTexts.close}
             handleCheckBoxToggle={handleSettingsTexts.checkBoxToggle}
             isSettingsOpen={settings.isSettingsOpen}
           />
           <Editor
-            textHeaders={displayedTextHeaders()}
-            textBodies={displayedTextBodies()}
             handleInputChange={handleSearch.inputChange}
             handleSubmit={handleSearch.submit}
             isMultipleRowsLayout={settings.isMultipleRowsLayout}
@@ -186,5 +159,15 @@ export default function Space() {
         </div>
       </ThemeProvider>
     </div>
+  );
+}
+
+export default function Index() {
+  return (
+    <TextsProvider>
+      <LoginProvider>
+        <Space />
+      </LoginProvider>
+    </TextsProvider>
   );
 }

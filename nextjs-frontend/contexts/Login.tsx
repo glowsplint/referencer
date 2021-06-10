@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 
-const LoginContext = React.createContext({
-  displayName: "",
-  spaceID: "",
-  setDisplayName: (_: string) => {},
-});
+const LoginContext = React.createContext<Partial<Login>>({});
+
+type Login = {
+  displayName: string;
+  spaceID: string;
+  setDisplayName: (newDisplayName: string) => void;
+};
 
 export const LoginProvider = ({ children }) => {
-  const setDisplayName = (newDisplayName: string) => {
-    setLoginDetails({ ...loginDetails, displayName: newDisplayName });
-  };
-
   const [loginDetails, setLoginDetails] = useState({
     displayName: "user-1",
     spaceID: "space-1",
-    setDisplayName: setDisplayName,
+    setDisplayName: (newDisplayName: string) => {
+      setLoginDetails({ ...loginDetails, displayName: newDisplayName });
+    },
   });
 
   return (

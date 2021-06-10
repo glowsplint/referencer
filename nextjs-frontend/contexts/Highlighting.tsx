@@ -1,24 +1,21 @@
 import React, { useState } from "react";
 import { Highlight } from "../enums/enums";
 
-const HighlightingContext = React.createContext({
-  highlightSelections: {},
-  addHighlight: (colour: string, selection: Selection[]) => {},
-});
+const HighlightingContext = React.createContext({});
+
+type HighlightSelection = {
+  [key in Highlight]: Selection[];
+};
 
 export const HighlightProvider = ({ children }) => {
-  const addHighlight = (
-    colour: Highlight,
-    newHighlightSelection: Selection[]
-  ) => {
-    setHighlights({ ...highlights });
-  };
-
-  const removeHighlight = () => {};
-
   const [highlights, setHighlights] = useState({
     highlightSelections: {},
-    addHighlight: addHighlight,
+    setHighlightSelections: (newHighlightSelection: HighlightSelection) => {
+      setHighlights({
+        highlightSelections: newHighlightSelection,
+        setHighlightSelections: highlights.setHighlightSelections,
+      });
+    },
   });
 
   return (

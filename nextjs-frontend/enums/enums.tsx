@@ -13,7 +13,6 @@ export enum Format {
   StandardText = "StandardText",
   Quotes = "Quotes",
   SpecialNote = "SpecialNote",
-  HasLineFeed = "HasLineFeed",
   FootnoteText = "FootnoteText",
   Psalm426 = "Psalm426",
   HasTripleLineFeedAtEnd = "HasTripleLineFeedAtEnd",
