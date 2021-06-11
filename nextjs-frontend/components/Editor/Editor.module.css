@@ -84,31 +84,8 @@
   text-align: center;
 }
 
-.word {
-  line-height: 2.2em;
-}
-
-.orange {
-  background-color: #ffa726;
-}
-
-.yellow {
-  background-color: #ffeb3b;
-}
-
-.green {
-  background-color: #81c784;
-}
-
-.blue {
-  background-color: #64b5f6;
-}
-
-.purple {
-  background-color: #ba68c8;
-}
-
 .span {
+  line-height: 2.2em;
   white-space: pre-wrap;
 }
 
@@ -121,4 +98,8 @@
   padding-left: 2em;
   text-indent: -2em;
   margin-bottom: 0.5em;
+}
+
+.verseNumber {
+  user-select: none;
 }

@@ -13,6 +13,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { useLogin } from "../../contexts/Login";
 import { useTexts } from "../../contexts/Texts";
+import { COLOURS, ColourType, ColourValueType, REGEX } from "../../enums/enums";
+import { mergeRanges, range } from "../utils";
 
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
@@ -23,7 +25,8 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CreateIcon from "@material-ui/icons/Create";
 import ShareIcon from "@material-ui/icons/Share";
-import { blue, green, orange, purple, yellow } from "@material-ui/core/colors";
+import { HighlightIndices, useHighlight } from "../../contexts/Highlight";
+import { start } from "repl";
 
 const useStyles = makeStyles({
   input: {
@@ -155,29 +158,145 @@ const Header = () => {
   );
 };
 
-const dotColours = [
-  orange[400],
-  yellow[500],
-  green[300],
-  blue[300],
-  purple[300],
-];
+interface DataNode extends Node {
+  data: string;
+  dataset: {
+    index: string;
+  };
+}
 
-const Dot = ({ colour }) => {
-  const { texts, setTexts } = useTexts();
-  const colourStyle = { backgroundColor: colour };
-  // We determine which sections of the text to re-render with highlights here.
-  // 1. Create a baseline to account for selection in the opposite direction
-  // 2. Identify the splits for both the anchor and focus components
-  // 3. If the anchor and focus components are the same component, then we only need to re-render one of the components
-  // 4. If they are not, then we have to render the following groups of components: [Start, Middle (can be more than 1 component), End]
-  // Clicking this button will update the Highlight Context which MainRegion is dependent on (need to configure this), triggering a re-render
-  // First we need to determine how the render side will take in props
+const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
+  // Clicking this component will update the Highlight Context which MainRegion is dependent on (need to configure this), triggering a re-render
+  const { displayedTexts } = useTexts();
+  const { highlightIndices, setHighlightIndices } = useHighlight();
+  const colourStyle = { backgroundColor: colour[1] };
+  const colourName = colour[0];
+
+  // Write a function (Selection, OldHighlightIndices) => void that triggers setHighlightIndices(NewHighlightIndices)
+  const generateNewIndices = (
+    selection: Selection,
+    oldHighlightIndices: HighlightIndices
+  ): void => {
+    // We determine which sections of the text to re-render with highlights here.
+    // No support for cross-text highlighting.
+    // 1. Determine what type of highlight it is.
+    //    - Invalid highlight (highlight is across different textBodies)
+    //    - Nil highlight (isCollapsed === true)
+    //    - Within phrase highlight
+    //    - Across phrase highlight
+    const anchorNode = selection.anchorNode as DataNode;
+    const focusNode = selection.focusNode as DataNode;
+    const anchorOffset = selection.anchorOffset;
+    const focusOffset = selection.focusOffset;
+    if (
+      anchorNode.parentElement.parentElement ===
+        focusNode.parentElement.parentElement &&
+      !selection.isCollapsed
+    ) {
+      // 2. Identify which node comes first by sorting on index and then offset
+      const textAreaID = anchorNode.parentElement.parentElement.id;
+      const getPosition = (node: DataNode) =>
+        parseInt(node.parentElement.dataset.index);
+      let startNode: DataNode;
+      let startOffset: number;
+      let endNode: DataNode;
+      let endOffset: number;
+      let sameComponent = false;
+
+      [startNode, endNode, startOffset, endOffset] = [
+        anchorNode,
+        focusNode,
+        anchorOffset,
+        focusOffset,
+      ];
+      if (getPosition(anchorNode) > getPosition(focusNode)) {
+        [startNode, endNode, startOffset, endOffset] = [
+          focusNode,
+          anchorNode,
+          focusOffset,
+          anchorOffset,
+        ];
+      } else if (getPosition(anchorNode) === getPosition(focusNode)) {
+        sameComponent = true;
+        [startNode, endNode, startOffset, endOffset] = [
+          anchorNode,
+          focusNode,
+          anchorOffset,
+          focusOffset,
+        ];
+        if (anchorOffset > focusOffset) {
+          [startNode, endNode, startOffset, endOffset] = [
+            focusNode,
+            anchorNode,
+            focusOffset,
+            anchorOffset,
+          ];
+        }
+      }
+      // Now, we have the startNode and endNode correctly sorted.
+      // 2. Identify the [Start, End] indices for both the startNode and endNode
+      let intermediateHighlightIndices: HighlightIndices;
+      if (sameComponent) {
+        intermediateHighlightIndices = {
+          [colourName]: { [getPosition(startNode)]: [startOffset, endOffset] },
+        };
+      } else {
+        intermediateHighlightIndices = {
+          [colourName]: {
+            [getPosition(startNode)]: [
+              startOffset,
+              displayedTexts.bodies[textAreaID].brokenText[
+                getPosition(startNode)
+              ].length,
+            ],
+            [getPosition(endNode)]: [0, endOffset],
+          },
+        };
+        // 3. Determine if there are nodes in the middle, and fill them in too
+        // Add a new entry for every string that exists within the range
+        const middleRange = range(
+          getPosition(endNode) - getPosition(startNode) - 1,
+          getPosition(startNode) + 1
+        );
+        console.log(middleRange);
+        for (let index of middleRange) {
+          const item = displayedTexts.bodies[textAreaID].brokenText[index];
+          if (!item.match(REGEX.verseNumber)) {
+            intermediateHighlightIndices[colourName][item] = [0, item.length];
+          }
+        }
+      }
+      // 4. Take union of oldHighlightIndices with intermediateHighlightIndices to return newHighlightIndices
+      // Take everything from oldHighlightIndices
+      // For every key in intermediateHighlightIndices, if it exists in oldHighlightIndices, value = mergeRanges(value)
+      let newHighlightIndices = { ...oldHighlightIndices };
+      for (let [sKey, sValue] of Object.entries(
+        intermediateHighlightIndices[colourName]
+      )) {
+        if (sKey in oldHighlightIndices) {
+          // console.log(intermediateHighlightIndices[colourName][sKey]);
+          // newHighlightIndices[colourName][sKey] = mergeRanges([
+          //   oldHighlightIndices[colourName][sKey],
+          //   intermediateHighlightIndices[colourName][sKey],
+          // ]);
+          console.log("gg");
+        } else {
+          if (!(colourName in newHighlightIndices)) {
+            newHighlightIndices[colourName] = {};
+          }
+          newHighlightIndices[colourName][sKey] = sValue;
+        }
+      }
+      console.log(newHighlightIndices);
+      setHighlightIndices(newHighlightIndices);
+    }
+  };
+
   return (
     <button
       className={styles.dot}
       onClick={() => {
-        console.log(window.getSelection());
+        generateNewIndices(window.getSelection(), highlightIndices);
       }}
       style={colourStyle}
     ></button>
@@ -187,8 +306,10 @@ const Dot = ({ colour }) => {
 const LayerItems = () => {
   return (
     <div className={styles.layer_items}>
-      {dotColours.map((item, index) => {
-        return <Dot colour={item} key={index} />;
+      {Object.entries(COLOURS).map((item, index: number) => {
+        return (
+          <Dot colour={item as [ColourType, ColourValueType]} key={index} />
+        );
       })}
     </div>
   );

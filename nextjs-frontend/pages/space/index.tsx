@@ -11,6 +11,7 @@ import SettingsPane from "../../components/SettingsPane";
 import Editor from "../../components/Editor";
 import { LoginProvider } from "../../contexts/Login";
 import { TextsProvider, useTexts } from "../../contexts/Texts";
+import { HighlightProvider } from "../../contexts/Highlight";
 
 export function Space() {
   const { texts, setTexts } = useTexts();
@@ -164,10 +165,12 @@ export function Space() {
 
 export default function Index() {
   return (
-    <TextsProvider>
-      <LoginProvider>
-        <Space />
-      </LoginProvider>
-    </TextsProvider>
+    <LoginProvider>
+      <TextsProvider>
+        <HighlightProvider>
+          <Space />
+        </HighlightProvider>
+      </TextsProvider>
+    </LoginProvider>
   );
 }

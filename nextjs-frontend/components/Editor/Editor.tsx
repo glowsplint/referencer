@@ -6,33 +6,25 @@ import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "@material-ui/core";
 import styles from "./Editor.module.css";
 import { get } from "../utils";
 import books from "../books";
 import clsx from "clsx";
 import { Scrollbars } from "react-custom-scrollbars";
-import { Highlight, Format } from "../../enums/enums";
-import { useTexts } from "../../contexts/Texts";
+import { Format } from "../../enums/enums";
+import { DisplayedBody, useTexts } from "../../contexts/Texts";
+import { REGEX, COLOURS, ColourType } from "../../enums/enums";
+import { useHighlight } from "../../contexts/Highlight";
 
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
 
-const regex = {
-  footnoteInText: /(?<!])(\(\d+\))/,
-  specialNoteInText: /^(\[.*?\]\(\d+\))$/,
-  verseNumberInText: /[ ]*\[(\d+)\]/,
-  hasTripleLineFeed: /(?:\n[ ]{4}){3}/,
-  hasTripleLineFeedAtEnd: /((?:\n[ ]{4}){2}\n)/,
-  inlineFootnote: /(\(\d+\))/,
-  italics: /(\*.*?\*)/,
-  paragraphs: /\n\n/,
-  quotes: /^[ ]*“.*?$/,
-  specialNote: /(\[.*?\])/,
-  verseNumber: /^\d+$/,
-  whitespace: /^([ ]+)$/,
-  whitespaceAfterWord: /([ ])/,
-  isPsalm: /^(Psalm)/,
-};
+const useStyles = makeStyles({
+  root: (props: { colour: string }) => ({
+    backgroundColor: COLOURS[props.colour],
+  }),
+});
 
 const SearchBar = ({
   handleInputChange,
@@ -78,34 +70,74 @@ const SearchBar = ({
   );
 };
 
-const Italics = ({ word }: { word: string }) => {
-  return <i>{word}</i>;
+const Italics = ({ phrase }: { phrase: string }) => {
+  return <i>{phrase}</i>;
 };
 
-const Word = ({ word }: { word: string }) => {
-  // Italicises the word if it is one of the special words from Psalms
-  // If not, simply returns the original word
-  const italicise = (word: string) => {
-    if (word === "Higgaion." || word === "Selah") {
-      return <Italics word={word} />;
-    }
-    return word;
-  };
+const HighlightedText = ({
+  phrase,
+  colour,
+  dataIndex,
+}: {
+  phrase: string;
+  colour: ColourType;
+  dataIndex: string;
+}) => {
+  const classes = useStyles({ colour: colour });
+  return (
+    <span className={clsx(classes.root, styles.span)} data-index={dataIndex}>
+      {phrase}
+    </span>
+  );
+};
+
+const NormalText = ({
+  phrase,
+  dataIndex,
+}: {
+  phrase: string;
+  dataIndex: string;
+}) => {
+  return (
+    <span className={styles.span} data-index={dataIndex}>
+      {phrase}
+    </span>
+  );
+};
+
+const HighlightDecider = ({
+  phrase,
+  dataIndex,
+}: {
+  phrase: string;
+  dataIndex: string;
+}) => {
+  // Splits the phrase into highlighted, italicised and normal text
+  const { highlightIndices } = useHighlight();
+  const splitOn = (slicable: string, ...indices: number[]) =>
+    [0, ...indices].map((n, i, m) => slicable.slice(n, m[i + 1]));
+
+  let textArray: string[] = [];
+  // if (phrase === "Higgaion." || phrase === "Selah") {
 
   // Will not render a component if empty string
-  const nullify = (word: string) => {
-    if (word === "") {
+  const nullify = (phrase: string) => {
+    if (phrase === "") {
       return null;
     }
-    return (
-      <span className={clsx(styles.word, styles.span)}>{italicise(word)}</span>
-    );
+    return <NormalText phrase={phrase} dataIndex={dataIndex} />;
   };
 
-  return nullify(word);
+  return nullify(phrase);
 };
 
-const InlineFootnote = ({ text }: { text: string }) => {
+const InlineFootnote = ({
+  text,
+  dataIndex,
+}: {
+  text: string;
+  dataIndex: string;
+}) => {
   return (
     <Typography variant="overline">
       <sup>{text}</sup>
@@ -113,56 +145,121 @@ const InlineFootnote = ({ text }: { text: string }) => {
   );
 };
 
-const StandardText = ({ text }: { text: string }) => {
+const FootnoteDecider = ({
+  text,
+  textAreaID,
+}: {
+  text: string;
+  textAreaID: string;
+}) => {
+  const { displayedTexts } = useTexts();
+  const { highlightIndices } = useHighlight();
+
   // Splits the text into several chunks comprising:
   // 1. Normal text to be rendered
   // 2. Inline footnotes to be italicised
   // Dispatches to their respective component for rendering
-  console.log(text);
-  const charArray = text.split(regex.inlineFootnote);
+
+  // First, we check if {text} is mentioned in HighlightContext
+  // If yes, then for every tuple in the values, we mark it as highlighted
+  // If no, then we skip completely
+  const getPosition = (text: string, textAreaID: string) =>
+    displayedTexts.bodies[textAreaID].brokenText.indexOf(text);
+
+  const matches = text.matchAll(REGEX.inlineFootnote);
+  for (const match of matches) {
+    console.log(
+      `Found ${match} with indices [${match.index}, ${
+        match.index + match[0].length
+      }]`
+    );
+  }
+
+  const charArray = text.split(REGEX.inlineFootnote);
+
   return (
     <>
-      {charArray.map((text, index) => {
-        if (text.match(regex.inlineFootnote)) {
-          return <InlineFootnote text={text} key={index} />;
+      {charArray.map((item, index) => {
+        if (item.match(REGEX.inlineFootnote)) {
+          return (
+            <InlineFootnote
+              text={item}
+              key={index}
+              dataIndex={getPosition(text, textAreaID)}
+            />
+          );
         }
-        return <Word word={text} key={index} />;
+        return (
+          <HighlightDecider
+            phrase={item}
+            key={index}
+            dataIndex={getPosition(text, textAreaID)}
+          />
+        );
       })}
     </>
   );
 };
 
-const SectionHeader = ({ text }: { text: string }) => {
+const SectionHeader = ({
+  text,
+  textAreaID,
+}: {
+  text: string;
+  textAreaID: string;
+}) => {
   return (
     <div className={styles.section_header}>
       <b>
-        <StandardText text={text} />
+        <FootnoteDecider text={text} textAreaID={textAreaID} />
       </b>
     </div>
   );
 };
 
-const SpecialNote = ({ text }: { text: string }) => {
+const SpecialNote = ({
+  text,
+  textAreaID,
+}: {
+  text: string;
+  textAreaID: string;
+}) => {
   // Matches special notes in John 7 and Mark 16
-  const textArray = text.split(regex.inlineFootnote);
-  const [textInSquareBrackets, footnote] = [textArray[0], textArray[1]];
   return (
     <div className={styles.special_note}>
-      <StandardText text={textInSquareBrackets} />
-      <InlineFootnote text={footnote} />
+      <FootnoteDecider text={text} textAreaID={textAreaID} />
     </div>
   );
 };
 
-const ItalicsBlock = ({ text }: { text: string }) => {
+const ItalicsBlock = ({
+  text,
+  dataIndex,
+}: {
+  text: string;
+  dataIndex: string;
+}) => {
   // Removes the asterisks on the ends before rendering
   const textWithoutAsterisks = text.slice(1, text.length - 1);
-  return <i>{textWithoutAsterisks}</i>;
+  return <i data-index={dataIndex}>{textWithoutAsterisks}</i>;
 };
 
-const VerseNumber = ({ text }: { text: string }) => {
+const VerseNumber = ({
+  text,
+  textAreaID,
+}: {
+  text: string;
+  textAreaID: string;
+}) => {
+  const { displayedTexts } = useTexts();
+  const getPosition = (text: string, textAreaID: string) =>
+    displayedTexts.bodies[textAreaID].brokenText.indexOf(text);
   return (
-    <Typography variant="button">
+    <Typography
+      variant="button"
+      className={styles.verseNumber}
+      data-index={getPosition(text, textAreaID)}
+    >
       <b>
         <sup>{text}</sup>
       </b>
@@ -170,7 +267,13 @@ const VerseNumber = ({ text }: { text: string }) => {
   );
 };
 
-const FootnoteText = ({ text }: { text: string }) => {
+const FootnoteText = ({
+  text,
+  dataIndex,
+}: {
+  text: string;
+  dataIndex: string;
+}) => {
   // Splits the text into several chunks comprising:
   // 1. Words to be italicised
   // 2. Words in standard formatting
@@ -178,10 +281,10 @@ const FootnoteText = ({ text }: { text: string }) => {
   return (
     <div className={styles.footnote_text}>
       {text
-        .split(regex.italics)
+        .split(REGEX.italics)
         .map((text, index) =>
-          text.match(regex.italics) ? (
-            <ItalicsBlock text={text} key={index} />
+          text.match(REGEX.italics) ? (
+            <ItalicsBlock text={text} key={index} dataIndex={dataIndex} />
           ) : (
             text
           )
@@ -190,26 +293,32 @@ const FootnoteText = ({ text }: { text: string }) => {
   );
 };
 
-const Quotes = ({ text }: { text: string }) => {
+const Quotes = ({ text, textAreaID }: { text: string; textAreaID: string }) => {
   // Adds a new paragraph before the start of a quote
   return (
     <>
       <ParagraphSpacer />
-      <StandardText text={text.slice(4)} />
+      <FootnoteDecider text={text.slice(2)} textAreaID={textAreaID} />
     </>
   );
 };
 
-const ParagraphSpacer = () => <SectionHeader text="" />;
+const ParagraphSpacer = () => <SectionHeader text="" textAreaID="" />;
 
-const Psalm426 = ({ text }: { text: string }) => {
+const Psalm426 = ({
+  text,
+  textAreaID,
+}: {
+  text: string;
+  textAreaID: string;
+}) => {
   // Special handling for Psalm 42:6
   // The parsing engine assumes that text appearing after text should be formatted as a SectionHeader
   // This is a special case hardcoded as an exception.
   return (
     <>
       <ParagraphSpacer />
-      <StandardText text={text} />
+      <FootnoteDecider text={text} textAreaID={textAreaID} />
     </>
   );
 };
@@ -219,130 +328,56 @@ const TextArea = React.memo(
     textName,
     textBody,
     isJustified,
+    id,
   }: {
     textName: string;
-    textBody: string;
+    textBody: DisplayedBody;
     isJustified: boolean;
+    id: number;
   }) => {
-    const splitOnParagraphs = (text: string): string[] =>
-      text.split(regex.paragraphs);
+    const { brokenText, brokenFootnotes, formatMainText, formatFootnotes } =
+      textBody;
 
-    const splitTexts = (text: string): [string[], string[]] => {
-      // Splits the original string into the main body of text, and also footnotes
-      const footnoteIndex = splitOnParagraphs(text).indexOf("Footnotes");
-      let footnotes = [];
-      let mainText = splitOnParagraphs(text);
-      if (footnoteIndex !== -1) {
-        footnotes = splitOnParagraphs(text).slice(footnoteIndex);
-        mainText = splitOnParagraphs(text).slice(0, footnoteIndex);
-      }
-      return [mainText, footnotes];
-    };
-
-    const getFormatMainText = (mainText: string[]): [string[], string[]] => {
-      // The primary parsing engine that creates an array that contains the formatting information for each block of text
-      const brokenText = mainText.slice(1).flatMap((a) =>
-        a
-          .split(regex.verseNumberInText)
-          .flatMap((b) => b.split(regex.specialNoteInText))
-          .flatMap((c) => c.split(regex.hasTripleLineFeed))
-          .flatMap((d) => d.split(regex.hasTripleLineFeedAtEnd))
-      );
-      let format: string[] = [];
-      let firstVerseNumberFound: boolean = false;
-
-      const addSpace = (brokenTextIndex: string): string => {
-        if (brokenTextIndex !== "" && !brokenTextIndex.endsWith("\n")) {
-          return brokenTextIndex + " ";
-        }
-        return brokenTextIndex;
-      };
-
-      // Spaces are added at the end of strings (via addSpace) to have proper spacing around verse numbers
-      for (let [index, item] of brokenText.entries()) {
-        if (item.match(regex.verseNumber)) {
-          format[index] = Format.VerseNumber;
-          if (!firstVerseNumberFound) {
-            firstVerseNumberFound = true;
-          }
-        } else {
-          // Everything before the first verse number is found is a SectionHeader
-          // firstVerseNumberFound is a flag to track that
-          if (!firstVerseNumberFound) {
-            format[index] = Format.SectionHeader;
-          } else if (item.match(regex.specialNoteInText)) {
-            format[index] = Format.SpecialNote;
-          } else if (item.match(regex.quotes)) {
-            // If the quote (") begins at the start of the verse, format as StandardText
-            // or, if the quote (") is in Psalms, format as StandardText
-            if (
-              format[index - 1] === Format.VerseNumber ||
-              mainText[0].match(regex.isPsalm)
-            ) {
-              format[index] = Format.StandardText;
-            } else {
-              format[index] = Format.Quotes;
-            }
-            brokenText[index] = addSpace(brokenText[index]);
-            // Triple Line Feeds at the end of the string are parsed as new paragraphs
-          } else if (item.match(regex.hasTripleLineFeedAtEnd)) {
-            format[index] = Format.HasTripleLineFeedAtEnd;
-            // If the previous item in the array is StandardText, this one should be a SectionHeader
-            // if it is not Psalm 42:6 (exception to the rule)
-          } else if (format[index - 1] === Format.StandardText) {
-            if (item.endsWith("\n")) {
-              format[index] = Format.Psalm426;
-            } else {
-              format[index] = Format.SectionHeader;
-            }
-          } else {
-            format[index] = Format.StandardText;
-            brokenText[index] = addSpace(brokenText[index]);
-          }
-        }
-      }
-      return [format, brokenText];
-    };
-
-    const getFormatFootnotes = (footnotes: string[]) => {
-      // The secondary parsing engine (for footnotes only) that creates an array with formatting information
-      let format: string[] = Array(footnotes.length).fill(Format.FootnoteText);
-      format[0] = Format.SectionHeader;
-      return [format, footnotes];
-    };
-
-    let [mainText, footnotes] = splitTexts(textBody);
-    const [formatMainText, brokenText] = getFormatMainText(mainText);
-    const [formatFootnotes, brokenFootnotes] = getFormatFootnotes(footnotes);
-
-    const getComponent = (format: string, text: string, index: number) => {
+    const getComponent = (
+      format: string,
+      text: string,
+      index: number,
+      id: string
+    ) => {
       const componentMap = {
         [Format.SectionHeader]: React.createElement(SectionHeader, {
           text: text,
           key: index,
+          textAreaID: id,
         }),
         [Format.VerseNumber]: React.createElement(VerseNumber, {
           text: text,
           key: index,
+          textAreaID: id,
         }),
         [Format.SpecialNote]: React.createElement(SpecialNote, {
           text: text,
           key: index,
+          textAreaID: id,
         }),
         [Format.Quotes]: React.createElement(Quotes, {
           text: text,
           key: index,
+          textAreaID: id,
         }),
-        [Format.StandardText]: React.createElement(StandardText, {
+        [Format.StandardText]: React.createElement(FootnoteDecider, {
           text: text,
           key: index,
+          textAreaID: id,
         }),
         [Format.HasTripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
           key: index,
+          textAreaID: id,
         }),
         [Format.Psalm426]: React.createElement(Psalm426, {
           text: text,
           key: index,
+          textAreaID: id,
         }),
       };
 
@@ -356,44 +391,31 @@ const TextArea = React.memo(
           [styles.justify]: isJustified,
           [""]: !isJustified,
         })}
+        id={id.toString()}
       >
         <Typography variant="h6">{textName}</Typography>
-        {brokenText.map((textArray, index) =>
-          getComponent(formatMainText[index], textArray, index)
+        {brokenText.map((textArray, index: number) =>
+          getComponent(formatMainText[index], textArray, index, id.toString())
         )}
-        {brokenFootnotes.map((text, index) => {
+        {brokenFootnotes.map((text, index: number) => {
           if (formatFootnotes[index] === Format.SectionHeader) {
-            return <SectionHeader text={text} key={index} />;
+            return (
+              <SectionHeader
+                text={text}
+                key={index}
+                textAreaID={id.toString()}
+              />
+            );
           } else {
-            return <FootnoteText text={text} key={index} />;
+            return (
+              <FootnoteText text={text} key={index} dataIndex={id.toString()} />
+            );
           }
         })}
       </div>
     );
   }
 );
-
-const HeaderLeft = React.memo(() => {
-  return (
-    <div className={styles.editor_header_left}>
-      <div className={styles.header_left_text}>
-        <Typography variant="subtitle2">Workspace</Typography>
-      </div>
-    </div>
-  );
-});
-
-const HeaderRight = React.memo(() => {
-  return (
-    <div className={styles.editor_header_right}>
-      <Tooltip title="Help" placement="left">
-        <IconButton size="small" onClick={() => {}}>
-          <HelpIcon />
-        </IconButton>
-      </Tooltip>
-    </div>
-  );
-});
 
 const MainRegion = ({
   isMultipleRowsLayout,
@@ -444,12 +466,35 @@ const MainRegion = ({
             textBody={bodies[index]}
             isJustified={isJustified}
             key={index}
+            id={index}
           />
         ))}
       </div>
     </Scrollbars>
   );
 };
+
+const HeaderLeft = React.memo(() => {
+  return (
+    <div className={styles.editor_header_left}>
+      <div className={styles.header_left_text}>
+        <Typography variant="subtitle2">Workspace</Typography>
+      </div>
+    </div>
+  );
+});
+
+const HeaderRight = React.memo(() => {
+  return (
+    <div className={styles.editor_header_right}>
+      <Tooltip title="Help" placement="left">
+        <IconButton size="small" onClick={() => {}}>
+          <HelpIcon />
+        </IconButton>
+      </Tooltip>
+    </div>
+  );
+});
 
 export default React.memo(
   ({
