@@ -297,13 +297,15 @@ const Quotes = ({ text, textAreaID }: { text: string; textAreaID: string }) => {
   // Adds a new paragraph before the start of a quote
   return (
     <>
-      <ParagraphSpacer />
+      <ParagraphSpacer textAreaID={textAreaID} />
       <FootnoteDecider text={text.slice(2)} textAreaID={textAreaID} />
     </>
   );
 };
 
-const ParagraphSpacer = () => <SectionHeader text="" textAreaID="" />;
+const ParagraphSpacer = ({ textAreaID }: { textAreaID: string }) => (
+  <SectionHeader text="" textAreaID={textAreaID} />
+);
 
 const Psalm426 = ({
   text,
@@ -317,7 +319,7 @@ const Psalm426 = ({
   // This is a special case hardcoded as an exception.
   return (
     <>
-      <ParagraphSpacer />
+      <ParagraphSpacer textAreaID={textAreaID} />
       <FootnoteDecider text={text} textAreaID={textAreaID} />
     </>
   );
