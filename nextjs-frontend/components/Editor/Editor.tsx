@@ -114,21 +114,71 @@ const HighlightDecider = ({
 }) => {
   // Splits the phrase into highlighted, italicised and normal text
   const { highlightIndices } = useHighlight();
-  const splitOn = (slicable: string, ...indices: number[]) =>
-    [0, ...indices].map((n, i, m) => slicable.slice(n, m[i + 1]));
 
-  let textArray: string[] = [];
-  // if (phrase === "Higgaion." || phrase === "Selah") {
-
-  // Will not render a component if empty string
-  const nullify = (phrase: string) => {
-    if (phrase === "") {
-      return null;
+  // Get the colors coresponding to the verse
+  let phraseIndices  = new Map<string, [number, number][]>();
+  let colorPtrs = new Map<string, number>();
+  let splits : number[] = [0];
+  for (let col in highlightIndices) {
+    if (dataIndex in highlightIndices[col]) {
+      phraseIndices.set(col, highlightIndices[col][dataIndex]);
+      colorPtrs.set(col, 0);
+      for (let interval of highlightIndices[col][dataIndex]) {
+        splits.push(...interval);
+      }
     }
-    return <NormalText phrase={phrase} dataIndex={dataIndex} />;
-  };
+  }
+  splits.push(phrase.length);
+  splits.sort((a, b) => { return a - b; });
+  type Subphrase = {st : number, en : number, colour? : ColourType};
 
-  return nullify(phrase);
+  let results : Subphrase[] = [];
+  for (let i = 0; i < splits.length - 1; i++) {
+    if (splits[i] == splits[i + 1]) continue;
+    let sphr : Subphrase = {
+      st: splits[i], en: splits[i + 1]
+    }
+    for (let col of phraseIndices.keys()) {
+      let i = colorPtrs.get(col);
+      if (i < phraseIndices.get(col).length) {
+        let [stH, enH] = phraseIndices.get(col)[(colorPtrs.get(col))];
+        if (stH == sphr.st) {
+          // Found the color.
+          sphr['colour'] = col as ColourType;
+          colorPtrs.set(col, colorPtrs.get(col) + 1);
+          break;
+        }
+      }
+    }
+    results.push(sphr);
+  }
+
+  if (results.length > 1) {console.log(results);}
+
+  return (
+    <>
+      {results.map((sphr : Subphrase, index) => {
+        if (sphr.hasOwnProperty('colour')) {
+          return (
+            <HighlightedText
+              phrase={phrase.substr(sphr.st, sphr.en-sphr.st)}
+              colour={sphr.colour}
+              dataIndex={dataIndex}
+              key={index}
+            />
+          );
+        } else {
+          return (
+            <NormalText
+            phrase={phrase.substr(sphr.st, sphr.en-sphr.st)}
+            dataIndex={dataIndex}
+            key={index}
+            />
+          );
+        }
+      })}
+    </>
+  );
 };
 
 const InlineFootnote = ({
@@ -297,15 +347,13 @@ const Quotes = ({ text, textAreaID }: { text: string; textAreaID: string }) => {
   // Adds a new paragraph before the start of a quote
   return (
     <>
-      <ParagraphSpacer textAreaID={textAreaID} />
+      <ParagraphSpacer />
       <FootnoteDecider text={text.slice(2)} textAreaID={textAreaID} />
     </>
   );
 };
 
-const ParagraphSpacer = ({ textAreaID }: { textAreaID: string }) => (
-  <SectionHeader text="" textAreaID={textAreaID} />
-);
+const ParagraphSpacer = () => <SectionHeader text="" textAreaID="" />;
 
 const Psalm426 = ({
   text,
@@ -319,7 +367,7 @@ const Psalm426 = ({
   // This is a special case hardcoded as an exception.
   return (
     <>
-      <ParagraphSpacer textAreaID={textAreaID} />
+      <ParagraphSpacer />
       <FootnoteDecider text={text} textAreaID={textAreaID} />
     </>
   );

@@ -238,18 +238,18 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       let intermediateHighlightIndices: HighlightIndices;
       if (sameComponent) {
         intermediateHighlightIndices = {
-          [colourName]: { [getPosition(startNode)]: [startOffset, endOffset] },
+          [colourName]: { [getPosition(startNode)]: [[startOffset, endOffset]] },
         };
       } else {
         intermediateHighlightIndices = {
           [colourName]: {
-            [getPosition(startNode)]: [
+            [getPosition(startNode)]: [[
               startOffset,
               displayedTexts.bodies[textAreaID].brokenText[
                 getPosition(startNode)
               ].length,
-            ],
-            [getPosition(endNode)]: [0, endOffset],
+            ]],
+            [getPosition(endNode)]: [[0, endOffset]],
           },
         };
         // 3. Determine if there are nodes in the middle, and fill them in too
@@ -258,7 +258,6 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
           getPosition(endNode) - getPosition(startNode) - 1,
           getPosition(startNode) + 1
         );
-        console.log(middleRange);
         for (let index of middleRange) {
           const item = displayedTexts.bodies[textAreaID].brokenText[index];
           if (!item.match(REGEX.verseNumber)) {
@@ -284,7 +283,13 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
           if (!(colourName in newHighlightIndices)) {
             newHighlightIndices[colourName] = {};
           }
-          newHighlightIndices[colourName][sKey] = sValue;
+          if (!(sKey in newHighlightIndices[colourName])) {
+            newHighlightIndices[colourName][sKey] = [];
+          }
+          newHighlightIndices[colourName][sKey].push(...sValue);
+          newHighlightIndices[colourName][sKey].sort(
+            ([a0, a1], [b0, b1]) => { return a0 - a1;}
+          );
         }
       }
       console.log(newHighlightIndices);
