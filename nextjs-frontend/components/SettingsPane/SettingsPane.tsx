@@ -199,8 +199,11 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
     ) {
       // 2. Identify which node comes first by sorting on index and then offset
       const textAreaID = parseInt(anchorNode.parentElement.parentElement.id);
-      const getPosition = (node: DataNode) =>
+      const getDataIndex = (node: DataNode) =>
         parseInt(node.parentElement.dataset.index);
+      const getDataPositionStart = (node: DataNode) => {
+        return node.parentElement.dataset.position.split(",").map(parseInt)[0];
+      };
       let startNode: DataNode;
       let startOffset: number;
       let endNode: DataNode;
@@ -213,14 +216,14 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
         anchorOffset,
         focusOffset,
       ];
-      if (getPosition(anchorNode) > getPosition(focusNode)) {
+      if (getDataIndex(anchorNode) > getDataIndex(focusNode)) {
         [startNode, endNode, startOffset, endOffset] = [
           focusNode,
           anchorNode,
           focusOffset,
           anchorOffset,
         ];
-      } else if (getPosition(anchorNode) === getPosition(focusNode)) {
+      } else if (getDataIndex(anchorNode) === getDataIndex(focusNode)) {
         sameComponent = true;
         [startNode, endNode, startOffset, endOffset] = [
           anchorNode,
@@ -240,20 +243,23 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       // Now, we have the startNode and endNode correctly sorted.
       // 2. Identify the [Start, End] indices for both the startNode and endNode
       let changedHighlights: HighlightIndicesChange = {};
+      const addDataPosition = (offset: number) =>
+        offset + getDataPositionStart(startNode);
+
       if (sameComponent) {
-        changedHighlights[getPosition(startNode)] = [startOffset, endOffset];
+        changedHighlights[getDataIndex(startNode)] = [startOffset, endOffset];
       } else {
-        changedHighlights[getPosition(startNode)] = [
+        changedHighlights[getDataIndex(startNode)] = [
           startOffset,
-          displayedTexts.bodies[textAreaID].brokenText[getPosition(startNode)]
+          displayedTexts.bodies[textAreaID].brokenText[getDataIndex(startNode)]
             .length,
         ];
-        changedHighlights[getPosition(endNode)] = [0, endOffset];
+        changedHighlights[getDataIndex(endNode)] = [0, endOffset];
         // 3. Determine if there are nodes in the middle, and fill them in too
         // Add a new entry for every string that exists within the range
         const middleRange = range(
-          getPosition(endNode) - getPosition(startNode) - 1,
-          getPosition(startNode) + 1
+          getDataIndex(endNode) - getDataIndex(startNode) - 1,
+          getDataIndex(startNode) + 1
         );
         for (let index of middleRange) {
           const item = displayedTexts.bodies[textAreaID].brokenText[index];

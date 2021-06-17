@@ -20,6 +20,8 @@ import { useHighlight, Interval } from "../../contexts/Highlight";
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
 
+type Subphrase = { st: number; en: number; colour?: ColourType };
+
 const useStyles = makeStyles({
   root: (props: { colour: string }) => ({
     backgroundColor: COLOURS[props.colour],
@@ -78,14 +80,20 @@ const HighlightedText = ({
   phrase,
   colour,
   dataIndex,
+  dataPosition,
 }: {
   phrase: string;
   colour: ColourType;
   dataIndex: number;
+  dataPosition: Interval;
 }) => {
   const classes = useStyles({ colour: colour });
   return (
-    <span className={clsx(classes.root, styles.span)} data-index={dataIndex}>
+    <span
+      className={clsx(classes.root, styles.span)}
+      data-index={dataIndex}
+      data-position={dataPosition}
+    >
       {phrase}
     </span>
   );
@@ -94,12 +102,18 @@ const HighlightedText = ({
 const NormalText = ({
   phrase,
   dataIndex,
+  dataPosition,
 }: {
   phrase: string;
   dataIndex: number;
+  dataPosition: Interval;
 }) => {
   return (
-    <span className={styles.span} data-index={dataIndex}>
+    <span
+      className={styles.span}
+      data-index={dataIndex}
+      data-position={dataPosition}
+    >
       {phrase}
     </span>
   );
@@ -109,14 +123,17 @@ const HighlightDecider = ({
   phrase,
   dataIndex,
   textAreaID,
+  dataPosition,
 }: {
   phrase: string;
   dataIndex: number;
   textAreaID: number;
+  dataPosition: Interval;
 }) => {
   // Splits the phrase into highlighted, italicised and normal text
   const { highlightIndices } = useHighlight();
   let phraseIndices: { [key in ColourType]?: Interval[] };
+
   // Get the colors coresponding to the verse
   let colourPos: { [key in ColourType]?: number } = {};
   let splits: number[] = [0];
@@ -138,7 +155,6 @@ const HighlightDecider = ({
   splits.sort((a, b) => {
     return a - b;
   });
-  type Subphrase = { st: number; en: number; colour?: ColourType };
 
   let results: Subphrase[] = [];
   for (let i = 0; i < splits.length - 1; i++) {
@@ -162,20 +178,25 @@ const HighlightDecider = ({
     results.push(sphr);
   }
 
-  if (results.length > 1) {
-    console.log(results);
-  }
+  // if (results.length > 1) {
+  //   console.log(results);
+  // }
 
   return (
     <>
       {results.map((sphr: Subphrase, index) => {
-        if (sphr.hasOwnProperty("colour")) {
-          console.table([sphr.st, sphr.en]);
+        if ("colour" in sphr) {
+          console.log(sphr.st, sphr.en);
           return (
             <HighlightedText
               phrase={phrase.substr(sphr.st, sphr.en - sphr.st)}
               colour={sphr.colour}
               dataIndex={dataIndex}
+              dataPosition={
+                [sphr.st, sphr.en].map(
+                  (item) => item + dataPosition[0]
+                ) as Interval
+              }
               key={index}
             />
           );
@@ -185,6 +206,11 @@ const HighlightDecider = ({
               phrase={phrase.substr(sphr.st, sphr.en - sphr.st)}
               dataIndex={dataIndex}
               key={index}
+              dataPosition={
+                [sphr.st, sphr.en].map(
+                  (item) => item + dataPosition[0]
+                ) as Interval
+              }
             />
           );
         }
@@ -196,12 +222,18 @@ const HighlightDecider = ({
 const InlineFootnote = ({
   text,
   dataIndex,
+  dataPosition,
 }: {
   text: string;
   dataIndex: number;
+  dataPosition: Interval;
 }) => {
   return (
-    <Typography variant="overline" data-index={dataIndex}>
+    <Typography
+      variant="overline"
+      data-index={dataIndex}
+      data-position={dataPosition}
+    >
       <sup>{text}</sup>
     </Typography>
   );
@@ -215,28 +247,25 @@ const FootnoteDecider = ({
   textAreaID: number;
 }) => {
   const { displayedTexts } = useTexts();
-  // Splits the text into several chunks comprising:
-  // 1. Normal text to be rendered
-  // 2. Inline footnotes to be italicised
-  // Dispatches to their respective component for rendering
-
-  // First, we check if {text} is mentioned in HighlightContext
-  // If yes, then for every tuple in the values, we mark it as highlighted
-  // If no, then we skip completely
   const getPosition = (text: string, textAreaID: number) =>
     displayedTexts.bodies[textAreaID].brokenText.indexOf(text);
 
   const charArray = text.split(REGEX.inlineFootnote);
+  const getDataPosition = (self: string[], index: number): Interval => {
+    const getInterval = (index: number) => self.slice(0, index).join("").length;
+    return [getInterval(index), getInterval(index + 1)];
+  };
 
   return (
     <>
-      {charArray.map((item, index) => {
+      {charArray.map((item, index, self) => {
         if (item.match(REGEX.inlineFootnote)) {
           return (
             <InlineFootnote
               text={item}
               key={index}
               dataIndex={getPosition(text, textAreaID)}
+              dataPosition={getDataPosition(self, index)}
             />
           );
         }
@@ -246,6 +275,7 @@ const FootnoteDecider = ({
             textAreaID={textAreaID}
             phrase={item}
             dataIndex={getPosition(text, textAreaID)}
+            dataPosition={getDataPosition(self, index)}
           />
         );
       })}

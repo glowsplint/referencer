@@ -6,8 +6,11 @@ const HighlightContext = React.createContext<Partial<HighlightState>>({});
 export type Interval = [number, number];
 
 export type HighlightIndices = {
+  // textAreaID
   [key: number]: {
+    // dataIndex
     [key: number]: {
+      // Key: Colour, Value: [Start, End] positions
       [key in ColourType]: Interval[];
     };
   };
