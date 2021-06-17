@@ -25,8 +25,12 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CreateIcon from "@material-ui/icons/Create";
 import ShareIcon from "@material-ui/icons/Share";
-import { HighlightIndices, HighlightIndicesChange, useHighlight } from "../../contexts/Highlight";
-import { start } from "repl";
+import {
+  HighlightIndices,
+  HighlightIndicesChange,
+  useHighlight,
+  Interval,
+} from "../../contexts/Highlight";
 
 const useStyles = makeStyles({
   input: {
@@ -194,7 +198,7 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       !selection.isCollapsed
     ) {
       // 2. Identify which node comes first by sorting on index and then offset
-      const textAreaID = anchorNode.parentElement.parentElement.id;
+      const textAreaID = parseInt(anchorNode.parentElement.parentElement.id);
       const getPosition = (node: DataNode) =>
         parseInt(node.parentElement.dataset.index);
       let startNode: DataNode;
@@ -235,17 +239,19 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       }
       // Now, we have the startNode and endNode correctly sorted.
       // 2. Identify the [Start, End] indices for both the startNode and endNode
-      let changedHighlights : HighlightIndicesChange = new Map<number, [number, number]>();
+      let changedHighlights: HighlightIndicesChange = new Map<
+        number,
+        Interval
+      >();
       if (sameComponent) {
         changedHighlights.set(getPosition(startNode), [startOffset, endOffset]);
       } else {
-        changedHighlights.set(
-          getPosition(startNode),
-          [startOffset, displayedTexts.bodies[textAreaID].brokenText[getPosition(startNode)].length]
-        );
-        changedHighlights.set(
-          getPosition(endNode), [0, endOffset]
-        );
+        changedHighlights.set(getPosition(startNode), [
+          startOffset,
+          displayedTexts.bodies[textAreaID].brokenText[getPosition(startNode)]
+            .length,
+        ]);
+        changedHighlights.set(getPosition(endNode), [0, endOffset]);
         // 3. Determine if there are nodes in the middle, and fill them in too
         // Add a new entry for every string that exists within the range
         const middleRange = range(
@@ -262,24 +268,30 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       // 4. Take union of oldHighlightIndices with intermediateHighlightIndices to return newHighlightIndices
       // Take everything from oldHighlightIndices
       // For every key in intermediateHighlightIndices, if it exists in oldHighlightIndices, value = mergeRanges(value)
-      if (!(oldHighlightIndices.has(textAreaID))) {
-        oldHighlightIndices.set(textAreaID, new Map<number, Map<ColourType, [number, number][]>>());
+      if (!oldHighlightIndices.has(textAreaID)) {
+        oldHighlightIndices.set(
+          textAreaID,
+          new Map<number, Map<ColourType, Interval[]>>()
+        );
       }
       let textHighlightIndices = oldHighlightIndices.get(textAreaID);
       for (let [dataIndex, interval] of changedHighlights) {
-        if (!(textHighlightIndices.has(dataIndex))) {
-          textHighlightIndices.set(dataIndex, new Map<ColourType, [number, number][]>());
+        if (!textHighlightIndices.has(dataIndex)) {
+          textHighlightIndices.set(
+            dataIndex,
+            new Map<ColourType, Interval[]>()
+          );
         }
         let verseHighlightIndices = textHighlightIndices.get(dataIndex);
-        if (!(verseHighlightIndices.has(colourName))) {
+        if (!verseHighlightIndices.has(colourName)) {
           verseHighlightIndices.set(colourName, []);
         }
         let colourHighlightIndices = verseHighlightIndices.get(colourName);
         // TODO This is the part where we need to check for overlaps and resolve.
         colourHighlightIndices.push(interval);
-        colourHighlightIndices.sort(
-          ([a0, a1], [b0, b1]) => { return a0 - a1;}
-        );
+        colourHighlightIndices.sort(([a0, a1], [b0, b1]) => {
+          return a0 - a1;
+        });
       }
       console.log(oldHighlightIndices);
       setHighlightIndices(oldHighlightIndices);
@@ -297,6 +309,20 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
   );
 };
 
+const ClearHighlightsButton = () => {
+  const { resetHighlightIndices } = useHighlight();
+  const handleClearHighlights = () => {
+    resetHighlightIndices();
+  };
+  return (
+    <div className={styles.clear_highlights}>
+      <Button variant="contained" onClick={handleClearHighlights}>
+        Clear Highlights
+      </Button>
+    </div>
+  );
+};
+
 const LayerItems = () => {
   return (
     <div className={styles.layer_items}>
@@ -305,6 +331,7 @@ const LayerItems = () => {
           <Dot colour={item as [ColourType, ColourValueType]} key={index} />
         );
       })}
+      <ClearHighlightsButton />
     </div>
   );
 };

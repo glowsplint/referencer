@@ -15,7 +15,7 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { Format } from "../../enums/enums";
 import { DisplayedBody, useTexts } from "../../contexts/Texts";
 import { REGEX, COLOURS, ColourType } from "../../enums/enums";
-import { useHighlight } from "../../contexts/Highlight";
+import { useHighlight, Interval } from "../../contexts/Highlight";
 
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
@@ -81,7 +81,7 @@ const HighlightedText = ({
 }: {
   phrase: string;
   colour: ColourType;
-  dataIndex: string;
+  dataIndex: number;
 }) => {
   const classes = useStyles({ colour: colour });
   return (
@@ -96,7 +96,7 @@ const NormalText = ({
   dataIndex,
 }: {
   phrase: string;
-  dataIndex: string;
+  dataIndex: number;
 }) => {
   return (
     <span className={styles.span} data-index={dataIndex}>
@@ -112,15 +112,18 @@ const HighlightDecider = ({
 }: {
   phrase: string;
   dataIndex: number;
-  textAreaID: string;
+  textAreaID: number;
 }) => {
   // Splits the phrase into highlighted, italicised and normal text
   const { highlightIndices } = useHighlight();
-  let phraseIndices : Map<ColourType, [number, number][]>;
+  let phraseIndices: Map<ColourType, Interval[]>;
   // Get the colors coresponding to the verse
   let colourPos = new Map<ColourType, number>();
-  let splits : number[] = [0];
-  if (highlightIndices.has(textAreaID) && highlightIndices.get(textAreaID).has(dataIndex)) {
+  let splits: number[] = [0];
+  if (
+    highlightIndices.has(textAreaID) &&
+    highlightIndices.get(textAreaID).has(dataIndex)
+  ) {
     phraseIndices = highlightIndices.get(textAreaID).get(dataIndex);
     for (let [col, intervals] of phraseIndices) {
       colourPos.set(col, 0);
@@ -129,25 +132,28 @@ const HighlightDecider = ({
       }
     }
   } else {
-    phraseIndices = new Map<ColourType, [number, number][]>();
+    phraseIndices = new Map<ColourType, Interval[]>();
   }
   splits.push(phrase.length);
-  splits.sort((a, b) => { return a - b; });
-  type Subphrase = {st : number, en : number, colour? : ColourType};
+  splits.sort((a, b) => {
+    return a - b;
+  });
+  type Subphrase = { st: number; en: number; colour?: ColourType };
 
-  let results : Subphrase[] = [];
+  let results: Subphrase[] = [];
   for (let i = 0; i < splits.length - 1; i++) {
     if (splits[i] == splits[i + 1]) continue;
-    let sphr : Subphrase = {
-      st: splits[i], en: splits[i + 1]
-    }
+    let sphr: Subphrase = {
+      st: splits[i],
+      en: splits[i + 1],
+    };
     for (let col of phraseIndices.keys()) {
       let i = colourPos.get(col);
       if (i < phraseIndices.get(col).length) {
-        let [stH, enH] = phraseIndices.get(col)[(colourPos.get(col))];
+        let [stH, enH] = phraseIndices.get(col)[colourPos.get(col)];
         if (stH == sphr.st) {
           // Found the color.
-          sphr['colour'] = col;
+          sphr["colour"] = col;
           colourPos.set(col, colourPos.get(col) + 1);
           break;
         }
@@ -156,26 +162,28 @@ const HighlightDecider = ({
     results.push(sphr);
   }
 
-  if (results.length > 1) {console.log(results);}
+  if (results.length > 1) {
+    console.log(results);
+  }
 
   return (
     <>
-      {results.map((sphr : Subphrase, index) => {
-        if (sphr.hasOwnProperty('colour')) {
+      {results.map((sphr: Subphrase, index) => {
+        if (sphr.hasOwnProperty("colour")) {
           return (
             <HighlightedText
-              phrase={phrase.substr(sphr.st, sphr.en-sphr.st)}
+              phrase={phrase.substr(sphr.st, sphr.en - sphr.st)}
               colour={sphr.colour}
-              dataIndex={dataIndex.toString()}
+              dataIndex={dataIndex}
               key={index}
             />
           );
         } else {
           return (
             <NormalText
-            phrase={phrase.substr(sphr.st, sphr.en-sphr.st)}
-            dataIndex={dataIndex.toString()}
-            key={index}
+              phrase={phrase.substr(sphr.st, sphr.en - sphr.st)}
+              dataIndex={dataIndex}
+              key={index}
             />
           );
         }
@@ -189,10 +197,10 @@ const InlineFootnote = ({
   dataIndex,
 }: {
   text: string;
-  dataIndex: string;
+  dataIndex: number;
 }) => {
   return (
-    <Typography variant="overline">
+    <Typography variant="overline" data-index={dataIndex}>
       <sup>{text}</sup>
     </Typography>
   );
@@ -203,7 +211,7 @@ const FootnoteDecider = ({
   textAreaID,
 }: {
   text: string;
-  textAreaID: string;
+  textAreaID: number;
 }) => {
   const { displayedTexts } = useTexts();
   const { highlightIndices } = useHighlight();
@@ -216,17 +224,17 @@ const FootnoteDecider = ({
   // First, we check if {text} is mentioned in HighlightContext
   // If yes, then for every tuple in the values, we mark it as highlighted
   // If no, then we skip completely
-  const getPosition = (text: string, textAreaID: string) =>
+  const getPosition = (text: string, textAreaID: number) =>
     displayedTexts.bodies[textAreaID].brokenText.indexOf(text);
 
   const matches = text.matchAll(REGEX.inlineFootnote);
-  for (const match of matches) {
-    console.log(
-      `Found ${match} with indices [${match.index}, ${
-        match.index + match[0].length
-      }]`
-    );
-  }
+  // for (const match of matches) {
+  //   console.log(
+  //     `Found ${match} with indices [${match.index}, ${
+  //       match.index + match[0].length
+  //     }]`
+  //   );
+  // }
 
   const charArray = text.split(REGEX.inlineFootnote);
 
@@ -260,7 +268,7 @@ const SectionHeader = ({
   textAreaID,
 }: {
   text: string;
-  textAreaID: string;
+  textAreaID: number;
 }) => {
   return (
     <div className={styles.section_header}>
@@ -276,7 +284,7 @@ const SpecialNote = ({
   textAreaID,
 }: {
   text: string;
-  textAreaID: string;
+  textAreaID: number;
 }) => {
   // Matches special notes in John 7 and Mark 16
   return (
@@ -291,7 +299,7 @@ const ItalicsBlock = ({
   dataIndex,
 }: {
   text: string;
-  dataIndex: string;
+  dataIndex: number;
 }) => {
   // Removes the asterisks on the ends before rendering
   const textWithoutAsterisks = text.slice(1, text.length - 1);
@@ -303,10 +311,10 @@ const VerseNumber = ({
   textAreaID,
 }: {
   text: string;
-  textAreaID: string;
+  textAreaID: number;
 }) => {
   const { displayedTexts } = useTexts();
-  const getPosition = (text: string, textAreaID: string) =>
+  const getPosition = (text: string, textAreaID: number) =>
     displayedTexts.bodies[textAreaID].brokenText.indexOf(text);
   return (
     <Typography
@@ -326,7 +334,7 @@ const FootnoteText = ({
   dataIndex,
 }: {
   text: string;
-  dataIndex: string;
+  dataIndex: number;
 }) => {
   // Splits the text into several chunks comprising:
   // 1. Words to be italicised
@@ -347,31 +355,33 @@ const FootnoteText = ({
   );
 };
 
-const Quotes = ({ text, textAreaID }: { text: string; textAreaID: string }) => {
+const Quotes = ({ text, textAreaID }: { text: string; textAreaID: number }) => {
   // Adds a new paragraph before the start of a quote
   return (
     <>
-      <ParagraphSpacer />
+      <ParagraphSpacer textAreaID={textAreaID} />
       <FootnoteDecider text={text.slice(2)} textAreaID={textAreaID} />
     </>
   );
 };
 
-const ParagraphSpacer = () => <SectionHeader text="" textAreaID="" />;
+const ParagraphSpacer = ({ textAreaID }: { textAreaID: number }) => (
+  <SectionHeader text="" textAreaID={textAreaID} />
+);
 
 const Psalm426 = ({
   text,
   textAreaID,
 }: {
   text: string;
-  textAreaID: string;
+  textAreaID: number;
 }) => {
   // Special handling for Psalm 42:6
   // The parsing engine assumes that text appearing after text should be formatted as a SectionHeader
   // This is a special case hardcoded as an exception.
   return (
     <>
-      <ParagraphSpacer />
+      <ParagraphSpacer textAreaID={textAreaID} />
       <FootnoteDecider text={text} textAreaID={textAreaID} />
     </>
   );
@@ -382,12 +392,12 @@ const TextArea = React.memo(
     textName,
     textBody,
     isJustified,
-    id,
+    textAreaID,
   }: {
     textName: string;
     textBody: DisplayedBody;
     isJustified: boolean;
-    id: number;
+    textAreaID: number;
   }) => {
     const { brokenText, brokenFootnotes, formatMainText, formatFootnotes } =
       textBody;
@@ -396,7 +406,7 @@ const TextArea = React.memo(
       format: string,
       text: string,
       index: number,
-      id: string
+      id: number
     ) => {
       const componentMap = {
         [Format.SectionHeader]: React.createElement(SectionHeader, {
@@ -445,24 +455,20 @@ const TextArea = React.memo(
           [styles.justify]: isJustified,
           [""]: !isJustified,
         })}
-        id={id.toString()}
+        id={textAreaID.toString()}
       >
         <Typography variant="h6">{textName}</Typography>
         {brokenText.map((textArray, index: number) =>
-          getComponent(formatMainText[index], textArray, index, id.toString())
+          getComponent(formatMainText[index], textArray, index, textAreaID)
         )}
         {brokenFootnotes.map((text, index: number) => {
           if (formatFootnotes[index] === Format.SectionHeader) {
             return (
-              <SectionHeader
-                text={text}
-                key={index}
-                textAreaID={id.toString()}
-              />
+              <SectionHeader text={text} key={index} textAreaID={textAreaID} />
             );
           } else {
             return (
-              <FootnoteText text={text} key={index} dataIndex={id.toString()} />
+              <FootnoteText text={text} key={index} dataIndex={textAreaID} />
             );
           }
         })}
@@ -520,7 +526,7 @@ const MainRegion = ({
             textBody={bodies[index]}
             isJustified={isJustified}
             key={index}
-            id={index}
+            textAreaID={index}
           />
         ))}
       </div>
