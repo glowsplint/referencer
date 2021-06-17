@@ -116,23 +116,23 @@ const HighlightDecider = ({
 }) => {
   // Splits the phrase into highlighted, italicised and normal text
   const { highlightIndices } = useHighlight();
-  let phraseIndices: Map<ColourType, Interval[]>;
+  let phraseIndices: { [key in ColourType]?: Interval[] };
   // Get the colors coresponding to the verse
-  let colourPos = new Map<ColourType, number>();
+  let colourPos: { [key in ColourType]?: number } = {};
   let splits: number[] = [0];
   if (
-    highlightIndices.has(textAreaID) &&
-    highlightIndices.get(textAreaID).has(dataIndex)
+    textAreaID in highlightIndices &&
+    dataIndex in highlightIndices[textAreaID]
   ) {
-    phraseIndices = highlightIndices.get(textAreaID).get(dataIndex);
-    for (let [col, intervals] of phraseIndices) {
-      colourPos.set(col, 0);
+    phraseIndices = highlightIndices[textAreaID][dataIndex];
+    for (let [col, intervals] of Object.entries(phraseIndices)) {
+      colourPos[col] = 0;
       for (let interval of intervals) {
         splits.push(...interval);
       }
     }
   } else {
-    phraseIndices = new Map<ColourType, Interval[]>();
+    phraseIndices = {};
   }
   splits.push(phrase.length);
   splits.sort((a, b) => {
@@ -147,14 +147,14 @@ const HighlightDecider = ({
       st: splits[i],
       en: splits[i + 1],
     };
-    for (let col of phraseIndices.keys()) {
-      let i = colourPos.get(col);
-      if (i < phraseIndices.get(col).length) {
-        let [stH, enH] = phraseIndices.get(col)[colourPos.get(col)];
+    for (let col of Object.keys(phraseIndices)) {
+      let i = colourPos[col];
+      if (i < phraseIndices[col].length) {
+        let [stH, enH] = phraseIndices[col][colourPos[col]];
         if (stH == sphr.st) {
           // Found the color.
-          sphr["colour"] = col;
-          colourPos.set(col, colourPos.get(col) + 1);
+          sphr["colour"] = col as ColourType;
+          colourPos[col] = colourPos[col] + 1;
           break;
         }
       }
@@ -170,6 +170,7 @@ const HighlightDecider = ({
     <>
       {results.map((sphr: Subphrase, index) => {
         if (sphr.hasOwnProperty("colour")) {
+          console.table([sphr.st, sphr.en]);
           return (
             <HighlightedText
               phrase={phrase.substr(sphr.st, sphr.en - sphr.st)}
@@ -214,8 +215,6 @@ const FootnoteDecider = ({
   textAreaID: number;
 }) => {
   const { displayedTexts } = useTexts();
-  const { highlightIndices } = useHighlight();
-
   // Splits the text into several chunks comprising:
   // 1. Normal text to be rendered
   // 2. Inline footnotes to be italicised
@@ -226,15 +225,6 @@ const FootnoteDecider = ({
   // If no, then we skip completely
   const getPosition = (text: string, textAreaID: number) =>
     displayedTexts.bodies[textAreaID].brokenText.indexOf(text);
-
-  const matches = text.matchAll(REGEX.inlineFootnote);
-  // for (const match of matches) {
-  //   console.log(
-  //     `Found ${match} with indices [${match.index}, ${
-  //       match.index + match[0].length
-  //     }]`
-  //   );
-  // }
 
   const charArray = text.split(REGEX.inlineFootnote);
 

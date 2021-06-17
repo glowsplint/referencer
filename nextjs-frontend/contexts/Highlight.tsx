@@ -5,12 +5,15 @@ const HighlightContext = React.createContext<Partial<HighlightState>>({});
 
 export type Interval = [number, number];
 
-export type HighlightIndices = Map<
-  number,
-  Map<number, Map<ColourType, Interval[]>>
->;
+export type HighlightIndices = {
+  [key: number]: {
+    [key: number]: {
+      [key in ColourType]: Interval[];
+    };
+  };
+};
 
-export type HighlightIndicesChange = Map<number, Interval>;
+export type HighlightIndicesChange = { [key: number]: Interval };
 
 type HighlightState = {
   highlightIndices: HighlightIndices;
@@ -20,10 +23,7 @@ type HighlightState = {
 
 export const HighlightProvider = ({ children }) => {
   const [highlights, setHighlights] = useState<HighlightState>({
-    highlightIndices: new Map<
-      number,
-      Map<number, Map<ColourType, Interval[]>>
-    >(),
+    highlightIndices: {},
     setHighlightIndices: (newHighlightIndices: HighlightIndices) => {
       setHighlights({
         highlightIndices: newHighlightIndices,
@@ -33,7 +33,7 @@ export const HighlightProvider = ({ children }) => {
     },
     resetHighlightIndices: () => {
       setHighlights({
-        highlightIndices: new Map(),
+        highlightIndices: {},
         setHighlightIndices: highlights.setHighlightIndices,
         resetHighlightIndices: highlights.resetHighlightIndices,
       });
