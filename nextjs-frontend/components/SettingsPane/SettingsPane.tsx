@@ -25,7 +25,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CreateIcon from "@material-ui/icons/Create";
 import ShareIcon from "@material-ui/icons/Share";
-import { HighlightIndices, useHighlight } from "../../contexts/Highlight";
+import { HighlightIndices, HighlightIndicesChange, useHighlight } from "../../contexts/Highlight";
 import { start } from "repl";
 
 const useStyles = makeStyles({
@@ -235,23 +235,17 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       }
       // Now, we have the startNode and endNode correctly sorted.
       // 2. Identify the [Start, End] indices for both the startNode and endNode
-      let intermediateHighlightIndices: HighlightIndices;
+      let changedHighlights : HighlightIndicesChange = new Map<number, [number, number]>();
       if (sameComponent) {
-        intermediateHighlightIndices = {
-          [colourName]: { [getPosition(startNode)]: [[startOffset, endOffset]] },
-        };
+        changedHighlights.set(getPosition(startNode), [startOffset, endOffset]);
       } else {
-        intermediateHighlightIndices = {
-          [colourName]: {
-            [getPosition(startNode)]: [[
-              startOffset,
-              displayedTexts.bodies[textAreaID].brokenText[
-                getPosition(startNode)
-              ].length,
-            ]],
-            [getPosition(endNode)]: [[0, endOffset]],
-          },
-        };
+        changedHighlights.set(
+          getPosition(startNode),
+          [startOffset, displayedTexts.bodies[textAreaID].brokenText[getPosition(startNode)].length]
+        );
+        changedHighlights.set(
+          getPosition(endNode), [0, endOffset]
+        );
         // 3. Determine if there are nodes in the middle, and fill them in too
         // Add a new entry for every string that exists within the range
         const middleRange = range(
@@ -261,39 +255,34 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
         for (let index of middleRange) {
           const item = displayedTexts.bodies[textAreaID].brokenText[index];
           if (!item.match(REGEX.verseNumber)) {
-            intermediateHighlightIndices[colourName][item] = [0, item.length];
+            changedHighlights.set(index, [0, item.length]);
           }
         }
       }
       // 4. Take union of oldHighlightIndices with intermediateHighlightIndices to return newHighlightIndices
       // Take everything from oldHighlightIndices
       // For every key in intermediateHighlightIndices, if it exists in oldHighlightIndices, value = mergeRanges(value)
-      let newHighlightIndices = { ...oldHighlightIndices };
-      for (let [sKey, sValue] of Object.entries(
-        intermediateHighlightIndices[colourName]
-      )) {
-        if (sKey in oldHighlightIndices) {
-          // console.log(intermediateHighlightIndices[colourName][sKey]);
-          // newHighlightIndices[colourName][sKey] = mergeRanges([
-          //   oldHighlightIndices[colourName][sKey],
-          //   intermediateHighlightIndices[colourName][sKey],
-          // ]);
-          console.log("gg");
-        } else {
-          if (!(colourName in newHighlightIndices)) {
-            newHighlightIndices[colourName] = {};
-          }
-          if (!(sKey in newHighlightIndices[colourName])) {
-            newHighlightIndices[colourName][sKey] = [];
-          }
-          newHighlightIndices[colourName][sKey].push(...sValue);
-          newHighlightIndices[colourName][sKey].sort(
-            ([a0, a1], [b0, b1]) => { return a0 - a1;}
-          );
-        }
+      if (!(oldHighlightIndices.has(textAreaID))) {
+        oldHighlightIndices.set(textAreaID, new Map<number, Map<ColourType, [number, number][]>>());
       }
-      console.log(newHighlightIndices);
-      setHighlightIndices(newHighlightIndices);
+      let textHighlightIndices = oldHighlightIndices.get(textAreaID);
+      for (let [dataIndex, interval] of changedHighlights) {
+        if (!(textHighlightIndices.has(dataIndex))) {
+          textHighlightIndices.set(dataIndex, new Map<ColourType, [number, number][]>());
+        }
+        let verseHighlightIndices = textHighlightIndices.get(dataIndex);
+        if (!(verseHighlightIndices.has(colourName))) {
+          verseHighlightIndices.set(colourName, []);
+        }
+        let colourHighlightIndices = verseHighlightIndices.get(colourName);
+        // TODO This is the part where we need to check for overlaps and resolve.
+        colourHighlightIndices.push(interval);
+        colourHighlightIndices.sort(
+          ([a0, a1], [b0, b1]) => { return a0 - a1;}
+        );
+      }
+      console.log(oldHighlightIndices);
+      setHighlightIndices(oldHighlightIndices);
     }
   };
 

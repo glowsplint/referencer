@@ -3,9 +3,9 @@ import { ColourType } from "../enums/enums";
 
 const HighlightContext = React.createContext<Partial<HighlightState>>({});
 
-export type HighlightIndices = {
-  [key in ColourType]?: { [key: string]: [number, number][] };
-};
+export type HighlightIndices = Map<string, Map<number, Map<ColourType, [number, number][]>>>;
+
+export type HighlightIndicesChange = Map<number, [number, number]>;
 
 type HighlightState = {
   highlightIndices: HighlightIndices;
@@ -14,7 +14,7 @@ type HighlightState = {
 
 export const HighlightProvider = ({ children }) => {
   const [highlights, setHighlights] = useState<HighlightState>({
-    highlightIndices: {},
+    highlightIndices: new Map<string, Map<number, Map<ColourType, [number, number][]>>>(),
     setHighlightIndices: (newHighlightIndices: HighlightIndices) => {
       setHighlights({
         highlightIndices: newHighlightIndices,

@@ -108,25 +108,28 @@ const NormalText = ({
 const HighlightDecider = ({
   phrase,
   dataIndex,
+  textAreaID,
 }: {
   phrase: string;
-  dataIndex: string;
+  dataIndex: number;
+  textAreaID: string;
 }) => {
   // Splits the phrase into highlighted, italicised and normal text
   const { highlightIndices } = useHighlight();
-
+  let phraseIndices : Map<ColourType, [number, number][]>;
   // Get the colors coresponding to the verse
-  let phraseIndices  = new Map<string, [number, number][]>();
-  let colorPtrs = new Map<string, number>();
+  let colourPos = new Map<ColourType, number>();
   let splits : number[] = [0];
-  for (let col in highlightIndices) {
-    if (dataIndex in highlightIndices[col]) {
-      phraseIndices.set(col, highlightIndices[col][dataIndex]);
-      colorPtrs.set(col, 0);
-      for (let interval of highlightIndices[col][dataIndex]) {
+  if (highlightIndices.has(textAreaID) && highlightIndices.get(textAreaID).has(dataIndex)) {
+    phraseIndices = highlightIndices.get(textAreaID).get(dataIndex);
+    for (let [col, intervals] of phraseIndices) {
+      colourPos.set(col, 0);
+      for (let interval of intervals) {
         splits.push(...interval);
       }
     }
+  } else {
+    phraseIndices = new Map<ColourType, [number, number][]>();
   }
   splits.push(phrase.length);
   splits.sort((a, b) => { return a - b; });
@@ -139,13 +142,13 @@ const HighlightDecider = ({
       st: splits[i], en: splits[i + 1]
     }
     for (let col of phraseIndices.keys()) {
-      let i = colorPtrs.get(col);
+      let i = colourPos.get(col);
       if (i < phraseIndices.get(col).length) {
-        let [stH, enH] = phraseIndices.get(col)[(colorPtrs.get(col))];
+        let [stH, enH] = phraseIndices.get(col)[(colourPos.get(col))];
         if (stH == sphr.st) {
           // Found the color.
-          sphr['colour'] = col as ColourType;
-          colorPtrs.set(col, colorPtrs.get(col) + 1);
+          sphr['colour'] = col;
+          colourPos.set(col, colourPos.get(col) + 1);
           break;
         }
       }
@@ -163,7 +166,7 @@ const HighlightDecider = ({
             <HighlightedText
               phrase={phrase.substr(sphr.st, sphr.en-sphr.st)}
               colour={sphr.colour}
-              dataIndex={dataIndex}
+              dataIndex={dataIndex.toString()}
               key={index}
             />
           );
@@ -171,7 +174,7 @@ const HighlightDecider = ({
           return (
             <NormalText
             phrase={phrase.substr(sphr.st, sphr.en-sphr.st)}
-            dataIndex={dataIndex}
+            dataIndex={dataIndex.toString()}
             key={index}
             />
           );
@@ -241,8 +244,9 @@ const FootnoteDecider = ({
         }
         return (
           <HighlightDecider
-            phrase={item}
             key={index}
+            textAreaID={textAreaID}
+            phrase={item}
             dataIndex={getPosition(text, textAreaID)}
           />
         );
