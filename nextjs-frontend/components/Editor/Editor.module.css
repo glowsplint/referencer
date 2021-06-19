@@ -103,3 +103,7 @@
 .verseNumber {
   user-select: none;
 }
+
+.inlineFootnote {
+  user-select: none;
+}

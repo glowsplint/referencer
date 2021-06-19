@@ -247,7 +247,10 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
         offset + getDataPositionStart(startNode);
 
       if (sameComponent) {
-        changedHighlights[getDataIndex(startNode)] = [startOffset, endOffset];
+        changedHighlights[getDataIndex(startNode)] = [
+          addDataPosition(startOffset),
+          addDataPosition(endOffset),
+        ];
       } else {
         changedHighlights[getDataIndex(startNode)] = [
           startOffset,

@@ -130,18 +130,28 @@ const HighlightDecider = ({
   textAreaID: number;
   dataPosition: Interval;
 }) => {
-  // Splits the phrase into highlighted, italicised and normal text
   const { highlightIndices } = useHighlight();
   let phraseIndices: { [key in ColourType]?: Interval[] };
 
-  // Get the colors coresponding to the verse
+  // Get the colors corresponding to the verse
   let colourPos: { [key in ColourType]?: number } = {};
   let splits: number[] = [0];
-  if (
-    textAreaID in highlightIndices &&
-    dataIndex in highlightIndices[textAreaID]
-  ) {
-    phraseIndices = highlightIndices[textAreaID][dataIndex];
+
+  phraseIndices = { ...highlightIndices?.[textAreaID]?.[dataIndex] };
+
+  if (phraseIndices) {
+    // Filter out from phraseIndices what is irrelevant to this component and offset it by dataPosition[0]
+    for (let col of Object.keys(phraseIndices)) {
+      phraseIndices[col] = phraseIndices[col].filter(
+        (interval: Interval) =>
+          dataPosition[0] <= interval[0] &&
+          interval[0] <= dataPosition[0] + phrase.length
+      );
+      phraseIndices[col] = phraseIndices[col].map((interval: Interval) =>
+        interval.map((item) => item - dataPosition[0])
+      );
+    }
+
     for (let [col, intervals] of Object.entries(phraseIndices)) {
       colourPos[col] = 0;
       for (let interval of intervals) {
@@ -151,6 +161,7 @@ const HighlightDecider = ({
   } else {
     phraseIndices = {};
   }
+
   splits.push(phrase.length);
   splits.sort((a, b) => {
     return a - b;
@@ -158,7 +169,7 @@ const HighlightDecider = ({
 
   let results: Subphrase[] = [];
   for (let i = 0; i < splits.length - 1; i++) {
-    if (splits[i] == splits[i + 1]) continue;
+    if (splits[i] === splits[i + 1]) continue;
     let sphr: Subphrase = {
       st: splits[i],
       en: splits[i + 1],
@@ -166,8 +177,8 @@ const HighlightDecider = ({
     for (let col of Object.keys(phraseIndices)) {
       let i = colourPos[col];
       if (i < phraseIndices[col].length) {
-        let [stH, enH] = phraseIndices[col][colourPos[col]];
-        if (stH == sphr.st) {
+        let [stH, enH]: Interval = phraseIndices[col][colourPos[col]];
+        if (stH === sphr.st) {
           // Found the color.
           sphr["colour"] = col as ColourType;
           colourPos[col] = colourPos[col] + 1;
@@ -186,7 +197,6 @@ const HighlightDecider = ({
     <>
       {results.map((sphr: Subphrase, index) => {
         if ("colour" in sphr) {
-          console.log(sphr.st, sphr.en);
           return (
             <HighlightedText
               phrase={phrase.substr(sphr.st, sphr.en - sphr.st)}
@@ -233,6 +243,7 @@ const InlineFootnote = ({
       variant="overline"
       data-index={dataIndex}
       data-position={dataPosition}
+      className={styles.inlineFootnote}
     >
       <sup>{text}</sup>
     </Typography>
