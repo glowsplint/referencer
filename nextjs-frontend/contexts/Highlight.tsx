@@ -16,7 +16,7 @@ export type HighlightIndices = {
   };
 };
 
-export type HighlightIndicesChange = { [key: number]: Interval };
+export type HighlightIndicesChange = { [key: number]: Interval[] };
 
 type HighlightState = {
   highlightIndices: HighlightIndices;

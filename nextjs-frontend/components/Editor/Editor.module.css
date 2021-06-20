@@ -107,3 +107,7 @@
 .inlineFootnote {
   user-select: none;
 }
+
+.span::selection {
+  background-color: rgb(143, 143, 143);
+}

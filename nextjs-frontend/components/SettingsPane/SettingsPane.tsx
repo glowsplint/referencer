@@ -170,13 +170,11 @@ interface DataNode extends Node {
 }
 
 const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
-  // Clicking this component will update the Highlight Context which MainRegion is dependent on (need to configure this), triggering a re-render
   const { displayedTexts } = useTexts();
   const { highlightIndices, setHighlightIndices } = useHighlight();
   const colourStyle = { backgroundColor: colour[1] };
   const colourName = colour[0];
 
-  // Write a function (Selection, OldHighlightIndices) => void that triggers setHighlightIndices(NewHighlightIndices)
   const generateNewIndices = (
     selection: Selection,
     oldHighlightIndices: HighlightIndices
@@ -192,6 +190,7 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
     const focusNode = selection.focusNode as DataNode;
     const anchorOffset = selection.anchorOffset;
     const focusOffset = selection.focusOffset;
+
     if (
       anchorNode.parentElement.parentElement ===
         focusNode.parentElement.parentElement &&
@@ -204,60 +203,64 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       const getDataPositionStart = (node: DataNode) => {
         return node.parentElement.dataset.position.split(",").map(parseInt)[0];
       };
-      let startNode: DataNode;
-      let startOffset: number;
-      let endNode: DataNode;
-      let endOffset: number;
-      let sameComponent = false;
 
-      [startNode, endNode, startOffset, endOffset] = [
-        anchorNode,
-        focusNode,
-        anchorOffset,
-        focusOffset,
-      ];
-      if (getDataIndex(anchorNode) > getDataIndex(focusNode)) {
-        [startNode, endNode, startOffset, endOffset] = [
-          focusNode,
-          anchorNode,
-          focusOffset,
-          anchorOffset,
-        ];
-      } else if (getDataIndex(anchorNode) === getDataIndex(focusNode)) {
-        sameComponent = true;
-        [startNode, endNode, startOffset, endOffset] = [
-          anchorNode,
-          focusNode,
-          anchorOffset,
-          focusOffset,
-        ];
-        if (anchorOffset > focusOffset) {
-          [startNode, endNode, startOffset, endOffset] = [
-            focusNode,
-            anchorNode,
-            focusOffset,
-            anchorOffset,
-          ];
-        }
+      let startNode: DataNode, endNode: DataNode;
+      let startOffset: number, endOffset: number;
+      let sameDataIndex = getDataIndex(anchorNode) === getDataIndex(focusNode);
+      let sameDataPosition =
+        getDataPositionStart(anchorNode) === getDataPositionStart(focusNode);
+
+      const setDefaultNodes = () => {
+        [startNode, endNode] = [anchorNode, focusNode];
+        [startOffset, endOffset] = [anchorOffset, focusOffset];
+      };
+      const reverseNodes = () => {
+        [startNode, endNode] = [focusNode, anchorNode];
+        [startOffset, endOffset] = [focusOffset, anchorOffset];
+      };
+
+      setDefaultNodes();
+      if (
+        getDataIndex(anchorNode) > getDataIndex(focusNode) ||
+        (sameDataIndex && sameDataPosition && anchorOffset > focusOffset) ||
+        getDataPositionStart(anchorNode) > getDataPositionStart(focusNode)
+      ) {
+        reverseNodes();
       }
+
       // Now, we have the startNode and endNode correctly sorted.
       // 2. Identify the [Start, End] indices for both the startNode and endNode
       let changedHighlights: HighlightIndicesChange = {};
-      const addDataPosition = (offset: number) =>
+      const addDataPositionStart = (offset: number) =>
         offset + getDataPositionStart(startNode);
+      const addDataPositionEnd = (offset: number) =>
+        offset + getDataPositionStart(endNode);
 
-      if (sameComponent) {
+      // 3 different scenarios:
+      // 1. Same dataIndex and dataPosition
+      // 2. Same dataIndex but different dataPosition
+      // 3. Different dataIndex and different dataPosition
+      if (sameDataIndex && sameDataPosition) {
         changedHighlights[getDataIndex(startNode)] = [
-          addDataPosition(startOffset),
-          addDataPosition(endOffset),
+          [addDataPositionStart(startOffset), addDataPositionStart(endOffset)],
+        ];
+      } else if (sameDataIndex && !sameDataPosition) {
+        changedHighlights[getDataIndex(startNode)] = [
+          [addDataPositionStart(startOffset), addDataPositionEnd(endOffset)],
         ];
       } else {
         changedHighlights[getDataIndex(startNode)] = [
-          startOffset,
-          displayedTexts.bodies[textAreaID].brokenText[getDataIndex(startNode)]
-            .length,
+          [
+            startOffset,
+            displayedTexts.bodies[textAreaID].brokenText[
+              getDataIndex(startNode)
+            ].length,
+          ],
         ];
-        changedHighlights[getDataIndex(endNode)] = [0, endOffset];
+        changedHighlights[getDataIndex(endNode)] = [
+          [0, addDataPositionEnd(endOffset)],
+        ];
+
         // 3. Determine if there are nodes in the middle, and fill them in too
         // Add a new entry for every string that exists within the range
         const middleRange = range(
@@ -267,35 +270,39 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
         for (let index of middleRange) {
           const item = displayedTexts.bodies[textAreaID].brokenText[index];
           if (!item.match(REGEX.verseNumber)) {
-            changedHighlights[index] = [0, item.length];
+            changedHighlights[index] = [[0, item.length]];
           }
         }
       }
-      // 4. Take union of oldHighlightIndices with intermediateHighlightIndices to return newHighlightIndices
-      // Take everything from oldHighlightIndices
-      // For every key in intermediateHighlightIndices, if it exists in oldHighlightIndices, value = mergeRanges(value)
+
+      // 4. Take union of oldHighlightIndices with changedHighlights to return newHighlightIndices
       if (!(textAreaID in oldHighlightIndices)) {
         oldHighlightIndices[textAreaID] = {};
       }
       let textHighlightIndices = oldHighlightIndices[textAreaID];
-      for (let [dataIndex, interval] of Object.entries(changedHighlights)) {
-        if (!(dataIndex in textHighlightIndices)) {
-          textHighlightIndices[dataIndex] = {};
+      for (let [dataIndex, intervalArray] of Object.entries(
+        changedHighlights
+      )) {
+        for (let interval of intervalArray) {
+          if (!(dataIndex in textHighlightIndices)) {
+            textHighlightIndices[dataIndex] = {};
+          }
+          let verseHighlightIndices = textHighlightIndices[dataIndex];
+          if (!(colourName in verseHighlightIndices)) {
+            verseHighlightIndices[colourName] = [];
+          }
+          let colourHighlightIndices = verseHighlightIndices[colourName];
+          // TODO This is the part where we need to check for overlaps and resolve.
+          colourHighlightIndices.push(interval);
+          colourHighlightIndices.sort(([a0, a1], [b0, b1]) => {
+            return a0 - b0;
+          });
         }
-        let verseHighlightIndices = textHighlightIndices[dataIndex];
-        if (!(colourName in verseHighlightIndices)) {
-          verseHighlightIndices[colourName] = [];
-        }
-        let colourHighlightIndices = verseHighlightIndices[colourName];
-        // TODO This is the part where we need to check for overlaps and resolve.
-        colourHighlightIndices.push(interval);
-        colourHighlightIndices.sort(([a0, a1], [b0, b1]) => {
-          return a0 - b0;
-        });
       }
       console.log(oldHighlightIndices);
       setHighlightIndices(oldHighlightIndices);
     }
+    window.getSelection().removeAllRanges();
   };
 
   return (

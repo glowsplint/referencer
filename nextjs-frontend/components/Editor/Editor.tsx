@@ -144,13 +144,18 @@ const HighlightDecider = ({
     for (let col of Object.keys(phraseIndices)) {
       phraseIndices[col] = phraseIndices[col].filter(
         (interval: Interval) =>
-          dataPosition[0] <= interval[0] &&
-          interval[0] <= dataPosition[0] + phrase.length
+          !(interval[1] < dataPosition[0] || interval[0] > dataPosition[1])
       );
       phraseIndices[col] = phraseIndices[col].map((interval: Interval) =>
-        interval.map((item) => item - dataPosition[0])
+        interval.map((item) =>
+          Math.min(Math.max(item - dataPosition[0], 0), phrase.length)
+        )
       );
     }
+
+    // if (dataIndex === 3) {
+    //   console.log(phraseIndices);
+    // }
 
     for (let [col, intervals] of Object.entries(phraseIndices)) {
       colourPos[col] = 0;
