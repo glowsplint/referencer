@@ -44,7 +44,7 @@
   flex: 1;
 }
 
-.sectionHeader {
+.section_header {
   display: flex;
   align-items: center;
   margin-top: 10px;
@@ -52,7 +52,7 @@
   margin-right: 10px;
 }
 
-.sectionHeader > svg {
+.section_header > svg {
   margin-bottom: 2px;
 }
 

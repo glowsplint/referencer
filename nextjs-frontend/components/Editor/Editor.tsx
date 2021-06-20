@@ -153,10 +153,6 @@ const HighlightDecider = ({
       );
     }
 
-    // if (dataIndex === 3) {
-    //   console.log(phraseIndices);
-    // }
-
     for (let [col, intervals] of Object.entries(phraseIndices)) {
       colourPos[col] = 0;
       for (let interval of intervals) {
@@ -193,10 +189,6 @@ const HighlightDecider = ({
     }
     results.push(sphr);
   }
-
-  // if (results.length > 1) {
-  //   console.log(results);
-  // }
 
   return (
     <>
@@ -248,7 +240,7 @@ const InlineFootnote = ({
       variant="overline"
       data-index={dataIndex}
       data-position={dataPosition}
-      className={styles.inlineFootnote}
+      className={styles.inline_footnote}
     >
       <sup>{text}</sup>
     </Typography>
@@ -308,9 +300,7 @@ const SectionHeader = ({
 }) => {
   return (
     <div className={styles.section_header}>
-      <b>
-        <FootnoteDecider text={text} textAreaID={textAreaID} />
-      </b>
+      <FootnoteDecider text={text} textAreaID={textAreaID} />
     </div>
   );
 };
@@ -355,7 +345,7 @@ const VerseNumber = ({
   return (
     <Typography
       variant="button"
-      className={styles.verseNumber}
+      className={styles.verse_number}
       data-index={getPosition(text, textAreaID)}
     >
       <b>
@@ -493,7 +483,9 @@ const TextArea = React.memo(
         })}
         id={textAreaID.toString()}
       >
-        <Typography variant="h6">{textName}</Typography>
+        <Typography variant="h6" className={styles.text_header}>
+          {textName}
+        </Typography>
         {brokenText.map((textArray, index: number) =>
           getComponent(formatMainText[index], textArray, index, textAreaID)
         )}

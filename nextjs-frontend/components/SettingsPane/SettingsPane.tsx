@@ -66,7 +66,7 @@ const Checkbox = ({
 
 const SectionHeader = ({ text }: { text: string }) => {
   return (
-    <div className={styles.sectionHeader}>
+    <div className={styles.section_header}>
       <ExpandMore fontSize="small" />
       <Typography variant="overline" display="block">
         {text}
@@ -220,14 +220,16 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       };
 
       setDefaultNodes();
-      if (
-        getDataIndex(anchorNode) > getDataIndex(focusNode) ||
-        (sameDataIndex && sameDataPosition && anchorOffset > focusOffset) ||
-        getDataPositionStart(anchorNode) > getDataPositionStart(focusNode)
-      ) {
+      const isGreaterDataIndex =
+        getDataIndex(anchorNode) > getDataIndex(focusNode);
+      const isGreaterDataPosition =
+        sameDataIndex &&
+        getDataPositionStart(anchorNode) > getDataPositionStart(focusNode);
+      const isGreaterOffset =
+        sameDataIndex && sameDataPosition && anchorOffset > focusOffset;
+      if (isGreaterDataIndex || isGreaterDataPosition || isGreaterOffset) {
         reverseNodes();
       }
-
       // Now, we have the startNode and endNode correctly sorted.
       // 2. Identify the [Start, End] indices for both the startNode and endNode
       let changedHighlights: HighlightIndicesChange = {};
@@ -251,10 +253,12 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       } else {
         changedHighlights[getDataIndex(startNode)] = [
           [
-            startOffset,
-            displayedTexts.bodies[textAreaID].brokenText[
-              getDataIndex(startNode)
-            ].length,
+            addDataPositionStart(startOffset),
+            addDataPositionStart(
+              displayedTexts.bodies[textAreaID].brokenText[
+                getDataIndex(startNode)
+              ].length
+            ),
           ],
         ];
         changedHighlights[getDataIndex(endNode)] = [
@@ -262,7 +266,6 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
         ];
 
         // 3. Determine if there are nodes in the middle, and fill them in too
-        // Add a new entry for every string that exists within the range
         const middleRange = range(
           getDataIndex(endNode) - getDataIndex(startNode) - 1,
           getDataIndex(startNode) + 1
@@ -283,23 +286,26 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
       for (let [dataIndex, intervalArray] of Object.entries(
         changedHighlights
       )) {
+        let verseHighlightIndices: { [key in ColourType]: Interval[] };
+        let colourHighlightIndices: Interval[];
         for (let interval of intervalArray) {
           if (!(dataIndex in textHighlightIndices)) {
             textHighlightIndices[dataIndex] = {};
           }
-          let verseHighlightIndices = textHighlightIndices[dataIndex];
+          verseHighlightIndices = textHighlightIndices[dataIndex];
           if (!(colourName in verseHighlightIndices)) {
             verseHighlightIndices[colourName] = [];
           }
-          let colourHighlightIndices = verseHighlightIndices[colourName];
-          // TODO This is the part where we need to check for overlaps and resolve.
+          colourHighlightIndices = verseHighlightIndices[colourName];
+
           colourHighlightIndices.push(interval);
-          colourHighlightIndices.sort(([a0, a1], [b0, b1]) => {
-            return a0 - b0;
-          });
         }
+        verseHighlightIndices[colourName] = mergeRanges(colourHighlightIndices);
+        verseHighlightIndices[colourName].sort(([a0, a1], [b0, b1]) => {
+          return a0 - b0;
+        });
       }
-      console.log(oldHighlightIndices);
+      // console.log(oldHighlightIndices);
       setHighlightIndices(oldHighlightIndices);
     }
     window.getSelection().removeAllRanges();
