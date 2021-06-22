@@ -15,16 +15,23 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { Format } from "../../enums/enums";
 import { DisplayedBody, useTexts } from "../../contexts/Texts";
 import { REGEX, COLOURS, ColourType } from "../../enums/enums";
-import { useHighlight, Interval } from "../../contexts/Highlight";
+import {
+  useHighlight,
+  Interval,
+  ColourArr,
+  strToColour,
+  colourToStr,
+  blendColour,
+} from "../../contexts/Highlight";
 
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
 
-type Subphrase = { st: number; en: number; colour?: ColourType };
+type Subphrase = { st: number; en: number; colour?: ColourArr[] };
 
 const useStyles = makeStyles({
   root: (props: { colour: string }) => ({
-    backgroundColor: COLOURS[props.colour],
+    backgroundColor: props.colour,
   }),
 });
 
@@ -83,7 +90,7 @@ const HighlightedText = ({
   dataPosition,
 }: {
   phrase: string;
-  colour: ColourType;
+  colour: string;
   dataIndex: number;
   dataPosition: Interval;
 }) => {
@@ -144,7 +151,7 @@ const HighlightDecider = ({
     for (let col of Object.keys(phraseIndices)) {
       phraseIndices[col] = phraseIndices[col].filter(
         (interval: Interval) =>
-          !(interval[1] < dataPosition[0] || interval[0] > dataPosition[1])
+          !(interval[1] <= dataPosition[0] || interval[0] >= dataPosition[1])
       );
       phraseIndices[col] = phraseIndices[col].map((interval: Interval) =>
         interval.map((item) =>
@@ -174,16 +181,18 @@ const HighlightDecider = ({
     let sphr: Subphrase = {
       st: splits[i],
       en: splits[i + 1],
+      colour: [],
     };
     for (let col of Object.keys(phraseIndices)) {
       let i = colourPos[col];
       if (i < phraseIndices[col].length) {
         let [stH, enH]: Interval = phraseIndices[col][colourPos[col]];
-        if (stH === sphr.st) {
+        if (stH <= sphr.st) {
           // Found the color.
-          sphr["colour"] = col as ColourType;
-          colourPos[col] = colourPos[col] + 1;
-          break;
+          sphr["colour"].push(strToColour(COLOURS[col], 0.5)); // alpha value set at 0.5 for now
+          if (sphr.en === enH) {
+            colourPos[col]++;
+          }
         }
       }
     }
@@ -196,8 +205,10 @@ const HighlightDecider = ({
         if ("colour" in sphr) {
           return (
             <HighlightedText
-              phrase={phrase.substr(sphr.st, sphr.en - sphr.st)}
-              colour={sphr.colour}
+              phrase={phrase.substring(sphr.st, sphr.en)}
+              colour={colourToStr(
+                sphr.colour.reduce(blendColour, [1, 1, 1, 1])
+              )} // this should be the backgrouund colour.
               dataIndex={dataIndex}
               dataPosition={
                 [sphr.st, sphr.en].map(
@@ -210,7 +221,7 @@ const HighlightDecider = ({
         } else {
           return (
             <NormalText
-              phrase={phrase.substr(sphr.st, sphr.en - sphr.st)}
+              phrase={phrase.substring(sphr.st, sphr.en)}
               dataIndex={dataIndex}
               key={index}
               dataPosition={
