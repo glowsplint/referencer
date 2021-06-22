@@ -24,6 +24,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 10px;
   margin-left: 5px;
   padding-right: 10px;
   padding-top: 5px;
@@ -71,13 +72,13 @@
   flex: 1;
 }
 
-.layer_items {
-  margin-left: 30px;
+.layers_items {
+  margin-left: 35px;
 }
 
 .dot {
-  height: 25px;
-  width: 25px;
+  height: 30px;
+  width: 30px;
   background-color: greenyellow;
   border-radius: 50%;
   display: inline-block;

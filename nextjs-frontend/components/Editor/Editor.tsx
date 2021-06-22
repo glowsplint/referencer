@@ -24,7 +24,7 @@ type Subphrase = { st: number; en: number; colour?: ColourType };
 
 const useStyles = makeStyles({
   root: (props: { colour: string }) => ({
-    backgroundColor: COLOURS[props.colour],
+    backgroundColor: COLOURS[props.colour] + "BB",
   }),
 });
 
@@ -81,16 +81,21 @@ const HighlightedText = ({
   colour,
   dataIndex,
   dataPosition,
+  removeLeadingWhitespace,
 }: {
   phrase: string;
   colour: ColourType;
   dataIndex: number;
   dataPosition: Interval;
+  removeLeadingWhitespace?: boolean;
 }) => {
   const classes = useStyles({ colour: colour });
   return (
     <span
-      className={clsx(classes.root, styles.span)}
+      className={clsx(classes.root, styles.span, {
+        [styles.with_leading_whitespace]: !removeLeadingWhitespace,
+        [styles.without_leading_whitespace]: removeLeadingWhitespace,
+      })}
       data-index={dataIndex}
       data-position={dataPosition}
     >
@@ -99,24 +104,37 @@ const HighlightedText = ({
   );
 };
 
+HighlightedText.defaultProps = {
+  removeLeadingWhitespace: false,
+};
+
 const NormalText = ({
   phrase,
   dataIndex,
   dataPosition,
+  removeLeadingWhitespace,
 }: {
   phrase: string;
   dataIndex: number;
   dataPosition: Interval;
+  removeLeadingWhitespace?: boolean;
 }) => {
   return (
     <span
-      className={styles.span}
+      className={clsx(styles.span, {
+        [styles.with_leading_whitespace]: !removeLeadingWhitespace,
+        [styles.without_leading_whitespace]: removeLeadingWhitespace,
+      })}
       data-index={dataIndex}
       data-position={dataPosition}
     >
       {phrase}
     </span>
   );
+};
+
+NormalText.defaultProps = {
+  removeLeadingWhitespace: false,
 };
 
 const HighlightDecider = ({
@@ -124,11 +142,13 @@ const HighlightDecider = ({
   dataIndex,
   textAreaID,
   dataPosition,
+  removeLeadingWhitespace,
 }: {
   phrase: string;
   dataIndex: number;
   textAreaID: number;
   dataPosition: Interval;
+  removeLeadingWhitespace?: boolean;
 }) => {
   const { highlightIndices } = useHighlight();
   let phraseIndices: { [key in ColourType]?: Interval[] };
@@ -205,6 +225,7 @@ const HighlightDecider = ({
                 ) as Interval
               }
               key={index}
+              removeLeadingWhitespace={removeLeadingWhitespace}
             />
           );
         } else {
@@ -218,12 +239,17 @@ const HighlightDecider = ({
                   (item) => item + dataPosition[0]
                 ) as Interval
               }
+              removeLeadingWhitespace={removeLeadingWhitespace}
             />
           );
         }
       })}
     </>
   );
+};
+
+HighlightDecider.defaultProps = {
+  removeLeadingWhitespace: false,
 };
 
 const InlineFootnote = ({
@@ -250,9 +276,11 @@ const InlineFootnote = ({
 const FootnoteDecider = ({
   text,
   textAreaID,
+  removeLeadingWhitespace,
 }: {
   text: string;
   textAreaID: number;
+  removeLeadingWhitespace?: boolean;
 }) => {
   const { displayedTexts } = useTexts();
   const getPosition = (text: string, textAreaID: number) =>
@@ -284,11 +312,16 @@ const FootnoteDecider = ({
             phrase={item}
             dataIndex={getPosition(text, textAreaID)}
             dataPosition={getDataPosition(self, index)}
+            removeLeadingWhitespace={removeLeadingWhitespace}
           />
         );
       })}
     </>
   );
+};
+
+FootnoteDecider.defaultProps = {
+  removeLeadingWhitespace: false,
 };
 
 const SectionHeader = ({
@@ -386,7 +419,11 @@ const Quotes = ({ text, textAreaID }: { text: string; textAreaID: number }) => {
   return (
     <>
       <ParagraphSpacer textAreaID={textAreaID} />
-      <FootnoteDecider text={text.slice(2)} textAreaID={textAreaID} />
+      <FootnoteDecider
+        text={text}
+        textAreaID={textAreaID}
+        removeLeadingWhitespace
+      />
     </>
   );
 };

@@ -32,13 +32,6 @@ import {
   Interval,
 } from "../../contexts/Highlight";
 
-const useStyles = makeStyles({
-  input: {
-    height: "20px",
-    boxSizing: "border-box",
-  },
-});
-
 const Checkbox = ({
   handleCheckBoxToggle,
   textHeader,
@@ -50,16 +43,15 @@ const Checkbox = ({
 }) => {
   const { isDisplayed } = useTexts().texts;
   const checked = isDisplayed[id];
-  const root = { root: useStyles().input };
   return (
     <MUICheckBox
       color="primary"
-      classes={root}
-      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-      checkedIcon={<CheckBoxIcon fontSize="small" />}
+      icon={<CheckBoxOutlineBlankIcon />}
+      checkedIcon={<CheckBoxIcon />}
       onChange={handleCheckBoxToggle}
       name={textHeader}
       checked={checked}
+      size="small"
     />
   );
 };
@@ -336,9 +328,9 @@ const ClearHighlightsButton = () => {
   );
 };
 
-const LayerItems = () => {
+const LayersItems = () => {
   return (
-    <div className={styles.layer_items}>
+    <div className={styles.layers_items}>
       {Object.entries(COLOURS).map((item, index: number) => {
         return (
           <Dot colour={item as [ColourType, ColourValueType]} key={index} />
@@ -368,7 +360,7 @@ const MainRegion = ({
         handleCheckBoxToggle={handleCheckBoxToggle}
       />
       <SectionHeader text="Layers" />
-      <LayerItems />
+      <LayersItems />
     </div>
   );
 };
@@ -377,7 +369,7 @@ const Profile = () => {
   const { displayName } = useLogin();
   return (
     <div className={styles.profile}>
-      <FaceIcon fontSize="small" />{" "}
+      <FaceIcon fontSize="small" />
       <span className={styles.name}>{displayName}</span>
       <ChangeNameButton />
     </div>

@@ -88,11 +88,19 @@
   margin-top: 15px;
   margin-bottom: 10px;
   text-align: center;
+  user-select: none;
 }
 
 .span {
   line-height: 2.2em;
+}
+
+.with_leading_whitespace {
   white-space: pre-wrap;
+}
+
+.without_leading_whitespace {
+  white-space: normal;
 }
 
 .superscript {
@@ -115,5 +123,5 @@
 }
 
 .span::selection {
-  background-color: rgb(143, 143, 143);
+  background-color: rgba(143, 143, 143, 0.7);
 }
