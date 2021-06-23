@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
@@ -23,6 +23,7 @@ import {
   colourToStr,
   blendColour,
 } from "../../contexts/Highlight";
+import { useTheme } from "@material-ui/core/styles";
 
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
@@ -83,7 +84,7 @@ const Italics = ({ phrase }: { phrase: string }) => {
   return <i>{phrase}</i>;
 };
 
-const HighlightedText = ({
+const Text = ({
   phrase,
   colour,
   dataIndex,
@@ -111,36 +112,7 @@ const HighlightedText = ({
   );
 };
 
-HighlightedText.defaultProps = {
-  removeLeadingWhitespace: false,
-};
-
-const NormalText = ({
-  phrase,
-  dataIndex,
-  dataPosition,
-  removeLeadingWhitespace,
-}: {
-  phrase: string;
-  dataIndex: number;
-  dataPosition: Interval;
-  removeLeadingWhitespace?: boolean;
-}) => {
-  return (
-    <span
-      className={clsx(styles.span, {
-        [styles.with_leading_whitespace]: !removeLeadingWhitespace,
-        [styles.without_leading_whitespace]: removeLeadingWhitespace,
-      })}
-      data-index={dataIndex}
-      data-position={dataPosition}
-    >
-      {phrase}
-    </span>
-  );
-};
-
-NormalText.defaultProps = {
+Text.defaultProps = {
   removeLeadingWhitespace: false,
 };
 
@@ -157,6 +129,7 @@ const HighlightDecider = ({
   dataPosition: Interval;
   removeLeadingWhitespace?: boolean;
 }) => {
+  const theme = useTheme();
   const { highlightIndices } = useHighlight();
   let phraseIndices: { [key in ColourType]?: Interval[] };
 
@@ -222,38 +195,25 @@ const HighlightDecider = ({
   return (
     <>
       {results.map((sphr: Subphrase, index) => {
-        if ("colour" in sphr) {
-          return (
-            <HighlightedText
-              phrase={phrase.substring(sphr.st, sphr.en)}
-              colour={colourToStr(
-                sphr.colour.reduce(blendColour, [1, 1, 1, 1])
-              )} // this should be the backgrouund colour.
-              dataIndex={dataIndex}
-              dataPosition={
-                [sphr.st, sphr.en].map(
-                  (item) => item + dataPosition[0]
-                ) as Interval
-              }
-              key={index}
-              removeLeadingWhitespace={removeLeadingWhitespace}
-            />
-          );
-        } else {
-          return (
-            <NormalText
-              phrase={phrase.substring(sphr.st, sphr.en)}
-              dataIndex={dataIndex}
-              key={index}
-              dataPosition={
-                [sphr.st, sphr.en].map(
-                  (item) => item + dataPosition[0]
-                ) as Interval
-              }
-              removeLeadingWhitespace={removeLeadingWhitespace}
-            />
-          );
-        }
+        return (
+          <Text
+            phrase={phrase.substring(sphr.st, sphr.en)}
+            colour={colourToStr(
+              sphr.colour.reduce(
+                blendColour,
+                strToColour(theme.palette.background.default, 1)
+              )
+            )} // this should be the background colour.
+            dataIndex={dataIndex}
+            dataPosition={
+              [sphr.st, sphr.en].map(
+                (item) => item + dataPosition[0]
+              ) as Interval
+            }
+            key={index}
+            removeLeadingWhitespace={removeLeadingWhitespace}
+          />
+        );
       })}
     </>
   );

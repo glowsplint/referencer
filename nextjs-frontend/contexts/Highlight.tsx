@@ -1,4 +1,3 @@
-import { FolderOpenRounded } from "@material-ui/icons";
 import React, { useState } from "react";
 import { ColourType } from "../enums/enums";
 
@@ -58,8 +57,8 @@ export const useHighlight = () => {
 export type ColourArr = [number, number, number, number];
 
 export const blendColour = (
-  [rb, gb, bb, ab]: ColourArr, // this the base colour
-  [ra, ga, ba, aa]: ColourArr // this the added colour
+  [rb, gb, bb, ab]: ColourArr, // this is the base colour
+  [ra, ga, ba, aa]: ColourArr // this is the added colour
 ): ColourArr => {
   let inv = ab * (1 - aa);
   let a = aa + inv;
