@@ -183,8 +183,8 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
     const focusOffset = selection.focusOffset;
 
     if (
-      anchorNode.parentElement.parentElement ===
-        focusNode.parentElement.parentElement &&
+      anchorNode?.parentElement.parentElement ===
+        focusNode?.parentElement.parentElement &&
       !selection.isCollapsed
     ) {
       // 2. Identify which node comes first by sorting on index and then offset

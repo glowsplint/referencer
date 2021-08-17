@@ -31,9 +31,23 @@ import SearchIcon from "@material-ui/icons/Search";
 type Subphrase = { st: number; en: number; colour?: ColourArr[] };
 
 const useStyles = makeStyles({
-  root: (props: { colour: string }) => ({
-    backgroundColor: props.colour,
-  }),
+  // Create an underline with a darker colour
+  root: (props: { colour: string }) => {
+    let underlineColour = colourToStr(
+      blendColour(
+        strToColour(props.colour, 1),
+        strToColour(props.colour, 1).map((val) => val * 0.3) as ColourArr
+      )
+    );
+    if (props.colour.toLowerCase() === "#fafafa") {
+      underlineColour = props.colour;
+    }
+
+    return {
+      backgroundColor: props.colour,
+      borderBottom: `2px solid ${underlineColour}`,
+    };
+  },
 });
 
 const SearchBar = ({
