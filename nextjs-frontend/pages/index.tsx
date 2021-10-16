@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import Head from "next/head";
-import styles from "./Landing.module.css";
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Router from "next/router";
-
-import KeyboardIcon from "@material-ui/icons/Keyboard";
-import FaceIcon from "@material-ui/icons/Face";
 import CreateIcon from "@material-ui/icons/Create";
+import FaceIcon from "@material-ui/icons/Face";
+import Head from "next/head";
 import InputIcon from "@material-ui/icons/Input";
+import KeyboardIcon from "@material-ui/icons/Keyboard";
+import React, { useState } from "react";
+import Router from "next/router";
+import TextField from "@material-ui/core/TextField";
+import styles from "../styles/Landing.module.css";
 import { LoginProvider } from "../contexts/Login";
 
 const InputField = ({
@@ -63,8 +62,8 @@ export default function Home() {
     displayName: "",
     codeInput: "",
   });
-  const [displayNameError, setDisplayNameError] = useState<boolean>(false);
-  const [spaceIDError, setSpaceIDError] = useState<boolean>(false);
+  const [displayNameError, _setDisplayNameError] = useState<boolean>(false);
+  const [spaceIDError, _setSpaceIDError] = useState<boolean>(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { REGEX, Format } from "../enums/enums";
+import { REGEX, Format } from "../common/enums";
 
 type Texts = {
   headers: string[];

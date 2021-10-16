@@ -1,6 +1,6 @@
+import Konva from "konva";
 import React from "react";
 import { Stage, Layer, Rect, Circle } from "react-konva";
-import Konva from "konva";
 
 const Canvas = ({
   className,

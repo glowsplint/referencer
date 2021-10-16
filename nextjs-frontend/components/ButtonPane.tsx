@@ -1,18 +1,17 @@
-import React from "react";
-import styles from "./ButtonPane.module.css";
 import Fab from "@material-ui/core/Fab";
-import Tooltip from "@material-ui/core/Tooltip";
-import Paper from "@material-ui/core/Paper";
-
-import MenuIcon from "@material-ui/icons/Menu";
+import FormatAlignJustifyIcon from "@material-ui/icons/FormatAlignJustify";
+import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import InvertColorsIcon from "@material-ui/icons/InvertColors";
 import InvertColorsOffIcon from "@material-ui/icons/InvertColorsOff";
-import LayersIcon from "@material-ui/icons/Layers";
 import LayersClearIcon from "@material-ui/icons/LayersClear";
+import LayersIcon from "@material-ui/icons/Layers";
+import MenuIcon from "@material-ui/icons/Menu";
+import Paper from "@material-ui/core/Paper";
+import React from "react";
 import TextRotateVerticalIcon from "@material-ui/icons/TextRotateVertical";
 import TextRotationNoneIcon from "@material-ui/icons/TextRotationNone";
-import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
-import FormatAlignJustifyIcon from "@material-ui/icons/FormatAlignJustify";
+import Tooltip from "@material-ui/core/Tooltip";
+import styles from "../styles/ButtonPane.module.css";
 
 const ButtonIcon = React.memo(
   ({ icon, callback }: { icon: JSX.Element; callback: () => void }) => {

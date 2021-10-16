@@ -1,23 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import { grey } from "@material-ui/core/colors";
-import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
-import styles from "./Editor.module.css";
-import { get } from "../utils";
-import books from "../books";
-import clsx from "clsx";
-import { Scrollbars } from "react-custom-scrollbars";
-import { Format } from "../../enums/enums";
-import { DisplayedBody, DisplayedTexts, useTexts } from "../../contexts/Texts";
-import { REGEX } from "../../enums/enums";
-import { Interval } from "../../contexts/Highlight";
 import HelpIcon from "@material-ui/icons/Help";
+import IconButton from "@material-ui/core/IconButton";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import React, { useEffect, useRef, useState } from "react";
 import SearchIcon from "@material-ui/icons/Search";
+import TextField from "@material-ui/core/TextField";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
+import books from "../common/books";
+import clsx from "clsx";
 import dynamic from "next/dynamic";
+import styles from "../styles/Editor.module.css";
+import { DisplayedBody, DisplayedTexts, useTexts } from "../contexts/Texts";
+import { Format } from "../common/enums";
+import { Interval } from "../contexts/Highlight";
+import { REGEX } from "../common/enums";
+import { Scrollbars } from "react-custom-scrollbars";
+import { get } from "../common/utils";
+import { grey } from "@material-ui/core/colors";
 
 const NoSSRCanvas = dynamic(() => import("./Canvas"), {
   ssr: false,

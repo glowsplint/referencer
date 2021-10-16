@@ -1,17 +1,16 @@
-import React, { useState } from "react";
-import Head from "next/head";
-import styles from "./Space.module.css";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { toTitleCase } from "../../components/utils";
-
 import ButtonPane from "../../components/ButtonPane";
-import SettingsPane from "../../components/SettingsPane";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import Editor from "../../components/Editor";
+import Head from "next/head";
+import React, { useState } from "react";
+import SettingsPane from "../../components/SettingsPane";
+import styles from "../../styles/Space.module.css";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { HighlightProvider } from "../../contexts/Highlight";
 import { LoginProvider } from "../../contexts/Login";
 import { TextsProvider, useTexts } from "../../contexts/Texts";
-import { HighlightProvider } from "../../contexts/Highlight";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { toTitleCase } from "../../common/utils";
 
 export function Space() {
   const { texts, setTexts } = useTexts();

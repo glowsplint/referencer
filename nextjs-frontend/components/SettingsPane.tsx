@@ -1,29 +1,28 @@
-import React, { useState } from "react";
-import clsx from "clsx";
-import styles from "./SettingsPane.module.css";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import { Checkbox as MUICheckBox, Paper } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CloseIcon from "@material-ui/icons/Close";
+import CreateIcon from "@material-ui/icons/Create";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { useLogin } from "../../contexts/Login";
-import { useTexts } from "../../contexts/Texts";
-import { COLOURS, ColourType, ColourValueType } from "../../enums/enums";
-
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CloseIcon from "@material-ui/icons/Close";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import FaceIcon from "@material-ui/icons/Face";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import CreateIcon from "@material-ui/icons/Create";
+import IconButton from "@material-ui/core/IconButton";
+import React, { useState } from "react";
 import ShareIcon from "@material-ui/icons/Share";
-import { useHighlight } from "../../contexts/Highlight";
+import TextField from "@material-ui/core/TextField";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
+import clsx from "clsx";
+import styles from "../styles/SettingsPane.module.css";
+import { COLOURS, ColourType, ColourValueType } from "../common/enums";
+import { Checkbox as MUICheckBox, Paper } from "@material-ui/core";
+import { useHighlight } from "../contexts/Highlight";
+import { useLogin } from "../contexts/Login";
+import { useTexts } from "../contexts/Texts";
 
 const Checkbox = ({
   handleCheckBoxToggle,
@@ -116,12 +115,7 @@ const Header = () => {
   const [displayedSpace, setDisplayedSpace] = useState(spaceID);
 
   const copyToClipboard = () => {
-    const el = document.createElement("textarea");
-    el.value = spaceID;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand("copy");
-    document.body.removeChild(el);
+    navigator.clipboard.writeText(spaceID);
   };
   const onMouseDown = () => {
     setDisplayedSpace("Copied!");

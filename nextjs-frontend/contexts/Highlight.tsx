@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ColourType } from "../enums/enums";
+import { ColourType } from "../common/enums";
 
 const HighlightContext = React.createContext<Partial<HighlightState>>({});
 
