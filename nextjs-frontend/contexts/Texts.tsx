@@ -7,16 +7,14 @@ type Texts = {
   isDisplayed: boolean[];
 };
 
-type DisplayedTexts = {
+export type DisplayedTexts = {
   headers: string[];
   bodies: DisplayedBody[];
 };
 
 export type DisplayedBody = {
-  formatMainText: string[];
-  brokenText: string[];
-  formatFootnotes: string[];
-  brokenFootnotes: string[];
+  mainText: TextInfo[];
+  footnotes: TextInfo[];
 };
 
 type TextState = {
@@ -24,6 +22,23 @@ type TextState = {
   displayedTexts: DisplayedTexts;
   setTexts: (newTexts: Texts) => void;
 };
+
+type TextType =
+  | Format
+  | "Quotes"
+  | "ParagraphSpacer"
+  | "IndentedVerseNumber"
+  | "InlineVerseNumber"
+  | "SectionHeader"
+  | "SpecialNote"
+  | "Italics"
+  | "InlineFootnote"
+  | "ItalicsBlock";
+
+interface TextInfo {
+  text: string;
+  format: TextType;
+}
 
 const TextsContext = React.createContext<Partial<TextState>>({});
 
@@ -51,68 +66,73 @@ const addSpace = (brokenTextIndex: string): string => {
 };
 
 // The primary parsing engine that creates an array that contains the formatting information for each block of text
-const getFormatMainText = (mainText: string[]): [string[], string[]] => {
-  const brokenText = mainText.slice(1).flatMap((a) =>
+const getMainText = (rawMainText: string[]): TextInfo[] => {
+  const brokenText = rawMainText.slice(1).flatMap((a) =>
     a
       .split(REGEX.verseNumberInText)
       .flatMap((b) => b.split(REGEX.specialNoteInText))
       .flatMap((c) => c.split(REGEX.hasTripleLineFeed))
       .flatMap((d) => d.split(REGEX.hasTripleLineFeedAtEnd))
   );
-  let format: string[] = [];
-  let firstVerseNumberFound: boolean = false;
+  let mainText: TextInfo[] = [];
+  let isFirstVerseNumberFound: boolean = false; // flag tracker
 
   // Spaces are added at the end of strings (via addSpace) to have proper spacing around verse numbers
   for (let [index, item] of brokenText.entries()) {
+    mainText[index] = { format: undefined, text: item };
+
     if (item.match(REGEX.verseNumber)) {
-      format[index] = Format.VerseNumber;
-      if (!firstVerseNumberFound) {
-        firstVerseNumberFound = true;
+      mainText[index].format = Format.VerseNumber;
+      if (!isFirstVerseNumberFound) {
+        isFirstVerseNumberFound = true;
       }
     } else {
       // Everything before the first verse number is found is a SectionHeader
-      // firstVerseNumberFound is a flag to track that
-      if (!firstVerseNumberFound) {
-        format[index] = Format.SectionHeader;
+      if (!isFirstVerseNumberFound) {
+        mainText[index].format = Format.SectionHeader;
       } else if (item.match(REGEX.specialNoteInText)) {
-        format[index] = Format.SpecialNote;
+        mainText[index].format = Format.SpecialNote;
       } else if (item.match(REGEX.quotes)) {
         // If the quote (") begins at the start of the verse, format as StandardText
         // or, if the quote (") is in Psalms, format as StandardText
         if (
-          format[index - 1] === Format.VerseNumber ||
-          mainText[0].match(REGEX.isPsalm)
+          mainText[index - 1].format === Format.VerseNumber ||
+          rawMainText[0].match(REGEX.isPsalm)
         ) {
-          format[index] = Format.StandardText;
+          mainText[index].format = Format.StandardText;
         } else {
-          format[index] = Format.Quotes;
+          mainText[index].format = Format.Quotes;
         }
         brokenText[index] = addSpace(brokenText[index]);
         // Triple Line Feeds at the end of the string are parsed as new paragraphs
       } else if (item.match(REGEX.hasTripleLineFeedAtEnd)) {
-        format[index] = Format.HasTripleLineFeedAtEnd;
-        // If the previous item in the array is StandardText, this one should be a SectionHeader
+        mainText[index].format = Format.HasTripleLineFeedAtEnd;
+        // If the previous item in the array is StandardText, then this should be a SectionHeader
         // if it is not Psalm 42:6 (exception to the rule)
-      } else if (format[index - 1] === Format.StandardText) {
+      } else if (mainText[index - 1].format === Format.StandardText) {
         if (item.endsWith("\n")) {
-          format[index] = Format.Psalm426;
+          mainText[index].format = Format.Psalm426;
         } else {
-          format[index] = Format.SectionHeader;
+          mainText[index].format = Format.SectionHeader;
         }
       } else {
-        format[index] = Format.StandardText;
+        mainText[index].format = Format.StandardText;
         brokenText[index] = addSpace(brokenText[index]);
       }
     }
   }
-  return [format, brokenText];
+  return mainText;
 };
 
 // The secondary parsing engine (for footnotes only) that creates an array with formatting information
-const getFormatFootnotes = (footnotes: string[]) => {
-  let format: string[] = Array(footnotes.length).fill(Format.FootnoteText);
-  format[0] = Format.SectionHeader;
-  return [format, footnotes];
+const getFootnotes = (rawFootnotes: string[]): TextInfo[] => {
+  const footnotes = rawFootnotes.map((footnoteText, index) => {
+    return {
+      format: index === 0 ? Format.SectionHeader : Format.FootnoteText,
+      text: footnoteText,
+    };
+  });
+  return footnotes;
 };
 
 /* Context Provider for texts */
@@ -123,10 +143,10 @@ export const TextsProvider = ({ children }) => {
     );
 
     const processTexts = (text: string) => {
-      const [mainText, footnotes] = splitTexts(text);
-      const [formatMainText, brokenText] = getFormatMainText(mainText);
-      const [formatFootnotes, brokenFootnotes] = getFormatFootnotes(footnotes);
-      return { formatMainText, brokenText, formatFootnotes, brokenFootnotes };
+      const [rawMainText, rawFootnotes] = splitTexts(text);
+      const mainText = getMainText(rawMainText);
+      const footnotes = getFootnotes(rawFootnotes);
+      return { mainText, footnotes };
     };
 
     let headers: string[] = [];

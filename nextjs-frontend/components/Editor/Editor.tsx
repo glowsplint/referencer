@@ -6,52 +6,21 @@ import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core";
 import styles from "./Editor.module.css";
 import { get } from "../utils";
 import books from "../books";
 import clsx from "clsx";
 import { Scrollbars } from "react-custom-scrollbars";
 import { Format } from "../../enums/enums";
-import { DisplayedBody, useTexts } from "../../contexts/Texts";
-import { REGEX, COLOURS, ColourType } from "../../enums/enums";
-import {
-  useHighlight,
-  Interval,
-  ColourArr,
-  strToColour,
-  colourToStr,
-  blendColour,
-} from "../../contexts/Highlight";
-import { useTheme } from "@material-ui/core/styles";
+import { DisplayedBody, DisplayedTexts, useTexts } from "../../contexts/Texts";
+import { REGEX } from "../../enums/enums";
+import { Interval } from "../../contexts/Highlight";
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
 import dynamic from "next/dynamic";
 
 const NoSSRCanvas = dynamic(() => import("./Canvas"), {
   ssr: false,
-});
-
-type Subphrase = { st: number; en: number; colour?: ColourArr[] };
-
-const useStyles = makeStyles({
-  // Create an underline with a darker colour
-  root: (props: { colour: string }) => {
-    let underlineColour = colourToStr(
-      blendColour(
-        strToColour(props.colour, 1),
-        strToColour(props.colour, 1).map((val) => val * 0.3) as ColourArr
-      )
-    );
-    if (props.colour.toLowerCase() === "#fafafa") {
-      underlineColour = props.colour;
-    }
-
-    return {
-      backgroundColor: props.colour,
-      borderBottom: `2px solid ${underlineColour}`,
-    };
-  },
 });
 
 const SearchBar = ({
@@ -100,21 +69,18 @@ const SearchBar = ({
 
 const Text = ({
   phrase,
-  colour,
   dataIndex,
   dataPosition,
   removeLeadingWhitespace,
 }: {
   phrase: string;
-  colour: string;
   dataIndex: number;
   dataPosition: Interval;
   removeLeadingWhitespace?: boolean;
 }) => {
-  const classes = useStyles({ colour: colour });
   return (
     <span
-      className={clsx(classes.root, styles.span, {
+      className={clsx(styles.span, {
         [styles.with_leading_whitespace]: !removeLeadingWhitespace,
         [styles.without_leading_whitespace]: removeLeadingWhitespace,
       })}
@@ -133,103 +99,21 @@ Text.defaultProps = {
 const HighlightDecider = ({
   phrase,
   dataIndex,
-  textAreaID,
   dataPosition,
   removeLeadingWhitespace,
 }: {
   phrase: string;
   dataIndex: number;
-  textAreaID: number;
   dataPosition: Interval;
   removeLeadingWhitespace?: boolean;
 }) => {
-  const theme = useTheme();
-  const { highlightIndices } = useHighlight();
-  let phraseIndices: { [key in ColourType]?: Interval[] };
-
-  // Get the colors corresponding to the verse
-  let colourPos: { [key in ColourType]?: number } = {};
-  let splits: number[] = [0];
-
-  phraseIndices = { ...highlightIndices?.[textAreaID]?.[dataIndex] };
-
-  if (phraseIndices) {
-    // Filter out from phraseIndices what is irrelevant to this component and offset it by dataPosition[0]
-    for (let col of Object.keys(phraseIndices)) {
-      phraseIndices[col] = phraseIndices[col].filter(
-        (interval: Interval) =>
-          !(interval[1] <= dataPosition[0] || interval[0] >= dataPosition[1])
-      );
-      phraseIndices[col] = phraseIndices[col].map((interval: Interval) =>
-        interval.map((item) =>
-          Math.min(Math.max(item - dataPosition[0], 0), phrase.length)
-        )
-      );
-    }
-
-    for (let [col, intervals] of Object.entries(phraseIndices)) {
-      colourPos[col] = 0;
-      for (let interval of intervals) {
-        splits.push(...interval);
-      }
-    }
-  } else {
-    phraseIndices = {};
-  }
-
-  splits.push(phrase.length);
-  splits.sort((a, b) => {
-    return a - b;
-  });
-
-  let results: Subphrase[] = [];
-  for (let i = 0; i < splits.length - 1; i++) {
-    if (splits[i] === splits[i + 1]) continue;
-    let sphr: Subphrase = {
-      st: splits[i],
-      en: splits[i + 1],
-      colour: [],
-    };
-    for (let col of Object.keys(phraseIndices)) {
-      let i = colourPos[col];
-      if (i < phraseIndices[col].length) {
-        let [stH, enH]: Interval = phraseIndices[col][colourPos[col]];
-        if (stH <= sphr.st) {
-          // Found the color.
-          sphr["colour"].push(strToColour(COLOURS[col], 0.5)); // alpha value set at 0.5 for now
-          if (sphr.en === enH) {
-            colourPos[col]++;
-          }
-        }
-      }
-    }
-    results.push(sphr);
-  }
-
   return (
-    <>
-      {results.map((sphr: Subphrase, index) => {
-        return (
-          <Text
-            phrase={phrase.substring(sphr.st, sphr.en)}
-            colour={colourToStr(
-              sphr.colour.reduce(
-                blendColour,
-                strToColour(theme.palette.background.default, 1)
-              )
-            )} // this should be the background colour.
-            dataIndex={dataIndex}
-            dataPosition={
-              [sphr.st, sphr.en].map(
-                (item) => item + dataPosition[0]
-              ) as Interval
-            }
-            key={index}
-            removeLeadingWhitespace={removeLeadingWhitespace}
-          />
-        );
-      })}
-    </>
+    <Text
+      phrase={phrase}
+      dataIndex={dataIndex}
+      dataPosition={dataPosition}
+      removeLeadingWhitespace={removeLeadingWhitespace}
+    />
   );
 };
 
@@ -258,6 +142,16 @@ const InlineFootnote = ({
   );
 };
 
+const getPosition = (
+  displayedTexts: DisplayedTexts,
+  typeFlag: "mainText" | "footnotes",
+  text: string,
+  textAreaID: number
+) => {
+  const body = displayedTexts.bodies[textAreaID][typeFlag];
+  return body.indexOf(body.filter((item) => item.text === text)[0]);
+};
+
 const FootnoteDecider = ({
   text,
   textAreaID,
@@ -268,9 +162,6 @@ const FootnoteDecider = ({
   removeLeadingWhitespace?: boolean;
 }) => {
   const { displayedTexts } = useTexts();
-  const getPosition = (text: string, textAreaID: number) =>
-    displayedTexts.bodies[textAreaID].brokenText.indexOf(text);
-
   const charArray = text.split(REGEX.inlineFootnote);
   const getDataPosition = (self: string[], index: number): Interval => {
     const getInterval = (index: number) => self.slice(0, index).join("").length;
@@ -285,7 +176,12 @@ const FootnoteDecider = ({
             <InlineFootnote
               text={item}
               key={index}
-              dataIndex={getPosition(text, textAreaID)}
+              dataIndex={getPosition(
+                displayedTexts,
+                "footnotes",
+                text,
+                textAreaID
+              )}
               dataPosition={getDataPosition(self, index)}
             />
           );
@@ -293,9 +189,13 @@ const FootnoteDecider = ({
         return (
           <HighlightDecider
             key={index}
-            textAreaID={textAreaID}
             phrase={item}
-            dataIndex={getPosition(text, textAreaID)}
+            dataIndex={getPosition(
+              displayedTexts,
+              "footnotes",
+              text,
+              textAreaID
+            )}
             dataPosition={getDataPosition(self, index)}
             removeLeadingWhitespace={removeLeadingWhitespace}
           />
@@ -358,13 +258,11 @@ const VerseNumber = ({
   textAreaID: number;
 }) => {
   const { displayedTexts } = useTexts();
-  const getPosition = (text: string, textAreaID: number) =>
-    displayedTexts.bodies[textAreaID].brokenText.indexOf(text);
   return (
     <Typography
       variant="button"
       className={styles.verse_number}
-      data-index={getPosition(text, textAreaID)}
+      data-index={getPosition(displayedTexts, "mainText", text, textAreaID)}
     >
       <b>
         <sup>{text}</sup>
@@ -447,8 +345,7 @@ const TextArea = React.memo(
     isJustified: boolean;
     textAreaID: number;
   }) => {
-    const { brokenText, brokenFootnotes, formatMainText, formatFootnotes } =
-      textBody;
+    const { mainText, footnotes } = textBody;
 
     const getComponent = (
       format: string,
@@ -508,17 +405,25 @@ const TextArea = React.memo(
         <Typography variant="h6" className={styles.text_header}>
           {textName}
         </Typography>
-        {brokenText.map((textArray, index: number) =>
-          getComponent(formatMainText[index], textArray, index, textAreaID)
+        {mainText.map((textArray, index: number) =>
+          getComponent(textArray.format, textArray.text, index, textAreaID)
         )}
-        {brokenFootnotes.map((text, index: number) => {
-          if (formatFootnotes[index] === Format.SectionHeader) {
+        {footnotes.map((text, index: number) => {
+          if (text.format === Format.SectionHeader) {
             return (
-              <SectionHeader text={text} key={index} textAreaID={textAreaID} />
+              <SectionHeader
+                text={text.text}
+                key={index}
+                textAreaID={textAreaID}
+              />
             );
           } else {
             return (
-              <FootnoteText text={text} key={index} dataIndex={textAreaID} />
+              <FootnoteText
+                text={text.text}
+                key={index}
+                dataIndex={textAreaID}
+              />
             );
           }
         })}
@@ -537,6 +442,7 @@ const MainRegion = ({
   isDarkMode: boolean;
 }) => {
   const { headers, bodies } = useTexts().displayedTexts;
+  // console.log(bodies);
 
   const dark = (style: any) => {
     return {
