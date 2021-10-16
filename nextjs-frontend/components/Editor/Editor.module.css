@@ -125,3 +125,8 @@
 .span::selection {
   background-color: rgba(143, 143, 143, 0.7);
 }
+
+.canvas {
+  position: absolute;
+  z-index: 3;
+}

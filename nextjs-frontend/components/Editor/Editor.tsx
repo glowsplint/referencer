@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
@@ -24,9 +24,13 @@ import {
   blendColour,
 } from "../../contexts/Highlight";
 import { useTheme } from "@material-ui/core/styles";
-
 import HelpIcon from "@material-ui/icons/Help";
 import SearchIcon from "@material-ui/icons/Search";
+import dynamic from "next/dynamic";
+
+const NoSSRCanvas = dynamic(() => import("./Canvas"), {
+  ssr: false,
+});
 
 type Subphrase = { st: number; en: number; colour?: ColourArr[] };
 
@@ -92,10 +96,6 @@ const SearchBar = ({
       </form>
     </div>
   );
-};
-
-const Italics = ({ phrase }: { phrase: string }) => {
-  return <i>{phrase}</i>;
 };
 
 const Text = ({
@@ -555,6 +555,22 @@ const MainRegion = ({
   };
 
   const maxWidth = { width: "100%", height: "100%" };
+  const ref = useRef(null);
+  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const resize = () => {
+      setHeight(ref.current.clientHeight);
+      setWidth(ref.current.clientWidth);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+    };
+  }, [headers]);
 
   return (
     <Scrollbars
@@ -564,21 +580,24 @@ const MainRegion = ({
         <div {...props} style={isDarkMode ? dark(style) : light(style)} />
       )}
     >
-      <div
-        className={clsx(styles.editor_textareas, {
-          [styles.row]: isMultipleRowsLayout,
-          [styles.col]: !isMultipleRowsLayout,
-        })}
-      >
-        {headers.map((textHeader: string, index: number) => (
-          <TextArea
-            textName={textHeader}
-            textBody={bodies[index]}
-            isJustified={isJustified}
-            key={index}
-            textAreaID={index}
-          />
-        ))}
+      <div ref={ref}>
+        <NoSSRCanvas className={styles.canvas} width={width} height={height} />
+        <div
+          className={clsx(styles.editor_textareas, {
+            [styles.row]: isMultipleRowsLayout,
+            [styles.col]: !isMultipleRowsLayout,
+          })}
+        >
+          {headers.map((textHeader: string, index: number) => (
+            <TextArea
+              textName={textHeader}
+              textBody={bodies[index]}
+              isJustified={isJustified}
+              key={index}
+              textAreaID={index}
+            />
+          ))}
+        </div>
       </div>
     </Scrollbars>
   );
