@@ -43,11 +43,10 @@ interface TextInfo {
 const TextsContext = React.createContext<Partial<TextState>>({});
 
 /* Parsing functions */
-
 // Splits the original string into the main body of text, and also footnotes
 const splitTexts = (text: string): [string[], string[]] => {
   const splitOnParagraphs = (text: string): string[] =>
-    text.split(REGEX.paragraphs);
+    text.split(REGEX.paragraph);
   const footnoteIndex = splitOnParagraphs(text).indexOf("Footnotes");
   let footnotes = [];
   let mainText = splitOnParagraphs(text);
@@ -71,8 +70,8 @@ const getMainText = (rawMainText: string[]): TextInfo[] => {
     a
       .split(REGEX.verseNumberInText)
       .flatMap((b) => b.split(REGEX.specialNoteInText))
-      .flatMap((c) => c.split(REGEX.hasTripleLineFeed))
-      .flatMap((d) => d.split(REGEX.hasTripleLineFeedAtEnd))
+      .flatMap((c) => c.split(REGEX.tripleLineFeed))
+      .flatMap((d) => d.split(REGEX.tripleLineFeedAtEnd))
   );
   let mainText: TextInfo[] = [];
   let isFirstVerseNumberFound: boolean = false; // flag tracker
@@ -97,7 +96,7 @@ const getMainText = (rawMainText: string[]): TextInfo[] => {
         // or, if the quote (") is in Psalms, format as StandardText
         if (
           mainText[index - 1].format === Format.VerseNumber ||
-          rawMainText[0].match(REGEX.isPsalm)
+          rawMainText[0].match(REGEX.psalm)
         ) {
           mainText[index].format = Format.StandardText;
         } else {
@@ -105,8 +104,8 @@ const getMainText = (rawMainText: string[]): TextInfo[] => {
         }
         brokenText[index] = addSpace(brokenText[index]);
         // Triple Line Feeds at the end of the string are parsed as new paragraphs
-      } else if (item.match(REGEX.hasTripleLineFeedAtEnd)) {
-        mainText[index].format = Format.HasTripleLineFeedAtEnd;
+      } else if (item.match(REGEX.tripleLineFeedAtEnd)) {
+        mainText[index].format = Format.TripleLineFeedAtEnd;
         // If the previous item in the array is StandardText, then this should be a SectionHeader
         // if it is not Psalm 42:6 (exception to the rule)
       } else if (mainText[index - 1].format === Format.StandardText) {

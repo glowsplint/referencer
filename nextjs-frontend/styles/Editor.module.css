@@ -48,6 +48,7 @@
   flex: 1;
   padding: 10px;
   margin: 10px;
+  line-height: 2.2em;
 }
 
 .row {
@@ -89,10 +90,6 @@
   margin-bottom: 10px;
   text-align: center;
   user-select: none;
-}
-
-.span {
-  line-height: 2.2em;
 }
 
 .with_leading_whitespace {

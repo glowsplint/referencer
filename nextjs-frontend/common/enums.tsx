@@ -1,14 +1,14 @@
 import { blue, green, orange, purple, yellow } from "@material-ui/core/colors";
 
 export enum Format {
-  SectionHeader = "SectionHeader",
-  VerseNumber = "VerseNumber",
-  StandardText = "StandardText",
-  Quotes = "Quotes",
-  SpecialNote = "SpecialNote",
   FootnoteText = "FootnoteText",
+  TripleLineFeedAtEnd = "TripleLineFeedAtEnd",
   Psalm426 = "Psalm426",
-  HasTripleLineFeedAtEnd = "HasTripleLineFeedAtEnd",
+  Quotes = "Quotes",
+  SectionHeader = "SectionHeader",
+  SpecialNote = "SpecialNote",
+  StandardText = "StandardText",
+  VerseNumber = "VerseNumber",
 }
 
 export const COLOURS = {
@@ -32,18 +32,16 @@ type ValueOf<T> = T[keyof T];
 export type ColourValueType = ValueOf<Colour>;
 
 export const REGEX = {
-  footnoteInText: /(?<!])(\(\d+\))/,
-  specialNoteInText: /^(\[.*?\]\(\d+\))$/,
-  verseNumberInText: /[ ]*\[(\d+)\]/,
-  hasTripleLineFeed: /(?:\n[ ]{4}){3}/,
-  hasTripleLineFeedAtEnd: /((?:\n[ ]{4}){2}\n)/,
+  completeWord: /^\w*$/,
   inlineFootnote: /(\(\d+\))/g,
-  italics: /(\*.*?\*)/,
-  paragraphs: /\n\n/,
+  paragraph: /\n\n/,
+  psalm: /^(Psalm)/,
   quotes: /^[ ]*“.*?$/,
-  specialNote: /(\[.*?\])/,
+  specialNoteInText: /^(\[.*?\]\(\d+\))$/,
+  tripleLineFeed: /(?:\n[ ]{4}){3}/,
+  tripleLineFeedAtEnd: /((?:\n[ ]{4}){2}\n)/,
   verseNumber: /^\d+$/,
-  whitespace: /^([ ]+)$/,
-  whitespaceAfterWord: /([ ])/,
-  isPsalm: /^(Psalm)/,
+  verseNumberInText: /[ ]*\[(\d+)\]/,
+  withinAsterisks: /(\*.*?\*)/,
+  wordBoundary: /\b/,
 };

@@ -78,17 +78,25 @@ const Text = ({
   dataPosition: Interval;
   removeLeadingWhitespace?: boolean;
 }) => {
+  const phraseArray = phrase.split(REGEX.wordBoundary);
+  console.log(phraseArray);
+  const [firstItem, ...rest] = phraseArray;
   return (
-    <span
-      className={clsx(styles.span, {
-        [styles.with_leading_whitespace]: !removeLeadingWhitespace,
-        [styles.without_leading_whitespace]: removeLeadingWhitespace,
-      })}
-      data-index={dataIndex}
-      data-position={dataPosition}
-    >
-      {phrase}
-    </span>
+    <>
+      <span
+        className={clsx({
+          [styles.with_leading_whitespace]: !removeLeadingWhitespace,
+          [styles.without_leading_whitespace]: removeLeadingWhitespace,
+        })}
+        data-index={dataIndex}
+        data-position={dataPosition}
+      >
+        {firstItem}
+      </span>
+      {rest.map((item) => (
+        <span>{item}</span>
+      ))}
+    </>
   );
 };
 
@@ -285,9 +293,9 @@ const FootnoteText = ({
   return (
     <div className={styles.footnote_text}>
       {text
-        .split(REGEX.italics)
+        .split(REGEX.withinAsterisks)
         .map((text, index) =>
-          text.match(REGEX.italics) ? (
+          text.match(REGEX.withinAsterisks) ? (
             <ItalicsBlock text={text} key={index} dataIndex={dataIndex} />
           ) : (
             text
@@ -379,7 +387,7 @@ const TextArea = React.memo(
           key: index,
           textAreaID: id,
         }),
-        [Format.HasTripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
+        [Format.TripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
           key: index,
           textAreaID: id,
         }),
@@ -442,7 +450,6 @@ const MainRegion = ({
   isDarkMode: boolean;
 }) => {
   const { headers, bodies } = useTexts().displayedTexts;
-  // console.log(bodies);
 
   const dark = (style: any) => {
     return {
