@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import React, { SetStateAction, useState } from "react";
 import { ColourType } from "../common/enums";
-
-const HighlightContext = React.createContext<Partial<HighlightState>>({});
 
 export type Interval = [number, number];
 
@@ -16,35 +14,33 @@ export type HighlightIndices = {
   };
 };
 
-export type HighlightIndicesChange = { [key: number]: Interval[] };
-
-type HighlightState = {
-  highlightIndices: HighlightIndices;
-  setHighlightIndices: (newHighlightIndices: HighlightIndices) => void;
-  resetHighlightIndices: () => void;
+export type Highlight = {
+  highlight: boolean;
 };
 
-export const HighlightProvider = ({ children }) => {
-  const [highlights, setHighlights] = useState<HighlightState>({
-    highlightIndices: {},
-    setHighlightIndices: (newHighlightIndices: HighlightIndices) => {
-      setHighlights({
-        highlightIndices: newHighlightIndices,
-        setHighlightIndices: highlights.setHighlightIndices,
-        resetHighlightIndices: highlights.resetHighlightIndices,
-      });
-    },
-    resetHighlightIndices: () => {
-      setHighlights({
-        highlightIndices: {},
-        setHighlightIndices: highlights.setHighlightIndices,
-        resetHighlightIndices: highlights.resetHighlightIndices,
-      });
-    },
-  });
+const baseHighlight = {
+  highlight: true,
+};
+
+export type SetHighlight = React.Dispatch<SetStateAction<Highlight>>;
+
+const HighlightContext = React.createContext<{
+  highlight: Highlight;
+  setHighlight: SetHighlight;
+}>({
+  highlight: baseHighlight,
+  setHighlight: () => {},
+});
+
+export const HighlightProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [highlight, setHighlight] = useState(baseHighlight);
 
   return (
-    <HighlightContext.Provider value={highlights}>
+    <HighlightContext.Provider value={{ highlight, setHighlight }}>
       {children}
     </HighlightContext.Provider>
   );

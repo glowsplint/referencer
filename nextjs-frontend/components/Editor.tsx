@@ -1,86 +1,29 @@
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import HelpIcon from "@material-ui/icons/Help";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import React, { useEffect, useRef, useState } from "react";
-import SearchIcon from "@material-ui/icons/Search";
-import TextField from "@material-ui/core/TextField";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import books from "../common/books";
+import Header from "./Header";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import SearchBar from "./SearchBar";
+import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 import styles from "../styles/Editor.module.css";
-import { DisplayedBody, DisplayedTexts, useTexts } from "../contexts/Texts";
 import { Format } from "../common/enums";
-import { Interval } from "../contexts/Highlight";
+import { ParsedText, useTexts } from "../contexts/Texts";
 import { REGEX } from "../common/enums";
-import { Scrollbars } from "react-custom-scrollbars";
+import { Scrollbars } from "react-custom-scrollbars-2";
 import { get } from "../common/utils";
-import { grey } from "@material-ui/core/colors";
+import { useSettings } from "../contexts/Settings";
 
 const NoSSRCanvas = dynamic(() => import("./Canvas"), {
   ssr: false,
 });
 
-const SearchBar = ({
-  handleInputChange,
-  handleSubmit,
-  searchQuery,
-}: {
-  handleInputChange: (
-    _event: React.ChangeEvent<HTMLInputElement>,
-    newValue: string
-  ) => void;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  searchQuery: string;
-}) => {
-  return (
-    <div className={styles.editor_search}>
-      <form className={styles.container} onSubmit={handleSubmit}>
-        <Autocomplete
-          id="autocomplete"
-          freeSolo
-          fullWidth
-          options={books}
-          inputValue={searchQuery}
-          onInputChange={handleInputChange}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon style={{ color: grey[500] }} />
-                  </InputAdornment>
-                ),
-              }}
-              label="Search"
-              size="small"
-              margin="none"
-              variant="outlined"
-            />
-          )}
-        />
-      </form>
-    </div>
-  );
-};
-
 const Text = ({
   phrase,
-  dataIndex,
-  dataPosition,
   removeLeadingWhitespace,
 }: {
   phrase: string;
-  dataIndex: number;
-  dataPosition: Interval;
   removeLeadingWhitespace?: boolean;
 }) => {
-  const phraseArray = phrase.split(REGEX.wordBoundary);
-  console.log(phraseArray);
-  const [firstItem, ...rest] = phraseArray;
+  const [firstItem, ...rest] = phrase.split(REGEX.wordBoundary);
   return (
     <>
       <span
@@ -88,13 +31,11 @@ const Text = ({
           [styles.with_leading_whitespace]: !removeLeadingWhitespace,
           [styles.without_leading_whitespace]: removeLeadingWhitespace,
         })}
-        data-index={dataIndex}
-        data-position={dataPosition}
       >
         {firstItem}
       </span>
-      {rest.map((item) => (
-        <span>{item}</span>
+      {rest.map((item, index) => (
+        <span key={index}>{item}</span>
       ))}
     </>
   );
@@ -106,22 +47,13 @@ Text.defaultProps = {
 
 const HighlightDecider = ({
   phrase,
-  dataIndex,
-  dataPosition,
   removeLeadingWhitespace,
 }: {
   phrase: string;
-  dataIndex: number;
-  dataPosition: Interval;
   removeLeadingWhitespace?: boolean;
 }) => {
   return (
-    <Text
-      phrase={phrase}
-      dataIndex={dataIndex}
-      dataPosition={dataPosition}
-      removeLeadingWhitespace={removeLeadingWhitespace}
-    />
+    <Text phrase={phrase} removeLeadingWhitespace={removeLeadingWhitespace} />
   );
 };
 
@@ -129,35 +61,12 @@ HighlightDecider.defaultProps = {
   removeLeadingWhitespace: false,
 };
 
-const InlineFootnote = ({
-  text,
-  dataIndex,
-  dataPosition,
-}: {
-  text: string;
-  dataIndex: number;
-  dataPosition: Interval;
-}) => {
+const InlineFootnote = ({ text }: { text: string }) => {
   return (
-    <Typography
-      variant="overline"
-      data-index={dataIndex}
-      data-position={dataPosition}
-      className={styles.inline_footnote}
-    >
+    <Typography variant="overline" className={styles.inline_footnote}>
       <sup>{text}</sup>
     </Typography>
   );
-};
-
-const getPosition = (
-  displayedTexts: DisplayedTexts,
-  typeFlag: "mainText" | "footnotes",
-  text: string,
-  textAreaID: number
-) => {
-  const body = displayedTexts.bodies[textAreaID][typeFlag];
-  return body.indexOf(body.filter((item) => item.text === text)[0]);
 };
 
 const FootnoteDecider = ({
@@ -169,42 +78,18 @@ const FootnoteDecider = ({
   textAreaID: number;
   removeLeadingWhitespace?: boolean;
 }) => {
-  const { displayedTexts } = useTexts();
   const charArray = text.split(REGEX.inlineFootnote);
-  const getDataPosition = (self: string[], index: number): Interval => {
-    const getInterval = (index: number) => self.slice(0, index).join("").length;
-    return [getInterval(index), getInterval(index + 1)];
-  };
 
   return (
     <>
-      {charArray.map((item, index, self) => {
+      {charArray.map((item, index) => {
         if (item.match(REGEX.inlineFootnote)) {
-          return (
-            <InlineFootnote
-              text={item}
-              key={index}
-              dataIndex={getPosition(
-                displayedTexts,
-                "footnotes",
-                text,
-                textAreaID
-              )}
-              dataPosition={getDataPosition(self, index)}
-            />
-          );
+          return <InlineFootnote text={item} key={index} />;
         }
         return (
           <HighlightDecider
             key={index}
             phrase={item}
-            dataIndex={getPosition(
-              displayedTexts,
-              "footnotes",
-              text,
-              textAreaID
-            )}
-            dataPosition={getDataPosition(self, index)}
             removeLeadingWhitespace={removeLeadingWhitespace}
           />
         );
@@ -246,16 +131,10 @@ const SpecialNote = ({
   );
 };
 
-const ItalicsBlock = ({
-  text,
-  dataIndex,
-}: {
-  text: string;
-  dataIndex: number;
-}) => {
+const ItalicsBlock = ({ text }: { text: string }) => {
   // Removes the asterisks on the ends before rendering
   const textWithoutAsterisks = text.slice(1, text.length - 1);
-  return <i data-index={dataIndex}>{textWithoutAsterisks}</i>;
+  return <i>{textWithoutAsterisks}</i>;
 };
 
 const VerseNumber = ({
@@ -265,13 +144,8 @@ const VerseNumber = ({
   text: string;
   textAreaID: number;
 }) => {
-  const { displayedTexts } = useTexts();
   return (
-    <Typography
-      variant="button"
-      className={styles.verse_number}
-      data-index={getPosition(displayedTexts, "mainText", text, textAreaID)}
-    >
+    <Typography variant="button" className={styles.verse_number}>
       <b>
         <sup>{text}</sup>
       </b>
@@ -279,13 +153,7 @@ const VerseNumber = ({
   );
 };
 
-const FootnoteText = ({
-  text,
-  dataIndex,
-}: {
-  text: string;
-  dataIndex: number;
-}) => {
+const FootnoteText = ({ text }: { text: string }) => {
   // Splits the text into several chunks comprising:
   // 1. Words to be italicised
   // 2. Words in standard formatting
@@ -296,7 +164,7 @@ const FootnoteText = ({
         .split(REGEX.withinAsterisks)
         .map((text, index) =>
           text.match(REGEX.withinAsterisks) ? (
-            <ItalicsBlock text={text} key={index} dataIndex={dataIndex} />
+            <ItalicsBlock text={text} key={index} />
           ) : (
             text
           )
@@ -345,15 +213,14 @@ const TextArea = React.memo(
   ({
     textName,
     textBody,
-    isJustified,
     textAreaID,
   }: {
     textName: string;
-    textBody: DisplayedBody;
-    isJustified: boolean;
+    textBody: ParsedText;
     textAreaID: number;
   }) => {
     const { mainText, footnotes } = textBody;
+    const { settings } = useSettings();
 
     const getComponent = (
       format: string,
@@ -405,8 +272,8 @@ const TextArea = React.memo(
     return (
       <div
         className={clsx(styles.editor_textarea, {
-          [styles.justify]: isJustified,
-          [""]: !isJustified,
+          [styles.justify]: settings.isJustified,
+          [""]: !settings.isJustified,
         })}
         id={textAreaID.toString()}
       >
@@ -426,13 +293,7 @@ const TextArea = React.memo(
               />
             );
           } else {
-            return (
-              <FootnoteText
-                text={text.text}
-                key={index}
-                dataIndex={textAreaID}
-              />
-            );
+            return <FootnoteText text={text.text} key={index} />;
           }
         })}
       </div>
@@ -440,16 +301,9 @@ const TextArea = React.memo(
   }
 );
 
-const MainRegion = ({
-  isMultipleRowsLayout,
-  isJustified,
-  isDarkMode,
-}: {
-  isMultipleRowsLayout: boolean;
-  isJustified: boolean;
-  isDarkMode: boolean;
-}) => {
-  const { headers, bodies } = useTexts().displayedTexts;
+const MainRegion = () => {
+  const { texts } = useTexts();
+  const { settings } = useSettings();
 
   const dark = (style: any) => {
     return {
@@ -468,7 +322,7 @@ const MainRegion = ({
   };
 
   const maxWidth = { width: "100%", height: "100%" };
-  const ref = useRef(null);
+  const ref = useRef() as MutableRefObject<HTMLDivElement>;
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
 
@@ -483,29 +337,32 @@ const MainRegion = ({
     return () => {
       window.removeEventListener("resize", resize);
     };
-  }, [headers]);
+  }, []);
+  // }, [headers]);
 
   return (
     <Scrollbars
       style={maxWidth}
       universal
       renderThumbVertical={({ style, ...props }) => (
-        <div {...props} style={isDarkMode ? dark(style) : light(style)} />
+        <div
+          {...props}
+          style={settings.isDarkMode ? dark(style) : light(style)}
+        />
       )}
     >
       <div ref={ref}>
         <NoSSRCanvas className={styles.canvas} width={width} height={height} />
         <div
           className={clsx(styles.editor_textareas, {
-            [styles.row]: isMultipleRowsLayout,
-            [styles.col]: !isMultipleRowsLayout,
+            [styles.row]: settings.isMultipleRowsLayout,
+            [styles.col]: !settings.isMultipleRowsLayout,
           })}
         >
-          {headers.map((textHeader: string, index: number) => (
+          {texts.headers.map((textHeader: string, index: number) => (
             <TextArea
               textName={textHeader}
-              textBody={bodies[index]}
-              isJustified={isJustified}
+              textBody={texts.bodies[index]}
               key={index}
               textAreaID={index}
             />
@@ -516,65 +373,14 @@ const MainRegion = ({
   );
 };
 
-const HeaderLeft = React.memo(() => {
+const Editor = React.memo(() => {
   return (
-    <div className={styles.editor_header_left}>
-      <div className={styles.header_left_text}>
-        <Typography variant="subtitle2">Workspace</Typography>
-      </div>
+    <div className={styles.editor}>
+      <Header />
+      <MainRegion />
+      <SearchBar />
     </div>
   );
 });
 
-const HeaderRight = React.memo(() => {
-  return (
-    <div className={styles.editor_header_right}>
-      <Tooltip title="Help" placement="left">
-        <IconButton size="small" onClick={() => {}}>
-          <HelpIcon />
-        </IconButton>
-      </Tooltip>
-    </div>
-  );
-});
-
-export default React.memo(
-  ({
-    handleInputChange,
-    handleSubmit,
-    searchQuery,
-    isMultipleRowsLayout,
-    isJustified,
-    isDarkMode,
-  }: {
-    handleInputChange: (
-      _event: React.ChangeEvent<HTMLInputElement>,
-      newValue: string
-    ) => void;
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-    searchQuery: string;
-    isMultipleRowsLayout: boolean;
-    isJustified: boolean;
-    isDarkMode: boolean;
-  }) => {
-    return (
-      <div className={styles.editor}>
-        <div className={styles.editor_header}>
-          <HeaderLeft />
-          <HeaderRight />
-        </div>
-
-        <MainRegion
-          isMultipleRowsLayout={isMultipleRowsLayout}
-          isJustified={isJustified}
-          isDarkMode={isDarkMode}
-        />
-        <SearchBar
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-          searchQuery={searchQuery}
-        />
-      </div>
-    );
-  }
-);
+export default Editor;

@@ -1,0 +1,10 @@
+.searchBar {
+  display: flex;
+  align-items: center;
+  margin: 15px;
+  margin-top: 20px;
+}
+
+.form {
+  flex-grow: 1;
+}

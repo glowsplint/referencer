@@ -13,7 +13,9 @@ const Canvas = ({
 }) => {
   const handleClick = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const [x, y] = [event.evt.clientX, event.evt.clientY];
-    console.log(document.elementsFromPoint(x, y));
+    const getSpan = () => document.elementsFromPoint(x, y)[3];
+    console.log(getSpan().getBoundingClientRect());
+    // Store coords into context
   };
 
   return (

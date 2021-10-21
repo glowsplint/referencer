@@ -1,27 +1,28 @@
-import Button from "@material-ui/core/Button";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CloseIcon from "@material-ui/icons/Close";
-import CreateIcon from "@material-ui/icons/Create";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import FaceIcon from "@material-ui/icons/Face";
-import IconButton from "@material-ui/core/IconButton";
+import Button from "@mui/material/Button";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CloseIcon from "@mui/icons-material/Close";
+import CreateIcon from "@mui/icons-material/Create";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import FaceIcon from "@mui/icons-material/Face";
+import IconButton from "@mui/material/IconButton";
+import MUICheckbox from "@mui/material/Checkbox";
+import Paper from "@mui/material/Paper";
 import React, { useState } from "react";
-import ShareIcon from "@material-ui/icons/Share";
-import TextField from "@material-ui/core/TextField";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
+import ShareIcon from "@mui/icons-material/Share";
+import TextField from "@mui/material/TextField";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import styles from "../styles/SettingsPane.module.css";
 import { COLOURS, ColourType, ColourValueType } from "../common/enums";
-import { Checkbox as MUICheckBox, Paper } from "@material-ui/core";
-import { useHighlight } from "../contexts/Highlight";
 import { useLogin } from "../contexts/Login";
+import { useSettings } from "../contexts/Settings";
 import { useTexts } from "../contexts/Texts";
 
 const Checkbox = ({
@@ -36,7 +37,7 @@ const Checkbox = ({
   const { isDisplayed } = useTexts().texts;
   const checked = isDisplayed[id];
   return (
-    <MUICheckBox
+    <MUICheckbox
       color="primary"
       icon={<CheckBoxOutlineBlankIcon />}
       checkedIcon={<CheckBoxIcon />}
@@ -111,17 +112,17 @@ const TextItems = ({
 };
 
 const Header = () => {
-  const { spaceID } = useLogin();
-  const [displayedSpace, setDisplayedSpace] = useState(spaceID);
+  const { login } = useLogin();
+  const [displayedSpace, setDisplayedSpace] = useState(login.spaceID);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(spaceID);
+    navigator.clipboard.writeText(login.spaceID);
   };
   const onMouseDown = () => {
     setDisplayedSpace("Copied!");
   };
   const onMouseUp = () => {
-    setDisplayedSpace(spaceID);
+    setDisplayedSpace(login.spaceID);
   };
 
   return (
@@ -154,13 +155,10 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
 };
 
 const ClearHighlightsButton = () => {
-  const { resetHighlightIndices } = useHighlight();
-  const handleClearHighlights = () => {
-    resetHighlightIndices();
-  };
+  const handleClick = () => {};
   return (
     <div className={styles.clear_highlights}>
-      <Button variant="contained" onClick={handleClearHighlights}>
+      <Button variant="contained" onClick={handleClick}>
         Clear Highlights
       </Button>
     </div>
@@ -205,11 +203,11 @@ const MainRegion = ({
 };
 
 const Profile = () => {
-  const { displayName } = useLogin();
+  const { login } = useLogin();
   return (
     <div className={styles.profile}>
       <FaceIcon fontSize="small" />
-      <span className={styles.name}>{displayName}</span>
+      <span className={styles.name}>{login.displayName}</span>
       <ChangeNameButton />
     </div>
   );
@@ -217,9 +215,10 @@ const Profile = () => {
 
 const ChangeNameButton = () => {
   const [open, setOpen] = React.useState(false);
-  const { displayName, setDisplayName } = useLogin();
-  const [currentDisplayName, setCurrentDisplayName] =
-    React.useState(displayName);
+  const { login, setLogin } = useLogin();
+  const [currentDisplayName, setCurrentDisplayName] = React.useState(
+    login.displayName
+  );
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -230,7 +229,9 @@ const ChangeNameButton = () => {
   };
 
   const handleDone = () => {
-    setDisplayName(currentDisplayName);
+    setLogin((prevLogin) => {
+      return { ...prevLogin, displayName: currentDisplayName };
+    });
     setOpen(false);
   };
 
@@ -283,27 +284,39 @@ const ChangeNameButton = () => {
   );
 };
 
-export default function Settings({
-  handleClose,
-  handleCheckBoxToggle,
-  isSettingsOpen,
-}: {
-  handleClose: (key: number) => void;
-  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  isSettingsOpen: boolean;
-}) {
-  const textHeaders = useTexts().texts.headers;
+const Settings = () => {
+  const { texts, setTexts } = useTexts();
+  const { settings } = useSettings();
+  const handleClose = (key: number) => {
+    const getNew = (oldArray: any[]) => [
+      ...oldArray.slice(0, key),
+      ...oldArray.slice(key + 1, oldArray.length),
+    ];
+    setTexts({
+      headers: getNew(texts.headers),
+      bodies: getNew(texts.bodies),
+      isDisplayed: getNew(texts.isDisplayed),
+    });
+  };
+
+  const handleCheckBoxToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const index = texts.headers.indexOf(event.target.name);
+    let newIsDisplayed = [...texts.isDisplayed];
+    newIsDisplayed[index] = !newIsDisplayed[index];
+    setTexts({ ...texts, isDisplayed: newIsDisplayed });
+  };
+
   return (
     <div
       className={clsx(styles.sidebar, {
-        [styles.open]: isSettingsOpen,
-        [styles.closed]: !isSettingsOpen,
+        [styles.open]: settings.isSettingsOpen,
+        [styles.closed]: !settings.isSettingsOpen,
       })}
     >
       <Paper className={styles.paper}>
         <Header />
         <MainRegion
-          textHeaders={textHeaders}
+          textHeaders={texts.headers}
           handleClose={handleClose}
           handleCheckBoxToggle={handleCheckBoxToggle}
         />
@@ -311,4 +324,6 @@ export default function Settings({
       </Paper>
     </div>
   );
-}
+};
+
+export default Settings;

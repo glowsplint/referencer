@@ -1,4 +1,4 @@
-import { blue, green, orange, purple, yellow } from "@material-ui/core/colors";
+import { blue, green, orange, purple, yellow } from "@mui/material/colors";
 
 export enum Format {
   FootnoteText = "FootnoteText",

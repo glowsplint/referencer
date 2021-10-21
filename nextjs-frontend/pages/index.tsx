@@ -1,14 +1,13 @@
-import Button from "@material-ui/core/Button";
-import CreateIcon from "@material-ui/icons/Create";
-import FaceIcon from "@material-ui/icons/Face";
+import CreateIcon from "@mui/icons-material/Create";
+import FaceIcon from "@mui/icons-material/Face";
 import Head from "next/head";
-import InputIcon from "@material-ui/icons/Input";
-import KeyboardIcon from "@material-ui/icons/Keyboard";
+import InputIcon from "@mui/icons-material/Input";
+import KeyboardIcon from "@mui/icons-material/Keyboard";
 import React, { useState } from "react";
-import Router from "next/router";
-import TextField from "@material-ui/core/TextField";
 import styles from "../styles/Landing.module.css";
+import { Button, TextField } from "@mui/material";
 import { LoginProvider } from "../contexts/Login";
+import { useRouter } from "next/router";
 
 const InputField = ({
   name,
@@ -58,6 +57,7 @@ const InputField = ({
 };
 
 export default function Home() {
+  const router = useRouter();
   const [input, setInput] = useState<object>({
     displayName: "",
     codeInput: "",
@@ -74,14 +74,14 @@ export default function Home() {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    Router.push("/space");
+    router.push("/space");
   };
 
   const handleJoin = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    Router.push("/space");
+    router.push("/space");
   };
 
   return (
