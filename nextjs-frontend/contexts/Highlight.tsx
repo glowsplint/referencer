@@ -6,20 +6,20 @@ export type Interval = [number, number];
 export type HighlightIndices = {
   // textAreaID
   [key: number]: {
-    // dataIndex
-    [key: number]: {
-      // Key: Colour, Value: [Start, End] positions
-      [key in ColourType]: Interval[];
+    // Key: Colour
+    [key in ColourType]: {
+      // dataIndex
+      [key: number]: Interval[];
     };
   };
 };
 
 export type Highlight = {
-  highlight: boolean;
+  highlight: HighlightIndices;
 };
 
 const baseHighlight = {
-  highlight: true,
+  highlight: {},
 };
 
 export type SetHighlight = React.Dispatch<SetStateAction<Highlight>>;

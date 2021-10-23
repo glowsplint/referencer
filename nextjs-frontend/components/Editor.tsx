@@ -18,9 +18,11 @@ const NoSSRCanvas = dynamic(() => import("./Canvas"), {
 
 const PureText = ({
   phrase,
+  dataTextIndex,
   removeLeadingWhitespace,
 }: {
   phrase: string;
+  dataTextIndex: number;
   removeLeadingWhitespace?: boolean;
 }) => {
   const [firstItem, ...rest] = phrase.split(REGEX.wordBoundary);
@@ -35,7 +37,9 @@ const PureText = ({
         {firstItem}
       </span>
       {rest.map((item, index) => (
-        <span key={index}>{item}</span>
+        <span data-index={[dataTextIndex, index]} key={index}>
+          {item}
+        </span>
       ))}
     </>
   );
@@ -73,8 +77,9 @@ const StandardText = ({
         }
         return (
           <PureText
-            key={index}
             phrase={item}
+            dataTextIndex={textInfo.id}
+            key={index}
             removeLeadingWhitespace={removeLeadingWhitespace}
           />
         );
@@ -350,7 +355,7 @@ const MainRegion = () => {
         />
       )}
     >
-      <div ref={ref}>
+      <div ref={ref} id="canvasContainer">
         <NoSSRCanvas className={styles.canvas} width={width} height={height} />
         <div
           className={clsx(styles.editor_textareas, {

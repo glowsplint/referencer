@@ -10,6 +10,7 @@ import { LoginProvider } from "../../contexts/Login";
 import { TextsProvider } from "../../contexts/Texts";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useSettings } from "../../contexts/Settings";
+import { SelectionProvider } from "../../contexts/Selection";
 
 export function Space() {
   const { settings } = useSettings();
@@ -48,9 +49,11 @@ export default function Index() {
   return (
     <LoginProvider>
       <TextsProvider>
-        <HighlightProvider>
-          <Space />
-        </HighlightProvider>
+        <SelectionProvider>
+          <HighlightProvider>
+            <Space />
+          </HighlightProvider>
+        </SelectionProvider>
       </TextsProvider>
     </LoginProvider>
   );
