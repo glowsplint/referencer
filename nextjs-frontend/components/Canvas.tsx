@@ -7,15 +7,16 @@ const Canvas = ({
   width,
   height,
 }: {
-  className: string;
+  className?: string;
   width: number;
   height: number;
 }) => {
   const handleClick = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const [x, y] = [event.evt.clientX, event.evt.clientY];
     const getSpan = () => document.elementsFromPoint(x, y)[3];
+    console.log(getSpan());
     console.log(getSpan().getBoundingClientRect());
-    // Store coords into context
+    // Update highlight context with the span's dataIndex
   };
 
   return (
@@ -23,12 +24,13 @@ const Canvas = ({
       className={className}
       width={width}
       height={height}
-      opacity={0}
+      opacity={10}
       onClick={handleClick}
     >
       <Layer>
-        <Rect width={50} height={50} fill="red" />
-        <Circle x={200} y={200} stroke="black" radius={50} />
+        {/* <Rect width={50} height={50} fill="red" /> */}
+        {/* <Circle x={200} y={200} stroke="black" radius={50} /> */}
+        {/* Draw all highlights from context */}
       </Layer>
     </Stage>
   );

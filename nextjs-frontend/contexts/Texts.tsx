@@ -19,9 +19,10 @@ type TextType =
   | "InlineFootnote"
   | "ItalicsBlock";
 
-type TextInfo = {
-  text: string;
+export type TextInfo = {
+  id: number;
   format: TextType;
+  text: string;
 };
 
 export type ParsedText = {
@@ -122,16 +123,15 @@ const getMainText = (rawMainText: string[]): TextInfo[] => {
         } else if (mainText[index - 1].format === Format.StandardText) {
           if (item.endsWith("\n")) {
             return Format.Psalm426;
-          } else {
-            return Format.SectionHeader;
           }
+          return Format.SectionHeader;
         } else {
           brokenText[index] = addSpace(brokenText[index]);
           return Format.StandardText;
         }
       }
     };
-    mainText[index] = { format: getFormat(), text: item };
+    mainText[index] = { id: index, format: getFormat(), text: item };
   }
   return mainText;
 };
@@ -140,6 +140,7 @@ const getMainText = (rawMainText: string[]): TextInfo[] => {
 const getFootnotes = (rawFootnotes: string[]): TextInfo[] => {
   const footnotes = rawFootnotes.map((footnoteText, index) => {
     return {
+      id: index,
       format: index === 0 ? Format.SectionHeader : Format.FootnoteText,
       text: footnoteText,
     };

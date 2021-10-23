@@ -2,12 +2,12 @@ import { blue, green, orange, purple, yellow } from "@mui/material/colors";
 
 export enum Format {
   FootnoteText = "FootnoteText",
-  TripleLineFeedAtEnd = "TripleLineFeedAtEnd",
   Psalm426 = "Psalm426",
   Quotes = "Quotes",
   SectionHeader = "SectionHeader",
   SpecialNote = "SpecialNote",
   StandardText = "StandardText",
+  TripleLineFeedAtEnd = "TripleLineFeedAtEnd",
   VerseNumber = "VerseNumber",
 }
 

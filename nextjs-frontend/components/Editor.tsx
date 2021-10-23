@@ -6,7 +6,7 @@ import clsx from "clsx";
 import dynamic from "next/dynamic";
 import styles from "../styles/Editor.module.css";
 import { Format } from "../common/enums";
-import { ParsedText, useTexts } from "../contexts/Texts";
+import { ParsedText, TextInfo, useTexts } from "../contexts/Texts";
 import { REGEX } from "../common/enums";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { get } from "../common/utils";
@@ -16,7 +16,7 @@ const NoSSRCanvas = dynamic(() => import("./Canvas"), {
   ssr: false,
 });
 
-const Text = ({
+const PureText = ({
   phrase,
   removeLeadingWhitespace,
 }: {
@@ -41,23 +41,7 @@ const Text = ({
   );
 };
 
-Text.defaultProps = {
-  removeLeadingWhitespace: false,
-};
-
-const HighlightDecider = ({
-  phrase,
-  removeLeadingWhitespace,
-}: {
-  phrase: string;
-  removeLeadingWhitespace?: boolean;
-}) => {
-  return (
-    <Text phrase={phrase} removeLeadingWhitespace={removeLeadingWhitespace} />
-  );
-};
-
-HighlightDecider.defaultProps = {
+PureText.defaultProps = {
   removeLeadingWhitespace: false,
 };
 
@@ -69,17 +53,18 @@ const InlineFootnote = ({ text }: { text: string }) => {
   );
 };
 
-const FootnoteDecider = ({
-  text,
+const StandardText = ({
+  textInfo,
   textAreaID,
   removeLeadingWhitespace,
 }: {
-  text: string;
+  textInfo: TextInfo;
   textAreaID: number;
   removeLeadingWhitespace?: boolean;
 }) => {
-  const charArray = text.split(REGEX.inlineFootnote);
+  const charArray = textInfo.text.split(REGEX.inlineFootnote);
 
+  // <text> may contain inline footnotes i.e. `(3)`.
   return (
     <>
       {charArray.map((item, index) => {
@@ -87,7 +72,7 @@ const FootnoteDecider = ({
           return <InlineFootnote text={item} key={index} />;
         }
         return (
-          <HighlightDecider
+          <PureText
             key={index}
             phrase={item}
             removeLeadingWhitespace={removeLeadingWhitespace}
@@ -98,35 +83,35 @@ const FootnoteDecider = ({
   );
 };
 
-FootnoteDecider.defaultProps = {
+StandardText.defaultProps = {
   removeLeadingWhitespace: false,
 };
 
 const SectionHeader = ({
-  text,
+  textInfo,
   textAreaID,
 }: {
-  text: string;
+  textInfo: TextInfo;
   textAreaID: number;
 }) => {
   return (
     <div className={styles.section_header}>
-      <FootnoteDecider text={text} textAreaID={textAreaID} />
+      <StandardText textInfo={textInfo} textAreaID={textAreaID} />
     </div>
   );
 };
 
 const SpecialNote = ({
-  text,
+  textInfo,
   textAreaID,
 }: {
-  text: string;
+  textInfo: TextInfo;
   textAreaID: number;
 }) => {
   // Matches special notes in John 7 and Mark 16
   return (
     <div className={styles.special_note}>
-      <FootnoteDecider text={text} textAreaID={textAreaID} />
+      <StandardText textInfo={textInfo} textAreaID={textAreaID} />
     </div>
   );
 };
@@ -138,16 +123,16 @@ const ItalicsBlock = ({ text }: { text: string }) => {
 };
 
 const VerseNumber = ({
-  text,
+  textInfo,
   textAreaID,
 }: {
-  text: string;
+  textInfo: TextInfo;
   textAreaID: number;
 }) => {
   return (
     <Typography variant="button" className={styles.verse_number}>
       <b>
-        <sup>{text}</sup>
+        <sup>{textInfo.text}</sup>
       </b>
     </Typography>
   );
@@ -173,13 +158,19 @@ const FootnoteText = ({ text }: { text: string }) => {
   );
 };
 
-const Quotes = ({ text, textAreaID }: { text: string; textAreaID: number }) => {
+const Quotes = ({
+  textInfo,
+  textAreaID,
+}: {
+  textInfo: TextInfo;
+  textAreaID: number;
+}) => {
   // Adds a new paragraph before the start of a quote
   return (
     <>
       <ParagraphSpacer textAreaID={textAreaID} />
-      <FootnoteDecider
-        text={text}
+      <StandardText
+        textInfo={textInfo}
         textAreaID={textAreaID}
         removeLeadingWhitespace
       />
@@ -187,15 +178,16 @@ const Quotes = ({ text, textAreaID }: { text: string; textAreaID: number }) => {
   );
 };
 
-const ParagraphSpacer = ({ textAreaID }: { textAreaID: number }) => (
-  <SectionHeader text="" textAreaID={textAreaID} />
-);
+const ParagraphSpacer = ({ textAreaID }: { textAreaID: number }) => {
+  const textInfo = { id: -1, text: "", format: Format.SectionHeader };
+  return <SectionHeader textInfo={textInfo} textAreaID={textAreaID} />;
+};
 
 const Psalm426 = ({
-  text,
+  textInfo,
   textAreaID,
 }: {
-  text: string;
+  textInfo: TextInfo;
   textAreaID: number;
 }) => {
   // Special handling for Psalm 42:6
@@ -204,7 +196,7 @@ const Psalm426 = ({
   return (
     <>
       <ParagraphSpacer textAreaID={textAreaID} />
-      <FootnoteDecider text={text} textAreaID={textAreaID} />
+      <StandardText textInfo={textInfo} textAreaID={textAreaID} />
     </>
   );
 };
@@ -222,51 +214,56 @@ const TextArea = React.memo(
     const { mainText, footnotes } = textBody;
     const { settings } = useSettings();
 
-    const getComponent = (
-      format: string,
-      text: string,
-      index: number,
-      id: number
-    ) => {
+    const getComponent = ({
+      textInfo,
+      textAreaID,
+    }: {
+      textInfo: TextInfo;
+      textAreaID: number;
+    }) => {
       const componentMap = {
         [Format.SectionHeader]: React.createElement(SectionHeader, {
-          text: text,
-          key: index,
-          textAreaID: id,
+          textInfo,
+          key: textInfo.id,
+          textAreaID,
         }),
         [Format.VerseNumber]: React.createElement(VerseNumber, {
-          text: text,
-          key: index,
-          textAreaID: id,
+          textInfo,
+          key: textInfo.id,
+          textAreaID,
         }),
         [Format.SpecialNote]: React.createElement(SpecialNote, {
-          text: text,
-          key: index,
-          textAreaID: id,
+          textInfo,
+          key: textInfo.id,
+          textAreaID,
         }),
         [Format.Quotes]: React.createElement(Quotes, {
-          text: text,
-          key: index,
-          textAreaID: id,
+          textInfo,
+          key: textInfo.id,
+          textAreaID,
         }),
-        [Format.StandardText]: React.createElement(FootnoteDecider, {
-          text: text,
-          key: index,
-          textAreaID: id,
+        [Format.StandardText]: React.createElement(StandardText, {
+          textInfo,
+          key: textInfo.id,
+          textAreaID,
         }),
         [Format.TripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
-          key: index,
-          textAreaID: id,
+          key: textInfo.id,
+          textAreaID,
         }),
         [Format.Psalm426]: React.createElement(Psalm426, {
-          text: text,
-          key: index,
-          textAreaID: id,
+          textInfo,
+          key: textInfo.id,
+          textAreaID,
         }),
       };
 
       // Defaults to StandardText if no matching format found from componentMap
-      return get(componentMap, format, componentMap[Format.StandardText]);
+      return get(
+        componentMap,
+        textInfo.format,
+        componentMap[Format.StandardText]
+      );
     };
 
     return (
@@ -280,20 +277,23 @@ const TextArea = React.memo(
         <Typography variant="h6" className={styles.text_header}>
           {textName}
         </Typography>
-        {mainText.map((textArray, index: number) =>
-          getComponent(textArray.format, textArray.text, index, textAreaID)
+        {mainText.map((textInfo) =>
+          getComponent({
+            textInfo,
+            textAreaID,
+          })
         )}
-        {footnotes.map((text, index: number) => {
-          if (text.format === Format.SectionHeader) {
+        {footnotes.map((textInfo) => {
+          if (textInfo.format === Format.SectionHeader) {
             return (
               <SectionHeader
-                text={text.text}
-                key={index}
+                textInfo={textInfo}
+                key={textInfo.id}
                 textAreaID={textAreaID}
               />
             );
           } else {
-            return <FootnoteText text={text.text} key={index} />;
+            return <FootnoteText text={textInfo.text} key={textInfo.id} />;
           }
         })}
       </div>
@@ -337,8 +337,7 @@ const MainRegion = () => {
     return () => {
       window.removeEventListener("resize", resize);
     };
-  }, []);
-  // }, [headers]);
+  }, [texts]);
 
   return (
     <Scrollbars
