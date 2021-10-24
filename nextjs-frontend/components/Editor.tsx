@@ -22,7 +22,7 @@ const PureText = ({
   removeLeadingWhitespace,
 }: {
   phrase: string;
-  dataTextIndex: number;
+  dataTextIndex: [number, number, number];
   removeLeadingWhitespace?: boolean;
 }) => {
   const [firstItem, ...rest] = phrase.split(REGEX.wordBoundary);
@@ -33,11 +33,12 @@ const PureText = ({
           [styles.with_leading_whitespace]: !removeLeadingWhitespace,
           [styles.without_leading_whitespace]: removeLeadingWhitespace,
         })}
+        id={[...dataTextIndex, 0].toString()}
       >
         {firstItem}
       </span>
       {rest.map((item, index) => (
-        <span data-index={[dataTextIndex, index]} key={index}>
+        <span id={[...dataTextIndex, index + 1].toString()} key={index}>
           {item}
         </span>
       ))}
@@ -51,20 +52,23 @@ PureText.defaultProps = {
 
 const InlineFootnote = ({ text }: { text: string }) => {
   return (
-    <Typography variant="overline" className={styles.inline_footnote}>
-      <sup>{text}</sup>
+    <Typography
+      variant="overline"
+      className={clsx(styles.inline_footnote, styles.superscript)}
+    >
+      {text}
     </Typography>
   );
 };
 
 const StandardText = ({
-  textInfo,
-  textAreaID,
   removeLeadingWhitespace,
+  textAreaID,
+  textInfo,
 }: {
-  textInfo: TextInfo;
-  textAreaID: number;
   removeLeadingWhitespace?: boolean;
+  textAreaID: number;
+  textInfo: TextInfo;
 }) => {
   const charArray = textInfo.text.split(REGEX.inlineFootnote);
 
@@ -78,7 +82,7 @@ const StandardText = ({
         return (
           <PureText
             phrase={item}
-            dataTextIndex={textInfo.id}
+            dataTextIndex={[textAreaID, textInfo.id, index]}
             key={index}
             removeLeadingWhitespace={removeLeadingWhitespace}
           />
@@ -127,18 +131,13 @@ const ItalicsBlock = ({ text }: { text: string }) => {
   return <i>{textWithoutAsterisks}</i>;
 };
 
-const VerseNumber = ({
-  textInfo,
-  textAreaID,
-}: {
-  textInfo: TextInfo;
-  textAreaID: number;
-}) => {
+const VerseNumber = ({ textInfo }: { textInfo: TextInfo }) => {
   return (
-    <Typography variant="button" className={styles.verse_number}>
-      <b>
-        <sup>{textInfo.text}</sup>
-      </b>
+    <Typography
+      variant="button"
+      className={clsx(styles.verse_number, styles.superscript)}
+    >
+      {textInfo.text}
     </Typography>
   );
 };

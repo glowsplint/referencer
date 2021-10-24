@@ -1,14 +1,25 @@
 import React, { SetStateAction, useState } from "react";
-import { Interval } from "./Highlight";
 
-type Selection = {
-  current: Interval;
+// SpanID is [textAreaID, data-text-index, data-phrase-index, data-pure-text-index]
+export type SpanID = [number, number, number, number];
+
+export type CurrentSelection = {
+  textAreaID?: number;
+  anchor?: SpanID;
+  start?: SpanID;
+  end?: SpanID;
+};
+
+export type Selection = {
+  selecting: boolean;
+  current: CurrentSelection;
 };
 
 export type SetSelection = React.Dispatch<SetStateAction<Selection>>;
 
 const baseSelection = {
-  current: [NaN, NaN] as Interval,
+  selecting: false,
+  current: {},
 };
 
 const SelectionContext = React.createContext<{
