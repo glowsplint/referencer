@@ -1,25 +1,19 @@
 import React, { SetStateAction, useState } from "react";
-import { ColourType } from "../common/enums";
-
-export type Interval = [number, number];
+import { SpanID } from "./Selection";
 
 export type HighlightIndices = {
-  // textAreaID
-  [key: number]: {
-    // Key: Colour
-    [key in ColourType]: {
-      // dataIndex
-      [key: number]: Interval[];
-    };
-  };
+  textAreaID: number;
+  colour: string;
+  start: SpanID;
+  end: SpanID;
 };
 
 export type Highlight = {
-  highlight: HighlightIndices;
+  highlights: HighlightIndices[];
 };
 
-const baseHighlight = {
-  highlight: {},
+const baseHighlight: Highlight = {
+  highlights: [],
 };
 
 export type SetHighlight = React.Dispatch<SetStateAction<Highlight>>;

@@ -18,11 +18,11 @@ const NoSSRCanvas = dynamic(() => import("./Canvas"), {
 
 const PureText = ({
   phrase,
-  dataTextIndex,
+  id,
   removeLeadingWhitespace,
 }: {
   phrase: string;
-  dataTextIndex: [number, number, number];
+  id: [number, number, number];
   removeLeadingWhitespace?: boolean;
 }) => {
   const [firstItem, ...rest] = phrase.split(REGEX.wordBoundary);
@@ -33,12 +33,12 @@ const PureText = ({
           [styles.with_leading_whitespace]: !removeLeadingWhitespace,
           [styles.without_leading_whitespace]: removeLeadingWhitespace,
         })}
-        id={[...dataTextIndex, 0].toString()}
+        id={[...id, 0].toString()}
       >
         {firstItem}
       </span>
       {rest.map((item, index) => (
-        <span id={[...dataTextIndex, index + 1].toString()} key={index}>
+        <span id={[...id, index + 1].toString()} key={index}>
           {item}
         </span>
       ))}
@@ -50,11 +50,12 @@ PureText.defaultProps = {
   removeLeadingWhitespace: false,
 };
 
-const InlineFootnote = ({ text }: { text: string }) => {
+const InlineFootnote = ({ text, id }: { text: string; id: string }) => {
   return (
     <Typography
       variant="overline"
       className={clsx(styles.inline_footnote, styles.superscript)}
+      id={id}
     >
       {text}
     </Typography>
@@ -77,12 +78,18 @@ const StandardText = ({
     <>
       {charArray.map((item, index) => {
         if (item.match(REGEX.inlineFootnote)) {
-          return <InlineFootnote text={item} key={index} />;
+          return (
+            <InlineFootnote
+              text={item}
+              key={index}
+              id={[textAreaID, textInfo.id, index, 0].toString()}
+            />
+          );
         }
         return (
           <PureText
             phrase={item}
-            dataTextIndex={[textAreaID, textInfo.id, index]}
+            id={[textAreaID, textInfo.id, index]}
             key={index}
             removeLeadingWhitespace={removeLeadingWhitespace}
           />
@@ -131,11 +138,18 @@ const ItalicsBlock = ({ text }: { text: string }) => {
   return <i>{textWithoutAsterisks}</i>;
 };
 
-const VerseNumber = ({ textInfo }: { textInfo: TextInfo }) => {
+const VerseNumber = ({
+  textInfo,
+  textAreaID,
+}: {
+  textInfo: TextInfo;
+  textAreaID: number;
+}) => {
   return (
     <Typography
       variant="button"
       className={clsx(styles.verse_number, styles.superscript)}
+      id={[textAreaID, textInfo.id, 0, -1].toString()}
     >
       {textInfo.text}
     </Typography>

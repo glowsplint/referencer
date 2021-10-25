@@ -17,7 +17,7 @@ export type Selection = {
 
 export type SetSelection = React.Dispatch<SetStateAction<Selection>>;
 
-const baseSelection = {
+export const baseSelection = {
   selecting: false,
   current: {},
 };

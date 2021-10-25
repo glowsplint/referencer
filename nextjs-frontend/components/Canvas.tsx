@@ -1,12 +1,15 @@
 import Konva from "konva";
-import React from "react";
+import React, { useEffect } from "react";
 import { Stage, Layer, Rect } from "react-konva";
+import { HighlightIndices, useHighlight } from "../contexts/Highlight";
 import {
+  baseSelection,
   CurrentSelection,
   Selection,
   SpanID,
   useSelection,
 } from "../contexts/Selection";
+import { useTexts } from "../contexts/Texts";
 
 type BoundingBox = {
   width: number;
@@ -83,7 +86,7 @@ const getSelectedNodes = (
 };
 
 const getSelectionBoundingRect = (
-  currentSelection: CurrentSelection
+  currentSelection: CurrentSelection | HighlightIndices
 ): DOMRect[] => {
   // Gets all bounding rectangles for a given selection
   const getNode = (key: "start" | "end") =>
@@ -94,7 +97,8 @@ const getSelectionBoundingRect = (
   /* We create bounding rectangles for all spans between the start and the end.
   
      We can combine all bounding boxes with the same y level if they have the same
-     textAreaID. */
+     textAreaID to reduce the number of drawn rectangles. This is not currently
+     implemented. */
 
   // Get all the nodes in between the start and end node
   const selectedNodes = getSelectedNodes(startNode, endNode);
@@ -143,6 +147,12 @@ const Canvas = ({
   height: number;
 }) => {
   const { selection, setSelection } = useSelection();
+  const { highlight } = useHighlight();
+  const { texts } = useTexts();
+
+  useEffect(() => {
+    setSelection(baseSelection);
+  }, [texts]);
 
   /* Mouse Event Handlers */
   const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
@@ -198,10 +208,12 @@ const Canvas = ({
   };
 
   /* Create bounding rectangles to be rendered using data from Highlight context */
-  const getSelectionOffsetBoundingRect = () => {
+  const getSelectionOffsetBoundingRect = (
+    current: CurrentSelection | HighlightIndices
+  ) => {
     // Compensate the bounding rect with position of canvasContainer with viewport
     const parent = getParentBoundingRect();
-    return getSelectionBoundingRect(selection.current)
+    return getSelectionBoundingRect(current)
       .map((child) => {
         const rect: BoundingBox = {
           width: child?.width,
@@ -213,7 +225,7 @@ const Canvas = ({
           bottom: child?.bottom - parent.bottom,
           left: child?.left - parent.left,
         };
-        return Object.entries(rect).some(([key, value]) => value == null)
+        return Object.entries(rect).some(([_key, value]) => value == null)
           ? null
           : rect;
       })
@@ -230,20 +242,36 @@ const Canvas = ({
       onMouseUp={handleMouseUp}
     >
       <Layer>
-        {/* Draw all highlights from context */}
-        {getSelectionOffsetBoundingRect().map((item, index) => {
-          return (
-            <Rect
-              x={item.x}
-              y={item.y}
-              width={item.width}
-              height={item.height}
-              fill="blue"
-              key={index}
-              opacity={0.2}
-            />
-          );
-        })}
+        {getSelectionOffsetBoundingRect(selection.current).map(
+          (item, index) => {
+            return (
+              <Rect
+                x={item.x}
+                y={item.y}
+                width={item.width}
+                height={item.height}
+                fill="blue"
+                key={index}
+                opacity={0.2}
+              />
+            );
+          }
+        )}
+        {highlight.highlights.map((highlightIndex) =>
+          getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => {
+            return (
+              <Rect
+                x={item.x}
+                y={item.y}
+                width={item.width}
+                height={item.height}
+                fill={highlightIndex.colour}
+                key={index}
+                opacity={0.2}
+              />
+            );
+          })
+        )}
       </Layer>
     </Stage>
   );

@@ -24,6 +24,8 @@ import { COLOURS, ColourType, ColourValueType } from "../common/enums";
 import { useLogin } from "../contexts/Login";
 import { useSettings } from "../contexts/Settings";
 import { useTexts } from "../contexts/Texts";
+import { HighlightIndices, useHighlight } from "../contexts/Highlight";
+import { useSelection } from "../contexts/Selection";
 
 const Checkbox = ({
   handleCheckBoxToggle,
@@ -143,19 +145,41 @@ const Header = () => {
 };
 
 const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
+  const { setHighlight } = useHighlight();
+  const { selection } = useSelection();
+
   const colourStyle = { backgroundColor: colour[1] };
+  const handleClick = () => {
+    setHighlight((prevHighlight) => {
+      return {
+        highlights: [
+          ...prevHighlight.highlights,
+          {
+            textAreaID: selection.current.textAreaID,
+            colour: colour[0].toLowerCase(),
+            start: selection.current.start,
+            end: selection.current.end,
+          } as HighlightIndices,
+        ],
+      };
+    });
+  };
 
   return (
     <button
       className={styles.dot}
-      onClick={() => {}}
+      onClick={handleClick}
       style={colourStyle}
     ></button>
   );
 };
 
 const ClearHighlightsButton = () => {
-  const handleClick = () => {};
+  const { setHighlight } = useHighlight();
+  const handleClick = () => {
+    setHighlight({ highlights: [] });
+  };
+
   return (
     <div className={styles.clear_highlights}>
       <Button variant="contained" onClick={handleClick}>
