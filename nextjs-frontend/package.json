@@ -1,29 +1,30 @@
 {
-  "name": "nextjs-frontend",
-  "version": "0.1.0",
+  "name": "nextjs",
+  "version": "5.0.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "debug": "cross-env NODE_OPTIONS='--inspect' next dev",
-    "build": "next build && next export",
-    "start": "next start"
-  },
   "dependencies": {
-    "@fontsource/roboto": "^4.3.0",
-    "@material-ui/core": "^4.11.4",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.58",
-    "browserslist": "4.16.5",
-    "clsx": "^1.1.1",
-    "cross-env": "^7.0.3",
-    "next": "10.2.0",
-    "react": "17.0.2",
-    "react-custom-scrollbars": "^4.2.1",
-    "react-dom": "17.0.2"
+    "@emotion/cache": "latest",
+    "@emotion/react": "latest",
+    "@emotion/server": "latest",
+    "@emotion/styled": "latest",
+    "@mui/icons-material": "^5.0.4",
+    "@mui/material": "latest",
+    "clsx": "latest",
+    "konva": "^8.2.2",
+    "next": "latest",
+    "prop-types": "latest",
+    "react": "latest",
+    "react-custom-scrollbars-2": "^4.4.0",
+    "react-dom": "latest",
+    "react-konva": "^17.0.2-5"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
   },
   "devDependencies": {
-    "@types/node": "^15.3.0",
-    "@types/react": "^17.0.5",
-    "typescript": "^4.2.4"
+    "typescript": "^4.4.4"
   }
 }

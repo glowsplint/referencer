@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import CreateIcon from "@mui/icons-material/Create";
+import FaceIcon from "@mui/icons-material/Face";
 import Head from "next/head";
-import styles from "./Landing.module.css";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Router from "next/router";
-
-import KeyboardIcon from "@material-ui/icons/Keyboard";
-import FaceIcon from "@material-ui/icons/Face";
-import CreateIcon from "@material-ui/icons/Create";
-import InputIcon from "@material-ui/icons/Input";
+import InputIcon from "@mui/icons-material/Input";
+import KeyboardIcon from "@mui/icons-material/Keyboard";
+import React, { useState } from "react";
+import styles from "../styles/Landing.module.css";
+import { Button, TextField } from "@mui/material";
 import { LoginProvider } from "../contexts/Login";
+import { useRouter } from "next/router";
 
 const InputField = ({
   name,
@@ -59,12 +57,13 @@ const InputField = ({
 };
 
 export default function Home() {
+  const router = useRouter();
   const [input, setInput] = useState<object>({
     displayName: "",
     codeInput: "",
   });
-  const [displayNameError, setDisplayNameError] = useState<boolean>(false);
-  const [spaceIDError, setSpaceIDError] = useState<boolean>(false);
+  const [displayNameError, _setDisplayNameError] = useState<boolean>(false);
+  const [spaceIDError, _setSpaceIDError] = useState<boolean>(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -75,14 +74,14 @@ export default function Home() {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    Router.push("/space");
+    router.push("/space");
   };
 
   const handleJoin = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    Router.push("/space");
+    router.push("/space");
   };
 
   return (

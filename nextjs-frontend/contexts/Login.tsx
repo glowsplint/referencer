@@ -1,24 +1,30 @@
-import React, { useState } from "react";
-
-const LoginContext = React.createContext<Partial<Login>>({});
+import React, { SetStateAction, useState } from "react";
 
 type Login = {
   displayName: string;
   spaceID: string;
-  setDisplayName: (newDisplayName: string) => void;
 };
 
-export const LoginProvider = ({ children }) => {
-  const [loginDetails, setLoginDetails] = useState({
-    displayName: "user-1",
-    spaceID: "space-1",
-    setDisplayName: (newDisplayName: string) => {
-      setLoginDetails({ ...loginDetails, displayName: newDisplayName });
-    },
-  });
+export type SetLogin = React.Dispatch<SetStateAction<Login>>;
+
+const baseLogin = {
+  displayName: "user-1",
+  spaceID: "space-1",
+};
+
+const LoginContext = React.createContext<{
+  login: Login;
+  setLogin: SetLogin;
+}>({
+  login: baseLogin,
+  setLogin: () => {},
+});
+
+export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
+  const [login, setLogin] = useState(baseLogin);
 
   return (
-    <LoginContext.Provider value={loginDetails}>
+    <LoginContext.Provider value={{ login, setLogin }}>
       {children}
     </LoginContext.Provider>
   );
