@@ -45,3 +45,9 @@ export const REGEX = {
   withinAsterisks: /(\*.*?\*)/,
   wordBoundary: /\b/,
 };
+
+export enum SelectionMode {
+  None,
+  Drawing,
+  Selecting,
+}

@@ -1,6 +1,7 @@
 import Konva from "konva";
 import React, { useEffect } from "react";
 import { Stage, Layer, Rect } from "react-konva";
+import { SelectionMode } from "../common/enums";
 import { HighlightIndices, useHighlight } from "../contexts/Highlight";
 import {
   baseSelection,
@@ -155,13 +156,13 @@ const Canvas = ({
   }, [texts]);
 
   /* Mouse Event Handlers */
-  const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
+  const handleSelection = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { textAreaID, target, isEarlyReturn } = getAttributes(event);
     if (isEarlyReturn) return;
     setSelection((prevSelection) => {
       return {
         ...prevSelection,
-        selecting: true,
+        mode: SelectionMode.Selecting,
         current: {
           ...prevSelection.current,
           textAreaID,
@@ -171,10 +172,25 @@ const Canvas = ({
     });
   };
 
+  useEffect(() => {
+    function changeSelectionMode(event: KeyboardEvent) {
+      if (event.key === "Control") {
+      }
+    }
+    window.addEventListener("keydown", changeSelectionMode);
+    return () => {
+      window.removeEventListener("keydown", changeSelectionMode);
+    };
+  }, []);
+
+  const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
+    handleSelection(event);
+  };
+
   const handleMouseMove = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { textAreaID, target, isEarlyReturn } = getAttributes(
       event,
-      !selection.selecting
+      !(selection.mode == SelectionMode.Selecting)
     );
     if (isEarlyReturn) return;
     setSelection((prevSelection: Selection) =>
@@ -189,12 +205,12 @@ const Canvas = ({
   const handleMouseUp = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { textAreaID, target, isEarlyReturn } = getAttributes(
       event,
-      !selection.selecting
+      !(selection.mode == SelectionMode.Selecting)
     );
     setSelection((prevSelection) => {
       return {
         ...prevSelection,
-        selecting: false,
+        mode: SelectionMode.None,
       };
     });
     if (isEarlyReturn) return;

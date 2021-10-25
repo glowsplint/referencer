@@ -1,4 +1,5 @@
 import React, { SetStateAction, useState } from "react";
+import { SelectionMode } from "../common/enums";
 
 // SpanID is [textAreaID, data-text-index, data-phrase-index, data-pure-text-index]
 export type SpanID = [number, number, number, number];
@@ -11,14 +12,14 @@ export type CurrentSelection = {
 };
 
 export type Selection = {
-  selecting: boolean;
+  mode: SelectionMode;
   current: CurrentSelection;
 };
 
 export type SetSelection = React.Dispatch<SetStateAction<Selection>>;
 
 export const baseSelection = {
-  selecting: false,
+  mode: SelectionMode.None,
   current: {},
 };
 
