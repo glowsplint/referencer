@@ -15,10 +15,18 @@ import styles from "../styles/ButtonPane.module.css";
 import { useSettings } from "../contexts/Settings";
 
 const ButtonIcon = React.memo(
-  ({ icon, callback }: { icon: JSX.Element; callback: () => void }) => {
+  ({
+    icon,
+    callback,
+    buttonProps = {},
+  }: {
+    icon: JSX.Element;
+    callback: () => void;
+    buttonProps: object;
+  }) => {
     return (
-      <div className={styles.leftpane_icon}>
-        <Fab size="small" color="primary" aria-label="add" onClick={callback}>
+      <div className={styles.leftpane_icon} onClick={callback} {...buttonProps}>
+        <Fab size="small" color="primary" aria-label="add">
           {icon}
         </Fab>
       </div>
@@ -26,31 +34,31 @@ const ButtonIcon = React.memo(
   }
 );
 
-const SwitchingButtonIcon = React.memo(
-  ({
-    iconOne,
-    iconTwo,
-    bool,
-    callback,
-    title,
-  }: {
-    iconOne: JSX.Element;
-    iconTwo: JSX.Element;
-    bool: boolean;
-    callback: () => void;
-    title: string;
-  }) => {
-    return (
-      <div className={styles.leftpane_icon}>
-        <Tooltip title={title} placement="right">
-          <Fab size="small" color="primary" aria-label="add" onClick={callback}>
-            {bool ? iconOne : iconTwo}
-          </Fab>
-        </Tooltip>
-      </div>
-    );
-  }
-);
+const SwitchingButtonIcon = ({
+  iconOne,
+  iconTwo,
+  bool,
+  callback,
+  title,
+  buttonProps = {},
+}: {
+  iconOne: JSX.Element;
+  iconTwo: JSX.Element;
+  bool: boolean;
+  callback: () => void;
+  title: string;
+  buttonProps: object;
+}) => {
+  return (
+    <div className={styles.leftpane_icon} {...buttonProps} onClick={callback}>
+      <Tooltip title={title} placement="right">
+        <Fab size="small" color="primary" aria-label="add">
+          {bool ? iconOne : iconTwo}
+        </Fab>
+      </Tooltip>
+    </div>
+  );
+};
 
 const ButtonPane = React.memo(() => {
   const { settings, setSettings } = useSettings();
@@ -87,21 +95,27 @@ const ButtonPane = React.memo(() => {
   };
 
   return (
-    <Paper className={styles.leftpane}>
-      <ButtonIcon icon={<MenuIcon />} callback={toggleSettingsPane} />
+    <Paper className={styles.leftpane} data-testid="buttonPane">
+      <ButtonIcon
+        icon={<MenuIcon />}
+        callback={toggleSettingsPane}
+        buttonProps={{ "data-testid": "menuButton" }}
+      />
       <SwitchingButtonIcon
         iconOne={<InvertColorsOffIcon />}
         iconTwo={<InvertColorsIcon />}
         bool={settings.isDarkMode}
         callback={toggleDarkMode}
         title="Toggle dark mode"
+        buttonProps={{ "data-testid": "darkModeButton" }}
       />
       <SwitchingButtonIcon
         iconOne={<LayersClearIcon />}
         iconTwo={<LayersIcon />}
         bool={settings.isLayersOn}
         callback={toggleLayers}
-        title="Toggle visibility of layers"
+        title="Toggle layer visibility"
+        buttonProps={{ "data-testid": "clearLayersButton" }}
       />
       <SwitchingButtonIcon
         iconTwo={<TextRotationNoneIcon />}
@@ -109,6 +123,7 @@ const ButtonPane = React.memo(() => {
         bool={settings.isMultipleRowsLayout}
         callback={toggleEditorLayout}
         title="Toggle editor layout"
+        buttonProps={{ "data-testid": "editorLayoutButton" }}
       />
       <SwitchingButtonIcon
         iconOne={<FormatAlignLeftIcon />}
@@ -116,6 +131,7 @@ const ButtonPane = React.memo(() => {
         bool={settings.isJustified}
         callback={toggleJustify}
         title="Toggle left-align/justify"
+        buttonProps={{ "data-testid": "textAlignButton" }}
       />
     </Paper>
   );

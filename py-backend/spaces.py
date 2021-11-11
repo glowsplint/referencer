@@ -1,12 +1,10 @@
-from fastapi import WebSocket
-import threading
 import random
 import string
-
-# typechecking only
-from typing import TypeVar, Generic, Tuple
+import threading
 from collections.abc import Sequence
+from typing import Generic, Tuple, TypeVar
 
+from fastapi import WebSocket
 from starlette.websockets import WebSocketDisconnect
 
 K = TypeVar("K")
@@ -209,4 +207,3 @@ class SpacesServer:
 
     def space_create(self):
         return "".join(self.spaces.key_generate(Space()))
-

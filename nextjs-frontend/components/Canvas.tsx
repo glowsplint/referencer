@@ -1,15 +1,16 @@
-import Konva from "konva";
-import React, { useEffect } from "react";
-import { Stage, Layer, Rect } from "react-konva";
-import { SelectionMode } from "../common/enums";
-import { HighlightIndices, useHighlight } from "../contexts/Highlight";
 import {
-  baseSelection,
   CurrentSelection,
   Selection,
   SpanID,
+  baseSelection,
   useSelection,
 } from "../contexts/Selection";
+import { HighlightIndices, useHighlight } from "../contexts/Highlight";
+import { Layer, Rect, Stage } from "react-konva";
+import React, { useEffect } from "react";
+
+import Konva from "konva";
+import { SelectionMode } from "../common/enums";
 import { useTexts } from "../contexts/Texts";
 
 type BoundingBox = {

@@ -1,16 +1,16 @@
+import { SettingsProvider, useSettings } from "../../contexts/Settings";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
 import ButtonPane from "../../components/ButtonPane";
-import CssBaseline from "@mui/material/CssBaseline";
 import Editor from "../../components/Editor";
 import Head from "next/head";
-import React from "react";
-import SettingsPane from "../../components/SettingsPane";
-import styles from "../../styles/Space.module.css";
 import { HighlightProvider } from "../../contexts/Highlight";
 import { LoginProvider } from "../../contexts/Login";
-import { TextsProvider } from "../../contexts/Texts";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useSettings } from "../../contexts/Settings";
+import React from "react";
 import { SelectionProvider } from "../../contexts/Selection";
+import SettingsPane from "../../components/SettingsPane";
+import { TextsProvider } from "../../contexts/Texts";
+import styles from "../../styles/Space.module.css";
 
 export function Space() {
   const { settings } = useSettings();
@@ -34,7 +34,6 @@ export function Space() {
       </Head>
 
       <ThemeProvider theme={theme}>
-        <CssBaseline />
         <div className={styles.app}>
           <ButtonPane />
           <SettingsPane />
@@ -48,13 +47,15 @@ export function Space() {
 export default function Index() {
   return (
     <LoginProvider>
-      <TextsProvider>
-        <SelectionProvider>
-          <HighlightProvider>
-            <Space />
-          </HighlightProvider>
-        </SelectionProvider>
-      </TextsProvider>
+      <SettingsProvider>
+        <TextsProvider>
+          <SelectionProvider>
+            <HighlightProvider>
+              <Space />
+            </HighlightProvider>
+          </SelectionProvider>
+        </TextsProvider>
+      </SettingsProvider>
     </LoginProvider>
   );
 }

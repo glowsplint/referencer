@@ -1,15 +1,17 @@
-import Header from "./Header";
+import { ParsedText, TextInfo, useTexts } from "../contexts/Texts";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+
+import { Format } from "../common/enums";
+import Header from "./Header";
+import { Paper } from "@mui/material";
+import { REGEX } from "../common/enums";
+import { Scrollbars } from "react-custom-scrollbars-2";
 import SearchBar from "./SearchBar";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
-import styles from "../styles/Editor.module.css";
-import { Format } from "../common/enums";
-import { ParsedText, TextInfo, useTexts } from "../contexts/Texts";
-import { REGEX } from "../common/enums";
-import { Scrollbars } from "react-custom-scrollbars-2";
 import { get } from "../common/utils";
+import styles from "../styles/Editor.module.css";
 import { useSettings } from "../contexts/Settings";
 
 const NoSSRCanvas = dynamic(() => import("./Canvas"), {
@@ -375,6 +377,7 @@ const MainRegion = () => {
             [styles.row]: settings.isMultipleRowsLayout,
             [styles.col]: !settings.isMultipleRowsLayout,
           })}
+          data-testid="textAreaContainer"
         >
           {texts.headers.map((textHeader: string, index: number) => (
             <TextArea
@@ -392,11 +395,11 @@ const MainRegion = () => {
 
 const Editor = React.memo(() => {
   return (
-    <div className={styles.editor}>
+    <Paper className={styles.editor}>
       <Header />
       <MainRegion />
       <SearchBar />
-    </div>
+    </Paper>
   );
 });
 

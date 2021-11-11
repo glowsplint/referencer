@@ -1,3 +1,7 @@
+import { COLOURS, ColourType, ColourValueType } from "../common/enums";
+import { HighlightIndices, useHighlight } from "../contexts/Highlight";
+import React, { useState } from "react";
+
 import Button from "@mui/material/Button";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -13,19 +17,16 @@ import FaceIcon from "@mui/icons-material/Face";
 import IconButton from "@mui/material/IconButton";
 import MUICheckbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
-import React, { useState } from "react";
 import ShareIcon from "@mui/icons-material/Share";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import styles from "../styles/SettingsPane.module.css";
-import { COLOURS, ColourType, ColourValueType } from "../common/enums";
 import { useLogin } from "../contexts/Login";
+import { useSelection } from "../contexts/Selection";
 import { useSettings } from "../contexts/Settings";
 import { useTexts } from "../contexts/Texts";
-import { HighlightIndices, useHighlight } from "../contexts/Highlight";
-import { useSelection } from "../contexts/Selection";
 
 const Checkbox = ({
   handleCheckBoxToggle,
@@ -308,7 +309,7 @@ const ChangeNameButton = () => {
   );
 };
 
-const Settings = () => {
+const SettingsPane = () => {
   const { texts, setTexts } = useTexts();
   const { settings } = useSettings();
   const handleClose = (key: number) => {
@@ -336,6 +337,7 @@ const Settings = () => {
         [styles.open]: settings.isSettingsOpen,
         [styles.closed]: !settings.isSettingsOpen,
       })}
+      data-testid="settingsPane"
     >
       <Paper className={styles.paper}>
         <Header />
@@ -350,4 +352,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default SettingsPane;

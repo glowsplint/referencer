@@ -6,12 +6,10 @@
 
 .open {
   width: 300px;
-  opacity: 1;
 }
 
 .closed {
-  width: 0;
-  opacity: 0;
+  display: none;
 }
 
 .paper {
