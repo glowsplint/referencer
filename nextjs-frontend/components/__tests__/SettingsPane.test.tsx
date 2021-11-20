@@ -1,8 +1,9 @@
 import "@testing-library/jest-dom";
 
+import { cleanup, render } from "@testing-library/react";
+
 import React from "react";
 import SettingsPane from "../SettingsPane";
-import { cleanup } from "@testing-library/react";
 import { isBeingRendered } from "./utils/utils";
 
 afterEach(() => {
@@ -15,5 +16,14 @@ const isBeingRenderedWithSettingsPane = ({ testId }: { testId: string }) =>
 
 describe("Settings Pane", () => {
   isBeingRenderedWithSettingsPane({ testId: "settingsPane" });
-  it("toggles the settings pane correctly when clicked", () => {});
+});
+
+describe("Space Button", () => {
+  // Render the index
+  // get space button by test id
+  // click on space button
+  // verify that the clipboard has changed
+  isBeingRenderedWithSettingsPane({ testId: "spaceButton" });
+  const { getByTestId } = render(<></>);
+  it("copies the current workspace ID to the clipboard when clicked", () => {});
 });

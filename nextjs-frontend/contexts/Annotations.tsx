@@ -1,6 +1,6 @@
 import React, { SetStateAction, useState } from "react";
 
-import { SpanID } from "./Selection";
+import { SpanID } from "./Tracking";
 
 type Interval = {
   start: SpanID;
@@ -11,27 +11,35 @@ type HighlightIndices = { colour: string } & Interval;
 
 type ArrowIndices = Interval;
 
+interface Selection {
+  anchor?: SpanID;
+  start?: SpanID;
+  end?: SpanID;
+}
+
 interface Annotations {
   highlights: HighlightIndices[];
+  selection: Selection;
   arrows: ArrowIndices[];
 }
 
 const baseAnnotations: Annotations = {
   highlights: [],
+  selection: {},
   arrows: [],
 };
 
-type SetAnnotation = React.Dispatch<SetStateAction<Annotations>>;
+type SetAnnotations = React.Dispatch<SetStateAction<Annotations>>;
 
 const AnnotationContext = React.createContext<{
   annotations: Annotations;
-  setAnnotations: SetAnnotation;
+  setAnnotations: SetAnnotations;
 }>({
   annotations: baseAnnotations,
   setAnnotations: () => {},
 });
 
-const AnnotationProvider = ({ children }: { children: React.ReactNode }) => {
+const AnnotationsProvider = ({ children }: { children: React.ReactNode }) => {
   const [annotations, setAnnotations] = useState(baseAnnotations);
 
   return (
@@ -45,5 +53,10 @@ const useAnnotation = () => {
   return React.useContext(AnnotationContext);
 };
 
-export type { SetAnnotation, Annotations, HighlightIndices };
-export { AnnotationProvider, useAnnotation };
+export type {
+  SetAnnotations as SetAnnotation,
+  Annotations,
+  HighlightIndices,
+  Selection,
+};
+export { AnnotationsProvider as AnnotationProvider, useAnnotation };

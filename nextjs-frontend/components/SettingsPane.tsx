@@ -1,5 +1,5 @@
 import { COLOURS, ColourType, ColourValueType } from "../common/enums";
-import { HighlightIndices, useAnnotation } from "../contexts/Annotation";
+import { HighlightIndices, useAnnotation } from "../contexts/Annotations";
 import React, { useState } from "react";
 
 import Button from "@mui/material/Button";
@@ -24,9 +24,9 @@ import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import styles from "../styles/SettingsPane.module.css";
 import { useLogin } from "../contexts/Login";
-import { useSelection } from "../contexts/Selection";
 import { useSettings } from "../contexts/Settings";
 import { useTexts } from "../contexts/Texts";
+import { useTracking } from "../contexts/Tracking";
 
 const Checkbox = ({
   handleCheckBoxToggle,
@@ -135,6 +135,7 @@ const Header = () => {
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
         size="small"
+        data-testid="spaceButton"
       >
         <span className={styles.top_spaceName}>{displayedSpace}</span>
         <span className={styles.top_icon}>
@@ -147,7 +148,6 @@ const Header = () => {
 
 const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
   const { setAnnotations } = useAnnotation();
-  const { selection } = useSelection();
 
   const colourStyle = { backgroundColor: colour[1] };
   const handleClick = () => {
@@ -158,8 +158,8 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
           ...prevAnnotations.highlights,
           {
             colour: colour[0].toLowerCase(),
-            start: selection.current.start,
-            end: selection.current.end,
+            start: prevAnnotations.selection.start,
+            end: prevAnnotations.selection.end,
           } as HighlightIndices,
         ],
       };

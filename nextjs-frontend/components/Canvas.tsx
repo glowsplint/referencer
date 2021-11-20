@@ -1,12 +1,17 @@
 import {
-  CurrentSelection,
+  Annotations,
+  HighlightIndices,
   Selection,
-  SetSelection,
+  useAnnotation,
+} from "../contexts/Annotations";
+import {
+  CurrentTracking,
+  SetTracking,
   SpanID,
-  baseSelection,
-  useSelection,
-} from "../contexts/Selection";
-import { HighlightIndices, useAnnotation } from "../contexts/Annotation";
+  Tracking,
+  baseTracking,
+  useTracking,
+} from "../contexts/Tracking";
 import { Layer, Rect, Stage } from "react-konva";
 import React, { useEffect } from "react";
 import { Texts, useTexts } from "../contexts/Texts";
@@ -87,7 +92,7 @@ const getSelectedNodes = (
 };
 
 const getSelectionBoundingRect = (
-  currentSelection: CurrentSelection | HighlightIndices
+  currentSelection: Selection | HighlightIndices
 ): DOMRect[] => {
   // Gets all bounding rectangles for a given selection
   const getNode = (key: "start" | "end") =>
@@ -122,14 +127,21 @@ const sortSpanIDs = (spanIDArray: [SpanID, SpanID]) => {
   return { start: sortedArray[0], end: sortedArray[1] };
 };
 
-const setSelectionWithSort = (prevSelection: Selection, target: SpanID) => {
+const setTrackingTarget = (prevTracking: Tracking, target: SpanID) => {
+  return {
+    ...prevTracking,
+    current: { ...prevTracking.current, target },
+  };
+};
+
+const setSelectionWithSort = (prevAnnotations: Annotations, target: SpanID) => {
   const { start, end } = sortSpanIDs([
-    prevSelection.current.anchor as SpanID,
+    prevAnnotations.selection.anchor as SpanID,
     target as SpanID,
   ]);
   return {
-    ...prevSelection,
-    current: { ...prevSelection.current, start, end },
+    ...prevAnnotations,
+    selection: { ...prevAnnotations.selection, start, end },
   };
 };
 
@@ -137,11 +149,11 @@ const resetSelectionOnTextsChange = ({
   setSelection,
   texts,
 }: {
-  setSelection: SetSelection;
+  setSelection: SetTracking;
   texts: Texts;
 }) =>
   useEffect(() => {
-    setSelection(baseSelection);
+    setSelection(baseTracking);
   }, [texts]);
 
 /* Canvas Component */
@@ -154,48 +166,26 @@ const Canvas = ({
   width: number;
   height: number;
 }) => {
-  const { selection, setSelection } = useSelection();
-  const { annotations } = useAnnotation();
+  const { tracking, setTracking } = useTracking();
+  const { annotations, setAnnotations } = useAnnotation();
   const { texts } = useTexts();
 
-  resetSelectionOnTextsChange({ setSelection, texts });
-
-  /* Mouse Event Handlers */
-  const setSelectionModeToSelecting = (
-    event: Konva.KonvaEventObject<MouseEvent>
-  ) => {
-    const { target, isEarlyReturn } = getAttributes(event);
-    if (isEarlyReturn) return;
-    setSelection((prevSelection) => {
-      return {
-        ...prevSelection,
-        mode: {
-          current: SelectionMode.Selecting,
-          previous: prevSelection.mode.current,
-        },
-        current: {
-          ...prevSelection.current,
-          anchor: target,
-        },
-      };
-    });
-  };
+  resetSelectionOnTextsChange({ setSelection: setTracking, texts });
 
   /* Drawing */
   useEffect(() => {
     const setSelectionModeToDrawing = (event: KeyboardEvent) => {
       if (event.key === "Control") {
         event.preventDefault();
-        setSelection((prevSelection) => {
-          const condition =
-            prevSelection.mode.current === SelectionMode.Drawing;
+        setTracking((prevTracking) => {
+          const condition = prevTracking.mode.current === SelectionMode.Drawing;
           return {
-            ...prevSelection,
+            ...prevTracking,
             mode: {
               current: SelectionMode.Drawing,
               previous: condition
-                ? prevSelection.mode.previous
-                : prevSelection.mode.current,
+                ? prevTracking.mode.previous
+                : prevTracking.mode.current,
             },
           };
         });
@@ -205,12 +195,12 @@ const Canvas = ({
     const setSelectionModeToPrevious = (event: KeyboardEvent) => {
       if (event.key === "Control") {
         event.preventDefault();
-        setSelection((prevSelection) => {
+        setTracking((prevTracking) => {
           return {
-            ...prevSelection,
+            ...prevTracking,
             mode: {
-              current: prevSelection.mode.previous,
-              previous: prevSelection.mode.current,
+              current: prevTracking.mode.previous,
+              previous: prevTracking.mode.current,
             },
           };
         });
@@ -226,44 +216,82 @@ const Canvas = ({
     };
   }, []);
 
+  /* Mouse Event Handlers */
+  const setTrackingCurrent = (target: SpanID) => {
+    setTracking((prevTracking) => {
+      return {
+        ...prevTracking,
+        mode: {
+          current: SelectionMode.Selecting,
+          previous: prevTracking.mode.current,
+        },
+        current: {
+          ...prevTracking.current,
+          anchor: target,
+        },
+      };
+    });
+  };
+
+  const setAnnotationSelection = (target: SpanID) => {
+    setAnnotations((prevAnnotations) => {
+      return {
+        ...prevAnnotations,
+        selection: {
+          ...prevAnnotations.selection,
+          anchor: target,
+        },
+      };
+    });
+  };
+
   const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
-    setSelectionModeToSelecting(event);
+    const { target, isEarlyReturn } = getAttributes(event);
+    if (isEarlyReturn) return;
+    setTrackingCurrent(target as SpanID);
+    setAnnotationSelection(target as SpanID);
   };
 
   const handleMouseMove = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { target, isEarlyReturn } = getAttributes(
       event,
-      !(selection.mode.current == SelectionMode.Selecting)
+      !(tracking.mode.current == SelectionMode.Selecting)
     );
     if (isEarlyReturn) return;
-    setSelection((prevSelection: Selection) =>
-      setSelectionWithSort(prevSelection, target as SpanID)
+    setTracking((prevTracking) =>
+      setTrackingTarget(prevTracking, target as SpanID)
+    );
+    setAnnotations((prevAnnotations) =>
+      setSelectionWithSort(prevAnnotations, target as SpanID)
     );
   };
 
   const handleMouseUp = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { target, isEarlyReturn } = getAttributes(
       event,
-      !(selection.mode.current == SelectionMode.Selecting)
+      !(tracking.mode.current == SelectionMode.Selecting)
     );
-    setSelection((prevSelection) => {
+    setTracking((prevTracking) => {
       return {
-        ...prevSelection,
+        ...prevTracking,
         mode: {
           current: SelectionMode.None,
-          previous: prevSelection.mode.current,
+          previous: prevTracking.mode.current,
         },
       };
     });
     if (isEarlyReturn) return;
-    setSelection((prevSelection: Selection) =>
-      setSelectionWithSort(prevSelection, target as SpanID)
+    setTracking((prevTracking) =>
+      setTrackingTarget(prevTracking, target as SpanID)
+    );
+    setAnnotations((prevAnnotations) =>
+      setSelectionWithSort(prevAnnotations, target as SpanID)
     );
   };
 
   /* Create bounding rectangles to be rendered using data from Highlight context */
   const getSelectionOffsetBoundingRect = (
-    current: CurrentSelection | HighlightIndices
+    current: Selection | HighlightIndices
   ) => {
     // Compensate the bounding rect with position of canvasContainer with viewport
     const parent = getParentBoundingRect();
@@ -286,8 +314,8 @@ const Canvas = ({
       .filter((item) => item) as BoundingBox[];
   };
 
-  const currentSelectionBoxes = getSelectionOffsetBoundingRect(
-    selection.current
+  const selectionBoxes = getSelectionOffsetBoundingRect(
+    annotations.selection
   ).map((item, index) => (
     <Rect
       x={item.x}
@@ -324,7 +352,7 @@ const Canvas = ({
       onMouseUp={handleMouseUp}
     >
       <Layer>
-        {currentSelectionBoxes}
+        {selectionBoxes}
         {highlightBoxes}
         {/* {arrows} */}
       </Layer>

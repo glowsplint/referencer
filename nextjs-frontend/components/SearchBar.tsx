@@ -1,16 +1,17 @@
+import { processTexts, useTexts } from "../contexts/Texts";
+
 import Autocomplete from "@mui/material/Autocomplete";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
 import books from "../common/books";
-import styles from "../styles/SearchBar.module.css";
 import { grey } from "@mui/material/colors";
+import styles from "../styles/SearchBar.module.css";
 import { toTitleCase } from "../common/utils";
 import { useState } from "react";
-import { processTexts, useTexts } from "../contexts/Texts";
 
 const SearchBar = () => {
-  const { texts, setTexts } = useTexts();
+  const { setTexts } = useTexts();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const getText = async (query: string) => {

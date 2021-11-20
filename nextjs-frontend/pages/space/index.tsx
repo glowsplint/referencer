@@ -1,15 +1,15 @@
 import { SettingsProvider, useSettings } from "../../contexts/Settings";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import { AnnotationProvider } from "../../contexts/Annotation";
+import { AnnotationProvider } from "../../contexts/Annotations";
 import ButtonPane from "../../components/ButtonPane";
 import Editor from "../../components/Editor";
 import Head from "next/head";
 import { LoginProvider } from "../../contexts/Login";
 import React from "react";
-import { SelectionProvider } from "../../contexts/Selection";
 import SettingsPane from "../../components/SettingsPane";
 import { TextsProvider } from "../../contexts/Texts";
+import { TrackingProvider } from "../../contexts/Tracking";
 import styles from "../../styles/Space.module.css";
 
 export function Space() {
@@ -49,11 +49,11 @@ export default function Index() {
     <LoginProvider>
       <SettingsProvider>
         <TextsProvider>
-          <SelectionProvider>
+          <TrackingProvider>
             <AnnotationProvider>
               <Space />
             </AnnotationProvider>
-          </SelectionProvider>
+          </TrackingProvider>
         </TextsProvider>
       </SettingsProvider>
     </LoginProvider>
