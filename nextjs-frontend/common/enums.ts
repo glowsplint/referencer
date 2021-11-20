@@ -47,7 +47,7 @@ export const REGEX = {
 };
 
 export enum SelectionMode {
-  None,
-  Drawing,
-  Selecting,
+  None = "None",
+  Drawing = "Drawing",
+  Selecting = "Selecting",
 }

@@ -1,5 +1,5 @@
 import { COLOURS, ColourType, ColourValueType } from "../common/enums";
-import { HighlightIndices, useHighlight } from "../contexts/Highlight";
+import { HighlightIndices, useAnnotation } from "../contexts/Annotation";
 import React, { useState } from "react";
 
 import Button from "@mui/material/Button";
@@ -146,7 +146,7 @@ const Header = () => {
 };
 
 const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
-  const { setHighlight } = useHighlight();
+  const { setAnnotations: setHighlight } = useAnnotation();
   const { selection } = useSelection();
 
   const colourStyle = { backgroundColor: colour[1] };
@@ -176,7 +176,7 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
 };
 
 const ClearHighlightsButton = () => {
-  const { setHighlight } = useHighlight();
+  const { setAnnotations: setHighlight } = useAnnotation();
   const handleClick = () => {
     setHighlight({ highlights: [] });
   };

@@ -1,10 +1,10 @@
 import { SettingsProvider, useSettings } from "../../contexts/Settings";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
+import { AnnotationProvider } from "../../contexts/Annotation";
 import ButtonPane from "../../components/ButtonPane";
 import Editor from "../../components/Editor";
 import Head from "next/head";
-import { HighlightProvider } from "../../contexts/Highlight";
 import { LoginProvider } from "../../contexts/Login";
 import React from "react";
 import { SelectionProvider } from "../../contexts/Selection";
@@ -50,9 +50,9 @@ export default function Index() {
       <SettingsProvider>
         <TextsProvider>
           <SelectionProvider>
-            <HighlightProvider>
+            <AnnotationProvider>
               <Space />
-            </HighlightProvider>
+            </AnnotationProvider>
           </SelectionProvider>
         </TextsProvider>
       </SettingsProvider>

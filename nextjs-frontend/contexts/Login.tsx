@@ -1,11 +1,11 @@
 import React, { SetStateAction, useState } from "react";
 
-type Login = {
+interface Login {
   displayName: string;
   spaceID: string;
-};
+}
 
-export type SetLogin = React.Dispatch<SetStateAction<Login>>;
+type SetLogin = React.Dispatch<SetStateAction<Login>>;
 
 const baseLogin = {
   displayName: "user-1",
@@ -20,7 +20,7 @@ const LoginContext = React.createContext<{
   setLogin: () => {},
 });
 
-export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
+const LoginProvider = ({ children }: { children: React.ReactNode }) => {
   const [login, setLogin] = useState(baseLogin);
 
   return (
@@ -30,6 +30,9 @@ export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useLogin = () => {
+const useLogin = () => {
   return React.useContext(LoginContext);
 };
+
+export type { SetLogin };
+export { LoginProvider, useLogin };

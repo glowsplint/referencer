@@ -1,17 +1,18 @@
 import {
   CurrentSelection,
   Selection,
+  SetSelection,
   SpanID,
   baseSelection,
   useSelection,
 } from "../contexts/Selection";
-import { HighlightIndices, useHighlight } from "../contexts/Highlight";
+import { HighlightIndices, useAnnotation } from "../contexts/Annotation";
 import { Layer, Rect, Stage } from "react-konva";
 import React, { useEffect } from "react";
+import { Texts, useTexts } from "../contexts/Texts";
 
 import Konva from "konva";
 import { SelectionMode } from "../common/enums";
-import { useTexts } from "../contexts/Texts";
 
 type BoundingBox = {
   width: number;
@@ -36,11 +37,11 @@ const getElement = (
 const getCurrentSpanAttributes = (span: Element, spanParent: Element) => {
   // Get <span>'s data-index attribute to update Highlight context
   const getDataIndex = () => {
-    const targetString = (span as HTMLElement).id;
-    const target = targetString
+    const spanIDString = (span as HTMLElement).id;
+    const spanID = spanIDString
       ?.split(",")
       .map((item) => Number(item)) as SpanID;
-    return target;
+    return spanID;
   };
 
   const textAreaID = Number(spanParent.id);
@@ -138,6 +139,17 @@ const setSelectionWithSort = (
   };
 };
 
+const resetSelectionOnTextsChange = ({
+  setSelection,
+  texts,
+}: {
+  setSelection: SetSelection;
+  texts: Texts;
+}) =>
+  useEffect(() => {
+    setSelection(baseSelection);
+  }, [texts]);
+
 /* Canvas Component */
 const Canvas = ({
   className,
@@ -149,21 +161,24 @@ const Canvas = ({
   height: number;
 }) => {
   const { selection, setSelection } = useSelection();
-  const { highlight } = useHighlight();
+  const { annotations: highlight } = useAnnotation();
   const { texts } = useTexts();
 
-  useEffect(() => {
-    setSelection(baseSelection);
-  }, [texts]);
+  resetSelectionOnTextsChange({ setSelection, texts });
 
   /* Mouse Event Handlers */
-  const handleSelection = (event: Konva.KonvaEventObject<MouseEvent>) => {
+  const setSelectionModeToSelecting = (
+    event: Konva.KonvaEventObject<MouseEvent>
+  ) => {
     const { textAreaID, target, isEarlyReturn } = getAttributes(event);
     if (isEarlyReturn) return;
     setSelection((prevSelection) => {
       return {
         ...prevSelection,
-        mode: SelectionMode.Selecting,
+        mode: {
+          current: SelectionMode.Selecting,
+          previous: prevSelection.mode.current,
+        },
         current: {
           ...prevSelection.current,
           textAreaID,
@@ -173,25 +188,59 @@ const Canvas = ({
     });
   };
 
+  /* Drawing */
   useEffect(() => {
-    function changeSelectionMode(event: KeyboardEvent) {
+    const setSelectionModeToDrawing = (event: KeyboardEvent) => {
       if (event.key === "Control") {
+        event.preventDefault();
+        setSelection((prevSelection) => {
+          const condition =
+            prevSelection.mode.current === SelectionMode.Drawing;
+          return {
+            ...prevSelection,
+            mode: {
+              current: SelectionMode.Drawing,
+              previous: condition
+                ? prevSelection.mode.previous
+                : prevSelection.mode.current,
+            },
+          };
+        });
       }
-    }
-    window.addEventListener("keydown", changeSelectionMode);
+    };
+
+    const setSelectionModeToPrevious = (event: KeyboardEvent) => {
+      if (event.key === "Control") {
+        event.preventDefault();
+        setSelection((prevSelection) => {
+          return {
+            ...prevSelection,
+            mode: {
+              current: prevSelection.mode.previous,
+              previous: prevSelection.mode.current,
+            },
+          };
+        });
+      }
+    };
+
+    window.addEventListener("keydown", setSelectionModeToDrawing);
+    window.addEventListener("keyup", setSelectionModeToPrevious);
+
     return () => {
-      window.removeEventListener("keydown", changeSelectionMode);
+      window.removeEventListener("keydown", setSelectionModeToDrawing);
+      window.removeEventListener("keyup", setSelectionModeToPrevious);
     };
   }, []);
 
   const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
-    handleSelection(event);
+    setSelectionModeToSelecting(event);
   };
 
   const handleMouseMove = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { textAreaID, target, isEarlyReturn } = getAttributes(
       event,
-      !(selection.mode == SelectionMode.Selecting)
+      !(selection.mode.current == SelectionMode.Selecting)
     );
     if (isEarlyReturn) return;
     setSelection((prevSelection: Selection) =>
@@ -206,12 +255,15 @@ const Canvas = ({
   const handleMouseUp = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { textAreaID, target, isEarlyReturn } = getAttributes(
       event,
-      !(selection.mode == SelectionMode.Selecting)
+      !(selection.mode.current == SelectionMode.Selecting)
     );
     setSelection((prevSelection) => {
       return {
         ...prevSelection,
-        mode: SelectionMode.None,
+        mode: {
+          current: SelectionMode.None,
+          previous: prevSelection.mode.current,
+        },
       };
     });
     if (isEarlyReturn) return;
@@ -249,6 +301,34 @@ const Canvas = ({
       .filter((item) => item) as BoundingBox[];
   };
 
+  const currentSelectionBoxes = getSelectionOffsetBoundingRect(
+    selection.current
+  ).map((item, index) => (
+    <Rect
+      x={item.x}
+      y={item.y}
+      width={item.width}
+      height={item.height}
+      fill="blue"
+      key={index}
+      opacity={0.2}
+    />
+  ));
+
+  const highlightBoxes = highlight.highlights.map((highlightIndex) =>
+    getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
+      <Rect
+        x={item.x}
+        y={item.y}
+        width={item.width}
+        height={item.height}
+        fill={highlightIndex.colour}
+        key={index}
+        opacity={0.2}
+      />
+    ))
+  );
+
   return (
     <Stage
       className={className}
@@ -259,36 +339,9 @@ const Canvas = ({
       onMouseUp={handleMouseUp}
     >
       <Layer>
-        {getSelectionOffsetBoundingRect(selection.current).map(
-          (item, index) => {
-            return (
-              <Rect
-                x={item.x}
-                y={item.y}
-                width={item.width}
-                height={item.height}
-                fill="blue"
-                key={index}
-                opacity={0.2}
-              />
-            );
-          }
-        )}
-        {highlight.highlights.map((highlightIndex) =>
-          getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => {
-            return (
-              <Rect
-                x={item.x}
-                y={item.y}
-                width={item.width}
-                height={item.height}
-                fill={highlightIndex.colour}
-                key={index}
-                opacity={0.2}
-              />
-            );
-          })
-        )}
+        {currentSelectionBoxes}
+        {highlightBoxes}
+        {/* {arrows} */}
       </Layer>
     </Stage>
   );

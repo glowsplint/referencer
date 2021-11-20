@@ -1,34 +1,11 @@
+import { Format, REGEX } from "../common/enums";
 import React, { SetStateAction, useState } from "react";
-import { REGEX, Format } from "../common/enums";
 
-type Texts = {
+interface Texts {
   headers: string[];
   bodies: ParsedText[];
   isDisplayed: boolean[];
-};
-
-type TextType =
-  | Format
-  | "Quotes"
-  | "ParagraphSpacer"
-  | "IndentedVerseNumber"
-  | "InlineVerseNumber"
-  | "SectionHeader"
-  | "SpecialNote"
-  | "Italics"
-  | "InlineFootnote"
-  | "ItalicsBlock";
-
-export type TextInfo = {
-  id: number;
-  format: TextType;
-  text: string;
-};
-
-export type ParsedText = {
-  mainText: TextInfo[];
-  footnotes: TextInfo[];
-};
+}
 
 const baseTexts: Texts = {
   headers: [],
@@ -45,6 +22,29 @@ const TextsContext = React.createContext<{
   texts: baseTexts,
   setTexts: () => {},
 });
+
+type TextType =
+  | Format
+  | "Quotes"
+  | "ParagraphSpacer"
+  | "IndentedVerseNumber"
+  | "InlineVerseNumber"
+  | "SectionHeader"
+  | "SpecialNote"
+  | "Italics"
+  | "InlineFootnote"
+  | "ItalicsBlock";
+
+interface TextInfo {
+  id: number;
+  format: TextType;
+  text: string;
+}
+
+interface ParsedText {
+  mainText: TextInfo[];
+  footnotes: TextInfo[];
+}
 
 /* Parsing functions */
 // Splits the original string into the main body of text, and also footnotes
@@ -70,7 +70,7 @@ const addSpace = (brokenTextItem: string): string => {
 };
 
 // Parsing entry point
-export const processTexts = (text: string) => {
+const processTexts = (text: string) => {
   const [rawMainText, rawFootnotes] = splitTexts(text);
   const mainText = getMainText(rawMainText);
   const footnotes = getFootnotes(rawFootnotes);
@@ -149,7 +149,7 @@ const getFootnotes = (rawFootnotes: string[]): TextInfo[] => {
 };
 
 /* Context Provider for texts */
-export const TextsProvider = ({ children }: { children: React.ReactNode }) => {
+const TextsProvider = ({ children }: { children: React.ReactNode }) => {
   const [texts, setTexts] = useState(baseTexts);
 
   return (
@@ -159,6 +159,9 @@ export const TextsProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useTexts = () => {
+const useTexts = () => {
   return React.useContext(TextsContext);
 };
+
+export type { Texts, TextInfo, ParsedText };
+export { useTexts, TextsProvider, processTexts };

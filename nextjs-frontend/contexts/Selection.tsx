@@ -1,25 +1,31 @@
 import React, { SetStateAction, useState } from "react";
+
 import { SelectionMode } from "../common/enums";
 
 // SpanID is [textAreaID, data-text-index, data-phrase-index, data-pure-text-index]
-export type SpanID = [number, number, number, number];
+type SpanID = [number, number, number, number];
 
-export type CurrentSelection = {
+interface CurrentSelection {
   textAreaID?: number;
   anchor?: SpanID;
   start?: SpanID;
   end?: SpanID;
-};
+}
 
-export type Selection = {
-  mode: SelectionMode;
+interface ISelection {
+  current: SelectionMode;
+  previous: SelectionMode;
+}
+
+interface Selection {
+  mode: ISelection;
   current: CurrentSelection;
-};
+}
 
-export type SetSelection = React.Dispatch<SetStateAction<Selection>>;
+type SetSelection = React.Dispatch<SetStateAction<Selection>>;
 
-export const baseSelection = {
-  mode: SelectionMode.None,
+const baseSelection = {
+  mode: { current: SelectionMode.None, previous: SelectionMode.None },
   current: {},
 };
 
@@ -31,11 +37,7 @@ const SelectionContext = React.createContext<{
   setSelection: () => {},
 });
 
-export const SelectionProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+const SelectionProvider = ({ children }: { children: React.ReactNode }) => {
   const [selection, setSelection] = useState(baseSelection);
 
   return (
@@ -45,6 +47,9 @@ export const SelectionProvider = ({
   );
 };
 
-export const useSelection = () => {
+const useSelection = () => {
   return React.useContext(SelectionContext);
 };
+
+export type { SpanID, CurrentSelection, Selection, SetSelection };
+export { baseSelection, SelectionProvider, useSelection };
