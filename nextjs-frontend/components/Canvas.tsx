@@ -44,8 +44,7 @@ const getCurrentSpanAttributes = (span: Element, spanParent: Element) => {
     return spanID;
   };
 
-  const textAreaID = Number(spanParent.id);
-  return { textAreaID, target: getDataIndex() };
+  return { target: getDataIndex() };
 };
 
 const getSpanAndParent = (event: Konva.KonvaEventObject<MouseEvent>) => {
@@ -61,13 +60,12 @@ const getAttributes = (
   const isEarlyReturn = condition || span.tagName.toLowerCase() === "div";
   if (isEarlyReturn) {
     return {
-      textAreaID: undefined,
       target: undefined,
       isEarlyReturn: true,
     };
   }
-  const { textAreaID, target } = getCurrentSpanAttributes(span, spanParent);
-  return { textAreaID, target, isEarlyReturn };
+  const { target } = getCurrentSpanAttributes(span, spanParent);
+  return { target, isEarlyReturn };
 };
 
 const getParentBoundingRect = () => {
@@ -124,18 +122,14 @@ const sortSpanIDs = (spanIDArray: [SpanID, SpanID]) => {
   return { start: sortedArray[0], end: sortedArray[1] };
 };
 
-const setSelectionWithSort = (
-  prevSelection: Selection,
-  target: SpanID,
-  textAreaID: number
-) => {
+const setSelectionWithSort = (prevSelection: Selection, target: SpanID) => {
   const { start, end } = sortSpanIDs([
     prevSelection.current.anchor as SpanID,
     target as SpanID,
   ]);
   return {
     ...prevSelection,
-    current: { ...prevSelection.current, textAreaID, start, end },
+    current: { ...prevSelection.current, start, end },
   };
 };
 
@@ -161,7 +155,7 @@ const Canvas = ({
   height: number;
 }) => {
   const { selection, setSelection } = useSelection();
-  const { annotations: highlight } = useAnnotation();
+  const { annotations } = useAnnotation();
   const { texts } = useTexts();
 
   resetSelectionOnTextsChange({ setSelection, texts });
@@ -170,7 +164,7 @@ const Canvas = ({
   const setSelectionModeToSelecting = (
     event: Konva.KonvaEventObject<MouseEvent>
   ) => {
-    const { textAreaID, target, isEarlyReturn } = getAttributes(event);
+    const { target, isEarlyReturn } = getAttributes(event);
     if (isEarlyReturn) return;
     setSelection((prevSelection) => {
       return {
@@ -181,7 +175,6 @@ const Canvas = ({
         },
         current: {
           ...prevSelection.current,
-          textAreaID,
           anchor: target,
         },
       };
@@ -238,22 +231,18 @@ const Canvas = ({
   };
 
   const handleMouseMove = (event: Konva.KonvaEventObject<MouseEvent>) => {
-    const { textAreaID, target, isEarlyReturn } = getAttributes(
+    const { target, isEarlyReturn } = getAttributes(
       event,
       !(selection.mode.current == SelectionMode.Selecting)
     );
     if (isEarlyReturn) return;
     setSelection((prevSelection: Selection) =>
-      setSelectionWithSort(
-        prevSelection,
-        target as SpanID,
-        textAreaID as number
-      )
+      setSelectionWithSort(prevSelection, target as SpanID)
     );
   };
 
   const handleMouseUp = (event: Konva.KonvaEventObject<MouseEvent>) => {
-    const { textAreaID, target, isEarlyReturn } = getAttributes(
+    const { target, isEarlyReturn } = getAttributes(
       event,
       !(selection.mode.current == SelectionMode.Selecting)
     );
@@ -268,11 +257,7 @@ const Canvas = ({
     });
     if (isEarlyReturn) return;
     setSelection((prevSelection: Selection) =>
-      setSelectionWithSort(
-        prevSelection,
-        target as SpanID,
-        textAreaID as number
-      )
+      setSelectionWithSort(prevSelection, target as SpanID)
     );
   };
 
@@ -315,7 +300,7 @@ const Canvas = ({
     />
   ));
 
-  const highlightBoxes = highlight.highlights.map((highlightIndex) =>
+  const highlightBoxes = annotations.highlights.map((highlightIndex) =>
     getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
       <Rect
         x={item.x}

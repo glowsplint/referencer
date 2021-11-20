@@ -2,19 +2,23 @@ import React, { SetStateAction, useState } from "react";
 
 import { SpanID } from "./Selection";
 
-interface HighlightIndices {
-  textAreaID: number;
-  colour: string;
+type Interval = {
   start: SpanID;
   end: SpanID;
-}
+};
+
+type HighlightIndices = { colour: string } & Interval;
+
+type ArrowIndices = Interval;
 
 interface Annotations {
   highlights: HighlightIndices[];
+  arrows: ArrowIndices[];
 }
 
 const baseAnnotations: Annotations = {
   highlights: [],
+  arrows: [],
 };
 
 type SetAnnotation = React.Dispatch<SetStateAction<Annotations>>;

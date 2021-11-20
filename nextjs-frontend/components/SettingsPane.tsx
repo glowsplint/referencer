@@ -146,17 +146,17 @@ const Header = () => {
 };
 
 const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
-  const { setAnnotations: setHighlight } = useAnnotation();
+  const { setAnnotations } = useAnnotation();
   const { selection } = useSelection();
 
   const colourStyle = { backgroundColor: colour[1] };
   const handleClick = () => {
-    setHighlight((prevHighlight) => {
+    setAnnotations((prevAnnotations) => {
       return {
+        ...prevAnnotations,
         highlights: [
-          ...prevHighlight.highlights,
+          ...prevAnnotations.highlights,
           {
-            textAreaID: selection.current.textAreaID,
             colour: colour[0].toLowerCase(),
             start: selection.current.start,
             end: selection.current.end,
@@ -176,9 +176,11 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
 };
 
 const ClearHighlightsButton = () => {
-  const { setAnnotations: setHighlight } = useAnnotation();
+  const { setAnnotations } = useAnnotation();
   const handleClick = () => {
-    setHighlight({ highlights: [] });
+    setAnnotations((prevAnnotations) => {
+      return { ...prevAnnotations, highlights: [] };
+    });
   };
 
   return (
