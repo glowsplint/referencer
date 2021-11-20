@@ -4,16 +4,15 @@ import {
   Selection,
   useAnnotation,
 } from "../contexts/Annotations";
+import { Layer, Rect, Stage } from "react-konva";
+import React, { useEffect } from "react";
 import {
-  CurrentTracking,
   SetTracking,
   SpanID,
   Tracking,
   baseTracking,
   useTracking,
 } from "../contexts/Tracking";
-import { Layer, Rect, Stage } from "react-konva";
-import React, { useEffect } from "react";
 import { Texts, useTexts } from "../contexts/Texts";
 
 import Konva from "konva";
@@ -39,7 +38,7 @@ const getElement = (
   return document.elementsFromPoint(x, y)[level];
 };
 
-const getCurrentSpanAttributes = (span: Element, spanParent: Element) => {
+const getCurrentSpanAttributes = (span: Element) => {
   // Get <span>'s data-index attribute to update Highlight context
   const getDataIndex = () => {
     const spanIDString = (span as HTMLElement).id;
@@ -53,6 +52,7 @@ const getCurrentSpanAttributes = (span: Element, spanParent: Element) => {
 };
 
 const getSpanAndParent = (event: Konva.KonvaEventObject<MouseEvent>) => {
+  // We aren't using spanParent; may be able to remove
   return { span: getElement(event, 3), spanParent: getElement(event, 4) };
 };
 
@@ -60,7 +60,7 @@ const getAttributes = (
   event: Konva.KonvaEventObject<MouseEvent>,
   condition: boolean = false
 ) => {
-  const { span, spanParent } = getSpanAndParent(event);
+  const { span } = getSpanAndParent(event);
   // Check that we are ending on a word (span), return early otherwise
   const isEarlyReturn = condition || span.tagName.toLowerCase() === "div";
   if (isEarlyReturn) {
@@ -69,7 +69,7 @@ const getAttributes = (
       isEarlyReturn: true,
     };
   }
-  const { target } = getCurrentSpanAttributes(span, spanParent);
+  const { target } = getCurrentSpanAttributes(span);
   return { target, isEarlyReturn };
 };
 
@@ -127,24 +127,6 @@ const sortSpanIDs = (spanIDArray: [SpanID, SpanID]) => {
   return { start: sortedArray[0], end: sortedArray[1] };
 };
 
-const setTrackingTarget = (prevTracking: Tracking, target: SpanID) => {
-  return {
-    ...prevTracking,
-    current: { ...prevTracking.current, target },
-  };
-};
-
-const setSelectionWithSort = (prevAnnotations: Annotations, target: SpanID) => {
-  const { start, end } = sortSpanIDs([
-    prevAnnotations.selection.anchor as SpanID,
-    target as SpanID,
-  ]);
-  return {
-    ...prevAnnotations,
-    selection: { ...prevAnnotations.selection, start, end },
-  };
-};
-
 const resetSelectionOnTextsChange = ({
   setSelection,
   texts,
@@ -173,55 +155,42 @@ const Canvas = ({
   resetSelectionOnTextsChange({ setSelection: setTracking, texts });
 
   /* Drawing */
-  useEffect(() => {
-    const setSelectionModeToDrawing = (event: KeyboardEvent) => {
-      if (event.key === "Control") {
-        event.preventDefault();
-        setTracking((prevTracking) => {
-          const condition = prevTracking.mode.current === SelectionMode.Drawing;
-          return {
-            ...prevTracking,
-            mode: {
-              current: SelectionMode.Drawing,
-              previous: condition
-                ? prevTracking.mode.previous
-                : prevTracking.mode.current,
-            },
-          };
-        });
-      }
-    };
+  const setTrackingModeToDrawing = () => {
+    setTracking((prevTracking) => {
+      const condition = prevTracking.mode.current === SelectionMode.Drawing;
+      return {
+        ...prevTracking,
+        mode: {
+          ...prevTracking.mode,
+          current: SelectionMode.Drawing,
+          previous: condition
+            ? prevTracking.mode.previous
+            : prevTracking.mode.current,
+        },
+      };
+    });
+  };
 
-    const setSelectionModeToPrevious = (event: KeyboardEvent) => {
-      if (event.key === "Control") {
-        event.preventDefault();
-        setTracking((prevTracking) => {
-          return {
-            ...prevTracking,
-            mode: {
-              current: prevTracking.mode.previous,
-              previous: prevTracking.mode.current,
-            },
-          };
-        });
-      }
-    };
-
-    window.addEventListener("keydown", setSelectionModeToDrawing);
-    window.addEventListener("keyup", setSelectionModeToPrevious);
-
-    return () => {
-      window.removeEventListener("keydown", setSelectionModeToDrawing);
-      window.removeEventListener("keyup", setSelectionModeToPrevious);
-    };
-  }, []);
-
-  /* Mouse Event Handlers */
-  const setTrackingCurrent = (target: SpanID) => {
+  const setSelectionModeToPrevious = () => {
     setTracking((prevTracking) => {
       return {
         ...prevTracking,
         mode: {
+          ...prevTracking.mode,
+          current: prevTracking.mode.previous,
+          previous: prevTracking.mode.current,
+        },
+      };
+    });
+  };
+
+  /* Mouse Event Handlers */
+  const setTrackingAnchor = (target: SpanID) => {
+    setTracking((prevTracking) => {
+      return {
+        ...prevTracking,
+        mode: {
+          tracking: true,
           current: SelectionMode.Selecting,
           previous: prevTracking.mode.current,
         },
@@ -233,7 +202,7 @@ const Canvas = ({
     });
   };
 
-  const setAnnotationSelection = (target: SpanID) => {
+  const setSelectionAnchor = (target: SpanID) => {
     setAnnotations((prevAnnotations) => {
       return {
         ...prevAnnotations,
@@ -245,11 +214,50 @@ const Canvas = ({
     });
   };
 
+  const setTrackingPrevious = () => {
+    setTracking((prevTracking) => {
+      return {
+        ...prevTracking,
+        mode: {
+          tracking: false,
+          current: SelectionMode.None,
+          previous: prevTracking.mode.current,
+        },
+      };
+    });
+  };
+
+  const setTrackingTarget = (target: SpanID) => {
+    setTracking((prevTracking) => {
+      return {
+        ...prevTracking,
+        current: { ...prevTracking.current, target },
+      };
+    });
+  };
+
+  const setSelectionWithSort = (target: SpanID) => {
+    setAnnotations((prevAnnotations) => {
+      const { start, end } = sortSpanIDs([
+        prevAnnotations.selection.anchor as SpanID,
+        target as SpanID,
+      ]);
+      return {
+        ...prevAnnotations,
+        selection: { ...prevAnnotations.selection, start, end },
+      };
+    });
+  };
+
   const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { target, isEarlyReturn } = getAttributes(event);
     if (isEarlyReturn) return;
-    setTrackingCurrent(target as SpanID);
-    setAnnotationSelection(target as SpanID);
+    setTrackingAnchor(target as SpanID);
+    if (event.evt.ctrlKey) {
+      setTrackingModeToDrawing();
+    } else {
+      setSelectionAnchor(target as SpanID);
+    }
   };
 
   const handleMouseMove = (event: Konva.KonvaEventObject<MouseEvent>) => {
@@ -258,12 +266,12 @@ const Canvas = ({
       !(tracking.mode.current == SelectionMode.Selecting)
     );
     if (isEarlyReturn) return;
-    setTracking((prevTracking) =>
-      setTrackingTarget(prevTracking, target as SpanID)
-    );
-    setAnnotations((prevAnnotations) =>
-      setSelectionWithSort(prevAnnotations, target as SpanID)
-    );
+    setTrackingTarget(target as SpanID);
+    if (event.evt.ctrlKey) {
+      setSelectionModeToPrevious();
+    } else {
+      setSelectionWithSort(target as SpanID);
+    }
   };
 
   const handleMouseUp = (event: Konva.KonvaEventObject<MouseEvent>) => {
@@ -271,22 +279,11 @@ const Canvas = ({
       event,
       !(tracking.mode.current == SelectionMode.Selecting)
     );
-    setTracking((prevTracking) => {
-      return {
-        ...prevTracking,
-        mode: {
-          current: SelectionMode.None,
-          previous: prevTracking.mode.current,
-        },
-      };
-    });
+    setTrackingPrevious();
     if (isEarlyReturn) return;
-    setTracking((prevTracking) =>
-      setTrackingTarget(prevTracking, target as SpanID)
-    );
-    setAnnotations((prevAnnotations) =>
-      setSelectionWithSort(prevAnnotations, target as SpanID)
-    );
+    // Please refactor the function into the component and not as a pure function
+    setTrackingTarget(target as SpanID);
+    setSelectionWithSort(target as SpanID);
   };
 
   /* Create bounding rectangles to be rendered using data from Highlight context */

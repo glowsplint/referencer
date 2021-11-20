@@ -13,6 +13,7 @@ interface CurrentTracking {
 interface ITracking {
   current: SelectionMode;
   previous: SelectionMode;
+  tracking: boolean;
 }
 
 interface Tracking {
@@ -23,7 +24,11 @@ interface Tracking {
 type SetTracking = React.Dispatch<SetStateAction<Tracking>>;
 
 const baseTracking = {
-  mode: { current: SelectionMode.None, previous: SelectionMode.None },
+  mode: {
+    current: SelectionMode.None,
+    previous: SelectionMode.None,
+    tracking: false,
+  },
   current: {},
 };
 
