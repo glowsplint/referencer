@@ -1,6 +1,7 @@
 import {
   Annotations,
   HighlightIndices,
+  Interval,
   Selection,
   useAnnotation,
 } from "../contexts/Annotations";
@@ -91,26 +92,6 @@ const getSelectedNodes = (
   return children.slice(startIndex, endIndex + 1);
 };
 
-const getSelectionBoundingRect = (
-  currentSelection: Selection | HighlightIndices
-): DOMRect[] => {
-  // Gets all bounding rectangles for a given selection
-  const getNode = (key: "start" | "end") =>
-    document.getElementById(`${currentSelection[key]?.toString()}`);
-  const startNode = getNode("start") as HTMLElement;
-  const endNode = getNode("end") as HTMLElement;
-
-  /* We create bounding rectangles for all spans between the start and the end.
-  
-     We can combine all bounding boxes with the same y level if they have the same
-     textAreaID to reduce the number of drawn rectangles. This is not currently
-     implemented. */
-
-  // Get all the nodes in between the start and end node
-  const selectedNodes = getSelectedNodes(startNode, endNode);
-  return selectedNodes.map((node) => node.getBoundingClientRect());
-};
-
 const convertSpanIDtoNumber = (spanID: SpanID) => {
   return (
     spanID[0] * 1_000_000_000 +
@@ -137,6 +118,48 @@ const resetSelectionOnTextsChange = ({
   useEffect(() => {
     setSelection(baseTracking);
   }, [texts]);
+
+const getSelectionBoundingRect = (
+  currentSelection: Selection | HighlightIndices
+): DOMRect[] => {
+  // Gets all bounding rectangles for a given selection
+  const getNode = (key: "start" | "end") =>
+    document.getElementById(`${currentSelection[key]?.toString()}`);
+  const startNode = getNode("start") as HTMLElement;
+  const endNode = getNode("end") as HTMLElement;
+
+  /* We create bounding rectangles for all spans between the start and the end.
+  
+     We can combine all bounding boxes with the same y level if they have the same
+     textAreaID to reduce the number of drawn rectangles. This is not currently
+     implemented. */
+
+  // Get all the nodes in between the start and end node
+  const selectedNodes = getSelectedNodes(startNode, endNode);
+  return selectedNodes.map((node) => node.getBoundingClientRect());
+};
+
+const getSelectionOffsetBoundingRect = (current: Interval) => {
+  // Compensate the bounding rect with position of canvasContainer with viewport
+  const parent = getParentBoundingRect();
+  return getSelectionBoundingRect(current)
+    .map((child) => {
+      const rect: BoundingBox = {
+        width: child?.width,
+        height: child?.height,
+        x: child?.x - parent.x,
+        y: child?.y - parent.y,
+        top: child?.top - parent.top,
+        right: child?.right - parent.right,
+        bottom: child?.bottom - parent.bottom,
+        left: child?.left - parent.left,
+      };
+      return Object.entries(rect).some(([_key, value]) => value == null)
+        ? null
+        : rect;
+    })
+    .filter((item) => item) as BoundingBox[];
+};
 
 /* Canvas Component */
 const Canvas = ({
@@ -271,8 +294,8 @@ const Canvas = ({
         ...prevAnnotations,
         arrows: {
           inCreation: {
-            start: [0, 0, 0, 0],
-            end: [0, 0, 0, 0],
+            start: [NaN, NaN, NaN, NaN],
+            end: [NaN, NaN, NaN, NaN],
           },
           finished: [
             ...prevAnnotations.arrows.finished,
@@ -337,31 +360,6 @@ const Canvas = ({
     finaliseArrowCreation();
   };
 
-  /* Create bounding rectangles to be rendered using data from Highlight context */
-  const getSelectionOffsetBoundingRect = (
-    current: Selection | HighlightIndices
-  ) => {
-    // Compensate the bounding rect with position of canvasContainer with viewport
-    const parent = getParentBoundingRect();
-    return getSelectionBoundingRect(current)
-      .map((child) => {
-        const rect: BoundingBox = {
-          width: child?.width,
-          height: child?.height,
-          x: child?.x - parent.x,
-          y: child?.y - parent.y,
-          top: child?.top - parent.top,
-          right: child?.right - parent.right,
-          bottom: child?.bottom - parent.bottom,
-          left: child?.left - parent.left,
-        };
-        return Object.entries(rect).some(([_key, value]) => value == null)
-          ? null
-          : rect;
-      })
-      .filter((item) => item) as BoundingBox[];
-  };
-
   const selectionBoxes = getSelectionOffsetBoundingRect(
     annotations.selection
   ).map((item, index) => (
@@ -393,13 +391,26 @@ const Canvas = ({
   const arrows = [
     ...annotations.arrows.finished,
     annotations.arrows.inCreation,
-  ].map((interval, index) => {
+  ].map((interval, index) =>
     // Get the middle of the bounding boxes
-    getSelectionOffsetBoundingRect(interval).map((item) => {
-      console.log(item.x, item.y);
-      return <Arrow points={[0, 0, item.x, item.y]} />;
-    });
-  });
+    // First modify AnnotationContext to have anchor and target
+    // I need a function that takes in an Interval and returns the mid point (x,y) coordinates of the Interval
+    getSelectionOffsetBoundingRect(interval).map((item, index) => {
+      return (
+        <Arrow
+          x={0}
+          y={0}
+          points={[0, 0, item.x, item.y]}
+          pointerLength={20}
+          pointerWidth={20}
+          fill="black"
+          stroke="black"
+          strokeWidth={4}
+          key={index}
+        />
+      );
+    })
+  );
 
   return (
     <Stage

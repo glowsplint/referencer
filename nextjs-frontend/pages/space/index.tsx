@@ -1,7 +1,7 @@
 import { SettingsProvider, useSettings } from "../../contexts/Settings";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import { AnnotationProvider } from "../../contexts/Annotations";
+import { AnnotationsProvider } from "../../contexts/Annotations";
 import ButtonPane from "../../components/ButtonPane";
 import Editor from "../../components/Editor";
 import Head from "next/head";
@@ -50,9 +50,9 @@ export default function Index() {
       <SettingsProvider>
         <TextsProvider>
           <TrackingProvider>
-            <AnnotationProvider>
+            <AnnotationsProvider>
               <Space />
-            </AnnotationProvider>
+            </AnnotationsProvider>
           </TrackingProvider>
         </TextsProvider>
       </SettingsProvider>

@@ -1,5 +1,9 @@
 import { COLOURS, ColourType, ColourValueType } from "../common/enums";
-import { HighlightIndices, useAnnotation } from "../contexts/Annotations";
+import {
+  HighlightIndices,
+  baseAnnotations,
+  useAnnotation,
+} from "../contexts/Annotations";
 import React, { useState } from "react";
 
 import Button from "@mui/material/Button";
@@ -26,7 +30,6 @@ import styles from "../styles/SettingsPane.module.css";
 import { useLogin } from "../contexts/Login";
 import { useSettings } from "../contexts/Settings";
 import { useTexts } from "../contexts/Texts";
-import { useTracking } from "../contexts/Tracking";
 
 const Checkbox = ({
   handleCheckBoxToggle,
@@ -167,11 +170,7 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
   };
 
   return (
-    <button
-      className={styles.dot}
-      onClick={handleClick}
-      style={colourStyle}
-    ></button>
+    <button className={styles.dot} onClick={handleClick} style={colourStyle} />
   );
 };
 
@@ -179,14 +178,14 @@ const ClearHighlightsButton = () => {
   const { setAnnotations } = useAnnotation();
   const handleClick = () => {
     setAnnotations((prevAnnotations) => {
-      return { ...prevAnnotations, highlights: [] };
+      return { ...prevAnnotations, ...baseAnnotations };
     });
   };
 
   return (
     <div className={styles.clear_highlights}>
       <Button variant="contained" onClick={handleClick}>
-        Clear Highlights
+        Clear annotations
       </Button>
     </div>
   );

@@ -6,8 +6,8 @@ import { SelectionMode } from "../common/enums";
 type SpanID = [number, number, number, number];
 
 interface CurrentTracking {
-  anchor?: SpanID;
-  target?: SpanID;
+  anchor: SpanID;
+  target: SpanID;
 }
 
 interface ITracking {
@@ -22,12 +22,15 @@ interface Tracking {
 
 type SetTracking = React.Dispatch<SetStateAction<Tracking>>;
 
-const baseTracking = {
+const baseTracking: Tracking = {
   mode: {
     current: SelectionMode.None,
     previous: SelectionMode.None,
   },
-  current: {},
+  current: {
+    anchor: [NaN, NaN, NaN, NaN],
+    target: [NaN, NaN, NaN, NaN],
+  },
 };
 
 const TrackingContext = React.createContext<{

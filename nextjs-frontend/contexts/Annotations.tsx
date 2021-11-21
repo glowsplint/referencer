@@ -11,10 +11,8 @@ type HighlightIndices = { colour: string } & Interval;
 
 type ArrowIndices = Interval;
 
-interface Selection {
+interface Selection extends Interval {
   anchor?: SpanID;
-  start?: SpanID;
-  end?: SpanID;
 }
 
 interface Arrows {
@@ -30,11 +28,14 @@ interface Annotations {
 
 const baseAnnotations: Annotations = {
   highlights: [],
-  selection: {},
+  selection: {
+    start: [NaN, NaN, NaN, NaN],
+    end: [NaN, NaN, NaN, NaN],
+  },
   arrows: {
     inCreation: {
-      start: [0, 0, 0, 0],
-      end: [0, 0, 0, 0],
+      start: [NaN, NaN, NaN, NaN],
+      end: [NaN, NaN, NaN, NaN],
     },
     finished: [],
   },
@@ -65,9 +66,10 @@ const useAnnotation = () => {
 };
 
 export type {
-  SetAnnotations as SetAnnotation,
+  SetAnnotations,
   Annotations,
   HighlightIndices,
   Selection,
+  Interval,
 };
-export { AnnotationsProvider as AnnotationProvider, useAnnotation };
+export { AnnotationsProvider, useAnnotation, baseAnnotations };
