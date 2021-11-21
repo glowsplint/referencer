@@ -4,7 +4,7 @@ import {
   Selection,
   useAnnotation,
 } from "../contexts/Annotations";
-import { Layer, Rect, Stage } from "react-konva";
+import { Arrow, Layer, Rect, Stage } from "react-konva";
 import React, { useEffect } from "react";
 import {
   SetTracking,
@@ -154,31 +154,18 @@ const Canvas = ({
 
   resetSelectionOnTextsChange({ setSelection: setTracking, texts });
 
-  /* Drawing */
-  const setTrackingModeToDrawing = () => {
+  /* Arrowing */
+  const setTrackingModeToArrowing = () => {
     setTracking((prevTracking) => {
-      const condition = prevTracking.mode.current === SelectionMode.Drawing;
+      const condition = prevTracking.mode.current === SelectionMode.Arrowing;
       return {
         ...prevTracking,
         mode: {
           ...prevTracking.mode,
-          current: SelectionMode.Drawing,
+          current: SelectionMode.Arrowing,
           previous: condition
             ? prevTracking.mode.previous
             : prevTracking.mode.current,
-        },
-      };
-    });
-  };
-
-  const setSelectionModeToPrevious = () => {
-    setTracking((prevTracking) => {
-      return {
-        ...prevTracking,
-        mode: {
-          ...prevTracking.mode,
-          current: prevTracking.mode.previous,
-          previous: prevTracking.mode.current,
         },
       };
     });
@@ -190,7 +177,6 @@ const Canvas = ({
       return {
         ...prevTracking,
         mode: {
-          tracking: true,
           current: SelectionMode.Selecting,
           previous: prevTracking.mode.current,
         },
@@ -209,6 +195,7 @@ const Canvas = ({
         selection: {
           ...prevAnnotations.selection,
           anchor: target,
+          target,
         },
       };
     });
@@ -219,7 +206,6 @@ const Canvas = ({
       return {
         ...prevTracking,
         mode: {
-          tracking: false,
           current: SelectionMode.None,
           previous: prevTracking.mode.current,
         },
@@ -249,26 +235,91 @@ const Canvas = ({
     });
   };
 
+  const setArrowAnchor = (target: SpanID) => {
+    setAnnotations((prevAnnotations) => {
+      return {
+        ...prevAnnotations,
+        arrows: {
+          ...prevAnnotations.arrows,
+          inCreation: {
+            start: target,
+            end: target,
+          },
+        },
+      };
+    });
+  };
+
+  const setArrowTarget = (target: SpanID) => {
+    setAnnotations((prevAnnotations) => {
+      return {
+        ...prevAnnotations,
+        arrows: {
+          ...prevAnnotations.arrows,
+          inCreation: {
+            ...prevAnnotations.arrows.inCreation,
+            end: target,
+          },
+        },
+      };
+    });
+  };
+
+  const finaliseArrowCreation = () => {
+    setAnnotations((prevAnnotations) => {
+      return {
+        ...prevAnnotations,
+        arrows: {
+          inCreation: {
+            start: [0, 0, 0, 0],
+            end: [0, 0, 0, 0],
+          },
+          finished: [
+            ...prevAnnotations.arrows.finished,
+            prevAnnotations.arrows.inCreation,
+          ],
+        },
+      };
+    });
+  };
+
   const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
+    /* Scenarios:
+        1. Mouse1 down
+            - Start selection, checking that you are on a word
+        2. Mouse1 down + Ctrl key down
+            - Set arrow anchor
+    */
     const { target, isEarlyReturn } = getAttributes(event);
     if (isEarlyReturn) return;
     setTrackingAnchor(target as SpanID);
     if (event.evt.ctrlKey) {
-      setTrackingModeToDrawing();
+      setTrackingModeToArrowing();
+      setArrowAnchor(target as SpanID);
     } else {
       setSelectionAnchor(target as SpanID);
+      setSelectionWithSort(target as SpanID);
     }
   };
 
   const handleMouseMove = (event: Konva.KonvaEventObject<MouseEvent>) => {
+    /* Scenarios:
+        1. Mouse moving
+            - Do nothing
+        2. Mouse moving + Mouse1 down
+            - Selection
+        3. Mouse moving + Mouse1 down + Ctrl key down
+            - Arrowing
+    */
     const { target, isEarlyReturn } = getAttributes(
       event,
-      !(tracking.mode.current == SelectionMode.Selecting)
+      !(tracking.mode.current !== SelectionMode.None)
     );
     if (isEarlyReturn) return;
     setTrackingTarget(target as SpanID);
     if (event.evt.ctrlKey) {
-      setSelectionModeToPrevious();
+      setTrackingModeToArrowing();
+      setArrowTarget(target as SpanID);
     } else {
       setSelectionWithSort(target as SpanID);
     }
@@ -277,13 +328,13 @@ const Canvas = ({
   const handleMouseUp = (event: Konva.KonvaEventObject<MouseEvent>) => {
     const { target, isEarlyReturn } = getAttributes(
       event,
-      !(tracking.mode.current == SelectionMode.Selecting)
+      !(tracking.mode.current !== SelectionMode.None)
     );
     setTrackingPrevious();
     if (isEarlyReturn) return;
-    // Please refactor the function into the component and not as a pure function
     setTrackingTarget(target as SpanID);
     setSelectionWithSort(target as SpanID);
+    finaliseArrowCreation();
   };
 
   /* Create bounding rectangles to be rendered using data from Highlight context */
@@ -325,8 +376,8 @@ const Canvas = ({
     />
   ));
 
-  const highlightBoxes = annotations.highlights.map((highlightIndex) =>
-    getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
+  const highlightBoxes = annotations.highlights.map((highlightIndex, index) =>
+    getSelectionOffsetBoundingRect(highlightIndex).map((item) => (
       <Rect
         x={item.x}
         y={item.y}
@@ -338,6 +389,17 @@ const Canvas = ({
       />
     ))
   );
+
+  const arrows = [
+    ...annotations.arrows.finished,
+    annotations.arrows.inCreation,
+  ].map((interval, index) => {
+    // Get the middle of the bounding boxes
+    getSelectionOffsetBoundingRect(interval).map((item) => {
+      console.log(item.x, item.y);
+      return <Arrow points={[0, 0, item.x, item.y]} />;
+    });
+  });
 
   return (
     <Stage
@@ -351,7 +413,7 @@ const Canvas = ({
       <Layer>
         {selectionBoxes}
         {highlightBoxes}
-        {/* {arrows} */}
+        {arrows}
       </Layer>
     </Stage>
   );

@@ -17,16 +17,27 @@ interface Selection {
   end?: SpanID;
 }
 
+interface Arrows {
+  inCreation: ArrowIndices;
+  finished: ArrowIndices[];
+}
+
 interface Annotations {
   highlights: HighlightIndices[];
   selection: Selection;
-  arrows: ArrowIndices[];
+  arrows: Arrows;
 }
 
 const baseAnnotations: Annotations = {
   highlights: [],
   selection: {},
-  arrows: [],
+  arrows: {
+    inCreation: {
+      start: [0, 0, 0, 0],
+      end: [0, 0, 0, 0],
+    },
+    finished: [],
+  },
 };
 
 type SetAnnotations = React.Dispatch<SetStateAction<Annotations>>;

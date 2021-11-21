@@ -13,7 +13,6 @@ interface CurrentTracking {
 interface ITracking {
   current: SelectionMode;
   previous: SelectionMode;
-  tracking: boolean;
 }
 
 interface Tracking {
@@ -27,7 +26,6 @@ const baseTracking = {
   mode: {
     current: SelectionMode.None,
     previous: SelectionMode.None,
-    tracking: false,
   },
   current: {},
 };

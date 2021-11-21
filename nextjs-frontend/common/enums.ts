@@ -48,6 +48,6 @@ export const REGEX = {
 
 export enum SelectionMode {
   None = "None",
-  Drawing = "Drawing",
+  Arrowing = "Arrowing",
   Selecting = "Selecting",
 }
