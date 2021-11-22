@@ -2,22 +2,27 @@ import React, { SetStateAction, useState } from "react";
 
 import { SpanID } from "./Tracking";
 
-type Interval = {
+interface Interval {
   start: SpanID;
   end: SpanID;
-};
+}
 
-type HighlightIndices = { colour: string } & Interval;
-
-type ArrowIndices = Interval;
-
-interface Selection extends Interval {
-  anchor?: SpanID;
+interface ArrowIndices {
+  anchor: Interval;
+  target: Interval;
 }
 
 interface Arrows {
   inCreation: ArrowIndices;
   finished: ArrowIndices[];
+}
+
+interface HighlightIndices extends Interval {
+  colour: string;
+}
+
+interface Selection extends Interval {
+  anchor?: SpanID;
 }
 
 interface Annotations {
@@ -26,16 +31,18 @@ interface Annotations {
   arrows: Arrows;
 }
 
+const NaNInterval: SpanID = [NaN, NaN, NaN, NaN];
+
 const baseAnnotations: Annotations = {
   highlights: [],
   selection: {
-    start: [NaN, NaN, NaN, NaN],
-    end: [NaN, NaN, NaN, NaN],
+    start: NaNInterval,
+    end: NaNInterval,
   },
   arrows: {
     inCreation: {
-      start: [NaN, NaN, NaN, NaN],
-      end: [NaN, NaN, NaN, NaN],
+      anchor: { start: NaNInterval, end: NaNInterval },
+      target: { start: NaNInterval, end: NaNInterval },
     },
     finished: [],
   },
@@ -66,10 +73,11 @@ const useAnnotation = () => {
 };
 
 export type {
-  SetAnnotations,
   Annotations,
+  ArrowIndices,
   HighlightIndices,
-  Selection,
   Interval,
+  Selection,
+  SetAnnotations,
 };
-export { AnnotationsProvider, useAnnotation, baseAnnotations };
+export { AnnotationsProvider, useAnnotation, baseAnnotations, NaNInterval };

@@ -1,7 +1,9 @@
 import {
   Annotations,
+  ArrowIndices,
   HighlightIndices,
   Interval,
+  NaNInterval,
   Selection,
   useAnnotation,
 } from "../contexts/Annotations";
@@ -52,16 +54,15 @@ const getCurrentSpanAttributes = (span: Element) => {
   return { target: getDataIndex() };
 };
 
-const getSpanAndParent = (event: Konva.KonvaEventObject<MouseEvent>) => {
-  // We aren't using spanParent; may be able to remove
-  return { span: getElement(event, 3), spanParent: getElement(event, 4) };
+const getSpan = (event: Konva.KonvaEventObject<MouseEvent>) => {
+  return getElement(event, 3);
 };
 
 const getAttributes = (
   event: Konva.KonvaEventObject<MouseEvent>,
   condition: boolean = false
 ) => {
-  const { span } = getSpanAndParent(event);
+  const span = getSpan(event);
   // Check that we are ending on a word (span), return early otherwise
   const isEarlyReturn = condition || span.tagName.toLowerCase() === "div";
   if (isEarlyReturn) {
@@ -119,9 +120,7 @@ const resetSelectionOnTextsChange = ({
     setSelection(baseTracking);
   }, [texts]);
 
-const getSelectionBoundingRect = (
-  currentSelection: Selection | HighlightIndices
-): DOMRect[] => {
+const getSelectionBoundingRect = (currentSelection: Interval): DOMRect[] => {
   // Gets all bounding rectangles for a given selection
   const getNode = (key: "start" | "end") =>
     document.getElementById(`${currentSelection[key]?.toString()}`);
@@ -265,8 +264,8 @@ const Canvas = ({
         arrows: {
           ...prevAnnotations.arrows,
           inCreation: {
-            start: target,
-            end: target,
+            anchor: { start: target, end: target },
+            target: { start: target, end: target },
           },
         },
       };
@@ -274,6 +273,8 @@ const Canvas = ({
   };
 
   const setArrowTarget = (target: SpanID) => {
+    // Current implementation: Set both start and end to the same target
+    // This only allows for single-word to single-word arrows
     setAnnotations((prevAnnotations) => {
       return {
         ...prevAnnotations,
@@ -281,7 +282,7 @@ const Canvas = ({
           ...prevAnnotations.arrows,
           inCreation: {
             ...prevAnnotations.arrows.inCreation,
-            end: target,
+            target: { start: target, end: target },
           },
         },
       };
@@ -289,13 +290,15 @@ const Canvas = ({
   };
 
   const finaliseArrowCreation = () => {
+    // Current implementation: Set both start and end to the same target
+    // This only allows for single-word to single-word arrows
     setAnnotations((prevAnnotations) => {
       return {
         ...prevAnnotations,
         arrows: {
           inCreation: {
-            start: [NaN, NaN, NaN, NaN],
-            end: [NaN, NaN, NaN, NaN],
+            anchor: { start: NaNInterval, end: NaNInterval },
+            target: { start: NaNInterval, end: NaNInterval },
           },
           finished: [
             ...prevAnnotations.arrows.finished,
@@ -374,8 +377,8 @@ const Canvas = ({
     />
   ));
 
-  const highlightBoxes = annotations.highlights.map((highlightIndex, index) =>
-    getSelectionOffsetBoundingRect(highlightIndex).map((item) => (
+  const highlightBoxes = annotations.highlights.map((highlightIndex) =>
+    getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
       <Rect
         x={item.x}
         y={item.y}
@@ -388,29 +391,52 @@ const Canvas = ({
     ))
   );
 
+  const getConnectorPointFromInterval = (interval: Interval) => {
+    // Returns the (x,y) connector point coordinate from an Interval
+    // Current implementation: Get the middle of the bounding boxes
+    const midpoints = getSelectionOffsetBoundingRect(interval).map((item) => {
+      return {
+        x: item.x + 0.5 * item.width,
+        y: item.y + 0.5 * item.height,
+      };
+    });
+    if (midpoints.length !== 0) {
+      return midpoints.reduceRight((previous, current) => {
+        return { x: previous.x - current.x, y: previous.y - current.y };
+      });
+    }
+  };
+
+  const getConnectorPointsFromArrowIndices = (arrowIndex: ArrowIndices) => {
+    // Takes in ArrowIndices and returns the two connector points
+    return {
+      anchor: getConnectorPointFromInterval(arrowIndex.anchor),
+      target: getConnectorPointFromInterval(arrowIndex.target),
+    };
+  };
+
   const arrows = [
     ...annotations.arrows.finished,
     annotations.arrows.inCreation,
-  ].map((interval, index) =>
-    // Get the middle of the bounding boxes
-    // First modify AnnotationContext to have anchor and target
-    // I need a function that takes in an Interval and returns the mid point (x,y) coordinates of the Interval
-    getSelectionOffsetBoundingRect(interval).map((item, index) => {
+  ].map((arrowIndex, index) => {
+    const { anchor, target } = getConnectorPointsFromArrowIndices(arrowIndex);
+    if (anchor && target) {
       return (
         <Arrow
           x={0}
           y={0}
-          points={[0, 0, item.x, item.y]}
-          pointerLength={20}
-          pointerWidth={20}
+          points={[anchor.x, anchor.y, target.x, target.y]}
+          pointerLength={7}
+          pointerWidth={7}
           fill="black"
           stroke="black"
-          strokeWidth={4}
+          opacity={0.6}
+          strokeWidth={2}
           key={index}
         />
       );
-    })
-  );
+    }
+  });
 
   return (
     <Stage
