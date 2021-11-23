@@ -1,18 +1,14 @@
+import { Arrow, Layer, Rect, Stage } from "react-konva";
 import {
-  Annotations,
   ArrowIndices,
-  HighlightIndices,
   Interval,
   NaNInterval,
-  Selection,
   useAnnotation,
 } from "../contexts/Annotations";
-import { Arrow, Layer, Rect, Stage } from "react-konva";
 import React, { useEffect } from "react";
 import {
   SetTracking,
   SpanID,
-  Tracking,
   baseTracking,
   useTracking,
 } from "../contexts/Tracking";
@@ -428,11 +424,13 @@ const Canvas = ({
           points={[anchor.x, anchor.y, target.x, target.y]}
           pointerLength={7}
           pointerWidth={7}
-          fill="black"
-          stroke="black"
+          fill="blue"
+          stroke="blue"
           opacity={0.6}
-          strokeWidth={2}
+          strokeWidth={1.5}
           key={index}
+          dashEnabled={true}
+          dash={[5, 5]}
         />
       );
     }

@@ -19,7 +19,7 @@ const SearchBar = () => {
     if (process.env.NODE_ENV === "production") {
       url = "http://localhost:5000/api/";
     }
-    const response = await fetch(url + encodeURIComponent(query));
+    const response = await fetch(url + encodeURIComponent(query.trim()));
     const payload: {
       query: string;
       canonical: string;

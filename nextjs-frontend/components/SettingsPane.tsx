@@ -57,7 +57,10 @@ const Checkbox = ({
 
 const SectionHeader = ({ text }: { text: string }) => {
   return (
-    <div className={styles.section_header}>
+    <div
+      className={styles.section_header}
+      data-testid={`${text.toLowerCase()}SectionHeader`}
+    >
       <ExpandMore fontSize="small" />
       <Typography variant="overline" display="block">
         {text}
@@ -174,7 +177,7 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
   );
 };
 
-const ClearHighlightsButton = () => {
+const ClearAnnotationsButton = () => {
   const { setAnnotations } = useAnnotation();
   const handleClick = () => {
     setAnnotations((prevAnnotations) => {
@@ -184,7 +187,11 @@ const ClearHighlightsButton = () => {
 
   return (
     <div className={styles.clear_highlights}>
-      <Button variant="contained" onClick={handleClick}>
+      <Button
+        variant="contained"
+        onClick={handleClick}
+        data-testid="clearAnnotationsButton"
+      >
         Clear annotations
       </Button>
     </div>
@@ -199,7 +206,7 @@ const LayersItems = () => {
           <Dot colour={item as [ColourType, ColourValueType]} key={index} />
         );
       })}
-      <ClearHighlightsButton />
+      <ClearAnnotationsButton />
     </div>
   );
 };

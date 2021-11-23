@@ -16,4 +16,5 @@ yarn-error.log*
 
 # Next.js
 /.next
+/pages/api
 coverage
