@@ -1,3 +1,4 @@
+import { COLOURS, ColourValueType, IColour } from "../common/enums";
 import React, { SetStateAction, useState } from "react";
 
 import { SpanID } from "./Tracking";
@@ -12,36 +13,35 @@ type Storage<T> = {
   finished: T[];
 };
 
-interface ArrowIndices {
+interface Indices {
   anchor: Interval;
   target: Interval;
+  colour: IColour;
 }
 
-interface HighlightIndices extends ArrowIndices {
-  colour: string;
-}
-
-type Arrows = Storage<ArrowIndices>;
-type Highlights = Storage<HighlightIndices>;
+type StorageIndices = Storage<Indices>;
 
 interface Selection extends Interval {
   anchor?: SpanID;
 }
 
 interface Annotations {
-  highlights: Highlights;
+  highlights: StorageIndices;
   selection: Selection;
-  arrows: Arrows;
+  arrows: StorageIndices;
+  activeColour: IColour;
 }
 
 const NaNInterval: SpanID = [NaN, NaN, NaN, NaN];
 
+const baseColour = COLOURS.Blue;
 const baseAnnotations: Annotations = {
+  activeColour: baseColour,
   highlights: {
     inCreation: {
       anchor: { start: NaNInterval, end: NaNInterval },
       target: { start: NaNInterval, end: NaNInterval },
-      colour: "blue",
+      colour: baseColour,
     },
     finished: [],
   },
@@ -53,6 +53,7 @@ const baseAnnotations: Annotations = {
     inCreation: {
       anchor: { start: NaNInterval, end: NaNInterval },
       target: { start: NaNInterval, end: NaNInterval },
+      colour: baseColour,
     },
     finished: [],
   },
@@ -84,10 +85,10 @@ const useAnnotation = () => {
 
 export type {
   Annotations,
-  ArrowIndices,
-  HighlightIndices,
+  Indices,
   Interval,
   Selection,
   SetAnnotations,
+  StorageIndices,
 };
 export { AnnotationsProvider, useAnnotation, baseAnnotations, NaNInterval };

@@ -1,6 +1,6 @@
 import { Arrow, Layer, Rect, Stage } from "react-konva";
 import {
-  ArrowIndices,
+  Indices,
   Interval,
   NaNInterval,
   useAnnotation,
@@ -262,6 +262,7 @@ const Canvas = ({
           inCreation: {
             anchor: { start: target, end: target },
             target: { start: target, end: target },
+            colour: prevAnnotations.activeColour,
           },
         },
         highlights: {
@@ -269,7 +270,7 @@ const Canvas = ({
           inCreation: {
             anchor: { start: target, end: target },
             target: { start: target, end: target },
-            colour: "blue",
+            colour: prevAnnotations.activeColour,
           },
         },
       };
@@ -310,6 +311,7 @@ const Canvas = ({
           inCreation: {
             anchor: { start: NaNInterval, end: NaNInterval },
             target: { start: NaNInterval, end: NaNInterval },
+            colour: prevAnnotations.activeColour,
           },
           finished: [
             ...prevAnnotations.arrows.finished,
@@ -321,7 +323,7 @@ const Canvas = ({
           inCreation: {
             anchor: { start: NaNInterval, end: NaNInterval },
             target: { start: NaNInterval, end: NaNInterval },
-            colour: "blue",
+            colour: prevAnnotations.activeColour,
           },
           finished: [
             ...prevAnnotations.highlights.finished,
@@ -414,7 +416,7 @@ const Canvas = ({
         y={item.y}
         width={item.width}
         height={item.height}
-        fill={highlightIndex.colour}
+        fill={highlightIndex.colour.arrow}
         key={index}
         opacity={0.2}
       />
@@ -437,11 +439,12 @@ const Canvas = ({
     }
   };
 
-  const getConnectorPointsFromArrowIndices = (arrowIndex: ArrowIndices) => {
+  const getConnectorPointsFromArrowIndices = (arrowIndex: Indices) => {
     // Takes in ArrowIndices and returns the two connector points
     return {
       anchor: getConnectorPointFromInterval(arrowIndex.anchor),
       target: getConnectorPointFromInterval(arrowIndex.target),
+      colour: arrowIndex.colour,
     };
   };
 
@@ -450,7 +453,8 @@ const Canvas = ({
     annotations.arrows.inCreation,
   ];
   const arrowLines = arrows.map((arrowIndex, index) => {
-    const { anchor, target } = getConnectorPointsFromArrowIndices(arrowIndex);
+    const { anchor, target, colour } =
+      getConnectorPointsFromArrowIndices(arrowIndex);
     if (anchor && target) {
       return (
         <Arrow
@@ -459,8 +463,8 @@ const Canvas = ({
           points={[anchor.x, anchor.y, target.x, target.y]}
           pointerLength={7}
           pointerWidth={7}
-          fill="blue"
-          stroke="blue"
+          fill={colour.arrow}
+          stroke={colour.arrow}
           opacity={0.6}
           strokeWidth={1.5}
           key={index}

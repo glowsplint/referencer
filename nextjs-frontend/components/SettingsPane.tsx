@@ -1,10 +1,6 @@
-import { COLOURS, ColourType, ColourValueType } from "../common/enums";
-import {
-  HighlightIndices,
-  baseAnnotations,
-  useAnnotation,
-} from "../contexts/Annotations";
+import { COLOURS, ColourType, ColourValueType, IColour } from "../common/enums";
 import React, { useState } from "react";
+import { baseAnnotations, useAnnotation } from "../contexts/Annotations";
 
 import Button from "@mui/material/Button";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -30,6 +26,7 @@ import styles from "../styles/SettingsPane.module.css";
 import { useLogin } from "../contexts/Login";
 import { useSettings } from "../contexts/Settings";
 import { useTexts } from "../contexts/Texts";
+import { useTracking } from "../contexts/Tracking";
 
 const Checkbox = ({
   handleCheckBoxToggle,
@@ -152,10 +149,10 @@ const Header = () => {
   );
 };
 
-const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
+const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
   const { setAnnotations } = useAnnotation();
 
-  const colourStyle = { backgroundColor: colour[1] };
+  const colourStyle = { backgroundColor: colour[1].highlight };
   const handleClick = () => {
     setAnnotations((prevAnnotations) => {
       return {
@@ -173,10 +170,11 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
                 start: prevAnnotations.selection.start,
                 end: prevAnnotations.selection.end,
               },
-              colour: colour[0].toLowerCase(),
+              colour: COLOURS[colour[0]],
             },
           ],
         },
+        activeColour: COLOURS[colour[0]],
       };
     });
   };
@@ -211,9 +209,7 @@ const LayersItems = () => {
   return (
     <div className={styles.layers_items}>
       {Object.entries(COLOURS).map((item, index: number) => {
-        return (
-          <Dot colour={item as [ColourType, ColourValueType]} key={index} />
-        );
+        return <Dot colour={item as [ColourType, IColour]} key={index} />;
       })}
       <ClearAnnotationsButton />
     </div>

@@ -1,6 +1,6 @@
 import { blue, green, orange, purple, yellow } from "@mui/material/colors";
 
-export enum Format {
+enum Format {
   FootnoteText = "FootnoteText",
   Psalm426 = "Psalm426",
   Quotes = "Quotes",
@@ -11,27 +11,31 @@ export enum Format {
   VerseNumber = "VerseNumber",
 }
 
-export const COLOURS = {
-  Orange: orange[400],
-  Yellow: yellow[500],
-  Green: green[300],
-  Blue: blue[300],
-  Purple: purple[300],
+const COLOURS = {
+  Orange: { highlight: orange[400], arrow: orange[900] },
+  Yellow: { highlight: yellow[500], arrow: yellow[900] },
+  Green: { highlight: green[300], arrow: green[900] },
+  Blue: { highlight: blue[300], arrow: blue[900] },
+  Purple: { highlight: purple[300], arrow: purple[900] },
 };
+
+interface IColour {
+  highlight: ColourValueType;
+  arrow: ColourValueType;
+}
 
 type Colour = {
-  Orange: string;
-  Yellow: string;
-  Green: string;
-  Blue: string;
-  Purple: string;
+  Orange: IColour;
+  Yellow: IColour;
+  Green: IColour;
+  Blue: IColour;
+  Purple: IColour;
 };
 
-export type ColourType = keyof Colour;
-type ValueOf<T> = T[keyof T];
-export type ColourValueType = ValueOf<Colour>;
+type ColourType = keyof Colour;
+type ColourValueType = string;
 
-export const REGEX = {
+const REGEX = {
   completeWord: /^\w*$/,
   inlineFootnote: /(\(\d+\))/g,
   paragraph: /\n\n/,
@@ -46,8 +50,11 @@ export const REGEX = {
   wordBoundary: /\b/,
 };
 
-export enum SelectionMode {
+enum SelectionMode {
   None = "None",
   Arrowing = "Arrowing",
   Selecting = "Selecting",
 }
+
+export type { ColourType, ColourValueType, IColour };
+export { COLOURS, Format, REGEX, SelectionMode };
