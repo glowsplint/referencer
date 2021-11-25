@@ -7,26 +7,29 @@ interface Interval {
   end: SpanID;
 }
 
+type Storage<T> = {
+  inCreation: T;
+  finished: T[];
+};
+
 interface ArrowIndices {
   anchor: Interval;
   target: Interval;
 }
 
-interface Arrows {
-  inCreation: ArrowIndices;
-  finished: ArrowIndices[];
-}
-
-interface HighlightIndices extends Interval {
+interface HighlightIndices extends ArrowIndices {
   colour: string;
 }
+
+type Arrows = Storage<ArrowIndices>;
+type Highlights = Storage<HighlightIndices>;
 
 interface Selection extends Interval {
   anchor?: SpanID;
 }
 
 interface Annotations {
-  highlights: HighlightIndices[];
+  highlights: Highlights;
   selection: Selection;
   arrows: Arrows;
 }
@@ -34,7 +37,14 @@ interface Annotations {
 const NaNInterval: SpanID = [NaN, NaN, NaN, NaN];
 
 const baseAnnotations: Annotations = {
-  highlights: [],
+  highlights: {
+    inCreation: {
+      anchor: { start: NaNInterval, end: NaNInterval },
+      target: { start: NaNInterval, end: NaNInterval },
+      colour: "blue",
+    },
+    finished: [],
+  },
   selection: {
     start: NaNInterval,
     end: NaNInterval,

@@ -160,14 +160,23 @@ const Dot = ({ colour }: { colour: [ColourType, ColourValueType] }) => {
     setAnnotations((prevAnnotations) => {
       return {
         ...prevAnnotations,
-        highlights: [
+        highlights: {
           ...prevAnnotations.highlights,
-          {
-            colour: colour[0].toLowerCase(),
-            start: prevAnnotations.selection.start,
-            end: prevAnnotations.selection.end,
-          } as HighlightIndices,
-        ],
+          finished: [
+            ...prevAnnotations.highlights.finished,
+            {
+              anchor: {
+                start: prevAnnotations.selection.start,
+                end: prevAnnotations.selection.end,
+              },
+              target: {
+                start: prevAnnotations.selection.start,
+                end: prevAnnotations.selection.end,
+              },
+              colour: colour[0].toLowerCase(),
+            },
+          ],
+        },
       };
     });
   };

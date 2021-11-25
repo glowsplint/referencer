@@ -264,6 +264,14 @@ const Canvas = ({
             target: { start: target, end: target },
           },
         },
+        highlights: {
+          ...prevAnnotations.highlights,
+          inCreation: {
+            anchor: { start: target, end: target },
+            target: { start: target, end: target },
+            colour: "blue",
+          },
+        },
       };
     });
   };
@@ -278,6 +286,13 @@ const Canvas = ({
           ...prevAnnotations.arrows,
           inCreation: {
             ...prevAnnotations.arrows.inCreation,
+            target: { start: target, end: target },
+          },
+        },
+        highlights: {
+          ...prevAnnotations.highlights,
+          inCreation: {
+            ...prevAnnotations.highlights.inCreation,
             target: { start: target, end: target },
           },
         },
@@ -299,6 +314,18 @@ const Canvas = ({
           finished: [
             ...prevAnnotations.arrows.finished,
             prevAnnotations.arrows.inCreation,
+          ],
+        },
+        highlights: {
+          ...prevAnnotations.highlights,
+          inCreation: {
+            anchor: { start: NaNInterval, end: NaNInterval },
+            target: { start: NaNInterval, end: NaNInterval },
+            colour: "blue",
+          },
+          finished: [
+            ...prevAnnotations.highlights.finished,
+            prevAnnotations.highlights.inCreation,
           ],
         },
       };
@@ -373,8 +400,15 @@ const Canvas = ({
     />
   ));
 
-  const highlightBoxes = annotations.highlights.map((highlightIndex) =>
-    getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
+  const highlights = [
+    ...annotations.highlights.finished,
+    annotations.highlights.inCreation,
+  ];
+  const highlightBoxes = highlights.map((highlightIndex) =>
+    [
+      ...getSelectionOffsetBoundingRect(highlightIndex.anchor),
+      ...getSelectionOffsetBoundingRect(highlightIndex.target),
+    ].map((item, index) => (
       <Rect
         x={item.x}
         y={item.y}
@@ -414,7 +448,8 @@ const Canvas = ({
   const arrows = [
     ...annotations.arrows.finished,
     annotations.arrows.inCreation,
-  ].map((arrowIndex, index) => {
+  ];
+  const arrowLines = arrows.map((arrowIndex, index) => {
     const { anchor, target } = getConnectorPointsFromArrowIndices(arrowIndex);
     if (anchor && target) {
       return (
@@ -448,7 +483,7 @@ const Canvas = ({
       <Layer>
         {selectionBoxes}
         {highlightBoxes}
-        {arrows}
+        {arrowLines}
       </Layer>
     </Stage>
   );
