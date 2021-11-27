@@ -157,23 +157,14 @@ const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
     setAnnotations((prevAnnotations) => {
       return {
         ...prevAnnotations,
-        highlights: {
+        highlights: [
           ...prevAnnotations.highlights,
-          finished: [
-            ...prevAnnotations.highlights.finished,
-            {
-              anchor: {
-                start: prevAnnotations.selection.start,
-                end: prevAnnotations.selection.end,
-              },
-              target: {
-                start: prevAnnotations.selection.start,
-                end: prevAnnotations.selection.end,
-              },
-              colour: COLOURS[colour[0]],
-            },
-          ],
-        },
+          {
+            start: prevAnnotations.selection.start,
+            end: prevAnnotations.selection.end,
+            colour: COLOURS[colour[0]],
+          },
+        ],
         activeColour: COLOURS[colour[0]],
       };
     });
@@ -187,9 +178,7 @@ const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
 const ClearAnnotationsButton = () => {
   const { setAnnotations } = useAnnotation();
   const handleClick = () => {
-    setAnnotations((prevAnnotations) => {
-      return { ...prevAnnotations, ...baseAnnotations };
-    });
+    setAnnotations(baseAnnotations);
   };
 
   return (

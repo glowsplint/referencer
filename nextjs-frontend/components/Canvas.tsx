@@ -1,6 +1,8 @@
 import { Arrow, Layer, Rect, Stage } from "react-konva";
 import {
-  Indices,
+  ArrowIndices,
+  Arrows,
+  Highlights,
   Interval,
   NaNInterval,
   useAnnotation,
@@ -213,7 +215,6 @@ const Canvas = ({
         selection: {
           ...prevAnnotations.selection,
           anchor: target,
-          target,
         },
       };
     });
@@ -265,14 +266,6 @@ const Canvas = ({
             colour: prevAnnotations.activeColour,
           },
         },
-        highlights: {
-          ...prevAnnotations.highlights,
-          inCreation: {
-            anchor: { start: target, end: target },
-            target: { start: target, end: target },
-            colour: prevAnnotations.activeColour,
-          },
-        },
       };
     });
   };
@@ -290,13 +283,6 @@ const Canvas = ({
             target: { start: target, end: target },
           },
         },
-        highlights: {
-          ...prevAnnotations.highlights,
-          inCreation: {
-            ...prevAnnotations.highlights.inCreation,
-            target: { start: target, end: target },
-          },
-        },
       };
     });
   };
@@ -304,6 +290,7 @@ const Canvas = ({
   const finaliseArrowCreation = () => {
     // Current implementation: Set both start and end to the same target
     // This only allows for single-word to single-word arrows
+
     setAnnotations((prevAnnotations) => {
       return {
         ...prevAnnotations,
@@ -316,18 +303,6 @@ const Canvas = ({
           finished: [
             ...prevAnnotations.arrows.finished,
             prevAnnotations.arrows.inCreation,
-          ],
-        },
-        highlights: {
-          ...prevAnnotations.highlights,
-          inCreation: {
-            anchor: { start: NaNInterval, end: NaNInterval },
-            target: { start: NaNInterval, end: NaNInterval },
-            colour: prevAnnotations.activeColour,
-          },
-          finished: [
-            ...prevAnnotations.highlights.finished,
-            prevAnnotations.highlights.inCreation,
           ],
         },
       };
@@ -403,14 +378,24 @@ const Canvas = ({
   ));
 
   const highlights = [
-    ...annotations.highlights.finished,
-    annotations.highlights.inCreation,
+    ...annotations.highlights,
+    {
+      ...annotations.arrows.inCreation.anchor,
+      colour: annotations.arrows.inCreation.colour,
+    },
+    {
+      ...annotations.arrows.inCreation.target,
+      colour: annotations.arrows.inCreation.colour,
+    },
+    ...annotations.arrows.finished.map((item) => {
+      return { ...item.anchor, colour: item.colour };
+    }),
+    ...annotations.arrows.finished.map((item) => {
+      return { ...item.target, colour: item.colour };
+    }),
   ];
   const highlightBoxes = highlights.map((highlightIndex) =>
-    [
-      ...getSelectionOffsetBoundingRect(highlightIndex.anchor),
-      ...getSelectionOffsetBoundingRect(highlightIndex.target),
-    ].map((item, index) => (
+    getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
       <Rect
         x={item.x}
         y={item.y}
@@ -439,7 +424,7 @@ const Canvas = ({
     }
   };
 
-  const getConnectorPointsFromArrowIndices = (arrowIndex: Indices) => {
+  const getConnectorPointsFromArrowIndices = (arrowIndex: ArrowIndices) => {
     // Takes in ArrowIndices and returns the two connector points
     return {
       anchor: getConnectorPointFromInterval(arrowIndex.anchor),
