@@ -345,11 +345,12 @@ const MainRegion = () => {
   const ref = useRef() as MutableRefObject<HTMLDivElement>;
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
+  const scrollbarWidth = 10;
 
   useEffect(() => {
     const resize = () => {
       setHeight(ref.current.clientHeight);
-      setWidth(ref.current.clientWidth);
+      setWidth(ref.current.clientWidth - scrollbarWidth);
     };
     resize();
     window.addEventListener("resize", resize);
