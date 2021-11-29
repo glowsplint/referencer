@@ -55,7 +55,7 @@ const Checkbox = ({
 const SectionHeader = ({ text }: { text: string }) => {
   return (
     <div
-      className={styles.section_header}
+      className={styles.sectionHeader}
       data-testid={`${text.toLowerCase()}SectionHeader`}
     >
       <ExpandMore fontSize="small" />
@@ -78,13 +78,13 @@ const TextItem = ({
   handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
-    <div className={styles.texts_item}>
+    <div className={styles.textsItem}>
       <Checkbox
         handleCheckBoxToggle={handleCheckBoxToggle}
         textHeader={textHeader}
         id={id}
       />
-      <div className={styles.texts_text}>
+      <div className={styles.textsText}>
         <Typography variant="overline" display="block">
           {textHeader}
         </Typography>
@@ -114,7 +114,7 @@ const TextItems = ({
       handleCheckBoxToggle={handleCheckBoxToggle}
     />
   ));
-  return <div className={styles.texts_items}>{items}</div>;
+  return <div className={styles.textsItems}>{items}</div>;
 };
 
 const Header = () => {
@@ -140,8 +140,8 @@ const Header = () => {
         size="small"
         data-testid="spaceButton"
       >
-        <span className={styles.top_spaceName}>{displayedSpace}</span>
-        <span className={styles.top_icon}>
+        <span className={styles.topSpaceName}>{displayedSpace}</span>
+        <span className={styles.topIcon}>
           <ShareIcon fontSize="small" />
         </span>
       </Button>
@@ -182,7 +182,7 @@ const ClearAnnotationsButton = () => {
   };
 
   return (
-    <div className={styles.clear_highlights}>
+    <div className={styles.clearHighlights}>
       <Button
         variant="contained"
         onClick={handleClick}
@@ -196,7 +196,7 @@ const ClearAnnotationsButton = () => {
 
 const LayersItems = () => {
   return (
-    <div className={styles.layers_items}>
+    <div className={styles.layersItems}>
       {Object.entries(COLOURS).map((item, index: number) => {
         return <Dot colour={item as [ColourType, IColour]} key={index} />;
       })}
@@ -335,7 +335,7 @@ const SettingsPane = () => {
 
   return (
     <div
-      className={clsx(styles.sidebar, {
+      className={clsx(styles.sideBar, {
         [styles.open]: settings.isSettingsOpen,
         [styles.closed]: !settings.isSettingsOpen,
       })}

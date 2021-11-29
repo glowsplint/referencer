@@ -25,7 +25,7 @@ const ButtonIcon = React.memo(
     buttonProps: object;
   }) => {
     return (
-      <div className={styles.leftpane_icon} onClick={callback} {...buttonProps}>
+      <div className={styles.leftPaneIcon} onClick={callback} {...buttonProps}>
         <Fab size="small" color="primary" aria-label="add">
           {icon}
         </Fab>
@@ -50,7 +50,7 @@ const SwitchingButtonIcon = ({
   buttonProps: object;
 }) => {
   return (
-    <div className={styles.leftpane_icon} {...buttonProps} onClick={callback}>
+    <div className={styles.leftPaneIcon} {...buttonProps} onClick={callback}>
       <Tooltip title={title} placement="right">
         <Fab size="small" color="primary" aria-label="add">
           {bool ? iconOne : iconTwo}
@@ -95,7 +95,7 @@ const ButtonPane = React.memo(() => {
   };
 
   return (
-    <Paper className={styles.leftpane} data-testid="buttonPane">
+    <Paper className={styles.leftPane} data-testid="buttonPane">
       <ButtonIcon
         icon={<MenuIcon />}
         callback={toggleSettingsPane}

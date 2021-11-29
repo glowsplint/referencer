@@ -1,8 +1,6 @@
 import { Arrow, Layer, Rect, Stage } from "react-konva";
 import {
   ArrowIndices,
-  Arrows,
-  Highlights,
   Interval,
   NaNInterval,
   useAnnotation,

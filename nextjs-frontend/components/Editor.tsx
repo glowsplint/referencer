@@ -32,8 +32,8 @@ const PureText = ({
     <>
       <span
         className={clsx({
-          [styles.with_leading_whitespace]: !removeLeadingWhitespace,
-          [styles.without_leading_whitespace]: removeLeadingWhitespace,
+          [styles.withLeadingWhitespace]: !removeLeadingWhitespace,
+          [styles.noLeadingWhitespace]: removeLeadingWhitespace,
         })}
         id={[...id, 0].toString()}
       >
@@ -56,7 +56,7 @@ const InlineFootnote = ({ text, id }: { text: string; id: string }) => {
   return (
     <Typography
       variant="overline"
-      className={clsx(styles.inline_footnote, styles.superscript)}
+      className={clsx(styles.inlineFootnote, styles.superscript)}
       id={id}
     >
       {text}
@@ -113,7 +113,7 @@ const SectionHeader = ({
   textAreaID: number;
 }) => {
   return (
-    <div className={styles.section_header}>
+    <div className={styles.sectionHeader}>
       <StandardText textInfo={textInfo} textAreaID={textAreaID} />
     </div>
   );
@@ -128,7 +128,7 @@ const SpecialNote = ({
 }) => {
   // Matches special notes in John 7 and Mark 16
   return (
-    <div className={styles.special_note}>
+    <div className={styles.specialNote}>
       <StandardText textInfo={textInfo} textAreaID={textAreaID} />
     </div>
   );
@@ -150,7 +150,7 @@ const VerseNumber = ({
   return (
     <Typography
       variant="button"
-      className={clsx(styles.verse_number, styles.superscript)}
+      className={clsx(styles.verseNumber, styles.superscript)}
       id={[textAreaID, textInfo.id, 0, -1].toString()}
     >
       {textInfo.text}
@@ -164,7 +164,7 @@ const FootnoteText = ({ text }: { text: string }) => {
   // 2. Words in standard formatting
   // Dispatches to their respective component for rendering
   return (
-    <div className={styles.footnote_text}>
+    <div className={styles.footnoteText}>
       {text
         .split(REGEX.withinAsterisks)
         .map((text, index) =>
@@ -288,13 +288,13 @@ const TextArea = React.memo(
 
     return (
       <div
-        className={clsx(styles.editor_textarea, {
+        className={clsx(styles.editorTextArea, {
           [styles.justify]: settings.isJustified,
           [""]: !settings.isJustified,
         })}
         id={textAreaID.toString()}
       >
-        <Typography variant="h6" className={styles.text_header}>
+        <Typography variant="h6" className={styles.textHeader}>
           {textName}
         </Typography>
         {mainText.map((textInfo) =>
@@ -373,7 +373,7 @@ const MainRegion = () => {
       <div ref={ref} id="canvasContainer">
         <NoSSRCanvas className={styles.canvas} width={width} height={height} />
         <div
-          className={clsx(styles.editor_textareas, {
+          className={clsx(styles.editorTextAreas, {
             [styles.row]: settings.isMultipleRowsLayout,
             [styles.col]: !settings.isMultipleRowsLayout,
           })}

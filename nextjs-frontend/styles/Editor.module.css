@@ -5,13 +5,13 @@
   height: 100vh;
 }
 
-.editor_textareas {
+.editorTextAreas {
   flex: 1;
   display: flex;
   overflow-y: auto;
 }
 
-.editor_textarea {
+.editorTextArea {
   flex: 1;
   padding: 10px;
   margin: 10px;
@@ -30,29 +30,29 @@
   text-align: justify;
 }
 
-.text_header {
+.textHeader {
   user-select: none;
 }
 
-.section_header {
+.sectionHeader {
   margin-top: 15px;
   margin-bottom: 10px;
   font-weight: bold;
   user-select: none;
 }
 
-.special_note {
+.specialNote {
   margin-top: 15px;
   margin-bottom: 10px;
   text-align: center;
   user-select: none;
 }
 
-.with_leading_whitespace {
+.withLeadingWhitespace {
   white-space: pre-wrap;
 }
 
-.without_leading_whitespace {
+.noLeadingWhitespace {
   white-space: normal;
 }
 
@@ -61,18 +61,18 @@
   font-size: 75%;
 }
 
-.footnote_text {
+.footnoteText {
   padding-left: 2em;
   text-indent: -2em;
   margin-bottom: 0.5em;
 }
 
-.verse_number {
+.verseNumber {
   font-weight: bold;
   user-select: none;
 }
 
-.inline_footnote {
+.inlineFootnote {
   user-select: none;
 }
 

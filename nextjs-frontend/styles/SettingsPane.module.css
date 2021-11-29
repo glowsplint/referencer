@@ -1,4 +1,4 @@
-.sidebar {
+.sideBar {
   display: flex;
   transition: width 0.3s, opacity 0.1s;
   user-select: none;
@@ -28,11 +28,11 @@
   padding-top: 5px;
 }
 
-.top_spaceName {
+.topSpaceName {
   padding-left: 5px;
 }
 
-.top_icon {
+.topIcon {
   margin-left: 5px;
   padding-top: 5px;
   padding-right: 5px;
@@ -43,7 +43,7 @@
   flex: 1;
 }
 
-.section_header {
+.sectionHeader {
   display: flex;
   align-items: center;
   margin-top: 10px;
@@ -51,26 +51,26 @@
   margin-right: 10px;
 }
 
-.section_header > svg {
+.sectionHeader > svg {
   margin-bottom: 2px;
 }
 
-.texts_items {
+.textsItems {
   margin-left: 30px;
   margin-right: 20px;
   color: gray;
 }
 
-.texts_item {
+.textsItem {
   display: flex;
   align-items: center;
 }
 
-.texts_text {
+.textsText {
   flex: 1;
 }
 
-.layers_items {
+.layersItems {
   margin-left: 35px;
 }
 
@@ -96,6 +96,6 @@
   flex: 1;
 }
 
-.clear_highlights {
+.clearHighlights {
   margin-top: 5px;
 }
