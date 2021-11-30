@@ -1,6 +1,6 @@
 import { COLOURS, ColourType, ColourValueType, IColour } from "../common/enums";
 import React, { useState } from "react";
-import { baseAnnotations, useAnnotation } from "../contexts/Annotations";
+import { baseAnnotations, useAnnotations } from "../contexts/Annotations";
 
 import Button from "@mui/material/Button";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -150,7 +150,7 @@ const Header = () => {
 };
 
 const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
-  const { setAnnotations } = useAnnotation();
+  const { setAnnotations } = useAnnotations();
 
   const colourStyle = { backgroundColor: colour[1].highlight };
   const handleClick = () => {
@@ -176,7 +176,7 @@ const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
 };
 
 const ClearAnnotationsButton = () => {
-  const { setAnnotations } = useAnnotation();
+  const { setAnnotations } = useAnnotations();
   const handleClick = () => {
     setAnnotations(baseAnnotations);
   };

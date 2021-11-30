@@ -1,14 +1,10 @@
 import React, { SetStateAction, useState } from "react";
 
 import { SelectionMode } from "../common/enums";
+import { number } from "prop-types";
 
 // SpanID is [textAreaID, data-text-index, data-phrase-index, data-pure-text-index]
 type SpanID = [number, number, number, number];
-
-interface CurrentTracking {
-  anchor: SpanID;
-  target: SpanID;
-}
 
 interface ITracking {
   current: SelectionMode;
@@ -17,7 +13,10 @@ interface ITracking {
 
 interface Tracking {
   mode: ITracking;
-  current: CurrentTracking;
+  mouse: {
+    x: number;
+    y: number;
+  };
 }
 
 type SetTracking = React.Dispatch<SetStateAction<Tracking>>;
@@ -27,9 +26,9 @@ const baseTracking: Tracking = {
     current: SelectionMode.None,
     previous: SelectionMode.None,
   },
-  current: {
-    anchor: [NaN, NaN, NaN, NaN],
-    target: [NaN, NaN, NaN, NaN],
+  mouse: {
+    x: NaN,
+    y: NaN,
   },
 };
 
@@ -55,5 +54,5 @@ const useTracking = () => {
   return React.useContext(TrackingContext);
 };
 
-export type { SpanID, CurrentTracking, Tracking, SetTracking };
+export type { SpanID, Tracking, SetTracking };
 export { baseTracking, TrackingProvider, useTracking };

@@ -1,12 +1,14 @@
+import { NaNInterval, useAnnotations } from "../contexts/Annotations";
 import { ParsedText, TextInfo, useTexts } from "../contexts/Texts";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { Format } from "../common/enums";
 import Header from "./Header";
-import { Paper } from "@mui/material";
+import Paper from "@mui/material/Paper";
 import { REGEX } from "../common/enums";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import SearchBar from "./SearchBar";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
@@ -288,7 +290,7 @@ const TextArea = React.memo(
 
     return (
       <div
-        className={clsx(styles.editorTextArea, {
+        className={clsx(styles.textArea, {
           [styles.justify]: settings.isJustified,
           [""]: !settings.isJustified,
         })}
@@ -324,6 +326,7 @@ const TextArea = React.memo(
 const MainRegion = () => {
   const { texts } = useTexts();
   const { settings } = useSettings();
+  const { annotations } = useAnnotations();
 
   const dark = (style: any) => {
     return {
@@ -360,6 +363,14 @@ const MainRegion = () => {
     };
   }, [texts]);
 
+  const isNotesInCreationNull =
+    annotations.notes.inCreation.interval.start == NaNInterval ||
+    annotations.notes.inCreation.interval.start == NaNInterval;
+  const notes = [
+    ...annotations.notes.finished,
+    isNotesInCreationNull ? null : annotations.notes.inCreation,
+  ].filter(Boolean);
+
   return (
     <Scrollbars
       style={maxWidth}
@@ -371,10 +382,10 @@ const MainRegion = () => {
         />
       )}
     >
-      <div ref={ref} id="canvasContainer">
+      <div ref={ref} id="canvasContainer" className={styles.playArea}>
         <NoSSRCanvas className={styles.canvas} width={width} height={height} />
         <div
-          className={clsx(styles.editorTextAreas, {
+          className={clsx(styles.textAreaContainer, {
             [styles.row]: settings.isMultipleRowsLayout,
             [styles.col]: !settings.isMultipleRowsLayout,
           })}
@@ -386,6 +397,17 @@ const MainRegion = () => {
               textBody={texts.bodies[index]}
               key={index}
               textAreaID={index}
+            />
+          ))}
+        </div>
+
+        <div className={styles.annotationRightMargin}>
+          {notes.map((item, index) => (
+            <TextField
+              id="outlined-basic"
+              label="Outlined"
+              variant="outlined"
+              key={index}
             />
           ))}
         </div>

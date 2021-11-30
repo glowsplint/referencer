@@ -3,7 +3,7 @@ import {
   ArrowIndices,
   Interval,
   NaNInterval,
-  useAnnotation,
+  useAnnotations,
 } from "../contexts/Annotations";
 import React, { useEffect } from "react";
 import {
@@ -29,12 +29,19 @@ type BoundingBox = {
 };
 
 /* Pure functions */
-const getElement = (
-  event: Konva.KonvaEventObject<MouseEvent>,
-  level: number
-) => {
-  const [x, y] = [event.evt.clientX, event.evt.clientY];
-  return document.elementsFromPoint(x, y)[level];
+const getMidpointFromDOMRect = (domRect: DOMRect): [number, number] => {
+  return [domRect.x + domRect.width / 2, domRect.y + domRect.height / 2];
+};
+
+const getCoordsFromSpanID = (span: SpanID): [number, number] => {
+  const element = document.getElementById(span.toString()) as HTMLElement;
+  return getMidpointFromDOMRect(element.getBoundingClientRect());
+};
+
+const spanLevel = 3;
+
+const getSpan = (x: number, y: number) => {
+  return document.elementsFromPoint(x, y)[spanLevel];
 };
 
 const getCurrentSpanAttributes = (span: Element) => {
@@ -50,15 +57,8 @@ const getCurrentSpanAttributes = (span: Element) => {
   return { target: getDataIndex() };
 };
 
-const getSpan = (event: Konva.KonvaEventObject<MouseEvent>) => {
-  return getElement(event, 3);
-};
-
-const getAttributes = (
-  event: Konva.KonvaEventObject<MouseEvent>,
-  condition: boolean = false
-) => {
-  const span = getSpan(event);
+const getAttributes = (x: number, y: number, condition: boolean = false) => {
+  const span = getSpan(x, y);
   // Check that we are ending on a word (span), return early otherwise
   const isEarlyReturn = condition || span.tagName.toLowerCase() === "div";
   if (isEarlyReturn) {
@@ -167,20 +167,19 @@ const Canvas = ({
   height: number;
 }) => {
   const { tracking, setTracking } = useTracking();
-  const { annotations, setAnnotations } = useAnnotation();
+  const { annotations, setAnnotations } = useAnnotations();
   const { texts } = useTexts();
 
   resetSelectionOnTextsChange({ setSelection: setTracking, texts });
 
-  /* Arrowing */
-  const setTrackingModeToArrowing = () => {
+  /* Tracking */
+  const setTrackingMode = (selectionMode: SelectionMode) => {
     setTracking((prevTracking) => {
-      const condition = prevTracking.mode.current === SelectionMode.Arrowing;
+      const condition = prevTracking.mode.current === selectionMode;
       return {
         ...prevTracking,
         mode: {
-          ...prevTracking.mode,
-          current: SelectionMode.Arrowing,
+          current: selectionMode,
           previous: condition
             ? prevTracking.mode.previous
             : prevTracking.mode.current,
@@ -189,23 +188,7 @@ const Canvas = ({
     });
   };
 
-  /* Mouse Event Handlers */
-  const setTrackingAnchor = (target: SpanID) => {
-    setTracking((prevTracking) => {
-      return {
-        ...prevTracking,
-        mode: {
-          current: SelectionMode.Selecting,
-          previous: prevTracking.mode.current,
-        },
-        current: {
-          ...prevTracking.current,
-          anchor: target,
-        },
-      };
-    });
-  };
-
+  /* Selection */
   const setSelectionAnchor = (target: SpanID) => {
     setAnnotations((prevAnnotations) => {
       return {
@@ -214,27 +197,6 @@ const Canvas = ({
           ...prevAnnotations.selection,
           anchor: target,
         },
-      };
-    });
-  };
-
-  const setTrackingPrevious = () => {
-    setTracking((prevTracking) => {
-      return {
-        ...prevTracking,
-        mode: {
-          current: SelectionMode.None,
-          previous: prevTracking.mode.current,
-        },
-      };
-    });
-  };
-
-  const setTrackingTarget = (target: SpanID) => {
-    setTracking((prevTracking) => {
-      return {
-        ...prevTracking,
-        current: { ...prevTracking.current, target },
       };
     });
   };
@@ -252,6 +214,7 @@ const Canvas = ({
     });
   };
 
+  /* Arrowing */
   const setArrowAnchor = (target: SpanID) => {
     setAnnotations((prevAnnotations) => {
       return {
@@ -288,7 +251,6 @@ const Canvas = ({
   const finaliseArrowCreation = () => {
     // Current implementation: Set both start and end to the same target
     // This only allows for single-word to single-word arrows
-
     setAnnotations((prevAnnotations) => {
       return {
         ...prevAnnotations,
@@ -307,60 +269,265 @@ const Canvas = ({
     });
   };
 
-  const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
-    /* Scenarios:
-        1. Mouse1 down
-            - Start selection, checking that you are on a word
-        2. Mouse1 down + Ctrl key down
-            - Set arrow anchor
-    */
-    const { target, isEarlyReturn } = getAttributes(event);
-    if (isEarlyReturn) return;
-    setTrackingAnchor(target as SpanID);
-    if (event.evt.ctrlKey) {
-      setTrackingModeToArrowing();
-      setArrowAnchor(target as SpanID);
+  /* Notes */
+  const setNotes = (target: SpanID) => {
+    setAnnotations((prevAnnotations) => {
+      return {
+        ...prevAnnotations,
+        notes: {
+          ...prevAnnotations.notes,
+          inCreation: { interval: { start: target, end: target }, text: "" },
+        },
+      };
+    });
+  };
+
+  /* State Machine & Handlers */
+  const isArrowing = (event: React.KeyboardEvent | MouseEvent) => {
+    if (event instanceof MouseEvent) {
+      return tracking.mode.current === SelectionMode.Arrowing || event.ctrlKey;
     } else {
-      setSelectionAnchor(target as SpanID);
-      setSelectionWithSort(target as SpanID);
+      return (
+        tracking.mode.current === SelectionMode.Arrowing ||
+        event.key === "Control"
+      );
     }
+  };
+
+  type StateMachinePattern<T> = (
+    event: T,
+    target: SpanID
+  ) => {
+    condition: boolean;
+    handler: () => void;
+  };
+
+  const mouseDownArrowing = (event: MouseEvent, target: SpanID) => {
+    return {
+      condition: isArrowing(event),
+      handler: () => setArrowAnchor(target as SpanID),
+    };
+  };
+
+  const mouseDownSelecting = (event: MouseEvent, target: SpanID) => {
+    return {
+      condition: true,
+      handler: () => {
+        setTrackingMode(SelectionMode.Selecting);
+        setSelectionAnchor(target as SpanID);
+        setSelectionWithSort(target as SpanID);
+      },
+    };
+  };
+
+  const mouseMoveSelecting = (event: MouseEvent, target: SpanID) => {
+    return {
+      condition: event.buttons == 1,
+      handler: () => {
+        setSelectionWithSort(target as SpanID);
+      },
+    };
+  };
+
+  const mouseMoveArrowing = (event: MouseEvent, target: SpanID) => {
+    return {
+      condition: event.buttons == 1 && isArrowing(event),
+      handler: () => {
+        setArrowTarget(target as SpanID);
+      },
+    };
+  };
+
+  const mouseUpSelecting = (event: MouseEvent, target: SpanID) => {
+    return {
+      condition: true,
+      handler: () => {
+        setSelectionWithSort(target as SpanID);
+      },
+    };
+  };
+
+  const mouseUpArrowing = (event: MouseEvent, target: SpanID) => {
+    return {
+      condition: true,
+      handler: () => {
+        finaliseArrowCreation();
+      },
+    };
+  };
+
+  const keyUpArrowing = (event: React.KeyboardEvent, target: SpanID) => {
+    return {
+      condition: isArrowing(event),
+      handler: () => {
+        setTrackingMode(SelectionMode.Selecting);
+        setSelectionAnchor(target as SpanID);
+      },
+    };
+  };
+
+  const keyUpSelecting = (event: React.KeyboardEvent, target: SpanID) => {
+    return {
+      condition: isArrowing(event),
+      handler: () => {
+        setTrackingMode(SelectionMode.None);
+      },
+    };
+  };
+
+  const keyDownArrowing = (event: React.KeyboardEvent, target: SpanID) => {
+    return {
+      condition: isArrowing(event),
+      handler: () => {
+        if (tracking.mode.current === SelectionMode.Selecting) {
+          setArrowAnchor(target as SpanID);
+        }
+        setTrackingMode(SelectionMode.Arrowing);
+      },
+    };
+  };
+
+  interface StateMachineMouse {
+    onMouseDown: StateMachinePattern<MouseEvent>[];
+    onMouseMove: StateMachinePattern<MouseEvent>[];
+    onMouseUp: StateMachinePattern<MouseEvent>[];
+  }
+
+  interface StateMachineKeyboard {
+    onKeyUp: StateMachinePattern<React.KeyboardEvent>[];
+    onKeyDown: StateMachinePattern<React.KeyboardEvent>[];
+  }
+
+  const stateMachineMouse: StateMachineMouse = {
+    // Order of functions in array is important as they are evaluated left-to-right
+    onMouseDown: [mouseDownArrowing, mouseDownSelecting],
+    onMouseMove: [mouseMoveArrowing, mouseMoveSelecting],
+    onMouseUp: [mouseUpArrowing, mouseUpSelecting],
+  };
+
+  const runStateMachineMouse = (
+    event: Konva.KonvaEventObject<MouseEvent>,
+    stateMachineMouse: StateMachineMouse,
+    key: keyof StateMachineMouse,
+    target: SpanID
+  ) => {
+    for (const pattern of stateMachineMouse[key]) {
+      const { condition, handler } = pattern(event.evt, target);
+      if (condition) {
+        handler();
+        break;
+      }
+    }
+  };
+
+  const stateMachineKeyboard: StateMachineKeyboard = {
+    onKeyUp: [keyUpArrowing, keyUpSelecting],
+    onKeyDown: [keyDownArrowing],
+  };
+
+  const runStateMachineKeyboard = (
+    event: React.KeyboardEvent,
+    stateMachineKeyboard: StateMachineKeyboard,
+    key: keyof StateMachineKeyboard,
+    target: SpanID
+  ) => {
+    for (const pattern of stateMachineKeyboard[key]) {
+      const { condition, handler } = pattern(event, target);
+      if (condition) {
+        handler();
+        break;
+      }
+    }
+  };
+
+  /* Mouse Event Handlers */
+  const storeMouseCoords = (event: MouseEvent) => {
+    setTracking((prevTracking) => {
+      return { ...prevTracking, mouse: { x: event.clientX, y: event.clientY } };
+    });
+  };
+
+  const handleMouseDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
+    // If user did not click on a word (span with a valid SpanID), return
+    const { target, isEarlyReturn } = getAttributes(
+      event.evt.clientX,
+      event.evt.clientY
+    );
+    if (isEarlyReturn) return;
+    runStateMachineMouse(
+      event,
+      stateMachineMouse,
+      "onMouseDown",
+      target as SpanID
+    );
   };
 
   const handleMouseMove = (event: Konva.KonvaEventObject<MouseEvent>) => {
-    /* Scenarios:
-        1. Mouse moving
-            - Do nothing
-        2. Mouse moving + Mouse1 down
-            - Selection
-        3. Mouse moving + Mouse1 down + Ctrl key down
-            - Arrowing
-    */
+    // If user did not click on a word (span with a valid SpanID), return
+    storeMouseCoords(event.evt);
     const { target, isEarlyReturn } = getAttributes(
-      event,
+      event.evt.clientX,
+      event.evt.clientY,
       !(tracking.mode.current !== SelectionMode.None)
     );
     if (isEarlyReturn) return;
-    setTrackingTarget(target as SpanID);
-    if (event.evt.ctrlKey) {
-      setTrackingModeToArrowing();
-      setArrowTarget(target as SpanID);
-    } else {
-      setSelectionWithSort(target as SpanID);
-    }
+    runStateMachineMouse(
+      event,
+      stateMachineMouse,
+      "onMouseMove",
+      target as SpanID
+    );
   };
 
   const handleMouseUp = (event: Konva.KonvaEventObject<MouseEvent>) => {
+    storeMouseCoords(event.evt);
+    setTrackingMode(SelectionMode.None);
     const { target, isEarlyReturn } = getAttributes(
-      event,
+      event.evt.clientX,
+      event.evt.clientY,
       !(tracking.mode.current !== SelectionMode.None)
     );
-    setTrackingPrevious();
     if (isEarlyReturn) return;
-    setTrackingTarget(target as SpanID);
-    setSelectionWithSort(target as SpanID);
-    finaliseArrowCreation();
+    runStateMachineMouse(
+      event,
+      stateMachineMouse,
+      "onMouseUp",
+      target as SpanID
+    );
   };
 
+  /* Keyboard Event Handlers */
+  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    const { target, isEarlyReturn } = getAttributes(
+      tracking.mouse.x,
+      tracking.mouse.y
+    );
+    if (isEarlyReturn) return;
+    runStateMachineKeyboard(
+      event,
+      stateMachineKeyboard,
+      "onKeyDown",
+      target as SpanID
+    );
+  };
+
+  const handleKeyUp: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    const { target, isEarlyReturn } = getAttributes(
+      tracking.mouse.x,
+      tracking.mouse.y
+    );
+    if (isEarlyReturn) return;
+    runStateMachineKeyboard(
+      event,
+      stateMachineKeyboard,
+      "onKeyUp",
+      target as SpanID
+    );
+  };
+
+  /* Canvas layer components */
   const selectionBoxes = getSelectionOffsetBoundingRect(
     annotations.selection
   ).map((item, index) => (
@@ -369,7 +536,7 @@ const Canvas = ({
       y={item.y}
       width={item.width}
       height={item.height}
-      fill="blue"
+      fill={annotations.activeColour.highlight}
       key={index}
       opacity={0.2}
     />
@@ -459,20 +626,22 @@ const Canvas = ({
   });
 
   return (
-    <Stage
-      className={className}
-      width={width}
-      height={height}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
-      <Layer>
-        {selectionBoxes}
-        {highlightBoxes}
-        {arrowLines}
-      </Layer>
-    </Stage>
+    <div tabIndex={1} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+      <Stage
+        className={className}
+        width={width}
+        height={height}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+      >
+        <Layer>
+          {selectionBoxes}
+          {highlightBoxes}
+          {arrowLines}
+        </Layer>
+      </Stage>
+    </div>
   );
 };
 

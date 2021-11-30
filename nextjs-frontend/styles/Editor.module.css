@@ -5,17 +5,25 @@
   height: 100vh;
 }
 
-.editorTextAreas {
-  flex: 1;
+.playArea {
+  display: flex;
+}
+
+.textAreaContainer {
+  flex: 7;
   display: flex;
   overflow-y: auto;
 }
 
-.editorTextArea {
+.textArea {
   flex: 1;
   padding: 10px;
   margin: 10px;
   line-height: 2em;
+}
+
+.annotationRightMargin {
+  flex: 3;
 }
 
 .row {
