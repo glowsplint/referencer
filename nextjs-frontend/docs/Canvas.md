@@ -10,12 +10,10 @@ When the Ctrl key is being pressed, the canvas goes into "arrowing" mode.
 
 ## Mouse events
 
-### MouseDown
+When a mouseDown event is detected, the canvas finds the target span with a SpanID at the current mouse location. If there is a span with a SpanID at the current location, the SpanID is passed to the selection or arrowing handlers depending on the current mode.
 
-When the mouse is first down, the canvas finds the target span with a SpanID at the current mouse location. If there is a span with a SpanID at the current location, the SpanID is passed to the selection or arrowing handlers depending on the current mode.
-
-| SelectionMode | Selection                                      | Arrowing                                                       | None        |
-| ------------- | ---------------------------------------------- | -------------------------------------------------------------- | ----------- |
-| MouseDown     | Set the anchor of the selection.               | Set the anchor of the arrow.                                   | Do nothing. |
-| MouseMove     | If mouseDown, set the target of the selection. | If mouseDown, set the target of the arrow if target != anchor. | Do nothing. |
-| MouseUp       | Do nothing.                                    | Move arrows.inCreation to arrows.finished                      | Do nothing. |
+|           | Selecting                                      | Arrowing (ctrlKey down)                                        | None        |
+| --------- | ---------------------------------------------- | -------------------------------------------------------------- | ----------- |
+| MouseDown | Set the anchor of the selection.               | Set the anchor of the arrow.                                   | Do nothing. |
+| MouseMove | If mouseDown, set the target of the selection. | If mouseDown, set the target of the arrow if target != anchor. | Do nothing. |
+| MouseUp   | Do nothing.                                    | Move arrows.inCreation to arrows.finished                      | Do nothing. |

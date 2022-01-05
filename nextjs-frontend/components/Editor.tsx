@@ -16,7 +16,7 @@ import { get } from "../common/utils";
 import styles from "../styles/Editor.module.css";
 import { useSettings } from "../contexts/Settings";
 
-const NoSSRCanvas = dynamic(() => import("./Canvas"), {
+const NoSSRCanvas = dynamic(() => import("./Canvas/Canvas"), {
   ssr: false,
 });
 
