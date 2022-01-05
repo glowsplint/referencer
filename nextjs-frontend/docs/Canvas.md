@@ -16,6 +16,6 @@ When the mouse is first down, the canvas finds the target span with a SpanID at 
 
 | SelectionMode | Selection                                      | Arrowing                                                       | None        |
 | ------------- | ---------------------------------------------- | -------------------------------------------------------------- | ----------- |
-| MouseDown     | Sets the anchor of the selection.              | Set the anchor of the arrow.                                   | Do nothing. |
+| MouseDown     | Set the anchor of the selection.               | Set the anchor of the arrow.                                   | Do nothing. |
 | MouseMove     | If mouseDown, set the target of the selection. | If mouseDown, set the target of the arrow if target != anchor. | Do nothing. |
 | MouseUp       | Do nothing.                                    | Move arrows.inCreation to arrows.finished                      | Do nothing. |
