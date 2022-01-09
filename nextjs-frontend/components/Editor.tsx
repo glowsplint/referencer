@@ -223,105 +223,103 @@ const Psalm426 = ({
   );
 };
 
-const TextArea = React.memo(
-  ({
-    textName,
-    textBody,
+const TextArea = ({
+  textName,
+  textBody,
+  textAreaID,
+}: {
+  textName: string;
+  textBody: ParsedText;
+  textAreaID: number;
+}) => {
+  const { mainText, footnotes } = textBody;
+  const { settings } = useSettings();
+
+  const getComponent = ({
+    textInfo,
     textAreaID,
   }: {
-    textName: string;
-    textBody: ParsedText;
+    textInfo: TextInfo;
     textAreaID: number;
   }) => {
-    const { mainText, footnotes } = textBody;
-    const { settings } = useSettings();
-
-    const getComponent = ({
-      textInfo,
-      textAreaID,
-    }: {
-      textInfo: TextInfo;
-      textAreaID: number;
-    }) => {
-      const componentMap = {
-        [Format.SectionHeader]: React.createElement(SectionHeader, {
-          textInfo,
-          key: textInfo.id,
-          textAreaID,
-        }),
-        [Format.VerseNumber]: React.createElement(VerseNumber, {
-          textInfo,
-          key: textInfo.id,
-          textAreaID,
-        }),
-        [Format.SpecialNote]: React.createElement(SpecialNote, {
-          textInfo,
-          key: textInfo.id,
-          textAreaID,
-        }),
-        [Format.Quotes]: React.createElement(Quotes, {
-          textInfo,
-          key: textInfo.id,
-          textAreaID,
-        }),
-        [Format.StandardText]: React.createElement(StandardText, {
-          textInfo,
-          key: textInfo.id,
-          textAreaID,
-        }),
-        [Format.TripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
-          key: textInfo.id,
-          textAreaID,
-        }),
-        [Format.Psalm426]: React.createElement(Psalm426, {
-          textInfo,
-          key: textInfo.id,
-          textAreaID,
-        }),
-      };
-
-      // Defaults to StandardText if no matching format found from componentMap
-      return get(
-        componentMap,
-        textInfo.format,
-        componentMap[Format.StandardText]
-      );
+    const componentMap = {
+      [Format.SectionHeader]: React.createElement(SectionHeader, {
+        textInfo,
+        key: textInfo.id,
+        textAreaID,
+      }),
+      [Format.VerseNumber]: React.createElement(VerseNumber, {
+        textInfo,
+        key: textInfo.id,
+        textAreaID,
+      }),
+      [Format.SpecialNote]: React.createElement(SpecialNote, {
+        textInfo,
+        key: textInfo.id,
+        textAreaID,
+      }),
+      [Format.Quotes]: React.createElement(Quotes, {
+        textInfo,
+        key: textInfo.id,
+        textAreaID,
+      }),
+      [Format.StandardText]: React.createElement(StandardText, {
+        textInfo,
+        key: textInfo.id,
+        textAreaID,
+      }),
+      [Format.TripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
+        key: textInfo.id,
+        textAreaID,
+      }),
+      [Format.Psalm426]: React.createElement(Psalm426, {
+        textInfo,
+        key: textInfo.id,
+        textAreaID,
+      }),
     };
 
-    return (
-      <div
-        className={clsx(styles.textArea, {
-          [styles.justify]: settings.isJustified,
-          [""]: !settings.isJustified,
-        })}
-        id={textAreaID.toString()}
-      >
-        <Typography variant="h6" className={styles.textHeader}>
-          {textName}
-        </Typography>
-        {mainText.map((textInfo) =>
-          getComponent({
-            textInfo,
-            textAreaID,
-          })
-        )}
-        {footnotes.map((textInfo) => {
-          if (textInfo.format === Format.SectionHeader) {
-            return (
-              <SectionHeader
-                textInfo={textInfo}
-                key={textInfo.id}
-                textAreaID={textAreaID}
-              />
-            );
-          } else {
-            return <FootnoteText text={textInfo.text} key={textInfo.id} />;
-          }
-        })}
-      </div>
+    // Defaults to StandardText if no matching format found from componentMap
+    return get(
+      componentMap,
+      textInfo.format,
+      componentMap[Format.StandardText]
     );
-  }
-);
+  };
+
+  return (
+    <div
+      className={clsx(styles.textArea, {
+        [styles.justify]: settings.isJustified,
+        [""]: !settings.isJustified,
+      })}
+      id={textAreaID.toString()}
+    >
+      <Typography variant="h6" className={styles.textHeader}>
+        {textName}
+      </Typography>
+      {mainText.map((textInfo) =>
+        getComponent({
+          textInfo,
+          textAreaID,
+        })
+      )}
+      {footnotes.map((textInfo) => {
+        if (textInfo.format === Format.SectionHeader) {
+          return (
+            <SectionHeader
+              textInfo={textInfo}
+              key={textInfo.id}
+              textAreaID={textAreaID}
+            />
+          );
+        } else {
+          return <FootnoteText text={textInfo.text} key={textInfo.id} />;
+        }
+      })}
+    </div>
+  );
+};
 
 const MainRegion = () => {
   const { texts } = useTexts();
@@ -416,7 +414,7 @@ const MainRegion = () => {
   );
 };
 
-const Editor = React.memo(() => {
+const Editor = () => {
   return (
     <Paper className={styles.editor}>
       <Header />
@@ -424,6 +422,6 @@ const Editor = React.memo(() => {
       <SearchBar />
     </Paper>
   );
-});
+};
 
 export default Editor;

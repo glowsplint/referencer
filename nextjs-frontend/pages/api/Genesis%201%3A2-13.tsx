@@ -2,7 +2,7 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default (req: NextApiRequest, res: NextApiResponse) => {
+const genesis3 = (req: NextApiRequest, res: NextApiResponse) => {
   res.status(200).json({
     query: "Genesis 1:2–13",
     canonical: "Genesis 1:2–13",
@@ -23,3 +23,5 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     ],
   });
 };
+
+export default genesis3;

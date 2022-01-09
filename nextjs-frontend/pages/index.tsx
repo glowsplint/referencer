@@ -1,12 +1,15 @@
+import { Button, TextField } from "@mui/material";
+import React, { useState } from "react";
+
 import CreateIcon from "@mui/icons-material/Create";
 import FaceIcon from "@mui/icons-material/Face";
 import Head from "next/head";
+import Image from "next/image";
 import InputIcon from "@mui/icons-material/Input";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
-import React, { useState } from "react";
-import styles from "../styles/Landing.module.css";
-import { Button, TextField } from "@mui/material";
 import { LoginProvider } from "../contexts/Login";
+import { imageLoader } from "../common/utils";
+import styles from "../styles/Landing.module.css";
 import { useRouter } from "next/router";
 
 const InputField = ({
@@ -93,7 +96,13 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <img src="/public/logo.png" height="125" width="475" alt="Logo" />
+        <Image
+          src="_"
+          loader={() => imageLoader("/public/logo.png")}
+          height="125"
+          width="475"
+          alt="Logo"
+        />
         <form className={styles.form}>
           <span className={styles.row}>
             <InputField

@@ -1,4 +1,4 @@
-import { COLOURS, ColourType, ColourValueType, IColour } from "../common/enums";
+import { COLOURS, ColourType, IColour } from "../common/enums";
 import React, { useState } from "react";
 import { baseAnnotations, useAnnotations } from "../contexts/Annotations";
 
@@ -26,7 +26,6 @@ import styles from "../styles/SettingsPane.module.css";
 import { useLogin } from "../contexts/Login";
 import { useSettings } from "../contexts/Settings";
 import { useTexts } from "../contexts/Texts";
-import { useTracking } from "../contexts/Tracking";
 
 const Checkbox = ({
   handleCheckBoxToggle,

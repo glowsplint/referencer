@@ -14,25 +14,23 @@ import Tooltip from "@mui/material/Tooltip";
 import styles from "../styles/ButtonPane.module.css";
 import { useSettings } from "../contexts/Settings";
 
-const ButtonIcon = React.memo(
-  ({
-    icon,
-    callback,
-    buttonProps = {},
-  }: {
-    icon: JSX.Element;
-    callback: () => void;
-    buttonProps: object;
-  }) => {
-    return (
-      <div className={styles.leftPaneIcon} onClick={callback} {...buttonProps}>
-        <Fab size="small" color="primary" aria-label="add">
-          {icon}
-        </Fab>
-      </div>
-    );
-  }
-);
+const ButtonIcon = ({
+  icon,
+  callback,
+  buttonProps = {},
+}: {
+  icon: JSX.Element;
+  callback: () => void;
+  buttonProps: object;
+}) => {
+  return (
+    <div className={styles.leftPaneIcon} onClick={callback} {...buttonProps}>
+      <Fab size="small" color="primary" aria-label="add">
+        {icon}
+      </Fab>
+    </div>
+  );
+};
 
 const SwitchingButtonIcon = ({
   iconOne,
@@ -60,7 +58,7 @@ const SwitchingButtonIcon = ({
   );
 };
 
-const ButtonPane = React.memo(() => {
+const ButtonPane = () => {
   const { settings, setSettings } = useSettings();
   const toggleSettingsPane = () => {
     setSettings((prevSettings) => {
@@ -135,6 +133,6 @@ const ButtonPane = React.memo(() => {
       />
     </Paper>
   );
-});
+};
 
 export default ButtonPane;

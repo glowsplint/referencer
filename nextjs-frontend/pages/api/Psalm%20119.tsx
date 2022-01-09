@@ -2,7 +2,7 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default (req: NextApiRequest, res: NextApiResponse) => {
+const psalm119 = (req: NextApiRequest, res: NextApiResponse) => {
   res.status(200).json({
     query: "Psalm 119",
     canonical: "Psalm 119",
@@ -23,3 +23,5 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     ],
   });
 };
+
+export default psalm119;

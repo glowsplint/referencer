@@ -1,4 +1,4 @@
-export default [
+const books = [
   "Genesis",
   "Exodus",
   "Leviticus",
@@ -66,3 +66,5 @@ export default [
   "Jude",
   "Revelation",
 ];
+
+export default books;

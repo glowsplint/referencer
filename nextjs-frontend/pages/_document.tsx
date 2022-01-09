@@ -1,8 +1,10 @@
 import * as React from "react";
-import Document, { Html, Head, Main, NextScript } from "next/document";
+
+import Document, { Head, Html, Main, NextScript } from "next/document";
+
+import createEmotionCache from "../src/createEmotionCache";
 import createEmotionServer from "@emotion/server/create-instance";
 import theme from "../src/theme";
-import createEmotionCache from "../src/createEmotionCache";
 
 export default class MyDocument extends Document {
   render() {
@@ -59,8 +61,11 @@ MyDocument.getInitialProps = async (ctx) => {
 
   ctx.renderPage = () =>
     originalRenderPage({
-      // @ts-expect-error: Force emotionCache prop
-      enhanceApp: (App) => (props) => <App emotionCache={cache} {...props} />,
+      enhanceApp: (App) =>
+        function EnhanceApp(props) {
+          // @ts-expect-error: Force emotionCache prop
+          return <App emotionCache={cache} {...props} />;
+        },
     });
 
   const initialProps = await Document.getInitialProps(ctx);

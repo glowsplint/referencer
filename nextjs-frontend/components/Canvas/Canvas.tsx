@@ -4,13 +4,13 @@ import {
   Interval,
   useAnnotations,
 } from "../../contexts/Annotations";
-import { SpanID, useTracking } from "../../contexts/Tracking";
+import React, { useEffect } from "react";
+import { SpanID, baseTracking, useTracking } from "../../contexts/Tracking";
 import { StateMachineKeyboard, StateMachineMouse } from "../types/types";
 import {
   finaliseArrowCreation,
   getAttributes,
   getSelectionOffsetBoundingRect,
-  resetSelectionOnTextsChange,
   setArrowAnchor,
   setArrowTarget,
   setSelectionAnchor,
@@ -19,7 +19,6 @@ import {
 } from "./actions";
 
 import Konva from "konva";
-import React from "react";
 import { SelectionMode } from "../../common/enums";
 import { useTexts } from "../../contexts/Texts";
 
@@ -37,7 +36,10 @@ const Canvas = ({
   const { annotations, setAnnotations } = useAnnotations();
   const { texts } = useTexts();
 
-  resetSelectionOnTextsChange({ setSelection: setTracking, texts });
+  // Reset selection on change to Texts context
+  useEffect(() => {
+    setTracking(baseTracking);
+  }, [texts, setTracking]);
 
   /* State Machine & Handlers */
   const isArrowing = (event: React.KeyboardEvent | MouseEvent) => {

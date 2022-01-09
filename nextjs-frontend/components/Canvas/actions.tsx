@@ -3,11 +3,9 @@ import {
   NaNInterval,
   SetAnnotations,
 } from "../../contexts/Annotations";
-import { SetTracking, SpanID, baseTracking } from "../../contexts/Tracking";
+import { SetTracking, SpanID } from "../../contexts/Tracking";
 
 import { SelectionMode } from "../../common/enums";
-import { Texts } from "../../contexts/Texts";
-import { useEffect } from "react";
 
 // Types and interfaces
 type BoundingBox = {
@@ -72,17 +70,6 @@ const getSelectedNodes = (
   const endIndex = children.findIndex((item) => item.id === endNode?.id);
   return children.slice(startIndex, endIndex + 1);
 };
-
-const resetSelectionOnTextsChange = ({
-  setSelection,
-  texts,
-}: {
-  setSelection: SetTracking;
-  texts: Texts;
-}) =>
-  useEffect(() => {
-    setSelection(baseTracking);
-  }, [texts]);
 
 const getSelectionBoundingRect = (currentSelection: Interval): DOMRect[] => {
   // Gets all bounding rectangles for a given selection
@@ -272,7 +259,6 @@ export {
   setArrowTarget,
   finaliseArrowCreation,
   setTrackingMode,
-  resetSelectionOnTextsChange,
   getAttributes,
   getSelectionOffsetBoundingRect,
 };
