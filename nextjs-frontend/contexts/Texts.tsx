@@ -25,15 +25,13 @@ const TextsContext = React.createContext<{
 
 type TextType =
   | Format
-  | "Quotes"
-  | "ParagraphSpacer"
   | "IndentedVerseNumber"
-  | "InlineVerseNumber"
-  | "SectionHeader"
-  | "SpecialNote"
-  | "Italics"
   | "InlineFootnote"
-  | "ItalicsBlock";
+  | "InlineVerseNumber"
+  | "Italics"
+  | "ItalicsBlock"
+  | "ParagraphSpacer"
+  | "SectionHeader";
 
 interface TextInfo {
   id: number;

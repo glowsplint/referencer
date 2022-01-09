@@ -1,9 +1,9 @@
-const get = (obj: object, path, defValue) => {
-  if (!path) return undefined;
-  const pathArray = Array.isArray(path) ? path : path.match(/([^[.\]])+/g);
-  return (
-    pathArray.reduce((prevObj, key) => prevObj && prevObj[key], obj) || defValue
-  );
+const get = (
+  obj: { [key: string]: object },
+  path: string,
+  defValue: object
+) => {
+  return obj[path] ?? defValue;
 };
 
 const toTitleCase = (str: string) => {
