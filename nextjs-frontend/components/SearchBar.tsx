@@ -4,10 +4,10 @@ import Autocomplete from "@mui/material/Autocomplete";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
+import _ from "lodash";
 import books from "../common/books";
 import { grey } from "@mui/material/colors";
 import styles from "../styles/SearchBar.module.css";
-import { toTitleCase } from "../common/utils";
 import { useState } from "react";
 
 const SearchBar = () => {
@@ -34,7 +34,7 @@ const SearchBar = () => {
     event.preventDefault();
     if (searchQuery !== "") {
       setSearchQuery("");
-      const payload = await getText(toTitleCase(searchQuery));
+      const payload = await getText(_.startCase(searchQuery));
       setTexts((prevTexts) => {
         return {
           headers: [...prevTexts.headers, payload.query + " ESV"],
