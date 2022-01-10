@@ -48,6 +48,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 To export and build the front-end static assets, run:
 
 ```bash
+cd nextjs-frontend
 yarn build
 ```
 

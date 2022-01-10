@@ -1,10 +1,10 @@
 import { processTexts, useTexts } from "../contexts/Texts";
 
 import Autocomplete from "@mui/material/Autocomplete";
+import { DEVELOPMENT_MODE } from "../common/utils";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
-import _ from "lodash";
 import books from "../common/books";
 import { grey } from "@mui/material/colors";
 import styles from "../styles/SearchBar.module.css";
@@ -16,7 +16,7 @@ const SearchBar = () => {
 
   const getText = async (query: string) => {
     let url = "http://localhost:3000/api/";
-    if (process.env.NODE_ENV === "production") {
+    if (!DEVELOPMENT_MODE) {
       url = "http://localhost:5000/api/";
     }
     const response = await fetch(url + encodeURIComponent(query.trim()));
@@ -34,7 +34,7 @@ const SearchBar = () => {
     event.preventDefault();
     if (searchQuery !== "") {
       setSearchQuery("");
-      const payload = await getText(_.startCase(searchQuery));
+      const payload = await getText(searchQuery.toLowerCase());
       setTexts((prevTexts) => {
         return {
           headers: [...prevTexts.headers, payload.query + " ESV"],
