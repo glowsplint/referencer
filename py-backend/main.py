@@ -52,7 +52,9 @@ async def index(request: Request):
 
 
 @app.get("/space")
-async def index(request: Request):
+async def index(
+    request: Request,
+):
     return templates.TemplateResponse(WORKSPACE_PAGE, {"request": request})
 
 
@@ -65,14 +67,31 @@ def get_passages(query: str):
     return response.json()
 
 
-@app.websocket("/ws")
-async def websocket_endpoint(
+@app.websocket("/ws/logon")
+async def websocket_logon(
     websocket: WebSocket,
-    username: Optional[str] = Query(None),
-    space_id: Optional[str] = Query(None),
+    username: Optional[str] = None,
+    space_id: Optional[str] = None
 ):
     await websocket.accept()
     if space_id is None:
         space_id = svr.space_create()
-    usr = await svr.user_connect(websocket, space_id, username)
-    await usr.listen()
+        print(f"Created new space {space_id}")
+    usr_token = svr.user_add(space_id, username)
+    await websocket.send_json({
+        'u': usr_token,
+        'r': space_id
+        })
+    await websocket.close()
+
+@app.websocket("/ws/r")
+async def websocket_room(
+    websocket: WebSocket,
+    u: Optional[str] = None,
+    r: Optional[str] = None
+):
+    await websocket.accept()
+    if u is None or r is None:
+        websocket.close()
+    else:
+        await svr.user_connect(space_id, uid)
