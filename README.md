@@ -74,3 +74,21 @@ py run.py
 ```
 
 Open [http://localhost:5000](http://localhost:5000) with your browser to see the back-end development server serving the exported front-end static assets.
+
+### Deployment
+
+The production server can be run as follows:
+
+```bash
+# build the latest front-end static assets
+cd nextjs-frontend
+yarn build
+
+# run the production server, -p flag for production
+cd ..
+py run.py -p
+```
+
+You will need to supply a `.env` file in the root directory with a valid ESV API key.
+
+Open [http://localhost:5000](http://localhost:5000) with your browser to see the production server.
