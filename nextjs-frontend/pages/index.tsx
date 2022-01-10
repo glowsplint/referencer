@@ -61,7 +61,10 @@ const InputField = ({
 
 export default function Home() {
   const router = useRouter();
-  const [input, setInput] = useState<object>({
+  const [input, setInput] = useState<{
+    displayName: string;
+    codeInput: string;
+  }>({
     displayName: "",
     codeInput: "",
   });
@@ -77,14 +80,32 @@ export default function Home() {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    router.push("/space");
+    var ws: WebSocket = new WebSocket(
+      encodeURI(
+        `ws://${window.location.host}/ws/logon?username=${input.displayName}`
+      )
+    );
+    ws.onmessage = function (ev) {
+      const params = JSON.parse(ev.data);
+      console.log(`Data received: ${params}`);
+      router.push(`/space?r=${params.r}&u=${params.u}`);
+    };
   };
 
   const handleJoin = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    router.push("/space");
+    var ws: WebSocket = new WebSocket(
+      encodeURI(
+        `ws://${window.location.host}/ws/logon?username=${input.displayName}&space_id=${input.codeInput}`
+      )
+    );
+    ws.onmessage = function (ev) {
+      const params = JSON.parse(ev.data);
+      console.log(`Data received: r=${params.r}, u=${params.u}`);
+      router.push(`/space?r=${params.r}&u=${params.u}`);
+    };
   };
 
   return (

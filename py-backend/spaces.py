@@ -2,7 +2,7 @@ import random
 import string
 import threading
 from collections.abc import Sequence
-from typing import Generic, Tuple, TypeVar
+from typing import Generic, Tuple, TypeVar, Optional
 
 from fastapi import WebSocket
 from starlette.websockets import WebSocketDisconnect
@@ -112,14 +112,16 @@ class Layer:
 
 
 class User:
-    def __init__(self, ws: WebSocket, space, username: str):
-        self.ws = ws
+    def __init__(self, space, username: str):
+        self.ws = None
         self.username = username
         self.space = space
-        self.connected = True
+
+    def isConnected(self):
+        return self.ws is not None
 
     async def update(self, data):
-        if self.connected:
+        if self.isConnected():
             await self.ws.send_json(data)
 
     async def listen(self):
@@ -128,8 +130,12 @@ class User:
                 data = await self.ws.receive_json()
                 await self.space.update(self, self.username, data)
         except WebSocketDisconnect:
-            self.connected = False
+            self.ws = None
             await self.space.user_disconnect(self, self.username)
+
+    def connect(self, ws: WebSocket):
+        self.ws = ws
+        self.connected = True
 
 
 class Space:
@@ -144,7 +150,7 @@ class Space:
     MSG_ACTION_REMOVE = 33
 
     def __init__(self):
-        self.users: dict[int, User] = dict()
+        self.users: dict[str, User] = dict()
         self.layers: dict[int, Layer] = dict()
         self.passages: dict[int, str] = dict()
 
@@ -158,7 +164,10 @@ class Space:
                 and "passage_text" in data
             ):
                 self.passages[data["passage_id"]] = data["passage_text"]
-            elif data["msg"] == Space.MSG_PASSAGE_REMOVE and "passage_id" in data:
+            elif (
+                data["msg"] == Space.MSG_PASSAGE_REMOVE
+                and "passage_id" in data
+            ):
                 self.passages.pop(data["passage_id"], None)
             elif data["msg"] == Space.MSG_ACTION_ADD and "layer_id" in data:
                 self.layers[data["layer_id"]].action_add(data)
@@ -169,20 +178,27 @@ class Space:
                 if username != un:
                     await self.users[un].update(data)
 
-    async def user_connect(self, userid: int, usr: User):
-        self.users[userid] = User()
-        for un in self.users:
-            await self.users[un].update(
-                username, {"msg": Space.MSG_USER_CONNECT, "user_name": usr.username}
-            )
-        for psg_id, psg_txt in self.passages.items():
-            await usr.update(
-                {
-                    "msg": Space.MSG_PASSAGE_ADD,
-                    "passage_id": psg_id,
-                    "passage_text": psg_txt,
-                }
-            )
+    def user_add(self, uid: str, usr: User):
+        self.users[uid] = usr
+
+    async def user_connect(self, uid: str, ws: WebSocket) -> None:
+        if uid in self.users:
+            usr = self.users[uid]
+            usr.connect(ws)
+            for peer_uid in self.users:
+                if uid == peer_uid: continue
+                await self.users[peer_uid].update(
+                    {"msg": Space.MSG_USER_CONNECT, "user_name": usr.username}
+                )
+            for psg_id, psg_txt in self.passages.items():
+                await usr.update(
+                    {
+                        "msg": Space.MSG_PASSAGE_ADD,
+                        "passage_id": psg_id,
+                        "passage_text": psg_txt,
+                    }
+                )
+            await usr.listen()
 
         # TODO send all past actions
 
@@ -195,15 +211,25 @@ class Space:
 
 class SpacesServer:
     def __init__(self):
-        self.spaces = UniqueDict()
-        self.users = UniqueDict(keychars=string.digits, keylen=16)
+        self.spaces: UniqueDict[str, Space] = UniqueDict()
+        self.users: UniqueDict[str, User] = UniqueDict(keychars=string.hexdigits, keylen=16)
 
-    async def user_connect(self, ws: WebSocket, space_id: str, username: str):
+    async def user_connect(self, ws: WebSocket, space_id_str: str, uid: str) -> None:
+        space_id = tuple(space_id_str)
         if space_id in self.spaces:
-            usr = User(ws, self.spaces[space_id], username)
-            userid = int("".join(self.users.key_generate(usr)))
-            await self.spaces[space_id].user_connect(userid)
-            return usr
+            await self.spaces[space_id].user_connect(uid)
+        print(f"Could not find space {space_id_str}")
+        print(self.spaces.dict)
+
+    def user_add(self, space_id_str: str, username: str) -> Optional[str]:
+        space_id = tuple(space_id_str)
+        if space_id in self.spaces:
+            usr = User(self.spaces[space_id], username)
+            userid = "".join(self.users.key_generate(usr))
+            print(f"Connecting {username} ({userid}) to {space_id_str}...")
+            self.spaces[space_id].user_add(userid, usr)
+            return userid
+        print(f"Could not find space {space_id_str}")
 
     def space_create(self):
         return "".join(self.spaces.key_generate(Space()))
