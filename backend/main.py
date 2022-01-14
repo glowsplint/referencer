@@ -15,7 +15,7 @@ from .spaces import SpacesServer
 
 load_dotenv()
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE")
-EXPORTED_PATH = Path("./nextjs-frontend/out/")
+EXPORTED_PATH = Path("./frontend/out/")
 
 LANDING_PAGE = "index.html"
 WORKSPACE_PAGE = "space.html"
@@ -35,8 +35,13 @@ exception_handlers = {
 app = FastAPI(exception_handlers=exception_handlers)
 app.mount(
     "/_next/static",
-    StaticFiles(directory="./nextjs-frontend/out/_next/static"),
+    StaticFiles(directory=EXPORTED_PATH / "_next/static"),
     name="static",
+)
+app.mount(
+    "/public",
+    StaticFiles(directory=EXPORTED_PATH / "public"),
+    name="public",
 )
 
 app.add_middleware(
