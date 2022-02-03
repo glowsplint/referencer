@@ -1,9 +1,10 @@
-import { Arrow, Layer, Rect, Stage } from "react-konva";
 import {
+  Annotations,
   ArrowIndices,
   Interval,
   useAnnotations,
 } from "../../contexts/Annotations";
+import { Arrow, Layer, Rect, Stage } from "react-konva";
 import React, { useEffect } from "react";
 import { SpanID, baseTracking, useTracking } from "../../contexts/Tracking";
 import { StateMachineKeyboard, StateMachineMouse } from "../types/types";
@@ -18,9 +19,97 @@ import {
   setTrackingMode,
 } from "./actions";
 
+import { IColour } from "../../common/enums";
 import Konva from "konva";
 import { SelectionMode } from "../../common/enums";
 import { useTexts } from "../../contexts/Texts";
+
+const getHighlightBoxes = (annotations: Annotations) => {
+  const highlights = [
+    ...annotations.highlights,
+    {
+      ...annotations.arrows.inCreation.anchor,
+      colour: annotations.arrows.inCreation.colour,
+    },
+    {
+      ...annotations.arrows.inCreation.target,
+      colour: annotations.arrows.inCreation.colour,
+    },
+    ...annotations.arrows.finished.map((item) => {
+      return { ...item.anchor, colour: item.colour };
+    }),
+    ...annotations.arrows.finished.map((item) => {
+      return { ...item.target, colour: item.colour };
+    }),
+  ];
+  const highlightBoxes = highlights.map((highlightIndex) =>
+    getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
+      <Rect
+        x={item.x}
+        y={item.y}
+        width={item.width}
+        height={item.height}
+        fill={highlightIndex.colour.arrow}
+        key={index}
+        opacity={0.2}
+      />
+    ))
+  );
+  return highlightBoxes;
+};
+
+const getSelectionBoxes = (annotations: Annotations) => {
+  return getSelectionOffsetBoundingRect(annotations.selection).map(
+    (item, index) => (
+      <Rect
+        x={item.x}
+        y={item.y}
+        width={item.width}
+        height={item.height}
+        fill={annotations.activeColour.highlight}
+        key={index}
+        opacity={0.2}
+      />
+    )
+  );
+};
+
+const getArrowLines = (
+  annotations: Annotations,
+  getConnectorPointsFromArrowIndices: (arrowIndex: ArrowIndices) => {
+    anchor: { x: number; y: number } | undefined;
+    target: { x: number; y: number } | undefined;
+    colour: IColour;
+  }
+) => {
+  const arrows = [
+    ...annotations.arrows.finished,
+    annotations.arrows.inCreation,
+  ];
+  const arrowLines = arrows.map((arrowIndex, index) => {
+    const { anchor, target, colour } =
+      getConnectorPointsFromArrowIndices(arrowIndex);
+    if (anchor && target) {
+      return (
+        <Arrow
+          x={0}
+          y={0}
+          points={[anchor.x, anchor.y, target.x, target.y]}
+          pointerLength={7}
+          pointerWidth={7}
+          fill={colour.arrow}
+          stroke={colour.arrow}
+          opacity={0.6}
+          strokeWidth={1.5}
+          key={index}
+          dashEnabled={true}
+          dash={[5, 5]}
+        />
+      );
+    }
+  });
+  return arrowLines;
+};
 
 /* Canvas Component */
 const Canvas = ({
@@ -268,50 +357,8 @@ const Canvas = ({
   };
 
   /* Canvas layer components */
-  const selectionBoxes = getSelectionOffsetBoundingRect(
-    annotations.selection
-  ).map((item, index) => (
-    <Rect
-      x={item.x}
-      y={item.y}
-      width={item.width}
-      height={item.height}
-      fill={annotations.activeColour.highlight}
-      key={index}
-      opacity={0.2}
-    />
-  ));
-
-  const highlights = [
-    ...annotations.highlights,
-    {
-      ...annotations.arrows.inCreation.anchor,
-      colour: annotations.arrows.inCreation.colour,
-    },
-    {
-      ...annotations.arrows.inCreation.target,
-      colour: annotations.arrows.inCreation.colour,
-    },
-    ...annotations.arrows.finished.map((item) => {
-      return { ...item.anchor, colour: item.colour };
-    }),
-    ...annotations.arrows.finished.map((item) => {
-      return { ...item.target, colour: item.colour };
-    }),
-  ];
-  const highlightBoxes = highlights.map((highlightIndex) =>
-    getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
-      <Rect
-        x={item.x}
-        y={item.y}
-        width={item.width}
-        height={item.height}
-        fill={highlightIndex.colour.arrow}
-        key={index}
-        opacity={0.2}
-      />
-    ))
-  );
+  const selectionBoxes = getSelectionBoxes(annotations);
+  const highlightBoxes = getHighlightBoxes(annotations);
 
   const getConnectorPointFromInterval = (interval: Interval) => {
     // Returns the (x,y) connector point coordinate from an Interval
@@ -338,32 +385,10 @@ const Canvas = ({
     };
   };
 
-  const arrows = [
-    ...annotations.arrows.finished,
-    annotations.arrows.inCreation,
-  ];
-  const arrowLines = arrows.map((arrowIndex, index) => {
-    const { anchor, target, colour } =
-      getConnectorPointsFromArrowIndices(arrowIndex);
-    if (anchor && target) {
-      return (
-        <Arrow
-          x={0}
-          y={0}
-          points={[anchor.x, anchor.y, target.x, target.y]}
-          pointerLength={7}
-          pointerWidth={7}
-          fill={colour.arrow}
-          stroke={colour.arrow}
-          opacity={0.6}
-          strokeWidth={1.5}
-          key={index}
-          dashEnabled={true}
-          dash={[5, 5]}
-        />
-      );
-    }
-  });
+  const arrowLines = getArrowLines(
+    annotations,
+    getConnectorPointsFromArrowIndices
+  );
 
   return (
     <div tabIndex={1} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
