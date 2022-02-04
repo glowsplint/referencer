@@ -152,7 +152,7 @@ const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
   const { setAnnotations } = useAnnotations();
 
   const colourStyle = { backgroundColor: colour[1].highlight };
-  const handleClick = () => {
+  const highlightText = () => {
     setAnnotations((prevAnnotations) => {
       return {
         ...prevAnnotations,
@@ -162,6 +162,7 @@ const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
             start: prevAnnotations.selection.start,
             end: prevAnnotations.selection.end,
             colour: COLOURS[colour[0]],
+            text: "",
           },
         ],
         activeColour: COLOURS[colour[0]],
@@ -170,13 +171,18 @@ const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
   };
 
   return (
-    <button className={styles.dot} onClick={handleClick} style={colourStyle} />
+    <button
+      title="Highlight text"
+      className={styles.dot}
+      onClick={highlightText}
+      style={colourStyle}
+    />
   );
 };
 
 const ClearAnnotationsButton = () => {
   const { setAnnotations } = useAnnotations();
-  const handleClick = () => {
+  const clearAnnotations = () => {
     setAnnotations(baseAnnotations);
   };
 
@@ -184,7 +190,7 @@ const ClearAnnotationsButton = () => {
     <div className={styles.clearHighlights}>
       <Button
         variant="contained"
-        onClick={handleClick}
+        onClick={clearAnnotations}
         data-testid="clearAnnotationsButton"
       >
         Clear annotations
@@ -246,14 +252,6 @@ const ChangeNameButton = () => {
     login.displayName
   );
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const handleDone = () => {
     setLogin((prevLogin) => {
       return { ...prevLogin, displayName: currentDisplayName };
@@ -275,13 +273,13 @@ const ChangeNameButton = () => {
   return (
     <div>
       <Tooltip title="Settings" placement="left">
-        <IconButton size="small" onClick={handleClickOpen}>
+        <IconButton size="small" onClick={() => setOpen(true)}>
           <CreateIcon fontSize="small" />
         </IconButton>
       </Tooltip>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">Change display name</DialogTitle>
@@ -300,7 +298,7 @@ const ChangeNameButton = () => {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
           <Button onClick={handleDone} color="secondary">
             Done
           </Button>
@@ -313,7 +311,7 @@ const ChangeNameButton = () => {
 const SettingsPane = () => {
   const { texts, setTexts } = useTexts();
   const { settings } = useSettings();
-  const handleClose = (key: number) => {
+  const removeTextArea = (key: number) => {
     const getNew = (oldArray: any[]) => [
       ...oldArray.slice(0, key),
       ...oldArray.slice(key + 1, oldArray.length),
@@ -325,10 +323,13 @@ const SettingsPane = () => {
     });
   };
 
-  const handleCheckBoxToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const toggleTextAreaVisibility = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const index = texts.headers.indexOf(event.target.name);
     let newIsDisplayed = [...texts.isDisplayed];
     newIsDisplayed[index] = !newIsDisplayed[index];
+    console.log(newIsDisplayed);
     setTexts({ ...texts, isDisplayed: newIsDisplayed });
   };
 
@@ -344,8 +345,8 @@ const SettingsPane = () => {
         <Header />
         <MainRegion
           textHeaders={texts.headers}
-          handleClose={handleClose}
-          handleCheckBoxToggle={handleCheckBoxToggle}
+          handleClose={removeTextArea}
+          handleCheckBoxToggle={toggleTextAreaVisibility}
         />
         <Profile />
       </Paper>

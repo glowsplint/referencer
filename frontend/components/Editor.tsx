@@ -381,14 +381,16 @@ const MainRegion = () => {
           })}
           data-testid="textAreaContainer"
         >
-          {texts.headers.map((textHeader: string, index: number) => (
-            <TextArea
-              textName={textHeader}
-              textBody={texts.bodies[index]}
-              key={index}
-              textAreaID={index}
-            />
-          ))}
+          {texts.headers.map((textHeader: string, index: number) => {
+            return texts.isDisplayed[index] ? (
+              <TextArea
+                textName={textHeader}
+                textBody={texts.bodies[index]}
+                key={index}
+                textAreaID={index}
+              />
+            ) : null;
+          })}
         </div>
 
         <div className={styles.annotationRightMargin}></div>
