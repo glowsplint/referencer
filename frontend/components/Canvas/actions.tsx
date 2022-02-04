@@ -239,19 +239,6 @@ const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
   });
 };
 
-/* Notes */
-const setNotes = (target: SpanID, setAnnotations: SetAnnotations) => {
-  setAnnotations((prevAnnotations) => {
-    return {
-      ...prevAnnotations,
-      notes: {
-        ...prevAnnotations.notes,
-        inCreation: { interval: { start: target, end: target }, text: "" },
-      },
-    };
-  });
-};
-
 export {
   setSelectionAnchor,
   setSelectionWithSort,

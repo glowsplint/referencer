@@ -92,3 +92,13 @@
   position: absolute;
   z-index: 3;
 }
+
+.dark {
+  background-color: "rgba(256, 256, 256, 0.2)";
+  border-radius: "inherit";
+}
+
+.light {
+  background-color: "rgba(0, 0, 0, 0.2)";
+  border-radius: "inherit";
+}

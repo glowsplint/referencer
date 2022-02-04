@@ -361,14 +361,6 @@ const MainRegion = () => {
     };
   }, [texts]);
 
-  const isNotesInCreationNull =
-    annotations.notes.inCreation.interval.start == NaNInterval ||
-    annotations.notes.inCreation.interval.start == NaNInterval;
-  const notes = [
-    ...annotations.notes.finished,
-    isNotesInCreationNull ? null : annotations.notes.inCreation,
-  ].filter(Boolean);
-
   return (
     <Scrollbars
       style={maxWidth}
@@ -376,7 +368,7 @@ const MainRegion = () => {
       renderThumbVertical={({ style, ...props }) => (
         <div
           {...props}
-          style={settings.isDarkMode ? dark(style) : light(style)}
+          className={settings.isDarkMode ? styles.dark : styles.light}
         />
       )}
     >
@@ -399,16 +391,7 @@ const MainRegion = () => {
           ))}
         </div>
 
-        <div className={styles.annotationRightMargin}>
-          {notes.map((item, index) => (
-            <TextField
-              id="outlined-basic"
-              label="Outlined"
-              variant="outlined"
-              key={index}
-            />
-          ))}
-        </div>
+        <div className={styles.annotationRightMargin}></div>
       </div>
     </Scrollbars>
   );

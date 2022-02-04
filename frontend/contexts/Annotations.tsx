@@ -8,20 +8,18 @@ interface Interval {
   end: SpanID;
 }
 
-type Storage<T> = {
-  inCreation: T;
-  finished: T[];
-};
-
+// Arrows consist of an anchor, target and colour
 interface ArrowIndices {
   anchor: Interval;
   target: Interval;
   colour: IColour;
 }
 
-interface Highlights extends Interval {
-  colour: IColour;
-}
+// While the arrow is in creation, its target can change but its anchor is fixed.
+type Storage<T> = {
+  inCreation: T;
+  finished: T[];
+};
 
 type Arrows = Storage<ArrowIndices>;
 
@@ -29,19 +27,16 @@ interface Selection extends Interval {
   anchor?: SpanID;
 }
 
-interface NotesIndices {
-  interval: Interval;
+interface Highlights extends Interval {
+  colour: IColour;
   text: string;
 }
-
-type Notes = Storage<NotesIndices>;
 
 interface Annotations {
   highlights: Highlights[];
   selection: Selection;
   arrows: Arrows;
   activeColour: IColour;
-  notes: Notes;
 }
 
 const NaNInterval: SpanID = [NaN, NaN, NaN, NaN];
@@ -59,13 +54,6 @@ const baseAnnotations: Annotations = {
       anchor: { start: NaNInterval, end: NaNInterval },
       target: { start: NaNInterval, end: NaNInterval },
       colour: baseColour,
-    },
-    finished: [],
-  },
-  notes: {
-    inCreation: {
-      interval: { start: NaNInterval, end: NaNInterval },
-      text: "",
     },
     finished: [],
   },
