@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { baseAnnotations, useAnnotations } from "../contexts/Annotations";
+import {
+  SetAnnotations,
+  baseAnnotations,
+  useAnnotations,
+} from "../contexts/Annotations";
 
 import Button from "@mui/material/Button";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -169,27 +173,6 @@ const ClearAnnotationsButton = () => {
 
 const LayersItems = () => {
   const { setAnnotations } = useAnnotations();
-
-  const highlightText = (
-    colour: string,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setAnnotations((prevAnnotations) => {
-      return {
-        ...prevAnnotations,
-        highlights: [
-          ...prevAnnotations.highlights,
-          {
-            start: prevAnnotations.selection.start,
-            end: prevAnnotations.selection.end,
-            colour: colour,
-            text: "",
-          },
-        ],
-        activeColour: colour,
-      };
-    });
-  };
 
   return (
     <div className={styles.layersItems}>

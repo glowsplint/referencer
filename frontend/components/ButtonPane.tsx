@@ -1,6 +1,8 @@
 import Fab from "@mui/material/Fab";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
+import FormatPaintIcon from "@mui/icons-material/FormatPaint";
+import HighlightAltIcon from "@mui/icons-material/HighlightAlt";
 import InvertColorsIcon from "@mui/icons-material/InvertColors";
 import InvertColorsOffIcon from "@mui/icons-material/InvertColorsOff";
 import LayersClearIcon from "@mui/icons-material/LayersClear";
@@ -12,6 +14,7 @@ import TextRotateVerticalIcon from "@mui/icons-material/TextRotateVertical";
 import TextRotationNoneIcon from "@mui/icons-material/TextRotationNone";
 import Tooltip from "@mui/material/Tooltip";
 import styles from "../styles/ButtonPane.module.css";
+import { useAnnotations } from "../contexts/Annotations";
 import { useSettings } from "../contexts/Settings";
 
 const ButtonIcon = ({
@@ -60,6 +63,7 @@ const SwitchingButtonIcon = ({
 
 const ButtonPane = () => {
   const { settings, setSettings } = useSettings();
+  const { annotations, setAnnotations } = useAnnotations();
   const toggleSettingsPane = () => {
     setSettings((prevSettings) => {
       return { ...prevSettings, isSettingsOpen: !settings.isSettingsOpen };
@@ -83,11 +87,19 @@ const ButtonPane = () => {
       };
     });
   };
-  const toggleJustify = (): void => {
+  const toggleJustify = () => {
     setSettings((prevSettings) => {
       return {
         ...prevSettings,
         isJustified: !settings.isJustified,
+      };
+    });
+  };
+  const togglePainterMode = (): void => {
+    setAnnotations((previous) => {
+      return {
+        ...previous,
+        isPainterMode: !annotations.isPainterMode,
       };
     });
   };
@@ -130,6 +142,14 @@ const ButtonPane = () => {
         callback={toggleJustify}
         title="Toggle left-align/justify"
         buttonProps={{ "data-testid": "textAlignButton" }}
+      />
+      <SwitchingButtonIcon
+        iconOne={<HighlightAltIcon />}
+        iconTwo={<FormatPaintIcon />}
+        bool={annotations.isPainterMode}
+        callback={togglePainterMode}
+        title="Toggle Painter mode"
+        buttonProps={{ "data-testid": "painterModeButton" }}
       />
     </Paper>
   );

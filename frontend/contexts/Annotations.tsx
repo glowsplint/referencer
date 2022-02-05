@@ -33,16 +33,18 @@ interface Highlights extends Interval {
 }
 
 interface Annotations {
+  isPainterMode: boolean;
+  activeColour: string;
+  arrows: Arrows;
   highlights: Highlights[];
   selection: Selection;
-  arrows: Arrows;
-  activeColour: string;
 }
 
 const NaNInterval: SpanID = [NaN, NaN, NaN, NaN];
 
 const baseColour = amber["500"];
 const baseAnnotations: Annotations = {
+  isPainterMode: false,
   activeColour: baseColour,
   highlights: [],
   selection: {

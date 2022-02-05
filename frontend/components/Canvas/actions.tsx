@@ -1,4 +1,5 @@
 import {
+  Annotations,
   Interval,
   NaNInterval,
   SetAnnotations,
@@ -172,6 +173,7 @@ const setSelectionWithSort = (
   target: SpanID,
   setAnnotations: SetAnnotations
 ) => {
+  // Sets the current selection into the annotation context
   setAnnotations((prevAnnotations) => {
     const { start, end } = sortSpanIDs([
       prevAnnotations.selection.anchor as SpanID,
@@ -218,9 +220,24 @@ const setArrowTarget = (target: SpanID, setAnnotations: SetAnnotations) => {
   });
 };
 
+const pushSelectionToHighlight = (
+  annotations: Annotations,
+  setAnnotations: SetAnnotations
+) => {
+  setAnnotations((previous) => {
+    return {
+      ...previous,
+      highlights: [
+        ...annotations.highlights,
+        { ...previous.selection, colour: previous.activeColour, text: "" },
+      ],
+    };
+  });
+};
+
 const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
-  // Current implementation: Set both start and end to the same target
-  // This only allows for single-word to single-word arrows
+  // Sets both start and end to the same target
+  // This currently supports only single-word to single-word arrows
   setAnnotations((prevAnnotations) => {
     return {
       ...prevAnnotations,
@@ -248,4 +265,5 @@ export {
   setTrackingMode,
   getAttributes,
   getSelectionOffsetBoundingRect,
+  pushSelectionToHighlight,
 };

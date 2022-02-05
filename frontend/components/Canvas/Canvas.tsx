@@ -12,6 +12,7 @@ import {
   finaliseArrowCreation,
   getAttributes,
   getSelectionOffsetBoundingRect,
+  pushSelectionToHighlight,
   setArrowAnchor,
   setArrowTarget,
   setSelectionAnchor,
@@ -184,13 +185,15 @@ const Canvas = ({
       condition: true,
       handler: () => {
         setSelectionWithSort(target as SpanID, setAnnotations);
+        if (!annotations.isPainterMode) return;
+        pushSelectionToHighlight(annotations, setAnnotations);
       },
     };
   };
 
   const mouseUpArrowing = (event: MouseEvent, target: SpanID) => {
     return {
-      condition: true,
+      condition: isArrowing(event),
       handler: () => {
         finaliseArrowCreation(setAnnotations);
       },
