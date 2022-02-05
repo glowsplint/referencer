@@ -172,8 +172,6 @@ const ClearAnnotationsButton = () => {
 };
 
 const LayersItems = () => {
-  const { setAnnotations } = useAnnotations();
-
   return (
     <div className={styles.layersItems}>
       <Swatch />

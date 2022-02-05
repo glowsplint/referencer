@@ -17,3 +17,7 @@ When a mouseDown event is detected, the canvas finds the target span with a Span
 | MouseDown | Set the anchor of the selection.               | Set the anchor of the arrow.                                   | Do nothing. |
 | MouseMove | If mouseDown, set the target of the selection. | If mouseDown, set the target of the arrow if target != anchor. | Do nothing. |
 | MouseUp   | Do nothing.                                    | Move arrows.inCreation to arrows.finished                      | Do nothing. |
+
+## Painter mode
+
+When you are in painter mode, any text selection that you make will highlight the corresponding segment with your active highlight colour.

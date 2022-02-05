@@ -51,10 +51,27 @@ const Circle = ({
   colour: string;
   selected: boolean;
 }) => {
-  const { setAnnotations } = useAnnotations();
+  const { annotations, setAnnotations } = useAnnotations();
   const changeActiveColour = (colour: string) => {
     setAnnotations((previous) => {
       return { ...previous, activeColour: colour };
+    });
+  };
+  const highlightText = (colour: string) => {
+    setAnnotations((previous) => {
+      return {
+        ...previous,
+        highlights: [
+          ...previous.highlights,
+          {
+            start: previous.selection.start,
+            end: previous.selection.end,
+            colour: colour,
+            text: "",
+          },
+        ],
+        activeColour: colour,
+      };
     });
   };
   const style = { backgroundColor: `${colour}` };
@@ -63,7 +80,10 @@ const Circle = ({
       <div
         style={style}
         className={clsx(styles.circle, { [styles.selected]: selected })}
-        onClick={() => changeActiveColour(colour)}
+        onClick={() => {
+          changeActiveColour(colour);
+          if (!annotations.isPainterMode) highlightText(colour);
+        }}
       />
     </span>
   );
