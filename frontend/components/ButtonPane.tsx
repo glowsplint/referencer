@@ -65,32 +65,32 @@ const ButtonPane = () => {
   const { settings, setSettings } = useSettings();
   const { annotations, setAnnotations } = useAnnotations();
   const toggleSettingsPane = () => {
-    setSettings((prevSettings) => {
-      return { ...prevSettings, isSettingsOpen: !settings.isSettingsOpen };
+    setSettings((previous) => {
+      return { ...previous, isSettingsOpen: !settings.isSettingsOpen };
     });
   };
   const toggleDarkMode = () => {
-    setSettings((prevSettings) => {
-      return { ...prevSettings, isDarkMode: !settings.isDarkMode };
+    setSettings((previous) => {
+      return { ...previous, isDarkMode: !settings.isDarkMode };
     });
   };
   const toggleLayers = () => {
-    setSettings((prevSettings) => {
-      return { ...prevSettings, isLayersOn: !settings.isLayersOn };
+    setSettings((previous) => {
+      return { ...previous, isLayersOn: !settings.isLayersOn };
     });
   };
   const toggleEditorLayout = () => {
-    setSettings((prevSettings) => {
+    setSettings((previous) => {
       return {
-        ...prevSettings,
+        ...previous,
         isMultipleRowsLayout: !settings.isMultipleRowsLayout,
       };
     });
   };
   const toggleJustify = () => {
-    setSettings((prevSettings) => {
+    setSettings((previous) => {
       return {
-        ...prevSettings,
+        ...previous,
         isJustified: !settings.isJustified,
       };
     });

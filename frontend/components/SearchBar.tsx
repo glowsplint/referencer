@@ -35,11 +35,11 @@ const SearchBar = () => {
     if (searchQuery !== "") {
       setSearchQuery("");
       const payload = await getText(searchQuery.toLowerCase());
-      setTexts((prevTexts) => {
+      setTexts((previous) => {
         return {
-          headers: [...prevTexts.headers, payload.query + " ESV"],
-          bodies: [...prevTexts.bodies, processTexts(payload.passages[0])],
-          isDisplayed: [...prevTexts.isDisplayed, true],
+          headers: [...previous.headers, payload.query + " ESV"],
+          bodies: [...previous.bodies, processTexts(payload.passages[0])],
+          isDisplayed: [...previous.isDisplayed, true],
         };
       });
     }
@@ -49,7 +49,7 @@ const SearchBar = () => {
     _event: React.SyntheticEvent<Element, Event>,
     newValue: string
   ) => {
-    setSearchQuery((_prevValue) => newValue);
+    setSearchQuery((previous) => newValue);
   };
 
   return (

@@ -225,8 +225,8 @@ const ChangeNameButton = () => {
   );
 
   const handleDone = () => {
-    setLogin((prevLogin) => {
-      return { ...prevLogin, displayName: currentDisplayName };
+    setLogin((previous) => {
+      return { ...previous, displayName: currentDisplayName };
     });
     setOpen(false);
   };

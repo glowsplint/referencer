@@ -275,8 +275,8 @@ const Canvas = ({
 
   /* Mouse Event Handlers */
   const storeMouseCoords = (event: MouseEvent) => {
-    setTracking((prevTracking) => {
-      return { ...prevTracking, mouse: { x: event.clientX, y: event.clientY } };
+    setTracking((previous) => {
+      return { ...previous, mouse: { x: event.clientX, y: event.clientY } };
     });
   };
 

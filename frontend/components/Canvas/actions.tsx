@@ -142,15 +142,13 @@ const setTrackingMode = (
   selectionMode: SelectionMode,
   setTracking: SetTracking
 ) => {
-  setTracking((prevTracking) => {
-    const condition = prevTracking.mode.current === selectionMode;
+  setTracking((previous) => {
+    const condition = previous.mode.current === selectionMode;
     return {
-      ...prevTracking,
+      ...previous,
       mode: {
         current: selectionMode,
-        previous: condition
-          ? prevTracking.mode.previous
-          : prevTracking.mode.current,
+        previous: condition ? previous.mode.previous : previous.mode.current,
       },
     };
   });
@@ -158,11 +156,11 @@ const setTrackingMode = (
 
 /* Selection */
 const setSelectionAnchor = (target: SpanID, setAnnotations: SetAnnotations) => {
-  setAnnotations((prevAnnotations) => {
+  setAnnotations((previous) => {
     return {
-      ...prevAnnotations,
+      ...previous,
       selection: {
-        ...prevAnnotations.selection,
+        ...previous.selection,
         anchor: target,
       },
     };
@@ -174,29 +172,29 @@ const setSelectionWithSort = (
   setAnnotations: SetAnnotations
 ) => {
   // Sets the current selection into the annotation context
-  setAnnotations((prevAnnotations) => {
+  setAnnotations((previous) => {
     const { start, end } = sortSpanIDs([
-      prevAnnotations.selection.anchor as SpanID,
+      previous.selection.anchor as SpanID,
       target as SpanID,
     ]);
     return {
-      ...prevAnnotations,
-      selection: { ...prevAnnotations.selection, start, end },
+      ...previous,
+      selection: { ...previous.selection, start, end },
     };
   });
 };
 
 /* Arrowing */
 const setArrowAnchor = (target: SpanID, setAnnotations: SetAnnotations) => {
-  setAnnotations((prevAnnotations) => {
+  setAnnotations((previous) => {
     return {
-      ...prevAnnotations,
+      ...previous,
       arrows: {
-        ...prevAnnotations.arrows,
+        ...previous.arrows,
         inCreation: {
           anchor: { start: target, end: target },
           target: { start: target, end: target },
-          colour: prevAnnotations.activeColour,
+          colour: previous.activeColour,
         },
       },
     };
@@ -206,13 +204,13 @@ const setArrowAnchor = (target: SpanID, setAnnotations: SetAnnotations) => {
 const setArrowTarget = (target: SpanID, setAnnotations: SetAnnotations) => {
   // Current implementation: Set both start and end to the same target
   // This only allows for single-word to single-word arrows
-  setAnnotations((prevAnnotations) => {
+  setAnnotations((previous) => {
     return {
-      ...prevAnnotations,
+      ...previous,
       arrows: {
-        ...prevAnnotations.arrows,
+        ...previous.arrows,
         inCreation: {
-          ...prevAnnotations.arrows.inCreation,
+          ...previous.arrows.inCreation,
           target: { start: target, end: target },
         },
       },
@@ -238,19 +236,16 @@ const pushSelectionToHighlight = (
 const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
   // Sets both start and end to the same target
   // This currently supports only single-word to single-word arrows
-  setAnnotations((prevAnnotations) => {
+  setAnnotations((previous) => {
     return {
-      ...prevAnnotations,
+      ...previous,
       arrows: {
         inCreation: {
           anchor: { start: NaNInterval, end: NaNInterval },
           target: { start: NaNInterval, end: NaNInterval },
-          colour: prevAnnotations.activeColour,
+          colour: previous.activeColour,
         },
-        finished: [
-          ...prevAnnotations.arrows.finished,
-          prevAnnotations.arrows.inCreation,
-        ],
+        finished: [...previous.arrows.finished, previous.arrows.inCreation],
       },
     };
   });
