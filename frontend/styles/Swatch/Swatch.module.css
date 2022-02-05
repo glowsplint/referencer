@@ -1,0 +1,28 @@
+.circle {
+  background: transparent;
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 100ms;
+  margin: 0px 7px 7px 0px;
+}
+
+.selected {
+  transform: scale(0.9);
+  box-shadow: 0 0 0 1px hsl(0, 0%, 100%), 0 0 0 3px hsl(0, 0%, 0%);
+}
+
+.circle:hover {
+  transform: scale(1.2);
+}
+
+.selected:hover {
+  transform: scale(1.05);
+}
+
+.swatch {
+  display: flex;
+  flex-wrap: wrap;
+  width: 230px;
+}

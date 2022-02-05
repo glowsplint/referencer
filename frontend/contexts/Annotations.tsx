@@ -1,7 +1,7 @@
-import { COLOURS, IColour } from "../common/enums";
 import React, { SetStateAction, useState } from "react";
 
 import { SpanID } from "./Tracking";
+import { amber } from "@mui/material/colors";
 
 interface Interval {
   start: SpanID;
@@ -12,7 +12,7 @@ interface Interval {
 interface ArrowIndices {
   anchor: Interval;
   target: Interval;
-  colour: IColour;
+  colour: string;
 }
 
 // While the arrow is in creation, its target can change but its anchor is fixed.
@@ -28,7 +28,7 @@ interface Selection extends Interval {
 }
 
 interface Highlights extends Interval {
-  colour: IColour;
+  colour: string;
   text: string;
 }
 
@@ -36,12 +36,12 @@ interface Annotations {
   highlights: Highlights[];
   selection: Selection;
   arrows: Arrows;
-  activeColour: IColour;
+  activeColour: string;
 }
 
 const NaNInterval: SpanID = [NaN, NaN, NaN, NaN];
 
-const baseColour = COLOURS.Blue;
+const baseColour = amber["500"];
 const baseAnnotations: Annotations = {
   activeColour: baseColour,
   highlights: [],

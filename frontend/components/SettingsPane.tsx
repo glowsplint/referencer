@@ -1,4 +1,3 @@
-import { COLOURS, ColourType, IColour } from "../common/enums";
 import React, { useState } from "react";
 import { baseAnnotations, useAnnotations } from "../contexts/Annotations";
 
@@ -18,6 +17,7 @@ import IconButton from "@mui/material/IconButton";
 import MUICheckbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 import ShareIcon from "@mui/icons-material/Share";
+import { Swatch } from "./Swatch/Swatch";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
@@ -148,38 +148,6 @@ const Header = () => {
   );
 };
 
-const Dot = ({ colour }: { colour: [ColourType, IColour] }) => {
-  const { setAnnotations } = useAnnotations();
-
-  const colourStyle = { backgroundColor: colour[1].highlight };
-  const highlightText = () => {
-    setAnnotations((prevAnnotations) => {
-      return {
-        ...prevAnnotations,
-        highlights: [
-          ...prevAnnotations.highlights,
-          {
-            start: prevAnnotations.selection.start,
-            end: prevAnnotations.selection.end,
-            colour: COLOURS[colour[0]],
-            text: "",
-          },
-        ],
-        activeColour: COLOURS[colour[0]],
-      };
-    });
-  };
-
-  return (
-    <button
-      title="Highlight text"
-      className={styles.dot}
-      onClick={highlightText}
-      style={colourStyle}
-    />
-  );
-};
-
 const ClearAnnotationsButton = () => {
   const { setAnnotations } = useAnnotations();
   const clearAnnotations = () => {
@@ -200,11 +168,32 @@ const ClearAnnotationsButton = () => {
 };
 
 const LayersItems = () => {
+  const { setAnnotations } = useAnnotations();
+
+  const highlightText = (
+    colour: string,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setAnnotations((prevAnnotations) => {
+      return {
+        ...prevAnnotations,
+        highlights: [
+          ...prevAnnotations.highlights,
+          {
+            start: prevAnnotations.selection.start,
+            end: prevAnnotations.selection.end,
+            colour: colour,
+            text: "",
+          },
+        ],
+        activeColour: colour,
+      };
+    });
+  };
+
   return (
     <div className={styles.layersItems}>
-      {Object.entries(COLOURS).map((item, index: number) => {
-        return <Dot colour={item as [ColourType, IColour]} key={index} />;
-      })}
+      <Swatch />
       <ClearAnnotationsButton />
     </div>
   );

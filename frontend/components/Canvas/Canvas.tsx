@@ -19,7 +19,6 @@ import {
   setTrackingMode,
 } from "./actions";
 
-import { IColour } from "../../common/enums";
 import Konva from "konva";
 import { SelectionMode } from "../../common/enums";
 import { useTexts } from "../../contexts/Texts";
@@ -30,16 +29,18 @@ const getHighlightBoxes = (annotations: Annotations) => {
     {
       ...annotations.arrows.inCreation.anchor,
       colour: annotations.arrows.inCreation.colour,
+      text: "",
     },
     {
       ...annotations.arrows.inCreation.target,
       colour: annotations.arrows.inCreation.colour,
+      text: "",
     },
     ...annotations.arrows.finished.map((item) => {
-      return { ...item.anchor, colour: item.colour };
+      return { ...item.anchor, colour: item.colour, text: "" };
     }),
     ...annotations.arrows.finished.map((item) => {
-      return { ...item.target, colour: item.colour };
+      return { ...item.target, colour: item.colour, text: "" };
     }),
   ];
   const highlightBoxes = highlights.map((highlightIndex) =>
@@ -49,7 +50,7 @@ const getHighlightBoxes = (annotations: Annotations) => {
         y={item.y}
         width={item.width}
         height={item.height}
-        fill={highlightIndex.colour.arrow}
+        fill={highlightIndex.colour}
         key={index}
         opacity={0.2}
       />
@@ -66,7 +67,7 @@ const getSelectionBoxes = (annotations: Annotations) => {
         y={item.y}
         width={item.width}
         height={item.height}
-        fill={annotations.activeColour.highlight}
+        fill={annotations.activeColour}
         key={index}
         opacity={0.2}
       />
@@ -79,7 +80,7 @@ const getArrowLines = (
   getConnectorPointsFromArrowIndices: (arrowIndex: ArrowIndices) => {
     anchor: { x: number; y: number } | undefined;
     target: { x: number; y: number } | undefined;
-    colour: IColour;
+    colour: string;
   }
 ) => {
   const arrows = [
@@ -97,8 +98,8 @@ const getArrowLines = (
           points={[anchor.x, anchor.y, target.x, target.y]}
           pointerLength={7}
           pointerWidth={7}
-          fill={colour.arrow}
-          stroke={colour.arrow}
+          fill={colour}
+          stroke={colour}
           opacity={0.6}
           strokeWidth={1.5}
           key={index}
