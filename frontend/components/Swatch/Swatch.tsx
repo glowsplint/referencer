@@ -22,6 +22,7 @@ import {
 import clsx from "clsx";
 import styles from "../../styles/Swatch/Swatch.module.css";
 import { useAnnotations } from "../../contexts/Annotations";
+import { useSettings } from "../../contexts/Settings";
 
 const colours = [
   red["500"],
@@ -52,6 +53,7 @@ const Circle = ({
   selected: boolean;
 }) => {
   const { annotations, setAnnotations } = useAnnotations();
+  const { settings } = useSettings();
   const changeActiveColour = (colour: string) => {
     setAnnotations((previous) => {
       return { ...previous, activeColour: colour };
@@ -79,7 +81,11 @@ const Circle = ({
     <span>
       <div
         style={style}
-        className={clsx(styles.circle, { [styles.selected]: selected })}
+        className={clsx(styles.circle, {
+          [styles.selected]: selected,
+          [styles.selectedLight]: selected && !settings.isDarkMode,
+          [styles.selectedDark]: selected && settings.isDarkMode,
+        })}
         onClick={() => {
           changeActiveColour(colour);
           if (!annotations.isPainterMode) highlightText(colour);

@@ -10,7 +10,14 @@
 
 .selected {
   transform: scale(0.9);
-  box-shadow: 0 0 0 1px hsl(0, 0%, 100%), 0 0 0 3px hsl(0, 0%, 0%);
+}
+
+.selectedLight {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 1), 0 0 0 3px rgba(0, 0, 0, 1);
+}
+
+.selectedDark {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 1), 0 0 0 3px rgba(255, 255, 255, 1);
 }
 
 .circle:hover {
