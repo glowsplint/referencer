@@ -393,7 +393,12 @@ const MainRegion = () => {
           })}
         </div>
 
-        <div className={styles.annotationRightMargin}></div>
+        <div
+          className={clsx(styles.annotationRightMargin, {
+            [styles.annotationRightMarginLight]: !settings.isDarkMode,
+            [styles.annotationRightMarginDark]: settings.isDarkMode,
+          })}
+        ></div>
       </div>
     </Scrollbars>
   );

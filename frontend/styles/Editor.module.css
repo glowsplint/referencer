@@ -10,7 +10,7 @@
 }
 
 .textAreaContainer {
-  flex: 7;
+  flex: 0.7;
   display: flex;
   overflow-y: auto;
 }
@@ -23,7 +23,15 @@
 }
 
 .annotationRightMargin {
-  flex: 3;
+  flex: 0.3;
+}
+
+.annotationRightMarginLight {
+  background-color: rgb(245, 245, 245);
+}
+
+.annotationRightMarginDark {
+  background-color: rgb(35, 35, 35);
 }
 
 .row {
