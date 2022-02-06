@@ -1,8 +1,8 @@
 import {
   Annotations,
   Interval,
-  NaNInterval,
   SetAnnotations,
+  baseAnnotations,
 } from "../../contexts/Annotations";
 import { SetTracking, SpanID } from "../../contexts/Tracking";
 
@@ -223,12 +223,14 @@ const pushSelectionToHighlight = (
   setAnnotations: SetAnnotations
 ) => {
   setAnnotations((previous) => {
+    const newHighlights = new Map(previous.highlights);
+    newHighlights.set(previous.selection, {
+      colour: previous.activeColour,
+      text: "",
+    });
     return {
       ...previous,
-      highlights: [
-        ...annotations.highlights,
-        { ...previous.selection, colour: previous.activeColour, text: "" },
-      ],
+      highlights: newHighlights,
     };
   });
 };
@@ -237,15 +239,18 @@ const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
   // Sets both start and end to the same target
   // This currently supports only single-word to single-word arrows
   setAnnotations((previous) => {
+    const { anchor, target, colour } = previous.arrows.inCreation;
     return {
       ...previous,
       arrows: {
-        inCreation: {
-          anchor: { start: NaNInterval, end: NaNInterval },
-          target: { start: NaNInterval, end: NaNInterval },
-          colour: previous.activeColour,
-        },
-        finished: [...previous.arrows.finished, previous.arrows.inCreation],
+        inCreation: baseAnnotations.arrows.inCreation,
+        finished: new Map([
+          ...previous.arrows.finished,
+          [
+            { anchor, target },
+            { colour, text: "" },
+          ],
+        ]),
       },
     };
   });

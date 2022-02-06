@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  SetAnnotations,
-  baseAnnotations,
-  useAnnotations,
-} from "../contexts/Annotations";
+import { baseAnnotations, useAnnotations } from "../contexts/Annotations";
 
 import Button from "@mui/material/Button";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -299,7 +295,6 @@ const SettingsPane = () => {
     const index = texts.headers.indexOf(event.target.name);
     let newIsDisplayed = [...texts.isDisplayed];
     newIsDisplayed[index] = !newIsDisplayed[index];
-    console.log(newIsDisplayed);
     setTexts({ ...texts, isDisplayed: newIsDisplayed });
   };
 

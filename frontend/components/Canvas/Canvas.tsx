@@ -1,6 +1,8 @@
 import {
+  AnnotationInfo,
   Annotations,
   ArrowIndices,
+  IArrow,
   Interval,
   useAnnotations,
 } from "../../contexts/Annotations";
@@ -25,33 +27,39 @@ import { SelectionMode } from "../../common/enums";
 import { useTexts } from "../../contexts/Texts";
 
 const getHighlightBoxes = (annotations: Annotations) => {
+  const highlightsFromFinishedArrows: Map<Interval, AnnotationInfo> = new Map(
+    [...annotations.arrows.finished].flatMap(([arrowIndex, info]) => {
+      return [
+        [arrowIndex.anchor, info],
+        [arrowIndex.target, info],
+      ];
+    })
+  );
+  const highlightsFromArrowsInCreation: Map<Interval, AnnotationInfo> = new Map(
+    [
+      [
+        annotations.arrows.inCreation.anchor,
+        { colour: annotations.arrows.inCreation.colour, text: "" },
+      ],
+      [
+        annotations.arrows.inCreation.target,
+        { colour: annotations.arrows.inCreation.colour, text: "" },
+      ],
+    ]
+  );
   const highlights = [
     ...annotations.highlights,
-    {
-      ...annotations.arrows.inCreation.anchor,
-      colour: annotations.arrows.inCreation.colour,
-      text: "",
-    },
-    {
-      ...annotations.arrows.inCreation.target,
-      colour: annotations.arrows.inCreation.colour,
-      text: "",
-    },
-    ...annotations.arrows.finished.map((item) => {
-      return { ...item.anchor, colour: item.colour, text: "" };
-    }),
-    ...annotations.arrows.finished.map((item) => {
-      return { ...item.target, colour: item.colour, text: "" };
-    }),
+    ...highlightsFromArrowsInCreation,
+    ...highlightsFromFinishedArrows,
   ];
-  const highlightBoxes = highlights.map((highlightIndex) =>
-    getSelectionOffsetBoundingRect(highlightIndex).map((item, index) => (
+  const highlightBoxes = highlights.map(([interval, highlightInfo]) =>
+    getSelectionOffsetBoundingRect(interval).map((item, index) => (
       <Rect
         x={item.x}
         y={item.y}
         width={item.width}
         height={item.height}
-        fill={highlightIndex.colour}
+        fill={highlightInfo.colour}
         key={index}
         opacity={0.2}
       />
@@ -78,7 +86,10 @@ const getSelectionBoxes = (annotations: Annotations) => {
 
 const getArrowLines = (
   annotations: Annotations,
-  getConnectorPointsFromArrowIndices: (arrowIndex: ArrowIndices) => {
+  getConnectorPointsFromIArrow: (
+    arrowIndex: ArrowIndices,
+    info: AnnotationInfo
+  ) => {
     anchor: { x: number; y: number } | undefined;
     target: { x: number; y: number } | undefined;
     colour: string;
@@ -86,11 +97,20 @@ const getArrowLines = (
 ) => {
   const arrows = [
     ...annotations.arrows.finished,
-    annotations.arrows.inCreation,
+    [
+      {
+        anchor: annotations.arrows.inCreation.anchor,
+        target: annotations.arrows.inCreation.target,
+      },
+      { colour: annotations.arrows.inCreation.colour as string, text: "" },
+    ] as [ArrowIndices, AnnotationInfo],
   ];
-  const arrowLines = arrows.map((arrowIndex, index) => {
-    const { anchor, target, colour } =
-      getConnectorPointsFromArrowIndices(arrowIndex);
+
+  const arrowLines = arrows.map(([arrowIndex, info], index) => {
+    const { anchor, target, colour } = getConnectorPointsFromIArrow(
+      arrowIndex,
+      info
+    );
     if (anchor && target) {
       return (
         <Arrow
@@ -380,19 +400,19 @@ const Canvas = ({
     }
   };
 
-  const getConnectorPointsFromArrowIndices = (arrowIndex: ArrowIndices) => {
+  const getConnectorPointsFromIArrow = (
+    arrowIndex: ArrowIndices,
+    info: AnnotationInfo
+  ) => {
     // Takes in ArrowIndices and returns the two connector points
     return {
       anchor: getConnectorPointFromInterval(arrowIndex.anchor),
       target: getConnectorPointFromInterval(arrowIndex.target),
-      colour: arrowIndex.colour,
+      colour: info.colour,
     };
   };
 
-  const arrowLines = getArrowLines(
-    annotations,
-    getConnectorPointsFromArrowIndices
-  );
+  const arrowLines = getArrowLines(annotations, getConnectorPointsFromIArrow);
 
   return (
     <div tabIndex={1} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>

@@ -12,31 +12,38 @@ interface Interval {
 interface ArrowIndices {
   anchor: Interval;
   target: Interval;
-  colour: string;
 }
+
+interface AnnotationInfo {
+  colour: string;
+  text: string;
+}
+
+type IArrow = Map<ArrowIndices, AnnotationInfo>;
 
 // While the arrow is in creation, its target can change but its anchor is fixed.
 type Storage<T> = {
-  inCreation: T;
-  finished: T[];
+  inCreation: {
+    anchor: Interval;
+    target: Interval;
+    colour: string;
+  };
+  finished: T;
 };
 
-type Arrows = Storage<ArrowIndices>;
+type Arrows = Storage<IArrow>;
 
 interface Selection extends Interval {
   anchor?: SpanID;
 }
 
-interface Highlights extends Interval {
-  colour: string;
-  text: string;
-}
+type Highlights = Map<Interval, AnnotationInfo>;
 
 interface Annotations {
   isPainterMode: boolean;
   activeColour: string;
   arrows: Arrows;
-  highlights: Highlights[];
+  highlights: Highlights;
   selection: Selection;
 }
 
@@ -46,7 +53,7 @@ const baseColour = amber["500"];
 const baseAnnotations: Annotations = {
   isPainterMode: false,
   activeColour: baseColour,
-  highlights: [],
+  highlights: new Map(),
   selection: {
     start: NaNInterval,
     end: NaNInterval,
@@ -57,7 +64,7 @@ const baseAnnotations: Annotations = {
       target: { start: NaNInterval, end: NaNInterval },
       colour: baseColour,
     },
-    finished: [],
+    finished: new Map(),
   },
 };
 
@@ -95,3 +102,5 @@ export type {
   Highlights,
 };
 export { AnnotationsProvider, useAnnotations, baseAnnotations, NaNInterval };
+
+export type { AnnotationInfo, IArrow };
