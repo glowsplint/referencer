@@ -32,4 +32,9 @@
   display: flex;
   flex-wrap: wrap;
   width: 230px;
+  filter: saturate(50%);
+}
+
+.swatch:hover {
+  filter: saturate(100%);
 }
