@@ -105,7 +105,7 @@ const ButtonPane = () => {
   };
 
   return (
-    <Paper className={styles.leftPane} data-testid="buttonPane">
+    <Paper className={styles.leftPane} data-testid="buttonPane" square>
       <ButtonIcon
         icon={<MenuIcon />}
         callback={toggleSettingsPane}

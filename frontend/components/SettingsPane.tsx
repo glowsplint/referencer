@@ -151,7 +151,13 @@ const Header = () => {
 const ClearAnnotationsButton = () => {
   const { setAnnotations } = useAnnotations();
   const clearAnnotations = () => {
-    setAnnotations(baseAnnotations);
+    setAnnotations((previous) => {
+      return {
+        ...baseAnnotations,
+        isPainterMode: previous.isPainterMode,
+        activeColour: previous.activeColour,
+      };
+    });
   };
 
   return (
@@ -306,7 +312,7 @@ const SettingsPane = () => {
       })}
       data-testid="settingsPane"
     >
-      <Paper className={styles.paper}>
+      <Paper className={styles.paper} square>
         <Header />
         <MainRegion
           textHeaders={texts.headers}

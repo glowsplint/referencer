@@ -406,7 +406,7 @@ const MainRegion = () => {
 
 const Editor = () => {
   return (
-    <Paper className={styles.editor}>
+    <Paper className={styles.editor} square>
       <Header />
       <MainRegion />
       <SearchBar />
