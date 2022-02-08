@@ -3,20 +3,22 @@
 import React, { SetStateAction, useState } from "react";
 
 interface Settings {
-  isLayersOn: boolean;
-  isSettingsOpen: boolean;
   isDarkMode: boolean;
-  isMultipleRowsLayout: boolean;
+  isZenMode: boolean;
   isJustified: boolean;
+  isLayersOn: boolean;
+  isMultipleRowsLayout: boolean;
+  isSettingsOpen: boolean;
 }
 
 const baseSettings = {
-  isLayersOn: true,
-  isSettingsOpen: true,
   //   isDarkMode: useMediaQuery("(prefers-color-scheme: dark)"),
   isDarkMode: false,
-  isMultipleRowsLayout: true,
+  isZenMode: false,
   isJustified: true,
+  isLayersOn: true,
+  isMultipleRowsLayout: true,
+  isSettingsOpen: true,
 };
 
 type SetSettings = React.Dispatch<SetStateAction<Settings>>;

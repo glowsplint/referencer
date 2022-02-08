@@ -1,4 +1,3 @@
-import { NaNInterval, useAnnotations } from "../contexts/Annotations";
 import { ParsedText, TextInfo, useTexts } from "../contexts/Texts";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 
@@ -8,12 +7,12 @@ import Paper from "@mui/material/Paper";
 import { REGEX } from "../common/enums";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import SearchBar from "./SearchBar";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 import { get } from "../common/utils";
 import styles from "../styles/Editor.module.css";
+import { useAnnotations } from "../contexts/Annotations";
 import { useSettings } from "../contexts/Settings";
 
 const NoSSRCanvas = dynamic(() => import("./Canvas/Canvas"), {
@@ -406,7 +405,7 @@ const MainRegion = () => {
 
 const Editor = () => {
   return (
-    <Paper className={styles.editor} square>
+    <Paper className={styles.editor} square id="Editor">
       <Header />
       <MainRegion />
       <SearchBar />

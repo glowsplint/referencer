@@ -1,8 +1,10 @@
+import CenterFocusStrongIcon from "@mui/icons-material/CenterFocusStrong";
 import Fab from "@mui/material/Fab";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
 import FormatPaintIcon from "@mui/icons-material/FormatPaint";
 import HighlightAltIcon from "@mui/icons-material/HighlightAlt";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import InvertColorsIcon from "@mui/icons-material/InvertColors";
 import InvertColorsOffIcon from "@mui/icons-material/InvertColorsOff";
 import LayersClearIcon from "@mui/icons-material/LayersClear";
@@ -95,12 +97,23 @@ const ButtonPane = () => {
       };
     });
   };
-  const togglePainterMode = (): void => {
+  const togglePainterMode = () => {
     setAnnotations((previous) => {
       return {
         ...previous,
         isPainterMode: !annotations.isPainterMode,
       };
+    });
+  };
+  const toggleZenMode = () => {
+    const element = document.documentElement;
+    element.requestFullscreen().then(() => {
+      setSettings((previous) => {
+        return {
+          ...previous,
+          isZenMode: !settings.isZenMode,
+        };
+      });
     });
   };
 
@@ -149,6 +162,14 @@ const ButtonPane = () => {
         bool={annotations.isPainterMode}
         callback={togglePainterMode}
         title="Toggle Painter mode"
+        buttonProps={{ "data-testid": "painterModeButton" }}
+      />
+      <SwitchingButtonIcon
+        iconOne={<HighlightOffIcon />}
+        iconTwo={<CenterFocusStrongIcon />}
+        bool={settings.isZenMode}
+        callback={toggleZenMode}
+        title="Toggle Zen mode"
         buttonProps={{ "data-testid": "painterModeButton" }}
       />
     </Paper>

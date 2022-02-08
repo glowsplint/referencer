@@ -171,7 +171,7 @@ const Canvas = ({
     };
   };
 
-  const mouseDownSelecting = (event: MouseEvent, target: SpanID) => {
+  const mouseDownSelecting = (_event: MouseEvent, target: SpanID) => {
     return {
       condition: true,
       handler: () => {
@@ -200,7 +200,7 @@ const Canvas = ({
     };
   };
 
-  const mouseUpSelecting = (event: MouseEvent, target: SpanID) => {
+  const mouseUpSelecting = (_event: MouseEvent, target: SpanID) => {
     return {
       condition: true,
       handler: () => {
@@ -209,7 +209,7 @@ const Canvas = ({
     };
   };
 
-  const mouseUpArrowing = (event: MouseEvent, target: SpanID) => {
+  const mouseUpArrowing = (event: MouseEvent, _target: SpanID) => {
     return {
       condition: isArrowing(event),
       handler: () => {
@@ -228,7 +228,7 @@ const Canvas = ({
     };
   };
 
-  const keyUpSelecting = (event: React.KeyboardEvent, target: SpanID) => {
+  const keyUpSelecting = (event: React.KeyboardEvent, _target: SpanID) => {
     return {
       condition: isArrowing(event),
       handler: () => {
