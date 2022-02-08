@@ -205,8 +205,6 @@ const Canvas = ({
       condition: true,
       handler: () => {
         setSelectionWithSort(target as SpanID, setAnnotations);
-        if (!annotations.isPainterMode) return;
-        pushSelectionToHighlight(annotations, setAnnotations);
       },
     };
   };
@@ -340,6 +338,7 @@ const Canvas = ({
       event.evt.clientY,
       !(tracking.mode.current !== SelectionMode.None)
     );
+    pushSelectionToHighlight(annotations, setAnnotations);
     if (isEarlyReturn) return;
     runStateMachineMouse(
       event,

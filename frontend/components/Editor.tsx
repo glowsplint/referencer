@@ -398,7 +398,7 @@ const MainRegion = () => {
             [styles.annotationRightMarginLight]: !settings.isDarkMode,
             [styles.annotationRightMarginDark]: settings.isDarkMode,
           })}
-        ></div>
+        />
       </div>
     </Scrollbars>
   );
