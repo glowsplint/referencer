@@ -314,7 +314,7 @@ const Canvas = ({
   };
 
   const handleMouseMove = (event: Konva.KonvaEventObject<MouseEvent>) => {
-    // If user did not click on a word (span with a valid SpanID), return
+    // If user did not click on a word (span with a valid SpanID), return``
     storeMouseCoords(event.evt);
     const { target, isEarlyReturn } = getAttributes(
       event.evt.clientX,
@@ -338,7 +338,9 @@ const Canvas = ({
       event.evt.clientY,
       !(tracking.mode.current !== SelectionMode.None)
     );
-    pushSelectionToHighlight(annotations, setAnnotations);
+    if (annotations.isPainterMode) {
+      pushSelectionToHighlight(annotations, setAnnotations);
+    }
     if (isEarlyReturn) return;
     runStateMachineMouse(
       event,
