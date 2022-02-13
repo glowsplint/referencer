@@ -35,6 +35,7 @@ type Arrows = Storage<IArrow>;
 
 interface Selection extends Interval {
   anchor?: SpanID;
+  text?: string;
 }
 
 type Highlights = Map<Interval, AnnotationInfo>;

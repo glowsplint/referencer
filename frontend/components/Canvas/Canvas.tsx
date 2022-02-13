@@ -18,6 +18,7 @@ import {
   setArrowAnchor,
   setArrowTarget,
   setSelectionAnchor,
+  setSelectionEmptyText,
   setSelectionWithSort,
   setTrackingMode,
 } from "./actions";
@@ -205,6 +206,7 @@ const Canvas = ({
       condition: true,
       handler: () => {
         setSelectionWithSort(target as SpanID, setAnnotations);
+        setSelectionEmptyText(setAnnotations);
       },
     };
   };
@@ -339,7 +341,7 @@ const Canvas = ({
       !(tracking.mode.current !== SelectionMode.None)
     );
     if (annotations.isPainterMode) {
-      pushSelectionToHighlight(annotations, setAnnotations);
+      pushSelectionToHighlight(setAnnotations);
     }
     if (isEarlyReturn) return;
     runStateMachineMouse(

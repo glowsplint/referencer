@@ -1,5 +1,4 @@
 import {
-  Annotations,
   Interval,
   SetAnnotations,
   baseAnnotations,
@@ -72,7 +71,7 @@ const getSelectedNodes = (
   return children.slice(startIndex, endIndex + 1);
 };
 
-const getSelectionBoundingRect = (currentSelection: Interval): DOMRect[] => {
+const getSelectionBoundingRect = (currentSelection: Interval) => {
   // Gets all bounding rectangles for a given selection
   const getNode = (key: "start" | "end") =>
     document.getElementById(`${currentSelection[key]?.toString()}`);
@@ -91,7 +90,8 @@ const getSelectionBoundingRect = (currentSelection: Interval): DOMRect[] => {
 };
 
 const getSelectionOffsetBoundingRect = (current: Interval) => {
-  // Compensate the bounding rect with position of canvasContainer with viewport
+  /* Returns the array of bounding rectangles for every item in the Interval,
+     offset by the bounding rect with position of canvasContainer with viewport */
   const parent = getParentBoundingRect();
   return getSelectionBoundingRect(current)
     .map((child) => {
@@ -184,6 +184,12 @@ const setSelectionWithSort = (
   });
 };
 
+const setSelectionEmptyText = (setAnnotations: SetAnnotations) => {
+  setAnnotations((previous) => {
+    return { ...previous, selection: { ...previous.selection, text: "" } };
+  });
+};
+
 /* Arrowing */
 const setArrowAnchor = (target: SpanID, setAnnotations: SetAnnotations) => {
   setAnnotations((previous) => {
@@ -218,10 +224,7 @@ const setArrowTarget = (target: SpanID, setAnnotations: SetAnnotations) => {
   });
 };
 
-const pushSelectionToHighlight = (
-  annotations: Annotations,
-  setAnnotations: SetAnnotations
-) => {
+const pushSelectionToHighlight = (setAnnotations: SetAnnotations) => {
   setAnnotations((previous) => {
     const newHighlights = new Map(previous.highlights);
     newHighlights.set(previous.selection, {
@@ -256,14 +259,33 @@ const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
   });
 };
 
+/* Text annotations */
+const getIntervalMidpoint = (interval: Interval) => {
+  const boxes = getSelectionOffsetBoundingRect(interval);
+  const getYProperty = (func: (...values: number[]) => number) =>
+    boxes
+      .map((box) => box.y)
+      .reduce((previousY, currentY) => func(previousY, currentY));
+  const minY = getYProperty(Math.min);
+  const maxY = getYProperty(Math.max);
+  const maxYWidth = boxes
+    .filter((box) => box.y === maxY)
+    .map((box) => box.height)
+    .reduce((previousY, currentY) => Math.max(previousY, currentY));
+  return (minY + maxY + maxYWidth) / 2;
+};
+
+const getTextAnnotationMidpoints = (interval: Interval, text: string) => {};
+
 export {
-  setSelectionAnchor,
-  setSelectionWithSort,
-  setArrowAnchor,
-  setArrowTarget,
   finaliseArrowCreation,
-  setTrackingMode,
   getAttributes,
   getSelectionOffsetBoundingRect,
   pushSelectionToHighlight,
+  setArrowAnchor,
+  setArrowTarget,
+  setSelectionAnchor,
+  setSelectionEmptyText,
+  setSelectionWithSort,
+  setTrackingMode,
 };
