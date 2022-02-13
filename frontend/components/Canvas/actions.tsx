@@ -1,4 +1,6 @@
 import {
+  AnnotationInfo,
+  Annotations,
   Interval,
   SetAnnotations,
   baseAnnotations,
@@ -275,7 +277,17 @@ const getIntervalMidpoint = (interval: Interval) => {
   return (minY + maxY + maxYWidth) / 2;
 };
 
-const getTextAnnotationMidpoints = (interval: Interval, text: string) => {};
+const getTextAnnotationMidpoints = (annotations: Annotations) => {
+  const highlights = [...annotations.highlights];
+  const { start, end, text } = annotations.selection;
+  const selection: [Interval, AnnotationInfo] = [
+    { start, end },
+    { text, colour: annotations.activeColour },
+  ];
+  return [...highlights, selection].map(([interval, annotationInfo]) => {
+    return { y: getIntervalMidpoint(interval), ...annotationInfo };
+  });
+};
 
 export {
   finaliseArrowCreation,
