@@ -2,12 +2,11 @@ import {
   AnnotationInfo,
   Annotations,
   ArrowIndices,
-  IArrow,
   Interval,
   useAnnotations,
 } from "../../contexts/Annotations";
 import { Arrow, Layer, Rect, Stage } from "react-konva";
-import React, { useEffect } from "react";
+import React, { MutableRefObject, useEffect } from "react";
 import { SpanID, baseTracking, useTracking } from "../../contexts/Tracking";
 import { StateMachineKeyboard, StateMachineMouse } from "../types/types";
 import {
@@ -27,7 +26,10 @@ import Konva from "konva";
 import { SelectionMode } from "../../common/enums";
 import { useTexts } from "../../contexts/Texts";
 
-const getHighlightBoxes = (annotations: Annotations) => {
+const getHighlightBoxes = (
+  canvasContainer: MutableRefObject<HTMLDivElement>,
+  annotations: Annotations
+) => {
   const highlightsFromFinishedArrows: Map<Interval, AnnotationInfo> = new Map(
     [...annotations.arrows.finished].flatMap(([arrowIndex, info]) => {
       return [
@@ -54,35 +56,41 @@ const getHighlightBoxes = (annotations: Annotations) => {
     ...highlightsFromFinishedArrows,
   ];
   const highlightBoxes = highlights.map(([interval, highlightInfo]) =>
-    getSelectionOffsetBoundingRect(interval).map((item, index) => (
-      <Rect
-        x={item.x}
-        y={item.y}
-        width={item.width}
-        height={item.height}
-        fill={highlightInfo.colour}
-        key={index}
-        opacity={0.2}
-      />
-    ))
+    getSelectionOffsetBoundingRect(canvasContainer, interval).map(
+      (item, index) => (
+        <Rect
+          x={item.x}
+          y={item.y}
+          width={item.width}
+          height={item.height}
+          fill={highlightInfo.colour}
+          key={index}
+          opacity={0.2}
+        />
+      )
+    )
   );
   return highlightBoxes;
 };
 
-const getSelectionBoxes = (annotations: Annotations) => {
-  return getSelectionOffsetBoundingRect(annotations.selection).map(
-    (item, index) => (
-      <Rect
-        x={item.x}
-        y={item.y}
-        width={item.width}
-        height={item.height}
-        fill={annotations.activeColour}
-        key={index}
-        opacity={0.2}
-      />
-    )
-  );
+const getSelectionBoxes = (
+  canvasContainer: MutableRefObject<HTMLDivElement>,
+  annotations: Annotations
+) => {
+  return getSelectionOffsetBoundingRect(
+    canvasContainer,
+    annotations.selection
+  ).map((item, index) => (
+    <Rect
+      x={item.x}
+      y={item.y}
+      width={item.width}
+      height={item.height}
+      fill={annotations.activeColour}
+      key={index}
+      opacity={0.2}
+    />
+  ));
 };
 
 const getArrowLines = (
@@ -139,10 +147,12 @@ const Canvas = ({
   className,
   width,
   height,
+  canvasContainer,
 }: {
   className?: string;
   width: number;
   height: number;
+  canvasContainer: MutableRefObject<HTMLDivElement>;
 }) => {
   const { tracking, setTracking } = useTracking();
   const { annotations, setAnnotations } = useAnnotations();
@@ -384,13 +394,16 @@ const Canvas = ({
   };
 
   /* Canvas layer components */
-  const selectionBoxes = getSelectionBoxes(annotations);
-  const highlightBoxes = getHighlightBoxes(annotations);
+  const selectionBoxes = getSelectionBoxes(canvasContainer, annotations);
+  const highlightBoxes = getHighlightBoxes(canvasContainer, annotations);
 
   const getConnectorPointFromInterval = (interval: Interval) => {
     // Returns the (x,y) connector point coordinate from an Interval
     // Current implementation: Get the middle of the bounding boxes
-    const midpoints = getSelectionOffsetBoundingRect(interval).map((item) => {
+    const midpoints = getSelectionOffsetBoundingRect(
+      canvasContainer,
+      interval
+    ).map((item) => {
       return {
         x: item.x + 0.5 * item.width,
         y: item.y + 0.5 * item.height,

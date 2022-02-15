@@ -7,10 +7,12 @@ import Paper from "@mui/material/Paper";
 import { REGEX } from "../common/enums";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import SearchBar from "./SearchBar";
+import { TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 import { get } from "../common/utils";
+import { getTextAnnotationMidpoints } from "./Canvas/actions";
 import styles from "../styles/Editor.module.css";
 import { useAnnotations } from "../contexts/Annotations";
 import { useSettings } from "../contexts/Settings";
@@ -320,37 +322,48 @@ const TextArea = ({
   );
 };
 
+const AnnotationRightMargin = ({
+  rightMarginRef: rightMarginRef,
+}: {
+  rightMarginRef: MutableRefObject<HTMLDivElement>;
+}) => {
+  const { settings } = useSettings();
+  const { annotations } = useAnnotations();
+  return (
+    <div
+      ref={rightMarginRef}
+      className={clsx(styles.annotationRightMargin, {
+        [styles.annotationRightMarginLight]: !settings.isDarkMode,
+        [styles.annotationRightMarginDark]: settings.isDarkMode,
+      })}
+    >
+      {/* {getTextAnnotationMidpoints(annotations).map((item, index) => {
+        return <TextField key={index} />;
+      })} */}
+      <TextField label="meep" variant="outlined" />
+    </div>
+  );
+};
+
 const MainRegion = () => {
   const { texts } = useTexts();
   const { settings } = useSettings();
-  const { annotations } = useAnnotations();
-
-  const dark = (style: any) => {
-    return {
-      ...style,
-      backgroundColor: "rgba(256, 256, 256, 0.2)",
-      borderRadius: "inherit",
-    };
-  };
-
-  const light = (style: any) => {
-    return {
-      ...style,
-      backgroundColor: "rgba(0, 0, 0, 0.2)",
-      borderRadius: "inherit",
-    };
-  };
 
   const maxWidth = { width: "100%", height: "100%" };
-  const ref = useRef() as MutableRefObject<HTMLDivElement>;
+  const canvasContainerRef = useRef() as MutableRefObject<HTMLDivElement>;
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
-  const scrollbarWidth = 10;
+
+  const rightMarginRef = useRef() as MutableRefObject<HTMLDivElement>;
+  // const scrollbarWidth = 10;
 
   useEffect(() => {
     const resize = () => {
-      setHeight(ref.current.clientHeight);
-      setWidth(ref.current.clientWidth - scrollbarWidth);
+      setHeight(canvasContainerRef.current.clientHeight);
+      setWidth(
+        canvasContainerRef.current.clientWidth -
+          rightMarginRef.current.clientWidth
+      );
     };
     resize();
     window.addEventListener("resize", resize);
@@ -371,8 +384,17 @@ const MainRegion = () => {
         />
       )}
     >
-      <div ref={ref} id="canvasContainer" className={styles.playArea}>
-        <NoSSRCanvas className={styles.canvas} width={width} height={height} />
+      <div
+        ref={canvasContainerRef}
+        id="canvasContainer"
+        className={styles.playArea}
+      >
+        <NoSSRCanvas
+          canvasContainer={canvasContainerRef}
+          className={styles.canvas}
+          width={width}
+          height={height}
+        />
         <div
           className={clsx(styles.textAreaContainer, {
             [styles.row]: settings.isMultipleRowsLayout,
@@ -392,12 +414,7 @@ const MainRegion = () => {
           })}
         </div>
 
-        <div
-          className={clsx(styles.annotationRightMargin, {
-            [styles.annotationRightMarginLight]: !settings.isDarkMode,
-            [styles.annotationRightMarginDark]: settings.isDarkMode,
-          })}
-        />
+        <AnnotationRightMargin rightMarginRef={rightMarginRef} />
       </div>
     </Scrollbars>
   );

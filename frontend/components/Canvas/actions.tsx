@@ -7,6 +7,7 @@ import {
 } from "../../contexts/Annotations";
 import { SetTracking, SpanID } from "../../contexts/Tracking";
 
+import { MutableRefObject } from "react";
 import { SelectionMode } from "../../common/enums";
 
 // Types and interfaces
@@ -55,11 +56,11 @@ const getAttributes = (x: number, y: number, condition: boolean = false) => {
   return { target, isEarlyReturn };
 };
 
-const getParentBoundingRect = () => {
+const getParentBoundingRect = (
+  canvasContainer: MutableRefObject<HTMLDivElement>
+) => {
   // Gets the bounding rectangle of the parent container
-  return (
-    document.getElementById("canvasContainer") as HTMLElement
-  ).getBoundingClientRect();
+  return canvasContainer.current.getBoundingClientRect();
 };
 
 const getSelectedNodes = (
@@ -91,10 +92,13 @@ const getSelectionBoundingRect = (currentSelection: Interval) => {
   return selectedNodes.map((node) => node.getBoundingClientRect());
 };
 
-const getSelectionOffsetBoundingRect = (current: Interval) => {
+const getSelectionOffsetBoundingRect = (
+  canvasContainer: MutableRefObject<HTMLDivElement>,
+  current: Interval
+) => {
   /* Returns the array of bounding rectangles for every item in the Interval,
      offset by the bounding rect with position of canvasContainer with viewport */
-  const parent = getParentBoundingRect();
+  const parent = getParentBoundingRect(canvasContainer);
   return getSelectionBoundingRect(current)
     .map((child) => {
       const rect: BoundingBox = {
@@ -262,8 +266,13 @@ const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
 };
 
 /* Text annotations */
-const getIntervalMidpoint = (interval: Interval) => {
-  const boxes = getSelectionOffsetBoundingRect(interval);
+const getIntervalMidpoint = (
+  canvasContainer: MutableRefObject<HTMLDivElement>,
+  interval: Interval
+) => {
+  /* Returns the y-coordinate midpoint from an interval */
+  const boxes = getSelectionOffsetBoundingRect(canvasContainer, interval);
+  if (boxes.length === 0) return;
   const getYProperty = (func: (...values: number[]) => number) =>
     boxes
       .map((box) => box.y)
@@ -277,7 +286,11 @@ const getIntervalMidpoint = (interval: Interval) => {
   return (minY + maxY + maxYWidth) / 2;
 };
 
-const getTextAnnotationMidpoints = (annotations: Annotations) => {
+const getTextAnnotationMidpoints = (
+  canvasContainer: MutableRefObject<HTMLDivElement>,
+  annotations: Annotations
+) => {
+  /* Returns the y-coordinate midpoints from current highlights and selection */
   const highlights = [...annotations.highlights];
   const { start, end, text } = annotations.selection;
   const selection: [Interval, AnnotationInfo] = [
@@ -285,7 +298,10 @@ const getTextAnnotationMidpoints = (annotations: Annotations) => {
     { text, colour: annotations.activeColour },
   ];
   return [...highlights, selection].map(([interval, annotationInfo]) => {
-    return { y: getIntervalMidpoint(interval), ...annotationInfo };
+    return {
+      y: getIntervalMidpoint(canvasContainer, interval),
+      ...annotationInfo,
+    };
   });
 };
 
@@ -293,6 +309,7 @@ export {
   finaliseArrowCreation,
   getAttributes,
   getSelectionOffsetBoundingRect,
+  getTextAnnotationMidpoints,
   pushSelectionToHighlight,
   setArrowAnchor,
   setArrowTarget,
