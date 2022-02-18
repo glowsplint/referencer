@@ -5,6 +5,7 @@ import { Format } from "../common/enums";
 import Header from "./Header";
 import Paper from "@mui/material/Paper";
 import { REGEX } from "../common/enums";
+import RightMargin from "./RightMargin";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import SearchBar from "./SearchBar";
 import { TextField } from "@mui/material";
@@ -322,29 +323,6 @@ const TextArea = ({
   );
 };
 
-const AnnotationRightMargin = ({
-  rightMarginRef: rightMarginRef,
-}: {
-  rightMarginRef: MutableRefObject<HTMLDivElement>;
-}) => {
-  const { settings } = useSettings();
-  const { annotations } = useAnnotations();
-  return (
-    <div
-      ref={rightMarginRef}
-      className={clsx(styles.annotationRightMargin, {
-        [styles.annotationRightMarginLight]: !settings.isDarkMode,
-        [styles.annotationRightMarginDark]: settings.isDarkMode,
-      })}
-    >
-      {/* {getTextAnnotationMidpoints(annotations).map((item, index) => {
-        return <TextField key={index} />;
-      })} */}
-      <TextField label="meep" variant="outlined" />
-    </div>
-  );
-};
-
 const MainRegion = () => {
   const { texts } = useTexts();
   const { settings } = useSettings();
@@ -355,7 +333,6 @@ const MainRegion = () => {
   const [width, setWidth] = useState(0);
 
   const rightMarginRef = useRef() as MutableRefObject<HTMLDivElement>;
-  // const scrollbarWidth = 10;
 
   useEffect(() => {
     const resize = () => {
@@ -414,7 +391,10 @@ const MainRegion = () => {
           })}
         </div>
 
-        <AnnotationRightMargin rightMarginRef={rightMarginRef} />
+        <RightMargin
+          canvasContainerRef={canvasContainerRef}
+          rightMarginRef={rightMarginRef}
+        />
       </div>
     </Scrollbars>
   );

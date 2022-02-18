@@ -2,6 +2,7 @@ import {
   AnnotationInfo,
   Annotations,
   Interval,
+  NaNInterval,
   SetAnnotations,
   baseAnnotations,
 } from "../../contexts/Annotations";
@@ -293,11 +294,20 @@ const getTextAnnotationMidpoints = (
   /* Returns the y-coordinate midpoints from current highlights and selection */
   const highlights = [...annotations.highlights];
   const { start, end, text } = annotations.selection;
-  const selection: [Interval, AnnotationInfo] = [
-    { start, end },
-    { text, colour: annotations.activeColour },
-  ];
-  return [...highlights, selection].map(([interval, annotationInfo]) => {
+  const isDisplaySelectionTextField =
+    start !== NaNInterval &&
+    end !== NaNInterval &&
+    annotations.selection.text === "";
+  const selection = isDisplaySelectionTextField
+    ? [
+        { start, end },
+        { text, colour: annotations.activeColour },
+      ]
+    : null;
+
+  return (
+    [...highlights, selection].filter(Boolean) as [Interval, AnnotationInfo][]
+  ).map(([interval, annotationInfo]) => {
     return {
       y: getIntervalMidpoint(canvasContainer, interval),
       ...annotationInfo,

@@ -22,18 +22,6 @@
   line-height: 2em;
 }
 
-.annotationRightMargin {
-  flex: 0.3;
-}
-
-.annotationRightMarginLight {
-  background-color: rgba(245, 245, 245);
-}
-
-.annotationRightMarginDark {
-  background-color: rgb(35, 35, 35);
-}
-
 .row {
   flex-direction: row;
 }

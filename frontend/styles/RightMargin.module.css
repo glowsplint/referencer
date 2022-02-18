@@ -1,0 +1,15 @@
+.textField {
+  position: absolute;
+}
+
+.rightMargin {
+  flex: 0.3;
+}
+
+.light {
+  background-color: rgba(245, 245, 245);
+}
+
+.dark {
+  background-color: rgb(35, 35, 35);
+}

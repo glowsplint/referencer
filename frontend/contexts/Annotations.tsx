@@ -35,7 +35,7 @@ type Arrows = Storage<IArrow>;
 
 interface Selection extends Interval {
   anchor?: SpanID;
-  text: string;
+  text?: string;
 }
 
 type Highlights = Map<Interval, AnnotationInfo>;
@@ -58,7 +58,6 @@ const baseAnnotations: Annotations = {
   selection: {
     start: NaNInterval,
     end: NaNInterval,
-    text: "",
   },
   arrows: {
     inCreation: {
