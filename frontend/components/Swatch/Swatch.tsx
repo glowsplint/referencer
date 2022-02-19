@@ -61,14 +61,16 @@ const Circle = ({
   };
   const highlightText = (colour: string) => {
     setAnnotations((previous) => {
-      let newHighlights = new Map(previous.highlights);
-      newHighlights.set(
-        { start: previous.selection.start, end: previous.selection.end },
-        { colour: colour, text: "" }
-      );
+      const highlights = new Map([
+        ...previous.highlights,
+        [
+          { start: previous.selection.start, end: previous.selection.end },
+          { colour: colour, text: "" },
+        ],
+      ]);
       return {
         ...previous,
-        highlights: newHighlights,
+        highlights,
         activeColour: colour,
       };
     });

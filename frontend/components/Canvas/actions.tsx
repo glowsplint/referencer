@@ -2,7 +2,6 @@ import {
   AnnotationInfo,
   Annotations,
   Interval,
-  NaNInterval,
   SetAnnotations,
   baseAnnotations,
 } from "../../contexts/Annotations";
@@ -137,10 +136,11 @@ const convertSpanIDtoNumber = (spanID: SpanID) => {
   );
 };
 
+const spanIDcomparator = (a: SpanID, b: SpanID) =>
+  convertSpanIDtoNumber(a) - convertSpanIDtoNumber(b);
+
 const sortSpanIDs = (spanIDArray: [SpanID, SpanID]) => {
-  const sortedArray = spanIDArray.sort(
-    (a, b) => convertSpanIDtoNumber(a) - convertSpanIDtoNumber(b)
-  );
+  const sortedArray = spanIDArray.sort(spanIDcomparator);
   return { start: sortedArray[0], end: sortedArray[1] };
 };
 
@@ -233,14 +233,19 @@ const setArrowTarget = (target: SpanID, setAnnotations: SetAnnotations) => {
 
 const pushSelectionToHighlight = (setAnnotations: SetAnnotations) => {
   setAnnotations((previous) => {
-    const newHighlights = new Map(previous.highlights);
-    newHighlights.set(previous.selection, {
-      colour: previous.activeColour,
-      text: "",
-    });
+    const highlights = new Map([
+      ...previous.highlights,
+      [
+        previous.selection,
+        {
+          colour: previous.activeColour,
+          text: "",
+        },
+      ],
+    ]);
     return {
       ...previous,
-      highlights: newHighlights,
+      highlights,
     };
   });
 };
@@ -293,26 +298,16 @@ const getTextAnnotationMidpoints = (
 ) => {
   /* Returns the y-coordinate midpoints from current highlights and selection */
   const highlights = [...annotations.highlights];
-  const { start, end, text } = annotations.selection;
-  const isDisplaySelectionTextField =
-    start !== NaNInterval &&
-    end !== NaNInterval &&
-    annotations.selection.text === "";
-  const selection = isDisplaySelectionTextField
-    ? [
-        { start, end },
-        { text, colour: annotations.activeColour },
-      ]
-    : null;
 
-  return (
-    [...highlights, selection].filter(Boolean) as [Interval, AnnotationInfo][]
-  ).map(([interval, annotationInfo]) => {
-    return {
-      y: getIntervalMidpoint(canvasContainer, interval),
-      ...annotationInfo,
-    };
-  });
+  return (highlights.filter(Boolean) as [Interval, AnnotationInfo][]).map(
+    ([interval, annotationInfo]) => {
+      return {
+        y: getIntervalMidpoint(canvasContainer, interval),
+        ...annotationInfo,
+        interval,
+      };
+    }
+  );
 };
 
 export {
@@ -327,4 +322,5 @@ export {
   setSelectionEmptyText,
   setSelectionWithSort,
   setTrackingMode,
+  spanIDcomparator,
 };
