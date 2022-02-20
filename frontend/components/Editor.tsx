@@ -8,14 +8,11 @@ import { REGEX } from "../common/enums";
 import RightMargin from "./RightMargin";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import SearchBar from "./SearchBar";
-import { TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 import { get } from "../common/utils";
-import { getTextAnnotationMidpoints } from "./Canvas/actions";
 import styles from "../styles/Editor.module.css";
-import { useAnnotations } from "../contexts/Annotations";
 import { useSettings } from "../contexts/Settings";
 
 const NoSSRCanvas = dynamic(() => import("./Canvas/Canvas"), {

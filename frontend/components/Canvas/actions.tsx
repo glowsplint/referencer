@@ -118,15 +118,6 @@ const getSelectionOffsetBoundingRect = (
     .filter((item) => item) as BoundingBox[];
 };
 
-const getMidpointFromDOMRect = (domRect: DOMRect): [number, number] => {
-  return [domRect.x + domRect.width / 2, domRect.y + domRect.height / 2];
-};
-
-const getCoordsFromSpanID = (span: SpanID): [number, number] => {
-  const element = document.getElementById(span.toString()) as HTMLElement;
-  return getMidpointFromDOMRect(element.getBoundingClientRect());
-};
-
 const convertSpanIDtoNumber = (spanID: SpanID) => {
   return (
     spanID[0] * 1_000_000_000 +

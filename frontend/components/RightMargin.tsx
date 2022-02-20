@@ -28,7 +28,7 @@ const RightMargin = ({
   const changeTextValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     /* JavaScript does not have a good built-in data type for a Map type that can order by keys,
         as such we use the Map data type to store objects. However, object comparison in JavaScript
-        always returns false, and we have to use the isEqual implementation from lodash instead. 
+        always returns false, and we use the isEqual implementation from lodash instead. 
     */
     event.preventDefault();
     const interval = JSON.parse(event.target.id);
@@ -61,10 +61,7 @@ const RightMargin = ({
        the vertical mid-point of the highlight to the vertical mid-point of the
        textField component
     */
-    // get the height of this text field as an argument into the function
-    // console.log(y, height);
     return y - height / 2;
-    // return y;
   };
 
   const midpoints = getTextAnnotationMidpoints(canvasContainerRef, annotations);
