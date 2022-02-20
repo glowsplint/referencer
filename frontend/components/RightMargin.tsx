@@ -3,16 +3,11 @@ import {
   Interval,
   useAnnotations,
 } from "../contexts/Annotations";
+import { MutableRefObject, useRef, useState } from "react";
 import {
-  createRef,
-  MutableRefObject,
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { getTextAnnotationMidpoints, spanIDcomparator } from "./Canvas/actions";
+  getTextAnnotationMidpoints,
+  highlightsComparator,
+} from "./Canvas/actions";
 
 import { TextField } from "@mui/material";
 import _ from "lodash";
@@ -53,14 +48,7 @@ const RightMargin = ({
           { text: event.target.value, colour: previousEntry[1].colour },
         ] as [Interval, AnnotationInfo],
       ];
-      highlightsArray.sort(([aInterval, aInfo], [bInterval, bInfo]) => {
-        const startComparator = spanIDcomparator(
-          aInterval.start,
-          bInterval.start
-        );
-        if (startComparator !== 0) return startComparator;
-        return spanIDcomparator(aInterval.end, bInterval.end);
-      });
+      highlightsArray.sort(highlightsComparator);
       const highlights = new Map(highlightsArray);
 
       return { ...previous, highlights };

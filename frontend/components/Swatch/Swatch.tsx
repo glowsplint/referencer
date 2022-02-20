@@ -21,8 +21,13 @@ import {
 
 import clsx from "clsx";
 import styles from "../../styles/Swatch/Swatch.module.css";
-import { useAnnotations } from "../../contexts/Annotations";
+import {
+  AnnotationInfo,
+  Interval,
+  useAnnotations,
+} from "../../contexts/Annotations";
 import { useSettings } from "../../contexts/Settings";
+import { highlightsComparator } from "../Canvas/actions";
 
 const colours = [
   red["500"],
@@ -61,13 +66,15 @@ const Circle = ({
   };
   const highlightText = (colour: string) => {
     setAnnotations((previous) => {
-      const highlights = new Map([
+      const highlightsArray = [
         ...previous.highlights,
         [
           { start: previous.selection.start, end: previous.selection.end },
           { colour: colour, text: "" },
         ],
-      ]);
+      ] as [Interval, AnnotationInfo][];
+      highlightsArray.sort(highlightsComparator);
+      const highlights = new Map(highlightsArray);
       return {
         ...previous,
         highlights,

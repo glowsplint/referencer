@@ -233,7 +233,7 @@ const setArrowTarget = (target: SpanID, setAnnotations: SetAnnotations) => {
 
 const pushSelectionToHighlight = (setAnnotations: SetAnnotations) => {
   setAnnotations((previous) => {
-    const highlights = new Map([
+    const highlightsArray = [
       ...previous.highlights,
       [
         previous.selection,
@@ -241,8 +241,10 @@ const pushSelectionToHighlight = (setAnnotations: SetAnnotations) => {
           colour: previous.activeColour,
           text: "",
         },
-      ],
-    ]);
+      ] as [Interval, AnnotationInfo],
+    ];
+    highlightsArray.sort(highlightsComparator);
+    const highlights = new Map(highlightsArray);
     return {
       ...previous,
       highlights,
@@ -272,6 +274,15 @@ const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
 };
 
 /* Text annotations */
+const highlightsComparator = (
+  [aInterval, aInfo]: [Interval, AnnotationInfo],
+  [bInterval, bInfo]: [Interval, AnnotationInfo]
+): number => {
+  const startComparator = spanIDcomparator(aInterval.start, bInterval.start);
+  if (startComparator !== 0) return startComparator;
+  return spanIDcomparator(aInterval.end, bInterval.end);
+};
+
 const getIntervalMidpoint = (
   canvasContainer: MutableRefObject<HTMLDivElement>,
   interval: Interval
@@ -315,6 +326,7 @@ export {
   getAttributes,
   getSelectionOffsetBoundingRect,
   getTextAnnotationMidpoints,
+  highlightsComparator,
   pushSelectionToHighlight,
   setArrowAnchor,
   setArrowTarget,
