@@ -61,8 +61,10 @@
 }
 
 .superscript {
-  vertical-align: super;
   font-size: 75%;
+  position: relative;
+  top: -0.4em;
+  vertical-align: baseline;
 }
 
 .footnoteText {
