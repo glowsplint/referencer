@@ -276,9 +276,9 @@ const getIntervalMidpoint = (
   canvasContainer: MutableRefObject<HTMLDivElement>,
   interval: Interval
 ) => {
-  /* Returns the y-coordinate midpoint from an interval */
+  /* Returns the y-coordinate of the midpoint from an interval */
   const boxes = getSelectionOffsetBoundingRect(canvasContainer, interval);
-  if (boxes.length === 0) return;
+  // if (boxes.length === 0) return;
   const getYProperty = (func: (...values: number[]) => number) =>
     boxes
       .map((box) => box.y)

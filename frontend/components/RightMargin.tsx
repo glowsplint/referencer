@@ -3,9 +3,17 @@ import {
   Interval,
   useAnnotations,
 } from "../contexts/Annotations";
+import {
+  createRef,
+  MutableRefObject,
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { getTextAnnotationMidpoints, spanIDcomparator } from "./Canvas/actions";
 
-import { MutableRefObject } from "react";
 import { TextField } from "@mui/material";
 import _ from "lodash";
 import clsx from "clsx";
@@ -59,23 +67,55 @@ const RightMargin = ({
     });
   };
 
+  const computeY = (y: number, height: number) => {
+    /* Computes the appropriate vertical offset for the textField component by
+       accounting for the height of the rendered textField component to match
+       the vertical mid-point of the highlight to the vertical mid-point of the
+       textField component
+    */
+    // get the height of this text field as an argument into the function
+    // console.log(y, height);
+    return y - height / 2;
+    // return y;
+  };
+
+  const midpoints = getTextAnnotationMidpoints(canvasContainerRef, annotations);
+
+  const ref = useRef<HTMLDivElement[]>([]);
+  const [heights, setHeights] = useState<number[]>([]);
+
   // Conditionally renders text fields if canvas container ref is valid
   const textFields = canvasContainerRef.current
-    ? getTextAnnotationMidpoints(canvasContainerRef, annotations).map(
-        (item, index) => {
-          return (
-            <div className={styles.textField} key={index}>
-              <TextField
-                value={item.text}
-                fullWidth
-                style={{ transform: `translateY(${item.y}px)` }}
-                onChange={changeTextValue}
-                id={JSON.stringify(item.interval)}
-              />
-            </div>
-          );
-        }
-      )
+    ? midpoints.map((item, index) => {
+        return (
+          <div
+            className={styles.textFieldContainer}
+            key={index}
+            style={{
+              transform: `translateY(${computeY(item.y, heights[index])}px)`,
+            }}
+          >
+            <TextField
+              value={item.text}
+              fullWidth
+              multiline
+              ref={(element) => {
+                ref.current[index] = element as HTMLDivElement;
+                // Prevents infinite update loop
+                if (heights.length >= ref.current.length) return;
+                setHeights((previous) => {
+                  // Does not use previous state because multiple renders will chain this callback
+                  const latest =
+                    ref.current[index]?.getBoundingClientRect().height;
+                  return [...heights.slice(0, heights.length), latest];
+                });
+              }}
+              onChange={changeTextValue}
+              id={JSON.stringify(item.interval)}
+            />
+          </div>
+        );
+      })
     : null;
 
   return (
