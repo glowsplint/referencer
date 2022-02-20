@@ -1,14 +1,25 @@
+import Konva from 'konva';
+import React, { MutableRefObject, useEffect } from 'react';
+import {
+  Arrow,
+  Layer,
+  Rect,
+  Stage
+  } from 'react-konva';
+import { baseTracking, useTracking } from '../../contexts/Tracking';
+import { SelectionMode } from '../../common/constants';
+import { useAnnotations } from '../../contexts/Annotations';
+import { useSettings } from '../../contexts/Settings';
+import { useTexts } from '../../contexts/Texts';
 import {
   AnnotationInfo,
   Annotations,
   ArrowIndices,
   Interval,
-  useAnnotations,
-} from "../../contexts/Annotations";
-import { Arrow, Layer, Rect, Stage } from "react-konva";
-import React, { MutableRefObject, useEffect } from "react";
-import { SpanID, baseTracking, useTracking } from "../../contexts/Tracking";
-import { StateMachineKeyboard, StateMachineMouse } from "../types/types";
+  SpanID,
+  StateMachineKeyboard,
+  StateMachineMouse,
+} from "../types";
 import {
   finaliseArrowCreation,
   getAttributes,
@@ -21,10 +32,6 @@ import {
   setSelectionWithSort,
   setTrackingMode,
 } from "./actions";
-
-import Konva from "konva";
-import { SelectionMode } from "../../common/enums";
-import { useTexts } from "../../contexts/Texts";
 
 const getHighlightBoxes = (
   canvasContainer: MutableRefObject<HTMLDivElement>,
@@ -154,6 +161,7 @@ const Canvas = ({
   height: number;
   canvasContainer: MutableRefObject<HTMLDivElement>;
 }) => {
+  const { settings } = useSettings();
   const { tracking, setTracking } = useTracking();
   const { annotations, setAnnotations } = useAnnotations();
   const { texts } = useTexts();
@@ -161,7 +169,7 @@ const Canvas = ({
   // Reset selection on change to Texts context
   useEffect(() => {
     setTracking(baseTracking);
-  }, [texts, setTracking]);
+  }, [settings, texts, setTracking]);
 
   /* State Machine & Handlers */
   const isArrowing = (event: React.KeyboardEvent | MouseEvent) => {

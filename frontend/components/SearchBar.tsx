@@ -1,14 +1,13 @@
-import { processTexts, useTexts } from "../contexts/Texts";
-
-import Autocomplete from "@mui/material/Autocomplete";
-import { DEVELOPMENT_MODE } from "../common/utils";
-import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";
-import TextField from "@mui/material/TextField";
-import books from "../common/books";
-import { grey } from "@mui/material/colors";
-import styles from "../styles/SearchBar.module.css";
-import { useState } from "react";
+import Autocomplete from '@mui/material/Autocomplete';
+import books from '../common/books';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
+import styles from '../styles/SearchBar.module.css';
+import TextField from '@mui/material/TextField';
+import { DEVELOPMENT_MODE } from '../common/constants';
+import { grey } from '@mui/material/colors';
+import { processTexts, useTexts } from '../contexts/Texts';
+import { useState } from 'react';
 
 const SearchBar = () => {
   const { setTexts } = useTexts();

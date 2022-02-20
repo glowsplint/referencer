@@ -1,25 +1,13 @@
-import React, { SetStateAction, useState } from "react";
+import React, { useState } from 'react';
+import { SelectionMode } from '../common/constants';
+import { SetTracking, Tracking } from '../components/types';
+/* The Tracking context provides information on current and previous modes of
+   selection (e.g. Arrowing, Selecting, None) and also where the mouse currently
+   is on the canvas.
 
-import { SelectionMode } from "../common/enums";
-import { number } from "prop-types";
-
-// SpanID is [textAreaID, data-text-index, data-phrase-index, data-pure-text-index]
-type SpanID = [number, number, number, number];
-
-interface ITracking {
-  current: SelectionMode;
-  previous: SelectionMode;
-}
-
-interface Tracking {
-  mode: ITracking;
-  mouse: {
-    x: number;
-    y: number;
-  };
-}
-
-type SetTracking = React.Dispatch<SetStateAction<Tracking>>;
+   The state is used in the state machine handlers in Canvas.tsx by the mouse
+   and keyboard actions.
+*/
 
 const baseTracking: Tracking = {
   mode: {
@@ -54,5 +42,4 @@ const useTracking = () => {
   return React.useContext(TrackingContext);
 };
 
-export type { SpanID, Tracking, SetTracking };
 export { baseTracking, TrackingProvider, useTracking };

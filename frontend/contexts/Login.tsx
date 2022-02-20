@@ -1,11 +1,5 @@
-import React, { SetStateAction, useState } from "react";
-
-interface Login {
-  displayName: string;
-  spaceID: string;
-}
-
-type SetLogin = React.Dispatch<SetStateAction<Login>>;
+import React, { useState } from "react";
+import { Login, SetLogin } from "../components/types";
 
 const baseLogin = {
   displayName: "user-1",
@@ -34,5 +28,4 @@ const useLogin = () => {
   return React.useContext(LoginContext);
 };
 
-export type { SetLogin };
 export { LoginProvider, useLogin };

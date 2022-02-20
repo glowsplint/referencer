@@ -1,28 +1,17 @@
+import { baseAnnotations } from '../../contexts/Annotations';
+import { MutableRefObject } from 'react';
+import { SelectionMode } from '../../common/constants';
 import {
   AnnotationInfo,
   Annotations,
+  BoundingBox,
   Interval,
   SetAnnotations,
-  baseAnnotations,
-} from "../../contexts/Annotations";
-import { SetTracking, SpanID } from "../../contexts/Tracking";
+  SetTracking,
+  SpanID,
+} from "../types";
 
-import { MutableRefObject } from "react";
-import { SelectionMode } from "../../common/enums";
-
-// Types and interfaces
-type BoundingBox = {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-  top: number;
-  right: number;
-  bottom: number;
-  left: number;
-};
-
-// Helper functions
+/* Helper functions */
 const SPAN_LEVEL = 3;
 
 const getSpan = (x: number, y: number) => {

@@ -1,18 +1,7 @@
-// import { useMediaQuery } from "@mui/material";
-
-import React, { SetStateAction, useState } from "react";
-
-interface Settings {
-  isDarkMode: boolean;
-  isZenMode: boolean;
-  isJustified: boolean;
-  isLayersOn: boolean;
-  isMultipleRowsLayout: boolean;
-  isSettingsOpen: boolean;
-}
+import React, { useState } from "react";
+import { SetSettings, Settings } from "../components/types";
 
 const baseSettings = {
-  //   isDarkMode: useMediaQuery("(prefers-color-scheme: dark)"),
   isDarkMode: false,
   isZenMode: false,
   isJustified: true,
@@ -20,8 +9,6 @@ const baseSettings = {
   isMultipleRowsLayout: true,
   isSettingsOpen: true,
 };
-
-type SetSettings = React.Dispatch<SetStateAction<Settings>>;
 
 const SettingsContext = React.createContext<{
   settings: Settings;
@@ -45,5 +32,4 @@ const useSettings = () => {
   return React.useContext(SettingsContext);
 };
 
-export type { Settings, SetSettings };
 export { useSettings, SettingsProvider };

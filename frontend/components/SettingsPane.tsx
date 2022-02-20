@@ -1,31 +1,30 @@
-import React, { useState } from "react";
-import { baseAnnotations, useAnnotations } from "../contexts/Annotations";
-
-import Button from "@mui/material/Button";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CloseIcon from "@mui/icons-material/Close";
-import CreateIcon from "@mui/icons-material/Create";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import FaceIcon from "@mui/icons-material/Face";
-import IconButton from "@mui/material/IconButton";
-import MUICheckbox from "@mui/material/Checkbox";
-import Paper from "@mui/material/Paper";
-import ShareIcon from "@mui/icons-material/Share";
-import { Swatch } from "./Swatch/Swatch";
-import TextField from "@mui/material/TextField";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
-import clsx from "clsx";
-import styles from "../styles/SettingsPane.module.css";
-import { useLogin } from "../contexts/Login";
-import { useSettings } from "../contexts/Settings";
-import { useTexts } from "../contexts/Texts";
+import Button from '@mui/material/Button';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CloseIcon from '@mui/icons-material/Close';
+import clsx from 'clsx';
+import CreateIcon from '@mui/icons-material/Create';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import FaceIcon from '@mui/icons-material/Face';
+import IconButton from '@mui/material/IconButton';
+import MUICheckbox from '@mui/material/Checkbox';
+import Paper from '@mui/material/Paper';
+import React, { useState } from 'react';
+import ShareIcon from '@mui/icons-material/Share';
+import styles from '../styles/SettingsPane.module.css';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { baseAnnotations, useAnnotations } from '../contexts/Annotations';
+import { Swatch } from './Swatch/Swatch';
+import { useLogin } from '../contexts/Login';
+import { useSettings } from '../contexts/Settings';
+import { useTexts } from '../contexts/Texts';
 
 const Checkbox = ({
   handleCheckBoxToggle,

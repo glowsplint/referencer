@@ -1,19 +1,15 @@
-import {
-  AnnotationInfo,
-  Interval,
-  useAnnotations,
-} from "../contexts/Annotations";
-import { MutableRefObject, useRef, useState } from "react";
+import _ from 'lodash';
+import clsx from 'clsx';
+import styles from '../styles/RightMargin.module.css';
+import { AnnotationInfo, Interval } from './types';
+import { MutableRefObject, useRef, useState } from 'react';
+import { TextField } from '@mui/material';
+import { useAnnotations } from '../contexts/Annotations';
+import { useSettings } from '../contexts/Settings';
 import {
   getTextAnnotationMidpoints,
   highlightsComparator,
 } from "./Canvas/actions";
-
-import { TextField } from "@mui/material";
-import _ from "lodash";
-import clsx from "clsx";
-import styles from "../styles/RightMargin.module.css";
-import { useSettings } from "../contexts/Settings";
 
 const RightMargin = ({
   canvasContainerRef,

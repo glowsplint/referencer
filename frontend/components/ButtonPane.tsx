@@ -1,23 +1,23 @@
-import CenterFocusStrongIcon from "@mui/icons-material/CenterFocusStrong";
-import Fab from "@mui/material/Fab";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import FormatPaintIcon from "@mui/icons-material/FormatPaint";
-import HighlightAltIcon from "@mui/icons-material/HighlightAlt";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import InvertColorsIcon from "@mui/icons-material/InvertColors";
-import InvertColorsOffIcon from "@mui/icons-material/InvertColorsOff";
-import LayersClearIcon from "@mui/icons-material/LayersClear";
-import LayersIcon from "@mui/icons-material/Layers";
-import MenuIcon from "@mui/icons-material/Menu";
-import Paper from "@mui/material/Paper";
-import React from "react";
-import TextRotateVerticalIcon from "@mui/icons-material/TextRotateVertical";
-import TextRotationNoneIcon from "@mui/icons-material/TextRotationNone";
-import Tooltip from "@mui/material/Tooltip";
-import styles from "../styles/ButtonPane.module.css";
-import { useAnnotations } from "../contexts/Annotations";
-import { useSettings } from "../contexts/Settings";
+import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
+import Fab from '@mui/material/Fab';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatPaintIcon from '@mui/icons-material/FormatPaint';
+import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import InvertColorsIcon from '@mui/icons-material/InvertColors';
+import InvertColorsOffIcon from '@mui/icons-material/InvertColorsOff';
+import LayersClearIcon from '@mui/icons-material/LayersClear';
+import LayersIcon from '@mui/icons-material/Layers';
+import MenuIcon from '@mui/icons-material/Menu';
+import Paper from '@mui/material/Paper';
+import React from 'react';
+import styles from '../styles/ButtonPane.module.css';
+import TextRotateVerticalIcon from '@mui/icons-material/TextRotateVertical';
+import TextRotationNoneIcon from '@mui/icons-material/TextRotationNone';
+import Tooltip from '@mui/material/Tooltip';
+import { useAnnotations } from '../contexts/Annotations';
+import { useSettings } from '../contexts/Settings';
 
 const ButtonIcon = ({
   icon,

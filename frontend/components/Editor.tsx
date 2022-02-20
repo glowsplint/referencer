@@ -1,19 +1,24 @@
-import { ParsedText, TextInfo, useTexts } from "../contexts/Texts";
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
-
-import { Format } from "../common/enums";
-import Header from "./Header";
-import Paper from "@mui/material/Paper";
-import { REGEX } from "../common/enums";
-import RightMargin from "./RightMargin";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import SearchBar from "./SearchBar";
-import Typography from "@mui/material/Typography";
-import clsx from "clsx";
-import dynamic from "next/dynamic";
-import { get } from "../common/utils";
-import styles from "../styles/Editor.module.css";
-import { useSettings } from "../contexts/Settings";
+import clsx from 'clsx';
+import dynamic from 'next/dynamic';
+import Header from './Header';
+import Paper from '@mui/material/Paper';
+import React, {
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState
+  } from 'react';
+import RightMargin from './RightMargin';
+import SearchBar from './SearchBar';
+import styles from '../styles/Editor.module.css';
+import Typography from '@mui/material/Typography';
+import { Format } from '../common/constants';
+import { get } from '../common/utils';
+import { ParsedText, TextInfo } from './types';
+import { Regex } from '../common/constants';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import { useSettings } from '../contexts/Settings';
+import { useTexts } from '../contexts/Texts';
 
 const NoSSRCanvas = dynamic(() => import("./Canvas/Canvas"), {
   ssr: false,
@@ -28,7 +33,7 @@ const PureText = ({
   id: [number, number, number];
   removeLeadingWhitespace?: boolean;
 }) => {
-  const [firstItem, ...rest] = phrase.split(REGEX.wordBoundary);
+  const [firstItem, ...rest] = phrase.split(Regex.WordBoundary);
   return (
     <>
       <span
@@ -74,13 +79,13 @@ const StandardText = ({
   textAreaID: number;
   textInfo: TextInfo;
 }) => {
-  const charArray = textInfo.text.split(REGEX.inlineFootnote);
+  const charArray = textInfo.text.split(Regex.InlineFootnote);
 
   // <text> may contain inline footnotes i.e. `(3)`.
   return (
     <>
       {charArray.map((item, index) => {
-        if (item.match(REGEX.inlineFootnote)) {
+        if (item.match(Regex.InlineFootnote)) {
           return (
             <InlineFootnote
               text={item}
@@ -167,9 +172,9 @@ const FootnoteText = ({ text }: { text: string }) => {
   return (
     <div className={styles.footnoteText}>
       {text
-        .split(REGEX.withinAsterisks)
+        .split(Regex.WithinAsterisks)
         .map((text, index) =>
-          text.match(REGEX.withinAsterisks) ? (
+          text.match(Regex.WithinAsterisks) ? (
             <ItalicsBlock text={text} key={index} />
           ) : (
             text

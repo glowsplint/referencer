@@ -1,19 +1,12 @@
-import { Format, REGEX } from "../common/enums";
-import React, { SetStateAction, useState } from "react";
-
-interface Texts {
-  headers: string[];
-  bodies: ParsedText[];
-  isDisplayed: boolean[];
-}
+import React, { useState } from 'react';
+import { Format, Regex } from '../common/constants';
+import { SetTexts, TextInfo, Texts } from '../components/types';
 
 const baseTexts: Texts = {
   headers: [],
   bodies: [],
   isDisplayed: [],
 };
-
-type SetTexts = React.Dispatch<SetStateAction<Texts>>;
 
 const TextsContext = React.createContext<{
   texts: Texts;
@@ -23,32 +16,11 @@ const TextsContext = React.createContext<{
   setTexts: () => {},
 });
 
-type TextType =
-  | Format
-  | "IndentedVerseNumber"
-  | "InlineFootnote"
-  | "InlineVerseNumber"
-  | "Italics"
-  | "ItalicsBlock"
-  | "ParagraphSpacer"
-  | "SectionHeader";
-
-interface TextInfo {
-  id: number;
-  format: TextType;
-  text: string;
-}
-
-interface ParsedText {
-  mainText: TextInfo[];
-  footnotes: TextInfo[];
-}
-
 /* Parsing functions */
 // Splits the original string into the main body of text, and also footnotes
 const splitTexts = (text: string): [string[], string[]] => {
   const splitOnParagraphs = (text: string): string[] =>
-    text.split(REGEX.paragraph);
+    text.split(Regex.Paragraph);
   const footnoteIndex = splitOnParagraphs(text).indexOf("Footnotes");
   let footnotes: string[] = [];
   let mainText: string[] = splitOnParagraphs(text);
@@ -79,10 +51,10 @@ const processTexts = (text: string) => {
 const getMainText = (rawMainText: string[]): TextInfo[] => {
   const brokenText = rawMainText.slice(1).flatMap((a) =>
     a
-      .split(REGEX.verseNumberInText)
-      .flatMap((b) => b.split(REGEX.specialNoteInText))
-      .flatMap((c) => c.split(REGEX.tripleLineFeed))
-      .flatMap((d) => d.split(REGEX.tripleLineFeedAtEnd))
+      .split(Regex.VerseNumberInText)
+      .flatMap((b) => b.split(Regex.SpecialNoteInText))
+      .flatMap((c) => c.split(Regex.TripleLineFeed))
+      .flatMap((d) => d.split(Regex.TripleLineFeedAtEnd))
   );
   let mainText: TextInfo[] = [];
   let isFirstVerseNumberFound: boolean = false; // flag tracker
@@ -90,7 +62,7 @@ const getMainText = (rawMainText: string[]): TextInfo[] => {
   // Spaces are added at the end of strings (via addSpace) to have proper spacing around verse numbers
   for (let [index, item] of brokenText.entries()) {
     const getFormat = () => {
-      if (item.match(REGEX.verseNumber)) {
+      if (item.match(Regex.VerseNumber)) {
         if (!isFirstVerseNumberFound) {
           isFirstVerseNumberFound = true;
         }
@@ -99,22 +71,22 @@ const getMainText = (rawMainText: string[]): TextInfo[] => {
         // Everything before the first verse number is found is a SectionHeader
         if (!isFirstVerseNumberFound) {
           return Format.SectionHeader;
-        } else if (item.match(REGEX.specialNoteInText)) {
+        } else if (item.match(Regex.SpecialNoteInText)) {
           return Format.SpecialNote;
-        } else if (item.match(REGEX.quotes)) {
+        } else if (item.match(Regex.Quotes)) {
           // If the quote (") begins at the start of the verse, format as StandardText
           // or, if the quote (") is in Psalms, format as StandardText
           brokenText[index] = addSpace(brokenText[index]);
           if (
             mainText[index - 1].format === Format.VerseNumber ||
-            rawMainText[0].match(REGEX.psalm)
+            rawMainText[0].match(Regex.Psalm)
           ) {
             return Format.StandardText;
           } else {
             return Format.Quotes;
           }
           // Triple Line Feeds at the end of the string are parsed as new paragraphs
-        } else if (item.match(REGEX.tripleLineFeedAtEnd)) {
+        } else if (item.match(Regex.TripleLineFeedAtEnd)) {
           return Format.TripleLineFeedAtEnd;
           // If the previous item in the array is StandardText, then this should be a SectionHeader
           // if it is not Psalm 42:6 (exception to the rule)
@@ -161,5 +133,4 @@ const useTexts = () => {
   return React.useContext(TextsContext);
 };
 
-export type { Texts, TextInfo, ParsedText };
 export { useTexts, TextsProvider, processTexts };

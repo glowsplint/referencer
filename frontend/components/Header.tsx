@@ -1,10 +1,10 @@
-import { APP_VERSION } from "../common/utils";
-import HelpIcon from "@mui/icons-material/Help";
-import IconButton from "@mui/material/IconButton";
-import React from "react";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
-import styles from "../styles/Header.module.css";
+import HelpIcon from '@mui/icons-material/Help';
+import IconButton from '@mui/material/IconButton';
+import React from 'react';
+import styles from '../styles/Header.module.css';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { APP_VERSION } from '../common/constants';
 
 const Left = () => {
   return (
