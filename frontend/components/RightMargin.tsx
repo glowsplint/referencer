@@ -2,10 +2,16 @@ import _ from 'lodash';
 import clsx from 'clsx';
 import styles from '../styles/RightMargin.module.css';
 import { AnnotationInfo, Interval } from './types';
-import { MutableRefObject, useRef, useState } from 'react';
 import { TextField } from '@mui/material';
 import { useAnnotations } from '../contexts/Annotations';
 import { useSettings } from '../contexts/Settings';
+import {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   getTextAnnotationMidpoints,
   highlightsComparator,
@@ -20,6 +26,23 @@ const RightMargin = ({
 }) => {
   const { settings } = useSettings();
   const { annotations, setAnnotations } = useAnnotations();
+  const midpoints = getTextAnnotationMidpoints(canvasContainerRef, annotations);
+  const [heights, setHeights] = useState<number[]>([]);
+
+  const ref = useCallback(
+    (node: HTMLDivElement) => {
+      if (node == null) return;
+      setTimeout(() => {
+        setHeights((previous) => {
+          return [...node.children].map(
+            (child) => child.getBoundingClientRect().height
+          );
+        });
+      }, 0);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [annotations.highlights]
+  );
 
   const changeTextValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     /* JavaScript does not have a good built-in data type for a Map type that can order by keys,
@@ -60,11 +83,6 @@ const RightMargin = ({
     return y - height / 2;
   };
 
-  const midpoints = getTextAnnotationMidpoints(canvasContainerRef, annotations);
-
-  const ref = useRef<HTMLDivElement[]>([]);
-  const [heights, setHeights] = useState<number[]>([]);
-
   // Conditionally renders text fields if canvas container ref is valid
   const textFields = canvasContainerRef.current
     ? midpoints.map((item, index) => {
@@ -80,17 +98,6 @@ const RightMargin = ({
               value={item.text}
               fullWidth
               multiline
-              ref={(element) => {
-                ref.current[index] = element as HTMLDivElement;
-                // Prevents infinite update loop
-                if (heights.length >= ref.current.length) return;
-                setHeights((previous) => {
-                  // Does not use previous state because multiple renders will chain this callback
-                  const latest =
-                    ref.current[index]?.getBoundingClientRect().height;
-                  return [...heights.slice(0, heights.length), latest];
-                });
-              }}
               onChange={changeTextValue}
               id={JSON.stringify(item.interval)}
             />
@@ -107,7 +114,7 @@ const RightMargin = ({
         [styles.dark]: settings.isDarkMode,
       })}
     >
-      {textFields}
+      <div ref={ref}>{textFields}</div>
     </div>
   );
 };
