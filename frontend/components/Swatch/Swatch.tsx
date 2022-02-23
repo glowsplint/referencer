@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import styles from '../../styles/Swatch/Swatch.module.css';
 import { AnnotationInfo, Interval } from '../types';
 import { highlightsComparator } from '../Canvas/actions';
-import { useAnnotations } from '../../contexts/Annotations';
+import { NaNInterval, useAnnotations } from '../../contexts/Annotations';
 import { useSettings } from '../../contexts/Settings';
 import {
   amber,
@@ -62,6 +62,13 @@ const Circle = ({
   };
   const highlightText = (colour: string) => {
     setAnnotations((previous) => {
+      // Guard clause to prevent errors
+      if (
+        previous.selection.start == NaNInterval ||
+        previous.selection.end == NaNInterval
+      )
+        return previous;
+
       const highlightsArray = [
         ...previous.highlights,
         [
