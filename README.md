@@ -4,17 +4,16 @@ Referencer is a web-based online Bible study annotation tool which makes it easy
 
 ### Features
 
-Collaborative online group bible study can often be challenging because:
+Referencer allows you to:
 
-1. It is difficult to take notes online as you are reading from the text.
-2. It is difficult to share the notes you have taken with other people from the group.
+1. Cross-reference different parts of the Bible side-by-side
+2. Make highlights, inline annotations and draw arrows
+3. Group ideas in different layers
 
-The Referencer online bible study tool aims to resolve these issues by allowing users to highlight, draw arrows, comment, and share these user-made annotations with other people who are also joined into the same study session.
+### Controls
 
-Users can:
-
-1. Use left-click drag to make text selections. They can highlight the selected text.
-2. Hold down the Ctrl key to enter arrowing mode. In this mode, left-click drag will draw arrows instead.
+1. Drag your left-click to make text selections.
+2. Press the Ctrl key before dragging your left click to draw arrows.
 
 # Development
 
@@ -38,7 +37,7 @@ To run the front-end development server, run:
 npm install -g yarn
 
 # to run the front-end dev server
-cd nextjs-frontend
+cd frontend
 yarn install
 yarn dev
 ```
@@ -48,11 +47,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 To export and build the front-end static assets, run:
 
 ```bash
-cd nextjs-frontend
+cd frontend
 yarn build
 ```
 
-This will generate the static assets in `nextjs-frontend\out`, which are required by the back-end development server in the next step.
+This will generate the static assets in `.\frontend\out`, which are required by the back-end development server in the next step.
 
 ### Back-end development
 
@@ -81,12 +80,12 @@ The production server can be run as follows:
 
 ```bash
 # build the latest front-end static assets
-cd nextjs-frontend
+cd frontend
 yarn build
 
-# run the production server, -p flag for production
+# run the production server
 cd ..
-py run.py -p
+py run.py
 ```
 
 You will need to supply a `.env` file in the root directory with a valid ESV API key.
