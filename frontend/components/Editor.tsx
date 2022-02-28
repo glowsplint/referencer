@@ -8,7 +8,6 @@ import React, {
   useRef,
   useState
   } from 'react';
-import RightMargin from './RightMargin';
 import SearchBar from './SearchBar';
 import styles from '../styles/Editor.module.css';
 import Typography from '@mui/material/Typography';
@@ -19,6 +18,7 @@ import { Regex } from '../common/constants';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { useSettings } from '../contexts/Settings';
 import { useTexts } from '../contexts/Texts';
+
 
 const NoSSRCanvas = dynamic(() => import("./Canvas/Canvas"), {
   ssr: false,
@@ -334,15 +334,10 @@ const MainRegion = () => {
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
 
-  const rightMarginRef = useRef() as MutableRefObject<HTMLDivElement>;
-
   useEffect(() => {
     const resize = () => {
       setHeight(canvasContainerRef.current.clientHeight);
-      setWidth(
-        canvasContainerRef.current.clientWidth -
-          rightMarginRef.current.clientWidth
-      );
+      setWidth(canvasContainerRef.current.clientWidth);
     };
     resize();
     window.addEventListener("resize", resize);
@@ -392,11 +387,6 @@ const MainRegion = () => {
             ) : null;
           })}
         </div>
-
-        <RightMargin
-          canvasContainerRef={canvasContainerRef}
-          rightMarginRef={rightMarginRef}
-        />
       </div>
     </Scrollbars>
   );
