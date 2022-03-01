@@ -1,9 +1,10 @@
 .chip {
-  position: absolute;
-  z-index: 999;
-  user-select: none;
-  border-radius: 16px;
   background-color: lightgray;
+  border-radius: 16px;
+  border: none;
   font-size: 0.8125rem;
-  padding: 0 6px 0 6px;
+  padding: 3px 6px 3px 6px;
+  position: absolute;
+  user-select: none;
+  z-index: 999;
 }
