@@ -13,6 +13,7 @@ import styles from '../styles/Editor.module.css';
 import Typography from '@mui/material/Typography';
 import { Format } from '../common/constants';
 import { get } from '../common/utils';
+import { InlineNotes } from './InlineNotes';
 import { ParsedText, TextInfo } from './types';
 import { Regex } from '../common/constants';
 import { Scrollbars } from 'react-custom-scrollbars-2';
@@ -363,6 +364,7 @@ const MainRegion = () => {
         id="canvasContainer"
         className={styles.playArea}
       >
+        <InlineNotes canvasContainer={canvasContainerRef} />
         <NoSSRCanvas
           canvasContainer={canvasContainerRef}
           className={styles.canvas}

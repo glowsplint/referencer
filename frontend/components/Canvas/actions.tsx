@@ -11,6 +11,7 @@ import {
   SpanID,
 } from "../types";
 
+
 /* Helper functions */
 const SPAN_LEVEL = 3;
 
@@ -263,24 +264,35 @@ const highlightsComparator = (
   return spanIDcomparator(aInterval.end, bInterval.end);
 };
 
+const getMiddleItemOfArray = <T extends unknown>(arr: T[]) => {
+  const middleIndex = Math.floor(arr.length / 2);
+  return arr[middleIndex];
+};
+
 const getIntervalMidpoint = (
   canvasContainer: MutableRefObject<HTMLDivElement>,
   interval: Interval
 ) => {
-  /* Returns the y-coordinate of the midpoint from an interval */
+  /* Returns the coordinates of the midpoint from an interval, accounting for
+     intervals that span across multiple lines
+  */
   const boxes = getSelectionOffsetBoundingRect(canvasContainer, interval);
   // if (boxes.length === 0) return;
-  const getYProperty = (func: (...values: number[]) => number) =>
-    boxes
-      .map((box) => box.y)
-      .reduce((previousY, currentY) => func(previousY, currentY));
-  const minY = getYProperty(Math.min);
-  const maxY = getYProperty(Math.max);
-  const maxYWidth = boxes
-    .filter((box) => box.y === maxY)
-    .map((box) => box.height)
-    .reduce((previousY, currentY) => Math.max(previousY, currentY));
-  return (minY + maxY + maxYWidth) / 2;
+
+  // Get the horizontal middle by taking the sum of widths for every vertical level
+  // and dividing in two, and then running along from the top to see where the middle is
+  const totalWidth = boxes.map((box) => box.width).reduce((a, b) => a + b);
+
+  let remainingWidth = totalWidth / 2;
+  let i = 0;
+  while (remainingWidth - boxes[i].width > 0) {
+    remainingWidth -= boxes[i].width;
+    i++;
+  }
+
+  const x = boxes[i].x + remainingWidth;
+  const y = boxes[i].y;
+  return { x, y };
 };
 
 const getTextAnnotationMidpoints = (
@@ -293,7 +305,7 @@ const getTextAnnotationMidpoints = (
   return (highlights.filter(Boolean) as [Interval, AnnotationInfo][]).map(
     ([interval, annotationInfo]) => {
       return {
-        y: getIntervalMidpoint(canvasContainer, interval),
+        y: getIntervalMidpoint(canvasContainer, interval).y,
         ...annotationInfo,
         interval,
       };
@@ -315,4 +327,5 @@ export {
   setSelectionWithSort,
   setTrackingMode,
   spanIDcomparator,
+  getIntervalMidpoint,
 };
