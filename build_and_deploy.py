@@ -12,7 +12,7 @@ def build_docker_image():
 
 
 def run_docker_container():
-    return "docker run -dp 5000:5000 referencer"
+    return "docker run -e PORT=5000 -dp 5000:5000 referencer"
 
 
 def clean_up_containers():
@@ -23,11 +23,30 @@ def clean_up_images():
     return "docker image prune -f"
 
 
+def heroku_container_login():
+    return "heroku container:login"
+
+
+def heroku_push():
+    return "heroku container:push web"
+
+
+def heroku_release():
+    return "heroku container:release web"
+
+
+def heroku_open():
+    return "heroku open"
+
+
 frontend_build_pipeline = [build_frontend]
 
-docker_build_and_run_pipeline = [
+docker_build_and_deploy_pipeline = [
     build_docker_image,
-    run_docker_container,
+    # run_docker_container,
+    heroku_container_login,
+    heroku_push,
+    heroku_release,
     clean_up_containers,
     clean_up_images,
 ]
@@ -56,4 +75,4 @@ if __name__ == "__main__":
 
         # Build Docker container, and run
         os.chdir("..")
-        execute_pipeline(pipeline=docker_build_and_run_pipeline, f=f)
+        execute_pipeline(pipeline=docker_build_and_deploy_pipeline, f=f)

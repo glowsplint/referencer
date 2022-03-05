@@ -1,7 +1,7 @@
-import styles from '../styles/InlineNotes.module.css';
-import { getIntervalMidpoint } from './Canvas/actions';
-import { Interval } from './types';
-import { useAnnotations } from '../contexts/Annotations';
+import styles from "../styles/InlineNotes.module.css";
+import { getIntervalMidpoint } from "./Canvas/actions";
+import { Interval } from "./types";
+import { useAnnotations } from "../contexts/Annotations";
 import {
   MutableRefObject,
   RefObject,
@@ -11,27 +11,24 @@ import {
   useState,
 } from "react";
 
-
 const verticalOffset = -1.8; // in em units
 
 const Chip = ({
-  horizontalOffset,
   interval,
   width,
   setWidth,
   canvasContainer,
 }: {
-  horizontalOffset: number;
   interval: Interval;
   width: number;
   setWidth: (newValue: number) => void;
   canvasContainer: MutableRefObject<HTMLDivElement>;
 }) => {
   const [input, setInput] = useState("");
-  // const [width, setWidth] = useState<string>("");
   const ref = useRef<HTMLInputElement>() as RefObject<HTMLInputElement>;
 
   const rect = getIntervalMidpoint(canvasContainer, interval);
+  const horizontalOffset = -width / 2; // in px units
   let style = {
     // 1. Shift up vertically by an offset
     // 2. Shift left horizontally to align midpoint of chip with midpoint of selection
@@ -87,7 +84,9 @@ const Chip = ({
       autoComplete="off"
       style={{ ...style, width }}
       className={styles.chip}
-      onInput={(e) => setInput((e.target as HTMLTextAreaElement).value)}
+      onInput={(e) => {
+        setInput((e.target as HTMLTextAreaElement).value);
+      }}
     />
   );
 };
@@ -115,26 +114,29 @@ const InlineNotes = ({
     [annotations.highlights]
   );
 
-  const setWidth = useCallback((index: number, newValue: number) => {
+  const setWidth = (index: number, newValue: number) => {
+    // funky behaviour because of the way this function works
+    // widths as a variable should probably be a map of intervals to numbers
     setWidths((previous) => {
       let current = [...previous];
       current[index] = newValue;
       return current;
     });
-  }, []);
+  };
 
   return (
     <div ref={ref}>
       {[...annotations.highlights].map(([interval, info], index) => {
-        const horizontalOffset = -widths[index] / 2; // in px units
         return (
           <Chip
             interval={interval}
-            horizontalOffset={horizontalOffset}
             canvasContainer={canvasContainer}
             width={widths[index]}
             setWidth={(newValue: number) => setWidth(index, newValue)}
-            key={index}
+            key={[
+              interval.start.toString(),
+              interval.end.toString(),
+            ].toString()}
           />
         );
       })}

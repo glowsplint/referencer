@@ -4,7 +4,7 @@ import os
 import uvicorn
 
 PRODUCTION_SERVER = {
-    "args": ["py-backend.main:app"],
+    "args": ["backend.main:app"],
     "kwargs": {
         "host": "127.0.0.1",
         "port": 5000,

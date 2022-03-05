@@ -9,6 +9,7 @@ import { grey } from '@mui/material/colors';
 import { processTexts, useTexts } from '../contexts/Texts';
 import { useState } from 'react';
 
+
 const SearchBar = () => {
   const { setTexts } = useTexts();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -16,7 +17,7 @@ const SearchBar = () => {
   const getText = async (query: string) => {
     let url = "http://localhost:3000/api/";
     if (!DEVELOPMENT_MODE) {
-      url = "http://localhost:5000/api/";
+      url = "/api/";
     }
     const response = await fetch(url + encodeURIComponent(query.trim()));
     const payload: {
