@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import styles from '../../styles/Swatch/Swatch.module.css';
-import { AnnotationInfo, Interval } from '../types';
-import { highlightsComparator } from '../Canvas/actions';
+import { AnnotationInfo, Interval, SetAnnotations } from '../types';
 import { NaNInterval, useAnnotations } from '../../contexts/Annotations';
 import { useSettings } from '../../contexts/Settings';
 import {
@@ -24,6 +23,12 @@ import {
   teal,
   yellow,
 } from "@mui/material/colors";
+import {
+  changeActiveColour,
+  highlightsComparator,
+  pushSelectionToHighlight,
+} from "../Canvas/actions";
+
 
 const colours = [
   red["500"],
@@ -55,35 +60,9 @@ const Circle = ({
 }) => {
   const { annotations, setAnnotations } = useAnnotations();
   const { settings } = useSettings();
-  const changeActiveColour = (colour: string) => {
-    setAnnotations((previous) => {
-      return { ...previous, activeColour: colour };
-    });
-  };
-  const highlightText = (colour: string) => {
-    setAnnotations((previous) => {
-      // Guard clause to prevent errors
-      if (
-        previous.selection.start == NaNInterval ||
-        previous.selection.end == NaNInterval
-      )
-        return previous;
-
-      const highlightsArray = [
-        ...previous.highlights,
-        [
-          { start: previous.selection.start, end: previous.selection.end },
-          { colour: colour, text: "" },
-        ],
-      ] as [Interval, AnnotationInfo][];
-      highlightsArray.sort(highlightsComparator);
-      const highlights = new Map(highlightsArray);
-      return {
-        ...previous,
-        highlights,
-        activeColour: colour,
-      };
-    });
+  const onClick = (setAnnotations: SetAnnotations, colour: string) => {
+    changeActiveColour(setAnnotations, colour);
+    pushSelectionToHighlight(setAnnotations);
   };
   const style = { backgroundColor: `${colour}` };
   return (
@@ -96,8 +75,7 @@ const Circle = ({
           [styles.selectedDark]: selected && settings.isDarkMode,
         })}
         onClick={() => {
-          changeActiveColour(colour);
-          if (!annotations.isPainterMode) highlightText(colour);
+          if (!annotations.isPainterMode) onClick(setAnnotations, colour);
         }}
       />
     </span>

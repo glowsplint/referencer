@@ -1,6 +1,7 @@
-import React, { SetStateAction, useState } from "react";
-import { amber } from "@mui/material/colors";
-import { Annotations, SetAnnotations, SpanID } from "../components/types";
+import React, { useState } from 'react';
+import { amber } from '@mui/material/colors';
+import { Annotations, SetAnnotations, SpanID } from '../components/types';
+
 
 const NaNInterval: SpanID = [NaN, NaN, NaN, NaN];
 const baseColour = amber["500"];

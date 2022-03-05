@@ -1,4 +1,4 @@
-import { baseAnnotations } from '../../contexts/Annotations';
+import { baseAnnotations, NaNInterval } from '../../contexts/Annotations';
 import { MutableRefObject } from 'react';
 import { SelectionMode } from '../../common/constants';
 import {
@@ -6,6 +6,7 @@ import {
   Annotations,
   BoundingBox,
   Interval,
+  IntervalString,
   SetAnnotations,
   SetTracking,
   SpanID,
@@ -212,17 +213,29 @@ const setArrowTarget = (target: SpanID, setAnnotations: SetAnnotations) => {
   });
 };
 
+const changeActiveColour = (setAnnotations: SetAnnotations, colour: string) => {
+  setAnnotations((previous) => {
+    return { ...previous, activeColour: colour };
+  });
+};
+
 const pushSelectionToHighlight = (setAnnotations: SetAnnotations) => {
   setAnnotations((previous) => {
+    // Guard clause to prevent errors
+    if (
+      previous.selection.start == NaNInterval ||
+      previous.selection.end == NaNInterval
+    )
+      return previous;
+
+    const key = JSON.stringify({
+      start: previous.selection.start,
+      end: previous.selection.end,
+    });
+    const value = { colour: previous.activeColour, text: "" };
     const highlightsArray = [
       ...previous.highlights,
-      [
-        previous.selection,
-        {
-          colour: previous.activeColour,
-          text: "",
-        },
-      ] as [Interval, AnnotationInfo],
+      [key, value] as [IntervalString, AnnotationInfo],
     ];
     highlightsArray.sort(highlightsComparator);
     const highlights = new Map(highlightsArray);
@@ -256,9 +269,11 @@ const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
 
 /* Text annotations */
 const highlightsComparator = (
-  [aInterval, aInfo]: [Interval, AnnotationInfo],
-  [bInterval, bInfo]: [Interval, AnnotationInfo]
+  [aIntervalString, aInfo]: [IntervalString, AnnotationInfo],
+  [bIntervalString, bInfo]: [IntervalString, AnnotationInfo]
 ): number => {
+  const aInterval = JSON.parse(aIntervalString) as Interval;
+  const bInterval = JSON.parse(bIntervalString) as Interval;
   const startComparator = spanIDcomparator(aInterval.start, bInterval.start);
   if (startComparator !== 0) return startComparator;
   return spanIDcomparator(aInterval.end, bInterval.end);
@@ -302,20 +317,23 @@ const getTextAnnotationMidpoints = (
   /* Returns the y-coordinate midpoints from current highlights and selection */
   const highlights = [...annotations.highlights];
 
-  return (highlights.filter(Boolean) as [Interval, AnnotationInfo][]).map(
-    ([interval, annotationInfo]) => {
+  return (highlights.filter(Boolean) as [IntervalString, AnnotationInfo][]).map(
+    ([intervalString, annotationInfo]) => {
+      const interval = JSON.parse(intervalString) as Interval;
       return {
         y: getIntervalMidpoint(canvasContainer, interval).y,
         ...annotationInfo,
-        interval,
+        interval: intervalString,
       };
     }
   );
 };
 
 export {
+  changeActiveColour,
   finaliseArrowCreation,
   getAttributes,
+  getIntervalMidpoint,
   getSelectionOffsetBoundingRect,
   getTextAnnotationMidpoints,
   highlightsComparator,
@@ -327,5 +345,4 @@ export {
   setSelectionWithSort,
   setTrackingMode,
   spanIDcomparator,
-  getIntervalMidpoint,
 };

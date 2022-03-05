@@ -33,10 +33,18 @@ import {
   setTrackingMode,
 } from "./actions";
 
+
 const getHighlightBoxes = (
   canvasContainer: MutableRefObject<HTMLDivElement>,
   annotations: Annotations
 ) => {
+  const highlightsFromHighlighted: Map<Interval, AnnotationInfo> = new Map(
+    [...annotations.highlights].flatMap(([intervalString, info]) => {
+      const interval = JSON.parse(intervalString) as Interval;
+      return [[interval, info]];
+    })
+  );
+  // Generate highlight boxes for the anchors, and also the targets
   const highlightsFromFinishedArrows: Map<Interval, AnnotationInfo> = new Map(
     [...annotations.arrows.finished].flatMap(([arrowIndex, info]) => {
       return [
@@ -58,7 +66,7 @@ const getHighlightBoxes = (
     ]
   );
   const highlights = [
-    ...annotations.highlights,
+    ...highlightsFromHighlighted,
     ...highlightsFromArrowsInCreation,
     ...highlightsFromFinishedArrows,
   ];

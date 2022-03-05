@@ -1,6 +1,7 @@
 import { Format, SelectionMode } from '../../common/constants';
 import { SetStateAction } from 'react';
 
+
 // Canvas
 type StateMachinePattern<T> = (
   event: T,
@@ -36,11 +37,15 @@ type BoundingBox = {
 
 // SpanID is [textAreaID, data-text-index, data-phrase-index, data-pure-text-index]
 type SpanID = [number, number, number, number];
+type SpanIDString = `[${number},${number},${number},${number}]`;
 
 interface Interval {
   start: SpanID;
   end: SpanID;
 }
+
+type IntervalString =
+  `{"start":${SpanIDString},"end":${SpanIDString},"anchor":${SpanIDString},"text":${string}}`;
 
 interface ArrowIndices {
   anchor: Interval;
@@ -71,7 +76,7 @@ interface Selection extends Interval {
   text?: string;
 }
 
-type Highlights = Map<Interval, AnnotationInfo>;
+type Highlights = Map<IntervalString, AnnotationInfo>;
 
 interface Annotations {
   isPainterMode: boolean;
@@ -159,6 +164,7 @@ export type {
   IArrow,
   ITracking,
   Interval,
+  IntervalString,
   Login,
   ParsedText,
   Selection,

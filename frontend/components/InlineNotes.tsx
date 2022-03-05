@@ -1,7 +1,14 @@
-import styles from "../styles/InlineNotes.module.css";
-import { getIntervalMidpoint } from "./Canvas/actions";
-import { Interval } from "./types";
-import { useAnnotations } from "../contexts/Annotations";
+import _ from 'lodash';
+import styles from '../styles/InlineNotes.module.css';
+import { getIntervalMidpoint, highlightsComparator } from './Canvas/actions';
+import { useAnnotations } from '../contexts/Annotations';
+import {
+  AnnotationInfo,
+  Interval,
+  IntervalString,
+  SetAnnotations,
+  SpanID,
+} from "./types";
 import {
   MutableRefObject,
   RefObject,
@@ -11,18 +18,25 @@ import {
   useState,
 } from "react";
 
+
 const verticalOffset = -1.8; // in em units
 
 const Chip = ({
-  interval,
-  width,
-  setWidth,
   canvasContainer,
+  id,
+  interval,
+  onValueChange,
+  setWidthValue,
+  value,
+  width,
 }: {
-  interval: Interval;
-  width: number;
-  setWidth: (newValue: number) => void;
   canvasContainer: MutableRefObject<HTMLDivElement>;
+  id: string;
+  interval: Interval;
+  onValueChange: React.FormEventHandler;
+  setWidthValue: (newValue: number) => void;
+  value: string;
+  width: number;
 }) => {
   const [input, setInput] = useState("");
   const ref = useRef<HTMLInputElement>() as RefObject<HTMLInputElement>;
@@ -38,6 +52,8 @@ const Chip = ({
   };
 
   useEffect(() => {
+    // Creates a fake element with the same styles to correctly update the width
+    // of the text field
     const fakeEle = document.createElement("div");
     fakeEle.style.position = "absolute";
     fakeEle.style.top = "0";
@@ -67,7 +83,7 @@ const Chip = ({
     fakeEle.innerHTML = string.replace(/\s/g, "&" + "nbsp;");
     const fakeEleStyles = window.getComputedStyle(fakeEle);
     document.body.appendChild(fakeEle);
-    setWidth(
+    setWidthValue(
       Number(fakeEleStyles.width.substring(0, fakeEleStyles.width.length - 2))
     );
 
@@ -84,9 +100,11 @@ const Chip = ({
       autoComplete="off"
       style={{ ...style, width }}
       className={styles.chip}
-      onInput={(e) => {
-        setInput((e.target as HTMLTextAreaElement).value);
+      onInput={(event) => {
+        setInput((event.target as HTMLTextAreaElement).value);
+        onValueChange(event);
       }}
+      id={id}
     />
   );
 };
@@ -96,17 +114,20 @@ const InlineNotes = ({
 }: {
   canvasContainer: MutableRefObject<HTMLDivElement>;
 }) => {
-  const { annotations } = useAnnotations();
-  const [widths, setWidths] = useState<number[]>([]);
+  const { annotations, setAnnotations } = useAnnotations();
+  const [widths, setWidths] = useState<Map<string, number>>(new Map());
 
   const ref = useCallback(
-    (node) => {
+    (node: HTMLDivElement) => {
       if (node == null) return;
+      // The following callback within setTimeout is called when a new inline note is mounted
       setTimeout(() => {
         setWidths((previous) => {
-          return [...node.children].map(
-            (child) => child.getBoundingClientRect().width
-          );
+          const newWidths: Map<string, number> = new Map();
+          for (let child of node.children) {
+            newWidths.set(child.id, child.getBoundingClientRect().width);
+          }
+          return newWidths;
         });
       }, 0);
     },
@@ -114,34 +135,75 @@ const InlineNotes = ({
     [annotations.highlights]
   );
 
-  const setWidth = (index: number, newValue: number) => {
+  const setWidthFromIndex = (
+    intervalString: IntervalString,
+    newValue: number
+  ) => {
     // funky behaviour because of the way this function works
-    // widths as a variable should probably be a map of intervals to numbers
+    // widths as a variable should probably be a map of intervalStrings to numbers
     setWidths((previous) => {
-      let current = [...previous];
-      current[index] = newValue;
-      return current;
+      const newWidths = new Map(previous);
+      newWidths.set(intervalString, newValue);
+      return newWidths;
     });
   };
 
+  const highlights = [...annotations.highlights];
+
   return (
     <div ref={ref}>
-      {[...annotations.highlights].map(([interval, info], index) => {
+      {highlights.map(([intervalString, info]) => {
+        const interval = JSON.parse(intervalString) as Interval;
         return (
           <Chip
             interval={interval}
             canvasContainer={canvasContainer}
-            width={widths[index]}
-            setWidth={(newValue: number) => setWidth(index, newValue)}
-            key={[
-              interval.start.toString(),
-              interval.end.toString(),
-            ].toString()}
+            width={widths.get(intervalString) as number}
+            setWidthValue={(newValue: number) =>
+              setWidthFromIndex(intervalString, newValue)
+            }
+            key={JSON.stringify(interval)}
+            id={JSON.stringify(interval)}
+            value={info.text}
+            onValueChange={(event) => {
+              const newValue = (event.target as HTMLTextAreaElement).value;
+              const id = JSON.parse((event.target as HTMLTextAreaElement).id);
+              updateTextInHighlights(setAnnotations, newValue, id);
+            }}
           />
         );
       })}
     </div>
   );
+};
+
+const updateTextInHighlights = (
+  setAnnotations: SetAnnotations,
+  newValue: string,
+  id: [SpanID, SpanID]
+) => {
+  // setAnnotations((previous) => {
+  // // Update text key
+  // const prevHighlights = [...previous.highlights];
+  // const isIntervalEqual = (
+  //   highlightKey: [Interval, AnnotationInfo],
+  //   id: [number, number][]
+  // ) => {
+  //   const [interval, info] = highlightKey;
+  //   return _.isEqual([interval.start, interval.end], id);
+  // };
+  // const matchedItem = prevHighlights.filter((highlightKey) =>
+  //   isIntervalEqual(highlightKey, id)
+  // )[0];
+  // matchedItem[1] = { ...matchedItem[1], text: newValue };
+  // const unmatchedItems = prevHighlights.filter(
+  //   (highlightKey) => !isIntervalEqual(highlightKey, id)
+  // );
+  // const highlightsArray = [...unmatchedItems, matchedItem];
+  // highlightsArray.sort(highlightsComparator);
+  // const newHighlights = new Map(highlightsArray);
+  // return { ...previous, highlights: newHighlights };
+  // });
 };
 
 export { InlineNotes };
