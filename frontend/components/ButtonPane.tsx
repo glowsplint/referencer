@@ -1,7 +1,5 @@
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import Fab from '@mui/material/Fab';
-import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
-import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FormatPaintIcon from '@mui/icons-material/FormatPaint';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -162,7 +160,7 @@ const ButtonPane = () => {
         bool={settings.isZenMode}
         callback={toggleZenMode}
         title="Toggle Zen mode"
-        buttonProps={{ "data-testid": "painterModeButton" }}
+        buttonProps={{ "data-testid": "zenModeButton" }}
       />
     </Paper>
   );

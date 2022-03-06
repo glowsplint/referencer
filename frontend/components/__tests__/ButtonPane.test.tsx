@@ -41,17 +41,38 @@ const checkStyleOfSubject: StyleChecker = ({
   expect(subject).toHaveStyle(state[stateProperty]);
 };
 
-const toggleWithChecks = <T extends any>({
-  subjectTestId,
+const not = (expr: boolean) => !expr;
+
+const checkFullScreen = ({
+  subject,
   state,
+  stateProperty,
+}: {
+  subject: HTMLElement;
+  state: JointState<boolean>;
+  stateProperty: boolean;
+}) => {
+  const isFullscreen =
+    screen.width == window.innerWidth && screen.height == window.innerHeight;
+  expect(stateProperty ? isFullscreen : not(isFullscreen));
+};
+
+const toggleWithChecks = <T extends any>({
   buttonTestId,
   handler,
+  state,
+  subjectTestId,
 }: {
-  subjectTestId: string;
-  state: JointState<T>;
   buttonTestId: string;
   handler: Checker<T>;
+  state: JointState<T>;
+  subjectTestId: string;
 }) => {
+  /* Utility function that test that when you click a button repeatedly,
+     the events happen in a circular loop
+
+     @param {Checker<T>} handler - Function that contains a function call to expect()
+  */
   const { getByTestId } = render(<Index />);
   const subject = getByTestId(subjectTestId);
   const menuButton = getByTestId(buttonTestId);
@@ -108,6 +129,7 @@ describe("Dark Mode Button", () => {
 
 describe("Clear Layers Button", () => {
   isBeingRenderedWithButtonPane({ testId: "clearLayersButton" });
+  // Missing functionality test
 });
 
 describe("Editor Layout Button", () => {
@@ -121,4 +143,14 @@ describe("Editor Layout Button", () => {
       handler: checkClassOfSubject,
     });
   });
+});
+
+describe("Painter Mode Button", () => {
+  isBeingRenderedWithButtonPane({ testId: "painterModeButton" });
+  // Missing functionality test
+});
+
+describe("Zen Mode Button", () => {
+  isBeingRenderedWithButtonPane({ testId: "zenModeButton" });
+  // Missing functionality test
 });
