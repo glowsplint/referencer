@@ -1,35 +1,21 @@
-import "@testing-library/jest-dom";
+import ButtonPane from '../ButtonPane';
+import Index from '../../pages/space';
+import React from 'react';
+import { fireEvent, render } from '@testing-library/react';
+import { isBeingRendered } from './utils/utils';
+import '@testing-library/jest-dom';
 
-import { fireEvent, render } from "@testing-library/react";
+import {
+  Checker,
+  ClassChecker,
+  JSSObject,
+  JointState,
+  StyleChecker,
+} from "./types";
 
-import ButtonPane from "../ButtonPane";
-import Index from "../../pages/space";
-import React from "react";
-import { isBeingRendered } from "./utils/utils";
 
-// Common functions and interfaces used within button pane
 const isBeingRenderedWithButtonPane = ({ testId }: { testId: string }) =>
   isBeingRendered({ testId, component: <ButtonPane /> });
-
-type JSSObject = { [key: string]: string };
-
-interface JointState<T> {
-  initial: T;
-  toggled: T;
-}
-
-type Checker<T> = ({
-  subject,
-  state,
-  stateProperty,
-}: {
-  subject: HTMLElement;
-  state: JointState<T>;
-  stateProperty: keyof JointState<T>;
-}) => void;
-
-type ClassChecker = Checker<string>;
-type StyleChecker = Checker<JSSObject>;
 
 const checkClassOfSubject: ClassChecker = ({
   subject,
@@ -117,7 +103,6 @@ describe("Dark Mode Button", () => {
       buttonTestId: "darkModeButton",
       handler: checkStyleOfSubject,
     });
-    // need to add all major components
   });
 });
 
@@ -136,8 +121,4 @@ describe("Editor Layout Button", () => {
       handler: checkClassOfSubject,
     });
   });
-});
-
-describe("Text Align Button", () => {
-  isBeingRenderedWithButtonPane({ testId: "textAlignButton" });
 });

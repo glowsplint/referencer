@@ -149,14 +149,6 @@ const ButtonPane = () => {
         buttonProps={{ "data-testid": "editorLayoutButton" }}
       />
       <SwitchingButtonIcon
-        iconOne={<FormatAlignLeftIcon />}
-        iconTwo={<FormatAlignJustifyIcon />}
-        bool={settings.isJustified}
-        callback={toggleJustify}
-        title="Toggle left-align/justify"
-        buttonProps={{ "data-testid": "textAlignButton" }}
-      />
-      <SwitchingButtonIcon
         iconOne={<HighlightAltIcon />}
         iconTwo={<FormatPaintIcon />}
         bool={annotations.isPainterMode}
