@@ -10,7 +10,7 @@ import {
   SetAnnotations,
   SetTracking,
   SpanID,
-} from "../types";
+} from "../../common/types";
 
 
 /* Helper functions */

@@ -1,14 +1,13 @@
 import _ from 'lodash';
 import styles from '../styles/InlineNotes.module.css';
-import { getIntervalMidpoint, highlightsComparator } from './Canvas/actions';
+import { getIntervalMidpoint } from './Canvas/actions';
 import { useAnnotations } from '../contexts/Annotations';
 import {
-  AnnotationInfo,
   Interval,
   IntervalString,
   SetAnnotations,
   SpanID,
-} from "./types";
+} from "../common/types";
 import {
   MutableRefObject,
   RefObject,

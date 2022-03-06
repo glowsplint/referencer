@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Format, Regex } from '../common/constants';
-import { SetTexts, TextInfo, Texts } from '../components/types';
+import { SetTexts, TextInfo, Texts } from '../common/types';
 
 const baseTexts: Texts = {
   headers: [],

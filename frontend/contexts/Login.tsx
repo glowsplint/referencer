@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Login, SetLogin } from "../components/types";
+import React, { useState } from 'react';
+import { Login, SetLogin } from '../common/types';
 
 const baseLogin = {
   displayName: "user-1",

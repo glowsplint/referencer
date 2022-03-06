@@ -19,7 +19,7 @@ import {
   SpanID,
   StateMachineKeyboard,
   StateMachineMouse,
-} from "../types";
+} from "../../common/types";
 import {
   finaliseArrowCreation,
   getAttributes,

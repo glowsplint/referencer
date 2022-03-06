@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import styles from '../../styles/Swatch/Swatch.module.css';
-import { AnnotationInfo, Interval, SetAnnotations } from '../types';
-import { NaNInterval, useAnnotations } from '../../contexts/Annotations';
+import { SetAnnotations } from '../../common/types';
+import { useAnnotations } from '../../contexts/Annotations';
 import { useSettings } from '../../contexts/Settings';
 import {
   amber,

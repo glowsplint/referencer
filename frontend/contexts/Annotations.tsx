@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { amber } from '@mui/material/colors';
-import { Annotations, SetAnnotations, SpanID } from '../components/types';
+import { Annotations, SetAnnotations, SpanID } from '../common/types';
 
 
 const NaNInterval: SpanID = [NaN, NaN, NaN, NaN];

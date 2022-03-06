@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { SelectionMode } from '../common/constants';
-import { SetTracking, Tracking } from '../components/types';
+import { SetTracking, Tracking } from '../common/types';
+
+
 /* The Tracking context provides information on current and previous modes of
    selection (e.g. Arrowing, Selecting, None) and also where the mouse currently
    is on the canvas.

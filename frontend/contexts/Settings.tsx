@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { SetSettings, Settings } from "../components/types";
+import React, { useState } from 'react';
+import { SetSettings, Settings } from '../common/types';
 
 const baseSettings = {
   isDarkMode: false,

@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import { Format } from '../common/constants';
 import { get } from '../common/utils';
 import { InlineNotes } from './InlineNotes';
-import { ParsedText, TextInfo } from './types';
+import { ParsedText, TextInfo } from '../common/types';
 import { Regex } from '../common/constants';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { useSettings } from '../contexts/Settings';
