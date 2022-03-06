@@ -25,7 +25,6 @@ import {
 } from "@mui/material/colors";
 import {
   changeActiveColour,
-  highlightsComparator,
   pushSelectionToHighlight,
 } from "../Canvas/actions";
 
@@ -62,7 +61,7 @@ const Circle = ({
   const { settings } = useSettings();
   const onClick = (setAnnotations: SetAnnotations, colour: string) => {
     changeActiveColour(setAnnotations, colour);
-    pushSelectionToHighlight(setAnnotations);
+    if (!annotations.isPainterMode) pushSelectionToHighlight(setAnnotations);
   };
   const style = { backgroundColor: `${colour}` };
   return (
@@ -75,7 +74,7 @@ const Circle = ({
           [styles.selectedDark]: selected && settings.isDarkMode,
         })}
         onClick={() => {
-          if (!annotations.isPainterMode) onClick(setAnnotations, colour);
+          onClick(setAnnotations, colour);
         }}
       />
     </span>
