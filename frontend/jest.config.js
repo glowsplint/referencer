@@ -27,7 +27,7 @@ module.exports = {
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
     "<rootDir>/.next/",
-    "<rootDir>/components/__tests__/utils/",
+    "<rootDir>/components/__tests__/common/",
   ],
   testEnvironment: "jsdom",
   transform: {

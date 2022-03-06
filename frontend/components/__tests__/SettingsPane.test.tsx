@@ -1,8 +1,8 @@
-import "@testing-library/jest-dom";
+import React from 'react';
+import SettingsPane from '../SettingsPane';
+import { isBeingRendered } from './common/utils';
+import '@testing-library/jest-dom';
 
-import React from "react";
-import SettingsPane from "../SettingsPane";
-import { isBeingRendered } from "./utils/utils";
 
 // Common functions and interfaces used within settings pane
 const isBeingRenderedWithSettingsPane = ({ testId }: { testId: string }) =>

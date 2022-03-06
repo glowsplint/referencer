@@ -2,7 +2,7 @@ import ButtonPane from '../ButtonPane';
 import Index from '../../pages/space';
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { isBeingRendered } from './utils/utils';
+import { isBeingRendered } from './common/utils';
 import '@testing-library/jest-dom';
 
 import {
@@ -11,7 +11,7 @@ import {
   JSSObject,
   JointState,
   StyleChecker,
-} from "./types";
+} from "./common/types";
 
 
 const isBeingRenderedWithButtonPane = ({ testId }: { testId: string }) =>
