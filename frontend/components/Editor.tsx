@@ -11,7 +11,7 @@ import React, {
 import SearchBar from './SearchBar';
 import styles from '../styles/Editor.module.css';
 import Typography from '@mui/material/Typography';
-import { Format } from '../common/constants';
+import { Format, scrollbarWidth } from '../common/constants';
 import { get } from '../common/utils';
 import { InlineNotes } from './InlineNotes';
 import { ParsedText, TextInfo } from '../common/types';
@@ -338,7 +338,7 @@ const MainRegion = () => {
   useEffect(() => {
     const resize = () => {
       setHeight(canvasContainerRef.current.clientHeight);
-      setWidth(canvasContainerRef.current.clientWidth);
+      setWidth(canvasContainerRef.current.clientWidth - scrollbarWidth);
     };
     resize();
     window.addEventListener("resize", resize);

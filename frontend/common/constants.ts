@@ -1,6 +1,8 @@
 const DEVELOPMENT_MODE = process.env.NEXT_PUBLIC_DEVELOPMENT_MODE === "True";
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION;
 
+const scrollbarWidth = 10;
+
 enum Format {
   FootnoteText = "FootnoteText",
   Psalm426 = "Psalm426",
@@ -33,4 +35,11 @@ enum SelectionMode {
   Selecting = "Selecting",
 }
 
-export { APP_VERSION, DEVELOPMENT_MODE, Format, Regex, SelectionMode };
+export {
+  APP_VERSION,
+  DEVELOPMENT_MODE,
+  Format,
+  Regex,
+  SelectionMode,
+  scrollbarWidth,
+};
