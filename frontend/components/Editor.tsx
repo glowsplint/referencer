@@ -300,9 +300,11 @@ const TextArea = ({
       })}
       id={textAreaID.toString()}
     >
-      <Typography variant="h6" className={styles.textHeader}>
-        {textName}
-      </Typography>
+      <div className={styles.textHeaderContainer}>
+        <Typography variant="h6" className={styles.textHeader} id="0,0,0,-1">
+          {textName}
+        </Typography>
+      </div>
       {mainText.map((textInfo) =>
         getComponent({
           textInfo,
