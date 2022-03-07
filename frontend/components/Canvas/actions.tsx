@@ -1,3 +1,6 @@
+import { baseAnnotations, NaNInterval } from '../../contexts/Annotations';
+import { MutableRefObject } from 'react';
+import { SelectionMode } from '../../common/constants';
 import {
   AnnotationInfo,
   Annotations,
@@ -8,10 +11,7 @@ import {
   SetTracking,
   SpanID,
 } from "../../common/types";
-import { NaNInterval, baseAnnotations } from "../../contexts/Annotations";
 
-import { MutableRefObject } from "react";
-import { SelectionMode } from "../../common/constants";
 
 /* Helper functions */
 const SPAN_LEVEL = 3;

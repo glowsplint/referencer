@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 
 const SearchBar = () => {
-  const { setTexts } = useTexts();
+  const { texts, setTexts } = useTexts();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const getText = async (query: string) => {
@@ -39,6 +39,10 @@ const SearchBar = () => {
 
       // Guard clause against nullish error queries
       if (passages[0] === undefined) return;
+
+      // Guard clause against too many passages
+      if (texts.headers.length >= 10) return;
+
       setTexts((previous) => {
         return {
           headers: [...previous.headers, query + " ESV"],
