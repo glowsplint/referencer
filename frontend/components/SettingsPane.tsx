@@ -26,6 +26,7 @@ import { useLogin } from '../contexts/Login';
 import { useSettings } from '../contexts/Settings';
 import { useTexts } from '../contexts/Texts';
 
+
 const Checkbox = ({
   handleCheckBoxToggle,
   textHeader,
@@ -233,7 +234,8 @@ const ChangeNameButton = () => {
   const onChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setCurrentDisplayName(event.target.value);
+    const newValue = event.target.value;
+    if (newValue.length <= 20) setCurrentDisplayName(newValue);
   };
 
   const handleChangeName = (event: React.FormEvent<HTMLFormElement>) => {
@@ -255,9 +257,12 @@ const ChangeNameButton = () => {
       >
         <DialogTitle id="form-dialog-title">Change display name</DialogTitle>
         <DialogContent>
-          <DialogContentText>Enter a new name.</DialogContentText>
+          <DialogContentText>
+            Enter a new name (limit of 20 characters).
+          </DialogContentText>
           <form onSubmit={handleChangeName}>
             <TextField
+              value={currentDisplayName}
               variant="outlined"
               autoFocus
               margin="dense"
