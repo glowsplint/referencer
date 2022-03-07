@@ -35,10 +35,14 @@ const SearchBar = () => {
     if (searchQuery !== "") {
       setSearchQuery("");
       const payload = await getText(searchQuery.toLowerCase());
+      const { query, passages } = payload;
+
+      // Guard clause against nullish error queries
+      if (passages[0] === undefined) return;
       setTexts((previous) => {
         return {
-          headers: [...previous.headers, payload.query + " ESV"],
-          bodies: [...previous.bodies, processTexts(payload.passages[0])],
+          headers: [...previous.headers, query + " ESV"],
+          bodies: [...previous.bodies, processTexts(passages[0])],
           isDisplayed: [...previous.isDisplayed, true],
         };
       });
