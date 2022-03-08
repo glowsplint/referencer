@@ -22,16 +22,10 @@ const getSpan = (x: number, y: number) => {
 };
 
 const getCurrentSpanAttributes = (span: Element) => {
-  // Get <span>'s data-index attribute to update Highlight context
-  const getDataIndex = () => {
-    const spanIDString = (span as HTMLElement).id;
-    const spanID = spanIDString
-      ?.split(",")
-      .map((item) => Number(item)) as SpanID;
-    return spanID;
-  };
-
-  return { target: getDataIndex() };
+  // Get <span>'s .id attribute to update Highlight context
+  const spanIDString = (span as HTMLElement).id;
+  const spanID = spanIDString?.split(",").map((item) => Number(item)) as SpanID;
+  return { target: spanID };
 };
 
 const getAttributes = (x: number, y: number, condition: boolean = false) => {
@@ -62,12 +56,12 @@ const getSelectedNodes = (
   // Gets all the nodes between two spans (inclusive)
   const children = Array.from(startNode?.parentElement?.children ?? []);
   const startIndex = children.findIndex((item) => item.id === startNode.id);
-  const endIndex = children.findIndex((item) => item.id === endNode?.id);
+  const endIndex = children.findIndex((item) => item.id === endNode.id);
   return children.slice(startIndex, endIndex + 1);
 };
 
-const getSelectionBoundingRect = (currentSelection: Interval) => {
-  // Gets all bounding rectangles for a given selection
+const getSelectionBoundingRects = (currentSelection: Interval) => {
+  // Returns an array of DOMRects for a given interval with start and end SpanIDs
   const getNode = (key: "start" | "end") =>
     document.getElementById(`${currentSelection[key]?.toString()}`);
   const startNode = getNode("start") as HTMLElement;
@@ -75,23 +69,22 @@ const getSelectionBoundingRect = (currentSelection: Interval) => {
 
   /* We create bounding rectangles for all spans between the start and the end.
     
-       We can combine all bounding boxes with the same y level if they have the same
-       textAreaID to reduce the number of drawn rectangles. This is not currently
-       implemented. */
+     We can combine all bounding boxes with the same y level if they have the same
+     textAreaID to reduce the number of drawn rectangles as an optimisation. This
+     is not currently implemented. */
 
-  // Get all the nodes in between the start and end node
   const selectedNodes = getSelectedNodes(startNode, endNode);
   return selectedNodes.map((node) => node.getBoundingClientRect());
 };
 
-const getSelectionOffsetBoundingRect = (
+const getSelectionOffsetBoundingRects = (
   canvasContainer: MutableRefObject<HTMLDivElement>,
   current: Interval
 ) => {
   /* Returns the array of bounding rectangles for every item in the Interval,
      offset by the bounding rect with position of canvasContainer with viewport */
   const parent = getParentBoundingRect(canvasContainer);
-  return getSelectionBoundingRect(current)
+  return getSelectionBoundingRects(current)
     .map((child) => {
       const rect: BoundingBox = {
         width: child?.width,
@@ -103,14 +96,16 @@ const getSelectionOffsetBoundingRect = (
         bottom: child?.bottom - parent.bottom,
         left: child?.left - parent.left,
       };
-      return Object.entries(rect).some(([_key, value]) => value == null)
+      // If any of the object's entries are null or undefined, return null
+      return Object.entries(rect).some(([key, value]) => value == null)
         ? null
         : rect;
     })
-    .filter((item) => item) as BoundingBox[];
+    .filter(Boolean) as BoundingBox[];
 };
 
 const convertSpanIDtoNumber = (spanID: SpanID) => {
+  // Returns a single number from a given SpanID
   return (
     spanID[0] * 1_000_000_000 +
     spanID[1] * 1_000_000 +
@@ -122,7 +117,7 @@ const convertSpanIDtoNumber = (spanID: SpanID) => {
 const spanIDcomparator = (a: SpanID, b: SpanID) =>
   convertSpanIDtoNumber(a) - convertSpanIDtoNumber(b);
 
-const sortSpanIDs = (spanIDArray: [SpanID, SpanID]) => {
+const getSortedSpanIDs = (spanIDArray: [SpanID, SpanID]) => {
   const sortedArray = spanIDArray.sort(spanIDcomparator);
   return { start: sortedArray[0], end: sortedArray[1] };
 };
@@ -132,6 +127,8 @@ const setTrackingMode = (
   selectionMode: SelectionMode,
   setTracking: SetTracking
 ) => {
+  /* Sets tracking.mode.current to <selectionMode> and moves current selection
+     to tracking.mode.previous */
   setTracking((previous) => {
     const condition = previous.mode.current === selectionMode;
     return {
@@ -146,6 +143,7 @@ const setTrackingMode = (
 
 /* Selection */
 const setSelectionAnchor = (target: SpanID, setAnnotations: SetAnnotations) => {
+  // Sets annotations.selection.anchor to <target>
   setAnnotations((previous) => {
     return {
       ...previous,
@@ -161,9 +159,9 @@ const setSelectionWithSort = (
   target: SpanID,
   setAnnotations: SetAnnotations
 ) => {
-  // Sets the current selection into the annotation context
+  // Sets annotations.selection to <target>
   setAnnotations((previous) => {
-    const { start, end } = sortSpanIDs([
+    const { start, end } = getSortedSpanIDs([
       previous.selection.anchor as SpanID,
       target as SpanID,
     ]);
@@ -175,6 +173,7 @@ const setSelectionWithSort = (
 };
 
 const setSelectionEmptyText = (setAnnotations: SetAnnotations) => {
+  // Sets annotations.selection.text to an empty string
   setAnnotations((previous) => {
     return { ...previous, selection: { ...previous.selection, text: "" } };
   });
@@ -182,6 +181,8 @@ const setSelectionEmptyText = (setAnnotations: SetAnnotations) => {
 
 /* Arrowing */
 const setArrowAnchor = (target: SpanID, setAnnotations: SetAnnotations) => {
+  // Sets annotations.arrows.inCreation anchor to <target>
+  // We also set the target to force the arrow highlight to appear.
   setAnnotations((previous) => {
     return {
       ...previous,
@@ -214,10 +215,21 @@ const setArrowTarget = (target: SpanID, setAnnotations: SetAnnotations) => {
   });
 };
 
-const changeActiveColour = (setAnnotations: SetAnnotations, colour: string) => {
+const changeActiveColour = (colour: string, setAnnotations: SetAnnotations) => {
+  // Sets annotations.activeColour to <colour>
   setAnnotations((previous) => {
     return { ...previous, activeColour: colour };
   });
+};
+
+const combineHighlights = (
+  previousEntries: [IntervalString, AnnotationInfo][],
+  newEntry: [IntervalString, AnnotationInfo]
+) => {
+  /* Combines new entry with previous entries with sorting */
+  const highlightsArray = [...previousEntries, newEntry];
+  highlightsArray.sort(highlightsComparator);
+  return new Map(highlightsArray);
 };
 
 const pushSelectionToHighlight = (setAnnotations: SetAnnotations) => {
@@ -232,14 +244,12 @@ const pushSelectionToHighlight = (setAnnotations: SetAnnotations) => {
     const key = JSON.stringify({
       start: previous.selection.start,
       end: previous.selection.end,
-    });
+    }) as IntervalString;
     const value = { colour: previous.activeColour, text: "" };
-    const highlightsArray = [
-      ...previous.highlights,
-      [key, value] as [IntervalString, AnnotationInfo],
-    ];
-    highlightsArray.sort(highlightsComparator);
-    const highlights = new Map(highlightsArray);
+    const highlights = combineHighlights(
+      [...previous.highlights],
+      [key, value]
+    );
     return {
       ...previous,
       highlights,
@@ -276,11 +286,6 @@ const highlightsComparator = (
   return spanIDcomparator(aInterval.end, bInterval.end);
 };
 
-const getMiddleItemOfArray = <T extends unknown>(arr: T[]) => {
-  const middleIndex = Math.floor(arr.length / 2);
-  return arr[middleIndex];
-};
-
 const getIntervalMidpoint = (
   canvasContainer: MutableRefObject<HTMLDivElement>,
   interval: Interval
@@ -288,9 +293,7 @@ const getIntervalMidpoint = (
   /* Returns the coordinates of the midpoint from an interval, accounting for
      intervals that span across multiple lines
   */
-  const boxes = getSelectionOffsetBoundingRect(canvasContainer, interval);
-  // if (boxes.length === 0) return;
-
+  const boxes = getSelectionOffsetBoundingRects(canvasContainer, interval);
   // Get the horizontal middle by taking the sum of widths for every vertical level
   // and dividing in two, and then running along from the top to see where the middle is
   const totalWidth = boxes.map((box) => box.width).reduce((a, b) => a + b);
@@ -331,7 +334,7 @@ export {
   finaliseArrowCreation,
   getAttributes,
   getIntervalMidpoint,
-  getSelectionOffsetBoundingRect,
+  getSelectionOffsetBoundingRects,
   getTextAnnotationMidpoints,
   highlightsComparator,
   pushSelectionToHighlight,

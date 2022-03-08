@@ -28,20 +28,21 @@ import { useTexts } from '../contexts/Texts';
 
 
 const Checkbox = ({ textHeader, id }: { id: number; textHeader: string }) => {
-  const { isDisplayed } = useTexts().texts;
-  const { setTexts } = useTexts();
+  const { texts, setTexts } = useTexts();
   const toggleTextAreaVisibility = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setTexts((previous) => {
-      const index = previous.headers.indexOf(event.target.name);
-      let newIsDisplayed = [...previous.isDisplayed];
-      newIsDisplayed[index] = !newIsDisplayed[index];
-      return { ...previous, isDisplayed: newIsDisplayed };
+      const passages = [...previous.passages];
+      passages[id] = {
+        ...passages[id],
+        isDisplayed: !passages[id].isDisplayed,
+      };
+      return { passages };
     });
   };
 
-  const checked = isDisplayed[id];
+  const checked = texts.passages[id].isDisplayed;
   return (
     <MUICheckbox
       color="primary"
@@ -70,31 +71,44 @@ const SectionHeader = ({ text }: { text: string }) => {
 };
 
 const TextItem = ({ textHeader, id }: { textHeader: string; id: number }) => {
-  const { texts, setTexts } = useTexts();
-  const { setAnnotations } = useAnnotations();
+  const { setTexts } = useTexts();
+  const { annotations, setAnnotations } = useAnnotations();
   const removeTextArea = (key: number) => {
     // Remove textHeaders and textBodies from text context
     const getNew = <T extends unknown>(oldArray: T[]) => [
       ...oldArray.slice(0, key),
       ...oldArray.slice(key + 1, oldArray.length),
     ];
-    setTexts({
-      headers: getNew(texts.headers),
-      bodies: getNew(texts.bodies),
-      isDisplayed: getNew(texts.isDisplayed),
+    setTexts((previous) => {
+      return {
+        passages: getNew(previous.passages),
+      };
     });
 
     /* Remove all annotations (highlights & arrows) of textAreaID (key)
        from annotations context */
-    // Iterate over highlights
-    // Look at intervalString, parse, see if start or end match the textAreaID
-    // If match, remove the highlight
-
-    // Iterate over arrows
-    // Look at
-    // setAnnotations((previous) => {
-    //   return { ...previous, highlights: };
-    // });
+    // Highlights
+    const re = new RegExp(`\\[${key}`);
+    const highlights = new Map(annotations.highlights);
+    [...annotations.highlights].forEach(([intervalString, info]) => {
+      if (intervalString.match(re) !== null) {
+        highlights.delete(intervalString);
+      }
+    });
+    // Arrows
+    const finished = new Map(annotations.arrows.finished);
+    [...annotations.arrows.finished].forEach(([arrowIndexString, info]) => {
+      if (arrowIndexString.match(re) !== null) {
+        finished.delete(arrowIndexString);
+      }
+    });
+    setAnnotations((previous) => {
+      return {
+        ...previous,
+        highlights,
+        arrows: { ...previous.arrows, finished },
+      };
+    });
   };
 
   return (
@@ -289,7 +303,7 @@ const SettingsPane = () => {
     >
       <Paper className={styles.paper} square>
         <Header />
-        <MainRegion textHeaders={texts.headers} />
+        <MainRegion textHeaders={texts.passages.map((area) => area.header)} />
         <Profile />
       </Paper>
     </div>

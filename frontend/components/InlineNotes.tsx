@@ -2,6 +2,7 @@ import _ from 'lodash';
 import styles from '../styles/InlineNotes.module.css';
 import { getIntervalMidpoint } from './Canvas/actions';
 import { useAnnotations } from '../contexts/Annotations';
+import { useTexts } from '../contexts/Texts';
 import {
   Interval,
   IntervalString,
@@ -40,7 +41,8 @@ const Chip = ({
   const [input, setInput] = useState("");
   const ref = useRef<HTMLInputElement>() as RefObject<HTMLInputElement>;
 
-  const { annotations } = useAnnotations();
+  // The below function call is giving me an error because the original startNode has not yet been rendered at this point
+  // We need to render chip with setTimeout
   const rect = getIntervalMidpoint(canvasContainer, interval);
   const horizontalOffset = -width / 2; // in px units
   let style = {
@@ -52,8 +54,8 @@ const Chip = ({
   };
 
   useEffect(() => {
-    // Creates a fake element with the same styles to correctly update the width
-    // of the text field
+    /* Creates a fake element with the same styles to correctly update the width
+       of the text field */
     const fakeEle = document.createElement("div");
     fakeEle.style.position = "absolute";
     fakeEle.style.top = "0";
@@ -109,12 +111,30 @@ const Chip = ({
   );
 };
 
+const ChipContainer = (props: {
+  canvasContainer: MutableRefObject<HTMLDivElement>;
+  id: string;
+  interval: Interval;
+  onValueChange: React.FormEventHandler;
+  setWidthValue: (newValue: number) => void;
+  value: string;
+  width: number;
+}) => {
+  const [isDisplayed, setIsDisplayed] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsDisplayed(true));
+    return () => clearTimeout(timer);
+  });
+  return isDisplayed ? <Chip {...props} /> : null;
+};
+
 const InlineNotes = ({
   canvasContainer,
 }: {
   canvasContainer: MutableRefObject<HTMLDivElement>;
 }) => {
   const { annotations, setAnnotations } = useAnnotations();
+  const { texts } = useTexts();
   const [widths, setWidths] = useState<Map<string, number>>(new Map());
 
   const ref = useCallback(
@@ -154,8 +174,11 @@ const InlineNotes = ({
     <div ref={ref}>
       {highlights.map(([intervalString, info]) => {
         const interval = JSON.parse(intervalString) as Interval;
-        return (
-          <Chip
+        // Chip should not render when textArea is hidden
+        const isChipToBeRendered =
+          texts.passages[interval.start[0]].isDisplayed;
+        return isChipToBeRendered ? (
+          <ChipContainer
             interval={interval}
             canvasContainer={canvasContainer}
             width={widths.get(intervalString) as number}
@@ -171,7 +194,7 @@ const InlineNotes = ({
               updateTextInHighlights(setAnnotations, newValue, id);
             }}
           />
-        );
+        ) : null;
       })}
     </div>
   );

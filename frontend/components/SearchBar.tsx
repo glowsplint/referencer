@@ -41,13 +41,18 @@ const SearchBar = () => {
       if (passages[0] === undefined) return;
 
       // Guard clause against too many passages
-      if (texts.headers.length >= 10) return;
+      if (texts.passages.length >= 10) return;
 
       setTexts((previous) => {
         return {
-          headers: [...previous.headers, query + " ESV"],
-          bodies: [...previous.bodies, processTexts(passages[0])],
-          isDisplayed: [...previous.isDisplayed, true],
+          passages: [
+            ...previous.passages,
+            {
+              header: query + " ESV",
+              body: processTexts(passages[0]),
+              isDisplayed: true,
+            },
+          ],
         };
       });
     }

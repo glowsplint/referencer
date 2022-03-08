@@ -60,7 +60,7 @@ const Circle = ({
   const { annotations, setAnnotations } = useAnnotations();
   const { settings } = useSettings();
   const onClick = (setAnnotations: SetAnnotations, colour: string) => {
-    changeActiveColour(setAnnotations, colour);
+    changeActiveColour(colour, setAnnotations);
     if (!annotations.isPainterMode) pushSelectionToHighlight(setAnnotations);
   };
   const style = { backgroundColor: `${colour}` };

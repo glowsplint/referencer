@@ -15,7 +15,6 @@ import {
   AnnotationInfo,
   Annotations,
   ArrowIndices,
-  ArrowIndicesString,
   Interval,
   SpanID,
   StateMachineKeyboard,
@@ -24,7 +23,7 @@ import {
 import {
   finaliseArrowCreation,
   getAttributes,
-  getSelectionOffsetBoundingRect,
+  getSelectionOffsetBoundingRects,
   pushSelectionToHighlight,
   setArrowAnchor,
   setArrowTarget,
@@ -73,7 +72,7 @@ const getHighlightBoxes = (
     ...highlightsFromFinishedArrows,
   ];
   const highlightBoxes = highlights.map(([interval, highlightInfo]) =>
-    getSelectionOffsetBoundingRect(canvasContainer, interval).map(
+    getSelectionOffsetBoundingRects(canvasContainer, interval).map(
       (item, index) => (
         <Rect
           x={item.x}
@@ -94,7 +93,7 @@ const getSelectionBoxes = (
   canvasContainer: MutableRefObject<HTMLDivElement>,
   annotations: Annotations
 ) => {
-  return getSelectionOffsetBoundingRect(
+  return getSelectionOffsetBoundingRects(
     canvasContainer,
     annotations.selection
   ).map((item, index) => (
@@ -429,7 +428,7 @@ const Canvas = ({
   const getConnectorPointFromInterval = (interval: Interval) => {
     // Returns the (x,y) connector point coordinate from an Interval
     // Current implementation: Get the middle of the bounding boxes
-    const midpoints = getSelectionOffsetBoundingRect(
+    const midpoints = getSelectionOffsetBoundingRects(
       canvasContainer,
       interval
     ).map((item) => {

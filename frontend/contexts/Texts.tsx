@@ -3,9 +3,7 @@ import { Format, Regex } from '../common/constants';
 import { SetTexts, TextInfo, Texts } from '../common/types';
 
 const baseTexts: Texts = {
-  headers: [],
-  bodies: [],
-  isDisplayed: [],
+  passages: [],
 };
 
 const TextsContext = React.createContext<{
