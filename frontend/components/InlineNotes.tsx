@@ -40,6 +40,7 @@ const Chip = ({
   const [input, setInput] = useState("");
   const ref = useRef<HTMLInputElement>() as RefObject<HTMLInputElement>;
 
+  const { annotations } = useAnnotations();
   const rect = getIntervalMidpoint(canvasContainer, interval);
   const horizontalOffset = -width / 2; // in px units
   let style = {

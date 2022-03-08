@@ -4,6 +4,7 @@ import { SelectionMode } from '../../common/constants';
 import {
   AnnotationInfo,
   Annotations,
+  ArrowIndicesString,
   BoundingBox,
   Interval,
   IntervalString,
@@ -251,17 +252,13 @@ const finaliseArrowCreation = (setAnnotations: SetAnnotations) => {
   // This currently supports only single-word to single-word arrows
   setAnnotations((previous) => {
     const { anchor, target, colour } = previous.arrows.inCreation;
+    const key = JSON.stringify({ anchor, target }) as ArrowIndicesString;
+    const value = { colour, text: "" };
     return {
       ...previous,
       arrows: {
         inCreation: baseAnnotations.arrows.inCreation,
-        finished: new Map([
-          ...previous.arrows.finished,
-          [
-            { anchor, target },
-            { colour, text: "" },
-          ],
-        ]),
+        finished: new Map([...previous.arrows.finished, [key, value]]),
       },
     };
   });

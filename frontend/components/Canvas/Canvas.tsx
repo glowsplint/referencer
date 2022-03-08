@@ -15,6 +15,7 @@ import {
   AnnotationInfo,
   Annotations,
   ArrowIndices,
+  ArrowIndicesString,
   Interval,
   SpanID,
   StateMachineKeyboard,
@@ -46,7 +47,8 @@ const getHighlightBoxes = (
   );
   // Generate highlight boxes for the anchors, and also the targets
   const highlightsFromFinishedArrows: Map<Interval, AnnotationInfo> = new Map(
-    [...annotations.arrows.finished].flatMap(([arrowIndex, info]) => {
+    [...annotations.arrows.finished].flatMap(([arrowIndexString, info]) => {
+      const arrowIndex = JSON.parse(arrowIndexString) as ArrowIndices;
       return [
         [arrowIndex.anchor, info],
         [arrowIndex.target, info],
@@ -119,15 +121,26 @@ const getArrowLines = (
     colour: string;
   }
 ) => {
-  const arrows = [
-    ...annotations.arrows.finished,
+  const arrowsFinished: Map<ArrowIndices, AnnotationInfo> = new Map(
+    [...annotations.arrows.finished].flatMap(([arrowIndexString, info]) => {
+      const arrowIndex = JSON.parse(arrowIndexString) as ArrowIndices;
+      return [[arrowIndex, info]];
+    })
+  );
+
+  const arrowsInCreation: Map<ArrowIndices, AnnotationInfo> = new Map([
     [
       {
         anchor: annotations.arrows.inCreation.anchor,
         target: annotations.arrows.inCreation.target,
       },
       { colour: annotations.arrows.inCreation.colour as string, text: "" },
-    ] as [ArrowIndices, AnnotationInfo],
+    ],
+  ]);
+
+  const arrows: [ArrowIndices, AnnotationInfo][] = [
+    ...arrowsFinished,
+    ...arrowsInCreation,
   ];
 
   const arrowLines = arrows.map(([arrowIndex, info], index) => {

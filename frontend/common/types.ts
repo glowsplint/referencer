@@ -44,20 +44,22 @@ interface Interval {
   end: SpanID;
 }
 
-type IntervalString =
-  `{"start":${SpanIDString},"end":${SpanIDString},"anchor":${SpanIDString},"text":${string}}`;
+type IntervalString = `{"start":${SpanIDString},"end":${SpanIDString}}`;
 
 interface ArrowIndices {
   anchor: Interval;
   target: Interval;
 }
 
+type ArrowIndicesString =
+  `{"anchor":${IntervalString},"target":${IntervalString}}`;
+
 interface AnnotationInfo {
   colour: string;
   text: string;
 }
 
-type IArrow = Map<ArrowIndices, AnnotationInfo>;
+type IArrow = Map<ArrowIndicesString, AnnotationInfo>;
 
 // While the arrow is in creation, its target can change but its anchor is fixed.
 type Storage<T> = {
@@ -158,6 +160,7 @@ export type {
   AnnotationInfo,
   Annotations,
   ArrowIndices,
+  ArrowIndicesString,
   Arrows,
   BoundingBox,
   Highlights,

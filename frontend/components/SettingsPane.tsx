@@ -67,15 +67,40 @@ const SectionHeader = ({ text }: { text: string }) => {
 
 const TextItem = ({
   textHeader,
-  handleClose,
   id,
   handleCheckBoxToggle,
 }: {
   textHeader: string;
-  handleClose: (key: number) => void;
   id: number;
   handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
+  const { texts, setTexts } = useTexts();
+  const { setAnnotations } = useAnnotations();
+  const removeTextArea = (key: number) => {
+    // Remove textHeaders and textBodies from text context
+    const getNew = <T extends unknown>(oldArray: T[]) => [
+      ...oldArray.slice(0, key),
+      ...oldArray.slice(key + 1, oldArray.length),
+    ];
+    setTexts({
+      headers: getNew(texts.headers),
+      bodies: getNew(texts.bodies),
+      isDisplayed: getNew(texts.isDisplayed),
+    });
+
+    /* Remove all annotations (highlights & arrows) of textAreaID (key)
+       from annotations context */
+    // Iterate over highlights
+    // Look at intervalString, parse, see if start or end match the textAreaID
+    // If match, remove the highlight
+
+    // Iterate over arrows
+    // Look at
+    // setAnnotations((previous) => {
+    //   return { ...previous, highlights: };
+    // });
+  };
+
   return (
     <div className={styles.textsItem}>
       <Checkbox
@@ -88,7 +113,7 @@ const TextItem = ({
           {textHeader}
         </Typography>
       </div>
-      <IconButton size="small" disableRipple onClick={() => handleClose(id)}>
+      <IconButton size="small" disableRipple onClick={() => removeTextArea(id)}>
         <CloseIcon fontSize="small" />
       </IconButton>
     </div>
@@ -97,17 +122,14 @@ const TextItem = ({
 
 const TextItems = ({
   textHeaders,
-  handleClose,
   handleCheckBoxToggle,
 }: {
   textHeaders: string[];
-  handleClose: (key: number) => void;
   handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const items = textHeaders.map((text: string, index: number) => (
     <TextItem
       textHeader={text}
-      handleClose={handleClose}
       key={index}
       id={index}
       handleCheckBoxToggle={handleCheckBoxToggle}
@@ -184,11 +206,9 @@ const LayersItems = () => {
 
 const MainRegion = ({
   textHeaders,
-  handleClose,
   handleCheckBoxToggle,
 }: {
   textHeaders: string[];
-  handleClose: (key: number) => void;
   handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
@@ -197,7 +217,6 @@ const MainRegion = ({
       <SectionHeader text="Texts" />
       <TextItems
         textHeaders={textHeaders}
-        handleClose={handleClose}
         handleCheckBoxToggle={handleCheckBoxToggle}
       />
       <SectionHeader text="Layers" />
@@ -287,17 +306,6 @@ const ChangeNameButton = () => {
 const SettingsPane = () => {
   const { texts, setTexts } = useTexts();
   const { settings } = useSettings();
-  const removeTextArea = (key: number) => {
-    const getNew = (oldArray: any[]) => [
-      ...oldArray.slice(0, key),
-      ...oldArray.slice(key + 1, oldArray.length),
-    ];
-    setTexts({
-      headers: getNew(texts.headers),
-      bodies: getNew(texts.bodies),
-      isDisplayed: getNew(texts.isDisplayed),
-    });
-  };
 
   const toggleTextAreaVisibility = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -320,7 +328,6 @@ const SettingsPane = () => {
         <Header />
         <MainRegion
           textHeaders={texts.headers}
-          handleClose={removeTextArea}
           handleCheckBoxToggle={toggleTextAreaVisibility}
         />
         <Profile />
