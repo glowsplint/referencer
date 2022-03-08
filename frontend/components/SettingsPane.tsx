@@ -27,23 +27,27 @@ import { useSettings } from '../contexts/Settings';
 import { useTexts } from '../contexts/Texts';
 
 
-const Checkbox = ({
-  handleCheckBoxToggle,
-  textHeader,
-  id,
-}: {
-  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  id: number;
-  textHeader: string;
-}) => {
+const Checkbox = ({ textHeader, id }: { id: number; textHeader: string }) => {
   const { isDisplayed } = useTexts().texts;
+  const { setTexts } = useTexts();
+  const toggleTextAreaVisibility = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTexts((previous) => {
+      const index = previous.headers.indexOf(event.target.name);
+      let newIsDisplayed = [...previous.isDisplayed];
+      newIsDisplayed[index] = !newIsDisplayed[index];
+      return { ...previous, isDisplayed: newIsDisplayed };
+    });
+  };
+
   const checked = isDisplayed[id];
   return (
     <MUICheckbox
       color="primary"
       icon={<CheckBoxOutlineBlankIcon />}
       checkedIcon={<CheckBoxIcon />}
-      onChange={handleCheckBoxToggle}
+      onChange={toggleTextAreaVisibility}
       name={textHeader}
       checked={checked}
       size="small"
@@ -65,15 +69,7 @@ const SectionHeader = ({ text }: { text: string }) => {
   );
 };
 
-const TextItem = ({
-  textHeader,
-  id,
-  handleCheckBoxToggle,
-}: {
-  textHeader: string;
-  id: number;
-  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}) => {
+const TextItem = ({ textHeader, id }: { textHeader: string; id: number }) => {
   const { texts, setTexts } = useTexts();
   const { setAnnotations } = useAnnotations();
   const removeTextArea = (key: number) => {
@@ -103,11 +99,7 @@ const TextItem = ({
 
   return (
     <div className={styles.textsItem}>
-      <Checkbox
-        handleCheckBoxToggle={handleCheckBoxToggle}
-        textHeader={textHeader}
-        id={id}
-      />
+      <Checkbox textHeader={textHeader} id={id} />
       <div className={styles.textsText}>
         <Typography variant="overline" display="block">
           {textHeader}
@@ -120,20 +112,9 @@ const TextItem = ({
   );
 };
 
-const TextItems = ({
-  textHeaders,
-  handleCheckBoxToggle,
-}: {
-  textHeaders: string[];
-  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}) => {
+const TextItems = ({ textHeaders }: { textHeaders: string[] }) => {
   const items = textHeaders.map((text: string, index: number) => (
-    <TextItem
-      textHeader={text}
-      key={index}
-      id={index}
-      handleCheckBoxToggle={handleCheckBoxToggle}
-    />
+    <TextItem textHeader={text} key={index} id={index} />
   ));
   return <div className={styles.textsItems}>{items}</div>;
 };
@@ -204,21 +185,12 @@ const LayersItems = () => {
   );
 };
 
-const MainRegion = ({
-  textHeaders,
-  handleCheckBoxToggle,
-}: {
-  textHeaders: string[];
-  handleCheckBoxToggle: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}) => {
+const MainRegion = ({ textHeaders }: { textHeaders: string[] }) => {
   return (
     <div className={styles.mainRegion}>
       <SectionHeader text="In Workspace" />
       <SectionHeader text="Texts" />
-      <TextItems
-        textHeaders={textHeaders}
-        handleCheckBoxToggle={handleCheckBoxToggle}
-      />
+      <TextItems textHeaders={textHeaders} />
       <SectionHeader text="Layers" />
       <LayersItems />
     </div>
@@ -304,17 +276,8 @@ const ChangeNameButton = () => {
 };
 
 const SettingsPane = () => {
-  const { texts, setTexts } = useTexts();
+  const { texts } = useTexts();
   const { settings } = useSettings();
-
-  const toggleTextAreaVisibility = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const index = texts.headers.indexOf(event.target.name);
-    let newIsDisplayed = [...texts.isDisplayed];
-    newIsDisplayed[index] = !newIsDisplayed[index];
-    setTexts({ ...texts, isDisplayed: newIsDisplayed });
-  };
 
   return (
     <div
@@ -326,10 +289,7 @@ const SettingsPane = () => {
     >
       <Paper className={styles.paper} square>
         <Header />
-        <MainRegion
-          textHeaders={texts.headers}
-          handleCheckBoxToggle={toggleTextAreaVisibility}
-        />
+        <MainRegion textHeaders={texts.headers} />
         <Profile />
       </Paper>
     </div>
