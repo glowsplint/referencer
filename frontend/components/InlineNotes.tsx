@@ -120,6 +120,8 @@ const ChipContainer = (props: {
   value: string;
   width: number;
 }) => {
+  /* This container is used to render the Chip after the timeout to allow the passage
+     to render before the Chip and allow correct access of the DOM nodes. */
   const [isDisplayed, setIsDisplayed] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => setIsDisplayed(true));
@@ -176,7 +178,7 @@ const InlineNotes = ({
         const interval = JSON.parse(intervalString) as Interval;
         // Chip should not render when textArea is hidden
         const isChipToBeRendered =
-          texts.passages[interval.start[0]].isDisplayed;
+          texts.passages[interval.start[0]]?.isDisplayed;
         return isChipToBeRendered ? (
           <ChipContainer
             interval={interval}
