@@ -14,11 +14,12 @@ import Typography from '@mui/material/Typography';
 import { Format, scrollbarWidth } from '../common/constants';
 import { get } from '../common/utils';
 import { InlineNotes } from './InlineNotes';
-import { ParsedText, TextArea, TextInfo } from '../common/types';
+import { ParsedText, Passage, TextInfo } from '../common/types';
 import { Regex } from '../common/constants';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { useSettings } from '../contexts/Settings';
 import { useTexts } from '../contexts/Texts';
+
 
 const NoSSRCanvas = dynamic(() => import("./Canvas/Canvas"), {
   ssr: false,
@@ -379,7 +380,7 @@ const MainRegion = () => {
           })}
           data-testid="textAreaContainer"
         >
-          {texts.passages.map((textArea: TextArea, index: number) => {
+          {texts.passages.map((textArea: Passage, index: number) => {
             return textArea.isDisplayed ? (
               <TextArea
                 textName={textArea.header}

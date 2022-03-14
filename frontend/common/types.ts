@@ -112,10 +112,10 @@ type SetSettings = React.Dispatch<SetStateAction<Settings>>;
 
 /* Texts */
 interface Texts {
-  passages: TextArea[];
+  passages: Passage[];
 }
 
-interface TextArea {
+interface Passage {
   header: string;
   body: ParsedText;
   isDisplayed: boolean;
@@ -184,7 +184,7 @@ export type {
   SpanID,
   StateMachineKeyboard,
   StateMachineMouse,
-  TextArea,
+  Passage,
   TextInfo,
   TextType,
   Texts,
