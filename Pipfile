@@ -11,6 +11,8 @@ python-dotenv = "*"
 
 [dev-packages]
 black = "*"
+ipykernel = "*"
+nb-black = "*"
 
 [requires]
 python_version = "3.9"

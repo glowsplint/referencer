@@ -1,14 +1,13 @@
-import Autocomplete from '@mui/material/Autocomplete';
-import books from '../common/books';
-import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/Search';
-import styles from '../styles/SearchBar.module.css';
-import TextField from '@mui/material/TextField';
-import { DEVELOPMENT_MODE } from '../common/constants';
-import { grey } from '@mui/material/colors';
-import { processTexts, useTexts } from '../contexts/Texts';
-import { useState } from 'react';
-
+import Autocomplete from "@mui/material/Autocomplete";
+import books from "../common/books";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
+import styles from "../styles/SearchBar.module.css";
+import TextField from "@mui/material/TextField";
+import { DEVELOPMENT_MODE } from "../common/constants";
+import { grey } from "@mui/material/colors";
+import { parseTexts, useTexts } from "../contexts/Texts";
+import { useState } from "react";
 
 const SearchBar = () => {
   const { texts, setTexts } = useTexts();
@@ -49,7 +48,7 @@ const SearchBar = () => {
             ...previous.passages,
             {
               header: query + " ESV",
-              body: processTexts(passages[0]),
+              body: parseTexts(passages[0]),
               isDisplayed: true,
             },
           ],

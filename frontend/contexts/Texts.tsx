@@ -1,6 +1,13 @@
+import _ from 'lodash';
 import React, { useState } from 'react';
 import { Format, Regex } from '../common/constants';
-import { SetTexts, TextInfo, Texts } from '../common/types';
+import {
+  SetTexts,
+  TextInfo,
+  Texts,
+  TextType
+  } from '../common/types';
+
 
 const baseTexts: Texts = {
   passages: [],
@@ -29,93 +36,6 @@ const splitTexts = (text: string): [string[], string[]] => {
   return [mainText, footnotes];
 };
 
-// Adds a space conditionally
-const addSpace = (brokenTextItem: string): string => {
-  if (brokenTextItem !== "" && !brokenTextItem.endsWith("\n")) {
-    return brokenTextItem + " ";
-  }
-  return brokenTextItem;
-};
-
-// Parsing entry point
-const processTexts = (text: string) => {
-  const [rawMainText, rawFootnotes] = splitTexts(text);
-  const mainText = getMainText(rawMainText);
-  const footnotes = getFootnotes(rawFootnotes);
-  return { mainText, footnotes };
-};
-
-// The primary parsing engine that creates an array that contains the formatting information for each block of text
-const getMainText = (rawMainText: string[]): TextInfo[] => {
-  const brokenText = rawMainText.slice(1).flatMap((a) =>
-    a
-      .split(Regex.VerseNumberInText)
-      .flatMap((b) => b.split(Regex.SpecialNoteInText))
-      .flatMap((c) => c.split(Regex.TripleLineFeed))
-      .flatMap((d) => d.split(Regex.TripleLineFeedAtEnd))
-  );
-  let mainText: TextInfo[] = [];
-  let isFirstVerseNumberFound: boolean = false; // flag tracker
-
-  // Spaces are added at the end of strings (via addSpace) to have proper spacing around verse numbers
-  for (let [index, item] of brokenText.entries()) {
-    const getFormat = () => {
-      if (item.match(Regex.VerseNumber)) {
-        if (!isFirstVerseNumberFound) {
-          isFirstVerseNumberFound = true;
-        }
-        return Format.VerseNumber;
-      } else {
-        // Everything before the first verse number is found is a SectionHeader
-        if (!isFirstVerseNumberFound) {
-          return Format.SectionHeader;
-        } else if (item.match(Regex.SpecialNoteInText)) {
-          return Format.SpecialNote;
-        } else if (item.match(Regex.Quotes)) {
-          // If the quote (") begins at the start of the verse, format as StandardText
-          // or, if the quote (") is in Psalms, format as StandardText
-          brokenText[index] = addSpace(brokenText[index]);
-          if (
-            mainText[index - 1].format === Format.VerseNumber ||
-            rawMainText[0].match(Regex.Psalm)
-          ) {
-            return Format.StandardText;
-          } else {
-            return Format.Quotes;
-          }
-          // Triple Line Feeds at the end of the string are parsed as new paragraphs
-        } else if (item.match(Regex.TripleLineFeedAtEnd)) {
-          return Format.TripleLineFeedAtEnd;
-          // If the previous item in the array is StandardText, then this should be a SectionHeader
-          // if it is not Psalm 42:6 (exception to the rule)
-        } else if (mainText[index - 1].format === Format.StandardText) {
-          if (item.endsWith("\n")) {
-            return Format.Psalm426;
-          }
-          return Format.SectionHeader;
-        } else {
-          brokenText[index] = addSpace(brokenText[index]);
-          return Format.StandardText;
-        }
-      }
-    };
-    mainText[index] = { id: index, format: getFormat(), text: item };
-  }
-  return mainText;
-};
-
-// The secondary parsing engine (for footnotes only) that creates an array with formatting information
-const getFootnotes = (rawFootnotes: string[]): TextInfo[] => {
-  const footnotes = rawFootnotes.map((footnoteText, index) => {
-    return {
-      id: index,
-      format: index === 0 ? Format.SectionHeader : Format.FootnoteText,
-      text: footnoteText,
-    };
-  });
-  return footnotes;
-};
-
 /* Context Provider for texts */
 const TextsProvider = ({ children }: { children: React.ReactNode }) => {
   const [texts, setTexts] = useState(baseTexts);
@@ -131,4 +51,166 @@ const useTexts = () => {
   return React.useContext(TextsContext);
 };
 
-export { useTexts, TextsProvider, processTexts };
+// Parsing entry point
+const parseTexts = (text: string, max_header_length = 100): TextInfo[] => {
+  // # parse
+  const parsedList: {
+    format: Format;
+    lineId: number;
+    text: string;
+  }[] = []; // # init output list
+  const brokenText = text.split("\n"); // # linebreaks
+
+  // # iterate by line
+  for (const lineId of _.range(0, brokenText.length)) {
+    // # str() at line
+    const text = brokenText[lineId];
+
+    // # parse title
+    if (lineId == 0) {
+      parsedList.push({
+        format: Format.SectionHeader,
+        lineId,
+        text,
+      });
+    }
+
+    // # parse linebreak
+    else if (text.replace(" ", "").length == 0) {
+      parsedList.push({
+        format: Format.LineBreak,
+        lineId,
+        text,
+      });
+    }
+
+    // # parse esv watermark (removed)
+    else if (text == " (ESV)") {
+    }
+
+    // # parse footnote
+    else if (text[0].includes("(") && text.slice(0, 4).includes(")")) {
+      parsedList.push({
+        format: Format.FootnoteText,
+        lineId,
+        text,
+      });
+    }
+
+    // # parse header
+    else {
+      const hasLineBreakBefore =
+        brokenText[lineId - 1].replace(" ", "").length == 0;
+      const hasLineBreakAfter =
+        brokenText[lineId + 1].replace(" ", "").length == 0;
+      const isLineLessThanMaxHeaderLength = text.length < max_header_length;
+      const doesNotHaveSquareBrackets = text.match(/\[\d+\]/) == null;
+
+      if (
+        hasLineBreakBefore && // # linebreak before
+        hasLineBreakAfter && // # linebreak after
+        isLineLessThanMaxHeaderLength && // # less than maximum header length
+        doesNotHaveSquareBrackets // # does not have square brackets
+      ) {
+        const brokenFootnote = parseInTextNum({
+          text,
+          lineId,
+          numFormat: Format.InlineFootnote,
+          subtextFormat: Format.SectionHeader,
+          parenthesisType: "()",
+        });
+        parsedList.push(...brokenFootnote);
+      }
+
+      // # parse body text
+
+      // # split verses
+      else {
+        const brokenVerse = parseInTextNum({
+          text,
+          lineId,
+          numFormat: Format.VerseNumber,
+          subtextFormat: Format.StandardText,
+          parenthesisType: "[]",
+        });
+
+        // # split footnote number
+        // # footnote number
+        for (const verse of brokenVerse) {
+          if (verse["format"] == Format.VerseNumber) {
+            parsedList.push(verse);
+          }
+
+          // # subverses split by footnote number
+          else {
+            const brokenFootnote = parseInTextNum({
+              text: verse["text"],
+              lineId,
+              numFormat: Format.InlineFootnote,
+              subtextFormat: Format.StandardText,
+              parenthesisType: "()",
+            });
+
+            parsedList.push(...brokenFootnote);
+          }
+        }
+      }
+    }
+  }
+
+  const finalList = parsedList.map((item, index) => {
+    return { ...item, id: index };
+  });
+
+  return finalList;
+};
+
+const parseInTextNum = ({
+  text,
+  lineId,
+  numFormat,
+  subtextFormat,
+  parenthesisType,
+}: {
+  text: string;
+  lineId: number;
+  numFormat: Format;
+  subtextFormat: Format;
+  parenthesisType: string;
+}) => {
+  const parsedList = []; // # init output list
+  let brokenText = [];
+
+  // # "()"
+  if (parenthesisType == "()") {
+    brokenText = text.split(/\(([0-9_]+)\)/);
+  }
+  // # "[]"
+  else {
+    brokenText = text.split(/\[([0-9_]+)\]/);
+  }
+
+  // # number
+  for (const text of brokenText) {
+    if (!isNaN(parseInt(text))) {
+      parsedList.push({
+        format: numFormat,
+        lineId,
+        text,
+      });
+    }
+
+    // # subtext
+    else {
+      parsedList.push({
+        format: subtextFormat,
+        lineId,
+        text,
+      });
+    }
+  }
+
+  return parsedList;
+};
+
+export { useTexts, TextsProvider, parseTexts };

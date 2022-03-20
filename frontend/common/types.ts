@@ -1,6 +1,5 @@
-import { Format, SelectionMode } from './constants';
-import { SetStateAction } from 'react';
-
+import { Format, SelectionMode } from "./constants";
+import { SetStateAction } from "react";
 
 // Canvas
 type StateMachinePattern<T> = (
@@ -117,7 +116,7 @@ interface Texts {
 
 interface Passage {
   header: string;
-  body: ParsedText;
+  body: TextInfo[];
   isDisplayed: boolean;
 }
 
@@ -135,13 +134,9 @@ type TextType =
 
 interface TextInfo {
   id: number;
+  lineId: number;
   format: TextType;
   text: string;
-}
-
-interface ParsedText {
-  mainText: TextInfo[];
-  footnotes: TextInfo[];
 }
 
 /* Tracking */
@@ -173,7 +168,6 @@ export type {
   Interval,
   IntervalString,
   Login,
-  ParsedText,
   Selection,
   SetAnnotations,
   SetLogin,

@@ -10,8 +10,9 @@ enum Format {
   SectionHeader = "SectionHeader",
   SpecialNote = "SpecialNote",
   StandardText = "StandardText",
-  TripleLineFeedAtEnd = "TripleLineFeedAtEnd",
+  LineBreak = "LineBreak",
   VerseNumber = "VerseNumber",
+  InlineFootnote = "InlineFootnote",
 }
 
 const Regex = {

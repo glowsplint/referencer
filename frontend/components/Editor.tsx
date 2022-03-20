@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import { Format, scrollbarWidth } from '../common/constants';
 import { get } from '../common/utils';
 import { InlineNotes } from './InlineNotes';
-import { ParsedText, Passage, TextInfo } from '../common/types';
+import { Passage, TextInfo } from '../common/types';
 import { Regex } from '../common/constants';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { useSettings } from '../contexts/Settings';
@@ -59,14 +59,13 @@ PureText.defaultProps = {
   removeLeadingWhitespace: false,
 };
 
-const InlineFootnote = ({ text, id }: { text: string; id: string }) => {
+const InlineFootnote = ({ textInfo }: { textInfo: TextInfo }) => {
   return (
     <Typography
       variant="overline"
       className={clsx(styles.inlineFootnote, styles.superscript)}
-      id={id}
     >
-      {text}
+      {textInfo.text}
     </Typography>
   );
 };
@@ -80,31 +79,12 @@ const StandardText = ({
   textAreaID: number;
   textInfo: TextInfo;
 }) => {
-  const charArray = textInfo.text.split(Regex.InlineFootnote);
-
-  // <text> may contain inline footnotes i.e. `(3)`.
   return (
-    <>
-      {charArray.map((item, index) => {
-        if (item.match(Regex.InlineFootnote)) {
-          return (
-            <InlineFootnote
-              text={item}
-              key={index}
-              id={[textAreaID, textInfo.id, index, 0].toString()}
-            />
-          );
-        }
-        return (
-          <PureText
-            phrase={item}
-            id={[textAreaID, textInfo.id, index]}
-            key={index}
-            removeLeadingWhitespace={removeLeadingWhitespace}
-          />
-        );
-      })}
-    </>
+    <PureText
+      phrase={textInfo.text}
+      id={[textAreaID, textInfo.id, 0]}
+      removeLeadingWhitespace={removeLeadingWhitespace}
+    />
   );
 };
 
@@ -158,7 +138,7 @@ const VerseNumber = ({
     <Typography
       variant="button"
       className={clsx(styles.verseNumber, styles.superscript)}
-      id={[textAreaID, textInfo.id, 0, -1].toString()}
+      id={[textAreaID, textInfo.lineId, 0, -1].toString()}
     >
       {textInfo.text}
     </Typography>
@@ -185,47 +165,14 @@ const FootnoteText = ({ text }: { text: string }) => {
   );
 };
 
-const Quotes = ({
+const ParagraphSpacer = ({
   textInfo,
   textAreaID,
 }: {
   textInfo: TextInfo;
   textAreaID: number;
 }) => {
-  // Adds a new paragraph before the start of a quote
-  return (
-    <>
-      <ParagraphSpacer textAreaID={textAreaID} />
-      <StandardText
-        textInfo={textInfo}
-        textAreaID={textAreaID}
-        removeLeadingWhitespace
-      />
-    </>
-  );
-};
-
-const ParagraphSpacer = ({ textAreaID }: { textAreaID: number }) => {
-  const textInfo = { id: -1, text: "", format: Format.SectionHeader };
   return <SectionHeader textInfo={textInfo} textAreaID={textAreaID} />;
-};
-
-const Psalm426 = ({
-  textInfo,
-  textAreaID,
-}: {
-  textInfo: TextInfo;
-  textAreaID: number;
-}) => {
-  // Special handling for Psalm 42:6
-  // The parsing engine assumes that text appearing after text should be formatted as a SectionHeader
-  // This is a special case hardcoded as an exception.
-  return (
-    <>
-      <ParagraphSpacer textAreaID={textAreaID} />
-      <StandardText textInfo={textInfo} textAreaID={textAreaID} />
-    </>
-  );
 };
 
 const TextArea = ({
@@ -234,10 +181,9 @@ const TextArea = ({
   textAreaID,
 }: {
   textName: string;
-  textBody: ParsedText;
+  textBody: TextInfo[];
   textAreaID: number;
 }) => {
-  const { mainText, footnotes } = textBody;
   const { settings } = useSettings();
 
   const getComponent = ({
@@ -250,37 +196,32 @@ const TextArea = ({
     const componentMap = {
       [Format.SectionHeader]: React.createElement(SectionHeader, {
         textInfo,
-        key: textInfo.id,
         textAreaID,
+        key: textInfo.id,
       }),
       [Format.VerseNumber]: React.createElement(VerseNumber, {
         textInfo,
-        key: textInfo.id,
         textAreaID,
+        key: textInfo.id,
       }),
       [Format.SpecialNote]: React.createElement(SpecialNote, {
         textInfo,
-        key: textInfo.id,
         textAreaID,
-      }),
-      [Format.Quotes]: React.createElement(Quotes, {
-        textInfo,
         key: textInfo.id,
-        textAreaID,
       }),
       [Format.StandardText]: React.createElement(StandardText, {
         textInfo,
-        key: textInfo.id,
         textAreaID,
-      }),
-      [Format.TripleLineFeedAtEnd]: React.createElement(ParagraphSpacer, {
         key: textInfo.id,
-        textAreaID,
       }),
-      [Format.Psalm426]: React.createElement(Psalm426, {
+      [Format.LineBreak]: React.createElement(ParagraphSpacer, {
+        textInfo,
+        textAreaID,
+        key: textInfo.id,
+      }),
+      [Format.InlineFootnote]: React.createElement(InlineFootnote, {
         textInfo,
         key: textInfo.id,
-        textAreaID,
       }),
     };
 
@@ -305,25 +246,12 @@ const TextArea = ({
           {textName}
         </Typography>
       </div>
-      {mainText.map((textInfo) =>
+      {textBody.map((textInfo) =>
         getComponent({
           textInfo,
           textAreaID,
         })
       )}
-      {footnotes.map((textInfo) => {
-        if (textInfo.format === Format.SectionHeader) {
-          return (
-            <SectionHeader
-              textInfo={textInfo}
-              key={textInfo.id}
-              textAreaID={textAreaID}
-            />
-          );
-        } else {
-          return <FootnoteText text={textInfo.text} key={textInfo.id} />;
-        }
-      })}
     </div>
   );
 };
