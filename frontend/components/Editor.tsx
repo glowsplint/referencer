@@ -25,40 +25,6 @@ const NoSSRCanvas = dynamic(() => import("./Canvas/Canvas"), {
   ssr: false,
 });
 
-const PureText = ({
-  phrase,
-  id,
-  removeLeadingWhitespace,
-}: {
-  phrase: string;
-  id: [number, number, number];
-  removeLeadingWhitespace?: boolean;
-}) => {
-  const [firstItem, ...rest] = phrase.split(Regex.WordBoundary);
-  return (
-    <>
-      <span
-        className={clsx({
-          [styles.withLeadingWhitespace]: !removeLeadingWhitespace,
-          [styles.noLeadingWhitespace]: removeLeadingWhitespace,
-        })}
-        id={[...id, 0].toString()}
-      >
-        {firstItem}
-      </span>
-      {rest.map((item, index) => (
-        <span id={[...id, index + 1].toString()} key={index}>
-          {item}
-        </span>
-      ))}
-    </>
-  );
-};
-
-PureText.defaultProps = {
-  removeLeadingWhitespace: false,
-};
-
 const InlineFootnote = ({ textInfo }: { textInfo: TextInfo }) => {
   return (
     <Typography
@@ -71,25 +37,22 @@ const InlineFootnote = ({ textInfo }: { textInfo: TextInfo }) => {
 };
 
 const StandardText = ({
-  removeLeadingWhitespace,
   textAreaID,
   textInfo,
 }: {
-  removeLeadingWhitespace?: boolean;
   textAreaID: number;
   textInfo: TextInfo;
 }) => {
+  const phrases = textInfo.text.split(Regex.WordBoundary);
   return (
-    <PureText
-      phrase={textInfo.text}
-      id={[textAreaID, textInfo.id, 0]}
-      removeLeadingWhitespace={removeLeadingWhitespace}
-    />
+    <>
+      {phrases.map((item, index) => (
+        <span id={[textAreaID, textInfo.id, index + 1].toString()} key={index}>
+          {item}
+        </span>
+      ))}
+    </>
   );
-};
-
-StandardText.defaultProps = {
-  removeLeadingWhitespace: false,
 };
 
 const SectionHeader = ({
@@ -100,9 +63,9 @@ const SectionHeader = ({
   textAreaID: number;
 }) => {
   return (
-    <div className={styles.sectionHeader}>
+    <span className={styles.sectionHeader}>
       <StandardText textInfo={textInfo} textAreaID={textAreaID} />
-    </div>
+    </span>
   );
 };
 
@@ -165,14 +128,8 @@ const FootnoteText = ({ text }: { text: string }) => {
   );
 };
 
-const ParagraphSpacer = ({
-  textInfo,
-  textAreaID,
-}: {
-  textInfo: TextInfo;
-  textAreaID: number;
-}) => {
-  return <SectionHeader textInfo={textInfo} textAreaID={textAreaID} />;
+const ParagraphSpacer = () => {
+  return <div></div>;
 };
 
 const TextArea = ({
@@ -215,8 +172,6 @@ const TextArea = ({
         key: textInfo.id,
       }),
       [Format.LineBreak]: React.createElement(ParagraphSpacer, {
-        textInfo,
-        textAreaID,
         key: textInfo.id,
       }),
       [Format.InlineFootnote]: React.createElement(InlineFootnote, {

@@ -104,7 +104,7 @@ const parseTexts = (text: string, max_header_length = 100): TextInfo[] => {
       const hasLineBreakAfter =
         brokenText[lineId + 1].replace(" ", "").length == 0;
       const isLineLessThanMaxHeaderLength = text.length < max_header_length;
-      const doesNotHaveSquareBrackets = text.match(/\[\d+\]/) == null;
+      const doesNotHaveSquareBrackets = text.match(/\[.*\]/) == null;
 
       if (
         hasLineBreakBefore && // # linebreak before
@@ -133,7 +133,6 @@ const parseTexts = (text: string, max_header_length = 100): TextInfo[] => {
           subtextFormat: Format.StandardText,
           parenthesisType: "[]",
         });
-
         // # split footnote number
         // # footnote number
         for (const verse of brokenVerse) {
@@ -158,11 +157,13 @@ const parseTexts = (text: string, max_header_length = 100): TextInfo[] => {
     }
   }
 
+  // Add running id
   const finalList = parsedList.map((item, index) => {
     return { ...item, id: index };
   });
 
-  return finalList;
+  // Remove first item
+  return finalList.slice(1, finalList.length);
 };
 
 const parseInTextNum = ({
@@ -189,14 +190,15 @@ const parseInTextNum = ({
   else {
     brokenText = text.split(/\[([0-9_]+)\]/);
   }
-
   // # number
-  for (const text of brokenText) {
-    if (!isNaN(parseInt(text))) {
+  console.log(brokenText);
+  for (const phrase of brokenText) {
+    const isNumber = !isNaN(parseInt(phrase));
+    if (isNumber) {
       parsedList.push({
         format: numFormat,
         lineId,
-        text,
+        text: phrase,
       });
     }
 
@@ -205,7 +207,7 @@ const parseInTextNum = ({
       parsedList.push({
         format: subtextFormat,
         lineId,
-        text,
+        text: phrase,
       });
     }
   }
