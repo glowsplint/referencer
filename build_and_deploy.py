@@ -4,7 +4,7 @@ import typing
 
 
 def build_frontend():
-    return "yarn build"
+    return "bun run build"
 
 
 def build_docker_image():

@@ -5,14 +5,12 @@ const scrollbarWidth = 10;
 
 enum Format {
   FootnoteText = "FootnoteText",
-  Psalm426 = "Psalm426",
-  Quotes = "Quotes",
+  InlineFootnote = "InlineFootnote",
+  LineBreak = "LineBreak",
   SectionHeader = "SectionHeader",
   SpecialNote = "SpecialNote",
   StandardText = "StandardText",
-  LineBreak = "LineBreak",
   VerseNumber = "VerseNumber",
-  InlineFootnote = "InlineFootnote",
 }
 
 const Regex = {

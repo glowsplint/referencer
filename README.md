@@ -23,23 +23,23 @@ This repository is a [Next.js](https://nextjs.org/) project bootstrapped with [`
 
 You will need:
 
-1. Node.js installed to run the front-end development server. You can get the latest version from [here](https://nodejs.org/en/).
+1. Bun installed to run the front-end development server. You can get the latest version from [here](https://bun.sh/).
 2. Python interpreter installed to run the back-end development server. You can get the latest version from [here](https://www.python.org/).
 
 ### Front-end development
 
-The preferred method uses the yarn package manager.
+The preferred method uses the Bun package manager.
 
 To run the front-end development server, run:
 
 ```bash
-# if you don't have the yarn package manager installed
-npm install -g yarn
+# if you don't have Bun installed
+# Install from https://bun.sh/ or use: curl -fsSL https://bun.sh/install | bash
 
 # to run the front-end dev server
 cd frontend
-yarn install
-yarn dev
+bun install
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser.
@@ -48,7 +48,7 @@ To export and build the front-end static assets, run:
 
 ```bash
 cd frontend
-yarn build
+bun run build
 ```
 
 This will generate the static assets in `.\frontend\out`, which are required by the back-end development server in the next step.
@@ -81,7 +81,7 @@ The production server can be run as follows:
 ```bash
 # build the latest front-end static assets
 cd frontend
-yarn build
+bun run build
 
 # run the production server
 cd ..
