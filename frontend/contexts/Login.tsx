@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Login, SetLogin } from '../common/types';
+import React, { useState } from "react";
+import { Login, SetLogin } from "../common/types";
 
-const baseLogin = {
+const defaultLogin = {
   displayName: "user-1",
   spaceID: "space-1",
 };
@@ -10,12 +10,12 @@ const LoginContext = React.createContext<{
   login: Login;
   setLogin: SetLogin;
 }>({
-  login: baseLogin,
+  login: defaultLogin,
   setLogin: () => {},
 });
 
 const LoginProvider = ({ children }: { children: React.ReactNode }) => {
-  const [login, setLogin] = useState(baseLogin);
+  const [login, setLogin] = useState(defaultLogin);
 
   return (
     <LoginContext.Provider value={{ login, setLogin }}>

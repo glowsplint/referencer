@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
-import { SettingsProvider, useSettings } from "../../contexts/Settings";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-
-import { AnnotationsProvider } from "../../contexts/Annotations";
 import ButtonPane from "../../components/ButtonPane";
 import Editor from "../../components/Editor";
 import Head from "next/head";
-import { LoginProvider } from "../../contexts/Login";
+import React, { useEffect } from "react";
 import SettingsPane from "../../components/SettingsPane";
+import styles from "../../styles/Space.module.css";
+import { AnnotationsProvider } from "../../contexts/Annotations";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { LoginProvider } from "../../contexts/Login";
+import { SettingsProvider, useSettings } from "../../contexts/Settings";
 import { TextsProvider } from "../../contexts/Texts";
 import { TrackingProvider } from "../../contexts/Tracking";
-import styles from "../../styles/Space.module.css";
 
 const DefaultLayout = () => {
   return (
@@ -53,7 +52,7 @@ export function Space() {
           mode: settings.isDarkMode ? "dark" : "light",
         },
       }),
-    [settings.isDarkMode]
+    [settings.isDarkMode],
   );
 
   return (
