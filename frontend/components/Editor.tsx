@@ -8,6 +8,7 @@ import React, {
   useRef,
   useState
   } from 'react';
+import PlateEditor from './PlateEditor';
 import SearchBar from './SearchBar';
 import styles from '../styles/Editor.module.css';
 import Typography from '@mui/material/Typography';
@@ -284,6 +285,7 @@ const Editor = () => {
     <Paper className={styles.editor} square id="Editor">
       <Header />
       <MainRegion />
+      <PlateEditor />
       <SearchBar />
     </Paper>
   );

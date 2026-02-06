@@ -1,17 +1,14 @@
 import json
 import os
 from pathlib import Path
-from typing import Optional
 from urllib.parse import quote
 
 import requests
 from dotenv import load_dotenv
-from fastapi import FastAPI, Query, WebSocket
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-
-from .spaces import SpacesServer
 
 load_dotenv()
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE")
@@ -52,8 +49,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-svr = SpacesServer()
-
 
 @app.get("/")
 async def index():
@@ -93,27 +88,3 @@ def read_json(path: Path):
 def get_development_passages(query: str):
     query_path = Path(query.lower())
     return read_json(query_path)
-
-
-@app.websocket("/ws/logon")
-async def websocket_logon(
-    websocket: WebSocket, username: Optional[str] = None, space_id: Optional[str] = None
-):
-    await websocket.accept()
-    if space_id is None:
-        space_id = svr.space_create()
-        print(f"Created new space {space_id}")
-    usr_token = svr.user_add(space_id, username)
-    await websocket.send_json({"u": usr_token, "r": space_id})
-    await websocket.close()
-
-
-@app.websocket("/ws/r")
-async def websocket_room(
-    websocket: WebSocket, u: Optional[str] = None, r: Optional[str] = None
-):
-    await websocket.accept()
-    if u is None or r is None:
-        websocket.close()
-    else:
-        await svr.user_connect(r, u)
