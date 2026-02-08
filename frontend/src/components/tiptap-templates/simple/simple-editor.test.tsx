@@ -1,0 +1,182 @@
+import { describe, it, expect, vi, beforeEach } from "vitest"
+import { render, screen } from "@testing-library/react"
+import { SimpleEditor } from "./simple-editor"
+
+// Mock editor instance shared across mocks
+const mockEditor = {
+  isEditable: true,
+  setEditable: vi.fn(),
+  emit: vi.fn(),
+  on: vi.fn(),
+  off: vi.fn(),
+  state: { tr: {} },
+}
+
+// Mock @tiptap/react
+vi.mock("@tiptap/react", () => ({
+  useEditor: () => mockEditor,
+  EditorContent: ({ editor: _editor, ...props }: Record<string, unknown>) => (
+    <div data-testid="editor-content" {...props} />
+  ),
+  EditorContext: {
+    Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  },
+}))
+
+// Mock toolbar primitives - pass through style and children
+vi.mock("@/components/tiptap-ui-primitive/toolbar", () => ({
+  Toolbar: vi.fn(
+    ({
+      children,
+      style,
+      ...props
+    }: {
+      children?: React.ReactNode
+      style?: React.CSSProperties
+      [key: string]: unknown
+    }) => (
+      <div data-testid="toolbar" style={style} {...props}>
+        {children}
+      </div>
+    )
+  ),
+  ToolbarGroup: ({ children }: { children?: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  ToolbarSeparator: () => <div />,
+}))
+
+vi.mock("@/components/tiptap-ui-primitive/button", () => ({
+  Button: () => <button />,
+}))
+
+vi.mock("@/components/tiptap-ui-primitive/spacer", () => ({
+  Spacer: () => <div />,
+}))
+
+// Mock all toolbar child components
+vi.mock("@/components/tiptap-ui/heading-dropdown-menu", () => ({
+  HeadingDropdownMenu: () => null,
+}))
+vi.mock("@/components/tiptap-ui/image-upload-button", () => ({
+  ImageUploadButton: () => null,
+}))
+vi.mock("@/components/tiptap-ui/list-dropdown-menu", () => ({
+  ListDropdownMenu: () => null,
+}))
+vi.mock("@/components/tiptap-ui/blockquote-button", () => ({
+  BlockquoteButton: () => null,
+}))
+vi.mock("@/components/tiptap-ui/code-block-button", () => ({
+  CodeBlockButton: () => null,
+}))
+vi.mock("@/components/tiptap-ui/color-highlight-popover", () => ({
+  ColorHighlightPopover: () => null,
+  ColorHighlightPopoverContent: () => null,
+  ColorHighlightPopoverButton: () => null,
+}))
+vi.mock("@/components/tiptap-ui/link-popover", () => ({
+  LinkPopover: () => null,
+  LinkContent: () => null,
+  LinkButton: () => null,
+}))
+vi.mock("@/components/tiptap-ui/mark-button", () => ({
+  MarkButton: () => null,
+}))
+vi.mock("@/components/tiptap-ui/text-align-button", () => ({
+  TextAlignButton: () => null,
+}))
+vi.mock("@/components/tiptap-ui/undo-redo-button", () => ({
+  UndoRedoButton: () => null,
+}))
+
+// Mock icons
+vi.mock("@/components/tiptap-icons/arrow-left-icon", () => ({
+  ArrowLeftIcon: () => null,
+}))
+vi.mock("@/components/tiptap-icons/highlighter-icon", () => ({
+  HighlighterIcon: () => null,
+}))
+vi.mock("@/components/tiptap-icons/link-icon", () => ({
+  LinkIcon: () => null,
+}))
+
+// Mock hooks
+vi.mock("@/hooks/use-is-breakpoint", () => ({
+  useIsBreakpoint: () => false,
+}))
+vi.mock("@/hooks/use-window-size", () => ({
+  useWindowSize: () => ({ width: 1024, height: 768, offsetTop: 0, offsetLeft: 0, scale: 1 }),
+}))
+vi.mock("@/hooks/use-cursor-visibility", () => ({
+  useCursorVisibility: () => ({ x: 0, y: 0, width: 0, height: 0 }),
+}))
+
+// Mock tiptap extensions
+vi.mock("@tiptap/starter-kit", () => ({
+  StarterKit: { configure: () => ({}) },
+}))
+vi.mock("@tiptap/extension-image", () => ({ Image: {} }))
+vi.mock("@tiptap/extension-list", () => ({ TaskItem: { configure: () => ({}) }, TaskList: {} }))
+vi.mock("@tiptap/extension-text-align", () => ({ TextAlign: { configure: () => ({}) } }))
+vi.mock("@tiptap/extension-typography", () => ({ Typography: {} }))
+vi.mock("@tiptap/extension-highlight", () => ({ Highlight: { configure: () => ({}) } }))
+vi.mock("@tiptap/extension-subscript", () => ({ Subscript: {} }))
+vi.mock("@tiptap/extension-superscript", () => ({ Superscript: {} }))
+vi.mock("@tiptap/extensions", () => ({ Selection: {} }))
+vi.mock("@/components/tiptap-node/image-upload-node/image-upload-node-extension", () => ({
+  ImageUploadNode: { configure: () => ({}) },
+}))
+vi.mock("@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension", () => ({
+  HorizontalRule: {},
+}))
+vi.mock("@/lib/tiptap-utils", () => ({
+  handleImageUpload: vi.fn(),
+  MAX_FILE_SIZE: 5000000,
+}))
+vi.mock("@/components/tiptap-templates/simple/data/content.json", () => ({
+  default: {},
+}))
+
+beforeEach(() => {
+  vi.clearAllMocks()
+})
+
+describe("SimpleEditor toolbar lock/unlock", () => {
+  it("toolbar has opacity 1 and pointer-events auto when unlocked", () => {
+    render(<SimpleEditor isLocked={false} />)
+    const toolbar = screen.getByTestId("toolbar")
+    expect(toolbar.style.opacity).toBe("1")
+    expect(toolbar.style.pointerEvents).toBe("auto")
+  })
+
+  it("toolbar has opacity 0 and pointer-events none when locked", () => {
+    render(<SimpleEditor isLocked={true} />)
+    const toolbar = screen.getByTestId("toolbar")
+    expect(toolbar.style.opacity).toBe("0")
+    expect(toolbar.style.pointerEvents).toBe("none")
+  })
+
+  it("calls editor.setEditable(true) when unlocking", () => {
+    render(<SimpleEditor isLocked={false} />)
+    expect(mockEditor.setEditable).toHaveBeenCalledWith(true)
+  })
+
+  it("calls editor.setEditable(false) when locking", () => {
+    render(<SimpleEditor isLocked={true} />)
+    expect(mockEditor.setEditable).toHaveBeenCalledWith(false)
+  })
+
+  it("calls editor.emit('selectionUpdate') when unlocking", () => {
+    render(<SimpleEditor isLocked={false} />)
+    expect(mockEditor.emit).toHaveBeenCalledWith("selectionUpdate", {
+      editor: mockEditor,
+      transaction: mockEditor.state.tr,
+    })
+  })
+
+  it("does NOT call editor.emit('selectionUpdate') when locking", () => {
+    render(<SimpleEditor isLocked={true} />)
+    expect(mockEditor.emit).not.toHaveBeenCalled()
+  })
+})
