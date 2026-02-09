@@ -57,9 +57,7 @@ This will generate the static assets in `.\frontend\out`, which are required by 
 
 The back-end development server is written in Python. When run, it will serve the front-end static assets. You will need to first export and build the front-end static assets (with steps above) before running this step.
 
-You will also need to install the Python dependencies by running from the root directory:
-
-Using pipenv:
+Install the Python dependencies using pipenv:
 
 ```bash
 # if you don't have pipenv
@@ -67,27 +65,22 @@ pip install pipenv
 
 # install dependencies into a virtualenv
 pipenv install
+```
 
-# to run the back-end dev server
-py run.py
+Then run the back-end dev server:
+
+```bash
+make serve
 ```
 
 Open [http://localhost:5000](http://localhost:5000) with your browser to see the back-end development server serving the exported front-end static assets.
 
-### Deployment
-
-The production server can be run as follows:
+### Build and run everything
 
 ```bash
-# build the latest front-end static assets
-cd frontend
-bun run build
-
-# run the production server
-cd ..
-py run.py
+make
 ```
 
-You will need to supply a `.env` file in the root directory with a valid ESV API key.
+This will build the frontend and start the backend server. You can also run each step individually with `make build` and `make serve`.
 
-Open [http://localhost:5000](http://localhost:5000) with your browser to see the production server.
+You will need to supply a `.env` file in the root directory with a valid ESV API key.

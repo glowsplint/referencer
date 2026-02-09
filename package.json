@@ -1,0 +1,7 @@
+{
+  "name": "referencer",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && bun run build"
+  }
+}

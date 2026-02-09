@@ -12,17 +12,13 @@ from fastapi.staticfiles import StaticFiles
 
 load_dotenv()
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE")
-EXPORTED_PATH = Path("./frontend/out/")
-
-LANDING_PAGE = "index.html"
-WORKSPACE_PAGE = "space.html"
-HTML_404_PAGE = "./404.html"
+EXPORTED_PATH = Path("./frontend/dist/")
 
 origins = ["http://127.0.0.1:5000"]
 
 
 async def not_found(request, exc):
-    return FileResponse(EXPORTED_PATH / HTML_404_PAGE)
+    return FileResponse(EXPORTED_PATH / "index.html")
 
 
 exception_handlers = {
@@ -31,14 +27,9 @@ exception_handlers = {
 
 app = FastAPI(exception_handlers=exception_handlers)
 app.mount(
-    "/_next/static",
-    StaticFiles(directory=EXPORTED_PATH / "_next/static"),
-    name="static",
-)
-app.mount(
-    "/public",
-    StaticFiles(directory=EXPORTED_PATH / "public"),
-    name="public",
+    "/assets",
+    StaticFiles(directory=EXPORTED_PATH / "assets"),
+    name="assets",
 )
 
 app.add_middleware(
@@ -52,12 +43,12 @@ app.add_middleware(
 
 @app.get("/")
 async def index():
-    return FileResponse(EXPORTED_PATH / LANDING_PAGE)
+    return FileResponse(EXPORTED_PATH / "index.html")
 
 
 @app.get("/space")
 async def space():
-    return FileResponse(EXPORTED_PATH / WORKSPACE_PAGE)
+    return FileResponse(EXPORTED_PATH / "index.html")
 
 
 @app.get("/api/{query}")
