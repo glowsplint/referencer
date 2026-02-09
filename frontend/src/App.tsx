@@ -32,6 +32,7 @@ export function App() {
     setActiveLayer,
     updateLayerColor,
     updateLayerName,
+    toggleLayerVisibility,
     addHighlight,
     removeHighlight,
     editorsRef,
@@ -87,6 +88,7 @@ export function App() {
             setActiveLayer={setActiveLayer}
             updateLayerColor={updateLayerColor}
             updateLayerName={updateLayerName}
+            toggleLayerVisibility={toggleLayerVisibility}
             removeEditor={removeEditor}
           />
         )}

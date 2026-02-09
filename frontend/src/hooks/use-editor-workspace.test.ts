@@ -564,6 +564,39 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].highlights).toEqual([])
   })
 
+  it("addLayer initializes visible as true", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    expect(result.current.layers[0].visible).toBe(true)
+  })
+
+  it("toggleLayerVisibility toggles a layer's visibility", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    const layerId = result.current.layers[0].id
+    expect(result.current.layers[0].visible).toBe(true)
+
+    act(() => {
+      result.current.toggleLayerVisibility(layerId)
+    })
+
+    expect(result.current.layers[0].visible).toBe(false)
+
+    act(() => {
+      result.current.toggleLayerVisibility(layerId)
+    })
+
+    expect(result.current.layers[0].visible).toBe(true)
+  })
+
   it("addHighlight adds a highlight to the specified layer", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 

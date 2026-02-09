@@ -32,4 +32,24 @@ describe("SectionList", () => {
     expect(screen.getByTestId("removeSection-0")).toBeInTheDocument()
     expect(screen.getByTestId("removeSection-1")).toBeInTheDocument()
   })
+
+  it("section rows are draggable when multiple sections exist", () => {
+    render(<SectionList editorCount={2} removeEditor={vi.fn()} />)
+    const row = screen.getByText("Section 1").closest("[draggable]")
+    expect(row).toHaveAttribute("draggable", "true")
+  })
+
+  it("section rows are not draggable when only one section exists", () => {
+    render(<SectionList editorCount={1} removeEditor={vi.fn()} />)
+    const row = screen.getByText("Section 1").parentElement
+    expect(row).not.toHaveAttribute("draggable", "true")
+  })
+
+  it("sets section index in dataTransfer on drag start", () => {
+    render(<SectionList editorCount={2} removeEditor={vi.fn()} />)
+    const row = screen.getByText("Section 2").closest("[draggable]")!
+    const setData = vi.fn()
+    fireEvent.dragStart(row, { dataTransfer: { setData } })
+    expect(setData).toHaveBeenCalledWith("application/x-section-index", "1")
+  })
 })

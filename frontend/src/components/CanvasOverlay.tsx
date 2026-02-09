@@ -35,7 +35,7 @@ export function CanvasOverlay({
     const containerRect = container.getBoundingClientRect()
 
     for (const layer of layers) {
-      if (layer.highlights.length === 0) continue
+      if (!layer.visible || layer.highlights.length === 0) continue
 
       // Parse hex colour and add ~30% alpha
       const color = layer.color

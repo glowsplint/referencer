@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from "lucide-react";
 import { ColorPicker } from "./ColorPicker";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,6 +11,7 @@ interface LayerRowProps {
   onSetActive: () => void;
   onUpdateColor: (color: string) => void;
   onUpdateName: (name: string) => void;
+  onToggleVisibility: () => void;
 }
 
 export function LayerRow({
@@ -19,6 +21,7 @@ export function LayerRow({
   onSetActive,
   onUpdateColor,
   onUpdateName,
+  onToggleVisibility,
 }: LayerRowProps) {
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -52,7 +55,7 @@ export function LayerRow({
       className="relative cursor-grab"
       draggable
       onDragStart={(e) => {
-        e.dataTransfer.setData("text/plain", layer.id);
+        e.dataTransfer.setData("application/x-layer-id", layer.id);
       }}
     >
       <div
@@ -84,7 +87,7 @@ export function LayerRow({
           />
         ) : (
           <div
-            className="text-sm w-full bg-transparent border-0 rounded px-1 py-0 truncate"
+            className="text-sm w-full bg-transparent border-0 rounded px-1 py-0 truncate cursor-default"
             onDoubleClick={(e) => {
               e.stopPropagation();
               startEditing();
@@ -102,6 +105,17 @@ export function LayerRow({
             Active
           </span>
         )}
+        <button
+          className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleVisibility();
+          }}
+          title={layer.visible ? "Hide layer" : "Show layer"}
+          data-testid={`layerVisibility-${index}`}
+        >
+          {layer.visible ? <Eye size={14} /> : <EyeOff size={14} />}
+        </button>
       </div>
       {colorPickerOpen && (
         <ColorPicker

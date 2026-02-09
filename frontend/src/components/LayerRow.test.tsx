@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from "vitest"
 import { LayerRow } from "./LayerRow"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
-const defaultLayer = { id: "a", name: "Layer 1", color: "#fca5a5", highlights: [] as unknown[] }
+const defaultLayer = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as unknown[] }
 
 function renderRow(overrides = {}) {
   const defaults = {
@@ -13,6 +13,7 @@ function renderRow(overrides = {}) {
     onSetActive: vi.fn(),
     onUpdateColor: vi.fn(),
     onUpdateName: vi.fn(),
+    onToggleVisibility: vi.fn(),
   }
   const props = { ...defaults, ...overrides }
   return { ...render(<LayerRow {...props} />), props }
@@ -41,7 +42,7 @@ describe("LayerRow", () => {
     const outer = container.querySelector(".relative")!
     const dataTransfer = { setData: vi.fn() }
     fireEvent.dragStart(outer, { dataTransfer })
-    expect(dataTransfer.setData).toHaveBeenCalledWith("text/plain", "a")
+    expect(dataTransfer.setData).toHaveBeenCalledWith("application/x-layer-id", "a")
   })
 
   it("opens colour picker when swatch is clicked", () => {
@@ -170,6 +171,31 @@ describe("LayerRow", () => {
     expect(nameEl).not.toHaveClass("hover:ring-border")
     expect(nameEl).not.toHaveClass("cursor-text")
     expect(nameEl).not.toHaveClass("flex-1")
+  })
+
+  it("renders eye icon when layer is visible", () => {
+    renderRow()
+    const btn = screen.getByTestId("layerVisibility-0")
+    expect(btn).toBeInTheDocument()
+    expect(btn).toHaveAttribute("title", "Hide layer")
+  })
+
+  it("renders eye-off icon when layer is hidden", () => {
+    renderRow({ layer: { ...defaultLayer, visible: false } })
+    const btn = screen.getByTestId("layerVisibility-0")
+    expect(btn).toHaveAttribute("title", "Show layer")
+  })
+
+  it("calls onToggleVisibility when visibility button is clicked", () => {
+    const { props } = renderRow()
+    fireEvent.click(screen.getByTestId("layerVisibility-0"))
+    expect(props.onToggleVisibility).toHaveBeenCalled()
+  })
+
+  it("visibility toggle does not trigger onSetActive", () => {
+    const { props } = renderRow()
+    fireEvent.click(screen.getByTestId("layerVisibility-0"))
+    expect(props.onSetActive).not.toHaveBeenCalled()
   })
 
   it("layer name swaps from div to input when entering edit mode", () => {
