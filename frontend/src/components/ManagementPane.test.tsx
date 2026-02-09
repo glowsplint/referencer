@@ -48,12 +48,37 @@ describe("ManagementPane", () => {
     expect(swatch.style.backgroundColor).toBe("rgb(252, 165, 165)")
   })
 
-  it("calls removeLayer when X button is clicked", () => {
+  it("renders trash bin when layers exist", () => {
+    renderPane({
+      layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
+    })
+    expect(screen.getByTestId("layerTrashBin")).toBeInTheDocument()
+  })
+
+  it("does not render trash bin when no layers", () => {
+    renderPane()
+    expect(screen.queryByTestId("layerTrashBin")).not.toBeInTheDocument()
+  })
+
+  it("calls removeLayer when a layer is dropped on the trash bin", () => {
     const { props } = renderPane({
       layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
     })
-    fireEvent.click(screen.getByTestId("removeLayer-0"))
+    const bin = screen.getByTestId("layerTrashBin")
+    fireEvent.drop(bin, {
+      dataTransfer: { getData: () => "a" },
+    })
     expect(props.removeLayer).toHaveBeenCalledWith("a")
+  })
+
+  it("trash bin shows visual feedback during dragover", () => {
+    renderPane({
+      layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
+    })
+    const bin = screen.getByTestId("layerTrashBin")
+    expect(bin).toHaveClass("border-muted-foreground/30")
+    fireEvent.dragEnter(bin)
+    expect(bin).toHaveClass("border-destructive")
   })
 
   it("opens colour picker when swatch is clicked", () => {
@@ -129,21 +154,29 @@ describe("ManagementPane", () => {
     }
   })
 
-  it("layer name shows hover outline class", () => {
+  it("layer name does not show hover outline class", () => {
     renderPane({
       layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
     })
     const nameSpan = screen.getByTestId("layerName-0")
-    expect(nameSpan).toHaveClass("hover:ring-border")
-    expect(nameSpan).toHaveClass("cursor-text")
-    expect(nameSpan).toHaveClass("whitespace-nowrap")
+    expect(nameSpan).not.toHaveClass("hover:ring-border")
+    expect(nameSpan).not.toHaveClass("cursor-text")
+    expect(nameSpan).toHaveClass("truncate")
   })
 
-  it("clicking layer name enters edit mode", () => {
+  it("single clicking layer name does not enter edit mode", () => {
     renderPane({
       layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
     })
     fireEvent.click(screen.getByTestId("layerName-0"))
+    expect(screen.queryByTestId("layerNameInput-0")).not.toBeInTheDocument()
+  })
+
+  it("double clicking layer name enters edit mode", () => {
+    renderPane({
+      layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
+    })
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     expect(input).toBeInTheDocument()
     expect((input as HTMLInputElement).value).toBe("Layer 1")
@@ -153,7 +186,7 @@ describe("ManagementPane", () => {
     const { props } = renderPane({
       layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
     })
-    fireEvent.click(screen.getByTestId("layerName-0"))
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     fireEvent.change(input, { target: { value: "My Layer" } })
     fireEvent.keyDown(input, { key: "Enter" })
@@ -164,7 +197,7 @@ describe("ManagementPane", () => {
     const { props } = renderPane({
       layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
     })
-    fireEvent.click(screen.getByTestId("layerName-0"))
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     fireEvent.change(input, { target: { value: "My Layer" } })
     fireEvent.keyDown(input, { key: "Escape" })
@@ -177,7 +210,7 @@ describe("ManagementPane", () => {
     const { props } = renderPane({
       layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
     })
-    fireEvent.click(screen.getByTestId("layerName-0"))
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     fireEvent.change(input, { target: { value: "Blurred Name" } })
     fireEvent.blur(input)
@@ -188,7 +221,7 @@ describe("ManagementPane", () => {
     const { props } = renderPane({
       layers: [{ id: "a", name: "Layer 1", color: "#fca5a5" }],
     })
-    fireEvent.click(screen.getByTestId("layerName-0"))
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     fireEvent.change(input, { target: { value: "   " } })
     fireEvent.keyDown(input, { key: "Enter" })
@@ -256,7 +289,7 @@ describe("ManagementPane", () => {
     const label = screen.getByTestId("layerName-0")
     expect(label.tagName).toBe("DIV")
     expect(label).toHaveTextContent("Layer 1")
-    fireEvent.click(label)
+    fireEvent.doubleClick(label)
     expect(screen.queryByTestId("layerName-0")).not.toBeInTheDocument()
     const input = screen.getByTestId("layerNameInput-0")
     expect(input.tagName).toBe("INPUT")

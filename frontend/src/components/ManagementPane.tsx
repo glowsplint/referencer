@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
 
@@ -24,6 +26,8 @@ export function ManagementPane({
   updateLayerName,
   removeEditor,
 }: ManagementPaneProps) {
+  const [dragOver, setDragOver] = useState(false);
+
   return (
     <div
       className="shrink-0 h-full overflow-y-auto p-3 w-[250px] border-r border-border"
@@ -43,13 +47,33 @@ export function ManagementPane({
               layer={layer}
               index={index}
               isActive={layer.id === activeLayerId}
-              onRemove={() => removeLayer(layer.id)}
               onSetActive={() => setActiveLayer(layer.id)}
               onUpdateColor={(color) => updateLayerColor(layer.id, color)}
               onUpdateName={(name) => updateLayerName(layer.id, name)}
             />
           ))}
         </div>
+        {layers.length > 0 && (
+          <div
+            className={`mt-2 flex items-center justify-center rounded border-2 border-dashed py-2 transition-colors ${
+              dragOver
+                ? "border-destructive text-destructive"
+                : "border-muted-foreground/30 text-muted-foreground/40"
+            }`}
+            data-testid="layerTrashBin"
+            onDragOver={(e) => e.preventDefault()}
+            onDragEnter={() => setDragOver(true)}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              const layerId = e.dataTransfer.getData("text/plain");
+              if (layerId) removeLayer(layerId);
+              setDragOver(false);
+            }}
+          >
+            <Trash2 size={16} />
+          </div>
+        )}
       </div>
 
       <SectionList editorCount={editorCount} removeEditor={removeEditor} />

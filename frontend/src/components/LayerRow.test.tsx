@@ -10,7 +10,6 @@ function renderRow(overrides = {}) {
     layer: defaultLayer,
     index: 0,
     isActive: false,
-    onRemove: vi.fn(),
     onSetActive: vi.fn(),
     onUpdateColor: vi.fn(),
     onUpdateName: vi.fn(),
@@ -31,10 +30,18 @@ describe("LayerRow", () => {
     expect(swatch.style.backgroundColor).toBe("rgb(252, 165, 165)")
   })
 
-  it("calls onRemove when X button is clicked", () => {
-    const { props } = renderRow()
-    fireEvent.click(screen.getByTestId("removeLayer-0"))
-    expect(props.onRemove).toHaveBeenCalled()
+  it("has draggable attribute on outer container", () => {
+    const { container } = renderRow()
+    const outer = container.querySelector(".relative")
+    expect(outer).toHaveAttribute("draggable", "true")
+  })
+
+  it("sets layer id in dataTransfer on dragstart", () => {
+    const { container } = renderRow()
+    const outer = container.querySelector(".relative")!
+    const dataTransfer = { setData: vi.fn() }
+    fireEvent.dragStart(outer, { dataTransfer })
+    expect(dataTransfer.setData).toHaveBeenCalledWith("text/plain", "a")
   })
 
   it("opens colour picker when swatch is clicked", () => {
@@ -89,9 +96,15 @@ describe("LayerRow", () => {
     expect(row).not.toHaveClass("bg-accent")
   })
 
-  it("clicking layer name enters edit mode", () => {
+  it("single clicking layer name does not enter edit mode", () => {
     renderRow()
     fireEvent.click(screen.getByTestId("layerName-0"))
+    expect(screen.queryByTestId("layerNameInput-0")).not.toBeInTheDocument()
+  })
+
+  it("double clicking layer name enters edit mode", () => {
+    renderRow()
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     expect(input).toBeInTheDocument()
     expect((input as HTMLInputElement).value).toBe("Layer 1")
@@ -99,7 +112,7 @@ describe("LayerRow", () => {
 
   it("pressing Enter commits the new name", () => {
     const { props } = renderRow()
-    fireEvent.click(screen.getByTestId("layerName-0"))
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     fireEvent.change(input, { target: { value: "My Layer" } })
     fireEvent.keyDown(input, { key: "Enter" })
@@ -108,7 +121,7 @@ describe("LayerRow", () => {
 
   it("pressing Escape cancels editing", () => {
     const { props } = renderRow()
-    fireEvent.click(screen.getByTestId("layerName-0"))
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     fireEvent.change(input, { target: { value: "My Layer" } })
     fireEvent.keyDown(input, { key: "Escape" })
@@ -118,7 +131,7 @@ describe("LayerRow", () => {
 
   it("blur commits the new name", () => {
     const { props } = renderRow()
-    fireEvent.click(screen.getByTestId("layerName-0"))
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     fireEvent.change(input, { target: { value: "Blurred Name" } })
     fireEvent.blur(input)
@@ -127,7 +140,7 @@ describe("LayerRow", () => {
 
   it("empty input reverts to previous name on commit", () => {
     const { props } = renderRow()
-    fireEvent.click(screen.getByTestId("layerName-0"))
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     const input = screen.getByTestId("layerNameInput-0")
     fireEvent.change(input, { target: { value: "   " } })
     fireEvent.keyDown(input, { key: "Enter" })
@@ -139,12 +152,6 @@ describe("LayerRow", () => {
     const row = container.querySelector(".relative > div:first-child")!
     fireEvent.click(row)
     expect(props.onSetActive).toHaveBeenCalled()
-  })
-
-  it("does not call onSetActive when clicking remove button", () => {
-    const { props } = renderRow()
-    fireEvent.click(screen.getByTestId("removeLayer-0"))
-    expect(props.onSetActive).not.toHaveBeenCalled()
   })
 
   it("colour swatch has hover and cursor-pointer classes", () => {
@@ -159,9 +166,9 @@ describe("LayerRow", () => {
   it("layer name has correct classes", () => {
     renderRow()
     const nameEl = screen.getByTestId("layerName-0")
-    expect(nameEl).toHaveClass("hover:ring-border")
-    expect(nameEl).toHaveClass("cursor-text")
-    expect(nameEl).toHaveClass("whitespace-nowrap")
+    expect(nameEl).toHaveClass("truncate")
+    expect(nameEl).not.toHaveClass("hover:ring-border")
+    expect(nameEl).not.toHaveClass("cursor-text")
     expect(nameEl).not.toHaveClass("flex-1")
   })
 
@@ -169,7 +176,7 @@ describe("LayerRow", () => {
     renderRow()
     const label = screen.getByTestId("layerName-0")
     expect(label.tagName).toBe("DIV")
-    fireEvent.click(label)
+    fireEvent.doubleClick(label)
     expect(screen.queryByTestId("layerName-0")).not.toBeInTheDocument()
     const input = screen.getByTestId("layerNameInput-0")
     expect(input.tagName).toBe("INPUT")

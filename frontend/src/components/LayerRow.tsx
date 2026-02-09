@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
 import { ColorPicker } from "./ColorPicker";
+import { useEffect, useRef, useState } from "react";
 
 import type { Layer } from "@/types/editor";
 
@@ -8,7 +7,6 @@ interface LayerRowProps {
   layer: Layer;
   index: number;
   isActive: boolean;
-  onRemove: () => void;
   onSetActive: () => void;
   onUpdateColor: (color: string) => void;
   onUpdateName: (name: string) => void;
@@ -18,7 +16,6 @@ export function LayerRow({
   layer,
   index,
   isActive,
-  onRemove,
   onSetActive,
   onUpdateColor,
   onUpdateName,
@@ -51,7 +48,13 @@ export function LayerRow({
   };
 
   return (
-    <div className="relative">
+    <div
+      className="relative cursor-grab"
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData("text/plain", layer.id);
+      }}
+    >
       <div
         className={`flex items-center gap-2 px-1 py-0.5 rounded ${isActive ? "bg-accent" : "hover:bg-accent/50"}`}
         onClick={onSetActive}
@@ -59,7 +62,10 @@ export function LayerRow({
         <button
           className="w-5 h-5 rounded-full border-2 border-black/10 hover:border-black/30 shrink-0 transition-colors cursor-pointer"
           style={{ backgroundColor: layer.color }}
-          onClick={(e) => { e.stopPropagation(); setColorPickerOpen(!colorPickerOpen); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setColorPickerOpen(!colorPickerOpen);
+          }}
           title="Change colour"
           data-testid={`layerSwatch-${index}`}
         />
@@ -78,17 +84,16 @@ export function LayerRow({
           />
         ) : (
           <div
-            className="text-sm w-auto bg-transparent border-0 ring-1 ring-transparent hover:ring-border rounded px-1 py-0 cursor-text whitespace-nowrap"
-            onClick={(e) => { e.stopPropagation(); startEditing(); }}
+            className="text-sm w-full bg-transparent border-0 rounded px-1 py-0 truncate"
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              startEditing();
+            }}
             data-testid={`layerName-${index}`}
           >
             {layer.name}
           </div>
         )}
-        <div
-          className="w-full h-auto self-stretch"
-          data-testid={`layerRowSpacer-${index}`}
-        />
         {isActive && (
           <span
             className="text-[10px] font-medium text-muted-foreground shrink-0"
@@ -97,14 +102,6 @@ export function LayerRow({
             Active
           </span>
         )}
-        <button
-          className="p-0.5 rounded hover:bg-destructive/20 text-muted-foreground hover:text-destructive shrink-0"
-          onClick={(e) => { e.stopPropagation(); onRemove(); }}
-          title="Remove layer"
-          data-testid={`removeLayer-${index}`}
-        >
-          <X size={14} />
-        </button>
       </div>
       {colorPickerOpen && (
         <ColorPicker

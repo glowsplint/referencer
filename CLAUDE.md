@@ -1,6 +1,6 @@
 ## Project Setup
 
-This project uses **bun** instead of node. Use `bun` for all package management and script execution (e.g., `bun install`, `bun run dev`).
+This project uses **bun** instead of node. Use `bun` for all package management and script execution (e.g., `bun install`, `bun run dev`). Always `cd /Users/tym/coding/referencer/frontend` before running any bun commands.
 
 ## Styling
 
