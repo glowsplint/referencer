@@ -11,7 +11,8 @@ const mockWorkspace = {
     isLocked: false,
   },
   annotations: { isPainterMode: false },
-  layers: [] as { id: string; color: string }[],
+  layers: [] as { id: string; color: string; name: string; highlights: unknown[] }[],
+  activeLayerId: null as string | null,
   editorCount: 1,
   activeEditor: null,
   editorWidths: [100],
@@ -21,7 +22,13 @@ const mockWorkspace = {
   toggleManagementPane: vi.fn(),
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
+  setActiveLayer: vi.fn(),
   updateLayerColor: vi.fn(),
+  updateLayerName: vi.fn(),
+  addHighlight: vi.fn(),
+  removeHighlight: vi.fn(),
+  clearLayerHighlights: vi.fn(),
+  editorsRef: { current: new Map() },
   addEditor: vi.fn(),
   removeEditor: vi.fn(),
   handleDividerResize: vi.fn(),
@@ -98,4 +105,5 @@ describe("App", () => {
     expect(screen.getByTestId("managementPane")).toBeInTheDocument()
     mockWorkspace.isManagementPaneOpen = false
   })
+
 })

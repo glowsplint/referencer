@@ -70,7 +70,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.annotations.isPainterMode).toBe(false)
   })
 
-  it("addLayer adds a layer with the next colour in order", () => {
+  it("addLayer adds a layer with the next colour in order and a default name", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
     act(() => {
@@ -80,9 +80,10 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers).toHaveLength(1)
     expect(result.current.layers[0].id).toBeTruthy()
     expect(result.current.layers[0].color).toBe(TAILWIND_300_COLORS[0])
+    expect(result.current.layers[0].name).toBe("Layer 1")
   })
 
-  it("addLayer assigns colours sequentially", () => {
+  it("addLayer assigns colours and names sequentially", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
     act(() => {
@@ -95,6 +96,9 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].color).toBe(TAILWIND_300_COLORS[0])
     expect(result.current.layers[1].color).toBe(TAILWIND_300_COLORS[1])
     expect(result.current.layers[2].color).toBe(TAILWIND_300_COLORS[2])
+    expect(result.current.layers[0].name).toBe("Layer 1")
+    expect(result.current.layers[1].name).toBe("Layer 2")
+    expect(result.current.layers[2].name).toBe("Layer 3")
     const ids = result.current.layers.map((l) => l.id)
     expect(new Set(ids).size).toBe(3)
   })
@@ -171,6 +175,59 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers).toHaveLength(TAILWIND_300_COLORS.length)
     const newLayer = result.current.layers[result.current.layers.length - 1]
     expect(newLayer.color).toBe(removedColor)
+  })
+
+  it("addLayer name counter never resets after removing layers", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+      result.current.addLayer()
+    })
+
+    const firstLayerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.removeLayer(firstLayerId)
+    })
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    // Should be "Layer 3", not "Layer 1" — counter never resets
+    expect(result.current.layers[1].name).toBe("Layer 3")
+  })
+
+  it("updateLayerName changes a layer's name", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.updateLayerName(layerId, "My Custom Layer")
+    })
+
+    expect(result.current.layers[0].name).toBe("My Custom Layer")
+    expect(result.current.layers[0].id).toBe(layerId)
+  })
+
+  it("updateLayerName with non-existent id does nothing", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    act(() => {
+      result.current.updateLayerName("non-existent", "New Name")
+    })
+
+    expect(result.current.layers[0].name).toBe("Layer 1")
   })
 
   it("addEditor increments editor count up to 3", () => {
@@ -383,5 +440,251 @@ describe("useEditorWorkspace", () => {
     })
 
     expect(result.current.editorCount).toBe(1)
+  })
+
+  it("addLayer auto-activates the first layer", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    expect(result.current.activeLayerId).toBe(result.current.layers[0].id)
+  })
+
+  it("addLayer does not change activeLayerId when layers already exist", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    const firstId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    expect(result.current.activeLayerId).toBe(firstId)
+  })
+
+  it("activeLayerId is initially null", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+    expect(result.current.activeLayerId).toBeNull()
+  })
+
+  it("setActiveLayer sets the active layer", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.setActiveLayer(layerId)
+    })
+
+    expect(result.current.activeLayerId).toBe(layerId)
+  })
+
+  it("setActiveLayer switches between layers", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+      result.current.addLayer()
+    })
+
+    const firstId = result.current.layers[0].id
+    const secondId = result.current.layers[1].id
+
+    act(() => {
+      result.current.setActiveLayer(firstId)
+    })
+    expect(result.current.activeLayerId).toBe(firstId)
+
+    act(() => {
+      result.current.setActiveLayer(secondId)
+    })
+    expect(result.current.activeLayerId).toBe(secondId)
+  })
+
+  it("removeLayer clears activeLayerId when the active layer is removed", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+      result.current.addLayer()
+    })
+
+    const firstId = result.current.layers[0].id
+
+    act(() => {
+      result.current.setActiveLayer(firstId)
+    })
+    expect(result.current.activeLayerId).toBe(firstId)
+
+    act(() => {
+      result.current.removeLayer(firstId)
+    })
+    expect(result.current.activeLayerId).toBeNull()
+  })
+
+  it("removeLayer keeps activeLayerId when a different layer is removed", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+      result.current.addLayer()
+    })
+
+    const firstId = result.current.layers[0].id
+    const secondId = result.current.layers[1].id
+
+    act(() => {
+      result.current.setActiveLayer(firstId)
+    })
+
+    act(() => {
+      result.current.removeLayer(secondId)
+    })
+
+    expect(result.current.activeLayerId).toBe(firstId)
+  })
+
+  it("addLayer initializes highlights as empty array", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    expect(result.current.layers[0].highlights).toEqual([])
+  })
+
+  it("addHighlight adds a highlight to the specified layer", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addHighlight(layerId, {
+        editorIndex: 0,
+        from: 1,
+        to: 5,
+        text: "hello",
+      })
+    })
+
+    expect(result.current.layers[0].highlights).toHaveLength(1)
+    expect(result.current.layers[0].highlights[0].text).toBe("hello")
+    expect(result.current.layers[0].highlights[0].from).toBe(1)
+    expect(result.current.layers[0].highlights[0].to).toBe(5)
+    expect(result.current.layers[0].highlights[0].editorIndex).toBe(0)
+    expect(result.current.layers[0].highlights[0].id).toBeTruthy()
+  })
+
+  it("addHighlight does not affect other layers", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+      result.current.addLayer()
+    })
+
+    const firstId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addHighlight(firstId, {
+        editorIndex: 0,
+        from: 1,
+        to: 5,
+        text: "hello",
+      })
+    })
+
+    expect(result.current.layers[0].highlights).toHaveLength(1)
+    expect(result.current.layers[1].highlights).toHaveLength(0)
+  })
+
+  it("removeHighlight removes a highlight by id", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addHighlight(layerId, {
+        editorIndex: 0,
+        from: 1,
+        to: 5,
+        text: "hello",
+      })
+      result.current.addHighlight(layerId, {
+        editorIndex: 0,
+        from: 10,
+        to: 15,
+        text: "world",
+      })
+    })
+
+    expect(result.current.layers[0].highlights).toHaveLength(2)
+
+    const highlightId = result.current.layers[0].highlights[0].id
+
+    act(() => {
+      result.current.removeHighlight(layerId, highlightId)
+    })
+
+    expect(result.current.layers[0].highlights).toHaveLength(1)
+    expect(result.current.layers[0].highlights[0].text).toBe("world")
+  })
+
+  it("clearLayerHighlights removes all highlights from a layer", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addHighlight(layerId, {
+        editorIndex: 0,
+        from: 1,
+        to: 5,
+        text: "hello",
+      })
+      result.current.addHighlight(layerId, {
+        editorIndex: 0,
+        from: 10,
+        to: 15,
+        text: "world",
+      })
+    })
+
+    expect(result.current.layers[0].highlights).toHaveLength(2)
+
+    act(() => {
+      result.current.clearLayerHighlights(layerId)
+    })
+
+    expect(result.current.layers[0].highlights).toEqual([])
+  })
+
+  it("editorsRef is exposed", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+    expect(result.current.editorsRef).toBeDefined()
+    expect(result.current.editorsRef.current).toBeInstanceOf(Map)
   })
 })

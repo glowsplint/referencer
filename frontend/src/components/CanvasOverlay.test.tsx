@@ -19,23 +19,32 @@ beforeEach(() => {
   )
 })
 
+function renderOverlay(overrides: Record<string, unknown> = {}) {
+  const defaults = {
+    layers: [],
+    containerRef: createRef<HTMLDivElement>(),
+    editorsRef: { current: new Map() },
+    isLocked: false,
+    isLayersOn: false,
+  }
+  const props = { ...defaults, ...overrides }
+  return render(<CanvasOverlay {...props as any} />)
+}
+
 describe("CanvasOverlay", () => {
   it("renders a canvas element", () => {
-    const containerRef = createRef<HTMLDivElement>()
-    render(<CanvasOverlay layers={[]} containerRef={containerRef} />)
+    renderOverlay()
     expect(screen.getByTestId("canvasOverlay")).toBeInTheDocument()
   })
 
   it("has pointer-events-none class for click pass-through", () => {
-    const containerRef = createRef<HTMLDivElement>()
-    render(<CanvasOverlay layers={[]} containerRef={containerRef} />)
+    renderOverlay()
     const canvas = screen.getByTestId("canvasOverlay")
     expect(canvas.classList.contains("pointer-events-none")).toBe(true)
   })
 
   it("has absolute positioning and z-10", () => {
-    const containerRef = createRef<HTMLDivElement>()
-    render(<CanvasOverlay layers={[]} containerRef={containerRef} />)
+    renderOverlay()
     const canvas = screen.getByTestId("canvasOverlay")
     expect(canvas.classList.contains("absolute")).toBe(true)
     expect(canvas.classList.contains("z-10")).toBe(true)
@@ -44,15 +53,12 @@ describe("CanvasOverlay", () => {
   it("observes the container for resize", () => {
     const div = document.createElement("div")
     const containerRef = { current: div }
-    render(<CanvasOverlay layers={[]} containerRef={containerRef} />)
+    renderOverlay({ containerRef })
     expect(observeSpy).toHaveBeenCalledWith(div)
   })
 
   it("disconnects observer on unmount", () => {
-    const containerRef = createRef<HTMLDivElement>()
-    const { unmount } = render(
-      <CanvasOverlay layers={[]} containerRef={containerRef} />,
-    )
+    const { unmount } = renderOverlay()
     unmount()
     expect(disconnectSpy).toHaveBeenCalled()
   })

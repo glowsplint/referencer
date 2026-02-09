@@ -14,7 +14,7 @@ function renderButtonPane(overrides = {}) {
     annotations: {
       isPainterMode: false,
     },
-    layers: [] as { id: string; color: string }[],
+    layers: [] as { id: string; name: string; color: string; highlights: unknown[] }[],
     isManagementPaneOpen: false,
     toggleManagementPane: vi.fn(),
     toggleDarkMode: vi.fn(),

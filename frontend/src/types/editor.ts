@@ -9,9 +9,19 @@ export interface AnnotationSettings {
   isPainterMode: boolean
 }
 
+export interface Highlight {
+  id: string
+  editorIndex: number
+  from: number
+  to: number
+  text: string
+}
+
 export interface Layer {
   id: string
+  name: string
   color: string
+  highlights: Highlight[]
 }
 
 export const TAILWIND_300_COLORS = [

@@ -1,4 +1,4 @@
-import { useRef, Fragment } from "react";
+import { useRef, useCallback, Fragment } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -11,12 +11,15 @@ import {
   SIMPLE_EDITOR_CONTENT,
 } from "./components/tiptap-templates/simple";
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
+import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 
 export function App() {
+  const workspace = useEditorWorkspace();
   const {
     settings,
     annotations,
     layers,
+    activeLayerId,
     editorCount,
     activeEditor,
     editorWidths,
@@ -26,80 +29,113 @@ export function App() {
     toggleManagementPane,
     addLayer,
     removeLayer,
+    setActiveLayer,
     updateLayerColor,
+    updateLayerName,
+    addHighlight,
+    removeHighlight,
+    editorsRef,
     addEditor,
     removeEditor,
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,
-  } = useEditorWorkspace();
+  } = workspace;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const handleWordClick = useCallback(
+    (editorIndex: number, from: number, to: number, text: string) => {
+      if (!activeLayerId) return;
+      const layer = layers.find((l) => l.id === activeLayerId);
+      const existing = layer?.highlights.find(
+        (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
+      );
+      if (existing) {
+        removeHighlight(activeLayerId, existing.id);
+      } else {
+        addHighlight(activeLayerId, { editorIndex, from, to, text });
+      }
+    },
+    [activeLayerId, layers, addHighlight, removeHighlight]
+  );
+
   return (
-    <div className="flex h-screen">
-      <ButtonPane
-        settings={settings}
-        annotations={annotations}
-        layers={layers}
-        isManagementPaneOpen={isManagementPaneOpen}
-        toggleManagementPane={toggleManagementPane}
-        toggleDarkMode={toggleSetting("isDarkMode")}
-        toggleLayers={toggleSetting("isLayersOn")}
-        toggleEditorLayout={toggleSetting("isMultipleRowsLayout")}
-        togglePainterMode={togglePainterMode}
-        toggleLock={toggleSetting("isLocked")}
-        addLayer={addLayer}
-        addEditor={addEditor}
-        editorCount={editorCount}
-      />
-      {isManagementPaneOpen && (
-        <ManagementPane
+    <WorkspaceProvider value={workspace}>
+      <div className="flex h-screen">
+        <ButtonPane
+          settings={settings}
+          annotations={annotations}
           layers={layers}
+          isManagementPaneOpen={isManagementPaneOpen}
+          toggleManagementPane={toggleManagementPane}
+          toggleDarkMode={toggleSetting("isDarkMode")}
+          toggleLayers={toggleSetting("isLayersOn")}
+          toggleEditorLayout={toggleSetting("isMultipleRowsLayout")}
+          togglePainterMode={togglePainterMode}
+          toggleLock={toggleSetting("isLocked")}
+          addLayer={addLayer}
+          addEditor={addEditor}
           editorCount={editorCount}
-          removeLayer={removeLayer}
-          updateLayerColor={updateLayerColor}
-          removeEditor={removeEditor}
         />
-      )}
-      <EditorContext.Provider value={{ editor: activeEditor }}>
-        <div className="flex flex-col flex-1 min-w-0">
-          <TitleBar />
-          <SimpleEditorToolbar isLocked={settings.isLocked} />
-          <div
-            ref={containerRef}
-            className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
-          >
-            <CanvasOverlay layers={layers} containerRef={containerRef} />
-            {editorWidths.map((width, i) => (
-              <Fragment key={i}>
-                {i > 0 && (
-                  <Divider
-                    onResize={(pct) => handleDividerResize(i - 1, pct)}
-                    containerRef={containerRef}
-                    direction={
-                      settings.isMultipleRowsLayout ? "vertical" : "horizontal"
-                    }
-                  />
-                )}
-                <div
-                  className="min-w-0 min-h-0 overflow-hidden"
-                  style={{ flex: `${width} 0 0%` }}
-                >
-                  <EditorPane
-                    isLocked={settings.isLocked}
-                    content={SIMPLE_EDITOR_CONTENT}
-                    index={i}
-                    onEditorMount={handleEditorMount}
-                    onFocus={handlePaneFocus}
-                  />
-                </div>
-              </Fragment>
-            ))}
+        {isManagementPaneOpen && (
+          <ManagementPane
+            layers={layers}
+            activeLayerId={activeLayerId}
+            editorCount={editorCount}
+            removeLayer={removeLayer}
+            setActiveLayer={setActiveLayer}
+            updateLayerColor={updateLayerColor}
+            updateLayerName={updateLayerName}
+            removeEditor={removeEditor}
+          />
+        )}
+        <EditorContext.Provider value={{ editor: activeEditor }}>
+          <div className="flex flex-col flex-1 min-w-0">
+            <TitleBar />
+            <SimpleEditorToolbar isLocked={settings.isLocked} />
+            <div
+              ref={containerRef}
+              className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
+            >
+              <CanvasOverlay
+                layers={layers}
+                containerRef={containerRef}
+                editorsRef={editorsRef}
+                isLocked={settings.isLocked}
+                isLayersOn={settings.isLayersOn}
+              />
+              {editorWidths.map((width, i) => (
+                <Fragment key={i}>
+                  {i > 0 && (
+                    <Divider
+                      onResize={(pct) => handleDividerResize(i - 1, pct)}
+                      containerRef={containerRef}
+                      direction={
+                        settings.isMultipleRowsLayout ? "vertical" : "horizontal"
+                      }
+                    />
+                  )}
+                  <div
+                    className="min-w-0 min-h-0 overflow-hidden"
+                    style={{ flex: `${width} 0 0%` }}
+                  >
+                    <EditorPane
+                      isLocked={settings.isLocked}
+                      content={SIMPLE_EDITOR_CONTENT}
+                      index={i}
+                      onEditorMount={handleEditorMount}
+                      onFocus={handlePaneFocus}
+                      onWordClick={settings.isLocked && settings.isLayersOn ? handleWordClick : undefined}
+                    />
+                  </div>
+                </Fragment>
+              ))}
+            </div>
           </div>
-        </div>
-      </EditorContext.Provider>
-    </div>
+        </EditorContext.Provider>
+      </div>
+    </WorkspaceProvider>
   );
 }
 
