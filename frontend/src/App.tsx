@@ -61,6 +61,7 @@ export function App() {
             <SimpleEditorToolbar isLocked={settings.isLocked} />
             <div
               ref={containerRef}
+              data-testid="editorContainer"
               className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
             >
               <CanvasOverlay

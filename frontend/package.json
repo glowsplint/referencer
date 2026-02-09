@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:e2e": "node node_modules/.bin/playwright test",
+    "test:e2e:ui": "node node_modules/.bin/playwright test --ui"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.17",
@@ -42,6 +44,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/lodash.throttle": "^4.1.9",

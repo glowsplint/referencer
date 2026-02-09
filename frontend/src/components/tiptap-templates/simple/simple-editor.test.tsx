@@ -147,14 +147,14 @@ beforeEach(() => {
 describe("SimpleEditorToolbar lock/unlock", () => {
   it("toolbar has opacity 1 and pointer-events auto when unlocked", () => {
     render(<SimpleEditorToolbar isLocked={false} />)
-    const toolbar = screen.getByTestId("toolbar")
+    const toolbar = screen.getByTestId("editorToolbar")
     expect(toolbar.style.opacity).toBe("1")
     expect(toolbar.style.pointerEvents).toBe("auto")
   })
 
   it("toolbar has opacity 0 and pointer-events none when locked", () => {
     render(<SimpleEditorToolbar isLocked={true} />)
-    const toolbar = screen.getByTestId("toolbar")
+    const toolbar = screen.getByTestId("editorToolbar")
     expect(toolbar.style.opacity).toBe("0")
     expect(toolbar.style.pointerEvents).toBe("none")
   })

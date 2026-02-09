@@ -166,6 +166,7 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
   return (
     <Toolbar
       ref={toolbarRef}
+      data-testid="editorToolbar"
       style={{
         ...(isMobile
           ? {
