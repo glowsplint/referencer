@@ -8,7 +8,9 @@ import {
   Paintbrush,
   Lock,
   LockOpen,
+  FilePlusCorner,
 } from "lucide-react";
+import { ButtonIcon } from "./ui/ButtonIcon";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
 
 interface ButtonPaneProps {
@@ -26,6 +28,8 @@ interface ButtonPaneProps {
   toggleEditorLayout: () => void;
   togglePainterMode: () => void;
   toggleLock: () => void;
+  addEditor: () => void;
+  editorCount: number;
 }
 
 export function ButtonPane({
@@ -36,6 +40,8 @@ export function ButtonPane({
   toggleEditorLayout,
   togglePainterMode,
   toggleLock,
+  addEditor,
+  editorCount,
 }: ButtonPaneProps) {
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
@@ -78,6 +84,13 @@ export function ButtonPane({
         callback={toggleLock}
         title="Toggle editor lock"
         buttonProps={{ "data-testid": "lockButton" }}
+      />
+      <ButtonIcon
+        icon={<FilePlusCorner size={20} />}
+        callback={addEditor}
+        disabled={editorCount >= 3}
+        title="Add new section"
+        buttonProps={{ "data-testid": "addEditorButton" }}
       />
     </div>
   );

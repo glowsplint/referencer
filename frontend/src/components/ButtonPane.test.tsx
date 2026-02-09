@@ -18,6 +18,8 @@ function renderButtonPane(overrides = {}) {
     toggleEditorLayout: vi.fn(),
     togglePainterMode: vi.fn(),
     toggleLock: vi.fn(),
+    addEditor: vi.fn(),
+    editorCount: 1,
   }
   const props = { ...defaults, ...overrides }
   return { ...render(<ButtonPane {...props} />), props }
@@ -61,5 +63,26 @@ describe("ButtonPane", () => {
     const { props } = renderButtonPane()
     fireEvent.click(screen.getByTestId("lockButton"))
     expect(props.toggleLock).toHaveBeenCalledOnce()
+  })
+
+  it("renders the add editor button", () => {
+    renderButtonPane()
+    expect(screen.getByTestId("addEditorButton")).toBeInTheDocument()
+  })
+
+  it("calls addEditor when add editor button is clicked", () => {
+    const { props } = renderButtonPane()
+    fireEvent.click(screen.getByTestId("addEditorButton"))
+    expect(props.addEditor).toHaveBeenCalledOnce()
+  })
+
+  it("disables add editor button when editorCount is 3", () => {
+    renderButtonPane({ editorCount: 3 })
+    expect(screen.getByTestId("addEditorButton")).toBeDisabled()
+  })
+
+  it("enables add editor button when editorCount is less than 3", () => {
+    renderButtonPane({ editorCount: 2 })
+    expect(screen.getByTestId("addEditorButton")).not.toBeDisabled()
   })
 })

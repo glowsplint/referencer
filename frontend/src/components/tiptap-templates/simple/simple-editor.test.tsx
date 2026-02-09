@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { render, screen } from "@testing-library/react"
-import { SimpleEditor } from "./simple-editor"
+import { render, screen, fireEvent } from "@testing-library/react"
+import { SimpleEditorToolbar, EditorPane } from "./simple-editor"
 
 // Mock editor instance shared across mocks
 const mockEditor = {
@@ -15,6 +15,7 @@ const mockEditor = {
 // Mock @tiptap/react
 vi.mock("@tiptap/react", () => ({
   useEditor: () => mockEditor,
+  useCurrentEditor: () => ({ editor: mockEditor }),
   EditorContent: ({ editor: _editor, ...props }: Record<string, unknown>) => (
     <div data-testid="editor-content" {...props} />
   ),
@@ -142,41 +143,69 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-describe("SimpleEditor toolbar lock/unlock", () => {
+describe("SimpleEditorToolbar lock/unlock", () => {
   it("toolbar has opacity 1 and pointer-events auto when unlocked", () => {
-    render(<SimpleEditor isLocked={false} />)
+    render(<SimpleEditorToolbar isLocked={false} />)
     const toolbar = screen.getByTestId("toolbar")
     expect(toolbar.style.opacity).toBe("1")
     expect(toolbar.style.pointerEvents).toBe("auto")
   })
 
   it("toolbar has opacity 0 and pointer-events none when locked", () => {
-    render(<SimpleEditor isLocked={true} />)
+    render(<SimpleEditorToolbar isLocked={true} />)
     const toolbar = screen.getByTestId("toolbar")
     expect(toolbar.style.opacity).toBe("0")
     expect(toolbar.style.pointerEvents).toBe("none")
   })
+})
 
-  it("calls editor.setEditable(true) when unlocking", () => {
-    render(<SimpleEditor isLocked={false} />)
+describe("EditorPane lock/unlock", () => {
+  it("calls editor.setEditable(true) when unlocked", () => {
+    render(
+      <EditorPane isLocked={false} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} />
+    )
     expect(mockEditor.setEditable).toHaveBeenCalledWith(true)
   })
 
-  it("calls editor.setEditable(false) when locking", () => {
-    render(<SimpleEditor isLocked={true} />)
+  it("calls editor.setEditable(false) when locked", () => {
+    render(
+      <EditorPane isLocked={true} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} />
+    )
     expect(mockEditor.setEditable).toHaveBeenCalledWith(false)
   })
 
-  it("calls editor.emit('selectionUpdate') when unlocking", () => {
-    render(<SimpleEditor isLocked={false} />)
+  it("calls editor.emit('selectionUpdate') when unlocked", () => {
+    render(
+      <EditorPane isLocked={false} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} />
+    )
     expect(mockEditor.emit).toHaveBeenCalledWith("selectionUpdate", {
       editor: mockEditor,
       transaction: mockEditor.state.tr,
     })
   })
 
-  it("does NOT call editor.emit('selectionUpdate') when locking", () => {
-    render(<SimpleEditor isLocked={true} />)
+  it("does NOT call editor.emit('selectionUpdate') when locked", () => {
+    render(
+      <EditorPane isLocked={true} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} />
+    )
     expect(mockEditor.emit).not.toHaveBeenCalled()
+  })
+
+  it("calls onEditorMount with index and editor on mount", () => {
+    const onEditorMount = vi.fn()
+    render(
+      <EditorPane isLocked={false} index={2} onEditorMount={onEditorMount} onFocus={vi.fn()} />
+    )
+    expect(onEditorMount).toHaveBeenCalledWith(2, mockEditor)
+  })
+
+  it("calls onFocus with index on focus capture", () => {
+    const onFocus = vi.fn()
+    render(
+      <EditorPane isLocked={false} index={1} onEditorMount={vi.fn()} onFocus={onFocus} />
+    )
+    const editorContent = screen.getByTestId("editor-content")
+    fireEvent.focus(editorContent)
+    expect(onFocus).toHaveBeenCalledWith(1)
   })
 })

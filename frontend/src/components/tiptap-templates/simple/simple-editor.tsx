@@ -1,7 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
-import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
+import { EditorContent, useCurrentEditor, useEditor } from "@tiptap/react"
+import type { Editor } from "@tiptap/react"
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
@@ -77,7 +78,42 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils"
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss"
 
-import content from "@/components/tiptap-templates/simple/data/content.json"
+import defaultContent from "@/components/tiptap-templates/simple/data/content.json"
+
+// --- Shared extensions factory ---
+
+export function createSimpleEditorExtensions() {
+  return [
+    StarterKit.configure({
+      horizontalRule: false,
+      link: {
+        openOnClick: false,
+        enableClickSelection: true,
+      },
+    }),
+    HorizontalRule,
+    TextAlign.configure({ types: ["heading", "paragraph"] }),
+    TaskList,
+    TaskItem.configure({ nested: true }),
+    Highlight.configure({ multicolor: true }),
+    Image,
+    Typography,
+    Superscript,
+    Subscript,
+    Selection,
+    ImageUploadNode.configure({
+      accept: "image/*",
+      maxSize: MAX_FILE_SIZE,
+      limit: 3,
+      upload: handleImageUpload,
+      onError: (error) => console.error("Upload failed:", error),
+    }),
+  ]
+}
+
+export { defaultContent as SIMPLE_EDITOR_CONTENT }
+
+// --- Toolbar content (private) ---
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -182,7 +218,9 @@ const MobileToolbarContent = ({
   </>
 )
 
-function TitleBar() {
+// --- Exported components ---
+
+export function TitleBar() {
   const [title, setTitle] = useState("Title")
   const [isEditing, setIsEditing] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -244,13 +282,70 @@ function TitleBar() {
   )
 }
 
-export function SimpleEditor({ isLocked = false }: { isLocked?: boolean }) {
+export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }) {
   const isMobile = useIsBreakpoint()
   const { height } = useWindowSize()
-  const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
-    "main"
-  )
+  const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">("main")
   const toolbarRef = useRef<HTMLDivElement>(null)
+  const { editor: activeEditor } = useCurrentEditor()
+
+  const rect = useCursorVisibility({
+    editor: activeEditor,
+    overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
+  })
+
+  useEffect(() => {
+    if (!isMobile && mobileView !== "main") {
+      setMobileView("main")
+    }
+  }, [isMobile, mobileView])
+
+  return (
+    <Toolbar
+      ref={toolbarRef}
+      style={{
+        ...(isMobile
+          ? {
+              bottom: `calc(100% - ${height - rect.y}px)`,
+            }
+          : {}),
+        opacity: isLocked ? 0 : 1,
+        maxHeight: isLocked ? 0 : "var(--tt-toolbar-height)",
+        overflow: "hidden",
+        transition: "opacity 0.1s ease, max-height 0.1s ease",
+        pointerEvents: isLocked ? "none" : "auto",
+      }}
+    >
+      {mobileView === "main" ? (
+        <MainToolbarContent
+          onHighlighterClick={() => setMobileView("highlighter")}
+          onLinkClick={() => setMobileView("link")}
+          isMobile={isMobile}
+        />
+      ) : (
+        <MobileToolbarContent
+          type={mobileView === "highlighter" ? "highlighter" : "link"}
+          onBack={() => setMobileView("main")}
+        />
+      )}
+    </Toolbar>
+  )
+}
+
+export function EditorPane({
+  isLocked,
+  content,
+  index,
+  onEditorMount,
+  onFocus,
+}: {
+  isLocked: boolean
+  content?: Record<string, unknown>
+  index: number
+  onEditorMount: (index: number, editor: Editor) => void
+  onFocus: (index: number) => void
+}) {
+  const [extensions] = useState(() => createSimpleEditorExtensions())
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -259,43 +354,19 @@ export function SimpleEditor({ isLocked = false }: { isLocked?: boolean }) {
         autocomplete: "off",
         autocorrect: "off",
         autocapitalize: "off",
-        "aria-label": "Main content area, start typing to enter text.",
+        "aria-label": "Content area, start typing to enter text.",
         class: "simple-editor",
       },
     },
-    extensions: [
-      StarterKit.configure({
-        horizontalRule: false,
-        link: {
-          openOnClick: false,
-          enableClickSelection: true,
-        },
-      }),
-      HorizontalRule,
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
-      TaskList,
-      TaskItem.configure({ nested: true }),
-      Highlight.configure({ multicolor: true }),
-      Image,
-      Typography,
-      Superscript,
-      Subscript,
-      Selection,
-      ImageUploadNode.configure({
-        accept: "image/*",
-        maxSize: MAX_FILE_SIZE,
-        limit: 3,
-        upload: handleImageUpload,
-        onError: (error) => console.error("Upload failed:", error),
-      }),
-    ],
+    extensions,
     content,
   })
 
-  const rect = useCursorVisibility({
-    editor,
-    overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
-  })
+  useEffect(() => {
+    if (editor) {
+      onEditorMount(index, editor)
+    }
+  }, [editor, index, onEditorMount])
 
   useLayoutEffect(() => {
     if (editor) {
@@ -306,51 +377,17 @@ export function SimpleEditor({ isLocked = false }: { isLocked?: boolean }) {
     }
   }, [editor, isLocked])
 
-  useEffect(() => {
-    if (!isMobile && mobileView !== "main") {
-      setMobileView("main")
-    }
-  }, [isMobile, mobileView])
+  const handleFocus = useCallback(() => {
+    onFocus(index)
+  }, [index, onFocus])
 
   return (
-    <div className="simple-editor-wrapper">
-      <EditorContext.Provider value={{ editor }}>
-        <TitleBar />
-        <Toolbar
-          ref={toolbarRef}
-          style={{
-            ...(isMobile
-              ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
-              : {}),
-            opacity: isLocked ? 0 : 1,
-            maxHeight: isLocked ? 0 : "var(--tt-toolbar-height)",
-            overflow: "hidden",
-            transition: "opacity 0.1s ease, max-height 0.1s ease",
-            pointerEvents: isLocked ? "none" : "auto",
-          }}
-        >
-          {mobileView === "main" ? (
-            <MainToolbarContent
-              onHighlighterClick={() => setMobileView("highlighter")}
-              onLinkClick={() => setMobileView("link")}
-              isMobile={isMobile}
-            />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")}
-            />
-          )}
-        </Toolbar>
-
-        <EditorContent
-          editor={editor}
-          role="presentation"
-          className="simple-editor-content"
-        />
-      </EditorContext.Provider>
+    <div className="simple-editor-wrapper" onFocusCapture={handleFocus}>
+      <EditorContent
+        editor={editor}
+        role="presentation"
+        className="simple-editor-content"
+      />
     </div>
   )
 }
