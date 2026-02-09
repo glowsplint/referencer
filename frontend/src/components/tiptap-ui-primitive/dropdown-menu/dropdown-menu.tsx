@@ -1,6 +1,6 @@
 import { forwardRef } from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
-import { cn } from "@/lib/tiptap-utils"
+import { cn } from "@/lib/utils"
 import "@/components/tiptap-ui-primitive/dropdown-menu/dropdown-menu.scss"
 
 function DropdownMenu({

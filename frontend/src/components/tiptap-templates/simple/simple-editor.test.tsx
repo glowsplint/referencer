@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen, fireEvent } from "@testing-library/react"
-import { SimpleEditorToolbar, EditorPane } from "./simple-editor"
+import { SimpleEditorToolbar } from "./SimpleEditorToolbar"
+import { EditorPane } from "./EditorPane"
 
 // Mock editor instance shared across mocks
 const mockEditor = {
@@ -131,7 +132,7 @@ vi.mock("@/components/tiptap-node/image-upload-node/image-upload-node-extension"
 vi.mock("@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension", () => ({
   HorizontalRule: {},
 }))
-vi.mock("@/lib/tiptap-utils", () => ({
+vi.mock("@/lib/tiptap/upload", () => ({
   handleImageUpload: vi.fn(),
   MAX_FILE_SIZE: 5000000,
 }))

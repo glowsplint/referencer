@@ -12,17 +12,11 @@ import {
 } from "lucide-react";
 import { ButtonIcon } from "./ui/ButtonIcon";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
+import type { EditorSettings, AnnotationSettings } from "@/types/editor";
 
 interface ButtonPaneProps {
-  settings: {
-    isDarkMode: boolean;
-    isLayersOn: boolean;
-    isMultipleRowsLayout: boolean;
-    isLocked: boolean;
-  };
-  annotations: {
-    isPainterMode: boolean;
-  };
+  settings: EditorSettings;
+  annotations: AnnotationSettings;
   toggleDarkMode: () => void;
   toggleLayers: () => void;
   toggleEditorLayout: () => void;

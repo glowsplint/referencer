@@ -8,7 +8,8 @@ import {
 } from "@/components/tiptap-ui-primitive/tooltip"
 
 // --- Lib ---
-import { cn, parseShortcutKeys } from "@/lib/tiptap-utils"
+import { cn } from "@/lib/utils"
+import { parseShortcutKeys } from "@/lib/tiptap-utils"
 
 import "@/components/tiptap-ui-primitive/button/button-colors.scss"
 import "@/components/tiptap-ui-primitive/button/button-group.scss"
