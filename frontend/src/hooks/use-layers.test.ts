@@ -246,6 +246,42 @@ describe("useLayers", () => {
     expect(result.current.layers[0].highlights).toEqual([])
   })
 
+  it("toggleAllLayerVisibility hides all layers when any are visible", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => { result.current.addLayer(); result.current.addLayer() })
+    act(() => { result.current.toggleLayerVisibility(result.current.layers[0].id) })
+    // One visible, one hidden
+    expect(result.current.layers[0].visible).toBe(false)
+    expect(result.current.layers[1].visible).toBe(true)
+
+    act(() => { result.current.toggleAllLayerVisibility() })
+    expect(result.current.layers[0].visible).toBe(false)
+    expect(result.current.layers[1].visible).toBe(false)
+  })
+
+  it("toggleAllLayerVisibility shows all layers when none are visible", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => { result.current.addLayer(); result.current.addLayer() })
+    act(() => {
+      result.current.toggleLayerVisibility(result.current.layers[0].id)
+      result.current.toggleLayerVisibility(result.current.layers[1].id)
+    })
+    expect(result.current.layers[0].visible).toBe(false)
+    expect(result.current.layers[1].visible).toBe(false)
+
+    act(() => { result.current.toggleAllLayerVisibility() })
+    expect(result.current.layers[0].visible).toBe(true)
+    expect(result.current.layers[1].visible).toBe(true)
+  })
+
+  it("toggleAllLayerVisibility is a no-op when there are no layers", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.toggleAllLayerVisibility() })
+    expect(result.current.layers).toEqual([])
+  })
+
   it("addLayer reuses freed colours from removed layers", () => {
     const { result } = renderHook(() => useLayers())
 

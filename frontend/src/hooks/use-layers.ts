@@ -44,6 +44,13 @@ export function useLayers() {
     )
   }, [])
 
+  const toggleAllLayerVisibility = useCallback(() => {
+    setLayers((prev) => {
+      const anyVisible = prev.some((l) => l.visible)
+      return prev.map((l) => ({ ...l, visible: !anyVisible }))
+    })
+  }, [])
+
   const updateLayerName = useCallback((id: string, name: string) => {
     setLayers((prev) =>
       prev.map((l) => (l.id === id ? { ...l, name } : l))
@@ -89,6 +96,7 @@ export function useLayers() {
     setActiveLayer,
     updateLayerColor,
     toggleLayerVisibility,
+    toggleAllLayerVisibility,
     updateLayerName,
     addHighlight,
     removeHighlight,

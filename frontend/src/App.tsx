@@ -33,13 +33,17 @@ export function App() {
     updateLayerColor,
     updateLayerName,
     toggleLayerVisibility,
+    toggleAllLayerVisibility,
     addHighlight,
     removeHighlight,
     editorsRef,
     sectionVisibility,
+    sectionNames,
     addEditor,
     removeEditor,
+    updateSectionName,
     toggleSectionVisibility,
+    toggleAllSectionVisibility,
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,
@@ -69,17 +73,12 @@ export function App() {
         <ButtonPane
           settings={settings}
           annotations={annotations}
-          layers={layers}
           isManagementPaneOpen={isManagementPaneOpen}
           toggleManagementPane={toggleManagementPane}
           toggleDarkMode={toggleSetting("isDarkMode")}
-          toggleLayers={toggleSetting("isLayersOn")}
           toggleEditorLayout={toggleSetting("isMultipleRowsLayout")}
           togglePainterMode={togglePainterMode}
           toggleLock={toggleSetting("isLocked")}
-          addLayer={addLayer}
-          addEditor={addEditor}
-          editorCount={editorCount}
         />
         {isManagementPaneOpen && (
           <ManagementPane
@@ -87,13 +86,19 @@ export function App() {
             activeLayerId={activeLayerId}
             editorCount={editorCount}
             sectionVisibility={sectionVisibility}
+            sectionNames={sectionNames}
+            addLayer={addLayer}
             removeLayer={removeLayer}
             setActiveLayer={setActiveLayer}
             updateLayerColor={updateLayerColor}
             updateLayerName={updateLayerName}
             toggleLayerVisibility={toggleLayerVisibility}
+            toggleAllLayerVisibility={toggleAllLayerVisibility}
+            addEditor={addEditor}
             removeEditor={removeEditor}
+            updateSectionName={updateSectionName}
             toggleSectionVisibility={toggleSectionVisibility}
+            toggleAllSectionVisibility={toggleAllSectionVisibility}
           />
         )}
         <EditorContext.Provider value={{ editor: activeEditor }}>

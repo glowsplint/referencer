@@ -26,14 +26,18 @@ const mockWorkspace = {
   updateLayerColor: vi.fn(),
   updateLayerName: vi.fn(),
   toggleLayerVisibility: vi.fn(),
+  toggleAllLayerVisibility: vi.fn(),
   addHighlight: vi.fn(),
   removeHighlight: vi.fn(),
   clearLayerHighlights: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
+  sectionNames: ["Passage 1"],
   addEditor: vi.fn(),
   removeEditor: vi.fn(),
+  updateSectionName: vi.fn(),
   toggleSectionVisibility: vi.fn(),
+  toggleAllSectionVisibility: vi.fn(),
   handleDividerResize: vi.fn(),
   handleEditorMount: vi.fn(),
   handlePaneFocus: vi.fn(),
@@ -92,17 +96,11 @@ describe("App", () => {
     expect(screen.getByTestId("menuButton")).toBeInTheDocument()
     expect(screen.getByTestId("darkModeButton")).toBeInTheDocument()
     expect(screen.getByTestId("lockButton")).toBeInTheDocument()
-    expect(screen.getByTestId("addEditorButton")).toBeInTheDocument()
   })
 
   it("renders the canvas overlay", () => {
     render(<App />)
     expect(screen.getByTestId("canvasOverlay")).toBeInTheDocument()
-  })
-
-  it("renders the add layer button", () => {
-    render(<App />)
-    expect(screen.getByTestId("addLayerButton")).toBeInTheDocument()
   })
 
   it("renders the title bar and toolbar", () => {

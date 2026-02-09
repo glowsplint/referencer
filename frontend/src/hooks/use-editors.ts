@@ -7,6 +7,7 @@ export function useEditors() {
   const [editorCount, setEditorCount] = useState(1)
   const [splitPositions, setSplitPositions] = useState<number[]>([])
   const [sectionVisibility, setSectionVisibility] = useState<boolean[]>([true])
+  const [sectionNames, setSectionNames] = useState<string[]>(["Passage 1"])
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null)
   const editorsRef = useRef<Map<number, Editor>>(new Map())
 
@@ -20,6 +21,7 @@ export function useEditors() {
       )
       setSplitPositions(positions)
       setSectionVisibility((prev) => [...prev, true])
+      setSectionNames((prev) => [...prev, `Passage ${prev.length + 1}`])
       return newCount
     })
   }, [])
@@ -45,6 +47,7 @@ export function useEditors() {
       )
       setSplitPositions(positions)
       setSectionVisibility((prev) => prev.filter((_, i) => i !== index))
+      setSectionNames((prev) => prev.filter((_, i) => i !== index))
       // Set active editor to the first remaining editor
       const firstEditor = newMap.get(0)
       if (firstEditor) setActiveEditor(firstEditor)
@@ -52,10 +55,23 @@ export function useEditors() {
     })
   }, [])
 
+  const updateSectionName = useCallback((index: number, name: string) => {
+    setSectionNames((prev) =>
+      prev.map((n, i) => (i === index ? name : n))
+    )
+  }, [])
+
   const toggleSectionVisibility = useCallback((index: number) => {
     setSectionVisibility((prev) =>
       prev.map((v, i) => (i === index ? !v : v))
     )
+  }, [])
+
+  const toggleAllSectionVisibility = useCallback(() => {
+    setSectionVisibility((prev) => {
+      const anyVisible = prev.some((v) => v)
+      return prev.map(() => !anyVisible)
+    })
   }, [])
 
   const handleDividerResize = useCallback((index: number, pct: number) => {
@@ -98,10 +114,13 @@ export function useEditors() {
     activeEditor,
     editorWidths,
     sectionVisibility,
+    sectionNames,
     editorsRef,
     addEditor,
     removeEditor,
+    updateSectionName,
     toggleSectionVisibility,
+    toggleAllSectionVisibility,
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,

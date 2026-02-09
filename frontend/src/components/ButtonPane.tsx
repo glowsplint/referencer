@@ -1,52 +1,37 @@
 import {
   Sun,
   MoonStar,
-  Layers,
   Columns2,
   Rows2,
   BoxSelect,
   Paintbrush,
   Lock,
   LockOpen,
-  FilePlusCorner,
-  LayersPlus,
   Menu,
 } from "lucide-react";
-import { ButtonIcon } from "./ui/ButtonIcon";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
-import type { EditorSettings, AnnotationSettings, Layer } from "@/types/editor";
-import { TAILWIND_300_COLORS } from "@/types/editor";
+import type { EditorSettings, AnnotationSettings } from "@/types/editor";
 
 interface ButtonPaneProps {
   settings: EditorSettings;
   annotations: AnnotationSettings;
-  layers: Layer[];
   isManagementPaneOpen: boolean;
   toggleManagementPane: () => void;
   toggleDarkMode: () => void;
-  toggleLayers: () => void;
   toggleEditorLayout: () => void;
   togglePainterMode: () => void;
   toggleLock: () => void;
-  addLayer: () => void;
-  addEditor: () => void;
-  editorCount: number;
 }
 
 export function ButtonPane({
   settings,
   annotations,
-  layers,
   isManagementPaneOpen,
   toggleManagementPane,
   toggleDarkMode,
-  toggleLayers,
   toggleEditorLayout,
   togglePainterMode,
   toggleLock,
-  addLayer,
-  addEditor,
-  editorCount,
 }: ButtonPaneProps) {
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
@@ -65,14 +50,6 @@ export function ButtonPane({
         callback={toggleDarkMode}
         title="Toggle dark mode"
         buttonProps={{ "data-testid": "darkModeButton" }}
-      />
-      <SwitchingButtonIcon
-        iconOne={<Layers size={20} />}
-        iconTwo={<Layers size={20} />}
-        bool={settings.isLayersOn}
-        callback={toggleLayers}
-        title="Toggle layer visibility"
-        buttonProps={{ "data-testid": "clearLayersButton" }}
       />
       <SwitchingButtonIcon
         iconTwo={<Columns2 size={20} />}
@@ -97,20 +74,6 @@ export function ButtonPane({
         callback={toggleLock}
         title="Toggle editor lock"
         buttonProps={{ "data-testid": "lockButton" }}
-      />
-      <ButtonIcon
-        icon={<LayersPlus size={20} />}
-        callback={addLayer}
-        disabled={layers.length >= TAILWIND_300_COLORS.length}
-        title="Add new layer"
-        buttonProps={{ "data-testid": "addLayerButton" }}
-      />
-      <ButtonIcon
-        icon={<FilePlusCorner size={20} />}
-        callback={addEditor}
-        disabled={editorCount >= 3}
-        title="Add new section"
-        buttonProps={{ "data-testid": "addEditorButton" }}
       />
     </div>
   );

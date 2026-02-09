@@ -187,6 +187,30 @@ describe("useEditors", () => {
     expect(result.current.sectionVisibility).toEqual([true, true])
   })
 
+  it("toggleAllSectionVisibility hides all sections when any are visible", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor() })
+    act(() => { result.current.toggleSectionVisibility(0) })
+    // One hidden, one visible
+    expect(result.current.sectionVisibility).toEqual([false, true])
+
+    act(() => { result.current.toggleAllSectionVisibility() })
+    expect(result.current.sectionVisibility).toEqual([false, false])
+  })
+
+  it("toggleAllSectionVisibility shows all sections when none are visible", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor() })
+    act(() => {
+      result.current.toggleSectionVisibility(0)
+      result.current.toggleSectionVisibility(1)
+    })
+    expect(result.current.sectionVisibility).toEqual([false, false])
+
+    act(() => { result.current.toggleAllSectionVisibility() })
+    expect(result.current.sectionVisibility).toEqual([true, true])
+  })
+
   it("toggleSectionVisibility toggles visibility at index", () => {
     const { result } = renderHook(() => useEditors())
     act(() => { result.current.addEditor() })
@@ -197,5 +221,44 @@ describe("useEditors", () => {
 
     act(() => { result.current.toggleSectionVisibility(0) })
     expect(result.current.sectionVisibility).toEqual([true, true])
+  })
+
+  // --- Section names ---
+
+  it("sectionNames starts with ['Passage 1']", () => {
+    const { result } = renderHook(() => useEditors())
+    expect(result.current.sectionNames).toEqual(["Passage 1"])
+  })
+
+  it("addEditor appends correct default name", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor() })
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"])
+    act(() => { result.current.addEditor() })
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2", "Passage 3"])
+  })
+
+  it("addEditor in quick succession assigns unique names", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor(); result.current.addEditor() })
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2", "Passage 3"])
+  })
+
+  it("removeEditor removes name at index", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor(); result.current.addEditor() })
+    act(() => { result.current.updateSectionName(1, "Custom") })
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Custom", "Passage 3"])
+    act(() => { result.current.removeEditor(1) })
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 3"])
+  })
+
+  it("updateSectionName updates name at index", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor() })
+    act(() => { result.current.updateSectionName(0, "Intro") })
+    expect(result.current.sectionNames).toEqual(["Intro", "Passage 2"])
+    act(() => { result.current.updateSectionName(1, "Body") })
+    expect(result.current.sectionNames).toEqual(["Intro", "Body"])
   })
 })

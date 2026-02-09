@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
 import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
 
@@ -10,13 +10,19 @@ interface ManagementPaneProps {
   activeLayerId: string | null;
   editorCount: number;
   sectionVisibility: boolean[];
+  sectionNames: string[];
+  addLayer: () => void;
   removeLayer: (id: string) => void;
   setActiveLayer: (id: string) => void;
   updateLayerColor: (id: string, color: string) => void;
   updateLayerName: (id: string, name: string) => void;
   toggleLayerVisibility: (id: string) => void;
+  toggleAllLayerVisibility: () => void;
+  addEditor: () => void;
   removeEditor: (index: number) => void;
+  updateSectionName: (index: number, name: string) => void;
   toggleSectionVisibility: (index: number) => void;
+  toggleAllSectionVisibility: () => void;
 }
 
 export function ManagementPane({
@@ -24,13 +30,19 @@ export function ManagementPane({
   activeLayerId,
   editorCount,
   sectionVisibility,
+  sectionNames,
+  addLayer,
   removeLayer,
   setActiveLayer,
   updateLayerColor,
   updateLayerName,
   toggleLayerVisibility,
+  toggleAllLayerVisibility,
+  addEditor,
   removeEditor,
+  updateSectionName,
   toggleSectionVisibility,
+  toggleAllSectionVisibility,
 }: ManagementPaneProps) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -40,12 +52,33 @@ export function ManagementPane({
       data-testid="managementPane"
     >
       <div className="mb-4">
-        <h3 className="text-xs font-medium text-muted-foreground mb-2">
-          Layers
-        </h3>
-        {layers.length === 0 && (
-          <p className="text-xs text-muted-foreground/60">No layers</p>
-        )}
+        <div className="flex items-center justify-between mb-2 px-1">
+          <h3 className="text-xs font-medium text-muted-foreground">
+            Layers
+          </h3>
+          <div className="flex items-center gap-1">
+            <button
+              className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
+              onClick={addLayer}
+              title="Add layer"
+              data-testid="addLayerButton"
+            >
+              <Plus size={14} />
+            </button>
+            <button
+              className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
+              onClick={toggleAllLayerVisibility}
+              title={layers.some((l) => l.visible) ? "Hide all layers" : "Show all layers"}
+              data-testid="toggleAllLayerVisibility"
+            >
+              {layers.some((l) => l.visible) ? (
+                <Eye size={14} />
+              ) : (
+                <EyeOff size={14} />
+              )}
+            </button>
+          </div>
+        </div>
         <div className="flex flex-col gap-1">
           {layers.map((layer, index) => (
             <LayerRow
@@ -65,8 +98,12 @@ export function ManagementPane({
       <SectionList
         editorCount={editorCount}
         sectionVisibility={sectionVisibility}
+        sectionNames={sectionNames}
+        addEditor={addEditor}
         removeEditor={removeEditor}
+        onUpdateName={updateSectionName}
         toggleSectionVisibility={toggleSectionVisibility}
+        toggleAllSectionVisibility={toggleAllSectionVisibility}
       />
 
       {(layers.length > 0 || editorCount > 1) && (

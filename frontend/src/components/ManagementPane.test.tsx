@@ -11,13 +11,19 @@ function renderPane(overrides = {}) {
     activeLayerId: null as string | null,
     editorCount: 1,
     sectionVisibility: [true],
+    sectionNames: ["Passage 1"],
+    addLayer: vi.fn(),
     removeLayer: vi.fn(),
     setActiveLayer: vi.fn(),
     updateLayerColor: vi.fn(),
     updateLayerName: vi.fn(),
     toggleLayerVisibility: vi.fn(),
+    toggleAllLayerVisibility: vi.fn(),
+    addEditor: vi.fn(),
     removeEditor: vi.fn(),
+    updateSectionName: vi.fn(),
     toggleSectionVisibility: vi.fn(),
+    toggleAllSectionVisibility: vi.fn(),
   }
   const props = { ...defaults, ...overrides }
   return { ...render(<ManagementPane {...props} />), props }
@@ -29,14 +35,15 @@ describe("ManagementPane", () => {
     expect(screen.getByTestId("managementPane")).toBeInTheDocument()
   })
 
-  it("shows 'No layers' when layers is empty", () => {
+  it("renders add layer button beside the Layers header", () => {
     renderPane()
-    expect(screen.getByText("No layers")).toBeInTheDocument()
+    expect(screen.getByTestId("addLayerButton")).toBeInTheDocument()
   })
 
-  it("does not show 'No layers' when layers exist", () => {
-    renderPane({ layers: [layerA] })
-    expect(screen.queryByText("No layers")).not.toBeInTheDocument()
+  it("calls addLayer when add layer button is clicked", () => {
+    const { props } = renderPane()
+    fireEvent.click(screen.getByTestId("addLayerButton"))
+    expect(props.addLayer).toHaveBeenCalled()
   })
 
   it("renders a LayerRow for each layer", () => {
@@ -78,21 +85,39 @@ describe("ManagementPane", () => {
     expect(props.toggleLayerVisibility).toHaveBeenCalledWith("a")
   })
 
-  it("renders the Sections heading via SectionList", () => {
+  it("renders the Passages heading via SectionList", () => {
     renderPane()
-    expect(screen.getByText("Sections")).toBeInTheDocument()
+    expect(screen.getByText("Passages")).toBeInTheDocument()
   })
 
-  it("renders section rows matching editorCount", () => {
-    renderPane({ editorCount: 2, sectionVisibility: [true, true] })
-    expect(screen.getByText("Section 1")).toBeInTheDocument()
-    expect(screen.getByText("Section 2")).toBeInTheDocument()
+  it("renders passage rows matching editorCount", () => {
+    renderPane({ editorCount: 2, sectionVisibility: [true, true], sectionNames: ["Passage 1", "Passage 2"] })
+    expect(screen.getByText("Passage 1")).toBeInTheDocument()
+    expect(screen.getByText("Passage 2")).toBeInTheDocument()
   })
 
-  it("calls toggleSectionVisibility when section eye button is clicked", () => {
-    const { props } = renderPane({ editorCount: 2, sectionVisibility: [true, true] })
+  it("calls toggleSectionVisibility when passage eye button is clicked", () => {
+    const { props } = renderPane({ editorCount: 2, sectionVisibility: [true, true], sectionNames: ["Passage 1", "Passage 2"] })
     fireEvent.click(screen.getByTestId("sectionVisibility-1"))
     expect(props.toggleSectionVisibility).toHaveBeenCalledWith(1)
+  })
+
+  // --- Master layer visibility ---
+
+  it("renders master layer visibility button when layers exist", () => {
+    renderPane({ layers: [layerA] })
+    expect(screen.getByTestId("toggleAllLayerVisibility")).toBeInTheDocument()
+  })
+
+  it("renders master layer visibility button even when no layers", () => {
+    renderPane()
+    expect(screen.getByTestId("toggleAllLayerVisibility")).toBeInTheDocument()
+  })
+
+  it("calls toggleAllLayerVisibility when master layer visibility button is clicked", () => {
+    const { props } = renderPane({ layers: [layerA] })
+    fireEvent.click(screen.getByTestId("toggleAllLayerVisibility"))
+    expect(props.toggleAllLayerVisibility).toHaveBeenCalled()
   })
 
   // --- Trash bin ---
@@ -149,5 +174,16 @@ describe("ManagementPane", () => {
     expect(bin).toHaveClass("border-destructive")
     fireEvent.dragLeave(bin)
     expect(bin).toHaveClass("border-muted-foreground/30")
+  })
+
+  // --- Section name editing ---
+
+  it("forwards sectionNames and updateSectionName to SectionList", () => {
+    const { props } = renderPane({ sectionNames: ["Custom Name"] })
+    expect(screen.getByText("Custom Name")).toBeInTheDocument()
+    fireEvent.doubleClick(screen.getByTestId("passageName-0"))
+    fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } })
+    fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" })
+    expect(props.updateSectionName).toHaveBeenCalledWith(0, "Renamed")
   })
 })
