@@ -6,6 +6,9 @@ import type { Editor } from "@tiptap/react"
 
 import { createSimpleEditorExtensions } from "./extensions"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
+import { useLayerDecorations } from "@/hooks/use-layer-decorations"
+import { useSelectionDecoration } from "@/hooks/use-selection-decoration"
+import type { Layer, WordSelection } from "@/types/editor"
 
 // --- Node SCSS ---
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
@@ -26,6 +29,10 @@ export function EditorPane({
   onEditorMount,
   onFocus,
   onWordClick,
+  onNonWordClick,
+  layers,
+  selection,
+  isLayersOn,
 }: {
   isLocked: boolean
   content?: Record<string, unknown>
@@ -33,6 +40,10 @@ export function EditorPane({
   onEditorMount: (index: number, editor: Editor) => void
   onFocus: (index: number) => void
   onWordClick?: (editorIndex: number, from: number, to: number, text: string) => void
+  onNonWordClick?: () => void
+  layers: Layer[]
+  selection: WordSelection | null
+  isLayersOn: boolean
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
 
@@ -66,23 +77,32 @@ export function EditorPane({
     }
   }, [editor, isLocked])
 
+  useLayerDecorations(editor, layers, index, isLocked, isLayersOn)
+  useSelectionDecoration(editor, selection, index)
+
   const handleFocus = useCallback(() => {
     onFocus(index)
   }, [index, onFocus])
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
-      if (!isLocked || !onWordClick || !editor) return
+      if (!isLocked || !editor) return
 
       const pos = editor.view.posAtCoords({ left: e.clientX, top: e.clientY })
-      if (!pos) return
+      if (!pos) {
+        onNonWordClick?.()
+        return
+      }
 
       const result = getWordBoundaries(editor.state.doc, pos.pos)
-      if (!result) return
+      if (!result) {
+        onNonWordClick?.()
+        return
+      }
 
-      onWordClick(index, result.from, result.to, result.text)
+      onWordClick?.(index, result.from, result.to, result.text)
     },
-    [isLocked, onWordClick, editor, index]
+    [isLocked, onWordClick, onNonWordClick, editor, index]
   )
 
   return (

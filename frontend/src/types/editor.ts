@@ -25,6 +25,13 @@ export interface Layer {
   highlights: Highlight[]
 }
 
+export interface WordSelection {
+  editorIndex: number
+  from: number
+  to: number
+  text: string
+}
+
 export const TAILWIND_300_COLORS = [
   "#fca5a5", // red-300
   "#fcd34d", // amber-300

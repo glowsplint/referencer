@@ -2,7 +2,6 @@ import { useRef, useCallback, Fragment } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
-import { CanvasOverlay } from "./components/CanvasOverlay";
 import { Divider } from "./components/ui/Divider";
 import {
   TitleBar,
@@ -11,6 +10,7 @@ import {
   SIMPLE_EDITOR_CONTENT,
 } from "./components/tiptap-templates/simple";
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
+import { useWordSelection } from "./hooks/use-word-selection";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 
 export function App() {
@@ -34,20 +34,30 @@ export function App() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleWordClick = useCallback(
+  const { selection, selectWord, clearSelection } = useWordSelection({
+    isLocked: settings.isLocked,
+    editorsRef,
+    containerRef,
+    editorCount,
+  });
+
+  const handleWordClickCombined = useCallback(
     (editorIndex: number, from: number, to: number, text: string) => {
-      if (!activeLayerId) return;
-      const layer = layers.find((l) => l.id === activeLayerId);
-      const existing = layer?.highlights.find(
-        (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
-      );
-      if (existing) {
-        removeHighlight(activeLayerId, existing.id);
-      } else {
-        addHighlight(activeLayerId, { editorIndex, from, to, text });
+      selectWord(editorIndex, from, to, text);
+
+      if (settings.isLayersOn && activeLayerId) {
+        const layer = layers.find((l) => l.id === activeLayerId);
+        const existing = layer?.highlights.find(
+          (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
+        );
+        if (existing) {
+          removeHighlight(activeLayerId, existing.id);
+        } else {
+          addHighlight(activeLayerId, { editorIndex, from, to, text });
+        }
       }
     },
-    [activeLayerId, layers, addHighlight, removeHighlight]
+    [selectWord, settings.isLayersOn, activeLayerId, layers, addHighlight, removeHighlight]
   );
 
   return (
@@ -64,14 +74,6 @@ export function App() {
               data-testid="editorContainer"
               className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
             >
-              <CanvasOverlay
-                layers={layers}
-                containerRef={containerRef}
-                editorsRef={editorsRef}
-                editorCount={editorCount}
-                isLocked={settings.isLocked}
-                isLayersOn={settings.isLayersOn}
-              />
               {editorWidths.map((width, i) => (
                 <Fragment key={i}>
                   {i > 0 && sectionVisibility[i - 1] && sectionVisibility[i] && (
@@ -96,7 +98,11 @@ export function App() {
                       index={i}
                       onEditorMount={handleEditorMount}
                       onFocus={handlePaneFocus}
-                      onWordClick={settings.isLocked && settings.isLayersOn ? handleWordClick : undefined}
+                      onWordClick={settings.isLocked ? handleWordClickCombined : undefined}
+                      onNonWordClick={settings.isLocked ? clearSelection : undefined}
+                      layers={layers}
+                      selection={selection}
+                      isLayersOn={settings.isLayersOn}
                     />
                   </div>
                 </Fragment>

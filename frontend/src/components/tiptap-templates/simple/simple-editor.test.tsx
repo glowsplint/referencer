@@ -4,13 +4,17 @@ import { SimpleEditorToolbar } from "./SimpleEditorToolbar"
 import { EditorPane } from "./EditorPane"
 
 // Mock editor instance shared across mocks
+const mockDispatch = vi.fn()
+const mockSetMeta = vi.fn().mockReturnThis()
 const mockEditor = {
   isEditable: true,
+  isDestroyed: false,
   setEditable: vi.fn(),
   emit: vi.fn(),
   on: vi.fn(),
   off: vi.fn(),
-  state: { tr: {} },
+  state: { tr: { setMeta: mockSetMeta }, doc: {} },
+  view: { dispatch: mockDispatch },
 }
 
 // Mock @tiptap/react
@@ -72,11 +76,6 @@ vi.mock("@/components/tiptap-ui/blockquote-button", () => ({
 vi.mock("@/components/tiptap-ui/code-block-button", () => ({
   CodeBlockButton: () => null,
 }))
-vi.mock("@/components/tiptap-ui/color-highlight-popover", () => ({
-  ColorHighlightPopover: () => null,
-  ColorHighlightPopoverContent: () => null,
-  ColorHighlightPopoverButton: () => null,
-}))
 vi.mock("@/components/tiptap-ui/link-popover", () => ({
   LinkPopover: () => null,
   LinkContent: () => null,
@@ -96,9 +95,6 @@ vi.mock("@/components/tiptap-ui/undo-redo-button", () => ({
 vi.mock("@/components/tiptap-icons/arrow-left-icon", () => ({
   ArrowLeftIcon: () => null,
 }))
-vi.mock("@/components/tiptap-icons/highlighter-icon", () => ({
-  HighlighterIcon: () => null,
-}))
 vi.mock("@/components/tiptap-icons/link-icon", () => ({
   LinkIcon: () => null,
 }))
@@ -113,6 +109,12 @@ vi.mock("@/hooks/use-window-size", () => ({
 vi.mock("@/hooks/use-cursor-visibility", () => ({
   useCursorVisibility: () => ({ x: 0, y: 0, width: 0, height: 0 }),
 }))
+vi.mock("@/hooks/use-layer-decorations", () => ({
+  useLayerDecorations: vi.fn(),
+}))
+vi.mock("@/hooks/use-selection-decoration", () => ({
+  useSelectionDecoration: vi.fn(),
+}))
 
 // Mock tiptap extensions
 vi.mock("@tiptap/starter-kit", () => ({
@@ -126,6 +128,14 @@ vi.mock("@tiptap/extension-highlight", () => ({ Highlight: { configure: () => ({
 vi.mock("@tiptap/extension-subscript", () => ({ Subscript: {} }))
 vi.mock("@tiptap/extension-superscript", () => ({ Superscript: {} }))
 vi.mock("@tiptap/extensions", () => ({ Selection: {} }))
+vi.mock("@/lib/tiptap/extensions/layer-highlights", () => ({
+  LayerHighlightsExtension: {},
+  layerHighlightsPluginKey: {},
+}))
+vi.mock("@/lib/tiptap/extensions/word-selection", () => ({
+  WordSelectionExtension: {},
+  wordSelectionPluginKey: {},
+}))
 vi.mock("@/components/tiptap-node/image-upload-node/image-upload-node-extension", () => ({
   ImageUploadNode: { configure: () => ({}) },
 }))
@@ -139,6 +149,12 @@ vi.mock("@/lib/tiptap/upload", () => ({
 vi.mock("@/components/tiptap-templates/simple/data/content.json", () => ({
   default: {},
 }))
+
+const defaultEditorPaneProps = {
+  layers: [],
+  selection: null,
+  isLayersOn: false,
+}
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -163,21 +179,21 @@ describe("SimpleEditorToolbar lock/unlock", () => {
 describe("EditorPane lock/unlock", () => {
   it("calls editor.setEditable(true) when unlocked", () => {
     render(
-      <EditorPane isLocked={false} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} />
+      <EditorPane isLocked={false} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
     )
     expect(mockEditor.setEditable).toHaveBeenCalledWith(true)
   })
 
   it("calls editor.setEditable(false) when locked", () => {
     render(
-      <EditorPane isLocked={true} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} />
+      <EditorPane isLocked={true} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
     )
     expect(mockEditor.setEditable).toHaveBeenCalledWith(false)
   })
 
   it("calls editor.emit('selectionUpdate') when unlocked", () => {
     render(
-      <EditorPane isLocked={false} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} />
+      <EditorPane isLocked={false} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
     )
     expect(mockEditor.emit).toHaveBeenCalledWith("selectionUpdate", {
       editor: mockEditor,
@@ -187,7 +203,7 @@ describe("EditorPane lock/unlock", () => {
 
   it("does NOT call editor.emit('selectionUpdate') when locked", () => {
     render(
-      <EditorPane isLocked={true} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} />
+      <EditorPane isLocked={true} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
     )
     expect(mockEditor.emit).not.toHaveBeenCalled()
   })
@@ -195,7 +211,7 @@ describe("EditorPane lock/unlock", () => {
   it("calls onEditorMount with index and editor on mount", () => {
     const onEditorMount = vi.fn()
     render(
-      <EditorPane isLocked={false} index={2} onEditorMount={onEditorMount} onFocus={vi.fn()} />
+      <EditorPane isLocked={false} index={2} onEditorMount={onEditorMount} onFocus={vi.fn()} {...defaultEditorPaneProps} />
     )
     expect(onEditorMount).toHaveBeenCalledWith(2, mockEditor)
   })
@@ -203,7 +219,7 @@ describe("EditorPane lock/unlock", () => {
   it("calls onFocus with index on focus capture", () => {
     const onFocus = vi.fn()
     render(
-      <EditorPane isLocked={false} index={1} onEditorMount={vi.fn()} onFocus={onFocus} />
+      <EditorPane isLocked={false} index={1} onEditorMount={vi.fn()} onFocus={onFocus} {...defaultEditorPaneProps} />
     )
     const editorContent = screen.getByTestId("editor-content")
     fireEvent.focus(editorContent)
