@@ -9,24 +9,28 @@ interface ManagementPaneProps {
   layers: Layer[];
   activeLayerId: string | null;
   editorCount: number;
+  sectionVisibility: boolean[];
   removeLayer: (id: string) => void;
   setActiveLayer: (id: string) => void;
   updateLayerColor: (id: string, color: string) => void;
   updateLayerName: (id: string, name: string) => void;
   toggleLayerVisibility: (id: string) => void;
   removeEditor: (index: number) => void;
+  toggleSectionVisibility: (index: number) => void;
 }
 
 export function ManagementPane({
   layers,
   activeLayerId,
   editorCount,
+  sectionVisibility,
   removeLayer,
   setActiveLayer,
   updateLayerColor,
   updateLayerName,
   toggleLayerVisibility,
   removeEditor,
+  toggleSectionVisibility,
 }: ManagementPaneProps) {
   const [dragOver, setDragOver] = useState(false);
 
@@ -58,7 +62,12 @@ export function ManagementPane({
         </div>
       </div>
 
-      <SectionList editorCount={editorCount} removeEditor={removeEditor} />
+      <SectionList
+        editorCount={editorCount}
+        sectionVisibility={sectionVisibility}
+        removeEditor={removeEditor}
+        toggleSectionVisibility={toggleSectionVisibility}
+      />
 
       {(layers.length > 0 || editorCount > 1) && (
         <div

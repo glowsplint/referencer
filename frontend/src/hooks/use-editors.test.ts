@@ -164,4 +164,38 @@ describe("useEditors", () => {
     const { result } = renderHook(() => useEditors())
     expect(result.current.editorsRef.current).toBeInstanceOf(Map)
   })
+
+  it("sectionVisibility starts with one visible section", () => {
+    const { result } = renderHook(() => useEditors())
+    expect(result.current.sectionVisibility).toEqual([true])
+  })
+
+  it("addEditor appends true to sectionVisibility", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor() })
+    expect(result.current.sectionVisibility).toEqual([true, true])
+    act(() => { result.current.addEditor() })
+    expect(result.current.sectionVisibility).toEqual([true, true, true])
+  })
+
+  it("removeEditor removes the entry from sectionVisibility", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor(); result.current.addEditor() })
+    act(() => { result.current.toggleSectionVisibility(1) })
+    expect(result.current.sectionVisibility).toEqual([true, false, true])
+    act(() => { result.current.removeEditor(1) })
+    expect(result.current.sectionVisibility).toEqual([true, true])
+  })
+
+  it("toggleSectionVisibility toggles visibility at index", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor() })
+    expect(result.current.sectionVisibility).toEqual([true, true])
+
+    act(() => { result.current.toggleSectionVisibility(0) })
+    expect(result.current.sectionVisibility).toEqual([false, true])
+
+    act(() => { result.current.toggleSectionVisibility(0) })
+    expect(result.current.sectionVisibility).toEqual([true, true])
+  })
 })

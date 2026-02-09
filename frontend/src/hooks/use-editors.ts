@@ -6,6 +6,7 @@ const MIN_EDITOR_PCT = 10
 export function useEditors() {
   const [editorCount, setEditorCount] = useState(1)
   const [splitPositions, setSplitPositions] = useState<number[]>([])
+  const [sectionVisibility, setSectionVisibility] = useState<boolean[]>([true])
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null)
   const editorsRef = useRef<Map<number, Editor>>(new Map())
 
@@ -18,6 +19,7 @@ export function useEditors() {
         (_, i) => ((i + 1) / newCount) * 100,
       )
       setSplitPositions(positions)
+      setSectionVisibility((prev) => [...prev, true])
       return newCount
     })
   }, [])
@@ -42,11 +44,18 @@ export function useEditors() {
         (_, i) => ((i + 1) / newCount) * 100,
       )
       setSplitPositions(positions)
+      setSectionVisibility((prev) => prev.filter((_, i) => i !== index))
       // Set active editor to the first remaining editor
       const firstEditor = newMap.get(0)
       if (firstEditor) setActiveEditor(firstEditor)
       return newCount
     })
+  }, [])
+
+  const toggleSectionVisibility = useCallback((index: number) => {
+    setSectionVisibility((prev) =>
+      prev.map((v, i) => (i === index ? !v : v))
+    )
   }, [])
 
   const handleDividerResize = useCallback((index: number, pct: number) => {
@@ -88,9 +97,11 @@ export function useEditors() {
     editorCount,
     activeEditor,
     editorWidths,
+    sectionVisibility,
     editorsRef,
     addEditor,
     removeEditor,
+    toggleSectionVisibility,
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,

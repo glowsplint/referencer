@@ -10,12 +10,14 @@ function renderPane(overrides = {}) {
     layers: [] as typeof layerA[],
     activeLayerId: null as string | null,
     editorCount: 1,
+    sectionVisibility: [true],
     removeLayer: vi.fn(),
     setActiveLayer: vi.fn(),
     updateLayerColor: vi.fn(),
     updateLayerName: vi.fn(),
     toggleLayerVisibility: vi.fn(),
     removeEditor: vi.fn(),
+    toggleSectionVisibility: vi.fn(),
   }
   const props = { ...defaults, ...overrides }
   return { ...render(<ManagementPane {...props} />), props }
@@ -82,15 +84,15 @@ describe("ManagementPane", () => {
   })
 
   it("renders section rows matching editorCount", () => {
-    renderPane({ editorCount: 2 })
+    renderPane({ editorCount: 2, sectionVisibility: [true, true] })
     expect(screen.getByText("Section 1")).toBeInTheDocument()
     expect(screen.getByText("Section 2")).toBeInTheDocument()
   })
 
-  it("calls removeEditor when section remove button is clicked", () => {
-    const { props } = renderPane({ editorCount: 2 })
-    fireEvent.click(screen.getByTestId("removeSection-1"))
-    expect(props.removeEditor).toHaveBeenCalledWith(1)
+  it("calls toggleSectionVisibility when section eye button is clicked", () => {
+    const { props } = renderPane({ editorCount: 2, sectionVisibility: [true, true] })
+    fireEvent.click(screen.getByTestId("sectionVisibility-1"))
+    expect(props.toggleSectionVisibility).toHaveBeenCalledWith(1)
   })
 
   // --- Trash bin ---

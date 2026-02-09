@@ -1,11 +1,18 @@
-import { X } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 interface SectionListProps {
   editorCount: number;
+  sectionVisibility: boolean[];
   removeEditor: (index: number) => void;
+  toggleSectionVisibility: (index: number) => void;
 }
 
-export function SectionList({ editorCount, removeEditor }: SectionListProps) {
+export function SectionList({
+  editorCount,
+  sectionVisibility,
+  removeEditor,
+  toggleSectionVisibility,
+}: SectionListProps) {
   return (
     <div>
       <h3 className="text-xs font-medium text-muted-foreground mb-2">
@@ -22,16 +29,18 @@ export function SectionList({ editorCount, removeEditor }: SectionListProps) {
             }}
           >
             <span className="text-sm flex-1">Section {i + 1}</span>
-            {editorCount > 1 && (
-              <button
-                className="p-0.5 rounded hover:bg-destructive/20 text-muted-foreground hover:text-destructive"
-                onClick={() => removeEditor(i)}
-                title="Remove section"
-                data-testid={`removeSection-${i}`}
-              >
-                <X size={14} />
-              </button>
-            )}
+            <button
+              className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
+              onClick={() => toggleSectionVisibility(i)}
+              title={sectionVisibility[i] ? "Hide section" : "Show section"}
+              data-testid={`sectionVisibility-${i}`}
+            >
+              {sectionVisibility[i] ? (
+                <Eye size={14} />
+              ) : (
+                <EyeOff size={14} />
+              )}
+            </button>
           </div>
         ))}
       </div>

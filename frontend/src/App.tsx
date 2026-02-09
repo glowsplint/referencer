@@ -36,8 +36,10 @@ export function App() {
     addHighlight,
     removeHighlight,
     editorsRef,
+    sectionVisibility,
     addEditor,
     removeEditor,
+    toggleSectionVisibility,
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,
@@ -84,12 +86,14 @@ export function App() {
             layers={layers}
             activeLayerId={activeLayerId}
             editorCount={editorCount}
+            sectionVisibility={sectionVisibility}
             removeLayer={removeLayer}
             setActiveLayer={setActiveLayer}
             updateLayerColor={updateLayerColor}
             updateLayerName={updateLayerName}
             toggleLayerVisibility={toggleLayerVisibility}
             removeEditor={removeEditor}
+            toggleSectionVisibility={toggleSectionVisibility}
           />
         )}
         <EditorContext.Provider value={{ editor: activeEditor }}>
@@ -109,7 +113,7 @@ export function App() {
               />
               {editorWidths.map((width, i) => (
                 <Fragment key={i}>
-                  {i > 0 && (
+                  {i > 0 && sectionVisibility[i - 1] && sectionVisibility[i] && (
                     <Divider
                       onResize={(pct) => handleDividerResize(i - 1, pct)}
                       containerRef={containerRef}
@@ -120,7 +124,10 @@ export function App() {
                   )}
                   <div
                     className="min-w-0 min-h-0 overflow-hidden"
-                    style={{ flex: `${width} 0 0%` }}
+                    style={{
+                      flex: `${width} 0 0%`,
+                      display: sectionVisibility[i] === false ? "none" : undefined,
+                    }}
                   >
                     <EditorPane
                       isLocked={settings.isLocked}
