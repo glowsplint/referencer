@@ -1,27 +1,10 @@
-import { render, screen, fireEvent } from "@testing-library/react"
-import { describe, it, expect, vi } from "vitest"
+import { screen, fireEvent } from "@testing-library/react"
+import { describe, it, expect } from "vitest"
 import { ButtonPane } from "./ButtonPane"
+import { renderWithWorkspace } from "@/test/render-with-workspace"
 
 function renderButtonPane(overrides = {}) {
-  const defaults = {
-    settings: {
-      isDarkMode: false,
-      isLayersOn: false,
-      isMultipleRowsLayout: false,
-      isLocked: false,
-    },
-    annotations: {
-      isPainterMode: false,
-    },
-    isManagementPaneOpen: false,
-    toggleManagementPane: vi.fn(),
-    toggleDarkMode: vi.fn(),
-    toggleEditorLayout: vi.fn(),
-    togglePainterMode: vi.fn(),
-    toggleLock: vi.fn(),
-  }
-  const props = { ...defaults, ...overrides }
-  return { ...render(<ButtonPane {...props} />), props }
+  return renderWithWorkspace(<ButtonPane />, overrides)
 }
 
 describe("ButtonPane", () => {
@@ -35,32 +18,32 @@ describe("ButtonPane", () => {
   })
 
   it("calls toggleManagementPane when menu button is clicked", () => {
-    const { props } = renderButtonPane()
+    const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("menuButton"))
-    expect(props.toggleManagementPane).toHaveBeenCalledOnce()
+    expect(workspace.toggleManagementPane).toHaveBeenCalledOnce()
   })
 
   it("calls toggleDarkMode when dark mode button is clicked", () => {
-    const { props } = renderButtonPane()
+    const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("darkModeButton"))
-    expect(props.toggleDarkMode).toHaveBeenCalledOnce()
+    expect(workspace.toggleDarkMode).toHaveBeenCalledOnce()
   })
 
-  it("calls toggleEditorLayout when layout button is clicked", () => {
-    const { props } = renderButtonPane()
+  it("calls toggleMultipleRowsLayout when layout button is clicked", () => {
+    const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("editorLayoutButton"))
-    expect(props.toggleEditorLayout).toHaveBeenCalledOnce()
+    expect(workspace.toggleMultipleRowsLayout).toHaveBeenCalledOnce()
   })
 
   it("calls togglePainterMode when painter button is clicked", () => {
-    const { props } = renderButtonPane()
+    const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("painterModeButton"))
-    expect(props.togglePainterMode).toHaveBeenCalledOnce()
+    expect(workspace.togglePainterMode).toHaveBeenCalledOnce()
   })
 
-  it("calls toggleLock when lock button is clicked", () => {
-    const { props } = renderButtonPane()
+  it("calls toggleLocked when lock button is clicked", () => {
+    const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("lockButton"))
-    expect(props.toggleLock).toHaveBeenCalledOnce()
+    expect(workspace.toggleLocked).toHaveBeenCalledOnce()
   })
 })

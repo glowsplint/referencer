@@ -1,32 +1,13 @@
-import { render, screen, fireEvent } from "@testing-library/react"
-import { describe, it, expect, vi } from "vitest"
+import { screen, fireEvent } from "@testing-library/react"
+import { describe, it, expect } from "vitest"
 import { ManagementPane } from "./ManagementPane"
+import { renderWithWorkspace } from "@/test/render-with-workspace"
 
 const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as unknown[] }
 const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as unknown[] }
 
 function renderPane(overrides = {}) {
-  const defaults = {
-    layers: [] as typeof layerA[],
-    activeLayerId: null as string | null,
-    editorCount: 1,
-    sectionVisibility: [true],
-    sectionNames: ["Passage 1"],
-    addLayer: vi.fn(),
-    removeLayer: vi.fn(),
-    setActiveLayer: vi.fn(),
-    updateLayerColor: vi.fn(),
-    updateLayerName: vi.fn(),
-    toggleLayerVisibility: vi.fn(),
-    toggleAllLayerVisibility: vi.fn(),
-    addEditor: vi.fn(),
-    removeEditor: vi.fn(),
-    updateSectionName: vi.fn(),
-    toggleSectionVisibility: vi.fn(),
-    toggleAllSectionVisibility: vi.fn(),
-  }
-  const props = { ...defaults, ...overrides }
-  return { ...render(<ManagementPane {...props} />), props }
+  return renderWithWorkspace(<ManagementPane />, overrides)
 }
 
 describe("ManagementPane", () => {
@@ -41,9 +22,9 @@ describe("ManagementPane", () => {
   })
 
   it("calls addLayer when add layer button is clicked", () => {
-    const { props } = renderPane()
+    const { workspace } = renderPane()
     fireEvent.click(screen.getByTestId("addLayerButton"))
-    expect(props.addLayer).toHaveBeenCalled()
+    expect(workspace.addLayer).toHaveBeenCalled()
   })
 
   it("renders a LayerRow for each layer", () => {
@@ -59,30 +40,30 @@ describe("ManagementPane", () => {
   })
 
   it("calls setActiveLayer with layer id when clicking a layer row", () => {
-    const { props } = renderPane({ layers: [layerA] })
+    const { workspace } = renderPane({ layers: [layerA] })
     fireEvent.click(screen.getByText("Layer 1"))
-    expect(props.setActiveLayer).toHaveBeenCalledWith("a")
+    expect(workspace.setActiveLayer).toHaveBeenCalledWith("a")
   })
 
   it("calls updateLayerColor with layer id and new colour", () => {
-    const { props } = renderPane({ layers: [layerA] })
+    const { workspace } = renderPane({ layers: [layerA] })
     fireEvent.click(screen.getByTestId("layerSwatch-0"))
     fireEvent.click(screen.getByTestId("colorOption-#93c5fd"))
-    expect(props.updateLayerColor).toHaveBeenCalledWith("a", "#93c5fd")
+    expect(workspace.updateLayerColor).toHaveBeenCalledWith("a", "#93c5fd")
   })
 
   it("calls updateLayerName with layer id and new name", () => {
-    const { props } = renderPane({ layers: [layerA] })
+    const { workspace } = renderPane({ layers: [layerA] })
     fireEvent.doubleClick(screen.getByTestId("layerName-0"))
     fireEvent.change(screen.getByTestId("layerNameInput-0"), { target: { value: "Renamed" } })
     fireEvent.keyDown(screen.getByTestId("layerNameInput-0"), { key: "Enter" })
-    expect(props.updateLayerName).toHaveBeenCalledWith("a", "Renamed")
+    expect(workspace.updateLayerName).toHaveBeenCalledWith("a", "Renamed")
   })
 
   it("calls toggleLayerVisibility with layer id", () => {
-    const { props } = renderPane({ layers: [layerA] })
+    const { workspace } = renderPane({ layers: [layerA] })
     fireEvent.click(screen.getByTestId("layerVisibility-0"))
-    expect(props.toggleLayerVisibility).toHaveBeenCalledWith("a")
+    expect(workspace.toggleLayerVisibility).toHaveBeenCalledWith("a")
   })
 
   it("renders the Passages heading via SectionList", () => {
@@ -97,9 +78,9 @@ describe("ManagementPane", () => {
   })
 
   it("calls toggleSectionVisibility when passage eye button is clicked", () => {
-    const { props } = renderPane({ editorCount: 2, sectionVisibility: [true, true], sectionNames: ["Passage 1", "Passage 2"] })
+    const { workspace } = renderPane({ editorCount: 2, sectionVisibility: [true, true], sectionNames: ["Passage 1", "Passage 2"] })
     fireEvent.click(screen.getByTestId("sectionVisibility-1"))
-    expect(props.toggleSectionVisibility).toHaveBeenCalledWith(1)
+    expect(workspace.toggleSectionVisibility).toHaveBeenCalledWith(1)
   })
 
   // --- Master layer visibility ---
@@ -115,9 +96,9 @@ describe("ManagementPane", () => {
   })
 
   it("calls toggleAllLayerVisibility when master layer visibility button is clicked", () => {
-    const { props } = renderPane({ layers: [layerA] })
+    const { workspace } = renderPane({ layers: [layerA] })
     fireEvent.click(screen.getByTestId("toggleAllLayerVisibility"))
-    expect(props.toggleAllLayerVisibility).toHaveBeenCalled()
+    expect(workspace.toggleAllLayerVisibility).toHaveBeenCalled()
   })
 
   // --- Trash bin ---
@@ -138,25 +119,25 @@ describe("ManagementPane", () => {
   })
 
   it("calls removeLayer when a layer is dropped on the trash bin", () => {
-    const { props } = renderPane({ layers: [layerA] })
+    const { workspace } = renderPane({ layers: [layerA] })
     fireEvent.drop(screen.getByTestId("trashBin"), {
       dataTransfer: {
         getData: (type: string) =>
           type === "application/x-layer-id" ? "a" : "",
       },
     })
-    expect(props.removeLayer).toHaveBeenCalledWith("a")
+    expect(workspace.removeLayer).toHaveBeenCalledWith("a")
   })
 
   it("calls removeEditor when a section is dropped on the trash bin", () => {
-    const { props } = renderPane({ editorCount: 2 })
+    const { workspace } = renderPane({ editorCount: 2 })
     fireEvent.drop(screen.getByTestId("trashBin"), {
       dataTransfer: {
         getData: (type: string) =>
           type === "application/x-section-index" ? "1" : "",
       },
     })
-    expect(props.removeEditor).toHaveBeenCalledWith(1)
+    expect(workspace.removeEditor).toHaveBeenCalledWith(1)
   })
 
   it("shows destructive styling during dragover", () => {
@@ -179,11 +160,11 @@ describe("ManagementPane", () => {
   // --- Section name editing ---
 
   it("forwards sectionNames and updateSectionName to SectionList", () => {
-    const { props } = renderPane({ sectionNames: ["Custom Name"] })
+    const { workspace } = renderPane({ sectionNames: ["Custom Name"] })
     expect(screen.getByText("Custom Name")).toBeInTheDocument()
     fireEvent.doubleClick(screen.getByTestId("passageName-0"))
     fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } })
     fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" })
-    expect(props.updateSectionName).toHaveBeenCalledWith(0, "Renamed")
+    expect(workspace.updateSectionName).toHaveBeenCalledWith(0, "Renamed")
   })
 })

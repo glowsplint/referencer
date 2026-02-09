@@ -23,36 +23,36 @@ describe("useSettings", () => {
     expect(result.current.annotations).toEqual({ isPainterMode: false })
   })
 
-  it("toggleSetting toggles isDarkMode and updates classList", () => {
+  it("toggleDarkMode toggles isDarkMode and updates classList", () => {
     const { result } = renderHook(() => useSettings())
 
-    act(() => { result.current.toggleSetting("isDarkMode")() })
+    act(() => { result.current.toggleDarkMode() })
     expect(result.current.settings.isDarkMode).toBe(true)
     expect(document.documentElement.classList.contains("dark")).toBe(true)
 
-    act(() => { result.current.toggleSetting("isDarkMode")() })
+    act(() => { result.current.toggleDarkMode() })
     expect(result.current.settings.isDarkMode).toBe(false)
     expect(document.documentElement.classList.contains("dark")).toBe(false)
   })
 
-  it("toggleSetting toggles isLayersOn", () => {
+  it("toggleLayersOn toggles isLayersOn", () => {
     const { result } = renderHook(() => useSettings())
 
-    act(() => { result.current.toggleSetting("isLayersOn")() })
+    act(() => { result.current.toggleLayersOn() })
     expect(result.current.settings.isLayersOn).toBe(true)
   })
 
-  it("toggleSetting toggles isMultipleRowsLayout", () => {
+  it("toggleMultipleRowsLayout toggles isMultipleRowsLayout", () => {
     const { result } = renderHook(() => useSettings())
 
-    act(() => { result.current.toggleSetting("isMultipleRowsLayout")() })
+    act(() => { result.current.toggleMultipleRowsLayout() })
     expect(result.current.settings.isMultipleRowsLayout).toBe(true)
   })
 
-  it("toggleSetting toggles isLocked", () => {
+  it("toggleLocked toggles isLocked", () => {
     const { result } = renderHook(() => useSettings())
 
-    act(() => { result.current.toggleSetting("isLocked")() })
+    act(() => { result.current.toggleLocked() })
     expect(result.current.settings.isLocked).toBe(true)
   })
 
@@ -69,7 +69,7 @@ describe("useSettings", () => {
   it("toggling one setting does not affect others", () => {
     const { result } = renderHook(() => useSettings())
 
-    act(() => { result.current.toggleSetting("isDarkMode")() })
+    act(() => { result.current.toggleDarkMode() })
 
     expect(result.current.settings.isLayersOn).toBe(false)
     expect(result.current.settings.isMultipleRowsLayout).toBe(false)

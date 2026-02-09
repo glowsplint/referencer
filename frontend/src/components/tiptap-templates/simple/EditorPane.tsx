@@ -5,6 +5,7 @@ import { EditorContent, useEditor } from "@tiptap/react"
 import type { Editor } from "@tiptap/react"
 
 import { createSimpleEditorExtensions } from "./extensions"
+import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
 
 // --- Node SCSS ---
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
@@ -17,32 +18,6 @@ import "@/components/tiptap-node/paragraph-node/paragraph-node.scss"
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss"
-
-function getWordBoundaries(doc: any, pos: number): { from: number; to: number; text: string } | null {
-  const resolved = doc.resolve(pos)
-  const parent = resolved.parent
-  if (!parent.isTextblock) return null
-
-  const parentOffset = resolved.parentOffset
-  const textContent = parent.textContent
-  if (!textContent) return null
-
-  // Walk backward to find word start
-  let start = parentOffset
-  while (start > 0 && /\w/.test(textContent[start - 1])) start--
-
-  // Walk forward to find word end
-  let end = parentOffset
-  while (end < textContent.length && /\w/.test(textContent[end])) end++
-
-  if (start === end) return null
-
-  const word = textContent.slice(start, end)
-
-  // Convert parent-relative offsets to absolute doc positions
-  const blockStart = resolved.start()
-  return { from: blockStart + start, to: blockStart + end, text: word }
-}
 
 export function EditorPane({
   isLocked,

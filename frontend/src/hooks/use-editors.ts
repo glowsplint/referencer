@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react"
+import { useRef, useState, useCallback, useMemo } from "react"
 import type { Editor } from "@tiptap/react"
 
 const MIN_EDITOR_PCT = 10
@@ -102,12 +102,15 @@ export function useEditors() {
     }
   }, [])
 
-  const editorWidths: number[] = []
-  for (let i = 0; i < editorCount; i++) {
-    const start = i === 0 ? 0 : splitPositions[i - 1]
-    const end = i === editorCount - 1 ? 100 : splitPositions[i]
-    editorWidths.push(end - start)
-  }
+  const editorWidths = useMemo(() => {
+    const widths: number[] = []
+    for (let i = 0; i < editorCount; i++) {
+      const start = i === 0 ? 0 : splitPositions[i - 1]
+      const end = i === editorCount - 1 ? 100 : splitPositions[i]
+      widths.push(end - start)
+    }
+    return widths
+  }, [editorCount, splitPositions])
 
   return {
     editorCount,

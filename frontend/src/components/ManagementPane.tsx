@@ -2,48 +2,30 @@ import { useState } from "react";
 import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
 import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
+import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
-import type { Layer } from "@/types/editor";
+export function ManagementPane() {
+  const {
+    layers,
+    activeLayerId,
+    editorCount,
+    sectionVisibility,
+    sectionNames,
+    addLayer,
+    removeLayer,
+    setActiveLayer,
+    updateLayerColor,
+    updateLayerName,
+    toggleLayerVisibility,
+    toggleAllLayerVisibility,
+    addEditor,
+    removeEditor,
+    updateSectionName,
+    toggleSectionVisibility,
+    toggleAllSectionVisibility,
+  } = useWorkspace();
 
-interface ManagementPaneProps {
-  layers: Layer[];
-  activeLayerId: string | null;
-  editorCount: number;
-  sectionVisibility: boolean[];
-  sectionNames: string[];
-  addLayer: () => void;
-  removeLayer: (id: string) => void;
-  setActiveLayer: (id: string) => void;
-  updateLayerColor: (id: string, color: string) => void;
-  updateLayerName: (id: string, name: string) => void;
-  toggleLayerVisibility: (id: string) => void;
-  toggleAllLayerVisibility: () => void;
-  addEditor: () => void;
-  removeEditor: (index: number) => void;
-  updateSectionName: (index: number, name: string) => void;
-  toggleSectionVisibility: (index: number) => void;
-  toggleAllSectionVisibility: () => void;
-}
-
-export function ManagementPane({
-  layers,
-  activeLayerId,
-  editorCount,
-  sectionVisibility,
-  sectionNames,
-  addLayer,
-  removeLayer,
-  setActiveLayer,
-  updateLayerColor,
-  updateLayerName,
-  toggleLayerVisibility,
-  toggleAllLayerVisibility,
-  addEditor,
-  removeEditor,
-  updateSectionName,
-  toggleSectionVisibility,
-  toggleAllSectionVisibility,
-}: ManagementPaneProps) {
   const [dragOver, setDragOver] = useState(false);
 
   return (
@@ -100,7 +82,6 @@ export function ManagementPane({
         sectionVisibility={sectionVisibility}
         sectionNames={sectionNames}
         addEditor={addEditor}
-        removeEditor={removeEditor}
         onUpdateName={updateSectionName}
         toggleSectionVisibility={toggleSectionVisibility}
         toggleAllSectionVisibility={toggleAllSectionVisibility}
@@ -119,13 +100,11 @@ export function ManagementPane({
           onDragLeave={() => setDragOver(false)}
           onDrop={(e) => {
             e.preventDefault();
-            const layerId = e.dataTransfer.getData("application/x-layer-id");
+            const layerId = e.dataTransfer.getData(DRAG_TYPE_LAYER);
             if (layerId) {
               removeLayer(layerId);
             }
-            const sectionIndex = e.dataTransfer.getData(
-              "application/x-section-index"
-            );
+            const sectionIndex = e.dataTransfer.getData(DRAG_TYPE_SECTION);
             if (sectionIndex !== "") {
               removeEditor(Number(sectionIndex));
             }

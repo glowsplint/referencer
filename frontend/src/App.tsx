@@ -17,33 +17,16 @@ export function App() {
   const workspace = useEditorWorkspace();
   const {
     settings,
-    annotations,
     layers,
     activeLayerId,
     editorCount,
     activeEditor,
     editorWidths,
     isManagementPaneOpen,
-    toggleSetting,
-    togglePainterMode,
-    toggleManagementPane,
-    addLayer,
-    removeLayer,
-    setActiveLayer,
-    updateLayerColor,
-    updateLayerName,
-    toggleLayerVisibility,
-    toggleAllLayerVisibility,
     addHighlight,
     removeHighlight,
     editorsRef,
     sectionVisibility,
-    sectionNames,
-    addEditor,
-    removeEditor,
-    updateSectionName,
-    toggleSectionVisibility,
-    toggleAllSectionVisibility,
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,
@@ -70,37 +53,8 @@ export function App() {
   return (
     <WorkspaceProvider value={workspace}>
       <div className="flex h-screen">
-        <ButtonPane
-          settings={settings}
-          annotations={annotations}
-          isManagementPaneOpen={isManagementPaneOpen}
-          toggleManagementPane={toggleManagementPane}
-          toggleDarkMode={toggleSetting("isDarkMode")}
-          toggleEditorLayout={toggleSetting("isMultipleRowsLayout")}
-          togglePainterMode={togglePainterMode}
-          toggleLock={toggleSetting("isLocked")}
-        />
-        {isManagementPaneOpen && (
-          <ManagementPane
-            layers={layers}
-            activeLayerId={activeLayerId}
-            editorCount={editorCount}
-            sectionVisibility={sectionVisibility}
-            sectionNames={sectionNames}
-            addLayer={addLayer}
-            removeLayer={removeLayer}
-            setActiveLayer={setActiveLayer}
-            updateLayerColor={updateLayerColor}
-            updateLayerName={updateLayerName}
-            toggleLayerVisibility={toggleLayerVisibility}
-            toggleAllLayerVisibility={toggleAllLayerVisibility}
-            addEditor={addEditor}
-            removeEditor={removeEditor}
-            updateSectionName={updateSectionName}
-            toggleSectionVisibility={toggleSectionVisibility}
-            toggleAllSectionVisibility={toggleAllSectionVisibility}
-          />
-        )}
+        <ButtonPane />
+        {isManagementPaneOpen && <ManagementPane />}
         <EditorContext.Provider value={{ editor: activeEditor }}>
           <div className="flex flex-col flex-1 min-w-0">
             <TitleBar />
@@ -113,6 +67,7 @@ export function App() {
                 layers={layers}
                 containerRef={containerRef}
                 editorsRef={editorsRef}
+                editorCount={editorCount}
                 isLocked={settings.isLocked}
                 isLayersOn={settings.isLayersOn}
               />

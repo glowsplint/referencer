@@ -1,6 +1,8 @@
 import { Eye, EyeOff } from "lucide-react";
 import { ColorPicker } from "./ColorPicker";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { DRAG_TYPE_LAYER } from "@/constants/drag-types";
+import { useInlineEdit } from "@/hooks/use-inline-edit";
 
 import type { Layer } from "@/types/editor";
 
@@ -24,38 +26,17 @@ export function LayerRow({
   onToggleVisibility,
 }: LayerRowProps) {
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [editingValue, setEditingValue] = useState("");
-  const editInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (editing && editInputRef.current) {
-      editInputRef.current.focus();
-      editInputRef.current.select();
-    }
-  }, [editing]);
-
-  const startEditing = () => {
-    setEditing(true);
-    setEditingValue(layer.name);
-  };
-
-  const commitEdit = () => {
-    const trimmed = editingValue.trim();
-    onUpdateName(trimmed || layer.name);
-    setEditing(false);
-  };
-
-  const cancelEdit = () => {
-    setEditing(false);
-  };
+  const { isEditing, inputProps, startEditing } = useInlineEdit({
+    currentName: layer.name,
+    onCommit: onUpdateName,
+  });
 
   return (
     <div
       className="relative cursor-grab"
       draggable
       onDragStart={(e) => {
-        e.dataTransfer.setData("application/x-layer-id", layer.id);
+        e.dataTransfer.setData(DRAG_TYPE_LAYER, layer.id);
       }}
     >
       <div
@@ -72,17 +53,10 @@ export function LayerRow({
           title="Change colour"
           data-testid={`layerSwatch-${index}`}
         />
-        {editing ? (
+        {isEditing ? (
           <input
-            ref={editInputRef}
+            {...inputProps}
             className="text-sm w-full bg-transparent border-0 ring-1 ring-border rounded px-1 py-0 outline-none"
-            value={editingValue}
-            onChange={(e) => setEditingValue(e.target.value)}
-            onBlur={commitEdit}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") commitEdit();
-              if (e.key === "Escape") cancelEdit();
-            }}
             data-testid={`layerNameInput-${index}`}
           />
         ) : (

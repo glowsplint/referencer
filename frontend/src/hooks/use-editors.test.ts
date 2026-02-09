@@ -253,6 +253,13 @@ describe("useEditors", () => {
     expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 3"])
   })
 
+  it("editorWidths is referentially stable when deps are unchanged", () => {
+    const { result, rerender } = renderHook(() => useEditors())
+    const first = result.current.editorWidths
+    rerender()
+    expect(result.current.editorWidths).toBe(first)
+  })
+
   it("updateSectionName updates name at index", () => {
     const { result } = renderHook(() => useEditors())
     act(() => { result.current.addEditor() })

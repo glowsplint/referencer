@@ -24,6 +24,7 @@ function renderOverlay(overrides: Record<string, unknown> = {}) {
     layers: [],
     containerRef: createRef<HTMLDivElement>(),
     editorsRef: { current: new Map() },
+    editorCount: 1,
     isLocked: false,
     isLayersOn: false,
   }
@@ -61,5 +62,48 @@ describe("CanvasOverlay", () => {
     const { unmount } = renderOverlay()
     unmount()
     expect(disconnectSpy).toHaveBeenCalled()
+  })
+
+  it("does not reattach scroll listeners when layers change", () => {
+    const wrapper = document.createElement("div")
+    wrapper.className = "simple-editor-wrapper"
+    const container = document.createElement("div")
+    container.appendChild(wrapper)
+    const containerRef = { current: container }
+
+    const addSpy = vi.spyOn(wrapper, "addEventListener")
+    const removeSpy = vi.spyOn(wrapper, "removeEventListener")
+
+    const layer1 = { id: "a", color: "#fca5a5", name: "L1", visible: true, highlights: [] }
+    const layer2 = { id: "b", color: "#93c5fd", name: "L2", visible: true, highlights: [] }
+
+    const { rerender } = render(
+      <CanvasOverlay
+        layers={[layer1] as any}
+        containerRef={containerRef as any}
+        editorsRef={{ current: new Map() } as any}
+        editorCount={1}
+        isLocked={false}
+        isLayersOn={false}
+      />
+    )
+
+    const scrollAddCount = addSpy.mock.calls.filter(([e]) => e === "scroll").length
+    const scrollRemoveCount = removeSpy.mock.calls.filter(([e]) => e === "scroll").length
+
+    rerender(
+      <CanvasOverlay
+        layers={[layer1, layer2] as any}
+        containerRef={containerRef as any}
+        editorsRef={{ current: new Map() } as any}
+        editorCount={1}
+        isLocked={false}
+        isLayersOn={false}
+      />
+    )
+
+    // Scroll listeners should NOT have been removed and re-added
+    expect(addSpy.mock.calls.filter(([e]) => e === "scroll").length).toBe(scrollAddCount)
+    expect(removeSpy.mock.calls.filter(([e]) => e === "scroll").length).toBe(scrollRemoveCount)
   })
 })

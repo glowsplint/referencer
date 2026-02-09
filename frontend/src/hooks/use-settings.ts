@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import type { EditorSettings, AnnotationSettings } from "@/types/editor"
 
 export function useSettings() {
@@ -16,16 +16,35 @@ export function useSettings() {
     document.documentElement.classList.toggle("dark", settings.isDarkMode)
   }, [settings.isDarkMode])
 
-  const toggleSetting = (key: keyof EditorSettings) => () =>
-    setSettings((s) => ({ ...s, [key]: !s[key] }))
+  const toggleDarkMode = useCallback(
+    () => setSettings((s) => ({ ...s, isDarkMode: !s.isDarkMode })),
+    []
+  )
+  const toggleLayersOn = useCallback(
+    () => setSettings((s) => ({ ...s, isLayersOn: !s.isLayersOn })),
+    []
+  )
+  const toggleMultipleRowsLayout = useCallback(
+    () => setSettings((s) => ({ ...s, isMultipleRowsLayout: !s.isMultipleRowsLayout })),
+    []
+  )
+  const toggleLocked = useCallback(
+    () => setSettings((s) => ({ ...s, isLocked: !s.isLocked })),
+    []
+  )
 
-  const togglePainterMode = () =>
-    setAnnotations((a) => ({ ...a, isPainterMode: !a.isPainterMode }))
+  const togglePainterMode = useCallback(
+    () => setAnnotations((a) => ({ ...a, isPainterMode: !a.isPainterMode })),
+    []
+  )
 
   return {
     settings,
     annotations,
-    toggleSetting,
+    toggleDarkMode,
+    toggleLayersOn,
+    toggleMultipleRowsLayout,
+    toggleLocked,
     togglePainterMode,
   }
 }

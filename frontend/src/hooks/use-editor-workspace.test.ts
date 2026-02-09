@@ -26,29 +26,29 @@ describe("useEditorWorkspace", () => {
     expect(result.current.isManagementPaneOpen).toBe(false)
   })
 
-  it("toggleSetting toggles isDarkMode", () => {
+  it("toggleDarkMode toggles isDarkMode", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
     act(() => {
-      result.current.toggleSetting("isDarkMode")()
+      result.current.toggleDarkMode()
     })
 
     expect(result.current.settings.isDarkMode).toBe(true)
     expect(document.documentElement.classList.contains("dark")).toBe(true)
 
     act(() => {
-      result.current.toggleSetting("isDarkMode")()
+      result.current.toggleDarkMode()
     })
 
     expect(result.current.settings.isDarkMode).toBe(false)
     expect(document.documentElement.classList.contains("dark")).toBe(false)
   })
 
-  it("toggleSetting toggles isLocked", () => {
+  it("toggleLocked toggles isLocked", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
     act(() => {
-      result.current.toggleSetting("isLocked")()
+      result.current.toggleLocked()
     })
 
     expect(result.current.settings.isLocked).toBe(true)

@@ -1,11 +1,13 @@
 import { useRef, useEffect, useCallback } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer } from "@/types/editor"
+import { parseHexToRgba } from "@/lib/color"
 
 interface CanvasOverlayProps {
   layers: Layer[]
   containerRef: React.RefObject<HTMLDivElement | null>
   editorsRef: React.RefObject<Map<number, Editor>>
+  editorCount: number
   isLocked: boolean
   isLayersOn: boolean
 }
@@ -14,6 +16,7 @@ export function CanvasOverlay({
   layers,
   containerRef,
   editorsRef,
+  editorCount,
   isLocked,
   isLayersOn,
 }: CanvasOverlayProps) {
@@ -37,12 +40,7 @@ export function CanvasOverlay({
     for (const layer of layers) {
       if (!layer.visible || layer.highlights.length === 0) continue
 
-      // Parse hex colour and add ~30% alpha
-      const color = layer.color
-      const r = parseInt(color.slice(1, 3), 16)
-      const g = parseInt(color.slice(3, 5), 16)
-      const b = parseInt(color.slice(5, 7), 16)
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.3)`
+      ctx.fillStyle = parseHexToRgba(layer.color, 0.3)
 
       for (const highlight of layer.highlights) {
         const editor = editorsRef.current.get(highlight.editorIndex)
@@ -99,6 +97,12 @@ export function CanvasOverlay({
     drawHighlights()
   }, [drawHighlights])
 
+  // Keep a ref to the latest drawHighlights so scroll handlers always call current version
+  const drawHighlightsRef = useRef(drawHighlights)
+  useEffect(() => {
+    drawHighlightsRef.current = drawHighlights
+  }, [drawHighlights])
+
   // Scroll listeners on editor wrappers
   useEffect(() => {
     const container = containerRef.current
@@ -106,7 +110,7 @@ export function CanvasOverlay({
 
     const handleScroll = () => {
       cancelAnimationFrame(rafRef.current)
-      rafRef.current = requestAnimationFrame(drawHighlights)
+      rafRef.current = requestAnimationFrame(() => drawHighlightsRef.current())
     }
 
     const wrappers = container.querySelectorAll(".simple-editor-wrapper")
@@ -116,7 +120,7 @@ export function CanvasOverlay({
       cancelAnimationFrame(rafRef.current)
       wrappers.forEach((el) => el.removeEventListener("scroll", handleScroll))
     }
-  }, [containerRef, drawHighlights, layers])
+  }, [containerRef, editorCount])
 
   return (
     <canvas

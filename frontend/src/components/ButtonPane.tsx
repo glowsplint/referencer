@@ -10,29 +10,20 @@ import {
   Menu,
 } from "lucide-react";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
-import type { EditorSettings, AnnotationSettings } from "@/types/editor";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
-interface ButtonPaneProps {
-  settings: EditorSettings;
-  annotations: AnnotationSettings;
-  isManagementPaneOpen: boolean;
-  toggleManagementPane: () => void;
-  toggleDarkMode: () => void;
-  toggleEditorLayout: () => void;
-  togglePainterMode: () => void;
-  toggleLock: () => void;
-}
+export function ButtonPane() {
+  const {
+    settings,
+    annotations,
+    isManagementPaneOpen,
+    toggleManagementPane,
+    toggleDarkMode,
+    toggleMultipleRowsLayout,
+    togglePainterMode,
+    toggleLocked,
+  } = useWorkspace();
 
-export function ButtonPane({
-  settings,
-  annotations,
-  isManagementPaneOpen,
-  toggleManagementPane,
-  toggleDarkMode,
-  toggleEditorLayout,
-  togglePainterMode,
-  toggleLock,
-}: ButtonPaneProps) {
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
       <SwitchingButtonIcon
@@ -55,7 +46,7 @@ export function ButtonPane({
         iconTwo={<Columns2 size={20} />}
         iconOne={<Rows2 size={20} />}
         bool={settings.isMultipleRowsLayout}
-        callback={toggleEditorLayout}
+        callback={toggleMultipleRowsLayout}
         title="Toggle editor layout"
         buttonProps={{ "data-testid": "editorLayoutButton" }}
       />
@@ -71,7 +62,7 @@ export function ButtonPane({
         iconOne={<LockOpen size={20} />}
         iconTwo={<Lock size={20} />}
         bool={settings.isLocked}
-        callback={toggleLock}
+        callback={toggleLocked}
         title="Toggle editor lock"
         buttonProps={{ "data-testid": "lockButton" }}
       />

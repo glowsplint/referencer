@@ -1,12 +1,13 @@
 import { Eye, EyeOff, Plus } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { DRAG_TYPE_SECTION } from "@/constants/drag-types";
+import { useInlineEdit } from "@/hooks/use-inline-edit";
 
 interface SectionListProps {
   editorCount: number;
   sectionVisibility: boolean[];
   sectionNames: string[];
   addEditor: () => void;
-  removeEditor: (index: number) => void;
   onUpdateName: (index: number, name: string) => void;
   toggleSectionVisibility: (index: number) => void;
   toggleAllSectionVisibility: () => void;
@@ -17,34 +18,28 @@ export function SectionList({
   sectionVisibility,
   sectionNames,
   addEditor,
-  removeEditor,
   onUpdateName,
   toggleSectionVisibility,
   toggleAllSectionVisibility,
 }: SectionListProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editingValue, setEditingValue] = useState("");
-  const editInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (editingIndex !== null && editInputRef.current) {
-      editInputRef.current.focus();
-      editInputRef.current.select();
-    }
-  }, [editingIndex]);
+  const { isEditing, inputProps, startEditing } = useInlineEdit({
+    currentName: editingIndex !== null ? sectionNames[editingIndex] : "",
+    onCommit: (name) => {
+      if (editingIndex !== null) {
+        onUpdateName(editingIndex, name);
+      }
+      setEditingIndex(null);
+    },
+  });
 
-  const startEditing = (index: number) => {
+  const handleStartEditing = (index: number) => {
     setEditingIndex(index);
-    setEditingValue(sectionNames[index]);
+    startEditing(sectionNames[index]);
   };
 
-  const commitEdit = (index: number) => {
-    const trimmed = editingValue.trim();
-    onUpdateName(index, trimmed || sectionNames[index]);
-    setEditingIndex(null);
-  };
-
-  const cancelEdit = () => {
+  const handleCancelEdit = () => {
     setEditingIndex(null);
   };
 
@@ -84,26 +79,26 @@ export function SectionList({
             className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-accent/50 cursor-grab"
             draggable={editorCount > 1}
             onDragStart={(e) => {
-              e.dataTransfer.setData("application/x-section-index", String(i));
+              e.dataTransfer.setData(DRAG_TYPE_SECTION, String(i));
             }}
           >
-            {editingIndex === i ? (
+            {isEditing && editingIndex === i ? (
               <input
-                ref={editInputRef}
-                className="text-sm w-full bg-transparent border-0 ring-1 ring-border rounded px-1 py-0 outline-none"
-                value={editingValue}
-                onChange={(e) => setEditingValue(e.target.value)}
-                onBlur={() => commitEdit(i)}
+                {...inputProps}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") commitEdit(i);
-                  if (e.key === "Escape") cancelEdit();
+                  if (e.key === "Escape") {
+                    handleCancelEdit();
+                    return;
+                  }
+                  inputProps.onKeyDown(e);
                 }}
+                className="text-sm w-full bg-transparent border-0 ring-1 ring-border rounded px-1 py-0 outline-none"
                 data-testid={`passageNameInput-${i}`}
               />
             ) : (
               <div
                 className="text-sm flex-1 bg-transparent border-0 rounded px-1 py-0 truncate cursor-default"
-                onDoubleClick={() => startEditing(i)}
+                onDoubleClick={() => handleStartEditing(i)}
                 data-testid={`passageName-${i}`}
               >
                 {sectionNames[i]}
