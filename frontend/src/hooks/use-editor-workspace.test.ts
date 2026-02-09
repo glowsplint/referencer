@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useEditorWorkspace } from "./use-editor-workspace"
+import { TAILWIND_300_COLORS } from "@/types/editor"
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -18,9 +19,11 @@ describe("useEditorWorkspace", () => {
       isLocked: false,
     })
     expect(result.current.annotations).toEqual({ isPainterMode: false })
+    expect(result.current.layers).toEqual([])
     expect(result.current.editorCount).toBe(1)
     expect(result.current.activeEditor).toBeNull()
     expect(result.current.editorWidths).toEqual([100])
+    expect(result.current.isManagementPaneOpen).toBe(false)
   })
 
   it("toggleSetting toggles isDarkMode", () => {
@@ -65,6 +68,109 @@ describe("useEditorWorkspace", () => {
     })
 
     expect(result.current.annotations.isPainterMode).toBe(false)
+  })
+
+  it("addLayer adds a layer with the next colour in order", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    expect(result.current.layers).toHaveLength(1)
+    expect(result.current.layers[0].id).toBeTruthy()
+    expect(result.current.layers[0].color).toBe(TAILWIND_300_COLORS[0])
+  })
+
+  it("addLayer assigns colours sequentially", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+      result.current.addLayer()
+      result.current.addLayer()
+    })
+
+    expect(result.current.layers).toHaveLength(3)
+    expect(result.current.layers[0].color).toBe(TAILWIND_300_COLORS[0])
+    expect(result.current.layers[1].color).toBe(TAILWIND_300_COLORS[1])
+    expect(result.current.layers[2].color).toBe(TAILWIND_300_COLORS[2])
+    const ids = result.current.layers.map((l) => l.id)
+    expect(new Set(ids).size).toBe(3)
+  })
+
+  it("addLayer does not exceed the number of available colours", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      for (let i = 0; i < TAILWIND_300_COLORS.length + 5; i++) {
+        result.current.addLayer()
+      }
+    })
+
+    expect(result.current.layers).toHaveLength(TAILWIND_300_COLORS.length)
+  })
+
+  it("addLayer after removeLayer assigns a different colour from existing layers", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+      result.current.addLayer()
+      result.current.addLayer()
+    })
+
+    const secondLayerId = result.current.layers[1].id
+    const remainingColors = [
+      result.current.layers[0].color,
+      result.current.layers[2].color,
+    ]
+
+    act(() => {
+      result.current.removeLayer(secondLayerId)
+    })
+
+    expect(result.current.layers).toHaveLength(2)
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    expect(result.current.layers).toHaveLength(3)
+    const newLayer = result.current.layers[2]
+    expect(remainingColors).not.toContain(newLayer.color)
+  })
+
+  it("addLayer reuses freed colours from removed layers", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    // Fill all colour slots
+    act(() => {
+      for (let i = 0; i < TAILWIND_300_COLORS.length; i++) {
+        result.current.addLayer()
+      }
+    })
+
+    expect(result.current.layers).toHaveLength(TAILWIND_300_COLORS.length)
+
+    // Remove a layer — its colour becomes available again
+    const removedColor = result.current.layers[3].color
+    const removedId = result.current.layers[3].id
+
+    act(() => {
+      result.current.removeLayer(removedId)
+    })
+
+    expect(result.current.layers).toHaveLength(TAILWIND_300_COLORS.length - 1)
+
+    // Adding a layer should reuse the freed colour
+    act(() => {
+      result.current.addLayer()
+    })
+
+    expect(result.current.layers).toHaveLength(TAILWIND_300_COLORS.length)
+    const newLayer = result.current.layers[result.current.layers.length - 1]
+    expect(newLayer.color).toBe(removedColor)
   })
 
   it("addEditor increments editor count up to 3", () => {
@@ -184,5 +290,98 @@ describe("useEditorWorkspace", () => {
     })
 
     expect(result.current.activeEditor).toBe(editor1)
+  })
+
+  it("toggleManagementPane toggles isManagementPaneOpen", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.toggleManagementPane()
+    })
+    expect(result.current.isManagementPaneOpen).toBe(true)
+
+    act(() => {
+      result.current.toggleManagementPane()
+    })
+    expect(result.current.isManagementPaneOpen).toBe(false)
+  })
+
+  it("removeLayer removes a layer by id", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+      result.current.addLayer()
+    })
+
+    const firstLayerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.removeLayer(firstLayerId)
+    })
+
+    expect(result.current.layers).toHaveLength(1)
+    expect(result.current.layers[0].id).not.toBe(firstLayerId)
+  })
+
+  it("removeLayer with non-existent id does nothing", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    act(() => {
+      result.current.removeLayer("non-existent")
+    })
+
+    expect(result.current.layers).toHaveLength(1)
+  })
+
+  it("updateLayerColor changes a layer's colour", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addLayer()
+    })
+
+    const layerId = result.current.layers[0].id
+    const newColor = TAILWIND_300_COLORS[5]
+
+    act(() => {
+      result.current.updateLayerColor(layerId, newColor)
+    })
+
+    expect(result.current.layers[0].color).toBe(newColor)
+    expect(result.current.layers[0].id).toBe(layerId)
+  })
+
+  it("removeEditor decrements editor count and redistributes widths", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.addEditor()
+      result.current.addEditor()
+    })
+    expect(result.current.editorCount).toBe(3)
+
+    act(() => {
+      result.current.removeEditor(1)
+    })
+
+    expect(result.current.editorCount).toBe(2)
+    expect(result.current.editorWidths).toHaveLength(2)
+    expect(result.current.editorWidths[0]).toBeCloseTo(50, 0)
+    expect(result.current.editorWidths[1]).toBeCloseTo(50, 0)
+  })
+
+  it("removeEditor does not go below 1 editor", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => {
+      result.current.removeEditor(0)
+    })
+
+    expect(result.current.editorCount).toBe(1)
   })
 })

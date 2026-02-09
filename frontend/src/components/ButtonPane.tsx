@@ -9,19 +9,26 @@ import {
   Lock,
   LockOpen,
   FilePlusCorner,
+  LayersPlus,
+  Menu,
 } from "lucide-react";
 import { ButtonIcon } from "./ui/ButtonIcon";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
-import type { EditorSettings, AnnotationSettings } from "@/types/editor";
+import type { EditorSettings, AnnotationSettings, Layer } from "@/types/editor";
+import { TAILWIND_300_COLORS } from "@/types/editor";
 
 interface ButtonPaneProps {
   settings: EditorSettings;
   annotations: AnnotationSettings;
+  layers: Layer[];
+  isManagementPaneOpen: boolean;
+  toggleManagementPane: () => void;
   toggleDarkMode: () => void;
   toggleLayers: () => void;
   toggleEditorLayout: () => void;
   togglePainterMode: () => void;
   toggleLock: () => void;
+  addLayer: () => void;
   addEditor: () => void;
   editorCount: number;
 }
@@ -29,16 +36,28 @@ interface ButtonPaneProps {
 export function ButtonPane({
   settings,
   annotations,
+  layers,
+  isManagementPaneOpen,
+  toggleManagementPane,
   toggleDarkMode,
   toggleLayers,
   toggleEditorLayout,
   togglePainterMode,
   toggleLock,
+  addLayer,
   addEditor,
   editorCount,
 }: ButtonPaneProps) {
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
+      <SwitchingButtonIcon
+        iconOne={<Menu size={20} />}
+        iconTwo={<Menu size={20} />}
+        bool={isManagementPaneOpen}
+        callback={toggleManagementPane}
+        title="Toggle management pane"
+        buttonProps={{ "data-testid": "menuButton" }}
+      />
       <SwitchingButtonIcon
         iconOne={<Sun size={20} />}
         iconTwo={<MoonStar size={20} />}
@@ -78,6 +97,13 @@ export function ButtonPane({
         callback={toggleLock}
         title="Toggle editor lock"
         buttonProps={{ "data-testid": "lockButton" }}
+      />
+      <ButtonIcon
+        icon={<LayersPlus size={20} />}
+        callback={addLayer}
+        disabled={layers.length >= TAILWIND_300_COLORS.length}
+        title="Add new layer"
+        buttonProps={{ "data-testid": "addLayerButton" }}
       />
       <ButtonIcon
         icon={<FilePlusCorner size={20} />}

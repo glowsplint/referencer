@@ -1,6 +1,8 @@
 import { useRef, Fragment } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
+import { ManagementPane } from "./components/ManagementPane";
+import { CanvasOverlay } from "./components/CanvasOverlay";
 import { Divider } from "./components/ui/Divider";
 import {
   TitleBar,
@@ -14,12 +16,19 @@ export function App() {
   const {
     settings,
     annotations,
+    layers,
     editorCount,
     activeEditor,
     editorWidths,
+    isManagementPaneOpen,
     toggleSetting,
     togglePainterMode,
+    toggleManagementPane,
+    addLayer,
+    removeLayer,
+    updateLayerColor,
     addEditor,
+    removeEditor,
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,
@@ -32,22 +41,36 @@ export function App() {
       <ButtonPane
         settings={settings}
         annotations={annotations}
+        layers={layers}
+        isManagementPaneOpen={isManagementPaneOpen}
+        toggleManagementPane={toggleManagementPane}
         toggleDarkMode={toggleSetting("isDarkMode")}
         toggleLayers={toggleSetting("isLayersOn")}
         toggleEditorLayout={toggleSetting("isMultipleRowsLayout")}
         togglePainterMode={togglePainterMode}
         toggleLock={toggleSetting("isLocked")}
+        addLayer={addLayer}
         addEditor={addEditor}
         editorCount={editorCount}
       />
+      {isManagementPaneOpen && (
+        <ManagementPane
+          layers={layers}
+          editorCount={editorCount}
+          removeLayer={removeLayer}
+          updateLayerColor={updateLayerColor}
+          removeEditor={removeEditor}
+        />
+      )}
       <EditorContext.Provider value={{ editor: activeEditor }}>
         <div className="flex flex-col flex-1 min-w-0">
           <TitleBar />
           <SimpleEditorToolbar isLocked={settings.isLocked} />
           <div
             ref={containerRef}
-            className={`flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
+            className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
           >
+            <CanvasOverlay layers={layers} containerRef={containerRef} />
             {editorWidths.map((width, i) => (
               <Fragment key={i}>
                 {i > 0 && (

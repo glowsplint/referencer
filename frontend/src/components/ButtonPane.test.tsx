@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react"
 import { describe, it, expect, vi } from "vitest"
 import { ButtonPane } from "./ButtonPane"
+import { TAILWIND_300_COLORS } from "@/types/editor"
 
 function renderButtonPane(overrides = {}) {
   const defaults = {
@@ -13,11 +14,15 @@ function renderButtonPane(overrides = {}) {
     annotations: {
       isPainterMode: false,
     },
+    layers: [] as { id: string; color: string }[],
+    isManagementPaneOpen: false,
+    toggleManagementPane: vi.fn(),
     toggleDarkMode: vi.fn(),
     toggleLayers: vi.fn(),
     toggleEditorLayout: vi.fn(),
     togglePainterMode: vi.fn(),
     toggleLock: vi.fn(),
+    addLayer: vi.fn(),
     addEditor: vi.fn(),
     editorCount: 1,
   }
@@ -28,11 +33,18 @@ function renderButtonPane(overrides = {}) {
 describe("ButtonPane", () => {
   it("renders all toggle buttons", () => {
     renderButtonPane()
+    expect(screen.getByTestId("menuButton")).toBeInTheDocument()
     expect(screen.getByTestId("darkModeButton")).toBeInTheDocument()
     expect(screen.getByTestId("clearLayersButton")).toBeInTheDocument()
     expect(screen.getByTestId("editorLayoutButton")).toBeInTheDocument()
     expect(screen.getByTestId("painterModeButton")).toBeInTheDocument()
     expect(screen.getByTestId("lockButton")).toBeInTheDocument()
+  })
+
+  it("calls toggleManagementPane when menu button is clicked", () => {
+    const { props } = renderButtonPane()
+    fireEvent.click(screen.getByTestId("menuButton"))
+    expect(props.toggleManagementPane).toHaveBeenCalledOnce()
   })
 
   it("calls toggleDarkMode when dark mode button is clicked", () => {
@@ -84,5 +96,37 @@ describe("ButtonPane", () => {
   it("enables add editor button when editorCount is less than 3", () => {
     renderButtonPane({ editorCount: 2 })
     expect(screen.getByTestId("addEditorButton")).not.toBeDisabled()
+  })
+
+  it("renders the add layer button", () => {
+    renderButtonPane()
+    expect(screen.getByTestId("addLayerButton")).toBeInTheDocument()
+  })
+
+  it("calls addLayer when add layer button is clicked", () => {
+    const { props } = renderButtonPane()
+    fireEvent.click(screen.getByTestId("addLayerButton"))
+    expect(props.addLayer).toHaveBeenCalledOnce()
+  })
+
+  it("disables add layer button when layers reach colour limit", () => {
+    const layers = TAILWIND_300_COLORS.map((color, i) => ({ id: String(i), color }))
+    renderButtonPane({ layers })
+    expect(screen.getByTestId("addLayerButton")).toBeDisabled()
+  })
+
+  it("enables add layer button when layers are below colour limit", () => {
+    renderButtonPane({ layers: [{ id: "1", color: "#fca5a5" }] })
+    expect(screen.getByTestId("addLayerButton")).not.toBeDisabled()
+  })
+
+  it("does not render layer pane (moved to ManagementPane)", () => {
+    renderButtonPane({
+      layers: [
+        { id: "1", color: "#fca5a5" },
+        { id: "2", color: "#93c5fd" },
+      ],
+    })
+    expect(screen.queryByTestId("layerPane")).not.toBeInTheDocument()
   })
 })
