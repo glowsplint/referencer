@@ -75,6 +75,12 @@ make serve
 
 Open [http://localhost:5000](http://localhost:5000) with your browser to see the back-end development server serving the exported front-end static assets.
 
+### Development with hot reloading
+
+1. `make serve` — starts the Python backend on port 5000
+2. `cd frontend && bun run dev` — starts Vite on port 5173 with hot reloading
+3. Open [http://localhost:5173](http://localhost:5173) — frontend hot reloads, `/api/*` requests proxy to the backend
+
 ### Build and run everything
 
 ```bash

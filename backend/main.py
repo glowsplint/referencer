@@ -14,7 +14,7 @@ load_dotenv()
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE")
 EXPORTED_PATH = Path("./frontend/dist/")
 
-origins = ["http://127.0.0.1:5000"]
+origins = ["http://127.0.0.1:5000", "http://localhost:5173"]
 
 
 async def not_found(request, exc):
