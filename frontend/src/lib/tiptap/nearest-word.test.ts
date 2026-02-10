@@ -99,6 +99,19 @@ describe("findNearestWord", () => {
   it("returns null for empty candidates", () => {
     expect(findNearestWord(center, [], "ArrowRight")).toBeNull()
   })
+
+  it("same-editor filtering: prefers same-editor word over closer cross-editor word", () => {
+    // Simulates side-by-side editors: "and" is selected in editor 0.
+    // Editor 0 has "professional" on the next line (cy=130, cx=80).
+    // Editor 1 has "Integrate" at a closer Y (cy=115, cx=400).
+    // When candidates are filtered to same-editor only, "professional" wins.
+    const sameEditorCandidates = [
+      { word: { editorIndex: 0, from: 50, to: 62, text: "professional" }, cx: 80, cy: 130 },
+      { word: { editorIndex: 0, from: 70, to: 85, text: "placeholder" }, cx: 100, cy: 160 },
+    ]
+    const result = findNearestWord(center, sameEditorCandidates, "ArrowDown")
+    expect(result?.text).toBe("professional")
+  })
 })
 
 function makeCandidateAt(cx: number, cy: number, text: string, editorIndex = 0) {

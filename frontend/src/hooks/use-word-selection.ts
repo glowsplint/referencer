@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"
 import { collectAllWords } from "@/lib/tiptap/word-collection"
@@ -24,6 +24,7 @@ export function useWordSelection({
   editorCount,
 }: UseWordSelectionOptions) {
   const [selection, setSelection] = useState<WordSelection | null>(null)
+  const stickyXRef = useRef<number | null>(null)
 
   const selectWord = useCallback(
     (editorIndex: number, from: number, to: number, text: string) => {
@@ -86,6 +87,9 @@ export function useWordSelection({
       }
 
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        // Reset sticky X on horizontal movement
+        stickyXRef.current = null
+
         // Same-line spatial (crosses editors on the same visual row)
         const sameLine = findNearestWordOnSameLine(
           currentCenter,
@@ -106,21 +110,34 @@ export function useWordSelection({
           }
         }
       } else {
-        // Spatial navigation for Up/Down
-        const nearest = findNearestWord(
-          currentCenter,
-          allCandidates,
-          e.key as "ArrowUp" | "ArrowDown"
-        )
+        // Set sticky X on first vertical press
+        if (stickyXRef.current === null) {
+          stickyXRef.current = currentCenter.cx
+        }
+        const navCenter = { cx: stickyXRef.current, cy: currentCenter.cy }
+        const direction = e.key as "ArrowUp" | "ArrowDown"
 
-        if (nearest) {
-          setSelection(nearest)
+        // 1. Try same-editor candidates first
+        const sameEditorCandidates = allCandidates.filter(
+          (c) => c.word.editorIndex === selection.editorIndex
+        )
+        const sameEditorNearest = findNearestWord(navCenter, sameEditorCandidates, direction)
+
+        if (sameEditorNearest) {
+          setSelection(sameEditorNearest)
         } else {
-          // Fall back to reading order to cross editor boundaries
-          const fallbackDirection = e.key === "ArrowDown" ? "ArrowRight" : "ArrowLeft"
-          const fallback = findWordInReadingOrder(selection, allWords, fallbackDirection)
-          if (fallback) {
-            setSelection(fallback)
+          // 2. Try all candidates (cross-editor spatial)
+          const nearest = findNearestWord(navCenter, allCandidates, direction)
+
+          if (nearest) {
+            setSelection(nearest)
+          } else {
+            // 3. Fall back to reading order to cross editor boundaries
+            const fallbackDirection = e.key === "ArrowDown" ? "ArrowRight" : "ArrowLeft"
+            const fallback = findWordInReadingOrder(selection, allWords, fallbackDirection)
+            if (fallback) {
+              setSelection(fallback)
+            }
           }
         }
       }
