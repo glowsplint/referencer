@@ -13,7 +13,7 @@ export function collectAllWords(editor: Editor, editorIndex: number): CollectedW
   const doc = editor.state.doc
 
   doc.descendants((node, pos) => {
-    if (node.type.name === "image" && node.attrs?.alt) {
+    if (node.type?.name === "image" && node.attrs?.alt) {
       const altText = node.attrs.alt
       if (/[a-zA-Z0-9]/.test(altText)) {
         words.push({

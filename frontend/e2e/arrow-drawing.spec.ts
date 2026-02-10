@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 
   // Lock the editor
   await page.getByTestId("lockButton").click();
-  await expect(page.getByTestId("editorToolbar")).toHaveCSS("opacity", "0");
+  await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
   // Click a word to start selection
   const firstParagraph = page.locator(".simple-editor p").first();

@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator(".simple-editor p").first()).toBeVisible();
   // Lock the editor
   await page.getByTestId("lockButton").click();
-  await expect(page.getByTestId("editorToolbar")).toHaveCSS("opacity", "0");
+  await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 });
 
 test("clicking a word in locked mode shows word-selection decoration", async ({ page }) => {
@@ -71,7 +71,7 @@ test("unlocking clears word selection", async ({ page }) => {
 
   // Unlock
   await page.getByTestId("lockButton").click();
-  await expect(page.getByTestId("editorToolbar")).toHaveCSS("opacity", "1");
+  await expect(page.getByTestId("editorToolbar")).toBeVisible();
 
   // Word selection should be gone
   await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });

@@ -140,22 +140,19 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
     }
   }, [isMobile, mobileView])
 
+  if (isLocked) return null
+
   return (
     <Toolbar
       ref={toolbarRef}
       data-testid="editorToolbar"
-      style={{
-        ...(isMobile
+      style={
+        isMobile
           ? {
               bottom: `calc(100% - ${height - rect.y}px)`,
             }
-          : {}),
-        opacity: isLocked ? 0 : 1,
-        maxHeight: isLocked ? 0 : "var(--tt-toolbar-height)",
-        overflow: "hidden",
-        transition: "opacity 0.1s ease, max-height 0.1s ease",
-        pointerEvents: isLocked ? "none" : "auto",
-      }}
+          : undefined
+      }
     >
       {mobileView === "main" ? (
         <MainToolbarContent

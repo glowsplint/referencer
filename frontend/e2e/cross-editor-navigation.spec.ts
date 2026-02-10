@@ -18,7 +18,7 @@ test.describe("cross-editor navigation (2 editors)", () => {
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
     await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCSS("opacity", "0");
+    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
   });
 
   test("ArrowRight crosses from editor 1 to editor 2 on same visual row", async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe("cross-editor navigation (3 editors)", () => {
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
     await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCSS("opacity", "0");
+    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
   });
 
   test("ArrowRight traverses E1 → E2 → E3 on same visual row, then wraps to next row at E1", async ({ page }) => {

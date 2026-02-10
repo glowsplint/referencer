@@ -161,18 +161,14 @@ beforeEach(() => {
 })
 
 describe("SimpleEditorToolbar lock/unlock", () => {
-  it("toolbar has opacity 1 and pointer-events auto when unlocked", () => {
+  it("toolbar is rendered when unlocked", () => {
     render(<SimpleEditorToolbar isLocked={false} />)
-    const toolbar = screen.getByTestId("editorToolbar")
-    expect(toolbar.style.opacity).toBe("1")
-    expect(toolbar.style.pointerEvents).toBe("auto")
+    expect(screen.getByTestId("editorToolbar")).toBeInTheDocument()
   })
 
-  it("toolbar has opacity 0 and pointer-events none when locked", () => {
+  it("toolbar is removed from DOM when locked", () => {
     render(<SimpleEditorToolbar isLocked={true} />)
-    const toolbar = screen.getByTestId("editorToolbar")
-    expect(toolbar.style.opacity).toBe("0")
-    expect(toolbar.style.pointerEvents).toBe("none")
+    expect(screen.queryByTestId("editorToolbar")).not.toBeInTheDocument()
   })
 })
 
