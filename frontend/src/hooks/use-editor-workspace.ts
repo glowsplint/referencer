@@ -8,7 +8,7 @@ export function useEditorWorkspace() {
   const layersHook = useLayers()
   const editorsHook = useEditors()
 
-  const [isManagementPaneOpen, setIsManagementPaneOpen] = useState(false)
+  const [isManagementPaneOpen, setIsManagementPaneOpen] = useState(true)
 
   const toggleManagementPane = useCallback(
     () => setIsManagementPaneOpen((v) => !v),

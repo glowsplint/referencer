@@ -71,9 +71,29 @@ describe("findNearestWord", () => {
       makeCandidate(150, 80, "diffCol"),   // closer y but different x
     ]
     const result = findNearestWord(center, candidates, "ArrowUp")
-    // sameCol: primary=50, perp=0, score=50
-    // diffCol: primary=20, perp=50, score=120
-    expect(result?.text).toBe("sameCol")
+    // Both on different lines from current; diffCol is on nearest line (cy=80)
+    // sameCol is on a farther line (cy=50)
+    // Line-first: picks nearest line (80), then closest x → diffCol
+    expect(result?.text).toBe("diffCol")
+  })
+
+  it("picks horizontally closest word on the nearest line below", () => {
+    const candidates = [
+      makeCandidate(200, 130, "nextFar"),   // next line, far horizontally
+      makeCandidate(105, 130, "nextClose"), // next line, close horizontally
+      makeCandidate(100, 200, "skipLine"),  // two lines down, same column
+    ]
+    const result = findNearestWord(center, candidates, "ArrowDown")
+    expect(result?.text).toBe("nextClose")
+  })
+
+  it("does not skip lines even when a farther line has better column alignment", () => {
+    const candidates = [
+      makeCandidate(50, 130, "nextLine"),  // next line, offset horizontally
+      makeCandidate(100, 200, "farLine"),  // two lines down, same column
+    ]
+    const result = findNearestWord(center, candidates, "ArrowDown")
+    expect(result?.text).toBe("nextLine")
   })
 
   it("returns null for empty candidates", () => {

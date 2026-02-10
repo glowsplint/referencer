@@ -49,13 +49,33 @@ describe("collectAllWords", () => {
     expect(collectAllWords(editor, 0)).toEqual([])
   })
 
-  it("skips non-alphanumeric characters", () => {
+  it("skips non-word punctuation characters", () => {
     const editor = mockEditor(["hello, world!"])
     const words = collectAllWords(editor, 0)
 
     expect(words).toEqual([
       { editorIndex: 0, from: 1, to: 6, text: "hello" },
       { editorIndex: 0, from: 8, to: 13, text: "world" },
+    ])
+  })
+
+  it("includes apostrophes as part of words", () => {
+    const editor = mockEditor(["don't stop"])
+    const words = collectAllWords(editor, 0)
+
+    expect(words).toEqual([
+      { editorIndex: 0, from: 1, to: 6, text: "don't" },
+      { editorIndex: 0, from: 7, to: 11, text: "stop" },
+    ])
+  })
+
+  it("includes hyphens as part of words", () => {
+    const editor = mockEditor(["well-known fact"])
+    const words = collectAllWords(editor, 0)
+
+    expect(words).toEqual([
+      { editorIndex: 0, from: 1, to: 11, text: "well-known" },
+      { editorIndex: 0, from: 12, to: 16, text: "fact" },
     ])
   })
 

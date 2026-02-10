@@ -61,6 +61,18 @@ describe("getWordBoundaries", () => {
     expect(result).toEqual({ from: 1, to: 6, text: "hello" })
   })
 
+  it("includes apostrophes in word boundaries", () => {
+    const doc = makeMockDoc("don't stop")
+    const result = getWordBoundaries(doc, 3) // inside "don't"
+    expect(result).toEqual({ from: 1, to: 6, text: "don't" })
+  })
+
+  it("includes hyphens in word boundaries", () => {
+    const doc = makeMockDoc("well-known")
+    const result = getWordBoundaries(doc, 4) // inside "well-known"
+    expect(result).toEqual({ from: 1, to: 11, text: "well-known" })
+  })
+
   it("returns null for empty text content", () => {
     const doc = {
       resolve() {

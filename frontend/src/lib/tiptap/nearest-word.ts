@@ -146,26 +146,36 @@ export function findNearestWord(
 
   if (filtered.length === 0) return null
 
+  if (direction === "ArrowUp" || direction === "ArrowDown") {
+    // Find the nearest visual line first, then pick the closest word on it
+    const nearestLineY =
+      direction === "ArrowDown"
+        ? Math.min(...filtered.map((c) => c.cy))
+        : Math.max(...filtered.map((c) => c.cy))
+
+    const lineWords = filtered.filter(
+      (c) => Math.abs(c.cy - nearestLineY) <= LINE_TOLERANCE
+    )
+
+    let best = lineWords[0]
+    let bestDist = Infinity
+    for (const c of lineWords) {
+      const dist = Math.abs(c.cx - currentCenter.cx)
+      if (dist < bestDist) {
+        bestDist = dist
+        best = c
+      }
+    }
+    return best.word
+  }
+
+  // Left/Right: use weighted scoring
   let best = filtered[0]
   let bestScore = Infinity
 
   for (const c of filtered) {
-    let primary: number
-    let perpendicular: number
-
-    switch (direction) {
-      case "ArrowLeft":
-      case "ArrowRight":
-        primary = Math.abs(c.cx - currentCenter.cx)
-        perpendicular = Math.abs(c.cy - currentCenter.cy)
-        break
-      case "ArrowUp":
-      case "ArrowDown":
-        primary = Math.abs(c.cy - currentCenter.cy)
-        perpendicular = Math.abs(c.cx - currentCenter.cx)
-        break
-    }
-
+    const primary = Math.abs(c.cx - currentCenter.cx)
+    const perpendicular = Math.abs(c.cy - currentCenter.cy)
     const score = primary + 2 * perpendicular
     if (score < bestScore) {
       bestScore = score

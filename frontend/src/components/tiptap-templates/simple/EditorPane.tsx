@@ -106,7 +106,7 @@ export function EditorPane({
   )
 
   return (
-    <div className="simple-editor-wrapper" onFocusCapture={handleFocus} onClick={handleClick}>
+    <div className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`} onFocusCapture={handleFocus} onClick={handleClick}>
       <EditorContent
         editor={editor}
         role="presentation"

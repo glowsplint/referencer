@@ -60,6 +60,12 @@ body,
   overflow: auto;
 }
 
+.simple-editor-wrapper.editor-locked {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
 .simple-editor-content {
   max-width: 648px;
   width: 100%;

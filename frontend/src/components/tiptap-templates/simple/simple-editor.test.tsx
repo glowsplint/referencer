@@ -208,6 +208,22 @@ describe("EditorPane lock/unlock", () => {
     expect(mockEditor.emit).not.toHaveBeenCalled()
   })
 
+  it("adds editor-locked class when locked", () => {
+    const { container } = render(
+      <EditorPane isLocked={true} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
+    )
+    const wrapper = container.querySelector(".simple-editor-wrapper")
+    expect(wrapper?.classList.contains("editor-locked")).toBe(true)
+  })
+
+  it("does not add editor-locked class when unlocked", () => {
+    const { container } = render(
+      <EditorPane isLocked={false} index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
+    )
+    const wrapper = container.querySelector(".simple-editor-wrapper")
+    expect(wrapper?.classList.contains("editor-locked")).toBe(false)
+  })
+
   it("calls onEditorMount with index and editor on mount", () => {
     const onEditorMount = vi.fn()
     render(

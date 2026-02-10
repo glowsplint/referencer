@@ -9,11 +9,11 @@ export function getWordBoundaries(doc: any, pos: number): { from: number; to: nu
 
   // Walk backward to find word start
   let start = parentOffset
-  while (start > 0 && /\w/.test(textContent[start - 1])) start--
+  while (start > 0 && /[\w'-]/.test(textContent[start - 1])) start--
 
   // Walk forward to find word end
   let end = parentOffset
-  while (end < textContent.length && /\w/.test(textContent[end])) end++
+  while (end < textContent.length && /[\w'-]/.test(textContent[end])) end++
 
   if (start === end) return null
 

@@ -23,7 +23,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.editorCount).toBe(1)
     expect(result.current.activeEditor).toBeNull()
     expect(result.current.editorWidths).toEqual([100])
-    expect(result.current.isManagementPaneOpen).toBe(false)
+    expect(result.current.isManagementPaneOpen).toBe(true)
   })
 
   it("toggleDarkMode toggles isDarkMode", () => {
@@ -351,16 +351,17 @@ describe("useEditorWorkspace", () => {
 
   it("toggleManagementPane toggles isManagementPaneOpen", () => {
     const { result } = renderHook(() => useEditorWorkspace())
-
-    act(() => {
-      result.current.toggleManagementPane()
-    })
     expect(result.current.isManagementPaneOpen).toBe(true)
 
     act(() => {
       result.current.toggleManagementPane()
     })
     expect(result.current.isManagementPaneOpen).toBe(false)
+
+    act(() => {
+      result.current.toggleManagementPane()
+    })
+    expect(result.current.isManagementPaneOpen).toBe(true)
   })
 
   it("removeLayer removes a layer by id", () => {
