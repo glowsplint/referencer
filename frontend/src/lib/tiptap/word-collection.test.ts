@@ -89,6 +89,17 @@ describe("collectAllWords", () => {
     ])
   })
 
+  it("does not match standalone hyphens or apostrophes", () => {
+    const editor = mockEditor(["hello - world ' foo"])
+    const words = collectAllWords(editor, 0)
+
+    expect(words).toEqual([
+      { editorIndex: 0, from: 1, to: 6, text: "hello" },
+      { editorIndex: 0, from: 9, to: 14, text: "world" },
+      { editorIndex: 0, from: 17, to: 20, text: "foo" },
+    ])
+  })
+
   it("uses the provided editorIndex", () => {
     const editor = mockEditor(["hi"])
     const words = collectAllWords(editor, 2)

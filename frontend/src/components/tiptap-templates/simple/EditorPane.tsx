@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useLayoutEffect, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { EditorContent, useEditor } from "@tiptap/react"
 import type { Editor } from "@tiptap/react"
 
@@ -46,6 +46,7 @@ export function EditorPane({
   isLayersOn: boolean
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
+  const wrapperRef = useRef<HTMLDivElement>(null)
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -78,7 +79,7 @@ export function EditorPane({
   }, [editor, isLocked])
 
   useLayerDecorations(editor, layers, index, isLocked, isLayersOn)
-  useSelectionDecoration(editor, selection, index)
+  const selectionRect = useSelectionDecoration(editor, selection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {
     onFocus(index)
@@ -106,12 +107,25 @@ export function EditorPane({
   )
 
   return (
-    <div className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`} onFocusCapture={handleFocus} onClick={handleClick}>
+    <div ref={wrapperRef} className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`} onFocusCapture={handleFocus} onClick={handleClick}>
       <EditorContent
         editor={editor}
         role="presentation"
         className="simple-editor-content"
       />
+      {selectionRect && (
+        <div
+          className="word-selection"
+          style={{
+            position: "absolute",
+            top: selectionRect.top,
+            left: selectionRect.left,
+            width: selectionRect.width,
+            height: selectionRect.height,
+            pointerEvents: "none",
+          }}
+        />
+      )}
     </div>
   )
 }

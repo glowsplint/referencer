@@ -14,7 +14,7 @@ export function collectAllWords(editor: Editor, editorIndex: number): CollectedW
   doc.descendants((node, pos) => {
     if (!node.isTextblock) return true
     const text = node.textContent
-    const regex = /[a-zA-Z0-9'-]+/g
+    const regex = /[a-zA-Z0-9'-]*[a-zA-Z0-9][a-zA-Z0-9'-]*/g
     let match: RegExpExecArray | null
     while ((match = regex.exec(text)) !== null) {
       words.push({
