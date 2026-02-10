@@ -12,7 +12,6 @@ test.describe("cross-editor navigation (2 editors)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
-    await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).toBeVisible();
     await page.getByTestId("addPassageButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(2);
@@ -57,7 +56,6 @@ test.describe("cross-editor navigation (3 editors)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
-    await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).toBeVisible();
     await page.getByTestId("addPassageButton").click();
     await page.getByTestId("addPassageButton").click();

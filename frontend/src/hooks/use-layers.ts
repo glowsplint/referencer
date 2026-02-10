@@ -7,6 +7,10 @@ export function useLayers() {
   const [activeLayerId, setActiveLayerId] = useState<string | null>(null)
   const layerCounterRef = useRef(0)
 
+  const updateLayer = (id: string, updater: (layer: Layer) => Layer) => {
+    setLayers((prev) => prev.map((l) => (l.id === id ? updater(l) : l)))
+  }
+
   const addLayer = useCallback(() => {
     layerCounterRef.current += 1
     const nextNumber = layerCounterRef.current
@@ -33,15 +37,11 @@ export function useLayers() {
   }, [])
 
   const updateLayerColor = useCallback((id: string, color: string) => {
-    setLayers((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, color } : l))
-    )
+    updateLayer(id, (l) => ({ ...l, color }))
   }, [])
 
   const toggleLayerVisibility = useCallback((id: string) => {
-    setLayers((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, visible: !l.visible } : l))
-    )
+    updateLayer(id, (l) => ({ ...l, visible: !l.visible }))
   }, [])
 
   const toggleAllLayerVisibility = useCallback(() => {
@@ -52,71 +52,49 @@ export function useLayers() {
   }, [])
 
   const updateLayerName = useCallback((id: string, name: string) => {
-    setLayers((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, name } : l))
-    )
+    updateLayer(id, (l) => ({ ...l, name }))
   }, [])
 
   const addHighlight = useCallback(
     (layerId: string, highlight: Omit<Highlight, "id">) => {
-      setLayers((prev) =>
-        prev.map((l) =>
-          l.id === layerId
-            ? { ...l, highlights: [...l.highlights, { ...highlight, id: crypto.randomUUID() }] }
-            : l
-        )
-      )
+      updateLayer(layerId, (l) => ({
+        ...l,
+        highlights: [...l.highlights, { ...highlight, id: crypto.randomUUID() }],
+      }))
     },
     []
   )
 
   const removeHighlight = useCallback((layerId: string, highlightId: string) => {
-    setLayers((prev) =>
-      prev.map((l) =>
-        l.id === layerId
-          ? { ...l, highlights: l.highlights.filter((h) => h.id !== highlightId) }
-          : l
-      )
-    )
+    updateLayer(layerId, (l) => ({
+      ...l,
+      highlights: l.highlights.filter((h) => h.id !== highlightId),
+    }))
   }, [])
 
   const clearLayerHighlights = useCallback((layerId: string) => {
-    setLayers((prev) =>
-      prev.map((l) =>
-        l.id === layerId ? { ...l, highlights: [] } : l
-      )
-    )
+    updateLayer(layerId, (l) => ({ ...l, highlights: [] }))
   }, [])
 
   const addArrow = useCallback(
     (layerId: string, arrow: Omit<Arrow, "id">) => {
-      setLayers((prev) =>
-        prev.map((l) =>
-          l.id === layerId
-            ? { ...l, arrows: [...l.arrows, { ...arrow, id: crypto.randomUUID() }] }
-            : l
-        )
-      )
+      updateLayer(layerId, (l) => ({
+        ...l,
+        arrows: [...l.arrows, { ...arrow, id: crypto.randomUUID() }],
+      }))
     },
     []
   )
 
   const removeArrow = useCallback((layerId: string, arrowId: string) => {
-    setLayers((prev) =>
-      prev.map((l) =>
-        l.id === layerId
-          ? { ...l, arrows: l.arrows.filter((a) => a.id !== arrowId) }
-          : l
-      )
-    )
+    updateLayer(layerId, (l) => ({
+      ...l,
+      arrows: l.arrows.filter((a) => a.id !== arrowId),
+    }))
   }, [])
 
   const clearLayerArrows = useCallback((layerId: string) => {
-    setLayers((prev) =>
-      prev.map((l) =>
-        l.id === layerId ? { ...l, arrows: [] } : l
-      )
-    )
+    updateLayer(layerId, (l) => ({ ...l, arrows: [] }))
   }, [])
 
   return {

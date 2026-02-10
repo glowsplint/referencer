@@ -1,5 +1,3 @@
-"use client"
-
 import { useCallback, useEffect, useState } from "react"
 import { useThrottledCallback } from "@/hooks/use-throttled-callback"
 
@@ -36,14 +34,6 @@ const initialRect: RectState = {
   left: 0,
 }
 
-const isSSR = typeof window === "undefined"
-const hasResizeObserver = !isSSR && typeof ResizeObserver !== "undefined"
-
-/**
- * Helper function to check if code is running on client side
- */
-const isClientSide = (): boolean => !isSSR
-
 /**
  * Custom hook that tracks an element's bounding rectangle and updates on resize, scroll, etc.
  *
@@ -59,7 +49,7 @@ export function useElementRect({
   const [rect, setRect] = useState<RectState>(initialRect)
 
   const getTargetElement = useCallback((): Element | null => {
-    if (!enabled || !isClientSide()) return null
+    if (!enabled) return null
 
     if (!element) {
       return document.body
@@ -78,7 +68,7 @@ export function useElementRect({
 
   const updateRect = useThrottledCallback(
     () => {
-      if (!enabled || !isClientSide()) return
+      if (!enabled) return
 
       const targetElement = getTargetElement()
       if (!targetElement) {
@@ -104,7 +94,7 @@ export function useElementRect({
   )
 
   useEffect(() => {
-    if (!enabled || !isClientSide()) {
+    if (!enabled) {
       setRect(initialRect)
       return
     }
@@ -116,7 +106,7 @@ export function useElementRect({
 
     const cleanup: (() => void)[] = []
 
-    if (useResizeObserver && hasResizeObserver) {
+    if (useResizeObserver) {
       const resizeObserver = new ResizeObserver(() => {
         window.requestAnimationFrame(updateRect)
       })
@@ -151,16 +141,6 @@ export function useBodyRect(
 ): RectState {
   return useElementRect({
     ...options,
-    element: isClientSide() ? document.body : null,
+    element: document.body,
   })
-}
-
-/**
- * Convenience hook for tracking a ref element's rect
- */
-export function useRefRect<T extends Element>(
-  ref: React.RefObject<T>,
-  options: Omit<ElementRectOptions, "element"> = {}
-): RectState {
-  return useElementRect({ ...options, element: ref })
 }

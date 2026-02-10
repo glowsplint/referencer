@@ -2,8 +2,6 @@ import { test, expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
-  // Open management pane
-  await page.getByTestId("menuButton").click();
   await expect(page.getByTestId("managementPane")).toBeVisible();
 });
 

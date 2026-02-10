@@ -3,6 +3,10 @@ import type { Editor } from "@tiptap/react"
 
 const MIN_EDITOR_PCT = 10
 
+function computeEvenSplitPositions(count: number): number[] {
+  return Array.from({ length: count - 1 }, (_, i) => ((i + 1) / count) * 100)
+}
+
 export function useEditors() {
   const [editorCount, setEditorCount] = useState(1)
   const [splitPositions, setSplitPositions] = useState<number[]>([])
@@ -15,11 +19,7 @@ export function useEditors() {
     setEditorCount((count) => {
       if (count >= 3) return count
       const newCount = count + 1
-      const positions = Array.from(
-        { length: newCount - 1 },
-        (_, i) => ((i + 1) / newCount) * 100,
-      )
-      setSplitPositions(positions)
+      setSplitPositions(computeEvenSplitPositions(newCount))
       setSectionVisibility((prev) => [...prev, true])
       setSectionNames((prev) => [...prev, `Passage ${prev.length + 1}`])
       return newCount
@@ -41,11 +41,7 @@ export function useEditors() {
         newIndex++
       }
       editorsRef.current = newMap
-      const positions = Array.from(
-        { length: newCount - 1 },
-        (_, i) => ((i + 1) / newCount) * 100,
-      )
-      setSplitPositions(positions)
+      setSplitPositions(computeEvenSplitPositions(newCount))
       setSectionVisibility((prev) => prev.filter((_, i) => i !== index))
       setSectionNames((prev) => prev.filter((_, i) => i !== index))
       // Set active editor to the first remaining editor

@@ -113,6 +113,20 @@ export function getWordCenter(
   if (!editor) return null
 
   try {
+    // For image nodes, use DOM element bounds for accurate center
+    const nodeAt = editor.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editor.view.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          cx: (rect.left + rect.right) / 2 - containerRect.left,
+          cy: (rect.top + rect.bottom) / 2 - containerRect.top,
+        }
+      }
+      return null
+    }
+
     const startCoords = editor.view.coordsAtPos(word.from)
     const endCoords = editor.view.coordsAtPos(word.to)
     return {

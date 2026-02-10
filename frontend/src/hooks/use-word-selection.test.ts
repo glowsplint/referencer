@@ -245,3 +245,123 @@ describe("useWordSelection keyboard navigation", () => {
     // tested implicitly by the navigation working correctly).
   })
 })
+
+describe("useWordSelection navigates through images", () => {
+  // Layout: single editor with text, image, then more text
+  //
+  //   Line 1: "and"            (100,100)
+  //   Line 2: "professional"   (100,130)
+  //   Line 3: [image]          (100,180)   <- placeholder-image
+  //   Line 4: "Subscript"      (80,230)
+  //
+  // Down from "and" → "professional" → image → "Subscript"
+
+  const words = [
+    { editorIndex: 0, from: 98, to: 101, text: "and" },
+    { editorIndex: 0, from: 102, to: 114, text: "professional" },
+    { editorIndex: 0, from: 120, to: 121, text: "placeholder-image", isImage: true },
+    { editorIndex: 0, from: 130, to: 139, text: "Subscript" },
+  ]
+
+  const centers: Record<string, { cx: number; cy: number }> = {
+    "0-98-101": { cx: 100, cy: 100 },     // "and"
+    "0-102-114": { cx: 100, cy: 130 },     // "professional"
+    "0-120-121": { cx: 100, cy: 180 },     // placeholder-image
+    "0-130-139": { cx: 80, cy: 230 },      // "Subscript"
+  }
+
+  function setupImageMocks() {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    editorsRef.current.set(0, {} as Editor)
+
+    const containerEl = document.createElement("div")
+    containerEl.getBoundingClientRect = () => ({
+      left: 0, top: 0, right: 800, bottom: 600,
+      width: 800, height: 600, x: 0, y: 0, toJSON: () => {},
+    })
+    const containerRef = { current: containerEl } as React.RefObject<HTMLDivElement | null>
+
+    vi.mocked(collectAllWords).mockImplementation(() => [...words])
+
+    vi.mocked(getWordCenter).mockImplementation((word) => {
+      const key = `${word.editorIndex}-${word.from}-${word.to}`
+      return centers[key] || null
+    })
+
+    return { editorsRef, containerRef }
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it("ArrowDown navigates from text through image to text below", () => {
+    const { editorsRef, containerRef } = setupImageMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Select "and"
+    act(() => { result.current.selectWord(0, 98, 101, "and") })
+    expect(result.current.selection?.text).toBe("and")
+
+    // Down → "professional"
+    act(() => { fireKey("ArrowDown") })
+    expect(result.current.selection?.text).toBe("professional")
+    expect(result.current.selection?.editorIndex).toBe(0)
+
+    // Down → "placeholder-image" (image)
+    act(() => { fireKey("ArrowDown") })
+    expect(result.current.selection?.text).toBe("placeholder-image")
+    expect(result.current.selection?.editorIndex).toBe(0)
+
+    // Down → "Subscript"
+    act(() => { fireKey("ArrowDown") })
+    expect(result.current.selection?.text).toBe("Subscript")
+    expect(result.current.selection?.editorIndex).toBe(0)
+  })
+
+  it("ArrowUp navigates back through image", () => {
+    const { editorsRef, containerRef } = setupImageMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Select "Subscript"
+    act(() => { result.current.selectWord(0, 130, 139, "Subscript") })
+
+    // Up → "placeholder-image"
+    act(() => { fireKey("ArrowUp") })
+    expect(result.current.selection?.text).toBe("placeholder-image")
+
+    // Up → "professional"
+    act(() => { fireKey("ArrowUp") })
+    expect(result.current.selection?.text).toBe("professional")
+
+    // Up → "and"
+    act(() => { fireKey("ArrowUp") })
+    expect(result.current.selection?.text).toBe("and")
+  })
+
+  it("maintains sticky X when navigating through images", () => {
+    const { editorsRef, containerRef } = setupImageMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Select "and" at cx=100
+    act(() => { result.current.selectWord(0, 98, 101, "and") })
+
+    // Down → "professional" (stickyX=100)
+    act(() => { fireKey("ArrowDown") })
+    expect(result.current.selection?.text).toBe("professional")
+
+    // Down → image (stickyX still 100)
+    act(() => { fireKey("ArrowDown") })
+    expect(result.current.selection?.text).toBe("placeholder-image")
+
+    // Down → "Subscript" at cx=80 (closest to stickyX=100)
+    act(() => { fireKey("ArrowDown") })
+    expect(result.current.selection?.text).toBe("Subscript")
+  })
+})

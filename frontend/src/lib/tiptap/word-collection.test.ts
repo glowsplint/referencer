@@ -109,3 +109,88 @@ describe("collectAllWords", () => {
     ])
   })
 })
+
+type MockNode = {
+  isTextblock: boolean
+  textContent: string
+  type: { name: string }
+  attrs?: Record<string, unknown>
+  nodeSize: number
+}
+
+function mockEditorWithNodes(nodes: MockNode[]) {
+  const doc = {
+    descendants(callback: (node: any, pos: number) => boolean | void) {
+      let pos = 0
+      for (const node of nodes) {
+        callback(node, pos)
+        pos += node.nodeSize
+      }
+    },
+  }
+  return { state: { doc } } as any
+}
+
+function textBlock(text: string): MockNode {
+  return {
+    isTextblock: true,
+    textContent: text,
+    type: { name: "paragraph" },
+    nodeSize: 1 + text.length + 1,
+  }
+}
+
+function imageNode(alt: string): MockNode {
+  return {
+    isTextblock: false,
+    textContent: "",
+    type: { name: "image" },
+    attrs: { alt },
+    nodeSize: 1,
+  }
+}
+
+describe("collectAllWords with images", () => {
+  it("collects image alt text as a word with isImage flag", () => {
+    const editor = mockEditorWithNodes([imageNode("placeholder-image")])
+    const words = collectAllWords(editor, 0)
+
+    expect(words).toEqual([
+      { editorIndex: 0, from: 0, to: 1, text: "placeholder-image", isImage: true },
+    ])
+  })
+
+  it("collects image words alongside text words with correct positions", () => {
+    const editor = mockEditorWithNodes([
+      textBlock("hello world"),           // pos 0, size 13
+      imageNode("placeholder-image"),     // pos 13, size 1
+      textBlock("next line"),             // pos 14, size 11
+    ])
+    const words = collectAllWords(editor, 0)
+
+    expect(words).toEqual([
+      { editorIndex: 0, from: 1, to: 6, text: "hello" },
+      { editorIndex: 0, from: 7, to: 12, text: "world" },
+      { editorIndex: 0, from: 13, to: 14, text: "placeholder-image", isImage: true },
+      { editorIndex: 0, from: 15, to: 19, text: "next" },
+      { editorIndex: 0, from: 20, to: 24, text: "line" },
+    ])
+  })
+
+  it("skips images without alt text", () => {
+    const noAlt: MockNode = {
+      isTextblock: false,
+      textContent: "",
+      type: { name: "image" },
+      attrs: {},
+      nodeSize: 1,
+    }
+    const editor = mockEditorWithNodes([noAlt])
+    expect(collectAllWords(editor, 0)).toEqual([])
+  })
+
+  it("skips images with non-alphanumeric alt text", () => {
+    const editor = mockEditorWithNodes([imageNode("---")])
+    expect(collectAllWords(editor, 0)).toEqual([])
+  })
+})

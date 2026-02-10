@@ -4,8 +4,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-  // Open management pane and create a layer
-  await page.getByTestId("menuButton").click();
+  // Create a layer
   await expect(page.getByTestId("managementPane")).toBeVisible();
   await page.getByTestId("addLayerButton").click();
   await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");

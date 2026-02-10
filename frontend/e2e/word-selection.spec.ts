@@ -45,19 +45,20 @@ test("arrow keys navigate between words", async ({ page }) => {
   const box = await firstParagraph.boundingBox();
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
 
-  const firstSelection = page.locator(".word-selection");
-  await expect(firstSelection).toBeVisible({ timeout: 2000 });
-  const firstText = await firstSelection.textContent();
+  const selection = page.locator(".word-selection");
+  await expect(selection).toBeVisible({ timeout: 2000 });
+  const firstBox = await selection.boundingBox();
+  expect(firstBox).not.toBeNull();
 
   // Press ArrowRight to move to next word
   await page.keyboard.press("ArrowRight");
 
-  const nextSelection = page.locator(".word-selection");
-  await expect(nextSelection).toBeVisible({ timeout: 2000 });
-  const nextText = await nextSelection.textContent();
+  await expect(selection).toBeVisible({ timeout: 2000 });
+  const nextBox = await selection.boundingBox();
+  expect(nextBox).not.toBeNull();
 
-  // The selected word should have changed
-  expect(nextText).not.toBe(firstText);
+  // The selection position should have changed
+  expect(nextBox!.x).not.toBe(firstBox!.x);
 });
 
 test("unlocking clears word selection", async ({ page }) => {

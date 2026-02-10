@@ -20,8 +20,8 @@ test("renders at least one editor pane", async ({ page }) => {
   await expect(page.locator(".simple-editor-wrapper").first()).toBeVisible();
 });
 
-test("management pane is hidden by default", async ({ page }) => {
-  await expect(page.getByTestId("managementPane")).not.toBeVisible();
+test("management pane is visible by default", async ({ page }) => {
+  await expect(page.getByTestId("managementPane")).toBeVisible();
 });
 
 test("title bar inline rename", async ({ page }) => {
