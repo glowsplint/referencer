@@ -39,6 +39,7 @@ function createDefaultProps(overrides: Record<string, unknown> = {}) {
     editorsRef: { current: new Map() } as React.RefObject<Map<number, Editor>>,
     containerRef: { current: containerEl } as React.RefObject<HTMLDivElement | null>,
     removeArrow: vi.fn(),
+    sectionVisibility: [true, true, true],
     ...overrides,
   }
 }
@@ -162,6 +163,27 @@ describe("ArrowOverlay", () => {
     )
 
     expect(screen.queryByTestId("preview-arrow")).not.toBeInTheDocument()
+  })
+
+  it("hides arrows when an endpoint's section is hidden", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          sectionVisibility: [true, false, true],
+        })}
+      />
+    )
+    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
   })
 
   it("click on arrow line triggers removeArrow callback", () => {

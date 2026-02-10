@@ -10,6 +10,7 @@ interface ArrowOverlayProps {
   editorsRef: React.RefObject<Map<number, Editor>>
   containerRef: React.RefObject<HTMLDivElement | null>
   removeArrow: (layerId: string, arrowId: string) => void
+  sectionVisibility: boolean[]
 }
 
 interface ArrowPosition {
@@ -29,6 +30,7 @@ export function ArrowOverlay({
   editorsRef,
   containerRef,
   removeArrow,
+  sectionVisibility,
 }: ArrowOverlayProps) {
   const [tick, setTick] = useState(0)
 
@@ -48,10 +50,10 @@ export function ArrowOverlay({
     }
   }, [containerRef, recalc])
 
-  // Recalculate when layers or drawingState change
+  // Recalculate when layers, drawingState, or sectionVisibility change
   useEffect(() => {
     recalc()
-  }, [layers, drawingState, recalc])
+  }, [layers, drawingState, sectionVisibility, recalc])
 
   const containerRect = containerRef.current?.getBoundingClientRect()
 
@@ -62,6 +64,8 @@ export function ArrowOverlay({
     for (const layer of layers) {
       if (!layer.visible) continue
       for (const arrow of layer.arrows) {
+        if (sectionVisibility[arrow.from.editorIndex] === false) continue
+        if (sectionVisibility[arrow.to.editorIndex] === false) continue
         const fromCenter = getWordCenter(arrow.from, editorsRef, containerRect)
         const toCenter = getWordCenter(arrow.to, editorsRef, containerRect)
         if (fromCenter && toCenter) {
@@ -80,10 +84,12 @@ export function ArrowOverlay({
 
     return positions
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layers, editorsRef, containerRect?.width, containerRect?.height, tick])
+  }, [layers, editorsRef, containerRect?.width, containerRect?.height, tick, sectionVisibility])
 
   const previewPosition = useMemo(() => {
     if (!drawingState || !containerRect) return null
+    if (sectionVisibility[drawingState.anchor.editorIndex] === false) return null
+    if (sectionVisibility[drawingState.cursor.editorIndex] === false) return null
     const fromCenter = getWordCenter(drawingState.anchor, editorsRef, containerRect)
     const toCenter = getWordCenter(drawingState.cursor, editorsRef, containerRect)
     if (!fromCenter || !toCenter) return null

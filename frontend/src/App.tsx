@@ -106,6 +106,7 @@ export function App() {
                 editorsRef={editorsRef}
                 containerRef={containerRef}
                 removeArrow={removeArrow}
+                sectionVisibility={sectionVisibility}
               />
               {editorWidths.map((width, i) => (
                 <Fragment key={i}>
