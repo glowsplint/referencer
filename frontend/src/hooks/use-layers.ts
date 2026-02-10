@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react"
-import type { Layer, Highlight } from "@/types/editor"
+import type { Layer, Highlight, Arrow } from "@/types/editor"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
 export function useLayers() {
@@ -19,7 +19,7 @@ export function useLayers() {
       if (prev.length === 0) {
         setActiveLayerId(id)
       }
-      return [...prev, { id, name, color, visible: true, highlights: [] }]
+      return [...prev, { id, name, color, visible: true, highlights: [], arrows: [] }]
     })
   }, [])
 
@@ -88,6 +88,37 @@ export function useLayers() {
     )
   }, [])
 
+  const addArrow = useCallback(
+    (layerId: string, arrow: Omit<Arrow, "id">) => {
+      setLayers((prev) =>
+        prev.map((l) =>
+          l.id === layerId
+            ? { ...l, arrows: [...l.arrows, { ...arrow, id: crypto.randomUUID() }] }
+            : l
+        )
+      )
+    },
+    []
+  )
+
+  const removeArrow = useCallback((layerId: string, arrowId: string) => {
+    setLayers((prev) =>
+      prev.map((l) =>
+        l.id === layerId
+          ? { ...l, arrows: l.arrows.filter((a) => a.id !== arrowId) }
+          : l
+      )
+    )
+  }, [])
+
+  const clearLayerArrows = useCallback((layerId: string) => {
+    setLayers((prev) =>
+      prev.map((l) =>
+        l.id === layerId ? { ...l, arrows: [] } : l
+      )
+    )
+  }, [])
+
   return {
     layers,
     activeLayerId,
@@ -101,5 +132,8 @@ export function useLayers() {
     addHighlight,
     removeHighlight,
     clearLayerHighlights,
+    addArrow,
+    removeArrow,
+    clearLayerArrows,
   }
 }

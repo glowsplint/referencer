@@ -3,7 +3,9 @@ import { describe, it, expect, vi } from "vitest"
 import { LayerRow } from "./LayerRow"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
-const defaultLayer = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as unknown[] }
+import type { Layer } from "@/types/editor"
+
+const defaultLayer: Layer = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [], arrows: [] }
 
 function renderRow(overrides = {}) {
   const defaults = {

@@ -23,6 +23,25 @@ export interface Layer {
   color: string
   visible: boolean
   highlights: Highlight[]
+  arrows: Arrow[]
+}
+
+export interface ArrowEndpoint {
+  editorIndex: number
+  from: number
+  to: number
+  text: string
+}
+
+export interface Arrow {
+  id: string
+  from: ArrowEndpoint
+  to: ArrowEndpoint
+}
+
+export interface DrawingState {
+  anchor: ArrowEndpoint
+  cursor: ArrowEndpoint
 }
 
 export interface WordSelection {

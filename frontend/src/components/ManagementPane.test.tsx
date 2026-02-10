@@ -3,8 +3,8 @@ import { describe, it, expect } from "vitest"
 import { ManagementPane } from "./ManagementPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
 
-const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as unknown[] }
-const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as unknown[] }
+const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as unknown[], arrows: [] as unknown[] }
+const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as unknown[], arrows: [] as unknown[] }
 
 function renderPane(overrides = {}) {
   return renderWithWorkspace(<ManagementPane />, overrides)

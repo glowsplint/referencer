@@ -11,7 +11,7 @@ const mockWorkspace = {
     isLocked: false,
   },
   annotations: { isPainterMode: false },
-  layers: [] as { id: string; color: string; name: string; visible: boolean; highlights: { id: string; editorIndex: number; from: number; to: number; text: string }[] }[],
+  layers: [] as { id: string; color: string; name: string; visible: boolean; highlights: { id: string; editorIndex: number; from: number; to: number; text: string }[]; arrows: unknown[] }[],
   activeLayerId: null as string | null,
   editorCount: 1,
   activeEditor: null,
@@ -33,6 +33,9 @@ const mockWorkspace = {
   addHighlight: vi.fn(),
   removeHighlight: vi.fn(),
   clearLayerHighlights: vi.fn(),
+  addArrow: vi.fn(),
+  removeArrow: vi.fn(),
+  clearLayerArrows: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
   sectionNames: ["Passage 1"],
@@ -147,7 +150,7 @@ describe("App", () => {
 
   it("passes layers and selection props to EditorPane", () => {
     mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] },
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [], arrows: [] },
     ]
     render(<App />)
 
@@ -161,7 +164,7 @@ describe("App", () => {
     mockWorkspace.settings.isLayersOn = true
     mockWorkspace.activeLayerId = "layer-1"
     mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] },
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [], arrows: [] },
     ]
     render(<App />)
 
@@ -189,6 +192,7 @@ describe("App", () => {
         highlights: [
           { id: "h1", editorIndex: 0, from: 1, to: 5, text: "hello" },
         ],
+        arrows: [],
       },
     ]
     render(<App />)

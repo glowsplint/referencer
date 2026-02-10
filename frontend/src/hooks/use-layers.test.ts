@@ -311,4 +311,111 @@ describe("useLayers", () => {
 
     expect(result.current.layers[1].name).toBe("Layer 3")
   })
+
+  it("addLayer initializes arrows as empty array", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    expect(result.current.layers[0].arrows).toEqual([])
+  })
+
+  it("addArrow adds an arrow to the specified layer", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addArrow(layerId, {
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+      })
+    })
+
+    expect(result.current.layers[0].arrows).toHaveLength(1)
+    expect(result.current.layers[0].arrows[0].from.text).toBe("hello")
+    expect(result.current.layers[0].arrows[0].to.text).toBe("world")
+    expect(result.current.layers[0].arrows[0].id).toBeTruthy()
+  })
+
+  it("addArrow does not affect other layers", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer(); result.current.addLayer() })
+    const firstId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addArrow(firstId, {
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+      })
+    })
+
+    expect(result.current.layers[0].arrows).toHaveLength(1)
+    expect(result.current.layers[1].arrows).toHaveLength(0)
+  })
+
+  it("removeArrow removes an arrow by id", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addArrow(layerId, {
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+      })
+      result.current.addArrow(layerId, {
+        from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
+        to: { editorIndex: 1, from: 1, to: 4, text: "bar" },
+      })
+    })
+
+    const arrowId = result.current.layers[0].arrows[0].id
+    act(() => { result.current.removeArrow(layerId, arrowId) })
+
+    expect(result.current.layers[0].arrows).toHaveLength(1)
+    expect(result.current.layers[0].arrows[0].from.text).toBe("foo")
+  })
+
+  it("removeArrow with non-existent id does nothing", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addArrow(layerId, {
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+      })
+    })
+    act(() => { result.current.removeArrow(layerId, "non-existent") })
+
+    expect(result.current.layers[0].arrows).toHaveLength(1)
+  })
+
+  it("clearLayerArrows removes all arrows from a layer", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addArrow(layerId, {
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+      })
+      result.current.addArrow(layerId, {
+        from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
+        to: { editorIndex: 1, from: 1, to: 4, text: "bar" },
+      })
+    })
+    act(() => { result.current.clearLayerArrows(layerId) })
+
+    expect(result.current.layers[0].arrows).toEqual([])
+  })
+
+  it("clearLayerArrows on layer with no arrows is a no-op", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+    act(() => { result.current.clearLayerArrows(layerId) })
+    expect(result.current.layers[0].arrows).toEqual([])
+  })
 })

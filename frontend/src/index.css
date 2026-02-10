@@ -131,6 +131,11 @@
   outline-offset: 1px;
 }
 
+.arrow-line:hover {
+  stroke-width: 4;
+  filter: brightness(0.85);
+}
+
 *,
 *::before,
 *::after {

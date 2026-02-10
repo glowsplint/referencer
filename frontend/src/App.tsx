@@ -11,6 +11,8 @@ import {
 } from "./components/tiptap-templates/simple";
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
+import { useDrawingMode } from "./hooks/use-drawing-mode";
+import { ArrowOverlay } from "./components/ArrowOverlay";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 
 export function App() {
@@ -25,6 +27,8 @@ export function App() {
     isManagementPaneOpen,
     addHighlight,
     removeHighlight,
+    addArrow,
+    removeArrow,
     editorsRef,
     sectionVisibility,
     handleDividerResize,
@@ -40,6 +44,17 @@ export function App() {
     containerRef,
     editorCount,
   });
+
+  const { drawingState } = useDrawingMode({
+    isLocked: settings.isLocked,
+    selection,
+    activeLayerId,
+    addArrow,
+  });
+
+  const activeLayerColor = activeLayerId
+    ? layers.find((l) => l.id === activeLayerId)?.color ?? null
+    : null;
 
   const handleWordClickCombined = useCallback(
     (editorIndex: number, from: number, to: number, text: string) => {
@@ -74,6 +89,14 @@ export function App() {
               data-testid="editorContainer"
               className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
             >
+              <ArrowOverlay
+                layers={layers}
+                drawingState={drawingState}
+                drawingColor={activeLayerColor}
+                editorsRef={editorsRef}
+                containerRef={containerRef}
+                removeArrow={removeArrow}
+              />
               {editorWidths.map((width, i) => (
                 <Fragment key={i}>
                   {i > 0 && sectionVisibility[i - 1] && sectionVisibility[i] && (
