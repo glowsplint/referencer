@@ -156,12 +156,10 @@ describe("App", () => {
 
     expect(capturedEditorPaneProps[0].layers).toEqual(mockWorkspace.layers)
     expect(capturedEditorPaneProps[0].selection).toBeNull()
-    expect(capturedEditorPaneProps[0].isLayersOn).toBe(false)
   })
 
-  it("handleWordClick adds highlight when layers on and activeLayerId set", () => {
+  it("handleWordClick adds highlight when activeLayerId set", () => {
     mockWorkspace.settings.isLocked = true
-    mockWorkspace.settings.isLayersOn = true
     mockWorkspace.activeLayerId = "layer-1"
     mockWorkspace.layers = [
       { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [], arrows: [] },
@@ -181,7 +179,6 @@ describe("App", () => {
 
   it("handleWordClick removes highlight when matching highlight exists", () => {
     mockWorkspace.settings.isLocked = true
-    mockWorkspace.settings.isLayersOn = true
     mockWorkspace.activeLayerId = "layer-1"
     mockWorkspace.layers = [
       {
@@ -204,10 +201,9 @@ describe("App", () => {
     expect(mockWorkspace.addHighlight).not.toHaveBeenCalled()
   })
 
-  it("handleWordClick does not toggle layers when layers off", () => {
+  it("handleWordClick does not toggle highlights when no activeLayerId", () => {
     mockWorkspace.settings.isLocked = true
-    mockWorkspace.settings.isLayersOn = false
-    mockWorkspace.activeLayerId = "layer-1"
+    mockWorkspace.activeLayerId = null
     render(<App />)
 
     const onWordClick = capturedEditorPaneProps[0].onWordClick as (editorIndex: number, from: number, to: number, text: string) => void

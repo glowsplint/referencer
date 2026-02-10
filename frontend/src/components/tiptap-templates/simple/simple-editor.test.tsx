@@ -153,7 +153,6 @@ vi.mock("@/components/tiptap-templates/simple/data/content.json", () => ({
 const defaultEditorPaneProps = {
   layers: [],
   selection: null,
-  isLayersOn: false,
 }
 
 beforeEach(() => {

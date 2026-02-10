@@ -4,7 +4,8 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("renders all 5 button pane buttons", async ({ page }) => {
+test("renders all 6 button pane buttons", async ({ page }) => {
+  await expect(page.getByTestId("keyboardShortcutsButton")).toBeVisible();
   await expect(page.getByTestId("menuButton")).toBeVisible();
   await expect(page.getByTestId("darkModeButton")).toBeVisible();
   await expect(page.getByTestId("editorLayoutButton")).toBeVisible();

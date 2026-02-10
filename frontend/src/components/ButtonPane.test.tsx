@@ -10,6 +10,7 @@ function renderButtonPane(overrides = {}, props: { isDrawing?: boolean } = {}) {
 describe("ButtonPane", () => {
   it("renders all toggle buttons", () => {
     renderButtonPane()
+    expect(screen.getByTestId("keyboardShortcutsButton")).toBeInTheDocument()
     expect(screen.getByTestId("menuButton")).toBeInTheDocument()
     expect(screen.getByTestId("darkModeButton")).toBeInTheDocument()
     expect(screen.getByTestId("editorLayoutButton")).toBeInTheDocument()
@@ -53,10 +54,17 @@ describe("ButtonPane", () => {
     expect(button.querySelector("svg")).toBeInTheDocument()
   })
 
-  it("painter mode button is the first button in the pane", () => {
+  it("keyboard shortcuts button is the first button in the pane", () => {
     renderButtonPane()
-    const pane = screen.getByTestId("painterModeButton").parentElement!
+    const pane = screen.getByTestId("keyboardShortcutsButton").parentElement!
     const buttons = pane.querySelectorAll("button")
-    expect(buttons[0]).toBe(screen.getByTestId("painterModeButton"))
+    expect(buttons[0]).toBe(screen.getByTestId("keyboardShortcutsButton"))
+  })
+
+  it("opens keyboard shortcuts dialog when button is clicked", () => {
+    renderButtonPane()
+    fireEvent.click(screen.getByTestId("keyboardShortcutsButton"))
+    expect(screen.getByTestId("keyboardShortcutsDialog")).toBeInTheDocument()
+    expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument()
   })
 })

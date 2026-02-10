@@ -66,18 +66,7 @@ describe("useLayerDecorations", () => {
   it("dispatches empty decorations when not locked", () => {
     const editor = createMockEditor()
     renderHook(() =>
-      useLayerDecorations(editor as any, [], 0, false, true)
-    )
-    expect(editor.state.tr.setMeta).toHaveBeenCalledWith(
-      layerHighlightsPluginKey,
-      DecorationSet.empty
-    )
-  })
-
-  it("dispatches empty decorations when layers off", () => {
-    const editor = createMockEditor()
-    renderHook(() =>
-      useLayerDecorations(editor as any, [], 0, true, false)
+      useLayerDecorations(editor as any, [], 0, false)
     )
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(
       layerHighlightsPluginKey,
@@ -93,7 +82,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true, true)
+      useLayerDecorations(editor as any, [layer], 0, true)
     )
     expect(capturedDecorations).toHaveLength(1)
     expect(capturedDecorations[0]).toEqual({
@@ -111,7 +100,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true, true)
+      useLayerDecorations(editor as any, [layer], 0, true)
     )
     expect(capturedDecorations).toHaveLength(0)
   })
@@ -128,7 +117,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true, true)
+      useLayerDecorations(editor as any, [layer], 0, true)
     )
     expect(capturedDecorations).toHaveLength(2)
     expect(capturedDecorations[0]).toEqual({
@@ -155,7 +144,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true, true)
+      useLayerDecorations(editor as any, [layer], 0, true)
     )
     // Only "from" endpoint is in editor 0
     expect(capturedDecorations).toHaveLength(1)
@@ -179,7 +168,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true, true)
+      useLayerDecorations(editor as any, [layer], 0, true)
     )
     expect(capturedDecorations).toHaveLength(0)
   })
@@ -199,7 +188,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true, true)
+      useLayerDecorations(editor as any, [layer], 0, true)
     )
     // 1 highlight + 2 arrow endpoints = 3 decorations
     expect(capturedDecorations).toHaveLength(3)

@@ -22,9 +22,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("arrow endpoints are highlighted with layer color after drawing", async ({ page }) => {
-  // Before drawing, no highlights should exist
+  // Before drawing, the word click highlight from beforeEach should exist
   const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
-  await expect(highlightSpans).toHaveCount(0);
+  await expect(highlightSpans).toHaveCount(1);
 
   // Draw an arrow: hold 'a', move right, release 'a'
   await page.keyboard.down("a");

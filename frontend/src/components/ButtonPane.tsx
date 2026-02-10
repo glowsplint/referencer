@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Sun,
   MoonStar,
@@ -9,8 +10,10 @@ import {
   LockOpen,
   Menu,
   ArrowUpRight,
+  Keyboard,
 } from "lucide-react";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
+import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 interface ButtonPaneProps {
@@ -29,6 +32,8 @@ export function ButtonPane({ isDrawing = false }: ButtonPaneProps) {
     toggleLocked,
   } = useWorkspace();
 
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+
   const painterIcon = isDrawing
     ? <ArrowUpRight size={20} />
     : annotations.isPainterMode
@@ -37,6 +42,14 @@ export function ButtonPane({ isDrawing = false }: ButtonPaneProps) {
 
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
+      <button
+        onClick={() => setShortcutsOpen(true)}
+        title="Keyboard shortcuts"
+        className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+        data-testid="keyboardShortcutsButton"
+      >
+        <Keyboard size={20} />
+      </button>
       <button
         onClick={togglePainterMode}
         title="Toggle Painter mode"
@@ -76,6 +89,10 @@ export function ButtonPane({ isDrawing = false }: ButtonPaneProps) {
         callback={toggleLocked}
         title="Toggle editor lock"
         buttonProps={{ "data-testid": "lockButton" }}
+      />
+      <KeyboardShortcutsDialog
+        open={shortcutsOpen}
+        onOpenChange={setShortcutsOpen}
       />
     </div>
   );

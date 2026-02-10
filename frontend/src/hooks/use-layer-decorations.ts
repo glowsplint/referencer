@@ -9,13 +9,12 @@ export function useLayerDecorations(
   editor: Editor | null,
   layers: Layer[],
   editorIndex: number,
-  isLocked: boolean,
-  isLayersOn: boolean
+  isLocked: boolean
 ) {
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
 
-    if (!isLocked || !isLayersOn) {
+    if (!isLocked) {
       const tr = editor.state.tr.setMeta(layerHighlightsPluginKey, DecorationSet.empty)
       editor.view.dispatch(tr)
       return
@@ -56,5 +55,5 @@ export function useLayerDecorations(
     const decorationSet = DecorationSet.create(editor.state.doc, decorations)
     const tr = editor.state.tr.setMeta(layerHighlightsPluginKey, decorationSet)
     editor.view.dispatch(tr)
-  }, [editor, layers, editorIndex, isLocked, isLayersOn])
+  }, [editor, layers, editorIndex, isLocked])
 }

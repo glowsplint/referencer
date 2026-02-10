@@ -32,7 +32,6 @@ export function EditorPane({
   onNonWordClick,
   layers,
   selection,
-  isLayersOn,
 }: {
   isLocked: boolean
   content?: Record<string, unknown>
@@ -43,7 +42,6 @@ export function EditorPane({
   onNonWordClick?: () => void
   layers: Layer[]
   selection: WordSelection | null
-  isLayersOn: boolean
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -78,7 +76,7 @@ export function EditorPane({
     }
   }, [editor, isLocked])
 
-  useLayerDecorations(editor, layers, index, isLocked, isLayersOn)
+  useLayerDecorations(editor, layers, index, isLocked)
   const selectionRect = useSelectionDecoration(editor, selection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {

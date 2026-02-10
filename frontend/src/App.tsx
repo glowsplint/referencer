@@ -12,6 +12,7 @@ import {
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
+import { useCycleLayer } from "./hooks/use-cycle-layer";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
@@ -26,6 +27,7 @@ export function App() {
     activeEditor,
     editorWidths,
     isManagementPaneOpen,
+    setActiveLayer,
     addHighlight,
     removeHighlight,
     addArrow,
@@ -53,6 +55,12 @@ export function App() {
     addArrow,
   });
 
+  useCycleLayer({
+    layers,
+    activeLayerId,
+    setActiveLayer,
+  });
+
   const activeLayerColor = activeLayerId
     ? layers.find((l) => l.id === activeLayerId)?.color ?? null
     : null;
@@ -61,7 +69,7 @@ export function App() {
     (editorIndex: number, from: number, to: number, text: string) => {
       selectWord(editorIndex, from, to, text);
 
-      if (settings.isLayersOn && activeLayerId) {
+      if (activeLayerId) {
         const layer = layers.find((l) => l.id === activeLayerId);
         const existing = layer?.highlights.find(
           (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
@@ -73,7 +81,7 @@ export function App() {
         }
       }
     },
-    [selectWord, settings.isLayersOn, activeLayerId, layers, addHighlight, removeHighlight]
+    [selectWord, activeLayerId, layers, addHighlight, removeHighlight]
   );
 
   return (
@@ -127,7 +135,7 @@ export function App() {
                       onNonWordClick={settings.isLocked ? clearSelection : undefined}
                       layers={layers}
                       selection={selection}
-                      isLayersOn={settings.isLayersOn}
+
                     />
                   </div>
                 </Fragment>

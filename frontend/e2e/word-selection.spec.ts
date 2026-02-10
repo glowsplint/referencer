@@ -30,11 +30,9 @@ test("clicking whitespace clears word-selection", async ({ page }) => {
 
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Click on the editor wrapper area below all content to trigger non-word click
-  const wrapper = page.locator(".simple-editor-wrapper").first();
-  const wrapperBox = await wrapper.boundingBox();
-  // Click at the very bottom of the wrapper where there's no text
-  await page.mouse.click(wrapperBox!.x + wrapperBox!.width / 2, wrapperBox!.y + wrapperBox!.height - 2);
+  // Click on the horizontal rule (a non-textblock node) to trigger non-word click
+  const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
+  await hr.click();
 
   await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 });
