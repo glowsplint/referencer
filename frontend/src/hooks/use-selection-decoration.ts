@@ -9,6 +9,30 @@ export interface SelectionRect {
   height: number
 }
 
+const SCROLL_PADDING = 40
+
+/** Scroll the wrapper so the region at (top, left) with the given size is visible. */
+export function scrollToKeepInView(
+  wrapper: HTMLElement,
+  top: number,
+  left: number,
+  height: number,
+  width: number,
+  padding: number = SCROLL_PADDING
+): void {
+  if (top < wrapper.scrollTop + padding) {
+    wrapper.scrollTop = Math.max(0, top - padding)
+  } else if (top + height > wrapper.scrollTop + wrapper.clientHeight - padding) {
+    wrapper.scrollTop = top + height - wrapper.clientHeight + padding
+  }
+
+  if (left < wrapper.scrollLeft + padding) {
+    wrapper.scrollLeft = Math.max(0, left - padding)
+  } else if (left + width > wrapper.scrollLeft + wrapper.clientWidth - padding) {
+    wrapper.scrollLeft = left + width - wrapper.clientWidth + padding
+  }
+}
+
 export function useSelectionDecoration(
   editor: Editor | null,
   selection: WordSelection | null,
@@ -49,11 +73,24 @@ export function useSelectionDecoration(
       const wordRect = range.getBoundingClientRect()
       const wrapperRect = wrapper.getBoundingClientRect()
 
-      // Convert viewport coords to scroll-content coords so the overlay
-      // scrolls correctly with the content inside the wrapper.
+      // Convert viewport coords to scroll-content coords (stable regardless
+      // of scroll position changes below).
+      const topInContent = wordRect.top - wrapperRect.top + wrapper.scrollTop
+      const leftInContent = wordRect.left - wrapperRect.left + wrapper.scrollLeft
+
+      // Scroll the wrapper so the selected word stays in view during
+      // keyboard navigation.
+      scrollToKeepInView(
+        wrapper,
+        topInContent,
+        leftInContent,
+        wordRect.height,
+        wordRect.width
+      )
+
       setRect({
-        top: wordRect.top - wrapperRect.top + wrapper.scrollTop,
-        left: wordRect.left - wrapperRect.left + wrapper.scrollLeft,
+        top: topInContent,
+        left: leftInContent,
         width: wordRect.width,
         height: wordRect.height,
       })
