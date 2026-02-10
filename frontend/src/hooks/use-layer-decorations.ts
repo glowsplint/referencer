@@ -37,6 +37,20 @@ export function useLayerDecorations(
           // Position may be invalid — skip
         }
       }
+      for (const arrow of layer.arrows) {
+        for (const endpoint of [arrow.from, arrow.to]) {
+          if (endpoint.editorIndex !== editorIndex) continue
+          try {
+            decorations.push(
+              Decoration.inline(endpoint.from, endpoint.to, {
+                style: `background-color: ${parseHexToRgba(layer.color, 0.3)}`,
+              })
+            )
+          } catch {
+            // Position may be invalid — skip
+          }
+        }
+      }
     }
 
     const decorationSet = DecorationSet.create(editor.state.doc, decorations)

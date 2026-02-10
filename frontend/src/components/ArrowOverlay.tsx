@@ -110,7 +110,7 @@ export function ArrowOverlay({
             id={`arrowhead-${pos.arrowId}`}
             markerWidth="8"
             markerHeight="6"
-            refX="8"
+            refX="4"
             refY="3"
             orient="auto"
           >
@@ -122,7 +122,7 @@ export function ArrowOverlay({
             id="arrowhead-preview"
             markerWidth="8"
             markerHeight="6"
-            refX="8"
+            refX="4"
             refY="3"
             orient="auto"
           >
@@ -131,38 +131,42 @@ export function ArrowOverlay({
         )}
       </defs>
 
-      {arrowPositions.map((pos) => (
-        <line
-          key={pos.arrowId}
-          data-testid="arrow-line"
-          className="arrow-line"
-          x1={pos.x1}
-          y1={pos.y1}
-          x2={pos.x2}
-          y2={pos.y2}
-          stroke={pos.color}
-          strokeWidth={2}
-          strokeOpacity={0.6}
-          markerEnd={`url(#arrowhead-${pos.arrowId})`}
-          style={{ pointerEvents: "auto", cursor: "pointer" }}
-          onClick={() => removeArrow(pos.layerId, pos.arrowId)}
-        />
-      ))}
+      {arrowPositions.map((pos) => {
+        const mx = (pos.x1 + pos.x2) / 2
+        const my = (pos.y1 + pos.y2) / 2
+        return (
+          <path
+            key={pos.arrowId}
+            data-testid="arrow-line"
+            className="arrow-line"
+            d={`M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`}
+            stroke={pos.color}
+            strokeWidth={2}
+            strokeOpacity={0.6}
+            fill="none"
+            markerMid={`url(#arrowhead-${pos.arrowId})`}
+            style={{ pointerEvents: "auto", cursor: "pointer" }}
+            onClick={() => removeArrow(pos.layerId, pos.arrowId)}
+          />
+        )
+      })}
 
-      {previewPosition && drawingColor && (
-        <line
-          data-testid="preview-arrow"
-          x1={previewPosition.x1}
-          y1={previewPosition.y1}
-          x2={previewPosition.x2}
-          y2={previewPosition.y2}
-          stroke={drawingColor}
-          strokeWidth={2}
-          strokeOpacity={0.6}
-          strokeDasharray="6 4"
-          markerEnd="url(#arrowhead-preview)"
-        />
-      )}
+      {previewPosition && drawingColor && (() => {
+        const mx = (previewPosition.x1 + previewPosition.x2) / 2
+        const my = (previewPosition.y1 + previewPosition.y2) / 2
+        return (
+          <path
+            data-testid="preview-arrow"
+            d={`M ${previewPosition.x1} ${previewPosition.y1} L ${mx} ${my} L ${previewPosition.x2} ${previewPosition.y2}`}
+            stroke={drawingColor}
+            strokeWidth={2}
+            strokeOpacity={0.6}
+            strokeDasharray="6 4"
+            fill="none"
+            markerMid="url(#arrowhead-preview)"
+          />
+        )
+      })()}
     </svg>
   )
 }
