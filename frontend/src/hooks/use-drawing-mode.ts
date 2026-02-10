@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { toast } from "sonner"
 import type { Arrow, ArrowEndpoint, DrawingState, WordSelection } from "@/types/editor"
 
 interface UseDrawingModeOptions {
@@ -60,6 +61,11 @@ export function useDrawingMode({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code !== "KeyA" || e.repeat) return
       if (!selection) return
+
+      if (!activeLayerIdRef.current) {
+        toast.warning("Select a layer before drawing arrows")
+        return
+      }
 
       e.preventDefault()
 

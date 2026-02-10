@@ -13,6 +13,7 @@ import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { ArrowOverlay } from "./components/ArrowOverlay";
+import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 
 export function App() {
@@ -77,6 +78,7 @@ export function App() {
 
   return (
     <WorkspaceProvider value={workspace}>
+      <Toaster />
       <div className="flex h-screen">
         <ButtonPane />
         {isManagementPaneOpen && <ManagementPane />}

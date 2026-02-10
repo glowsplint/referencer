@@ -59,8 +59,8 @@ export function ButtonPane() {
         buttonProps={{ "data-testid": "painterModeButton" }}
       />
       <SwitchingButtonIcon
-        iconOne={<LockOpen size={20} />}
-        iconTwo={<Lock size={20} />}
+        iconOne={<Lock size={20} />}
+        iconTwo={<LockOpen size={20} />}
         bool={settings.isLocked}
         callback={toggleLocked}
         title="Toggle editor lock"

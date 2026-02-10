@@ -141,3 +141,9 @@
 *::after {
   transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease !important;
 }
+
+[data-sonner-toaster] *,
+[data-sonner-toaster] *::before,
+[data-sonner-toaster] *::after {
+  transition: transform 0.4s ease !important;
+}

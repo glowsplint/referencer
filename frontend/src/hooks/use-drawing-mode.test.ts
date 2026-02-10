@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
+import { toast } from "sonner"
 import { useDrawingMode } from "./use-drawing-mode"
 import type { WordSelection } from "@/types/editor"
+
+vi.mock("sonner", () => ({
+  toast: { warning: vi.fn() },
+}))
 
 function createOptions(overrides: Record<string, unknown> = {}) {
   return {
@@ -134,24 +139,22 @@ describe("useDrawingMode", () => {
     expect(result.current.drawingState).toBeNull()
   })
 
-  it("does not commit when activeLayerId is null", () => {
+  it("shows error toast and does not enter drawing mode when activeLayerId is null", () => {
     const addArrow = vi.fn()
-    const { rerender } = renderHook(
-      (props: { selection: WordSelection | null }) =>
-        useDrawingMode({
-          isLocked: true,
-          selection: props.selection,
-          activeLayerId: null,
-          addArrow,
-        }),
-      { initialProps: { selection: word1 } }
+    const { result } = renderHook(() =>
+      useDrawingMode({
+        isLocked: true,
+        selection: word1,
+        activeLayerId: null,
+        addArrow,
+      })
     )
 
     act(() => { fireKeyDown("a") })
-    rerender({ selection: word2 })
-    act(() => { fireKeyUp("a") })
 
-    expect(addArrow).not.toHaveBeenCalled()
+    expect(toast.warning).toHaveBeenCalledWith("Select a layer before drawing arrows")
+    expect(result.current.drawingState).toBeNull()
+    expect(result.current.isDrawing).toBe(false)
   })
 
   it("clears drawingState on unlock", () => {
