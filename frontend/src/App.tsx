@@ -46,7 +46,7 @@ export function App() {
     editorCount,
   });
 
-  const { drawingState } = useDrawingMode({
+  const { drawingState, isDrawing } = useDrawingMode({
     isLocked: settings.isLocked,
     selection,
     activeLayerId,
@@ -80,7 +80,7 @@ export function App() {
     <WorkspaceProvider value={workspace}>
       <Toaster />
       <div className="flex h-screen">
-        <ButtonPane />
+        <ButtonPane isDrawing={isDrawing} />
         {isManagementPaneOpen && <ManagementPane />}
         <EditorContext.Provider value={{ editor: activeEditor }}>
           <div className="flex flex-col flex-1 min-w-0">

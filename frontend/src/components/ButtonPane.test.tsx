@@ -3,8 +3,8 @@ import { describe, it, expect } from "vitest"
 import { ButtonPane } from "./ButtonPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
 
-function renderButtonPane(overrides = {}) {
-  return renderWithWorkspace(<ButtonPane />, overrides)
+function renderButtonPane(overrides = {}, props: { isDrawing?: boolean } = {}) {
+  return renderWithWorkspace(<ButtonPane {...props} />, overrides)
 }
 
 describe("ButtonPane", () => {
@@ -45,5 +45,18 @@ describe("ButtonPane", () => {
     const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("lockButton"))
     expect(workspace.toggleLocked).toHaveBeenCalledOnce()
+  })
+
+  it("shows arrowhead icon when isDrawing is true", () => {
+    renderButtonPane({}, { isDrawing: true })
+    const button = screen.getByTestId("painterModeButton")
+    expect(button.querySelector("svg")).toBeInTheDocument()
+  })
+
+  it("painter mode button is the first button in the pane", () => {
+    renderButtonPane()
+    const pane = screen.getByTestId("painterModeButton").parentElement!
+    const buttons = pane.querySelectorAll("button")
+    expect(buttons[0]).toBe(screen.getByTestId("painterModeButton"))
   })
 })

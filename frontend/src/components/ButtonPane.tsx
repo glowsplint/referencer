@@ -3,16 +3,21 @@ import {
   MoonStar,
   Columns2,
   Rows2,
-  BoxSelect,
+  MousePointer2,
   Paintbrush,
   Lock,
   LockOpen,
   Menu,
+  ArrowUpRight,
 } from "lucide-react";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 
-export function ButtonPane() {
+interface ButtonPaneProps {
+  isDrawing?: boolean;
+}
+
+export function ButtonPane({ isDrawing = false }: ButtonPaneProps) {
   const {
     settings,
     annotations,
@@ -24,8 +29,22 @@ export function ButtonPane() {
     toggleLocked,
   } = useWorkspace();
 
+  const painterIcon = isDrawing
+    ? <ArrowUpRight size={20} />
+    : annotations.isPainterMode
+      ? <Paintbrush size={20} />
+      : <MousePointer2 size={20} />;
+
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
+      <button
+        onClick={togglePainterMode}
+        title="Toggle Painter mode"
+        className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+        data-testid="painterModeButton"
+      >
+        {painterIcon}
+      </button>
       <SwitchingButtonIcon
         iconOne={<Menu size={20} />}
         iconTwo={<Menu size={20} />}
@@ -49,14 +68,6 @@ export function ButtonPane() {
         callback={toggleMultipleRowsLayout}
         title="Toggle editor layout"
         buttonProps={{ "data-testid": "editorLayoutButton" }}
-      />
-      <SwitchingButtonIcon
-        iconOne={<BoxSelect size={20} />}
-        iconTwo={<Paintbrush size={20} />}
-        bool={annotations.isPainterMode}
-        callback={togglePainterMode}
-        title="Toggle Painter mode"
-        buttonProps={{ "data-testid": "painterModeButton" }}
       />
       <SwitchingButtonIcon
         iconOne={<Lock size={20} />}
