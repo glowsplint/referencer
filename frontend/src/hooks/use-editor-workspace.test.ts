@@ -453,20 +453,19 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeLayerId).toBe(result.current.layers[0].id)
   })
 
-  it("addLayer does not change activeLayerId when layers already exist", () => {
+  it("addLayer always sets the new layer as active", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
     act(() => {
       result.current.addLayer()
     })
 
-    const firstId = result.current.layers[0].id
-
     act(() => {
       result.current.addLayer()
     })
 
-    expect(result.current.activeLayerId).toBe(firstId)
+    const secondId = result.current.layers[1].id
+    expect(result.current.activeLayerId).toBe(secondId)
   })
 
   it("activeLayerId is initially null", () => {

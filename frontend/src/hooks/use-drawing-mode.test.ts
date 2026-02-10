@@ -152,7 +152,7 @@ describe("useDrawingMode", () => {
 
     act(() => { fireKeyDown("a") })
 
-    expect(toast.warning).toHaveBeenCalledWith("Select a layer before drawing arrows")
+    expect(toast.warning).toHaveBeenCalledWith("Add a new layer before drawing arrows")
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
   })

@@ -21,7 +21,7 @@ test("shows error toast when drawing without an active layer", async ({ page }) 
   // Toast should appear with error message
   const toast = page.locator("[data-sonner-toast]");
   await expect(toast).toBeVisible({ timeout: 2000 });
-  await expect(toast).toContainText("Select a layer before drawing arrows");
+  await expect(toast).toContainText("Add a new layer before drawing arrows");
 
   // Should NOT enter drawing mode — no preview arrow
   await page.keyboard.press("ArrowRight");

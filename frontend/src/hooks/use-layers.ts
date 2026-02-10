@@ -20,9 +20,7 @@ export function useLayers() {
       const color = TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
       if (!color) return prev
       const name = `Layer ${nextNumber}`
-      if (prev.length === 0) {
-        setActiveLayerId(id)
-      }
+      setActiveLayerId(id)
       return [...prev, { id, name, color, visible: true, highlights: [], arrows: [] }]
     })
   }, [])

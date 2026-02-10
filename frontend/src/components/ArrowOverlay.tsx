@@ -114,7 +114,7 @@ export function ArrowOverlay({
             refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 8 3, 0 6" fill={pos.color} />
+            <polygon points="0 0, 8 3, 0 6" fill={pos.color} fillOpacity={0.6} />
           </marker>
         ))}
         {previewPosition && drawingColor && (
@@ -126,7 +126,7 @@ export function ArrowOverlay({
             refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 8 3, 0 6" fill={drawingColor} />
+            <polygon points="0 0, 8 3, 0 6" fill={drawingColor} fillOpacity={0.6} />
           </marker>
         )}
       </defs>
@@ -142,6 +142,7 @@ export function ArrowOverlay({
           y2={pos.y2}
           stroke={pos.color}
           strokeWidth={2}
+          strokeOpacity={0.6}
           markerEnd={`url(#arrowhead-${pos.arrowId})`}
           style={{ pointerEvents: "auto", cursor: "pointer" }}
           onClick={() => removeArrow(pos.layerId, pos.arrowId)}
@@ -157,6 +158,7 @@ export function ArrowOverlay({
           y2={previewPosition.y2}
           stroke={drawingColor}
           strokeWidth={2}
+          strokeOpacity={0.6}
           strokeDasharray="6 4"
           markerEnd="url(#arrowhead-preview)"
         />

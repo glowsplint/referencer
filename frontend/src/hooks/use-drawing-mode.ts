@@ -63,7 +63,7 @@ export function useDrawingMode({
       if (!selection) return
 
       if (!activeLayerIdRef.current) {
-        toast.warning("Select a layer before drawing arrows")
+        toast.warning("Add a new layer before drawing arrows")
         return
       }
 
