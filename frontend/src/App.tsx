@@ -197,6 +197,7 @@ export function App() {
                   activeTool={annotations.activeTool}
                   sectionVisibility={sectionVisibility}
                   isDarkMode={settings.isDarkMode}
+                  isLocked={settings.isLocked || readOnly}
                 />
                 {editorWidths.map((width, i) => {
                   const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]

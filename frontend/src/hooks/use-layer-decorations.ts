@@ -51,12 +51,6 @@ export function useLayerDecorations(
         if (highlight.editorIndex !== editorIndex) continue
         tryPushDecoration(decorations, highlight.from, highlight.to, opaqueColor)
       }
-      for (const arrow of layer.arrows) {
-        for (const endpoint of [arrow.from, arrow.to]) {
-          if (endpoint.editorIndex !== editorIndex) continue
-          tryPushDecoration(decorations, endpoint.from, endpoint.to, opaqueColor)
-        }
-      }
     }
 
     const decorationSet = DecorationSet.create(editor.state.doc, decorations)

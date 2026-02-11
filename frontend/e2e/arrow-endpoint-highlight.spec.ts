@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
   await page.keyboard.press("a");
 });
 
-test("arrow endpoints are highlighted with layer color after drawing", async ({ page }) => {
+test("arrow endpoints are highlighted as SVG rects after drawing", async ({ page }) => {
   // Click current word to set anchor
   const sel = page.locator(".word-selection").first();
   await sel.click({ force: true });
@@ -41,26 +41,12 @@ test("arrow endpoints are highlighted with layer color after drawing", async ({ 
   // Arrow should be drawn
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Clear selection to count highlights cleanly
-  const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
-  await hr.click();
-  await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
-
-  // Both arrow endpoints should be highlighted with background-color
-  // (committed highlight from beforeEach + 2 arrow endpoints, but the
-  // committed highlight overlaps with one endpoint, so we see 2 distinct spans)
-  const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
-  await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });
-
-  // Each highlight should contain the layer's pre-blended opaque color
-  for (let i = 0; i < 2; i++) {
-    const style = await highlightSpans.nth(i).getAttribute("style");
-    expect(style).toContain("background-color");
-    expect(style).toMatch(/rgb\(\d+, \d+, \d+\)/);
-  }
+  // Both arrow endpoints should be highlighted as SVG rects in the overlay
+  const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
+  await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
 });
 
-test("arrow endpoint highlights disappear when layer is hidden", async ({ page }) => {
+test("arrow endpoint SVG rects disappear when layer is hidden", async ({ page }) => {
   // Click current word to set anchor
   const sel = page.locator(".word-selection").first();
   await sel.click({ force: true });
@@ -73,24 +59,19 @@ test("arrow endpoint highlights disappear when layer is hidden", async ({ page }
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Clear selection to count highlights cleanly
-  const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
-  await hr.click();
-  await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
-
-  const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
-  await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });
+  const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
+  await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
 
   // Toggle layer visibility off
   await page.getByTestId("layerVisibility-0").click();
-  await expect(highlightSpans).toHaveCount(0, { timeout: 2000 });
+  await expect(endpointRects).toHaveCount(0, { timeout: 2000 });
 
   // Toggle layer visibility back on
   await page.getByTestId("layerVisibility-0").click();
-  await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });
+  await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
 });
 
-test("arrow endpoint highlights disappear when unlocked", async ({ page }) => {
+test("arrow endpoint SVG rects disappear when unlocked", async ({ page }) => {
   // Click current word to set anchor
   const sel = page.locator(".word-selection").first();
   await sel.click({ force: true });
@@ -103,19 +84,14 @@ test("arrow endpoint highlights disappear when unlocked", async ({ page }) => {
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Clear selection to count highlights cleanly
-  const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
-  await hr.click();
-  await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
+  const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
+  await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
 
-  const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
-  await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });
-
-  // Unlock editor — highlights should disappear
+  // Unlock editor — endpoint rects should disappear
   await page.getByTestId("lockButton").click();
-  await expect(highlightSpans).toHaveCount(0, { timeout: 2000 });
+  await expect(endpointRects).toHaveCount(0, { timeout: 2000 });
 
-  // Lock again — highlights should reappear
+  // Lock again — endpoint rects should reappear
   await page.getByTestId("lockButton").click();
-  await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });
+  await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
 });

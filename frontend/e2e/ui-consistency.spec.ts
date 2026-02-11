@@ -150,30 +150,20 @@ test.describe("no dangling highlights when layer is hidden", () => {
       timeout: 2000,
     });
 
-    // Clear selection
-    const hr = page
-      .locator('.simple-editor [data-type="horizontalRule"]')
-      .first();
-    await hr.click();
-    await expect(page.locator(".word-selection")).toHaveCount(0, {
-      timeout: 2000,
-    });
-
-    // Arrow endpoint highlights should exist
-    const highlights = page.locator(
-      '.simple-editor span[style*="background-color"]'
+    // Arrow endpoint highlights should exist as SVG rects
+    const endpointRects = page.locator(
+      '[data-testid="arrow-endpoint-rect"]'
     );
-    const countBefore = await highlights.count();
-    expect(countBefore).toBeGreaterThan(0);
+    await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
 
     // Hide layer
     await page.getByTestId("layerVisibility-0").click();
 
-    // Both arrows AND highlights should be gone
+    // Both arrows AND endpoint rects should be gone
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
-    await expect(highlights).toHaveCount(0, { timeout: 2000 });
+    await expect(endpointRects).toHaveCount(0, { timeout: 2000 });
   });
 });
 
@@ -368,6 +358,10 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(page.getByTestId("arrow-line")).toHaveCount(1);
     await expect(page.getByText("Synced note")).toBeVisible();
 
+    // Arrow endpoint rects should exist in SVG overlay
+    const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
+    await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
+
     // Clear selection to verify highlights
     const hr = page
       .locator('.simple-editor [data-type="horizontalRule"]')
@@ -397,6 +391,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
       timeout: 2000,
     });
     await expect(highlights).toHaveCount(0, { timeout: 2000 });
+    await expect(endpointRects).toHaveCount(0, { timeout: 2000 });
 
     // Show Layer 1
     await page.getByTestId("layerVisibility-0").click();
@@ -408,6 +403,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(page.getByText("Synced note")).toBeVisible({ timeout: 2000 });
     const highlightsAfter = await highlights.count();
     expect(highlightsAfter).toBe(highlightsBefore);
+    await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
   });
 
   test("layer 2 elements unaffected when layer 1 is toggled", async ({
@@ -560,6 +556,9 @@ test.describe("all elements hidden state", () => {
       page.locator(
         '.simple-editor span[style*="background-color"]:not(.word-selection):not(.similar-text-highlight)'
       )
+    ).toHaveCount(0, { timeout: 2000 });
+    await expect(
+      page.locator('[data-testid="arrow-endpoint-rect"]')
     ).toHaveCount(0, { timeout: 2000 });
 
     // Word selection should still work (not layer-dependent)

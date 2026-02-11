@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
-import { getWordCenter } from "@/lib/tiptap/nearest-word"
+import { getWordCenter, getWordRect } from "@/lib/tiptap/nearest-word"
 import { blendWithBackground } from "@/lib/color"
 
 const ARROW_OPACITY = 0.6
@@ -16,6 +16,14 @@ interface ArrowOverlayProps {
   activeTool: ActiveTool
   sectionVisibility: boolean[]
   isDarkMode: boolean
+  isLocked: boolean
+}
+
+interface WordRect {
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 interface ArrowPosition {
@@ -26,6 +34,8 @@ interface ArrowPosition {
   y1: number
   x2: number
   y2: number
+  fromRect: WordRect | null
+  toRect: WordRect | null
 }
 
 export function ArrowOverlay({
@@ -38,6 +48,7 @@ export function ArrowOverlay({
   activeTool,
   sectionVisibility,
   isDarkMode,
+  isLocked,
 }: ArrowOverlayProps) {
   const [tick, setTick] = useState(0)
   const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null)
@@ -102,6 +113,8 @@ export function ArrowOverlay({
             y1: fromCenter.cy,
             x2: toCenter.cx,
             y2: toCenter.cy,
+            fromRect: isLocked ? getWordRect(arrow.from, editorsRef, containerRect) : null,
+            toRect: isLocked ? getWordRect(arrow.to, editorsRef, containerRect) : null,
           })
         }
       }
@@ -109,7 +122,7 @@ export function ArrowOverlay({
 
     return positions
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layers, editorsRef, containerRect?.width, containerRect?.height, tick, sectionVisibility])
+  }, [layers, editorsRef, containerRect?.width, containerRect?.height, tick, sectionVisibility, isLocked])
 
   const previewPosition = useMemo(() => {
     if (!drawingState || !containerRect) return null
@@ -150,7 +163,7 @@ export function ArrowOverlay({
             refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 8 3, 0 6" fill={blendArrow(pos.color)} />
+            <polygon points="0 0, 8 3, 0 6" fill={pos.color} />
           </marker>
         ))}
         {previewPosition && drawingColor && (
@@ -175,14 +188,36 @@ export function ArrowOverlay({
         const strokeColor = blendArrow(pos.color)
         return (
           <g key={pos.arrowId}>
-            <path
-              data-testid="arrow-line"
-              d={arrowPath}
-              stroke={strokeColor}
-              strokeWidth={2}
-              fill="none"
-              markerMid={`url(#arrowhead-${pos.arrowId})`}
-            />
+            <g opacity={ARROW_OPACITY}>
+              {pos.fromRect && (
+                <rect
+                  data-testid="arrow-endpoint-rect"
+                  x={pos.fromRect.x}
+                  y={pos.fromRect.y}
+                  width={pos.fromRect.width}
+                  height={pos.fromRect.height}
+                  fill={pos.color}
+                />
+              )}
+              {pos.toRect && (
+                <rect
+                  data-testid="arrow-endpoint-rect"
+                  x={pos.toRect.x}
+                  y={pos.toRect.y}
+                  width={pos.toRect.width}
+                  height={pos.toRect.height}
+                  fill={pos.color}
+                />
+              )}
+              <path
+                data-testid="arrow-line"
+                d={arrowPath}
+                stroke={pos.color}
+                strokeWidth={2}
+                fill="none"
+                markerMid={`url(#arrowhead-${pos.arrowId})`}
+              />
+            </g>
             {/* Wider invisible hit area for easier hovering/clicking */}
             <path
               data-testid="arrow-hit-area"

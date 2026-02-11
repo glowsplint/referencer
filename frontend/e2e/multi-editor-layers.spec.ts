@@ -113,7 +113,7 @@ test.describe("cross-editor arrows (2 editors)", () => {
     });
   });
 
-  test("cross-editor arrow highlights appear in both editors", async ({
+  test("cross-editor arrow highlights appear as SVG rects", async ({
     page,
   }) => {
     await drawArrowToEditor(page, 1, 2);
@@ -121,22 +121,9 @@ test.describe("cross-editor arrows (2 editors)", () => {
       timeout: 2000,
     });
 
-    // Clear selection so it doesn't merge with highlight spans
-    const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
-    await hr.click();
-    await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
-
-    const e1Highlights = page
-      .locator(".simple-editor-wrapper")
-      .nth(0)
-      .locator('span[style*="background-color"]');
-    const e2Highlights = page
-      .locator(".simple-editor-wrapper")
-      .nth(1)
-      .locator('span[style*="background-color"]');
-
-    await expect(e1Highlights.first()).toBeVisible({ timeout: 2000 });
-    await expect(e2Highlights.first()).toBeVisible({ timeout: 2000 });
+    // Both arrow endpoints should be highlighted as SVG rects in the overlay
+    const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
+    await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
   });
 
   test("cross-editor arrow can be deleted by clicking", async ({ page }) => {
@@ -168,15 +155,14 @@ test.describe("cross-editor arrows (2 editors)", () => {
       timeout: 2000,
     });
 
-    const highlights = page.locator(
-      '.simple-editor span[style*="background-color"]:not(.word-selection):not(.similar-text-highlight)'
-    );
-    await expect(highlights).toHaveCount(0, { timeout: 2000 });
+    const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
+    await expect(endpointRects).toHaveCount(0, { timeout: 2000 });
 
     await page.getByTestId("layerVisibility-0").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
+    await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
   });
 });
 

@@ -104,6 +104,43 @@ export function findNearestWordOnSameLine(
   return closestByCx(sameLine, currentCenter.cx).word
 }
 
+export function getWordRect(
+  word: CollectedWord,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  containerRect: DOMRect
+): { x: number; y: number; width: number; height: number } | null {
+  const editor = editorsRef.current.get(word.editorIndex)
+  if (!editor) return null
+
+  try {
+    const nodeAt = editor.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editor.view.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          x: rect.left - containerRect.left,
+          y: rect.top - containerRect.top,
+          width: rect.width,
+          height: rect.height,
+        }
+      }
+      return null
+    }
+
+    const startCoords = editor.view.coordsAtPos(word.from)
+    const endCoords = editor.view.coordsAtPos(word.to)
+    return {
+      x: startCoords.left - containerRect.left,
+      y: startCoords.top - containerRect.top,
+      width: endCoords.right - startCoords.left,
+      height: startCoords.bottom - startCoords.top,
+    }
+  } catch {
+    return null
+  }
+}
+
 export function getWordCenter(
   word: CollectedWord,
   editorsRef: React.RefObject<Map<number, Editor>>,

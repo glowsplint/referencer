@@ -1,6 +1,7 @@
-import { describe, it, expect } from "vitest"
-import { findNearestWord, findNearestWordOnSameLine, findFirstWordOnAdjacentLine, findWordInReadingOrder } from "./nearest-word"
+import { describe, it, expect, vi } from "vitest"
+import { findNearestWord, findNearestWordOnSameLine, findFirstWordOnAdjacentLine, findWordInReadingOrder, getWordRect } from "./nearest-word"
 import type { CollectedWord } from "./word-collection"
+import type { Editor } from "@tiptap/react"
 
 function makeCandidate(cx: number, cy: number, text = "word"): { word: CollectedWord; cx: number; cy: number } {
   return {
@@ -218,6 +219,73 @@ describe("findFirstWordOnAdjacentLine", () => {
     ]
     const result = findFirstWordOnAdjacentLine(center, candidates, "ArrowRight")
     expect(result?.text).toBe("row2")
+  })
+})
+
+describe("getWordRect", () => {
+  function createMockEditor(coordsMap: Record<number, { left: number; right: number; top: number; bottom: number }>) {
+    return {
+      state: {
+        doc: { nodeAt: vi.fn(() => ({ type: { name: "text" } })) },
+      },
+      view: {
+        coordsAtPos: vi.fn((pos: number) => coordsMap[pos] ?? { left: 0, right: 0, top: 0, bottom: 0 }),
+        nodeDOM: vi.fn(),
+      },
+    } as unknown as Editor
+  }
+
+  const containerRect = { left: 10, top: 20, width: 800, height: 600 } as DOMRect
+
+  it("returns rect with SVG-relative coordinates", () => {
+    const editor = createMockEditor({
+      5: { left: 60, right: 70, top: 120, bottom: 140 },
+      10: { left: 100, right: 110, top: 120, bottom: 140 },
+    })
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+
+    const result = getWordRect(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      containerRect
+    )
+
+    expect(result).toEqual({
+      x: 50,    // 60 - 10
+      y: 100,   // 120 - 20
+      width: 50, // 110 - 60
+      height: 20, // 140 - 120
+    })
+  })
+
+  it("returns null when editor not found", () => {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    const result = getWordRect(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      containerRect
+    )
+    expect(result).toBeNull()
+  })
+
+  it("returns null when coordsAtPos throws", () => {
+    const editor = {
+      state: {
+        doc: { nodeAt: vi.fn(() => ({ type: { name: "text" } })) },
+      },
+      view: {
+        coordsAtPos: vi.fn(() => { throw new Error("invalid pos") }),
+        nodeDOM: vi.fn(),
+      },
+    } as unknown as Editor
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+
+    const result = getWordRect(
+      { editorIndex: 0, from: 999, to: 1000, text: "x" },
+      editorsRef,
+      containerRect
+    )
+    expect(result).toBeNull()
   })
 })
 

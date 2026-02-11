@@ -4,11 +4,19 @@ import { ArrowOverlay } from "./ArrowOverlay"
 import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
 import type { Editor } from "@tiptap/react"
 
-// Mock getWordCenter to return deterministic positions
+// Mock getWordCenter and getWordRect to return deterministic positions
 vi.mock("@/lib/tiptap/nearest-word", () => ({
   getWordCenter: vi.fn((word: { editorIndex: number; from: number }) => {
     // Return predictable positions based on from offset
     return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 }
+  }),
+  getWordRect: vi.fn((word: { editorIndex: number; from: number; to: number }) => {
+    return {
+      x: word.from * 10,
+      y: word.editorIndex * 50 + 15,
+      width: (word.to - word.from) * 10,
+      height: 20,
+    }
   }),
 }))
 
@@ -42,6 +50,7 @@ function createDefaultProps(overrides: Record<string, unknown> = {}) {
     activeTool: "selection" as ActiveTool,
     sectionVisibility: [true, true, true],
     isDarkMode: false,
+    isLocked: false,
     ...overrides,
   }
 }
@@ -237,6 +246,45 @@ describe("ArrowOverlay", () => {
     })
 
     expect(getWordCenter.mock.calls.length).toBeGreaterThan(callsBefore)
+  })
+
+  it("renders endpoint rects when isLocked", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], isLocked: true })}
+      />
+    )
+
+    const rects = screen.getAllByTestId("arrow-endpoint-rect")
+    expect(rects).toHaveLength(2)
+  })
+
+  it("does not render endpoint rects when not locked", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], isLocked: false })}
+      />
+    )
+
+    expect(screen.queryByTestId("arrow-endpoint-rect")).not.toBeInTheDocument()
   })
 
   it("arrow hit areas have pointer-events none when arrow tool is active", () => {

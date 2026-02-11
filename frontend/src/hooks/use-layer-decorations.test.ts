@@ -100,60 +100,9 @@ describe("useLayerDecorations", () => {
     expect(capturedDecorations).toHaveLength(0)
   })
 
-  it("creates decorations for both arrow endpoints in same editor", () => {
+  it("does not create decorations for arrow endpoints (handled by SVG overlay)", () => {
     const editor = createMockEditor()
     const layer = createLayer({
-      arrows: [
-        {
-          id: "a1",
-          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
-        },
-      ],
-    })
-    renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true, false)
-    )
-    expect(capturedDecorations).toHaveLength(2)
-    expect(capturedDecorations[0]).toEqual({
-      from: 1,
-      to: 5,
-      attrs: { style: "background-color: rgb(254, 228, 228)" },
-    })
-    expect(capturedDecorations[1]).toEqual({
-      from: 10,
-      to: 15,
-      attrs: { style: "background-color: rgb(254, 228, 228)" },
-    })
-  })
-
-  it("only creates decoration for arrow endpoint in this editor", () => {
-    const editor = createMockEditor()
-    const layer = createLayer({
-      arrows: [
-        {
-          id: "a1",
-          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
-        },
-      ],
-    })
-    renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true, false)
-    )
-    // Only "from" endpoint is in editor 0
-    expect(capturedDecorations).toHaveLength(1)
-    expect(capturedDecorations[0]).toEqual({
-      from: 1,
-      to: 5,
-      attrs: { style: "background-color: rgb(254, 228, 228)" },
-    })
-  })
-
-  it("skips arrow endpoints from invisible layers", () => {
-    const editor = createMockEditor()
-    const layer = createLayer({
-      visible: false,
       arrows: [
         {
           id: "a1",
@@ -168,7 +117,7 @@ describe("useLayerDecorations", () => {
     expect(capturedDecorations).toHaveLength(0)
   })
 
-  it("combines highlights and arrow endpoint decorations", () => {
+  it("only creates decorations for highlights, not arrow endpoints", () => {
     const editor = createMockEditor()
     const layer = createLayer({
       highlights: [
@@ -185,7 +134,7 @@ describe("useLayerDecorations", () => {
     renderHook(() =>
       useLayerDecorations(editor as any, [layer], 0, true, false)
     )
-    // 1 highlight + 2 arrow endpoints = 3 decorations
-    expect(capturedDecorations).toHaveLength(3)
+    // Only the highlight decoration, arrow endpoints are in SVG
+    expect(capturedDecorations).toHaveLength(1)
   })
 })
