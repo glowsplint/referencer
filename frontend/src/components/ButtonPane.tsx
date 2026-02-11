@@ -11,9 +11,11 @@ import {
   ArrowBigRight,
   MessageSquareText,
   Keyboard,
+  CircleHelp,
 } from "lucide-react";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
+import { FAQDialog } from "./FAQDialog";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import type { ActiveTool } from "@/types/editor";
 
@@ -31,6 +33,7 @@ export function ButtonPane() {
   } = useWorkspace();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [faqOpen, setFaqOpen] = useState(false);
 
   const toolButtons: { tool: ActiveTool; icon: React.ReactNode; title: string; testId: string }[] = [
     { tool: "selection", icon: <MousePointer2 size={20} />, title: "Selection tool", testId: "selectionToolButton" },
@@ -56,6 +59,14 @@ export function ButtonPane() {
         data-testid="keyboardShortcutsButton"
       >
         <Keyboard size={20} />
+      </button>
+      <button
+        onClick={() => setFaqOpen(true)}
+        title="Help & FAQ"
+        className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+        data-testid="faqButton"
+      >
+        <CircleHelp size={20} />
       </button>
       <div className="w-6 border-t border-border" role="separator" />
       {/* Tools group */}
@@ -105,6 +116,7 @@ export function ButtonPane() {
         open={shortcutsOpen}
         onOpenChange={setShortcutsOpen}
       />
+      <FAQDialog open={faqOpen} onOpenChange={setFaqOpen} />
     </div>
   );
 }

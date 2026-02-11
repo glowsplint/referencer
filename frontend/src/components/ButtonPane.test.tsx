@@ -11,6 +11,7 @@ describe("ButtonPane", () => {
   it("renders all toggle buttons", () => {
     renderButtonPane()
     expect(screen.getByTestId("keyboardShortcutsButton")).toBeInTheDocument()
+    expect(screen.getByTestId("faqButton")).toBeInTheDocument()
     expect(screen.getByTestId("selectionToolButton")).toBeInTheDocument()
     expect(screen.getByTestId("arrowToolButton")).toBeInTheDocument()
     expect(screen.getByTestId("commentsToolButton")).toBeInTheDocument()
@@ -110,5 +111,12 @@ describe("ButtonPane", () => {
     fireEvent.click(screen.getByTestId("keyboardShortcutsButton"))
     expect(screen.getByTestId("keyboardShortcutsDialog")).toBeInTheDocument()
     expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument()
+  })
+
+  it("opens FAQ dialog when help button is clicked", () => {
+    renderButtonPane()
+    fireEvent.click(screen.getByTestId("faqButton"))
+    expect(screen.getByTestId("faqDialog")).toBeInTheDocument()
+    expect(screen.getByText("Frequently Asked Questions")).toBeInTheDocument()
   })
 })
