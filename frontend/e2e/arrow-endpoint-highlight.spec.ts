@@ -19,6 +19,9 @@ test.beforeEach(async ({ page }) => {
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Dismiss auto-focused annotation input so arrow keys navigate words
+  await page.keyboard.press("Escape");
 });
 
 test("arrow endpoints are highlighted with layer color after drawing", async ({ page }) => {

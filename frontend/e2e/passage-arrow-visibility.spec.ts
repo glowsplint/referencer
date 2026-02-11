@@ -35,6 +35,8 @@ async function drawArrowRight(
   page: import("@playwright/test").Page,
   steps: number
 ) {
+  // Dismiss any auto-focused annotation input so arrow keys navigate words
+  await page.keyboard.press("Escape");
   await page.keyboard.down("a");
   for (let i = 0; i < steps; i++) {
     await page.keyboard.press("ArrowRight");
@@ -49,6 +51,8 @@ async function drawArrowToEditor(
   editorCount: number,
   maxSteps = 80
 ) {
+  // Dismiss any auto-focused annotation input so arrow keys navigate words
+  await page.keyboard.press("Escape");
   await page.keyboard.down("a");
   for (let i = 0; i < maxSteps; i++) {
     await page.keyboard.press("ArrowRight");

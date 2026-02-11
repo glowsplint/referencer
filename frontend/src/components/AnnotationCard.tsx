@@ -58,6 +58,10 @@ export function AnnotationCard({
         e.preventDefault()
         handleBlur()
       }
+      if (e.key === "Escape") {
+        e.preventDefault()
+        textareaRef.current?.blur()
+      }
       // Stop propagation so arrow keys don't trigger word navigation
       e.stopPropagation()
     },
