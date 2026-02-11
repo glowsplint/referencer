@@ -26,6 +26,11 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // Debounce timer ref for editor content updates
   const contentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Helper to wrap callbacks with a readOnly guard, returning a fallback value when read-only
+  function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {
+    return ((...args: any[]) => readOnly ? fallback : fn(...args)) as T
+  }
+
   const guardedSendAction = useCallback(
     (type: string, payload: Record<string, unknown>) => {
       if (!readOnly) sendAction(type, payload)
@@ -35,53 +40,51 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
 
   // Wrap tracked layer actions to also send over WebSocket
   const addLayer = useCallback(
-    (opts?: { id?: string; name?: string; color?: string }) => {
-      if (readOnly) return ""
-      const id = trackedLayersHook.addLayer(opts)
-      if (!id) return ""
-      const layer = rawLayersHook.layers.find((l) => l.id === id)
-      // The layer may not be in state yet (setState is async), so derive from opts
-      const name =
-        opts?.name ??
-        layer?.name ??
-        `Layer ${rawLayersHook.layers.length + 1}`
-      const color = opts?.color ?? layer?.color ?? ""
-      guardedSendAction("addLayer", { id, name, color })
-      return id
-    },
+    guarded(
+      (opts?: { id?: string; name?: string; color?: string }) => {
+        const id = trackedLayersHook.addLayer(opts)
+        if (!id) return ""
+        const layer = rawLayersHook.layers.find((l) => l.id === id)
+        // The layer may not be in state yet (setState is async), so derive from opts
+        const name =
+          opts?.name ??
+          layer?.name ??
+          `Layer ${rawLayersHook.layers.length + 1}`
+        const color = opts?.color ?? layer?.color ?? ""
+        guardedSendAction("addLayer", { id, name, color })
+        return id
+      },
+      ""
+    ),
     [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction]
   )
 
   const removeLayer = useCallback(
-    (id: string) => {
-      if (readOnly) return
+    guarded((id: string) => {
       trackedLayersHook.removeLayer(id)
       guardedSendAction("removeLayer", { id })
-    },
+    }),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const updateLayerName = useCallback(
-    (id: string, name: string) => {
-      if (readOnly) return
+    guarded((id: string, name: string) => {
       trackedLayersHook.updateLayerName(id, name)
       guardedSendAction("updateLayerName", { id, name })
-    },
+    }),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const updateLayerColor = useCallback(
-    (id: string, color: string) => {
-      if (readOnly) return
+    guarded((id: string, color: string) => {
       trackedLayersHook.updateLayerColor(id, color)
       guardedSendAction("updateLayerColor", { id, color })
-    },
+    }),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const toggleLayerVisibility = useCallback(
-    (id: string) => {
-      if (readOnly) return
+    guarded((id: string) => {
       const layer = rawLayersHook.layers.find((l) => l.id === id)
       const wasVisible = layer?.visible ?? true
       trackedLayersHook.toggleLayerVisibility(id)
@@ -92,39 +95,39 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
         undo: () => rawLayersHook.toggleLayerVisibility(id),
         redo: () => rawLayersHook.toggleLayerVisibility(id),
       })
-    },
+    }),
     [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction, history]
   )
 
   const addHighlight = useCallback(
-    (
-      layerId: string,
-      highlight: Omit<Highlight, "id">,
-      opts?: { id?: string }
-    ): string => {
-      if (readOnly) return ""
-      const id = trackedLayersHook.addHighlight(layerId, highlight, opts)
-      guardedSendAction("addHighlight", {
-        layerId,
-        highlight: { ...highlight, id },
-      })
-      return id
-    },
+    guarded(
+      (
+        layerId: string,
+        highlight: Omit<Highlight, "id">,
+        opts?: { id?: string }
+      ): string => {
+        const id = trackedLayersHook.addHighlight(layerId, highlight, opts)
+        guardedSendAction("addHighlight", {
+          layerId,
+          highlight: { ...highlight, id },
+        })
+        return id
+      },
+      ""
+    ),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const removeHighlight = useCallback(
-    (layerId: string, highlightId: string) => {
-      if (readOnly) return
+    guarded((layerId: string, highlightId: string) => {
       trackedLayersHook.removeHighlight(layerId, highlightId)
       guardedSendAction("removeHighlight", { layerId, highlightId })
-    },
+    }),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const updateHighlightAnnotation = useCallback(
-    (layerId: string, highlightId: string, annotation: string) => {
-      if (readOnly) return
+    guarded((layerId: string, highlightId: string, annotation: string) => {
       trackedLayersHook.updateHighlightAnnotation(
         layerId,
         highlightId,
@@ -135,67 +138,67 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
         highlightId,
         annotation,
       })
-    },
+    }),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const addArrow = useCallback(
-    (
-      layerId: string,
-      arrow: Omit<Arrow, "id">,
-      opts?: { id?: string }
-    ): string => {
-      if (readOnly) return ""
-      const id = trackedLayersHook.addArrow(layerId, arrow, opts)
-      guardedSendAction("addArrow", {
-        layerId,
-        arrow: { ...arrow, id },
-      })
-      return id
-    },
+    guarded(
+      (
+        layerId: string,
+        arrow: Omit<Arrow, "id">,
+        opts?: { id?: string }
+      ): string => {
+        const id = trackedLayersHook.addArrow(layerId, arrow, opts)
+        guardedSendAction("addArrow", {
+          layerId,
+          arrow: { ...arrow, id },
+        })
+        return id
+      },
+      ""
+    ),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const removeArrow = useCallback(
-    (layerId: string, arrowId: string) => {
-      if (readOnly) return
+    guarded((layerId: string, arrowId: string) => {
       trackedLayersHook.removeArrow(layerId, arrowId)
       guardedSendAction("removeArrow", { layerId, arrowId })
-    },
+    }),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
-  const addEditor = useCallback(() => {
-    if (readOnly) return
-    trackedEditorsHook.addEditor()
-    const newIndex = rawEditorsHook.editorCount
-    const name =
-      rawEditorsHook.sectionNames[newIndex] ??
-      `Passage ${rawEditorsHook.editorCount + 1}`
-    guardedSendAction("addEditor", { index: newIndex, name })
-  }, [readOnly, trackedEditorsHook, rawEditorsHook, guardedSendAction])
+  const addEditor = useCallback(
+    guarded(() => {
+      trackedEditorsHook.addEditor()
+      const newIndex = rawEditorsHook.editorCount
+      const name =
+        rawEditorsHook.sectionNames[newIndex] ??
+        `Passage ${rawEditorsHook.editorCount + 1}`
+      guardedSendAction("addEditor", { index: newIndex, name })
+    }),
+    [readOnly, trackedEditorsHook, rawEditorsHook, guardedSendAction]
+  )
 
   const removeEditor = useCallback(
-    (index: number) => {
-      if (readOnly) return
+    guarded((index: number) => {
       trackedEditorsHook.removeEditor(index)
       guardedSendAction("removeEditor", { index })
-    },
+    }),
     [readOnly, trackedEditorsHook, guardedSendAction]
   )
 
   const updateSectionName = useCallback(
-    (index: number, name: string) => {
-      if (readOnly) return
+    guarded((index: number, name: string) => {
       trackedEditorsHook.updateSectionName(index, name)
       guardedSendAction("updateSectionName", { index, name })
-    },
+    }),
     [readOnly, trackedEditorsHook, guardedSendAction]
   )
 
   const toggleSectionVisibility = useCallback(
-    (index: number) => {
-      if (readOnly) return
+    guarded((index: number) => {
       const wasVisible = rawEditorsHook.sectionVisibility[index] ?? true
       const name = rawEditorsHook.sectionNames[index] ?? `Passage ${index + 1}`
       rawEditorsHook.toggleSectionVisibility(index)
@@ -206,13 +209,12 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
         undo: () => rawEditorsHook.toggleSectionVisibility(index),
         redo: () => rawEditorsHook.toggleSectionVisibility(index),
       })
-    },
+    }),
     [readOnly, rawEditorsHook, guardedSendAction, history]
   )
 
   const updateEditorContent = useCallback(
-    (editorIndex: number, contentJson: unknown) => {
-      if (readOnly) return
+    guarded((editorIndex: number, contentJson: unknown) => {
       if (contentTimerRef.current) {
         clearTimeout(contentTimerRef.current)
       }
@@ -220,7 +222,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
         guardedSendAction("updateEditorContent", { editorIndex, contentJson: contentJson as Record<string, unknown> })
         contentTimerRef.current = null
       }, 2000)
-    },
+    }),
     [readOnly, guardedSendAction]
   )
 
