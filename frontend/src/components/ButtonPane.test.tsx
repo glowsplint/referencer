@@ -20,26 +20,40 @@ describe("ButtonPane", () => {
     expect(screen.getByTestId("lockButton")).toBeInTheDocument()
   })
 
+  it("tool buttons are disabled when editor is not locked", () => {
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false } })
+    expect(screen.getByTestId("selectionToolButton")).toBeDisabled()
+    expect(screen.getByTestId("arrowToolButton")).toBeDisabled()
+    expect(screen.getByTestId("commentsToolButton")).toBeDisabled()
+  })
+
+  it("tool buttons are enabled when editor is locked", () => {
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true } })
+    expect(screen.getByTestId("selectionToolButton")).toBeEnabled()
+    expect(screen.getByTestId("arrowToolButton")).toBeEnabled()
+    expect(screen.getByTestId("commentsToolButton")).toBeEnabled()
+  })
+
   it("calls setActiveTool('selection') when selection button is clicked", () => {
-    const { workspace } = renderButtonPane()
+    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true } })
     fireEvent.click(screen.getByTestId("selectionToolButton"))
     expect(workspace.setActiveTool).toHaveBeenCalledWith("selection")
   })
 
   it("calls setActiveTool('arrow') when arrow button is clicked", () => {
-    const { workspace } = renderButtonPane()
+    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true } })
     fireEvent.click(screen.getByTestId("arrowToolButton"))
     expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow")
   })
 
   it("calls setActiveTool('comments') when comments button is clicked", () => {
-    const { workspace } = renderButtonPane()
+    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true } })
     fireEvent.click(screen.getByTestId("commentsToolButton"))
     expect(workspace.setActiveTool).toHaveBeenCalledWith("comments")
   })
 
-  it("shows depressed state on the active tool button", () => {
-    renderButtonPane({ annotations: { activeTool: "arrow" } })
+  it("shows depressed state on the active tool button when locked", () => {
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true }, annotations: { activeTool: "arrow" } })
     const arrowBtn = screen.getByTestId("arrowToolButton")
     expect(arrowBtn.className.split(" ")).toContain("bg-accent")
     // Non-active buttons should not have bare bg-accent class
@@ -47,10 +61,10 @@ describe("ButtonPane", () => {
     expect(selBtn.className.split(" ")).not.toContain("bg-accent")
   })
 
-  it("selection tool has depressed state by default", () => {
-    renderButtonPane()
-    const selBtn = screen.getByTestId("selectionToolButton")
-    expect(selBtn.className.split(" ")).toContain("bg-accent")
+  it("does not show depressed state on active tool button when unlocked", () => {
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false }, annotations: { activeTool: "arrow" } })
+    const arrowBtn = screen.getByTestId("arrowToolButton")
+    expect(arrowBtn.className.split(" ")).not.toContain("bg-accent")
   })
 
   it("calls toggleManagementPane when menu button is clicked", () => {

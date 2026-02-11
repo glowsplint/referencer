@@ -60,10 +60,11 @@ export function ButtonPane() {
           key={tool}
           onClick={() => setActiveTool(tool)}
           title={title}
+          disabled={!settings.isLocked}
           className={`p-2 rounded-md transition-colors ${
-            annotations.activeTool === tool
+            annotations.activeTool === tool && settings.isLocked
               ? "bg-accent text-accent-foreground"
-              : "hover:bg-accent hover:text-accent-foreground"
+              : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
           }`}
           data-testid={testId}
         >
