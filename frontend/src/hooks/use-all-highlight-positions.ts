@@ -41,8 +41,16 @@ export function useAllHighlightPositions(
           if (!editor || editor.isDestroyed) continue
 
           try {
+            const editorDom = editor.view.dom
+            const wrapper = editorDom.closest(".simple-editor-wrapper")
+            if (!wrapper) continue
+            const wrapperRect = wrapper.getBoundingClientRect()
+
             const coords = editor.view.coordsAtPos(highlight.from)
             const endCoords = editor.view.coordsAtPos(highlight.to)
+
+            // Skip highlights whose text is scrolled out of the editor's visible area
+            if (coords.top < wrapperRect.top || coords.top > wrapperRect.bottom) continue
 
             const top = coords.top - containerRect.top + container.scrollTop
             const rightEdge = endCoords.right - containerRect.left + container.scrollLeft

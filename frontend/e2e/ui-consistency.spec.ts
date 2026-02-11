@@ -377,6 +377,11 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     const highlightsBefore = await highlights.count();
     expect(highlightsBefore).toBeGreaterThan(0);
 
+    // Scroll editor back to top (clicking HR may have scrolled it)
+    await page.locator(".simple-editor-wrapper").first().evaluate((el) => {
+      el.scrollTop = 0;
+    });
+
     // Reopen management pane for layer toggle
     await page.getByTestId("menuButton").click();
 
