@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
 import type { Layer } from "@/types/editor";
+import { isEditableElement } from "@/lib/dom";
+
+const CYCLE_LAYER_KEY = "KeyL";
 
 interface UseCycleLayerOptions {
   layers: Layer[];
@@ -21,17 +24,8 @@ export function useCycleLayer({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== "KeyL" || e.repeat) return;
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement
-      )
-        return;
-      if (
-        e.target instanceof HTMLElement &&
-        e.target.contentEditable === "true"
-      )
-        return;
+      if (e.code !== CYCLE_LAYER_KEY || e.repeat) return;
+      if (isEditableElement(e.target)) return;
 
       const currentLayers = layersRef.current;
       if (currentLayers.length === 0) return;

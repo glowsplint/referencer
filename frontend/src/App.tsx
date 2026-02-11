@@ -80,13 +80,6 @@ export function App() {
     ? layers.find((l) => l.id === activeLayerId)?.color ?? null
     : null;
 
-  const handleAnnotationChange = useCallback(
-    (layerId: string, highlightId: string, annotation: string) => {
-      updateHighlightAnnotation(layerId, highlightId, annotation);
-    },
-    [updateHighlightAnnotation]
-  );
-
   const handleAnnotationBlur = useCallback(
     (layerId: string, highlightId: string, annotation: string) => {
       if (!annotation.trim()) {
@@ -134,15 +127,16 @@ export function App() {
                   removeArrow={removeArrow}
                   sectionVisibility={sectionVisibility}
                 />
-                {editorWidths.map((width, i) => (
+                {editorWidths.map((width, i) => {
+                  const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]
+                  const dividerDirection = settings.isMultipleRowsLayout ? "vertical" as const : "horizontal" as const
+                  return (
                   <Fragment key={i}>
-                    {i > 0 && sectionVisibility[i - 1] && sectionVisibility[i] && (
+                    {showDivider && (
                       <Divider
                         onResize={(pct) => handleDividerResize(i - 1, pct)}
                         containerRef={containerRef}
-                        direction={
-                          settings.isMultipleRowsLayout ? "vertical" : "horizontal"
-                        }
+                        direction={dividerDirection}
                       />
                     )}
                     <div
@@ -167,7 +161,8 @@ export function App() {
                       />
                     </div>
                   </Fragment>
-                ))}
+                  )
+                })}
               </div>
               {settings.isLocked && hasAnyAnnotations && (
                 <AnnotationPanel
@@ -175,7 +170,7 @@ export function App() {
                   editorsRef={editorsRef}
                   containerRef={containerRef}
                   editingAnnotation={editingAnnotation}
-                  onAnnotationChange={handleAnnotationChange}
+                  onAnnotationChange={updateHighlightAnnotation}
                   onAnnotationBlur={handleAnnotationBlur}
                   onAnnotationClick={handleAnnotationClick}
                 />

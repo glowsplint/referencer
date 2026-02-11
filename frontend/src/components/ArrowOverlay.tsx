@@ -141,12 +141,13 @@ export function ArrowOverlay({
       {arrowPositions.map((pos) => {
         const mx = (pos.x1 + pos.x2) / 2
         const my = (pos.y1 + pos.y2) / 2
+        const arrowPath = `M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`
         const isHovered = hoveredArrowId === pos.arrowId
         return (
           <g key={pos.arrowId}>
             <path
               data-testid="arrow-line"
-              d={`M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`}
+              d={arrowPath}
               stroke={pos.color}
               strokeWidth={2}
               fill="none"
@@ -156,7 +157,7 @@ export function ArrowOverlay({
             {/* Wider invisible hit area for easier hovering/clicking */}
             <path
               data-testid="arrow-hit-area"
-              d={`M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`}
+              d={arrowPath}
               stroke="transparent"
               strokeWidth={12}
               fill="none"
@@ -184,12 +185,11 @@ export function ArrowOverlay({
       })}
 
       {previewPosition && drawingColor && (() => {
-        const mx = (previewPosition.x1 + previewPosition.x2) / 2
-        const my = (previewPosition.y1 + previewPosition.y2) / 2
+        const previewPath = `M ${previewPosition.x1} ${previewPosition.y1} L ${(previewPosition.x1 + previewPosition.x2) / 2} ${(previewPosition.y1 + previewPosition.y2) / 2} L ${previewPosition.x2} ${previewPosition.y2}`
         return (
           <path
             data-testid="preview-arrow"
-            d={`M ${previewPosition.x1} ${previewPosition.y1} L ${mx} ${my} L ${previewPosition.x2} ${previewPosition.y2}`}
+            d={previewPath}
             stroke={drawingColor}
             strokeWidth={2}
             strokeDasharray="6 4"

@@ -101,32 +101,33 @@ export function useDragSelection({
 
       selectWord(editorIndex, from, to, text)
 
-      if (activeLayerId) {
-        const layer = layers.find((l) => l.id === activeLayerId)
-        // Check for exact match to toggle off
-        const existing = layer?.highlights.find(
-          (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
-        )
-        if (existing) {
-          removeHighlight(activeLayerId, existing.id)
-        } else {
-          // Remove any empty-annotation highlights on this layer before adding a new one
-          if (layer) {
-            for (const h of layer.highlights) {
-              if (!h.annotation.trim()) {
-                removeHighlight(activeLayerId, h.id)
-              }
-            }
+      if (!activeLayerId) return
+
+      const layer = layers.find((l) => l.id === activeLayerId)
+      // Check for exact match to toggle off
+      const existing = layer?.highlights.find(
+        (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
+      )
+      if (existing) {
+        removeHighlight(activeLayerId, existing.id)
+        return
+      }
+
+      // Remove any empty-annotation highlights on this layer before adding a new one
+      if (layer) {
+        for (const h of layer.highlights) {
+          if (!h.annotation.trim()) {
+            removeHighlight(activeLayerId, h.id)
           }
-          addHighlight(activeLayerId, {
-            editorIndex,
-            from,
-            to,
-            text,
-            annotation: "",
-          })
         }
       }
+      addHighlight(activeLayerId, {
+        editorIndex,
+        from,
+        to,
+        text,
+        annotation: "",
+      })
     },
     [isLocked, activeLayerId, layers, addHighlight, removeHighlight, selectWord]
   )

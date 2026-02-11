@@ -19,6 +19,8 @@ interface ShortcutSection {
   shortcuts: ShortcutEntry[];
 }
 
+const CMD = "\u2318";
+
 const LEFT_SECTIONS: ShortcutSection[] = [
   {
     title: "Workspace",
@@ -31,21 +33,21 @@ const LEFT_SECTIONS: ShortcutSection[] = [
   {
     title: "Text Formatting",
     shortcuts: [
-      { keys: ["\u2318", "B"], description: "Bold" },
-      { keys: ["\u2318", "I"], description: "Italic" },
-      { keys: ["\u2318", "U"], description: "Underline" },
-      { keys: ["\u2318", "Shift", "S"], description: "Strikethrough" },
-      { keys: ["\u2318", "E"], description: "Inline code" },
-      { keys: ["\u2318", "."], description: "Superscript" },
-      { keys: ["\u2318", ","], description: "Subscript" },
-      { keys: ["\u2318", "Shift", "H"], description: "Color highlight" },
+      { keys: [CMD, "B"], description: "Bold" },
+      { keys: [CMD, "I"], description: "Italic" },
+      { keys: [CMD, "U"], description: "Underline" },
+      { keys: [CMD, "Shift", "S"], description: "Strikethrough" },
+      { keys: [CMD, "E"], description: "Inline code" },
+      { keys: [CMD, "."], description: "Superscript" },
+      { keys: [CMD, ","], description: "Subscript" },
+      { keys: [CMD, "Shift", "H"], description: "Color highlight" },
     ],
   },
   {
     title: "General",
     shortcuts: [
-      { keys: ["\u2318", "Z"], description: "Undo" },
-      { keys: ["\u2318", "Shift", "Z"], description: "Redo" },
+      { keys: [CMD, "Z"], description: "Undo" },
+      { keys: [CMD, "Shift", "Z"], description: "Redo" },
     ],
   },
 ];
@@ -65,20 +67,20 @@ const RIGHT_SECTIONS: ShortcutSection[] = [
   {
     title: "Lists & Blocks",
     shortcuts: [
-      { keys: ["\u2318", "Shift", "8"], description: "Bullet list" },
-      { keys: ["\u2318", "Shift", "7"], description: "Ordered list" },
-      { keys: ["\u2318", "Shift", "9"], description: "Task list" },
-      { keys: ["\u2318", "Shift", "B"], description: "Blockquote" },
-      { keys: ["\u2318", "Alt", "C"], description: "Code block" },
+      { keys: [CMD, "Shift", "8"], description: "Bullet list" },
+      { keys: [CMD, "Shift", "7"], description: "Ordered list" },
+      { keys: [CMD, "Shift", "9"], description: "Task list" },
+      { keys: [CMD, "Shift", "B"], description: "Blockquote" },
+      { keys: [CMD, "Alt", "C"], description: "Code block" },
     ],
   },
   {
     title: "Text Alignment",
     shortcuts: [
-      { keys: ["\u2318", "Shift", "L"], description: "Align left" },
-      { keys: ["\u2318", "Shift", "E"], description: "Align center" },
-      { keys: ["\u2318", "Shift", "R"], description: "Align right" },
-      { keys: ["\u2318", "Shift", "J"], description: "Align justify" },
+      { keys: [CMD, "Shift", "L"], description: "Align left" },
+      { keys: [CMD, "Shift", "E"], description: "Align center" },
+      { keys: [CMD, "Shift", "R"], description: "Align right" },
+      { keys: [CMD, "Shift", "J"], description: "Align justify" },
     ],
   },
 ];
@@ -88,6 +90,45 @@ function Kbd({ children }: { children: React.ReactNode }) {
     <kbd className="inline-flex items-center justify-center rounded-sm border bg-muted px-1.5 py-0.5 text-xs font-mono font-medium text-muted-foreground">
       {children}
     </kbd>
+  );
+}
+
+function KeyCombination({ keys }: { keys: string[] }) {
+  return (
+    <div className="flex items-center gap-1">
+      {keys.map((key, i) => (
+        <span key={i} className="flex items-center gap-1">
+          {i > 0 && (
+            <span className="text-xs text-muted-foreground">+</span>
+          )}
+          <Kbd>{key}</Kbd>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function ShortcutRow({ shortcut }: { shortcut: ShortcutEntry }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-sm">{shortcut.description}</span>
+      <KeyCombination keys={shortcut.keys} />
+    </div>
+  );
+}
+
+function ShortcutGroup({ section }: { section: ShortcutSection }) {
+  return (
+    <div>
+      <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+        {section.title}
+      </h3>
+      <div className="space-y-2">
+        {section.shortcuts.map((shortcut) => (
+          <ShortcutRow key={shortcut.description} shortcut={shortcut} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -118,38 +159,7 @@ export function KeyboardShortcutsDialog({
             {[LEFT_SECTIONS, RIGHT_SECTIONS].map((column, colIdx) => (
               <div key={colIdx} className="space-y-5">
                 {column.map((section) => (
-                  <div key={section.title}>
-                    <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                      {section.title}
-                    </h3>
-                    <div className="space-y-2">
-                      {section.shortcuts.map((shortcut) => (
-                        <div
-                          key={shortcut.description}
-                          className="flex items-center justify-between"
-                        >
-                          <span className="text-sm">
-                            {shortcut.description}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            {shortcut.keys.map((key, i) => (
-                              <span
-                                key={i}
-                                className="flex items-center gap-1"
-                              >
-                                {i > 0 && (
-                                  <span className="text-xs text-muted-foreground">
-                                    +
-                                  </span>
-                                )}
-                                <Kbd>{key}</Kbd>
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <ShortcutGroup key={section.title} section={section} />
                 ))}
               </div>
             ))}

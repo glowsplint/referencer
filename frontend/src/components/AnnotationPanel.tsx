@@ -36,36 +36,18 @@ export function AnnotationPanel({
     )
   }, [positions])
 
-  // Build lookup maps
-  const colorByHighlightId = useMemo(() => {
-    const map = new Map<string, string>()
+  const highlightLookup = useMemo(() => {
+    const color = new Map<string, string>()
+    const layerId = new Map<string, string>()
+    const annotation = new Map<string, string>()
     for (const layer of layers) {
       for (const h of layer.highlights) {
-        map.set(h.id, layer.color)
+        color.set(h.id, layer.color)
+        layerId.set(h.id, layer.id)
+        if (layer.visible) annotation.set(h.id, h.annotation)
       }
     }
-    return map
-  }, [layers])
-
-  const layerIdByHighlightId = useMemo(() => {
-    const map = new Map<string, string>()
-    for (const layer of layers) {
-      for (const h of layer.highlights) {
-        map.set(h.id, layer.id)
-      }
-    }
-    return map
-  }, [layers])
-
-  const annotationByHighlightId = useMemo(() => {
-    const map = new Map<string, string>()
-    for (const layer of layers) {
-      if (!layer.visible) continue
-      for (const h of layer.highlights) {
-        map.set(h.id, h.annotation)
-      }
-    }
-    return map
+    return { color, layerId, annotation }
   }, [layers])
 
   const positionByHighlightId = useMemo(() => {
@@ -92,7 +74,7 @@ export function AnnotationPanel({
         {resolvedPositions.map((resolved) => {
           const original = positionByHighlightId.get(resolved.id)
           if (!original) return null
-          const color = colorByHighlightId.get(resolved.id)
+          const color = highlightLookup.color.get(resolved.id)
           if (!color) return null
 
           // x1 is relative to the panel - the rightEdge is relative to the container,
@@ -121,9 +103,9 @@ export function AnnotationPanel({
       {/* Annotation cards */}
       <div className="absolute top-0 left-4 right-0 z-10 pointer-events-auto">
         {resolvedPositions.map((resolved) => {
-          const color = colorByHighlightId.get(resolved.id) ?? "#888"
-          const layerId = layerIdByHighlightId.get(resolved.id) ?? ""
-          const annotation = annotationByHighlightId.get(resolved.id) ?? ""
+          const color = highlightLookup.color.get(resolved.id) ?? "#888"
+          const layerId = highlightLookup.layerId.get(resolved.id) ?? ""
+          const annotation = highlightLookup.annotation.get(resolved.id) ?? ""
           const isEditing =
             editingAnnotation?.highlightId === resolved.id &&
             editingAnnotation?.layerId === layerId

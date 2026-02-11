@@ -5,6 +5,27 @@ import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import { layerHighlightsPluginKey } from "@/lib/tiptap/extensions/layer-highlights"
 import { parseHexToRgba } from "@/lib/color"
 
+const HIGHLIGHT_OPACITY = 0.3
+
+function createHighlightDecoration(from: number, to: number, color: string): Decoration {
+  return Decoration.inline(from, to, {
+    style: `background-color: ${parseHexToRgba(color, HIGHLIGHT_OPACITY)}`,
+  })
+}
+
+function tryPushDecoration(
+  decorations: Decoration[],
+  from: number,
+  to: number,
+  color: string
+) {
+  try {
+    decorations.push(createHighlightDecoration(from, to, color))
+  } catch {
+    // Position may be invalid — skip
+  }
+}
+
 export function useLayerDecorations(
   editor: Editor | null,
   layers: Layer[],
@@ -26,28 +47,12 @@ export function useLayerDecorations(
       if (!layer.visible) continue
       for (const highlight of layer.highlights) {
         if (highlight.editorIndex !== editorIndex) continue
-        try {
-          decorations.push(
-            Decoration.inline(highlight.from, highlight.to, {
-              style: `background-color: ${parseHexToRgba(layer.color, 0.3)}`,
-            })
-          )
-        } catch {
-          // Position may be invalid — skip
-        }
+        tryPushDecoration(decorations, highlight.from, highlight.to, layer.color)
       }
       for (const arrow of layer.arrows) {
         for (const endpoint of [arrow.from, arrow.to]) {
           if (endpoint.editorIndex !== editorIndex) continue
-          try {
-            decorations.push(
-              Decoration.inline(endpoint.from, endpoint.to, {
-                style: `background-color: ${parseHexToRgba(layer.color, 0.3)}`,
-              })
-            )
-          } catch {
-            // Position may be invalid — skip
-          }
+          tryPushDecoration(decorations, endpoint.from, endpoint.to, layer.color)
         }
       }
     }

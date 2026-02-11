@@ -2,6 +2,25 @@ import { useState, useEffect, useRef } from "react"
 import { toast } from "sonner"
 import type { Arrow, ArrowEndpoint, DrawingState, WordSelection } from "@/types/editor"
 
+const DRAW_ARROW_KEY = "KeyA"
+
+function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
+  return {
+    editorIndex: sel.editorIndex,
+    from: sel.from,
+    to: sel.to,
+    text: sel.text,
+  }
+}
+
+function arrowSpansDifferentWords(anchor: ArrowEndpoint, cursor: ArrowEndpoint): boolean {
+  return (
+    anchor.editorIndex !== cursor.editorIndex ||
+    anchor.from !== cursor.from ||
+    anchor.to !== cursor.to
+  )
+}
+
 interface UseDrawingModeOptions {
   isLocked: boolean
   selection: WordSelection | null
@@ -18,7 +37,6 @@ export function useDrawingMode({
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
   const drawingRef = useRef<DrawingState | null>(null)
 
-  // Keep refs in sync for keyup handler
   const activeLayerIdRef = useRef(activeLayerId)
   const addArrowRef = useRef(addArrow)
   useEffect(() => {
@@ -38,15 +56,9 @@ export function useDrawingMode({
     }
   }, [isLocked])
 
-  // Update cursor when selection changes during drawing
   useEffect(() => {
     if (drawingRef.current && selection) {
-      const cursor: ArrowEndpoint = {
-        editorIndex: selection.editorIndex,
-        from: selection.from,
-        to: selection.to,
-        text: selection.text,
-      }
+      const cursor = endpointFromSelection(selection)
       drawingRef.current = { anchor: drawingRef.current.anchor, cursor }
       setDrawingState(drawingRef.current)
     }
@@ -56,7 +68,7 @@ export function useDrawingMode({
     if (!isLocked) return
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== "KeyA" || e.repeat) return
+      if (e.code !== DRAW_ARROW_KEY || e.repeat) return
       if (!selection) return
 
       if (!activeLayerIdRef.current) {
@@ -66,28 +78,17 @@ export function useDrawingMode({
 
       e.preventDefault()
 
-      const anchor: ArrowEndpoint = {
-        editorIndex: selection.editorIndex,
-        from: selection.from,
-        to: selection.to,
-        text: selection.text,
-      }
-
+      const anchor = endpointFromSelection(selection)
       drawingRef.current = { anchor, cursor: anchor }
       setDrawingState(drawingRef.current)
     }
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code !== "KeyA") return
+      if (e.code !== DRAW_ARROW_KEY) return
       if (!drawingRef.current) return
 
       const { anchor, cursor } = drawingRef.current
-      if (
-        activeLayerIdRef.current &&
-        (anchor.editorIndex !== cursor.editorIndex ||
-          anchor.from !== cursor.from ||
-          anchor.to !== cursor.to)
-      ) {
+      if (activeLayerIdRef.current && arrowSpansDifferentWords(anchor, cursor)) {
         addArrowRef.current(activeLayerIdRef.current, {
           from: anchor,
           to: cursor,

@@ -1,6 +1,46 @@
 import type { Editor } from "@tiptap/react"
 import type { CollectedWord } from "./word-collection"
 
+/** Pixels of vertical distance to group words into the same visual line */
+export const LINE_TOLERANCE = 12
+
+/** Minimum pixel distance before considering a candidate (avoids re-selecting current word) */
+const SAME_POSITION_THRESHOLD = 1
+
+/** Perpendicular distance is weighted more heavily to prefer horizontally aligned words */
+const PERPENDICULAR_WEIGHT = 2
+
+export interface WordCenter {
+  word: CollectedWord
+  cx: number
+  cy: number
+}
+
+function closestByCx(candidates: WordCenter[], targetCx: number): WordCenter {
+  let best = candidates[0]
+  let bestDist = Infinity
+  for (const c of candidates) {
+    const dist = Math.abs(c.cx - targetCx)
+    if (dist < bestDist) {
+      bestDist = dist
+      best = c
+    }
+  }
+  return best
+}
+
+function findWordsOnNearestLine(
+  candidates: WordCenter[],
+  direction: "up" | "down"
+): WordCenter[] {
+  if (candidates.length === 0) return []
+  const targetY =
+    direction === "down"
+      ? Math.min(...candidates.map((c) => c.cy))
+      : Math.max(...candidates.map((c) => c.cy))
+  return candidates.filter((c) => Math.abs(c.cy - targetY) <= LINE_TOLERANCE)
+}
+
 export function findWordInReadingOrder(
   current: CollectedWord,
   allWords: CollectedWord[],
@@ -27,46 +67,26 @@ export function findWordInReadingOrder(
   }
 }
 
-export const LINE_TOLERANCE = 12
-
 export function findFirstWordOnAdjacentLine(
   currentCenter: { cx: number; cy: number },
   candidates: WordCenter[],
   direction: "ArrowRight" | "ArrowLeft"
 ): CollectedWord | null {
-  if (direction === "ArrowRight") {
-    // Find the next visual row below, then pick its leftmost word
-    const below = candidates.filter(
-      (c) => c.cy > currentCenter.cy + LINE_TOLERANCE
-    )
-    if (below.length === 0) return null
+  const isForward = direction === "ArrowRight"
+  const beyondLine = candidates.filter((c) =>
+    isForward
+      ? c.cy > currentCenter.cy + LINE_TOLERANCE
+      : c.cy < currentCenter.cy - LINE_TOLERANCE
+  )
+  if (beyondLine.length === 0) return null
 
-    const nextRowY = Math.min(...below.map((c) => c.cy))
-    const nextRow = below.filter(
-      (c) => Math.abs(c.cy - nextRowY) <= LINE_TOLERANCE
-    )
-    let leftmost = nextRow[0]
-    for (const c of nextRow) {
-      if (c.cx < leftmost.cx) leftmost = c
-    }
-    return leftmost.word
-  } else {
-    // Find the previous visual row above, then pick its rightmost word
-    const above = candidates.filter(
-      (c) => c.cy < currentCenter.cy - LINE_TOLERANCE
-    )
-    if (above.length === 0) return null
+  const adjacentRow = findWordsOnNearestLine(beyondLine, isForward ? "down" : "up")
 
-    const prevRowY = Math.max(...above.map((c) => c.cy))
-    const prevRow = above.filter(
-      (c) => Math.abs(c.cy - prevRowY) <= LINE_TOLERANCE
-    )
-    let rightmost = prevRow[0]
-    for (const c of prevRow) {
-      if (c.cx > rightmost.cx) rightmost = c
-    }
-    return rightmost.word
-  }
+  // Pick leftmost for forward (next row), rightmost for backward (previous row)
+  const edge = adjacentRow.reduce((best, c) =>
+    isForward ? (c.cx < best.cx ? c : best) : (c.cx > best.cx ? c : best)
+  )
+  return edge.word
 }
 
 export function findNearestWordOnSameLine(
@@ -74,34 +94,14 @@ export function findNearestWordOnSameLine(
   candidates: WordCenter[],
   direction: "ArrowLeft" | "ArrowRight"
 ): CollectedWord | null {
-  const threshold = 1
-
   const sameLine = candidates.filter((c) => {
     if (Math.abs(c.cy - currentCenter.cy) > LINE_TOLERANCE) return false
-    if (direction === "ArrowRight") return c.cx > currentCenter.cx + threshold
-    return c.cx < currentCenter.cx - threshold
+    if (direction === "ArrowRight") return c.cx > currentCenter.cx + SAME_POSITION_THRESHOLD
+    return c.cx < currentCenter.cx - SAME_POSITION_THRESHOLD
   })
 
   if (sameLine.length === 0) return null
-
-  let best = sameLine[0]
-  let bestDist = Infinity
-
-  for (const c of sameLine) {
-    const dist = Math.abs(c.cx - currentCenter.cx)
-    if (dist < bestDist) {
-      bestDist = dist
-      best = c
-    }
-  }
-
-  return best.word
-}
-
-export interface WordCenter {
-  word: CollectedWord
-  cx: number
-  cy: number
+  return closestByCx(sameLine, currentCenter.cx).word
 }
 
 export function getWordCenter(
@@ -113,7 +113,6 @@ export function getWordCenter(
   if (!editor) return null
 
   try {
-    // For image nodes, use DOM element bounds for accurate center
     const nodeAt = editor.state.doc.nodeAt(word.from)
     if (nodeAt?.type.name === "image") {
       const dom = editor.view.nodeDOM(word.from)
@@ -143,54 +142,35 @@ export function findNearestWord(
   candidates: WordCenter[],
   direction: "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown"
 ): CollectedWord | null {
-  const threshold = 1
-
   const filtered = candidates.filter((c) => {
     switch (direction) {
       case "ArrowLeft":
-        return c.cx < currentCenter.cx - threshold
+        return c.cx < currentCenter.cx - SAME_POSITION_THRESHOLD
       case "ArrowRight":
-        return c.cx > currentCenter.cx + threshold
+        return c.cx > currentCenter.cx + SAME_POSITION_THRESHOLD
       case "ArrowUp":
-        return c.cy < currentCenter.cy - threshold
+        return c.cy < currentCenter.cy - SAME_POSITION_THRESHOLD
       case "ArrowDown":
-        return c.cy > currentCenter.cy + threshold
+        return c.cy > currentCenter.cy + SAME_POSITION_THRESHOLD
     }
   })
 
   if (filtered.length === 0) return null
 
   if (direction === "ArrowUp" || direction === "ArrowDown") {
-    // Find the nearest visual line first, then pick the closest word on it
-    const nearestLineY =
-      direction === "ArrowDown"
-        ? Math.min(...filtered.map((c) => c.cy))
-        : Math.max(...filtered.map((c) => c.cy))
-
-    const lineWords = filtered.filter(
-      (c) => Math.abs(c.cy - nearestLineY) <= LINE_TOLERANCE
-    )
-
-    let best = lineWords[0]
-    let bestDist = Infinity
-    for (const c of lineWords) {
-      const dist = Math.abs(c.cx - currentCenter.cx)
-      if (dist < bestDist) {
-        bestDist = dist
-        best = c
-      }
-    }
-    return best.word
+    const lineDir = direction === "ArrowDown" ? "down" as const : "up" as const
+    const lineWords = findWordsOnNearestLine(filtered, lineDir)
+    return closestByCx(lineWords, currentCenter.cx).word
   }
 
-  // Left/Right: use weighted scoring
+  // Left/Right: use weighted scoring favoring horizontal alignment
   let best = filtered[0]
   let bestScore = Infinity
 
   for (const c of filtered) {
     const primary = Math.abs(c.cx - currentCenter.cx)
     const perpendicular = Math.abs(c.cy - currentCenter.cy)
-    const score = primary + 2 * perpendicular
+    const score = primary + PERPENDICULAR_WEIGHT * perpendicular
     if (score < bestScore) {
       bestScore = score
       best = c

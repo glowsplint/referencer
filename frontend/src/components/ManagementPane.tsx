@@ -28,6 +28,17 @@ export function ManagementPane() {
 
   const [dragOver, setDragOver] = useState(false);
 
+  const hasVisibleLayers = layers.some((l) => l.visible);
+
+  const handleDropOnTrash = (e: React.DragEvent) => {
+    e.preventDefault();
+    const layerId = e.dataTransfer.getData(DRAG_TYPE_LAYER);
+    if (layerId) removeLayer(layerId);
+    const sectionIndex = e.dataTransfer.getData(DRAG_TYPE_SECTION);
+    if (sectionIndex !== "") removeEditor(Number(sectionIndex));
+    setDragOver(false);
+  };
+
   return (
     <div
       className="shrink-0 h-full overflow-y-auto p-3 w-[250px] border-r border-border"
@@ -50,14 +61,10 @@ export function ManagementPane() {
             <button
               className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
               onClick={toggleAllLayerVisibility}
-              title={layers.some((l) => l.visible) ? "Hide all layers" : "Show all layers"}
+              title={hasVisibleLayers ? "Hide all layers" : "Show all layers"}
               data-testid="toggleAllLayerVisibility"
             >
-              {layers.some((l) => l.visible) ? (
-                <Eye size={14} />
-              ) : (
-                <EyeOff size={14} />
-              )}
+              {hasVisibleLayers ? <Eye size={14} /> : <EyeOff size={14} />}
             </button>
           </div>
         </div>
@@ -98,18 +105,7 @@ export function ManagementPane() {
           onDragOver={(e) => e.preventDefault()}
           onDragEnter={() => setDragOver(true)}
           onDragLeave={() => setDragOver(false)}
-          onDrop={(e) => {
-            e.preventDefault();
-            const layerId = e.dataTransfer.getData(DRAG_TYPE_LAYER);
-            if (layerId) {
-              removeLayer(layerId);
-            }
-            const sectionIndex = e.dataTransfer.getData(DRAG_TYPE_SECTION);
-            if (sectionIndex !== "") {
-              removeEditor(Number(sectionIndex));
-            }
-            setDragOver(false);
-          }}
+          onDrop={handleDropOnTrash}
         >
           <Trash2 size={16} />
         </div>

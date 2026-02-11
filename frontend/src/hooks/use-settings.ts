@@ -1,6 +1,17 @@
 import { useEffect, useState, useCallback } from "react"
 import type { EditorSettings, AnnotationSettings } from "@/types/editor"
 
+function useToggle<T>(
+  setter: React.Dispatch<React.SetStateAction<T>>,
+  key: keyof T
+) {
+  return useCallback(
+    () => setter((prev) => ({ ...prev, [key]: !prev[key] })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+}
+
 export function useSettings() {
   const [settings, setSettings] = useState<EditorSettings>({
     isDarkMode: false,
@@ -16,27 +27,11 @@ export function useSettings() {
     document.documentElement.classList.toggle("dark", settings.isDarkMode)
   }, [settings.isDarkMode])
 
-  const toggleDarkMode = useCallback(
-    () => setSettings((s) => ({ ...s, isDarkMode: !s.isDarkMode })),
-    []
-  )
-  const toggleLayersOn = useCallback(
-    () => setSettings((s) => ({ ...s, isLayersOn: !s.isLayersOn })),
-    []
-  )
-  const toggleMultipleRowsLayout = useCallback(
-    () => setSettings((s) => ({ ...s, isMultipleRowsLayout: !s.isMultipleRowsLayout })),
-    []
-  )
-  const toggleLocked = useCallback(
-    () => setSettings((s) => ({ ...s, isLocked: !s.isLocked })),
-    []
-  )
-
-  const togglePainterMode = useCallback(
-    () => setAnnotations((a) => ({ ...a, isPainterMode: !a.isPainterMode })),
-    []
-  )
+  const toggleDarkMode = useToggle(setSettings, "isDarkMode")
+  const toggleLayersOn = useToggle(setSettings, "isLayersOn")
+  const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout")
+  const toggleLocked = useToggle(setSettings, "isLocked")
+  const togglePainterMode = useToggle(setAnnotations, "isPainterMode")
 
   return {
     settings,
