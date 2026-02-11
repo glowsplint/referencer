@@ -93,7 +93,6 @@ export function LayerRow({
       </div>
       {colorPickerOpen && (
         <ColorPicker
-          layerId={layer.id}
           index={index}
           onSelectColor={(color) => {
             onUpdateColor(color);

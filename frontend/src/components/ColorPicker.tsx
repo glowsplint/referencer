@@ -1,7 +1,6 @@
 import { TAILWIND_300_COLORS } from "@/types/editor";
 
 interface ColorPickerProps {
-  layerId: string;
   index: number;
   onSelectColor: (color: string) => void;
 }
