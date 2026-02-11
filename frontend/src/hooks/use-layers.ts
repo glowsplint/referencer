@@ -25,13 +25,13 @@ export function useLayers() {
       const color = opts?.color ?? TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
       if (!color) return prev
       added = true
+      setActiveLayerId(id)
       return [...prev, { id, name, color, visible: true, highlights: [], arrows: [] }]
     })
     if (!added) {
       toast.warning("All colors are in use — remove a layer first")
       return null
     }
-    setActiveLayerId(id)
     return { id, name }
   }, [])
 
