@@ -39,6 +39,7 @@ export function ButtonPane() {
 
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
+      {/* Meta group */}
       <SwitchingButtonIcon
         iconOne={<Menu size={20} />}
         iconTwo={<Menu size={20} />}
@@ -55,6 +56,8 @@ export function ButtonPane() {
       >
         <Keyboard size={20} />
       </button>
+      <div className="w-6 border-t border-border" role="separator" />
+      {/* Tools group */}
       {toolButtons.map(({ tool, icon, title, testId }) => (
         <button
           key={tool}
@@ -71,6 +74,8 @@ export function ButtonPane() {
           {icon}
         </button>
       ))}
+      <div className="w-6 border-t border-border" role="separator" />
+      {/* Settings group */}
       <SwitchingButtonIcon
         iconOne={<MoonStar size={20} />}
         iconTwo={<Sun size={20} />}

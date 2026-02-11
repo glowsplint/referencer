@@ -98,6 +98,13 @@ describe("ButtonPane", () => {
     expect(buttons[0]).toBe(screen.getByTestId("menuButton"))
   })
 
+  it("renders dividers between button groups", () => {
+    renderButtonPane()
+    const pane = screen.getByTestId("menuButton").parentElement!
+    const separators = pane.querySelectorAll('[role="separator"]')
+    expect(separators).toHaveLength(2)
+  })
+
   it("opens keyboard shortcuts dialog when button is clicked", () => {
     renderButtonPane()
     fireEvent.click(screen.getByTestId("keyboardShortcutsButton"))

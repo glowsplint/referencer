@@ -13,6 +13,7 @@ import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useToolShortcuts } from "./hooks/use-tool-shortcuts";
+import { useToggleShortcuts } from "./hooks/use-toggle-shortcuts";
 import { useCycleLayer } from "./hooks/use-cycle-layer";
 import { useDragSelection } from "./hooks/use-drag-selection";
 import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
@@ -64,6 +65,12 @@ export function App() {
   } = workspace;
 
   useToolShortcuts({ isLocked: settings.isLocked, setActiveTool });
+  useToggleShortcuts({
+    toggleDarkMode: workspace.toggleDarkMode,
+    toggleMultipleRowsLayout: workspace.toggleMultipleRowsLayout,
+    toggleLocked: workspace.toggleLocked,
+    toggleManagementPane: workspace.toggleManagementPane,
+  });
   useUndoRedoKeyboard(history);
   const actionConsole = useActionConsole();
 
