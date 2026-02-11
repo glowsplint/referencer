@@ -7,8 +7,7 @@ function useToggle<T>(
 ) {
   return useCallback(
     () => setter((prev) => ({ ...prev, [key]: !prev[key] })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [setter, key]
   )
 }
 
