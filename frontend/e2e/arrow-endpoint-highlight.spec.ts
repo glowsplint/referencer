@@ -41,12 +41,11 @@ test("arrow endpoints are highlighted with layer color after drawing", async ({ 
   const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
   await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });
 
-  // Each highlight should contain the layer's color (rgba with 0.3 opacity)
+  // Each highlight should contain the layer's pre-blended opaque color
   for (let i = 0; i < 2; i++) {
     const style = await highlightSpans.nth(i).getAttribute("style");
     expect(style).toContain("background-color");
-    expect(style).toContain("rgba");
-    expect(style).toContain("0.3");
+    expect(style).toMatch(/rgb\(\d+, \d+, \d+\)/);
   }
 });
 
