@@ -126,6 +126,7 @@ export function App() {
                   containerRef={containerRef}
                   removeArrow={removeArrow}
                   sectionVisibility={sectionVisibility}
+                  isDarkMode={settings.isDarkMode}
                 />
                 {editorWidths.map((width, i) => {
                   const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]
@@ -158,6 +159,7 @@ export function App() {
                         layers={layers}
                         selection={selection}
                         activeLayerColor={activeLayerColor}
+                        isDarkMode={settings.isDarkMode}
                       />
                     </div>
                   </Fragment>
@@ -173,6 +175,7 @@ export function App() {
                   onAnnotationChange={updateHighlightAnnotation}
                   onAnnotationBlur={handleAnnotationBlur}
                   onAnnotationClick={handleAnnotationClick}
+                  isDarkMode={settings.isDarkMode}
                 />
               )}
             </div>

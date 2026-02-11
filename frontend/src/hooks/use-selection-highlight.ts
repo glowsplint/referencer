@@ -3,7 +3,7 @@ import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import { wordSelectionPluginKey } from "@/lib/tiptap/extensions/word-selection"
-import { parseHexToRgba } from "@/lib/color"
+import { blendWithBackground } from "@/lib/color"
 
 /**
  * Renders the current word selection as an inline highlight decoration
@@ -15,7 +15,8 @@ export function useSelectionHighlight(
   selection: WordSelection | null,
   editorIndex: number,
   isLocked: boolean,
-  activeLayerColor: string | null
+  activeLayerColor: string | null,
+  isDarkMode: boolean
 ) {
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
@@ -31,8 +32,8 @@ export function useSelectionHighlight(
     }
 
     const color = activeLayerColor
-      ? parseHexToRgba(activeLayerColor, 0.3)
-      : "rgba(59, 130, 246, 0.25)"
+      ? blendWithBackground(activeLayerColor, 0.3, isDarkMode)
+      : blendWithBackground("#3b82f6", 0.25, isDarkMode)
 
     try {
       const decoration = Decoration.inline(selection.from, selection.to, {
@@ -46,5 +47,5 @@ export function useSelectionHighlight(
       const tr = editor.state.tr.setMeta(wordSelectionPluginKey, DecorationSet.empty)
       editor.view.dispatch(tr)
     }
-  }, [editor, selection, editorIndex, isLocked, activeLayerColor])
+  }, [editor, selection, editorIndex, isLocked, activeLayerColor, isDarkMode])
 }

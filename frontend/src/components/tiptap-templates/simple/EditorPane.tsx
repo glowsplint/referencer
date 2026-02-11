@@ -34,6 +34,7 @@ export function EditorPane({
   layers,
   selection,
   activeLayerColor,
+  isDarkMode,
 }: {
   isLocked: boolean
   content?: Record<string, unknown>
@@ -46,6 +47,7 @@ export function EditorPane({
   layers: Layer[]
   selection: WordSelection | null
   activeLayerColor: string | null
+  isDarkMode: boolean
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -80,8 +82,8 @@ export function EditorPane({
     }
   }, [editor, isLocked])
 
-  useLayerDecorations(editor, layers, index, isLocked)
-  useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor)
+  useLayerDecorations(editor, layers, index, isLocked, isDarkMode)
+  useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useSelectionScroll(editor, selection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {

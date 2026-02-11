@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, DrawingState } from "@/types/editor"
 import { getWordCenter } from "@/lib/tiptap/nearest-word"
+import { blendWithBackground } from "@/lib/color"
+
+const ARROW_OPACITY = 0.6
 
 interface ArrowOverlayProps {
   layers: Layer[]
@@ -11,6 +14,7 @@ interface ArrowOverlayProps {
   containerRef: React.RefObject<HTMLDivElement | null>
   removeArrow: (layerId: string, arrowId: string) => void
   sectionVisibility: boolean[]
+  isDarkMode: boolean
 }
 
 interface ArrowPosition {
@@ -31,6 +35,7 @@ export function ArrowOverlay({
   containerRef,
   removeArrow,
   sectionVisibility,
+  isDarkMode,
 }: ArrowOverlayProps) {
   const [tick, setTick] = useState(0)
   const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null)
@@ -104,6 +109,11 @@ export function ArrowOverlay({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drawingState, editorsRef, containerRect?.width, containerRect?.height, tick])
 
+  const blendArrow = useCallback(
+    (hex: string) => blendWithBackground(hex, ARROW_OPACITY, isDarkMode),
+    [isDarkMode]
+  )
+
   return (
     <svg
       data-testid="arrow-overlay"
@@ -121,7 +131,7 @@ export function ArrowOverlay({
             refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 8 3, 0 6" fill={pos.color} />
+            <polygon points="0 0, 8 3, 0 6" fill={blendArrow(pos.color)} />
           </marker>
         ))}
         {previewPosition && drawingColor && (
@@ -133,7 +143,7 @@ export function ArrowOverlay({
             refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 8 3, 0 6" fill={drawingColor} />
+            <polygon points="0 0, 8 3, 0 6" fill={blendArrow(drawingColor)} />
           </marker>
         )}
       </defs>
@@ -143,15 +153,15 @@ export function ArrowOverlay({
         const my = (pos.y1 + pos.y2) / 2
         const arrowPath = `M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`
         const isHovered = hoveredArrowId === pos.arrowId
+        const strokeColor = blendArrow(pos.color)
         return (
           <g key={pos.arrowId}>
             <path
               data-testid="arrow-line"
               d={arrowPath}
-              stroke={pos.color}
+              stroke={strokeColor}
               strokeWidth={2}
               fill="none"
-              opacity={0.6}
               markerMid={`url(#arrowhead-${pos.arrowId})`}
             />
             {/* Wider invisible hit area for easier hovering/clicking */}
@@ -171,10 +181,10 @@ export function ArrowOverlay({
                 transform={`translate(${mx}, ${my})`}
                 style={{ pointerEvents: "none" }}
               >
-                <circle r="8" fill="white" stroke={pos.color} strokeWidth={1.5} />
+                <circle r="8" fill="white" stroke={strokeColor} strokeWidth={1.5} />
                 <path
                   d="M -3 -3 L 3 3 M 3 -3 L -3 3"
-                  stroke={pos.color}
+                  stroke={strokeColor}
                   strokeWidth={1.5}
                   strokeLinecap="round"
                 />
@@ -190,11 +200,10 @@ export function ArrowOverlay({
           <path
             data-testid="preview-arrow"
             d={previewPath}
-            stroke={drawingColor}
+            stroke={blendArrow(drawingColor)}
             strokeWidth={2}
             strokeDasharray="6 4"
             fill="none"
-            opacity={0.6}
             markerMid="url(#arrowhead-preview)"
           />
         )

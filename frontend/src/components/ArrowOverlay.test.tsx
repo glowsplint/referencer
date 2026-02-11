@@ -40,6 +40,7 @@ function createDefaultProps(overrides: Record<string, unknown> = {}) {
     containerRef: { current: containerEl } as React.RefObject<HTMLDivElement | null>,
     removeArrow: vi.fn(),
     sectionVisibility: [true, true, true],
+    isDarkMode: false,
     ...overrides,
   }
 }

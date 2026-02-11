@@ -61,7 +61,7 @@ describe("useLayerDecorations", () => {
   it("dispatches empty decorations when not locked", () => {
     const editor = createMockEditor()
     renderHook(() =>
-      useLayerDecorations(editor as any, [], 0, false)
+      useLayerDecorations(editor as any, [], 0, false, false)
     )
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(
       layerHighlightsPluginKey,
@@ -77,13 +77,13 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true)
+      useLayerDecorations(editor as any, [layer], 0, true, false)
     )
     expect(capturedDecorations).toHaveLength(1)
     expect(capturedDecorations[0]).toEqual({
       from: 1,
       to: 5,
-      attrs: { style: "background-color: rgba(252, 165, 165, 0.3)" },
+      attrs: { style: "background-color: rgb(254, 228, 228)" },
     })
   })
 
@@ -95,7 +95,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true)
+      useLayerDecorations(editor as any, [layer], 0, true, false)
     )
     expect(capturedDecorations).toHaveLength(0)
   })
@@ -112,18 +112,18 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true)
+      useLayerDecorations(editor as any, [layer], 0, true, false)
     )
     expect(capturedDecorations).toHaveLength(2)
     expect(capturedDecorations[0]).toEqual({
       from: 1,
       to: 5,
-      attrs: { style: "background-color: rgba(252, 165, 165, 0.3)" },
+      attrs: { style: "background-color: rgb(254, 228, 228)" },
     })
     expect(capturedDecorations[1]).toEqual({
       from: 10,
       to: 15,
-      attrs: { style: "background-color: rgba(252, 165, 165, 0.3)" },
+      attrs: { style: "background-color: rgb(254, 228, 228)" },
     })
   })
 
@@ -139,14 +139,14 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true)
+      useLayerDecorations(editor as any, [layer], 0, true, false)
     )
     // Only "from" endpoint is in editor 0
     expect(capturedDecorations).toHaveLength(1)
     expect(capturedDecorations[0]).toEqual({
       from: 1,
       to: 5,
-      attrs: { style: "background-color: rgba(252, 165, 165, 0.3)" },
+      attrs: { style: "background-color: rgb(254, 228, 228)" },
     })
   })
 
@@ -163,7 +163,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true)
+      useLayerDecorations(editor as any, [layer], 0, true, false)
     )
     expect(capturedDecorations).toHaveLength(0)
   })
@@ -183,7 +183,7 @@ describe("useLayerDecorations", () => {
       ],
     })
     renderHook(() =>
-      useLayerDecorations(editor as any, [layer], 0, true)
+      useLayerDecorations(editor as any, [layer], 0, true, false)
     )
     // 1 highlight + 2 arrow endpoints = 3 decorations
     expect(capturedDecorations).toHaveLength(3)

@@ -19,7 +19,7 @@ vi.mock("@/lib/resolve-annotation-overlaps", () => ({
 }))
 
 vi.mock("@/lib/color", () => ({
-  parseHexToRgba: vi.fn((hex: string) => hex),
+  blendWithBackground: vi.fn((hex: string) => hex),
 }))
 
 function createLayer(overrides: Partial<Layer> = {}): Layer {
@@ -55,6 +55,7 @@ function createProps(overrides: Record<string, unknown> = {}) {
     onAnnotationChange: vi.fn(),
     onAnnotationBlur: vi.fn(),
     onAnnotationClick: vi.fn(),
+    isDarkMode: false,
     ...overrides,
   }
 }

@@ -3,7 +3,7 @@ import type { Editor } from "@tiptap/react"
 import type { Layer, EditingAnnotation } from "@/types/editor"
 import { useAllHighlightPositions } from "@/hooks/use-all-highlight-positions"
 import { resolveAnnotationOverlaps } from "@/lib/resolve-annotation-overlaps"
-import { parseHexToRgba } from "@/lib/color"
+import { blendWithBackground } from "@/lib/color"
 import { AnnotationCard } from "./AnnotationCard"
 
 interface AnnotationPanelProps {
@@ -14,10 +14,12 @@ interface AnnotationPanelProps {
   onAnnotationChange: (layerId: string, highlightId: string, annotation: string) => void
   onAnnotationBlur: (layerId: string, highlightId: string, annotation: string) => void
   onAnnotationClick: (layerId: string, highlightId: string) => void
+  isDarkMode: boolean
 }
 
 const PANEL_WIDTH = 224 // w-56
 const CONNECTOR_GAP = 8
+const CONNECTOR_OPACITY = 0.4
 
 export function AnnotationPanel({
   layers,
@@ -27,6 +29,7 @@ export function AnnotationPanel({
   onAnnotationChange,
   onAnnotationBlur,
   onAnnotationClick,
+  isDarkMode,
 }: AnnotationPanelProps) {
   const positions = useAllHighlightPositions(editorsRef, layers, containerRef)
 
@@ -94,7 +97,7 @@ export function AnnotationPanel({
               y1={y1}
               x2={x2}
               y2={y2}
-              stroke={parseHexToRgba(color, 0.4)}
+              stroke={blendWithBackground(color, CONNECTOR_OPACITY, isDarkMode)}
               strokeWidth={1}
             />
           )
