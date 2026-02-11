@@ -46,6 +46,61 @@ test("arrow endpoints are highlighted as SVG rects after drawing", async ({ page
   await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
 });
 
+test("arrow overlay uses mix-blend-mode multiply for text visibility", async ({ page }) => {
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right to destination
+  await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(30);
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
+
+  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+
+  // Verify the SVG overlay uses mix-blend-mode multiply (light mode default)
+  // so endpoint highlights don't obscure text underneath
+  const svg = page.getByTestId("arrow-overlay");
+  const blendMode = await svg.evaluate((el) =>
+    window.getComputedStyle(el).mixBlendMode
+  );
+  expect(blendMode).toBe("multiply");
+});
+
+test("arrow endpoint rects, line, and arrowhead share same base color", async ({ page }) => {
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right to destination
+  await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(30);
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
+
+  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+
+  const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
+  await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
+
+  // Get the layer color from the first endpoint rect
+  const rectFill = await endpointRects.first().getAttribute("fill");
+  expect(rectFill).toBeTruthy();
+
+  // Verify second rect has same fill
+  const rectFill2 = await endpointRects.nth(1).getAttribute("fill");
+  expect(rectFill2).toBe(rectFill);
+
+  // Verify arrow line stroke matches
+  const lineStroke = await page.getByTestId("arrow-line").getAttribute("stroke");
+  expect(lineStroke).toBe(rectFill);
+
+  // Verify arrowhead polygon fill matches
+  const arrowheadFill = await page.locator("marker polygon").first().getAttribute("fill");
+  expect(arrowheadFill).toBe(rectFill);
+});
+
 test("arrow endpoint SVG rects disappear when layer is hidden", async ({ page }) => {
   // Click current word to set anchor
   const sel = page.locator(".word-selection").first();

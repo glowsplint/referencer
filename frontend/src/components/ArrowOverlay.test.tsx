@@ -287,6 +287,59 @@ describe("ArrowOverlay", () => {
     expect(screen.queryByTestId("arrow-endpoint-rect")).not.toBeInTheDocument()
   })
 
+  it("SVG overlay uses mix-blend-mode multiply in light mode", () => {
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ isDarkMode: false })}
+      />
+    )
+
+    const svg = screen.getByTestId("arrow-overlay")
+    expect(svg).toHaveStyle({ mixBlendMode: "multiply" })
+  })
+
+  it("SVG overlay uses mix-blend-mode screen in dark mode", () => {
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ isDarkMode: true })}
+      />
+    )
+
+    const svg = screen.getByTestId("arrow-overlay")
+    expect(svg).toHaveStyle({ mixBlendMode: "screen" })
+  })
+
+  it("endpoint rects, arrow line, and arrowhead share same base color", () => {
+    const layerColor = "#fca5a5"
+    const layer = createLayer({
+      color: layerColor,
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], isLocked: true })}
+      />
+    )
+
+    const rects = screen.getAllByTestId("arrow-endpoint-rect")
+    for (const rect of rects) {
+      expect(rect.getAttribute("fill")).toBe(layerColor)
+    }
+
+    const line = screen.getByTestId("arrow-line")
+    expect(line.getAttribute("stroke")).toBe(layerColor)
+
+    const marker = document.getElementById("arrowhead-a1")
+    const polygon = marker?.querySelector("polygon")
+    expect(polygon?.getAttribute("fill")).toBe(layerColor)
+  })
+
   it("arrow hit areas have pointer-events none when arrow tool is active", () => {
     const layer = createLayer({
       arrows: [
