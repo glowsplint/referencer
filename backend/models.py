@@ -5,13 +5,8 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 
-class ArrowEndpointModel(BaseModel):
-    model_config = {"populate_by_name": True}
-
-    editorIndex: int
-    from_: int = Field(alias="from")
-    to: int
-    text: str
+class FromFieldMixin:
+    """Mixin that renames ``from_`` back to ``from`` in model_dump output."""
 
     def model_dump(self, **kwargs):
         d = super().model_dump(**kwargs)
@@ -19,7 +14,16 @@ class ArrowEndpointModel(BaseModel):
         return d
 
 
-class HighlightModel(BaseModel):
+class ArrowEndpointModel(FromFieldMixin, BaseModel):
+    model_config = {"populate_by_name": True}
+
+    editorIndex: int
+    from_: int = Field(alias="from")
+    to: int
+    text: str
+
+
+class HighlightModel(FromFieldMixin, BaseModel):
     model_config = {"populate_by_name": True}
 
     id: str
@@ -28,11 +32,6 @@ class HighlightModel(BaseModel):
     to: int
     text: str
     annotation: str = ""
-
-    def model_dump(self, **kwargs):
-        d = super().model_dump(**kwargs)
-        d["from"] = d.pop("from_")
-        return d
 
 
 class ArrowModel(BaseModel):
