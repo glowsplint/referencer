@@ -42,20 +42,24 @@ export function useDrawingMode({
   useEffect(() => {
     activeLayerIdRef.current = activeLayerId
     addArrowRef.current = addArrow
-  })
+  }, [activeLayerId, addArrow])
 
   const isArrowTool = activeTool === "arrow" && isLocked
 
   // Clear anchor when switching away from arrow tool or unlocking
-  if (!isArrowTool && anchorRef.current !== null) {
-    anchorRef.current = null
-    setDrawingState(null)
-  }
+  useEffect(() => {
+    if (!isArrowTool) {
+      anchorRef.current = null
+      setDrawingState(null)
+    }
+  }, [isArrowTool])
 
-  // Also clear state on render if not locked
-  if (!isLocked && drawingState !== null) {
-    setDrawingState(null)
-  }
+  // Also clear state when not locked
+  useEffect(() => {
+    if (!isLocked) {
+      setDrawingState(null)
+    }
+  }, [isLocked])
 
   // Update preview cursor when selection changes while anchor is set
   useEffect(() => {
