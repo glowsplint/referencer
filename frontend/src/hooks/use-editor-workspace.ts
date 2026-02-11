@@ -85,10 +85,12 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       const wasVisible = layer?.visible ?? true
       trackedLayersHook.toggleLayerVisibility(id)
       guardedSendAction("toggleLayerVisibility", { id })
-      history.logOnly(
-        wasVisible ? "hideLayer" : "showLayer",
-        `${wasVisible ? "Hid" : "Showed"} layer '${layer?.name ?? "layer"}'`
-      )
+      history.record({
+        type: wasVisible ? "hideLayer" : "showLayer",
+        description: `${wasVisible ? "Hid" : "Showed"} layer '${layer?.name ?? "layer"}'`,
+        undo: () => rawLayersHook.toggleLayerVisibility(id),
+        redo: () => rawLayersHook.toggleLayerVisibility(id),
+      })
     },
     [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction, history]
   )
@@ -197,10 +199,12 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       const name = rawEditorsHook.sectionNames[index] ?? `Passage ${index + 1}`
       rawEditorsHook.toggleSectionVisibility(index)
       guardedSendAction("toggleSectionVisibility", { index })
-      history.logOnly(
-        wasVisible ? "hidePassage" : "showPassage",
-        `${wasVisible ? "Hid" : "Showed"} passage '${name}'`
-      )
+      history.record({
+        type: wasVisible ? "hidePassage" : "showPassage",
+        description: `${wasVisible ? "Hid" : "Showed"} passage '${name}'`,
+        undo: () => rawEditorsHook.toggleSectionVisibility(index),
+        redo: () => rawEditorsHook.toggleSectionVisibility(index),
+      })
     },
     [readOnly, rawEditorsHook, guardedSendAction, history]
   )
@@ -222,16 +226,25 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const toggleLocked = useCallback(() => {
     const wasLocked = settingsHook.settings.isLocked
     settingsHook.toggleLocked()
-    history.logOnly(
-      wasLocked ? "unlock" : "lock",
-      wasLocked ? "Unlocked editor" : "Locked editor"
-    )
+    history.record({
+      type: wasLocked ? "unlock" : "lock",
+      description: wasLocked ? "Unlocked editor" : "Locked editor",
+      undo: () => settingsHook.toggleLocked(),
+      redo: () => settingsHook.toggleLocked(),
+    })
   }, [settingsHook, history])
 
   const setActiveTool = useCallback(
     (tool: Parameters<typeof settingsHook.setActiveTool>[0]) => {
+      if (tool === settingsHook.annotations.activeTool) return
+      const oldTool = settingsHook.annotations.activeTool
       settingsHook.setActiveTool(tool)
-      history.logOnly("setActiveTool", `Switched to ${tool} tool`)
+      history.record({
+        type: "setActiveTool",
+        description: `Switched to ${tool} tool`,
+        undo: () => settingsHook.setActiveTool(oldTool),
+        redo: () => settingsHook.setActiveTool(tool),
+      })
     },
     [settingsHook, history]
   )
@@ -239,13 +252,23 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const toggleDarkMode = useCallback(() => {
     const wasDark = settingsHook.settings.isDarkMode
     settingsHook.toggleDarkMode()
-    history.logOnly("toggleDarkMode", `Switched to ${wasDark ? "light" : "dark"} mode`)
+    history.record({
+      type: "toggleDarkMode",
+      description: `Switched to ${wasDark ? "light" : "dark"} mode`,
+      undo: () => settingsHook.toggleDarkMode(),
+      redo: () => settingsHook.toggleDarkMode(),
+    })
   }, [settingsHook, history])
 
   const toggleMultipleRowsLayout = useCallback(() => {
     const wasRows = settingsHook.settings.isMultipleRowsLayout
     settingsHook.toggleMultipleRowsLayout()
-    history.logOnly("toggleLayout", `Switched to ${wasRows ? "column" : "row"} layout`)
+    history.record({
+      type: "toggleLayout",
+      description: `Switched to ${wasRows ? "column" : "row"} layout`,
+      undo: () => settingsHook.toggleMultipleRowsLayout(),
+      redo: () => settingsHook.toggleMultipleRowsLayout(),
+    })
   }, [settingsHook, history])
 
   const [isManagementPaneOpen, setIsManagementPaneOpen] = useState(true)

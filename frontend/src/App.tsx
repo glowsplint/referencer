@@ -169,12 +169,8 @@ export function App() {
   return (
     <WorkspaceProvider value={workspace}>
       <Toaster />
-      <ActionConsole
-        log={history.log}
-        isOpen={actionConsole.isOpen}
-        onClose={() => actionConsole.setIsOpen(false)}
-      />
-      <div className="flex h-screen">
+      <div className="flex flex-col h-screen">
+      <div className="flex flex-1 min-h-0">
         <ButtonPane />
         {isManagementPaneOpen && <ManagementPane />}
         <EditorContext.Provider value={{ editor: activeEditor }}>
@@ -255,6 +251,14 @@ export function App() {
             </div>
           </div>
         </EditorContext.Provider>
+      </div>
+      <ActionConsole
+        log={history.log}
+        isOpen={actionConsole.isOpen}
+        onClose={() => actionConsole.setIsOpen(false)}
+        height={actionConsole.consoleHeight}
+        onHeightChange={actionConsole.setConsoleHeight}
+      />
       </div>
     </WorkspaceProvider>
   );

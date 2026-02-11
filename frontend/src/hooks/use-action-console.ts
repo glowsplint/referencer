@@ -3,6 +3,7 @@ import { isEditableElement } from "@/lib/dom"
 
 export function useActionConsole() {
   const [isOpen, setIsOpen] = useState(false)
+  const [consoleHeight, setConsoleHeight] = useState(192)
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -17,5 +18,5 @@ export function useActionConsole() {
     return () => document.removeEventListener("keydown", handler)
   }, [])
 
-  return { isOpen, setIsOpen }
+  return { isOpen, setIsOpen, consoleHeight, setConsoleHeight }
 }

@@ -787,4 +787,159 @@ describe("useEditorWorkspace", () => {
 
     expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"])
   })
+
+  // --- Toggle actions are undoable (logOnly → record) ---
+
+  it("toggleLayerVisibility is undoable", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+    expect(result.current.layers[0].visible).toBe(true)
+
+    act(() => { result.current.toggleLayerVisibility(layerId) })
+    expect(result.current.layers[0].visible).toBe(false)
+    expect(result.current.history.canUndo).toBe(true)
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.layers[0].visible).toBe(true)
+
+    act(() => { result.current.history.redo() })
+    expect(result.current.layers[0].visible).toBe(false)
+  })
+
+  it("toggleSectionVisibility is undoable", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    expect(result.current.sectionVisibility[0]).toBe(true)
+
+    act(() => { result.current.toggleSectionVisibility(0) })
+    expect(result.current.sectionVisibility[0]).toBe(false)
+    expect(result.current.history.canUndo).toBe(true)
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.sectionVisibility[0]).toBe(true)
+
+    act(() => { result.current.history.redo() })
+    expect(result.current.sectionVisibility[0]).toBe(false)
+  })
+
+  it("toggleLocked is undoable", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    expect(result.current.settings.isLocked).toBe(false)
+
+    act(() => { result.current.toggleLocked() })
+    expect(result.current.settings.isLocked).toBe(true)
+    expect(result.current.history.canUndo).toBe(true)
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.settings.isLocked).toBe(false)
+
+    act(() => { result.current.history.redo() })
+    expect(result.current.settings.isLocked).toBe(true)
+  })
+
+  it("toggleDarkMode is undoable", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    expect(result.current.settings.isDarkMode).toBe(false)
+
+    act(() => { result.current.toggleDarkMode() })
+    expect(result.current.settings.isDarkMode).toBe(true)
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.settings.isDarkMode).toBe(false)
+
+    act(() => { result.current.history.redo() })
+    expect(result.current.settings.isDarkMode).toBe(true)
+  })
+
+  it("toggleMultipleRowsLayout is undoable", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    expect(result.current.settings.isMultipleRowsLayout).toBe(false)
+
+    act(() => { result.current.toggleMultipleRowsLayout() })
+    expect(result.current.settings.isMultipleRowsLayout).toBe(true)
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.settings.isMultipleRowsLayout).toBe(false)
+
+    act(() => { result.current.history.redo() })
+    expect(result.current.settings.isMultipleRowsLayout).toBe(true)
+  })
+
+  it("setActiveTool no-ops when setting the same tool", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    expect(result.current.annotations.activeTool).toBe("selection")
+
+    act(() => { result.current.setActiveTool("selection") })
+
+    expect(result.current.history.canUndo).toBe(false)
+    expect(result.current.history.log).toHaveLength(0)
+  })
+
+  it("setActiveTool is undoable and restores old tool", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    expect(result.current.annotations.activeTool).toBe("selection")
+
+    act(() => { result.current.setActiveTool("arrow") })
+    expect(result.current.annotations.activeTool).toBe("arrow")
+    expect(result.current.history.canUndo).toBe(true)
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.annotations.activeTool).toBe("selection")
+
+    act(() => { result.current.history.redo() })
+    expect(result.current.annotations.activeTool).toBe("arrow")
+  })
+
+  it("setActiveTool undo chain across multiple tool switches", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => { result.current.setActiveTool("arrow") })
+    act(() => { result.current.setActiveTool("comments") })
+
+    expect(result.current.annotations.activeTool).toBe("comments")
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.annotations.activeTool).toBe("arrow")
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.annotations.activeTool).toBe("selection")
+  })
+
+  it("toggle actions use record() not logOnly()", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.toggleLocked()
+      result.current.toggleDarkMode()
+      result.current.toggleMultipleRowsLayout()
+      result.current.toggleLayerVisibility(layerId)
+      result.current.toggleSectionVisibility(0)
+      result.current.setActiveTool("arrow")
+    })
+
+    // All should be on the undo stack (addLayer + 6 toggles = 7)
+    const logEntries = result.current.history.log
+    expect(logEntries.length).toBe(7)
+
+    // Undo all 6 toggle actions
+    for (let i = 0; i < 6; i++) {
+      expect(result.current.history.canUndo).toBe(true)
+      act(() => { result.current.history.undo() })
+    }
+
+    // Only addLayer should remain on the undo stack
+    expect(result.current.history.canUndo).toBe(true)
+    act(() => { result.current.history.undo() })
+    expect(result.current.history.canUndo).toBe(false)
+  })
 })

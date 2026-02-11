@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useCallback } from "react"
 import type { ActionEntry } from "@/types/editor"
 
 const TYPE_COLORS: Record<string, string> = {
@@ -33,9 +33,11 @@ interface ActionConsoleProps {
   log: ActionEntry[]
   isOpen: boolean
   onClose: () => void
+  height: number
+  onHeightChange: (height: number) => void
 }
 
-export function ActionConsole({ log, isOpen, onClose }: ActionConsoleProps) {
+export function ActionConsole({ log, isOpen, onClose, height, onHeightChange }: ActionConsoleProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -44,13 +46,44 @@ export function ActionConsole({ log, isOpen, onClose }: ActionConsoleProps) {
     }
   }, [log])
 
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      document.body.style.userSelect = "none"
+      const startY = e.clientY
+      const startHeight = height
+
+      const onMouseMove = (e: MouseEvent) => {
+        const delta = startY - e.clientY
+        const newHeight = Math.min(600, Math.max(80, startHeight + delta))
+        onHeightChange(newHeight)
+      }
+
+      const onMouseUp = () => {
+        document.removeEventListener("mousemove", onMouseMove)
+        document.removeEventListener("mouseup", onMouseUp)
+        document.body.style.userSelect = ""
+      }
+
+      document.addEventListener("mousemove", onMouseMove)
+      document.addEventListener("mouseup", onMouseUp)
+    },
+    [height, onHeightChange]
+  )
+
   if (!isOpen) return null
 
   return (
     <div
       data-testid="actionConsole"
-      className="fixed bottom-0 left-0 right-0 h-48 z-50 bg-zinc-900 border-t border-zinc-700 flex flex-col font-mono text-xs"
+      className="bg-zinc-900 border-t border-zinc-700 flex flex-col font-mono text-xs shrink-0"
+      style={{ height }}
     >
+      <div
+        data-testid="consoleDragHandle"
+        onMouseDown={handleDragStart}
+        className="h-1.5 cursor-row-resize hover:bg-zinc-600 transition-colors shrink-0"
+      />
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-700">
         <span className="text-zinc-400 text-xs font-medium">Action Console</span>
         <button
