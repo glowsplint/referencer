@@ -8,7 +8,7 @@ import {
   Lock,
   LockOpen,
   Menu,
-  ArrowUpRight,
+  ArrowBigRight,
   MessageSquareText,
   Keyboard,
 } from "lucide-react";
@@ -33,12 +33,20 @@ export function ButtonPane() {
 
   const toolButtons: { tool: ActiveTool; icon: React.ReactNode; title: string; testId: string }[] = [
     { tool: "selection", icon: <MousePointer2 size={20} />, title: "Selection tool", testId: "selectionToolButton" },
-    { tool: "arrow", icon: <ArrowUpRight size={20} />, title: "Arrow tool", testId: "arrowToolButton" },
+    { tool: "arrow", icon: <ArrowBigRight size={20} />, title: "Arrow tool", testId: "arrowToolButton" },
     { tool: "comments", icon: <MessageSquareText size={20} />, title: "Comments tool", testId: "commentsToolButton" },
   ];
 
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
+      <SwitchingButtonIcon
+        iconOne={<Menu size={20} />}
+        iconTwo={<Menu size={20} />}
+        bool={isManagementPaneOpen}
+        callback={toggleManagementPane}
+        title="Toggle management pane"
+        buttonProps={{ "data-testid": "menuButton" }}
+      />
       <button
         onClick={() => setShortcutsOpen(true)}
         title="Keyboard shortcuts"
@@ -62,14 +70,6 @@ export function ButtonPane() {
           {icon}
         </button>
       ))}
-      <SwitchingButtonIcon
-        iconOne={<Menu size={20} />}
-        iconTwo={<Menu size={20} />}
-        bool={isManagementPaneOpen}
-        callback={toggleManagementPane}
-        title="Toggle management pane"
-        buttonProps={{ "data-testid": "menuButton" }}
-      />
       <SwitchingButtonIcon
         iconOne={<Sun size={20} />}
         iconTwo={<MoonStar size={20} />}

@@ -77,11 +77,11 @@ describe("ButtonPane", () => {
     expect(workspace.toggleLocked).toHaveBeenCalledOnce()
   })
 
-  it("keyboard shortcuts button is the first button in the pane", () => {
+  it("menu button is the first button in the pane", () => {
     renderButtonPane()
-    const pane = screen.getByTestId("keyboardShortcutsButton").parentElement!
+    const pane = screen.getByTestId("menuButton").parentElement!
     const buttons = pane.querySelectorAll("button")
-    expect(buttons[0]).toBe(screen.getByTestId("keyboardShortcutsButton"))
+    expect(buttons[0]).toBe(screen.getByTestId("menuButton"))
   })
 
   it("opens keyboard shortcuts dialog when button is clicked", () => {
