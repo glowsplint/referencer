@@ -20,7 +20,12 @@ load_dotenv()
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE")
 EXPORTED_PATH = Path("./frontend/dist/")
 
-origins = ["http://127.0.0.1:5000", "http://localhost:5173"]
+DEFAULT_CORS_ORIGINS = "http://127.0.0.1:5000,http://localhost:5173"
+origins = [
+    origin.strip()
+    for origin in os.getenv("CORS_ORIGINS", DEFAULT_CORS_ORIGINS).split(",")
+    if origin.strip()
+]
 
 
 @asynccontextmanager
@@ -115,7 +120,7 @@ def get_production_passages(query: str):
     url = f"https://api.esv.org/v3/passage/text/?q={query}"
     headers = {"Authorization": f'Token {os.environ["API_KEY"]}'}
     params = {"include-short-copyright": False}
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params, timeout=10)
     return response.json()
 
 
