@@ -8,6 +8,126 @@ import type { useEditors } from "./use-editors"
 type RawLayersHook = ReturnType<typeof useLayers>
 type RawEditorsHook = ReturnType<typeof useEditors>
 
+// ---------------------------------------------------------------------------
+// Payload validation helpers
+// ---------------------------------------------------------------------------
+
+function isObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v)
+}
+
+function isString(v: unknown): v is string {
+  return typeof v === "string"
+}
+
+function isNumber(v: unknown): v is number {
+  return typeof v === "number"
+}
+
+function isBoolean(v: unknown): v is boolean {
+  return typeof v === "boolean"
+}
+
+/** Validate that `data` looks like a WorkspaceStatePayload. */
+export function validateStatePayload(
+  data: unknown
+): data is WorkspaceStatePayload {
+  if (!isObject(data)) return false
+  if (!isString(data.workspaceId)) return false
+  if (!Array.isArray(data.layers)) return false
+  if (!Array.isArray(data.editors)) return false
+
+  for (const l of data.layers) {
+    if (!isObject(l)) return false
+    if (!isString(l.id) || !isString(l.name) || !isString(l.color) || !isBoolean(l.visible))
+      return false
+    if (!Array.isArray(l.highlights) || !Array.isArray(l.arrows)) return false
+  }
+
+  for (const e of data.editors) {
+    if (!isObject(e)) return false
+    if (!isString(e.name) || !isBoolean(e.visible)) return false
+  }
+
+  return true
+}
+
+/** Validate fields required for each remote action type. Returns true if valid. */
+export function validateActionPayload(payload: Record<string, unknown>): boolean {
+  const t = payload.actionType
+  if (!isString(t)) {
+    console.warn("[ws] action payload missing actionType", payload)
+    return false
+  }
+
+  switch (t) {
+    case "addLayer":
+      return isString(payload.id) && isString(payload.name) && isString(payload.color)
+
+    case "removeLayer":
+      return isString(payload.id)
+
+    case "updateLayerName":
+      return isString(payload.id) && isString(payload.name)
+
+    case "updateLayerColor":
+      return isString(payload.id) && isString(payload.color)
+
+    case "toggleLayerVisibility":
+      return isString(payload.id)
+
+    case "reorderLayers":
+      return Array.isArray(payload.layerIds) && payload.layerIds.every(isString)
+
+    case "addHighlight": {
+      if (!isString(payload.layerId) || !isObject(payload.highlight)) return false
+      const h = payload.highlight
+      return (
+        isString(h.id) && isNumber(h.editorIndex) && isNumber(h.from) && isNumber(h.to)
+      )
+    }
+
+    case "removeHighlight":
+      return isString(payload.layerId) && isString(payload.highlightId)
+
+    case "updateHighlightAnnotation":
+      return (
+        isString(payload.layerId) &&
+        isString(payload.highlightId) &&
+        isString(payload.annotation)
+      )
+
+    case "addArrow": {
+      if (!isString(payload.layerId) || !isObject(payload.arrow)) return false
+      const a = payload.arrow
+      return isString(a.id) && isObject(a.from) && isObject(a.to)
+    }
+
+    case "removeArrow":
+      return isString(payload.layerId) && isString(payload.arrowId)
+
+    case "addEditor":
+      return isString(payload.name)
+
+    case "removeEditor":
+      return isNumber(payload.index)
+
+    case "updateSectionName":
+      return isNumber(payload.index) && isString(payload.name)
+
+    case "toggleSectionVisibility":
+      return isNumber(payload.index)
+
+    default:
+      // Unknown action — let it through; the switch in applyRemoteAction will ignore it
+      return true
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Hook
+// ---------------------------------------------------------------------------
+
 export function useWebSocket(
   workspaceId: string | null,
   rawLayers: RawLayersHook,
@@ -39,16 +159,28 @@ export function useWebSocket(
     client.on("_disconnected", () => setConnected(false))
 
     client.on("state", (msg: ServerMessage) => {
-      const state = msg.payload as unknown as WorkspaceStatePayload
-      hydrateState(state, rawLayersRef.current, rawEditorsRef.current)
+      try {
+        if (!validateStatePayload(msg.payload)) {
+          console.warn("[ws] Invalid state payload, skipping hydration", msg.payload)
+          return
+        }
+        hydrateState(msg.payload, rawLayersRef.current, rawEditorsRef.current)
+      } catch (err) {
+        console.error("[ws] Unexpected error hydrating state", err)
+      }
     })
 
     client.on("action", (msg: ServerMessage) => {
-      applyRemoteAction(
-        msg.payload as Record<string, unknown>,
-        rawLayersRef.current,
-        rawEditorsRef.current
-      )
+      try {
+        const payload = msg.payload as Record<string, unknown>
+        if (!validateActionPayload(payload)) {
+          console.warn("[ws] Invalid action payload, skipping", payload)
+          return
+        }
+        applyRemoteAction(payload, rawLayersRef.current, rawEditorsRef.current)
+      } catch (err) {
+        console.error("[ws] Unexpected error applying remote action", err)
+      }
     })
 
     client.connect()
