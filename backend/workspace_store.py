@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections import defaultdict
 
 import aiosqlite
 
@@ -40,56 +41,72 @@ async def get_full_state(
     )
     layer_rows = await cursor.fetchall()
 
-    layers: list[LayerModel] = []
-    for lr in layer_rows:
-        layer_id = lr[0]
+    # Batch-fetch ALL highlights for this workspace via JOIN
+    h_cursor = await db.execute(
+        'SELECT h.id, h.layer_id, h.editor_index, h."from", h."to", h.text, h.annotation '
+        "FROM highlight h "
+        "JOIN layer l ON h.layer_id = l.id "
+        "WHERE l.workspace_id = ?",
+        (workspace_id,),
+    )
+    h_rows = await h_cursor.fetchall()
 
-        # Load highlights for this layer
-        h_cursor = await db.execute(
-            'SELECT id, editor_index, "from", "to", text, annotation FROM highlight WHERE layer_id = ?',
-            (layer_id,),
-        )
-        h_rows = await h_cursor.fetchall()
-        highlights = [
+    highlights_by_layer: dict[str, list[HighlightModel]] = defaultdict(list)
+    for h in h_rows:
+        highlights_by_layer[h["layer_id"]].append(
             HighlightModel(
-                id=h[0],
-                editorIndex=h[1],
-                from_=h[2],
-                to=h[3],
-                text=h[4],
-                annotation=h[5],
+                id=h["id"],
+                editorIndex=h["editor_index"],
+                from_=h["from"],
+                to=h["to"],
+                text=h["text"],
+                annotation=h["annotation"],
             )
-            for h in h_rows
-        ]
-
-        # Load arrows for this layer
-        a_cursor = await db.execute(
-            "SELECT id, from_editor_index, from_start, from_end, from_text, "
-            "to_editor_index, to_start, to_end, to_text FROM arrow WHERE layer_id = ?",
-            (layer_id,),
         )
-        a_rows = await a_cursor.fetchall()
-        arrows = [
+
+    # Batch-fetch ALL arrows for this workspace via JOIN
+    a_cursor = await db.execute(
+        "SELECT a.id, a.layer_id, a.from_editor_index, a.from_start, a.from_end, a.from_text, "
+        "a.to_editor_index, a.to_start, a.to_end, a.to_text "
+        "FROM arrow a "
+        "JOIN layer l ON a.layer_id = l.id "
+        "WHERE l.workspace_id = ?",
+        (workspace_id,),
+    )
+    a_rows = await a_cursor.fetchall()
+
+    arrows_by_layer: dict[str, list[ArrowModel]] = defaultdict(list)
+    for a in a_rows:
+        arrows_by_layer[a["layer_id"]].append(
             ArrowModel(
-                id=a[0],
+                id=a["id"],
                 from_endpoint=ArrowEndpointModel(
-                    editorIndex=a[1], from_=a[2], to=a[3], text=a[4]
+                    editorIndex=a["from_editor_index"],
+                    from_=a["from_start"],
+                    to=a["from_end"],
+                    text=a["from_text"],
                 ),
                 to_endpoint=ArrowEndpointModel(
-                    editorIndex=a[5], from_=a[6], to=a[7], text=a[8]
+                    editorIndex=a["to_editor_index"],
+                    from_=a["to_start"],
+                    to=a["to_end"],
+                    text=a["to_text"],
                 ),
             )
-            for a in a_rows
-        ]
+        )
 
+    # Assemble layers with pre-fetched highlights and arrows
+    layers: list[LayerModel] = []
+    for lr in layer_rows:
+        layer_id = lr["id"]
         layers.append(
             LayerModel(
                 id=layer_id,
-                name=lr[1],
-                color=lr[2],
-                visible=bool(lr[3]),
-                highlights=highlights,
-                arrows=arrows,
+                name=lr["name"],
+                color=lr["color"],
+                visible=bool(lr["visible"]),
+                highlights=highlights_by_layer.get(layer_id, []),
+                arrows=arrows_by_layer.get(layer_id, []),
             )
         )
 
@@ -101,10 +118,10 @@ async def get_full_state(
     editor_rows = await cursor.fetchall()
     editors = [
         EditorModel(
-            index=e[0],
-            name=e[1],
-            visible=bool(e[2]),
-            contentJson=json.loads(e[3]) if e[3] else None,
+            index=e["index_pos"],
+            name=e["name"],
+            visible=bool(e["visible"]),
+            contentJson=json.loads(e["content_json"]) if e["content_json"] else None,
         )
         for e in editor_rows
     ]
