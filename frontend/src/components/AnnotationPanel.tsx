@@ -80,7 +80,7 @@ export function AnnotationPanel({
           {/* SVG connector lines - overflow visible to extend into editor area */}
           <svg
             className="pointer-events-none absolute inset-0"
-            style={{ width: "100%", height: "100%", overflow: "visible" }}
+            style={{ width: "100%", height: "100%", overflow: "visible", mixBlendMode: isDarkMode ? "screen" : "multiply" }}
           >
             {resolvedPositions.map((resolved) => {
               const original = positionByHighlightId.get(resolved.id)
@@ -103,7 +103,7 @@ export function AnnotationPanel({
                   x2={x2}
                   y2={y2}
                   stroke={blendWithBackground(color, CONNECTOR_OPACITY, isDarkMode)}
-                  strokeWidth={1}
+                  strokeWidth={2}
                 />
               )
             })}
