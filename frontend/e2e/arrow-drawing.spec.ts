@@ -77,11 +77,11 @@ test("click on arrow line deletes it", async ({ page }) => {
   await page.keyboard.press("ArrowRight");
   await page.keyboard.up("a");
 
-  const arrowLine = page.getByTestId("arrow-line");
-  await expect(arrowLine).toHaveCount(1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Click to delete
-  await arrowLine.click({ force: true });
+  // Click hit area to delete
+  const hitArea = page.getByTestId("arrow-hit-area");
+  await hitArea.click({ force: true });
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
 });
 

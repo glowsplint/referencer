@@ -59,6 +59,10 @@ export function useWordSelection({
         return
       }
 
+      // Don't hijack arrow keys when a textarea is focused (e.g. annotation input)
+      const active = document.activeElement
+      if (active && (active.tagName === "TEXTAREA" || active.tagName === "INPUT")) return
+
       if (!selection) return
 
       e.preventDefault()

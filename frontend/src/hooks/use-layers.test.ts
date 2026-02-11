@@ -164,7 +164,7 @@ describe("useLayers", () => {
     act(() => { result.current.addLayer() })
     const id = result.current.layers[0].id
     act(() => {
-      result.current.addHighlight(id, { editorIndex: 0, from: 1, to: 5, text: "hello" })
+      result.current.addHighlight(id, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
     })
 
     expect(result.current.layers[0].highlights).toHaveLength(1)
@@ -178,7 +178,7 @@ describe("useLayers", () => {
     act(() => { result.current.addLayer(); result.current.addLayer() })
     const firstId = result.current.layers[0].id
     act(() => {
-      result.current.addHighlight(firstId, { editorIndex: 0, from: 1, to: 5, text: "hello" })
+      result.current.addHighlight(firstId, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
     })
 
     expect(result.current.layers[0].highlights).toHaveLength(1)
@@ -190,7 +190,7 @@ describe("useLayers", () => {
 
     act(() => { result.current.addLayer() })
     act(() => {
-      result.current.addHighlight("non-existent", { editorIndex: 0, from: 1, to: 5, text: "hello" })
+      result.current.addHighlight("non-existent", { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
     })
     expect(result.current.layers[0].highlights).toHaveLength(0)
   })
@@ -201,8 +201,8 @@ describe("useLayers", () => {
     act(() => { result.current.addLayer() })
     const layerId = result.current.layers[0].id
     act(() => {
-      result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello" })
-      result.current.addHighlight(layerId, { editorIndex: 0, from: 10, to: 15, text: "world" })
+      result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
+      result.current.addHighlight(layerId, { editorIndex: 0, from: 10, to: 15, text: "world", annotation: "" })
     })
 
     const highlightId = result.current.layers[0].highlights[0].id
@@ -218,7 +218,7 @@ describe("useLayers", () => {
     act(() => { result.current.addLayer() })
     const layerId = result.current.layers[0].id
     act(() => {
-      result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello" })
+      result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
     })
     act(() => { result.current.removeHighlight(layerId, "non-existent") })
     expect(result.current.layers[0].highlights).toHaveLength(1)
@@ -230,8 +230,8 @@ describe("useLayers", () => {
     act(() => { result.current.addLayer() })
     const layerId = result.current.layers[0].id
     act(() => {
-      result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello" })
-      result.current.addHighlight(layerId, { editorIndex: 0, from: 10, to: 15, text: "world" })
+      result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
+      result.current.addHighlight(layerId, { editorIndex: 0, from: 10, to: 15, text: "world", annotation: "" })
     })
     act(() => { result.current.clearLayerHighlights(layerId) })
 
@@ -326,8 +326,8 @@ describe("useLayers", () => {
 
     act(() => {
       result.current.addArrow(layerId, {
-        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world", annotation: "" },
       })
     })
 
@@ -344,8 +344,8 @@ describe("useLayers", () => {
 
     act(() => {
       result.current.addArrow(firstId, {
-        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world", annotation: "" },
       })
     })
 
@@ -360,8 +360,8 @@ describe("useLayers", () => {
 
     act(() => {
       result.current.addArrow(layerId, {
-        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world", annotation: "" },
       })
       result.current.addArrow(layerId, {
         from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
@@ -383,8 +383,8 @@ describe("useLayers", () => {
 
     act(() => {
       result.current.addArrow(layerId, {
-        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world", annotation: "" },
       })
     })
     act(() => { result.current.removeArrow(layerId, "non-existent") })
@@ -399,8 +399,8 @@ describe("useLayers", () => {
 
     act(() => {
       result.current.addArrow(layerId, {
-        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world", annotation: "" },
       })
       result.current.addArrow(layerId, {
         from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
@@ -418,5 +418,47 @@ describe("useLayers", () => {
     const layerId = result.current.layers[0].id
     act(() => { result.current.clearLayerArrows(layerId) })
     expect(result.current.layers[0].arrows).toEqual([])
+  })
+
+  it("addHighlight returns the generated highlight id", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    let returnedId: string = ""
+    act(() => {
+      returnedId = result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
+    })
+
+    expect(returnedId).toBeTruthy()
+    expect(result.current.layers[0].highlights[0].id).toBe(returnedId)
+  })
+
+  it("updateHighlightAnnotation updates annotation text", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
+    })
+    const highlightId = result.current.layers[0].highlights[0].id
+
+    act(() => { result.current.updateHighlightAnnotation(layerId, highlightId, "my note") })
+
+    expect(result.current.layers[0].highlights[0].annotation).toBe("my note")
+  })
+
+  it("updateHighlightAnnotation with non-existent highlight does nothing", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addHighlight(layerId, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
+    })
+
+    act(() => { result.current.updateHighlightAnnotation(layerId, "non-existent", "note") })
+    expect(result.current.layers[0].highlights[0].annotation).toBe("")
   })
 })

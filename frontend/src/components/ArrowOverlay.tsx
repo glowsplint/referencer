@@ -33,6 +33,7 @@ export function ArrowOverlay({
   sectionVisibility,
 }: ArrowOverlayProps) {
   const [tick, setTick] = useState(0)
+  const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null)
 
   const recalc = useCallback(() => setTick((t) => t + 1), [])
 
@@ -120,7 +121,7 @@ export function ArrowOverlay({
             refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 8 3, 0 6" fill={pos.color} fillOpacity={0.6} />
+            <polygon points="0 0, 8 3, 0 6" fill={pos.color} />
           </marker>
         ))}
         {previewPosition && drawingColor && (
@@ -132,7 +133,7 @@ export function ArrowOverlay({
             refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 8 3, 0 6" fill={drawingColor} fillOpacity={0.6} />
+            <polygon points="0 0, 8 3, 0 6" fill={drawingColor} />
           </marker>
         )}
       </defs>
@@ -140,20 +141,45 @@ export function ArrowOverlay({
       {arrowPositions.map((pos) => {
         const mx = (pos.x1 + pos.x2) / 2
         const my = (pos.y1 + pos.y2) / 2
+        const isHovered = hoveredArrowId === pos.arrowId
         return (
-          <path
-            key={pos.arrowId}
-            data-testid="arrow-line"
-            className="arrow-line"
-            d={`M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`}
-            stroke={pos.color}
-            strokeWidth={2}
-            strokeOpacity={0.6}
-            fill="none"
-            markerMid={`url(#arrowhead-${pos.arrowId})`}
-            style={{ pointerEvents: "auto", cursor: "pointer" }}
-            onClick={() => removeArrow(pos.layerId, pos.arrowId)}
-          />
+          <g key={pos.arrowId}>
+            <path
+              data-testid="arrow-line"
+              d={`M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`}
+              stroke={pos.color}
+              strokeWidth={2}
+              fill="none"
+              opacity={0.6}
+              markerMid={`url(#arrowhead-${pos.arrowId})`}
+            />
+            {/* Wider invisible hit area for easier hovering/clicking */}
+            <path
+              data-testid="arrow-hit-area"
+              d={`M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`}
+              stroke="transparent"
+              strokeWidth={12}
+              fill="none"
+              style={{ pointerEvents: "auto", cursor: "pointer" }}
+              onMouseEnter={() => setHoveredArrowId(pos.arrowId)}
+              onMouseLeave={() => setHoveredArrowId(null)}
+              onClick={() => removeArrow(pos.layerId, pos.arrowId)}
+            />
+            {isHovered && (
+              <g
+                transform={`translate(${mx}, ${my})`}
+                style={{ pointerEvents: "none" }}
+              >
+                <circle r="8" fill="white" stroke={pos.color} strokeWidth={1.5} />
+                <path
+                  d="M -3 -3 L 3 3 M 3 -3 L -3 3"
+                  stroke={pos.color}
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                />
+              </g>
+            )}
+          </g>
         )
       })}
 
@@ -166,9 +192,9 @@ export function ArrowOverlay({
             d={`M ${previewPosition.x1} ${previewPosition.y1} L ${mx} ${my} L ${previewPosition.x2} ${previewPosition.y2}`}
             stroke={drawingColor}
             strokeWidth={2}
-            strokeOpacity={0.6}
             strokeDasharray="6 4"
             fill="none"
+            opacity={0.6}
             markerMid="url(#arrowhead-preview)"
           />
         )

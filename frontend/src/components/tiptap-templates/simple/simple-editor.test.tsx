@@ -115,6 +115,9 @@ vi.mock("@/hooks/use-layer-decorations", () => ({
 vi.mock("@/hooks/use-selection-decoration", () => ({
   useSelectionDecoration: vi.fn(() => null),
 }))
+vi.mock("@/components/AnnotationMargin", () => ({
+  AnnotationMargin: () => null,
+}))
 
 // Mock tiptap extensions
 vi.mock("@tiptap/starter-kit", () => ({
@@ -153,6 +156,7 @@ vi.mock("@/components/tiptap-templates/simple/data/content.json", () => ({
 const defaultEditorPaneProps = {
   layers: [],
   selection: null,
+  editingAnnotation: null,
 }
 
 beforeEach(() => {

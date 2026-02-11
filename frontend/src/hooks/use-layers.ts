@@ -54,10 +54,24 @@ export function useLayers() {
   }, [])
 
   const addHighlight = useCallback(
-    (layerId: string, highlight: Omit<Highlight, "id">) => {
+    (layerId: string, highlight: Omit<Highlight, "id">): string => {
+      const id = crypto.randomUUID()
       updateLayer(layerId, (l) => ({
         ...l,
-        highlights: [...l.highlights, { ...highlight, id: crypto.randomUUID() }],
+        highlights: [...l.highlights, { ...highlight, id }],
+      }))
+      return id
+    },
+    []
+  )
+
+  const updateHighlightAnnotation = useCallback(
+    (layerId: string, highlightId: string, annotation: string) => {
+      updateLayer(layerId, (l) => ({
+        ...l,
+        highlights: l.highlights.map((h) =>
+          h.id === highlightId ? { ...h, annotation } : h
+        ),
       }))
     },
     []
@@ -107,6 +121,7 @@ export function useLayers() {
     updateLayerName,
     addHighlight,
     removeHighlight,
+    updateHighlightAnnotation,
     clearLayerHighlights,
     addArrow,
     removeArrow,

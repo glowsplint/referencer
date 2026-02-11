@@ -1,4 +1,4 @@
-import { useRef, useCallback, Fragment } from "react";
+import { useRef, useState, useCallback, Fragment } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -13,9 +13,11 @@ import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useCycleLayer } from "./hooks/use-cycle-layer";
+import { useDragSelection } from "./hooks/use-drag-selection";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
+import type { EditingAnnotation } from "./types/editor";
 
 export function App() {
   const workspace = useEditorWorkspace();
@@ -30,6 +32,7 @@ export function App() {
     setActiveLayer,
     addHighlight,
     removeHighlight,
+    updateHighlightAnnotation,
     addArrow,
     removeArrow,
     editorsRef,
@@ -40,6 +43,7 @@ export function App() {
   } = workspace;
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
 
   const { selection, selectWord, clearSelection } = useWordSelection({
     isLocked: settings.isLocked,
@@ -61,27 +65,36 @@ export function App() {
     setActiveLayer,
   });
 
+  const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragSelection({
+    isLocked: settings.isLocked,
+    activeLayerId,
+    addHighlight,
+    removeHighlight,
+    layers,
+    selectWord,
+    clearSelection,
+  });
+
   const activeLayerColor = activeLayerId
     ? layers.find((l) => l.id === activeLayerId)?.color ?? null
     : null;
 
-  const handleWordClickCombined = useCallback(
-    (editorIndex: number, from: number, to: number, text: string) => {
-      selectWord(editorIndex, from, to, text);
-
-      if (activeLayerId) {
-        const layer = layers.find((l) => l.id === activeLayerId);
-        const existing = layer?.highlights.find(
-          (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
-        );
-        if (existing) {
-          removeHighlight(activeLayerId, existing.id);
-        } else {
-          addHighlight(activeLayerId, { editorIndex, from, to, text });
-        }
-      }
+  const handleAnnotationChange = useCallback(
+    (layerId: string, highlightId: string, annotation: string) => {
+      updateHighlightAnnotation(layerId, highlightId, annotation);
     },
-    [selectWord, activeLayerId, layers, addHighlight, removeHighlight]
+    [updateHighlightAnnotation]
+  );
+
+  const handleAnnotationBlur = useCallback(() => {
+    setEditingAnnotation(null);
+  }, []);
+
+  const handleAnnotationClick = useCallback(
+    (layerId: string, highlightId: string) => {
+      setEditingAnnotation({ layerId, highlightId });
+    },
+    []
   );
 
   return (
@@ -132,11 +145,15 @@ export function App() {
                       index={i}
                       onEditorMount={handleEditorMount}
                       onFocus={handlePaneFocus}
-                      onWordClick={settings.isLocked ? handleWordClickCombined : undefined}
-                      onNonWordClick={settings.isLocked ? clearSelection : undefined}
+                      onMouseDown={settings.isLocked ? handleMouseDown : undefined}
+                      onMouseMove={settings.isLocked ? handleMouseMove : undefined}
+                      onMouseUp={settings.isLocked ? handleMouseUp : undefined}
                       layers={layers}
                       selection={selection}
-
+                      editingAnnotation={editingAnnotation}
+                      onAnnotationChange={handleAnnotationChange}
+                      onAnnotationBlur={handleAnnotationBlur}
+                      onAnnotationClick={handleAnnotationClick}
                     />
                   </div>
                 </Fragment>

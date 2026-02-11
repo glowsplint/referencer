@@ -203,7 +203,7 @@ describe("ArrowOverlay", () => {
       />
     )
 
-    fireEvent.click(screen.getByTestId("arrow-line"))
+    fireEvent.click(screen.getByTestId("arrow-hit-area"))
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
   })
 })

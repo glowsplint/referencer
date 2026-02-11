@@ -5,10 +5,10 @@ import { EditorContent, useEditor } from "@tiptap/react"
 import type { Editor } from "@tiptap/react"
 
 import { createSimpleEditorExtensions } from "./extensions"
-import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
 import { useLayerDecorations } from "@/hooks/use-layer-decorations"
 import { useSelectionDecoration } from "@/hooks/use-selection-decoration"
-import type { Layer, WordSelection } from "@/types/editor"
+import { AnnotationMargin } from "@/components/AnnotationMargin"
+import type { Layer, WordSelection, EditingAnnotation } from "@/types/editor"
 
 // --- Node SCSS ---
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
@@ -28,20 +28,30 @@ export function EditorPane({
   index,
   onEditorMount,
   onFocus,
-  onWordClick,
-  onNonWordClick,
+  onMouseDown,
+  onMouseMove,
+  onMouseUp,
   layers,
   selection,
+  editingAnnotation,
+  onAnnotationChange,
+  onAnnotationBlur,
+  onAnnotationClick,
 }: {
   isLocked: boolean
   content?: Record<string, unknown>
   index: number
   onEditorMount: (index: number, editor: Editor) => void
   onFocus: (index: number) => void
-  onWordClick?: (editorIndex: number, from: number, to: number, text: string) => void
-  onNonWordClick?: () => void
+  onMouseDown?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
+  onMouseMove?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
+  onMouseUp?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
   layers: Layer[]
   selection: WordSelection | null
+  editingAnnotation: EditingAnnotation | null
+  onAnnotationChange?: (layerId: string, highlightId: string, annotation: string) => void
+  onAnnotationBlur?: () => void
+  onAnnotationClick?: (layerId: string, highlightId: string) => void
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -83,29 +93,39 @@ export function EditorPane({
     onFocus(index)
   }, [index, onFocus])
 
-  const handleClick = useCallback(
+  const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (!isLocked || !editor) return
-
-      const pos = editor.view.posAtCoords({ left: e.clientX, top: e.clientY })
-      if (!pos) {
-        onNonWordClick?.()
-        return
-      }
-
-      const result = getWordBoundaries(editor.state.doc, pos.pos)
-      if (!result) {
-        onNonWordClick?.()
-        return
-      }
-
-      onWordClick?.(index, result.from, result.to, result.text)
+      onMouseDown?.(e, editor, index)
     },
-    [isLocked, onWordClick, onNonWordClick, editor, index]
+    [isLocked, editor, index, onMouseDown]
+  )
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isLocked || !editor) return
+      onMouseMove?.(e, editor, index)
+    },
+    [isLocked, editor, index, onMouseMove]
+  )
+
+  const handleMouseUp = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isLocked || !editor) return
+      onMouseUp?.(e, editor, index)
+    },
+    [isLocked, editor, index, onMouseUp]
   )
 
   return (
-    <div ref={wrapperRef} className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`} onFocusCapture={handleFocus} onClick={handleClick}>
+    <div
+      ref={wrapperRef}
+      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`}
+      onFocusCapture={handleFocus}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+    >
       <EditorContent
         editor={editor}
         role="presentation"
@@ -122,6 +142,18 @@ export function EditorPane({
             height: selectionRect.height,
             pointerEvents: "none",
           }}
+        />
+      )}
+      {isLocked && (
+        <AnnotationMargin
+          editor={editor}
+          editorIndex={index}
+          layers={layers}
+          wrapperRef={wrapperRef}
+          editingAnnotation={editingAnnotation}
+          onAnnotationChange={onAnnotationChange}
+          onAnnotationBlur={onAnnotationBlur}
+          onAnnotationClick={onAnnotationClick}
         />
       )}
     </div>

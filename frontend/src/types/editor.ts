@@ -15,6 +15,12 @@ export interface Highlight {
   from: number
   to: number
   text: string
+  annotation: string
+}
+
+export interface EditingAnnotation {
+  layerId: string
+  highlightId: string
 }
 
 export interface Layer {

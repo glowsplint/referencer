@@ -11,7 +11,7 @@ const mockWorkspace = {
     isLocked: false,
   },
   annotations: { isPainterMode: false },
-  layers: [] as { id: string; color: string; name: string; visible: boolean; highlights: { id: string; editorIndex: number; from: number; to: number; text: string }[]; arrows: unknown[] }[],
+  layers: [] as { id: string; color: string; name: string; visible: boolean; highlights: { id: string; editorIndex: number; from: number; to: number; text: string; annotation: string }[]; arrows: unknown[] }[],
   activeLayerId: null as string | null,
   editorCount: 1,
   activeEditor: null,
@@ -32,6 +32,7 @@ const mockWorkspace = {
   toggleAllLayerVisibility: vi.fn(),
   addHighlight: vi.fn(),
   removeHighlight: vi.fn(),
+  updateHighlightAnnotation: vi.fn(),
   clearLayerHighlights: vi.fn(),
   addArrow: vi.fn(),
   removeArrow: vi.fn(),
@@ -92,6 +93,7 @@ beforeEach(() => {
   mockWorkspace.isManagementPaneOpen = false
   mockWorkspace.addHighlight = vi.fn()
   mockWorkspace.removeHighlight = vi.fn()
+  mockWorkspace.updateHighlightAnnotation = vi.fn()
   capturedEditorPaneProps = []
 })
 
@@ -136,16 +138,20 @@ describe("App", () => {
     expect(panes).toHaveLength(2)
   })
 
-  it("does not pass onWordClick to EditorPane when not locked", () => {
+  it("does not pass mouse handlers to EditorPane when not locked", () => {
     mockWorkspace.settings.isLocked = false
     render(<App />)
-    expect(capturedEditorPaneProps[0].onWordClick).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onMouseDown).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onMouseMove).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onMouseUp).toBeUndefined()
   })
 
-  it("passes onWordClick to EditorPane when locked", () => {
+  it("passes mouse handlers to EditorPane when locked", () => {
     mockWorkspace.settings.isLocked = true
     render(<App />)
-    expect(capturedEditorPaneProps[0].onWordClick).toBeDefined()
+    expect(capturedEditorPaneProps[0].onMouseDown).toBeDefined()
+    expect(capturedEditorPaneProps[0].onMouseMove).toBeDefined()
+    expect(capturedEditorPaneProps[0].onMouseUp).toBeDefined()
   })
 
   it("passes layers and selection props to EditorPane", () => {
@@ -158,58 +164,13 @@ describe("App", () => {
     expect(capturedEditorPaneProps[0].selection).toBeNull()
   })
 
-  it("handleWordClick adds highlight when activeLayerId set", () => {
+  it("passes annotation-related props to EditorPane", () => {
     mockWorkspace.settings.isLocked = true
-    mockWorkspace.activeLayerId = "layer-1"
-    mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [], arrows: [] },
-    ]
     render(<App />)
 
-    const onWordClick = capturedEditorPaneProps[0].onWordClick as (editorIndex: number, from: number, to: number, text: string) => void
-    onWordClick(0, 1, 5, "hello")
-
-    expect(mockWorkspace.addHighlight).toHaveBeenCalledWith("layer-1", {
-      editorIndex: 0,
-      from: 1,
-      to: 5,
-      text: "hello",
-    })
-  })
-
-  it("handleWordClick removes highlight when matching highlight exists", () => {
-    mockWorkspace.settings.isLocked = true
-    mockWorkspace.activeLayerId = "layer-1"
-    mockWorkspace.layers = [
-      {
-        id: "layer-1",
-        name: "Layer 1",
-        color: "#fca5a5",
-        visible: true,
-        highlights: [
-          { id: "h1", editorIndex: 0, from: 1, to: 5, text: "hello" },
-        ],
-        arrows: [],
-      },
-    ]
-    render(<App />)
-
-    const onWordClick = capturedEditorPaneProps[0].onWordClick as (editorIndex: number, from: number, to: number, text: string) => void
-    onWordClick(0, 1, 5, "hello")
-
-    expect(mockWorkspace.removeHighlight).toHaveBeenCalledWith("layer-1", "h1")
-    expect(mockWorkspace.addHighlight).not.toHaveBeenCalled()
-  })
-
-  it("handleWordClick does not toggle highlights when no activeLayerId", () => {
-    mockWorkspace.settings.isLocked = true
-    mockWorkspace.activeLayerId = null
-    render(<App />)
-
-    const onWordClick = capturedEditorPaneProps[0].onWordClick as (editorIndex: number, from: number, to: number, text: string) => void
-    onWordClick(0, 1, 5, "hello")
-
-    expect(mockWorkspace.addHighlight).not.toHaveBeenCalled()
-    expect(mockWorkspace.removeHighlight).not.toHaveBeenCalled()
+    expect(capturedEditorPaneProps[0].editingAnnotation).toBeNull()
+    expect(capturedEditorPaneProps[0].onAnnotationChange).toBeDefined()
+    expect(capturedEditorPaneProps[0].onAnnotationBlur).toBeDefined()
+    expect(capturedEditorPaneProps[0].onAnnotationClick).toBeDefined()
   })
 })
