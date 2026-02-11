@@ -127,8 +127,6 @@ describe("useWordSelection keyboard navigation", () => {
     { editorIndex: 1, from: 1, to: 10, text: "Integrate" },
     { editorIndex: 1, from: 15, to: 20, text: "stuff" },
   ]
-  const allWords = [...wordsE0, ...wordsE1]
-
   const wordCenters: Record<string, { cx: number; cy: number }> = {
     "0-1-4": { cx: 100, cy: 100 },     // "and"
     "0-10-13": { cx: 80, cy: 130 },     // "pro"

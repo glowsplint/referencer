@@ -19,6 +19,7 @@ export function WorkspaceProvider({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useWorkspace(): WorkspaceContextValue {
   const ctx = useContext(WorkspaceContext)
   if (!ctx) {

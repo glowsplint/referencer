@@ -20,6 +20,7 @@ export function useAllHighlightPositions(
   useLayoutEffect(() => {
     const container = containerRef.current
     if (!container) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset when no container
       setPositions([])
       return
     }

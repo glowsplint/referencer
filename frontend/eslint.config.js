@@ -20,4 +20,26 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: [
+      'src/components/tiptap-ui/**/*.{ts,tsx}',
+      'src/components/tiptap-ui-primitive/**/*.{ts,tsx}',
+      'src/components/tiptap-node/**/*.{ts,tsx}',
+      'src/components/tiptap-templates/**/*.{ts,tsx}',
+      'src/components/tiptap-extension/**/*.{ts,tsx}',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/refs': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', 'e2e/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ])

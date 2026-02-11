@@ -45,6 +45,7 @@ export function useWordSelection({
 
   useEffect(() => {
     if (!isLocked) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset on prop change
       setSelection(null)
     }
   }, [isLocked])

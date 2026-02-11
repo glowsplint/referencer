@@ -16,11 +16,14 @@ export function useCycleLayer({
   setActiveLayer,
 }: UseCycleLayerOptions) {
   const layersRef = useRef(layers);
-  layersRef.current = layers;
   const activeLayerIdRef = useRef(activeLayerId);
-  activeLayerIdRef.current = activeLayerId;
   const setActiveLayerRef = useRef(setActiveLayer);
-  setActiveLayerRef.current = setActiveLayer;
+
+  useEffect(() => {
+    layersRef.current = layers;
+    activeLayerIdRef.current = activeLayerId;
+    setActiveLayerRef.current = setActiveLayer;
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

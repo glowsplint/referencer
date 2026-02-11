@@ -19,7 +19,7 @@ vi.mock("@/lib/resolve-annotation-overlaps", () => ({
 }))
 
 vi.mock("@/lib/color", () => ({
-  parseHexToRgba: vi.fn((hex: string, _alpha: number) => hex),
+  parseHexToRgba: vi.fn((hex: string) => hex),
 }))
 
 function createLayer(overrides: Partial<Layer> = {}): Layer {

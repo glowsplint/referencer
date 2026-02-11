@@ -7,7 +7,6 @@ interface ColorPickerProps {
 }
 
 export function ColorPicker({
-  layerId,
   index,
   onSelectColor,
 }: ColorPickerProps) {

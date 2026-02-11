@@ -60,6 +60,9 @@ export function AnnotationPanel({
 
   if (positions.length === 0) return null
 
+  /* eslint-disable react-hooks/refs -- ref read for SVG line positioning */
+  const containerWidth = containerRef.current?.offsetWidth ?? 0
+
   return (
     <div
       className="relative flex-shrink-0"
@@ -79,8 +82,6 @@ export function AnnotationPanel({
 
           // x1 is relative to the panel - the rightEdge is relative to the container,
           // so we need to negate it from the panel's perspective (panel is to the right of container)
-          const containerEl = containerRef.current
-          const containerWidth = containerEl ? containerEl.offsetWidth : 0
           const x1 = original.rightEdge - containerWidth - CONNECTOR_GAP
           const y1 = original.top + 10
           const x2 = 16 // left padding inside panel

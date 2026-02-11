@@ -21,7 +21,7 @@ const mockEditor = {
 vi.mock("@tiptap/react", () => ({
   useEditor: () => mockEditor,
   useCurrentEditor: () => ({ editor: mockEditor }),
-  EditorContent: ({ editor: _editor, ...props }: Record<string, unknown>) => (
+  EditorContent: (props: Record<string, unknown>) => (
     <div data-testid="editor-content" {...props} />
   ),
   EditorContext: {

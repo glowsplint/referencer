@@ -75,7 +75,7 @@ describe("Divider", () => {
   it("fires onResize during vertical drag", () => {
     const onResize = vi.fn()
     renderDivider(onResize, "vertical")
-    const divider = screen.getByTestId("divider")
+    screen.getByTestId("divider")
 
     const containerRef = createRef<HTMLDivElement>()
     // Re-render with a ref we can mock

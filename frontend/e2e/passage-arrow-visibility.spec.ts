@@ -259,9 +259,6 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await clickWordInEditor(page, 0);
     await drawArrowRight(page, 2);
 
-    const highlights = page.locator(
-      '.simple-editor-wrapper:nth-child(1) span[style*="background-color"]:not(.word-selection)'
-    );
     const countBefore = await page
       .locator('.simple-editor span[style*="background-color"]:not(.word-selection)')
       .count();

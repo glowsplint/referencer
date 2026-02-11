@@ -1,4 +1,6 @@
-export function getWordBoundaries(doc: any, pos: number): { from: number; to: number; text: string } | null {
+import type { Node as PMNode } from "@tiptap/pm/model"
+
+export function getWordBoundaries(doc: PMNode, pos: number): { from: number; to: number; text: string } | null {
   const resolved = doc.resolve(pos)
   const parent = resolved.parent
   if (!parent.isTextblock) return null

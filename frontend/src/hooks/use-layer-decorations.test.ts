@@ -7,7 +7,6 @@ import { layerHighlightsPluginKey } from "@/lib/tiptap/extensions/layer-highligh
 
 // Track what gets dispatched
 let capturedDecorations: unknown[] = []
-let capturedMeta: unknown = null
 
 vi.mock("@tiptap/pm/view", async () => {
   const actual = await vi.importActual("@tiptap/pm/view")
@@ -33,10 +32,7 @@ vi.mock("@tiptap/pm/view", async () => {
 
 function createMockEditor() {
   const mockTr = {
-    setMeta: vi.fn((_key: unknown, value: unknown) => {
-      capturedMeta = value
-      return mockTr
-    }),
+    setMeta: vi.fn(() => mockTr),
   }
   return {
     isDestroyed: false,
@@ -60,7 +56,6 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
 describe("useLayerDecorations", () => {
   beforeEach(() => {
     capturedDecorations = []
-    capturedMeta = null
   })
 
   it("dispatches empty decorations when not locked", () => {
