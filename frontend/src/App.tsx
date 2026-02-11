@@ -86,9 +86,15 @@ export function App() {
     [updateHighlightAnnotation]
   );
 
-  const handleAnnotationBlur = useCallback(() => {
-    setEditingAnnotation(null);
-  }, []);
+  const handleAnnotationBlur = useCallback(
+    (layerId: string, highlightId: string, annotation: string) => {
+      if (!annotation.trim()) {
+        removeHighlight(layerId, highlightId);
+      }
+      setEditingAnnotation(null);
+    },
+    [removeHighlight]
+  );
 
   const handleAnnotationClick = useCallback(
     (layerId: string, highlightId: string) => {

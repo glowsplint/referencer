@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useLayoutEffect, useMemo, useState } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, EditingAnnotation } from "@/types/editor"
 import { useHighlightPositions } from "@/hooks/use-highlight-positions"
@@ -13,12 +13,13 @@ interface AnnotationMarginProps {
   wrapperRef: React.RefObject<HTMLDivElement | null>
   editingAnnotation: EditingAnnotation | null
   onAnnotationChange?: (layerId: string, highlightId: string, annotation: string) => void
-  onAnnotationBlur?: () => void
+  onAnnotationBlur?: (layerId: string, highlightId: string, annotation: string) => void
   onAnnotationClick?: (layerId: string, highlightId: string) => void
 }
 
-const ANNOTATION_LEFT = 680 // 648px content + 32px gap
+const DEFAULT_ANNOTATION_LEFT = 680 // 648px content + 32px gap
 const CARD_WIDTH = 192 // w-48
+const MIN_LEFT = 16
 
 export function AnnotationMargin({
   editor,
@@ -30,6 +31,26 @@ export function AnnotationMargin({
   onAnnotationBlur,
   onAnnotationClick,
 }: AnnotationMarginProps) {
+  const [wrapperWidth, setWrapperWidth] = useState<number | null>(null)
+
+  useLayoutEffect(() => {
+    const el = wrapperRef.current
+    if (!el) return
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setWrapperWidth(entry.contentRect.width)
+      }
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [wrapperRef])
+
+  const annotationLeft =
+    wrapperWidth !== null
+      ? Math.max(MIN_LEFT, Math.min(DEFAULT_ANNOTATION_LEFT, wrapperWidth - CARD_WIDTH - 16))
+      : DEFAULT_ANNOTATION_LEFT
+
   // Collect highlights for this editor across all visible layers
   const highlightsWithLayer = useMemo(() => {
     const result: { highlight: Layer["highlights"][0]; layerId: string }[] = []
@@ -80,7 +101,7 @@ export function AnnotationMargin({
       {/* SVG connector lines */}
       <svg
         className="pointer-events-none absolute inset-0"
-        style={{ width: ANNOTATION_LEFT + CARD_WIDTH + 16, height: "100%", overflow: "visible" }}
+        style={{ width: annotationLeft + CARD_WIDTH + 16, height: "100%", overflow: "visible" }}
       >
         {resolvedPositions.map((resolved) => {
           const original = positionByHighlightId.get(resolved.id)
@@ -90,7 +111,7 @@ export function AnnotationMargin({
 
           const x1 = original.rightEdge + 4
           const y1 = original.top + 10
-          const x2 = ANNOTATION_LEFT
+          const x2 = annotationLeft
           const y2 = resolved.top + 10
 
           return (
@@ -109,8 +130,8 @@ export function AnnotationMargin({
 
       {/* Annotation cards */}
       <div
-        className="absolute top-0 pointer-events-auto"
-        style={{ left: ANNOTATION_LEFT }}
+        className="absolute top-0 z-10 pointer-events-auto"
+        style={{ left: annotationLeft }}
       >
         {resolvedPositions.map((resolved) => {
           const color = colorByHighlightId.get(resolved.id) ?? "#888"

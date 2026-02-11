@@ -8,7 +8,7 @@ interface AnnotationCardProps {
   isEditing: boolean
   top: number
   onChange: (layerId: string, highlightId: string, annotation: string) => void
-  onBlur: () => void
+  onBlur: (layerId: string, highlightId: string, annotation: string) => void
   onClick: (layerId: string, highlightId: string) => void
 }
 
@@ -38,16 +38,20 @@ export function AnnotationCard({
     [layerId, highlightId, onChange]
   )
 
+  const handleBlur = useCallback(() => {
+    onBlur(layerId, highlightId, annotation)
+  }, [onBlur, layerId, highlightId, annotation])
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault()
-        onBlur()
+        handleBlur()
       }
       // Stop propagation so arrow keys don't trigger word navigation
       e.stopPropagation()
     },
-    [onBlur]
+    [handleBlur]
   )
 
   const handleClick = useCallback(
@@ -77,7 +81,7 @@ export function AnnotationCard({
           value={annotation}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          onBlur={onBlur}
+          onBlur={handleBlur}
           placeholder="Add annotation..."
         />
       ) : (

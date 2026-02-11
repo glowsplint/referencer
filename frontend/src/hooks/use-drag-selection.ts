@@ -17,7 +17,7 @@ interface UseDragSelectionOptions {
     highlight: { editorIndex: number; from: number; to: number; text: string; annotation: string }
   ) => string
   removeHighlight: (layerId: string, highlightId: string) => void
-  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number }[] }[]
+  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[]
   selectWord: (editorIndex: number, from: number, to: number, text: string) => void
   clearSelection: () => void
 }
@@ -103,6 +103,14 @@ export function useDragSelection({
         if (existing) {
           removeHighlight(activeLayerId, existing.id)
         } else {
+          // Remove any empty-annotation highlights on this layer before adding a new one
+          if (layer) {
+            for (const h of layer.highlights) {
+              if (!h.annotation.trim()) {
+                removeHighlight(activeLayerId, h.id)
+              }
+            }
+          }
           addHighlight(activeLayerId, {
             editorIndex,
             from,

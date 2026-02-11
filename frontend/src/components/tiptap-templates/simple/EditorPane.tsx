@@ -50,7 +50,7 @@ export function EditorPane({
   selection: WordSelection | null
   editingAnnotation: EditingAnnotation | null
   onAnnotationChange?: (layerId: string, highlightId: string, annotation: string) => void
-  onAnnotationBlur?: () => void
+  onAnnotationBlur?: (layerId: string, highlightId: string, annotation: string) => void
   onAnnotationClick?: (layerId: string, highlightId: string) => void
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
