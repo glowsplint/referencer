@@ -71,8 +71,8 @@ export function ButtonPane() {
         </button>
       ))}
       <SwitchingButtonIcon
-        iconOne={<Sun size={20} />}
-        iconTwo={<MoonStar size={20} />}
+        iconOne={<MoonStar size={20} />}
+        iconTwo={<Sun size={20} />}
         bool={settings.isDarkMode}
         callback={toggleDarkMode}
         title="Toggle dark mode"
