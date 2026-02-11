@@ -25,7 +25,7 @@ export function resolveAnnotationOverlaps(
 
   for (const pos of sorted) {
     const prev = resolved[resolved.length - 1]
-    const minTop = prev ? prev.top + CARD_HEIGHT + CARD_GAP : 0
+    const minTop = prev ? prev.top + CARD_HEIGHT + CARD_GAP : -Infinity
     resolved.push({
       id: pos.id,
       top: Math.max(pos.desiredTop, minTop),

@@ -27,6 +27,20 @@ async function addAnnotation(
   await expect(page.getByText(text)).toBeVisible({ timeout: 2000 });
 }
 
+/** Check whether the annotation card is visually outside the panel's bounds */
+async function isCardOutsidePanel(
+  page: import("@playwright/test").Page,
+  text: string
+) {
+  const cardBox = await page.getByText(text).boundingBox();
+  const panelBox = await page.getByTestId("annotation-panel").boundingBox();
+  if (!cardBox || !panelBox) return true;
+  return (
+    cardBox.y + cardBox.height <= panelBox.y ||
+    cardBox.y >= panelBox.y + panelBox.height
+  );
+}
+
 test.describe("annotation scroll visibility", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -44,12 +58,15 @@ test.describe("annotation scroll visibility", () => {
     await page.keyboard.press("c");
   });
 
-  test("annotation hides when highlighted text scrolls out of view", async ({
+  test("annotation scrolls out of view when highlighted text scrolls out", async ({
     page,
   }) => {
     // Create annotation near the top of the editor
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Scroll test note");
+
+    // Verify card starts inside the panel
+    expect(await isCardOutsidePanel(page, "Scroll test note")).toBe(false);
 
     const wrapper = page.locator(".simple-editor-wrapper").first();
 
@@ -61,13 +78,11 @@ test.describe("annotation scroll visibility", () => {
     // Wait for scroll event to trigger recomputation
     await page.waitForTimeout(200);
 
-    // Annotation should disappear since highlighted text is no longer visible
-    await expect(page.getByText("Scroll test note")).toHaveCount(0, {
-      timeout: 2000,
-    });
+    // Annotation card should be outside the panel's visible area
+    expect(await isCardOutsidePanel(page, "Scroll test note")).toBe(true);
   });
 
-  test("annotation reappears when scrolled back into view", async ({
+  test("annotation scrolls back into view when text returns", async ({
     page,
   }) => {
     // Create annotation near the top of the editor
@@ -82,9 +97,7 @@ test.describe("annotation scroll visibility", () => {
     });
     await page.waitForTimeout(200);
 
-    await expect(page.getByText("Reappear note")).toHaveCount(0, {
-      timeout: 2000,
-    });
+    expect(await isCardOutsidePanel(page, "Reappear note")).toBe(true);
 
     // Scroll back to top
     await wrapper.evaluate((el) => {
@@ -92,9 +105,7 @@ test.describe("annotation scroll visibility", () => {
     });
     await page.waitForTimeout(200);
 
-    // Annotation should reappear
-    await expect(page.getByText("Reappear note")).toBeVisible({
-      timeout: 2000,
-    });
+    // Annotation should be back inside the panel
+    expect(await isCardOutsidePanel(page, "Reappear note")).toBe(false);
   });
 });

@@ -72,7 +72,7 @@ export function AnnotationPanel({
   return (
     <div
       className="relative flex-shrink-0"
-      style={{ width: PANEL_WIDTH }}
+      style={{ width: PANEL_WIDTH, overflowY: "clip" }}
       data-testid="annotation-panel"
     >
       {positions.length > 0 && (

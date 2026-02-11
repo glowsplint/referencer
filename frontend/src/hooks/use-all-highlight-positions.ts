@@ -41,19 +41,20 @@ export function useAllHighlightPositions(
           if (!editor || editor.isDestroyed) continue
 
           try {
-            const editorDom = editor.view.dom
-            const wrapper = editorDom.closest(".simple-editor-wrapper")
-            if (!wrapper) continue
-            const wrapperRect = wrapper.getBoundingClientRect()
+            // Use domAtPos + Range for accurate viewport coordinates even when
+            // scrolled out of view (coordsAtPos clamps to the visible editor area)
+            const domStart = editor.view.domAtPos(highlight.from)
+            const domEnd = editor.view.domAtPos(highlight.to)
+            const range = document.createRange()
+            range.setStart(domStart.node, domStart.offset)
+            range.setEnd(domEnd.node, domEnd.offset)
+            const rects = range.getClientRects()
+            if (rects.length === 0) continue
+            const firstRect = rects[0]
+            const lastRect = rects[rects.length - 1]
 
-            const coords = editor.view.coordsAtPos(highlight.from)
-            const endCoords = editor.view.coordsAtPos(highlight.to)
-
-            // Skip highlights whose text is scrolled out of the editor's visible area
-            if (coords.top < wrapperRect.top || coords.top > wrapperRect.bottom) continue
-
-            const top = coords.top - containerRect.top + container.scrollTop
-            const rightEdge = endCoords.right - containerRect.left + container.scrollLeft
+            const top = firstRect.top - containerRect.top + container.scrollTop
+            const rightEdge = lastRect.right - containerRect.left + container.scrollLeft
 
             result.push({
               highlightId: highlight.id,
