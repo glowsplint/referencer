@@ -1,0 +1,225 @@
+import { describe, it, expect, vi, beforeEach } from "vitest"
+import { render, screen } from "@testing-library/react"
+import { App } from "./App"
+
+// Mock the editor workspace hook
+const mockWorkspace = {
+  settings: {
+    isDarkMode: false,
+    isLayersOn: false,
+    isMultipleRowsLayout: false,
+    isLocked: false,
+  },
+  annotations: { isPainterMode: false },
+  layers: [] as { id: string; color: string; name: string; visible: boolean; highlights: { id: string; editorIndex: number; from: number; to: number; text: string; annotation: string }[]; arrows: unknown[] }[],
+  activeLayerId: null as string | null,
+  editorCount: 1,
+  activeEditor: null,
+  editorWidths: [100],
+  isManagementPaneOpen: false,
+  toggleDarkMode: vi.fn(),
+  toggleLayersOn: vi.fn(),
+  toggleMultipleRowsLayout: vi.fn(),
+  toggleLocked: vi.fn(),
+  togglePainterMode: vi.fn(),
+  toggleManagementPane: vi.fn(),
+  addLayer: vi.fn(),
+  removeLayer: vi.fn(),
+  setActiveLayer: vi.fn(),
+  updateLayerColor: vi.fn(),
+  updateLayerName: vi.fn(),
+  toggleLayerVisibility: vi.fn(),
+  toggleAllLayerVisibility: vi.fn(),
+  addHighlight: vi.fn(),
+  removeHighlight: vi.fn(),
+  updateHighlightAnnotation: vi.fn(),
+  clearLayerHighlights: vi.fn(),
+  addArrow: vi.fn(),
+  removeArrow: vi.fn(),
+  clearLayerArrows: vi.fn(),
+  editorsRef: { current: new Map() },
+  sectionVisibility: [true],
+  sectionNames: ["Passage 1"],
+  addEditor: vi.fn(),
+  removeEditor: vi.fn(),
+  updateSectionName: vi.fn(),
+  toggleSectionVisibility: vi.fn(),
+  toggleAllSectionVisibility: vi.fn(),
+  handleDividerResize: vi.fn(),
+  handleEditorMount: vi.fn(),
+  handlePaneFocus: vi.fn(),
+}
+
+vi.mock("./hooks/use-editor-workspace", () => ({
+  useEditorWorkspace: () => mockWorkspace,
+}))
+
+// Mock tiptap
+vi.mock("@tiptap/react", () => ({
+  useEditor: () => null,
+  useCurrentEditor: () => ({ editor: null }),
+  EditorContent: (props: Record<string, unknown>) => (
+    <div data-testid="editor-content" {...props} />
+  ),
+  EditorContext: {
+    Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  },
+}))
+
+// Capture props passed to EditorPane
+let capturedEditorPaneProps: Record<string, unknown>[] = []
+
+vi.mock("./components/tiptap-templates/simple", () => ({
+  TitleBar: () => <div data-testid="title-bar" />,
+  SimpleEditorToolbar: () => <div data-testid="toolbar" />,
+  EditorPane: (props: Record<string, unknown>) => {
+    capturedEditorPaneProps.push(props)
+    return <div data-testid="editor-pane" />
+  },
+  SIMPLE_EDITOR_CONTENT: {},
+}))
+
+// Mock AnnotationPanel
+let capturedAnnotationPanelProps: Record<string, unknown> | null = null
+
+vi.mock("./components/AnnotationPanel", () => ({
+  AnnotationPanel: (props: Record<string, unknown>) => {
+    capturedAnnotationPanelProps = props
+    return <div data-testid="annotation-panel" />
+  },
+}))
+
+beforeEach(() => {
+  // Reset mock state
+  mockWorkspace.settings = {
+    isDarkMode: false,
+    isLayersOn: false,
+    isMultipleRowsLayout: false,
+    isLocked: false,
+  }
+  mockWorkspace.layers = []
+  mockWorkspace.activeLayerId = null
+  mockWorkspace.editorWidths = [100]
+  mockWorkspace.isManagementPaneOpen = false
+  mockWorkspace.addHighlight = vi.fn()
+  mockWorkspace.removeHighlight = vi.fn()
+  mockWorkspace.updateHighlightAnnotation = vi.fn()
+  capturedEditorPaneProps = []
+  capturedAnnotationPanelProps = null
+})
+
+describe("App", () => {
+  it("renders the button pane with expected buttons", () => {
+    render(<App />)
+
+    expect(screen.getByTestId("menuButton")).toBeInTheDocument()
+    expect(screen.getByTestId("darkModeButton")).toBeInTheDocument()
+    expect(screen.getByTestId("lockButton")).toBeInTheDocument()
+  })
+
+  it("renders the title bar and toolbar", () => {
+    render(<App />)
+
+    expect(screen.getByTestId("title-bar")).toBeInTheDocument()
+    expect(screen.getByTestId("toolbar")).toBeInTheDocument()
+  })
+
+  it("renders editor panes based on editorWidths", () => {
+    render(<App />)
+
+    const panes = screen.getAllByTestId("editor-pane")
+    expect(panes).toHaveLength(1)
+  })
+
+  it("does not render management pane when closed", () => {
+    render(<App />)
+    expect(screen.queryByTestId("managementPane")).not.toBeInTheDocument()
+  })
+
+  it("renders management pane when open", () => {
+    mockWorkspace.isManagementPaneOpen = true
+    render(<App />)
+    expect(screen.getByTestId("managementPane")).toBeInTheDocument()
+  })
+
+  it("renders multiple editor panes when editorWidths has multiple entries", () => {
+    mockWorkspace.editorWidths = [50, 50]
+    render(<App />)
+    const panes = screen.getAllByTestId("editor-pane")
+    expect(panes).toHaveLength(2)
+  })
+
+  it("does not pass mouse handlers to EditorPane when not locked", () => {
+    mockWorkspace.settings.isLocked = false
+    render(<App />)
+    expect(capturedEditorPaneProps[0].onMouseDown).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onMouseMove).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onMouseUp).toBeUndefined()
+  })
+
+  it("passes mouse handlers to EditorPane when locked", () => {
+    mockWorkspace.settings.isLocked = true
+    render(<App />)
+    expect(capturedEditorPaneProps[0].onMouseDown).toBeDefined()
+    expect(capturedEditorPaneProps[0].onMouseMove).toBeDefined()
+    expect(capturedEditorPaneProps[0].onMouseUp).toBeDefined()
+  })
+
+  it("passes layers and selection props to EditorPane", () => {
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [], arrows: [] },
+    ]
+    render(<App />)
+
+    expect(capturedEditorPaneProps[0].layers).toEqual(mockWorkspace.layers)
+    expect(capturedEditorPaneProps[0].selection).toBeNull()
+  })
+
+  it("does not render AnnotationPanel when not locked", () => {
+    mockWorkspace.settings.isLocked = false
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note" }], arrows: [] },
+    ]
+    render(<App />)
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
+  })
+
+  it("does not render AnnotationPanel when locked but no annotations", () => {
+    mockWorkspace.settings.isLocked = true
+    mockWorkspace.layers = []
+    render(<App />)
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
+  })
+
+  it("renders AnnotationPanel when locked with annotations", () => {
+    mockWorkspace.settings.isLocked = true
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note" }], arrows: [] },
+    ]
+    render(<App />)
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument()
+  })
+
+  it("passes annotation handlers to AnnotationPanel", () => {
+    mockWorkspace.settings.isLocked = true
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note" }], arrows: [] },
+    ]
+    render(<App />)
+
+    expect(capturedAnnotationPanelProps).not.toBeNull()
+    expect(capturedAnnotationPanelProps!.onAnnotationChange).toBeDefined()
+    expect(capturedAnnotationPanelProps!.onAnnotationBlur).toBeDefined()
+    expect(capturedAnnotationPanelProps!.onAnnotationClick).toBeDefined()
+  })
+
+  it("does not pass annotation props to EditorPane", () => {
+    mockWorkspace.settings.isLocked = true
+    render(<App />)
+
+    expect(capturedEditorPaneProps[0].editingAnnotation).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onAnnotationChange).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onAnnotationBlur).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onAnnotationClick).toBeUndefined()
+  })
+})

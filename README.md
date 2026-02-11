@@ -4,17 +4,16 @@ Referencer is a web-based online Bible study annotation tool which makes it easy
 
 ### Features
 
-Collaborative online group bible study can often be challenging because:
+Referencer allows you to:
 
-1. It is difficult to take notes online as you are reading from the text.
-2. It is difficult to share the notes you have taken with other people from the group.
+1. Cross-reference different parts of the Bible side-by-side
+2. Make highlights, inline annotations and draw arrows
+3. Group ideas in different layers
 
-The Referencer online bible study tool aims to resolve these issues by allowing users to highlight, draw arrows, comment, and share these user-made annotations with other people who are also joined into the same study session.
+### Controls
 
-Users can:
-
-1. Use left-click drag to make text selections. They can highlight the selected text.
-2. Hold down the Ctrl key to enter arrowing mode. In this mode, left-click drag will draw arrows instead.
+1. Drag your left-click to make text selections.
+2. Press the Ctrl key before dragging your left click to draw arrows.
 
 # Development
 
@@ -24,23 +23,23 @@ This repository is a [Next.js](https://nextjs.org/) project bootstrapped with [`
 
 You will need:
 
-1. Node.js installed to run the front-end development server. You can get the latest version from [here](https://nodejs.org/en/).
+1. Bun installed to run the front-end development server. You can get the latest version from [here](https://bun.sh/).
 2. Python interpreter installed to run the back-end development server. You can get the latest version from [here](https://www.python.org/).
 
 ### Front-end development
 
-The preferred method uses the yarn package manager.
+The preferred method uses the Bun package manager.
 
 To run the front-end development server, run:
 
 ```bash
-# if you don't have the yarn package manager installed
-npm install -g yarn
+# if you don't have Bun installed
+# Install from https://bun.sh/ or use: curl -fsSL https://bun.sh/install | bash
 
 # to run the front-end dev server
-cd nextjs-frontend
-yarn install
-yarn dev
+cd frontend
+bun install
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser.
@@ -48,19 +47,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 To export and build the front-end static assets, run:
 
 ```bash
-cd nextjs-frontend
-yarn build
+cd frontend
+bun run build
 ```
 
-This will generate the static assets in `nextjs-frontend\out`, which are required by the back-end development server in the next step.
+This will generate the static assets in `.\frontend\out`, which are required by the back-end development server in the next step.
 
 ### Back-end development
 
 The back-end development server is written in Python. When run, it will serve the front-end static assets. You will need to first export and build the front-end static assets (with steps above) before running this step.
 
-You will also need to install the Python dependencies by running from the root directory:
-
-Using pipenv:
+Install the Python dependencies using pipenv:
 
 ```bash
 # if you don't have pipenv
@@ -68,27 +65,28 @@ pip install pipenv
 
 # install dependencies into a virtualenv
 pipenv install
+```
 
-# to run the back-end dev server
-py run.py
+Then run the back-end dev server:
+
+```bash
+make serve
 ```
 
 Open [http://localhost:5000](http://localhost:5000) with your browser to see the back-end development server serving the exported front-end static assets.
 
-### Deployment
+### Development with hot reloading
 
-The production server can be run as follows:
+1. `make serve` — starts the Python backend on port 5000
+2. `cd frontend && bun run dev` — starts Vite on port 5173 with hot reloading
+3. Open [http://localhost:5173](http://localhost:5173) — frontend hot reloads, `/api/*` requests proxy to the backend
+
+### Build and run everything
 
 ```bash
-# build the latest front-end static assets
-cd nextjs-frontend
-yarn build
-
-# run the production server, -p flag for production
-cd ..
-py run.py -p
+make
 ```
 
-You will need to supply a `.env` file in the root directory with a valid ESV API key.
+This will build the frontend and start the backend server. You can also run each step individually with `make build` and `make serve`.
 
-Open [http://localhost:5000](http://localhost:5000) with your browser to see the production server.
+You will need to supply a `.env` file in the root directory with a valid ESV API key.
