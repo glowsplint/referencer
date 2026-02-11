@@ -29,8 +29,8 @@ function createOptions(overrides: Record<string, unknown> = {}) {
   }
 }
 
-function fireKey(key: string) {
-  document.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }))
+function fireKey(key: string, opts: KeyboardEventInit = {}) {
+  document.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, ...opts }))
 }
 
 describe("useWordSelection", () => {
@@ -361,5 +361,224 @@ describe("useWordSelection navigates through images", () => {
     // Down → "Subscript" at cx=80 (closest to stickyX=100)
     act(() => { fireKey("ArrowDown") })
     expect(result.current.selection?.text).toBe("Subscript")
+  })
+})
+
+describe("useWordSelection shift+arrow range selection", () => {
+  // Layout:
+  //
+  // Editor 0:
+  //   Line 1: "the"(50,100)  "quick"(120,100)  "brown"(200,100)
+  //   Line 2: "fox"(60,130)   "jumps"(130,130)
+  //
+  // Editor 1:
+  //   Line 1: "over"(350,100)
+
+  const words0 = [
+    { editorIndex: 0, from: 1, to: 4, text: "the" },
+    { editorIndex: 0, from: 5, to: 10, text: "quick" },
+    { editorIndex: 0, from: 11, to: 16, text: "brown" },
+    { editorIndex: 0, from: 20, to: 23, text: "fox" },
+    { editorIndex: 0, from: 24, to: 29, text: "jumps" },
+  ]
+  const words1 = [
+    { editorIndex: 1, from: 1, to: 5, text: "over" },
+  ]
+
+  const shiftCenters: Record<string, { cx: number; cy: number }> = {
+    "0-1-4": { cx: 50, cy: 100 },
+    "0-5-10": { cx: 120, cy: 100 },
+    "0-11-16": { cx: 200, cy: 100 },
+    "0-20-23": { cx: 60, cy: 130 },
+    "0-24-29": { cx: 130, cy: 130 },
+    "1-1-5": { cx: 350, cy: 100 },
+    // Range center for collapse test ("the quick" range)
+    "0-1-10": { cx: 85, cy: 100 },
+  }
+
+  function setupShiftMocks(editorCount: number) {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+
+    for (let i = 0; i < editorCount; i++) {
+      const editorWords = i === 0 ? words0 : i === 1 ? words1 : []
+      const fakeEditor = {
+        state: {
+          doc: {
+            textBetween: (from: number, to: number) => {
+              const inRange = editorWords.filter(w => w.from >= from && w.to <= to)
+              return inRange.map(w => w.text).join(" ")
+            },
+          },
+        },
+      } as unknown as Editor
+      editorsRef.current.set(i, fakeEditor)
+    }
+
+    const containerEl = document.createElement("div")
+    containerEl.getBoundingClientRect = () => ({
+      left: 0, top: 0, right: 800, bottom: 600,
+      width: 800, height: 600, x: 0, y: 0, toJSON: () => {},
+    })
+    const containerRef = { current: containerEl } as React.RefObject<HTMLDivElement | null>
+
+    vi.mocked(collectAllWords).mockImplementation((_editor, editorIndex) => {
+      if (editorIndex === 0) return [...words0]
+      if (editorIndex === 1) return [...words1]
+      return []
+    })
+
+    vi.mocked(getWordCenter).mockImplementation((word) => {
+      const key = `${word.editorIndex}-${word.from}-${word.to}`
+      return shiftCenters[key] ?? null
+    })
+
+    return { editorsRef, containerRef }
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it("Shift+ArrowRight extends selection to the next word", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(1)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+    expect(result.current.selection?.text).toBe("the")
+
+    act(() => { fireKey("ArrowRight", { shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 10,
+      text: "the quick",
+    })
+  })
+
+  it("Shift+ArrowLeft extends selection in the other direction", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(1)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 11, 16, "brown") })
+
+    act(() => { fireKey("ArrowLeft", { shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 5,
+      to: 16,
+      text: "quick brown",
+    })
+  })
+
+  it("Shift+ArrowDown extends selection to word on next line", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(1)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+
+    act(() => { fireKey("ArrowDown", { shiftKey: true }) })
+    // Anchor is "the" (1,4), head moves to "fox" (20,23) — nearest to stickyX=50
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 23,
+      text: "the quick brown fox",
+    })
+  })
+
+  it("multiple shift+arrows accumulate the range", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(1)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+
+    // First shift+right: "the" → "quick"
+    act(() => { fireKey("ArrowRight", { shiftKey: true }) })
+    expect(result.current.selection?.from).toBe(1)
+    expect(result.current.selection?.to).toBe(10)
+
+    // Second shift+right: head moves from "quick" → "brown"
+    act(() => { fireKey("ArrowRight", { shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 16,
+      text: "the quick brown",
+    })
+  })
+
+  it("arrow without shift after shift+arrow collapses to single word", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(1)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+
+    // Shift+right: extends to "the quick"
+    act(() => { fireKey("ArrowRight", { shiftKey: true }) })
+    expect(result.current.selection?.from).toBe(1)
+    expect(result.current.selection?.to).toBe(10)
+
+    // Right without shift: collapses and navigates from range center (85,100)
+    act(() => { fireKey("ArrowRight") })
+    // Nearest word to the right of cx=85 on same line is "quick" at cx=120
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 5,
+      to: 10,
+      text: "quick",
+    })
+  })
+
+  it("selectWord resets the anchor for next shift+arrow", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(1)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Start range from "the"
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+    act(() => { fireKey("ArrowRight", { shiftKey: true }) })
+    expect(result.current.selection?.to).toBe(10)
+
+    // Click "quick" — resets anchor
+    act(() => { result.current.selectWord(0, 5, 10, "quick") })
+
+    // Shift+right from "quick" → extends to "brown", not from "the"
+    act(() => { fireKey("ArrowRight", { shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 5,
+      to: 16,
+      text: "quick brown",
+    })
+  })
+
+  it("shift+arrow does not extend across editors", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(2)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
+    )
+
+    // Select "brown" (rightmost on line 1 in editor 0)
+    act(() => { result.current.selectWord(0, 11, 16, "brown") })
+
+    // Shift+right: target is "over" in editor 1 — should be blocked
+    act(() => { fireKey("ArrowRight", { shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 11,
+      to: 16,
+      text: "brown",
+    })
   })
 })

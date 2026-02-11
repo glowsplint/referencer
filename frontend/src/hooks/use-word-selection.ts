@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"
+import type { CollectedWord } from "@/lib/tiptap/word-collection"
 import type { WordCenter } from "@/lib/tiptap/nearest-word"
 import { collectAllWords } from "@/lib/tiptap/word-collection"
 import {
@@ -30,16 +31,22 @@ export function useWordSelection({
 }: UseWordSelectionOptions) {
   const [selection, setSelection] = useState<WordSelection | null>(null)
   const stickyXRef = useRef<number | null>(null)
+  const anchorRef = useRef<WordSelection | null>(null)
+  const headRef = useRef<WordSelection | null>(null)
 
   const selectWord = useCallback(
     (editorIndex: number, from: number, to: number, text: string) => {
       if (!HAS_ALPHANUMERIC.test(text)) return
+      anchorRef.current = null
+      headRef.current = null
       setSelection({ editorIndex, from, to, text })
     },
     []
   )
 
   const clearSelection = useCallback(() => {
+    anchorRef.current = null
+    headRef.current = null
     setSelection(null)
   }, [])
 
@@ -70,26 +77,23 @@ export function useWordSelection({
       return candidates
     }
 
-    const handleHorizontalNav = (
+    const findHorizontalTarget = (
       key: "ArrowLeft" | "ArrowRight",
       currentCenter: { cx: number; cy: number },
       allCandidates: WordCenter[]
-    ) => {
+    ): CollectedWord | null => {
       stickyXRef.current = null
       const sameLine = findNearestWordOnSameLine(currentCenter, allCandidates, key)
-      if (sameLine) {
-        setSelection(sameLine)
-      } else {
-        const wrapped = findFirstWordOnAdjacentLine(currentCenter, allCandidates, key)
-        if (wrapped) setSelection(wrapped)
-      }
+      if (sameLine) return sameLine
+      return findFirstWordOnAdjacentLine(currentCenter, allCandidates, key)
     }
 
-    const handleVerticalNav = (
+    const findVerticalTarget = (
       key: "ArrowUp" | "ArrowDown",
       currentCenter: { cx: number; cy: number },
-      allCandidates: WordCenter[]
-    ) => {
+      allCandidates: WordCenter[],
+      currentWord: WordSelection
+    ): CollectedWord | null => {
       if (stickyXRef.current === null) {
         stickyXRef.current = currentCenter.cx
       }
@@ -97,26 +101,19 @@ export function useWordSelection({
 
       // 1. Try same-editor candidates first
       const sameEditorCandidates = allCandidates.filter(
-        (c) => c.word.editorIndex === selection!.editorIndex
+        (c) => c.word.editorIndex === currentWord.editorIndex
       )
       const sameEditorNearest = findNearestWord(navCenter, sameEditorCandidates, key)
-      if (sameEditorNearest) {
-        setSelection(sameEditorNearest)
-        return
-      }
+      if (sameEditorNearest) return sameEditorNearest
 
       // 2. Try all candidates (cross-editor spatial)
       const nearest = findNearestWord(navCenter, allCandidates, key)
-      if (nearest) {
-        setSelection(nearest)
-        return
-      }
+      if (nearest) return nearest
 
       // 3. Fall back to reading order to cross editor boundaries
       const fallbackDirection = key === "ArrowDown" ? "ArrowRight" as const : "ArrowLeft" as const
       const allWords = allCandidates.map((c) => c.word)
-      const fallback = findWordInReadingOrder(selection!, allWords, fallbackDirection)
-      if (fallback) setSelection(fallback)
+      return findWordInReadingOrder(currentWord, allWords, fallbackDirection)
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -130,15 +127,66 @@ export function useWordSelection({
       if (!container) return
       const containerRect = container.getBoundingClientRect()
 
-      const currentCenter = getWordCenter(selection, editorsRef, containerRect)
-      if (!currentCenter) return
-
       const allCandidates = collectCandidates()
 
-      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-        handleHorizontalNav(e.key, currentCenter, allCandidates)
+      if (e.shiftKey) {
+        // Initialize anchor/head on first shift+arrow
+        if (!anchorRef.current) {
+          anchorRef.current = selection
+          headRef.current = selection
+        }
+
+        const head = headRef.current!
+        const currentCenter = getWordCenter(head, editorsRef, containerRect)
+        if (!currentCenter) return
+
+        let target: CollectedWord | null
+        if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+          target = findHorizontalTarget(e.key, currentCenter, allCandidates)
+        } else {
+          target = findVerticalTarget(
+            e.key as "ArrowUp" | "ArrowDown",
+            currentCenter,
+            allCandidates,
+            head
+          )
+        }
+
+        if (!target) return
+        // Don't extend across editors
+        if (target.editorIndex !== anchorRef.current.editorIndex) return
+
+        headRef.current = target
+        const anchor = anchorRef.current
+        const from = Math.min(anchor.from, target.from)
+        const to = Math.max(anchor.to, target.to)
+
+        const editor = editorsRef.current.get(anchor.editorIndex)
+        if (!editor) return
+        const text = editor.state.doc.textBetween(from, to, " ")
+
+        setSelection({ editorIndex: anchor.editorIndex, from, to, text })
       } else {
-        handleVerticalNav(e.key as "ArrowUp" | "ArrowDown", currentCenter, allCandidates)
+        // Normal navigation (no shift)
+        anchorRef.current = null
+        headRef.current = null
+
+        const currentCenter = getWordCenter(selection, editorsRef, containerRect)
+        if (!currentCenter) return
+
+        let target: CollectedWord | null
+        if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+          target = findHorizontalTarget(e.key, currentCenter, allCandidates)
+        } else {
+          target = findVerticalTarget(
+            e.key as "ArrowUp" | "ArrowDown",
+            currentCenter,
+            allCandidates,
+            selection
+          )
+        }
+
+        if (target) setSelection(target)
       }
     }
 
