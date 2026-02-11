@@ -255,7 +255,7 @@ test.describe("multiple layers (2 editors)", () => {
 
     // Add annotation so highlight persists across layer switch
     // (blank-annotation highlights are cleaned up when switching layers)
-    await page.getByText("Add annotation...").click();
+    // Annotation input auto-focuses after highlight creation
     await page.getByPlaceholder("Add annotation...").fill("E1 note");
     await page.getByPlaceholder("Add annotation...").press("Enter");
 
@@ -275,7 +275,7 @@ test.describe("multiple layers (2 editors)", () => {
     await clickWordInEditor(page, 1, 60);
 
     // Add annotation for E2 highlight too
-    await page.getByText("Add annotation...").click();
+    // Annotation input auto-focuses after highlight creation
     await page.getByPlaceholder("Add annotation...").fill("E2 note");
     await page.getByPlaceholder("Add annotation...").press("Enter");
 
