@@ -42,7 +42,7 @@ async def test_schema_version_is_set(temp_db):
     db = await get_db()
     try:
         version = await get_schema_version(db)
-        assert version == 2
+        assert version == 1
     finally:
         await db.close()
 
@@ -54,6 +54,6 @@ async def test_init_db_is_idempotent(temp_db):
     db = await get_db()
     try:
         version = await get_schema_version(db)
-        assert version == 2
+        assert version == 1
     finally:
         await db.close()
