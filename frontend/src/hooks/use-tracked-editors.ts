@@ -51,9 +51,40 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
     [raw, record]
   )
 
+  const updateSectionName = useCallback(
+    (index: number, name: string) => {
+      const oldName = raw.sectionNames[index] ?? ""
+      raw.updateSectionName(index, name)
+      record({
+        type: "updateSectionName",
+        description: `Renamed passage '${oldName}' to '${name}'`,
+        undo: () => {
+          raw.updateSectionName(index, oldName)
+        },
+        redo: () => {
+          raw.updateSectionName(index, name)
+        },
+      })
+    },
+    [raw, record]
+  )
+
+  const toggleAllSectionVisibility = useCallback(() => {
+    const anyVisible = raw.sectionVisibility.some((v) => v)
+    raw.toggleAllSectionVisibility()
+    record({
+      type: anyVisible ? "hideAllPassages" : "showAllPassages",
+      description: anyVisible ? "Hid all passages" : "Showed all passages",
+      undo: () => raw.toggleAllSectionVisibility(),
+      redo: () => raw.toggleAllSectionVisibility(),
+    })
+  }, [raw, record])
+
   return {
     ...raw,
     addEditor,
     removeEditor,
+    updateSectionName,
+    toggleAllSectionVisibility,
   }
 }

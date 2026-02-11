@@ -134,7 +134,7 @@ export function App() {
         if (oldText !== annotation) {
           history.record({
             type: "updateAnnotation",
-            description: `Updated annotation to '${annotation.length > 30 ? annotation.slice(0, 30) + "..." : annotation}'`,
+            description: `Updated annotation to '${annotation.length > 80 ? annotation.slice(0, 80) + "..." : annotation}'`,
             undo: () => {
               updateHighlightAnnotation(layerId, highlightId, oldText);
             },

@@ -186,10 +186,10 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const updateSectionName = useCallback(
     (index: number, name: string) => {
       if (readOnly) return
-      rawEditorsHook.updateSectionName(index, name)
+      trackedEditorsHook.updateSectionName(index, name)
       guardedSendAction("updateSectionName", { index, name })
     },
-    [readOnly, rawEditorsHook, guardedSendAction]
+    [readOnly, trackedEditorsHook, guardedSendAction]
   )
 
   const toggleSectionVisibility = useCallback(

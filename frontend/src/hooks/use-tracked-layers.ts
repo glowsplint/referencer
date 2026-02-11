@@ -6,7 +6,7 @@ import type { Highlight, Arrow } from "@/types/editor"
 type LayersHook = ReturnType<typeof useLayers>
 type History = ReturnType<typeof useActionHistory>
 
-function truncate(text: string, max = 30): string {
+function truncate(text: string, max = 80): string {
   return text.length > max ? text.slice(0, max) + "..." : text
 }
 
@@ -186,6 +186,63 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
     [raw, record]
   )
 
+  const toggleAllLayerVisibility = useCallback(() => {
+    const anyVisible = raw.layers.some((l) => l.visible)
+    raw.toggleAllLayerVisibility()
+    record({
+      type: anyVisible ? "hideAllLayers" : "showAllLayers",
+      description: anyVisible ? "Hid all layers" : "Showed all layers",
+      undo: () => raw.toggleAllLayerVisibility(),
+      redo: () => raw.toggleAllLayerVisibility(),
+    })
+  }, [raw, record])
+
+  const clearLayerHighlights = useCallback(
+    (layerId: string) => {
+      const layer = raw.layers.find((l) => l.id === layerId)
+      if (!layer || layer.highlights.length === 0) return
+      const snapshot = [...layer.highlights]
+      raw.clearLayerHighlights(layerId)
+      record({
+        type: "clearHighlights",
+        description: `Cleared ${snapshot.length} highlight${snapshot.length === 1 ? "" : "s"} from '${layer.name}'`,
+        undo: () => {
+          for (const h of snapshot) {
+            const { id, ...rest } = h
+            raw.addHighlight(layerId, rest, { id })
+          }
+        },
+        redo: () => {
+          raw.clearLayerHighlights(layerId)
+        },
+      })
+    },
+    [raw, record]
+  )
+
+  const clearLayerArrows = useCallback(
+    (layerId: string) => {
+      const layer = raw.layers.find((l) => l.id === layerId)
+      if (!layer || layer.arrows.length === 0) return
+      const snapshot = [...layer.arrows]
+      raw.clearLayerArrows(layerId)
+      record({
+        type: "clearArrows",
+        description: `Cleared ${snapshot.length} arrow${snapshot.length === 1 ? "" : "s"} from '${layer.name}'`,
+        undo: () => {
+          for (const a of snapshot) {
+            const { id, ...rest } = a
+            raw.addArrow(layerId, rest, { id })
+          }
+        },
+        redo: () => {
+          raw.clearLayerArrows(layerId)
+        },
+      })
+    },
+    [raw, record]
+  )
+
   return {
     ...raw,
     addLayer,
@@ -196,5 +253,8 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
     removeArrow,
     updateLayerName,
     updateLayerColor,
+    toggleAllLayerVisibility,
+    clearLayerHighlights,
+    clearLayerArrows,
   }
 }
