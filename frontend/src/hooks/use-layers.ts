@@ -31,7 +31,18 @@ export function useLayers() {
   }, [])
 
   const setActiveLayer = useCallback((id: string) => {
-    setActiveLayerId(id)
+    setActiveLayerId((prevId) => {
+      if (prevId && prevId !== id) {
+        setLayers((layers) =>
+          layers.map((l) =>
+            l.id === prevId
+              ? { ...l, highlights: l.highlights.filter((h) => h.annotation.trim()) }
+              : l
+          )
+        )
+      }
+      return id
+    })
   }, [])
 
   const updateLayerColor = useCallback((id: string, color: string) => {

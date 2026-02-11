@@ -449,6 +449,59 @@ describe("useLayers", () => {
     expect(result.current.layers[0].highlights[0].annotation).toBe("my note")
   })
 
+  it("setActiveLayer clears blank annotations from the previous layer", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => { result.current.addLayer(); result.current.addLayer() })
+    const firstId = result.current.layers[0].id
+    const secondId = result.current.layers[1].id
+    act(() => { result.current.setActiveLayer(firstId) })
+
+    act(() => {
+      result.current.addHighlight(firstId, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "note" })
+      result.current.addHighlight(firstId, { editorIndex: 0, from: 10, to: 15, text: "world", annotation: "" })
+      result.current.addHighlight(firstId, { editorIndex: 0, from: 20, to: 25, text: "blank", annotation: "   " })
+    })
+
+    act(() => { result.current.setActiveLayer(secondId) })
+
+    expect(result.current.layers[0].highlights).toHaveLength(1)
+    expect(result.current.layers[0].highlights[0].text).toBe("hello")
+  })
+
+  it("setActiveLayer does not clear annotations from other layers", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => { result.current.addLayer(); result.current.addLayer() })
+    const firstId = result.current.layers[0].id
+    const secondId = result.current.layers[1].id
+    act(() => { result.current.setActiveLayer(firstId) })
+
+    act(() => {
+      result.current.addHighlight(secondId, { editorIndex: 0, from: 1, to: 5, text: "other", annotation: "" })
+    })
+
+    act(() => { result.current.setActiveLayer(secondId) })
+
+    expect(result.current.layers[1].highlights).toHaveLength(1)
+  })
+
+  it("setActiveLayer to same layer does not clear blank annotations", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => { result.current.addLayer() })
+    const id = result.current.layers[0].id
+    act(() => { result.current.setActiveLayer(id) })
+
+    act(() => {
+      result.current.addHighlight(id, { editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" })
+    })
+
+    act(() => { result.current.setActiveLayer(id) })
+
+    expect(result.current.layers[0].highlights).toHaveLength(1)
+  })
+
   it("updateHighlightAnnotation with non-existent highlight does nothing", () => {
     const { result } = renderHook(() => useLayers())
     act(() => { result.current.addLayer() })
