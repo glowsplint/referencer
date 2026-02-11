@@ -1,4 +1,5 @@
 import { useCallback, useRef } from "react"
+import { toast } from "sonner"
 import type { Editor } from "@tiptap/react"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
 
@@ -103,7 +104,10 @@ export function useDragSelection({
 
       selectWord(editorIndex, from, to, text)
 
-      if (!activeLayerId) return
+      if (!activeLayerId) {
+        toast.warning("Add a new layer to create annotations")
+        return
+      }
 
       const layer = layers.find((l) => l.id === activeLayerId)
       // Check for exact match to toggle off
