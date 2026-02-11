@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:e2e": "node node_modules/.bin/playwright test",
+    "test:e2e": "node node_modules/.bin/playwright test -x 10",
     "test:e2e:ui": "node node_modules/.bin/playwright test --ui"
   },
   "dependencies": {
