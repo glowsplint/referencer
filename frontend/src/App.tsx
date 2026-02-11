@@ -24,8 +24,20 @@ import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
 
+function getWorkspaceId(): string {
+  const path = window.location.pathname;
+  const match = path.match(/^\/space\/(.+)$/);
+  if (match) return match[1];
+
+  // On /space with no id, generate one and redirect
+  const id = crypto.randomUUID();
+  window.history.replaceState(null, "", `/space/${id}`);
+  return id;
+}
+
 export function App() {
-  const workspace = useEditorWorkspace();
+  const [workspaceId] = useState(getWorkspaceId);
+  const workspace = useEditorWorkspace(workspaceId);
   const {
     settings,
     layers,
@@ -48,6 +60,7 @@ export function App() {
     annotations,
     setActiveTool,
     history,
+    updateEditorContent,
   } = workspace;
 
   useToolShortcuts({ isLocked: settings.isLocked, setActiveTool });
@@ -200,6 +213,7 @@ export function App() {
                         onMouseDown={settings.isLocked ? handleMouseDown : undefined}
                         onMouseMove={settings.isLocked ? handleMouseMove : undefined}
                         onMouseUp={settings.isLocked ? handleMouseUp : undefined}
+                        onContentUpdate={updateEditorContent}
                         layers={layers}
                         selection={selection}
                         activeLayerColor={activeLayerColor}

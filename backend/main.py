@@ -1,5 +1,6 @@
 import json
 import os
+from contextlib import asynccontextmanager
 from pathlib import Path
 from urllib.parse import quote
 
@@ -10,11 +11,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from .database import init_db
+from .ws import websocket_endpoint
+
 load_dotenv()
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE")
 EXPORTED_PATH = Path("./frontend/dist/")
 
 origins = ["http://127.0.0.1:5000", "http://localhost:5173"]
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    yield
 
 
 async def not_found(request, exc):
@@ -25,7 +35,7 @@ exception_handlers = {
     404: not_found,
 }
 
-app = FastAPI(exception_handlers=exception_handlers)
+app = FastAPI(exception_handlers=exception_handlers, lifespan=lifespan)
 app.mount(
     "/assets",
     StaticFiles(directory=EXPORTED_PATH / "assets"),
@@ -49,6 +59,14 @@ async def index():
 @app.get("/space")
 async def space():
     return FileResponse(EXPORTED_PATH / "index.html")
+
+
+@app.get("/space/{workspace_id}")
+async def space_with_id(workspace_id: str):
+    return FileResponse(EXPORTED_PATH / "index.html")
+
+
+app.websocket("/ws/{workspace_id}")(websocket_endpoint)
 
 
 @app.get("/api/{query}")

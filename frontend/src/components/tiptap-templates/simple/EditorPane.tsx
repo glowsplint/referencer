@@ -32,6 +32,7 @@ export function EditorPane({
   onMouseDown,
   onMouseMove,
   onMouseUp,
+  onContentUpdate,
   layers,
   selection,
   activeLayerColor,
@@ -45,6 +46,7 @@ export function EditorPane({
   onMouseDown?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
   onMouseMove?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
   onMouseUp?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
+  onContentUpdate?: (index: number, json: Record<string, unknown>) => void
   layers: Layer[]
   selection: WordSelection | null
   activeLayerColor: string | null
@@ -52,6 +54,11 @@ export function EditorPane({
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
+
+  const onContentUpdateRef = useRef(onContentUpdate)
+  onContentUpdateRef.current = onContentUpdate
+  const indexRef = useRef(index)
+  indexRef.current = index
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -66,6 +73,9 @@ export function EditorPane({
     },
     extensions,
     content,
+    onUpdate: ({ editor }) => {
+      onContentUpdateRef.current?.(indexRef.current, editor.getJSON() as Record<string, unknown>)
+    },
   })
 
   useEffect(() => {
