@@ -76,6 +76,17 @@ describe("AnnotationCard", () => {
     expect(onClick).toHaveBeenCalledWith("layer-1", "h1")
   })
 
+  it("auto-resizes textarea to fit content", () => {
+    const onChange = vi.fn()
+    const { getByPlaceholderText } = render(
+      <AnnotationCard {...createProps({ isEditing: true, annotation: "", onChange })} />
+    )
+
+    const textarea = getByPlaceholderText("Add annotation...") as HTMLTextAreaElement
+    expect(textarea.style.height).toBeTruthy()
+    expect(textarea.classList.contains("overflow-hidden")).toBe(true)
+  })
+
   it("shows placeholder text when annotation is empty and not editing", () => {
     const { getByText } = render(
       <AnnotationCard {...createProps({ annotation: "" })} />
