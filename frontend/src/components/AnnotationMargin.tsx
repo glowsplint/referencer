@@ -17,9 +17,8 @@ interface AnnotationMarginProps {
   onAnnotationClick?: (layerId: string, highlightId: string) => void
 }
 
-const DEFAULT_ANNOTATION_LEFT = 680 // 648px content + 32px gap
 const CARD_WIDTH = 192 // w-48
-const MIN_LEFT = 16
+const RIGHT_PAD = 16
 
 export function AnnotationMargin({
   editor,
@@ -48,8 +47,8 @@ export function AnnotationMargin({
 
   const annotationLeft =
     wrapperWidth !== null
-      ? Math.max(MIN_LEFT, Math.min(DEFAULT_ANNOTATION_LEFT, wrapperWidth - CARD_WIDTH - 16))
-      : DEFAULT_ANNOTATION_LEFT
+      ? wrapperWidth - CARD_WIDTH - RIGHT_PAD
+      : 0
 
   // Collect highlights for this editor across all visible layers
   const highlightsWithLayer = useMemo(() => {

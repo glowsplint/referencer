@@ -89,6 +89,10 @@ export function EditorPane({
   useLayerDecorations(editor, layers, index, isLocked)
   const selectionRect = useSelectionDecoration(editor, selection, index, wrapperRef)
 
+  const hasAnnotations = isLocked && layers.some(
+    (l) => l.visible && l.highlights.some((h) => h.editorIndex === index)
+  )
+
   const handleFocus = useCallback(() => {
     onFocus(index)
   }, [index, onFocus])
@@ -120,7 +124,7 @@ export function EditorPane({
   return (
     <div
       ref={wrapperRef}
-      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`}
+      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}${hasAnnotations ? " has-annotations" : ""}`}
       onFocusCapture={handleFocus}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}

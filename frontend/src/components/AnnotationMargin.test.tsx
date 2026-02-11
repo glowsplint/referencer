@@ -103,15 +103,15 @@ describe("AnnotationMargin", () => {
     expect(container.innerHTML).toBe("")
   })
 
-  it("uses default left position (680px) before resize fires", () => {
+  it("uses 0px left position before resize fires", () => {
     const props = createProps()
     const { container } = render(<AnnotationMargin {...props} />)
 
     const cardContainer = container.querySelector(".z-10") as HTMLElement
-    expect(cardContainer.style.left).toBe("680px")
+    expect(cardContainer.style.left).toBe("0px")
   })
 
-  it("adjusts left position for narrow wrappers (550px - two editors)", () => {
+  it("pins annotations to right edge (550px wrapper)", () => {
     const props = createProps()
     const { container } = render(<AnnotationMargin {...props} />)
 
@@ -122,7 +122,18 @@ describe("AnnotationMargin", () => {
     expect(cardContainer.style.left).toBe("342px")
   })
 
-  it("adjusts left position for very narrow wrappers (367px - three editors)", () => {
+  it("pins annotations to right edge (1200px wrapper)", () => {
+    const props = createProps()
+    const { container } = render(<AnnotationMargin {...props} />)
+
+    act(() => triggerResize(1200))
+
+    const cardContainer = container.querySelector(".z-10") as HTMLElement
+    // 1200 - 192 - 16 = 992
+    expect(cardContainer.style.left).toBe("992px")
+  })
+
+  it("pins annotations to right edge (367px wrapper)", () => {
     const props = createProps()
     const { container } = render(<AnnotationMargin {...props} />)
 
@@ -133,29 +144,7 @@ describe("AnnotationMargin", () => {
     expect(cardContainer.style.left).toBe("159px")
   })
 
-  it("clamps left position to minimum of 16px for extremely narrow wrappers", () => {
-    const props = createProps()
-    const { container } = render(<AnnotationMargin {...props} />)
-
-    act(() => triggerResize(100))
-
-    const cardContainer = container.querySelector(".z-10") as HTMLElement
-    // 100 - 192 - 16 = -108 → clamped to 16
-    expect(cardContainer.style.left).toBe("16px")
-  })
-
-  it("uses default 680px when wrapper is wide enough", () => {
-    const props = createProps()
-    const { container } = render(<AnnotationMargin {...props} />)
-
-    act(() => triggerResize(1200))
-
-    const cardContainer = container.querySelector(".z-10") as HTMLElement
-    // 1200 - 192 - 16 = 992, min(680, 992) = 680
-    expect(cardContainer.style.left).toBe("680px")
-  })
-
-  it("SVG width matches dynamic annotation left position", () => {
+  it("SVG width matches wrapper right edge", () => {
     const props = createProps()
     const { container } = render(<AnnotationMargin {...props} />)
 
