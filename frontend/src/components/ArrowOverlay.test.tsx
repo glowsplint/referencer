@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react"
+import { render, screen, fireEvent, act } from "@testing-library/react"
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { ArrowOverlay } from "./ArrowOverlay"
 import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
@@ -207,6 +207,36 @@ describe("ArrowOverlay", () => {
 
     fireEvent.click(screen.getByTestId("arrow-hit-area"))
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
+  })
+
+  it("recalculates positions on scroll within container", async () => {
+    const { getWordCenter } = vi.mocked(
+      await import("@/lib/tiptap/nearest-word")
+    )
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    const props = createDefaultProps({ layers: [layer] })
+    render(<ArrowOverlay {...props} />)
+
+    const callsBefore = getWordCenter.mock.calls.length
+
+    // Dispatch scroll on the container (capture listeners fire on target too)
+    await act(async () => {
+      props.containerRef.current!.dispatchEvent(
+        new Event("scroll", { bubbles: false })
+      )
+      // Wait for requestAnimationFrame to flush
+      await new Promise((r) => requestAnimationFrame(r))
+    })
+
+    expect(getWordCenter.mock.calls.length).toBeGreaterThan(callsBefore)
   })
 
   it("arrow hit areas have pointer-events none when arrow tool is active", () => {

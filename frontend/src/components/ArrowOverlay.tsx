@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
 import { getWordCenter } from "@/lib/tiptap/nearest-word"
@@ -55,6 +55,23 @@ export function ArrowOverlay({
     return () => {
       ro.disconnect()
       window.removeEventListener("resize", recalc)
+    }
+  }, [containerRef, recalc])
+
+  // Recalculate on scroll (capture phase since scroll doesn't bubble)
+  const rafId = useRef(0)
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const onScroll = () => {
+      cancelAnimationFrame(rafId.current)
+      rafId.current = requestAnimationFrame(recalc)
+    }
+    container.addEventListener("scroll", onScroll, true)
+    return () => {
+      container.removeEventListener("scroll", onScroll, true)
+      cancelAnimationFrame(rafId.current)
     }
   }, [containerRef, recalc])
 
