@@ -11,7 +11,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
   const addEditor = useCallback(() => {
     const prevCount = raw.editorCount
     if (prevCount >= 3) return
-    raw.addEditor()
+    const name = raw.addEditor()
     record({
       type: "addEditor",
       description: "Added passage",
@@ -19,7 +19,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
         raw.removeEditor(prevCount)
       },
       redo: () => {
-        raw.addEditor()
+        raw.addEditor({ name })
       },
     })
   }, [raw, record])
@@ -34,13 +34,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
         type: "removeEditor",
         description: `Removed passage '${name}'`,
         undo: () => {
-          raw.addEditor()
-          // Restore the name of the re-added editor
-          raw.setSectionNames((prev) => {
-            const copy = [...prev]
-            copy[copy.length - 1] = name
-            return copy
-          })
+          raw.addEditor({ name })
           if (!visibility) {
             raw.setSectionVisibility((prev) => {
               const copy = [...prev]

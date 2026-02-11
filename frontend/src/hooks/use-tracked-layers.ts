@@ -12,21 +12,17 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
   const addLayer = useCallback(
     (opts?: { id?: string; name?: string; color?: string }) => {
       const prevActiveLayerId = raw.activeLayerId
-      const id = raw.addLayer(opts)
-      // Defer reading the created layer until undo time — the name/color
-      // are determined inside the setter so we capture them via closure
-      // over the id and read from state at undo time.
-      const layerOpts = opts
+      const { id, name } = raw.addLayer(opts)
       record({
         type: "addLayer",
-        description: `Created layer '${opts?.name ?? "Layer"}'`,
+        description: `Created layer '${name}'`,
         undo: () => {
           raw.removeLayer(id)
           if (prevActiveLayerId) raw.setActiveLayerId(prevActiveLayerId)
           else raw.setActiveLayerId(null)
         },
         redo: () => {
-          raw.addLayer({ id, ...layerOpts })
+          raw.addLayer({ ...opts, id, name })
         },
       })
       return id

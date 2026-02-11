@@ -720,4 +720,71 @@ describe("useEditorWorkspace", () => {
     expect(result.current.editorsRef).toBeDefined()
     expect(result.current.editorsRef.current).toBeInstanceOf(Map)
   })
+
+  // --- Undo/redo naming stability ---
+
+  it("undo/redo addLayer preserves the original layer name", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => { result.current.addLayer() })
+    expect(result.current.layers[0].name).toBe("Layer 1")
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.layers).toHaveLength(0)
+
+    act(() => { result.current.history.redo() })
+    expect(result.current.layers[0].name).toBe("Layer 1")
+  })
+
+  it("repeated undo/redo of addLayer does not increment layer name", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => { result.current.addLayer() })
+    expect(result.current.layers[0].name).toBe("Layer 1")
+
+    for (let i = 0; i < 5; i++) {
+      act(() => { result.current.history.undo() })
+      act(() => { result.current.history.redo() })
+    }
+
+    expect(result.current.layers[0].name).toBe("Layer 1")
+  })
+
+  it("undo/redo addLayer does not waste counter values for subsequent layers", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => { result.current.addLayer() })
+    act(() => { result.current.history.undo() })
+    act(() => { result.current.history.redo() })
+    act(() => { result.current.addLayer() })
+
+    expect(result.current.layers[0].name).toBe("Layer 1")
+    expect(result.current.layers[1].name).toBe("Layer 2")
+  })
+
+  it("undo/redo addEditor preserves the original passage name", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => { result.current.addEditor() })
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"])
+
+    act(() => { result.current.history.undo() })
+    expect(result.current.sectionNames).toEqual(["Passage 1"])
+
+    act(() => { result.current.history.redo() })
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"])
+  })
+
+  it("repeated undo/redo of addEditor does not increment passage name", () => {
+    const { result } = renderHook(() => useEditorWorkspace())
+
+    act(() => { result.current.addEditor() })
+
+    for (let i = 0; i < 5; i++) {
+      act(() => { result.current.history.undo() })
+      act(() => { result.current.history.redo() })
+    }
+
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"])
+  })
 })

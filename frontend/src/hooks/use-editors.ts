@@ -14,16 +14,22 @@ export function useEditors() {
   const [sectionNames, setSectionNames] = useState<string[]>(["Passage 1"])
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null)
   const editorsRef = useRef<Map<number, Editor>>(new Map())
+  const passageCounterRef = useRef(1)
 
-  const addEditor = useCallback(() => {
+  const addEditor = useCallback((opts?: { name?: string }): string => {
+    if (!opts?.name) {
+      passageCounterRef.current += 1
+    }
+    const name = opts?.name ?? `Passage ${passageCounterRef.current}`
     setEditorCount((count) => {
       if (count >= 3) return count
       const newCount = count + 1
       setSplitPositions(computeEvenSplitPositions(newCount))
       setSectionVisibility((prev) => [...prev, true])
-      setSectionNames((prev) => [...prev, `Passage ${prev.length + 1}`])
+      setSectionNames((prev) => [...prev, name])
       return newCount
     })
+    return name
   }, [])
 
   const removeEditor = useCallback((index: number) => {

@@ -313,6 +313,38 @@ describe("useLayers", () => {
     expect(result.current.layers[1].name).toBe("Layer 3")
   })
 
+  it("addLayer returns id and name", () => {
+    const { result } = renderHook(() => useLayers())
+
+    let ret: { id: string; name: string } = { id: "", name: "" }
+    act(() => { ret = result.current.addLayer() })
+
+    expect(ret.id).toBe(result.current.layers[0].id)
+    expect(ret.name).toBe("Layer 1")
+  })
+
+  it("addLayer with explicit name does not increment counter", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => { result.current.addLayer({ name: "Custom" }) })
+    act(() => { result.current.addLayer() })
+
+    expect(result.current.layers[0].name).toBe("Custom")
+    expect(result.current.layers[1].name).toBe("Layer 1")
+  })
+
+  it("addLayer with explicit name preserves counter for subsequent auto-names", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => { result.current.addLayer() })
+    act(() => { result.current.addLayer({ name: "Custom" }) })
+    act(() => { result.current.addLayer() })
+
+    expect(result.current.layers[0].name).toBe("Layer 1")
+    expect(result.current.layers[1].name).toBe("Custom")
+    expect(result.current.layers[2].name).toBe("Layer 2")
+  })
+
   it("addLayer initializes arrows as empty array", () => {
     const { result } = renderHook(() => useLayers())
     act(() => { result.current.addLayer() })

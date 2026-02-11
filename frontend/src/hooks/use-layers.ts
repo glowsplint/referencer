@@ -11,19 +11,21 @@ export function useLayers() {
     setLayers((prev) => prev.map((l) => (l.id === id ? updater(l) : l)))
   }
 
-  const addLayer = useCallback((opts?: { id?: string; name?: string; color?: string }) => {
-    layerCounterRef.current += 1
+  const addLayer = useCallback((opts?: { id?: string; name?: string; color?: string }): { id: string; name: string } => {
+    if (!opts?.name) {
+      layerCounterRef.current += 1
+    }
     const nextNumber = layerCounterRef.current
     const id = opts?.id ?? crypto.randomUUID()
+    const name = opts?.name ?? `Layer ${nextNumber}`
     setLayers((prev) => {
       const usedColors = new Set(prev.map((l) => l.color))
       const color = opts?.color ?? TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
       if (!color) return prev
-      const name = opts?.name ?? `Layer ${nextNumber}`
       setActiveLayerId(id)
       return [...prev, { id, name, color, visible: true, highlights: [], arrows: [] }]
     })
-    return id
+    return { id, name }
   }, [])
 
   const removeLayer = useCallback((id: string) => {

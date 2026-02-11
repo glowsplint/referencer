@@ -268,4 +268,29 @@ describe("useEditors", () => {
     act(() => { result.current.updateSectionName(1, "Body") })
     expect(result.current.sectionNames).toEqual(["Intro", "Body"])
   })
+
+  it("addEditor returns the generated name", () => {
+    const { result } = renderHook(() => useEditors())
+    let name = ""
+    act(() => { name = result.current.addEditor() })
+    expect(name).toBe("Passage 2")
+  })
+
+  it("addEditor with explicit name does not increment counter", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor({ name: "Custom" }) })
+    act(() => { result.current.addEditor() })
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Custom", "Passage 2"])
+  })
+
+  it("passage name counter never resets after removing editors", () => {
+    const { result } = renderHook(() => useEditors())
+    act(() => { result.current.addEditor(); result.current.addEditor() })
+    // ["Passage 1", "Passage 2", "Passage 3"]
+    act(() => { result.current.removeEditor(1) })
+    // ["Passage 1", "Passage 3"]
+    act(() => { result.current.addEditor() })
+    // Counter was at 3, so next auto-name is "Passage 4"
+    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 3", "Passage 4"])
+  })
 })
