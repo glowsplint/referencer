@@ -9,7 +9,7 @@ import { useLayerDecorations } from "@/hooks/use-layer-decorations"
 import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
 import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
-import type { Layer, WordSelection } from "@/types/editor"
+import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
 
 // --- Node SCSS ---
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
@@ -25,6 +25,7 @@ import "@/components/tiptap-templates/simple/simple-editor.scss"
 
 export function EditorPane({
   isLocked,
+  activeTool,
   content,
   index,
   onEditorMount,
@@ -39,6 +40,7 @@ export function EditorPane({
   isDarkMode,
 }: {
   isLocked: boolean
+  activeTool?: ActiveTool
   content?: Record<string, unknown>
   index: number
   onEditorMount: (index: number, editor: Editor) => void
@@ -129,7 +131,7 @@ export function EditorPane({
   return (
     <div
       ref={wrapperRef}
-      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`}
+      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}${isLocked && activeTool === "arrow" ? " arrow-mode" : ""}`}
       onFocusCapture={handleFocus}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}

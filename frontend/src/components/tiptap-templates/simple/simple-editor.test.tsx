@@ -223,6 +223,30 @@ describe("EditorPane lock/unlock", () => {
     expect(wrapper?.classList.contains("editor-locked")).toBe(false)
   })
 
+  it("adds arrow-mode class when locked with arrow tool active", () => {
+    const { container } = render(
+      <EditorPane isLocked={true} activeTool="arrow" index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
+    )
+    const wrapper = container.querySelector(".simple-editor-wrapper")
+    expect(wrapper?.classList.contains("arrow-mode")).toBe(true)
+  })
+
+  it("does not add arrow-mode class when locked with selection tool", () => {
+    const { container } = render(
+      <EditorPane isLocked={true} activeTool="selection" index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
+    )
+    const wrapper = container.querySelector(".simple-editor-wrapper")
+    expect(wrapper?.classList.contains("arrow-mode")).toBe(false)
+  })
+
+  it("does not add arrow-mode class when unlocked with arrow tool", () => {
+    const { container } = render(
+      <EditorPane isLocked={false} activeTool="arrow" index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
+    )
+    const wrapper = container.querySelector(".simple-editor-wrapper")
+    expect(wrapper?.classList.contains("arrow-mode")).toBe(false)
+  })
+
   it("calls onEditorMount with index and editor on mount", () => {
     const onEditorMount = vi.fn()
     render(

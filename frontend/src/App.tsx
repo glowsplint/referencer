@@ -220,6 +220,7 @@ export function App() {
                     >
                       <EditorPane
                         isLocked={settings.isLocked || readOnly}
+                        activeTool={annotations.activeTool}
                         content={SIMPLE_EDITOR_CONTENT}
                         index={i}
                         onEditorMount={handleEditorMount}

@@ -65,6 +65,10 @@ body,
   user-select: none;
   -webkit-user-select: none;
   cursor: default;
+
+  &.arrow-mode {
+    cursor: crosshair;
+  }
 }
 
 .simple-editor-content {
