@@ -5,6 +5,8 @@ type MessageHandler = (message: ServerMessage) => void
 const MAX_RECONNECT_DELAY = 30000
 const INITIAL_RECONNECT_DELAY = 1000
 
+let nextId = 0
+
 export class WorkspaceWSClient {
   private ws: WebSocket | null = null
   private url: string
@@ -12,7 +14,6 @@ export class WorkspaceWSClient {
   private reconnectDelay = INITIAL_RECONNECT_DELAY
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null
   private shouldReconnect = true
-  private requestCounter = 0
 
   constructor(workspaceId: string) {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:"
@@ -37,10 +38,12 @@ export class WorkspaceWSClient {
   }
 
   send(type: string, payload: Record<string, unknown>): string {
-    const requestId = `req_${++this.requestCounter}_${Date.now()}`
+    const requestId = `req_${++nextId}`
     const message: ClientMessage = { type, payload, requestId }
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message))
+    } else {
+      console.warn(`[ws-client] Message dropped (socket not open): ${type}`, payload)
     }
     return requestId
   }
@@ -78,8 +81,8 @@ export class WorkspaceWSClient {
       try {
         const message: ServerMessage = JSON.parse(event.data)
         this.emit(message.type, message)
-      } catch {
-        // Ignore malformed messages
+      } catch (error) {
+        console.warn("[ws-client] Failed to parse incoming message:", event.data, error)
       }
     }
 
