@@ -63,75 +63,80 @@ export function AnnotationPanel({
     return map
   }, [positions])
 
-  if (positions.length === 0) return null
-
   /* eslint-disable react-hooks/refs -- ref read for SVG line positioning */
   const containerWidth = containerRef.current?.offsetWidth ?? 0
 
+  // Always render the wrapper div to reserve panel width in the flex layout.
+  // This ensures useLayoutEffect computes highlight positions AFTER the editor
+  // container has shrunk, preventing stale coordinates on the first annotation.
   return (
     <div
       className="relative flex-shrink-0"
       style={{ width: PANEL_WIDTH }}
       data-testid="annotation-panel"
     >
-      {/* SVG connector lines - overflow visible to extend into editor area */}
-      <svg
-        className="pointer-events-none absolute inset-0"
-        style={{ width: "100%", height: "100%", overflow: "visible" }}
-      >
-        {resolvedPositions.map((resolved) => {
-          const original = positionByHighlightId.get(resolved.id)
-          if (!original) return null
-          const color = highlightLookup.color.get(resolved.id)
-          if (!color) return null
+      {positions.length > 0 && (
+        <>
+          {/* SVG connector lines - overflow visible to extend into editor area */}
+          <svg
+            className="pointer-events-none absolute inset-0"
+            style={{ width: "100%", height: "100%", overflow: "visible" }}
+          >
+            {resolvedPositions.map((resolved) => {
+              const original = positionByHighlightId.get(resolved.id)
+              if (!original) return null
+              const color = highlightLookup.color.get(resolved.id)
+              if (!color) return null
 
-          // x1 is relative to the panel - the rightEdge is relative to the container,
-          // so we need to negate it from the panel's perspective (panel is to the right of container)
-          const x1 = original.rightEdge - containerWidth - CONNECTOR_GAP
-          const y1 = original.top + 10
-          const x2 = 16 // left padding inside panel
-          const y2 = resolved.top + 10
+              // x1 is relative to the panel - the rightEdge is relative to the container,
+              // so we need to negate it from the panel's perspective (panel is to the right of container)
+              const x1 = original.rightEdge - containerWidth - CONNECTOR_GAP
+              const y1 = original.top + 10
+              const x2 = 16 // left padding inside panel
+              const y2 = resolved.top + 10
 
-          return (
-            <line
-              key={`line-${resolved.id}`}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke={blendWithBackground(color, CONNECTOR_OPACITY, isDarkMode)}
-              strokeWidth={1}
-            />
-          )
-        })}
-      </svg>
+              return (
+                <line
+                  key={`line-${resolved.id}`}
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
+                  stroke={blendWithBackground(color, CONNECTOR_OPACITY, isDarkMode)}
+                  strokeWidth={1}
+                />
+              )
+            })}
+          </svg>
 
-      {/* Annotation cards */}
-      <div className="absolute top-0 left-4 right-0 z-10 pointer-events-auto">
-        {resolvedPositions.map((resolved) => {
-          const color = highlightLookup.color.get(resolved.id) ?? "#888"
-          const layerId = highlightLookup.layerId.get(resolved.id) ?? ""
-          const annotation = highlightLookup.annotation.get(resolved.id) ?? ""
-          const isEditing =
-            editingAnnotation?.highlightId === resolved.id &&
-            editingAnnotation?.layerId === layerId
+          {/* Annotation cards */}
+          <div className="absolute top-0 left-4 right-0 z-10 pointer-events-auto">
+            {resolvedPositions.map((resolved) => {
+              const color = highlightLookup.color.get(resolved.id) ?? "#888"
+              const layerId = highlightLookup.layerId.get(resolved.id) ?? ""
+              const annotation = highlightLookup.annotation.get(resolved.id) ?? ""
+              const isEditing =
+                editingAnnotation?.highlightId === resolved.id &&
+                editingAnnotation?.layerId === layerId
 
-          return (
-            <AnnotationCard
-              key={resolved.id}
-              layerId={layerId}
-              highlightId={resolved.id}
-              color={color}
-              annotation={annotation}
-              isEditing={isEditing}
-              top={resolved.top}
-              onChange={onAnnotationChange}
-              onBlur={onAnnotationBlur}
-              onClick={onAnnotationClick}
-            />
-          )
-        })}
-      </div>
+              return (
+                <AnnotationCard
+                  key={resolved.id}
+                  layerId={layerId}
+                  highlightId={resolved.id}
+                  color={color}
+                  annotation={annotation}
+                  isEditing={isEditing}
+                  top={resolved.top}
+                  onChange={onAnnotationChange}
+                  onBlur={onAnnotationBlur}
+                  onClick={onAnnotationClick}
+                />
+              )
+            })}
+          </div>
+        </>
+      )}
     </div>
   )
 }

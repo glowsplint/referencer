@@ -77,7 +77,7 @@ describe("AnnotationPanel", () => {
     expect(container.querySelector("[data-testid='annotation-panel']")).toBeTruthy()
   })
 
-  it("returns null when no positions exist", () => {
+  it("renders empty panel wrapper when no positions exist", () => {
     vi.mocked(useAllHighlightPositions).mockReturnValue([])
 
     const props = createProps({
@@ -85,7 +85,10 @@ describe("AnnotationPanel", () => {
     })
 
     const { container } = render(<AnnotationPanel {...props} />)
-    expect(container.innerHTML).toBe("")
+    // Wrapper div always renders to reserve layout width
+    expect(container.querySelector("[data-testid='annotation-panel']")).toBeTruthy()
+    expect(container.querySelectorAll("line")).toHaveLength(0)
+    expect(container.querySelector("svg")).toBeNull()
   })
 
   it("renders with fixed width of 224px", () => {
