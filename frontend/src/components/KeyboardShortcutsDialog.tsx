@@ -28,6 +28,7 @@ const LEFT_SECTIONS: ShortcutSection[] = [
       { keys: ["L"], description: "Cycle to next layer" },
       { keys: ["A"], description: "Hold to draw arrow" },
       { keys: ["Arrow keys"], description: "Navigate between words" },
+      { keys: ["`"], description: "Toggle action console" },
     ],
   },
   {
@@ -46,8 +47,8 @@ const LEFT_SECTIONS: ShortcutSection[] = [
   {
     title: "General",
     shortcuts: [
-      { keys: [CMD, "Z"], description: "Undo" },
-      { keys: [CMD, "Shift", "Z"], description: "Redo" },
+      { keys: [CMD, "Z"], description: "Undo (workspace when locked)" },
+      { keys: [CMD, "Shift", "Z"], description: "Redo (workspace when locked)" },
     ],
   },
 ];

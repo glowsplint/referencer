@@ -14,8 +14,11 @@ import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useCycleLayer } from "./hooks/use-cycle-layer";
 import { useDragSelection } from "./hooks/use-drag-selection";
+import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
+import { useActionConsole } from "./hooks/use-action-console";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
+import { ActionConsole } from "./components/ActionConsole";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
@@ -41,10 +44,15 @@ export function App() {
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,
+    history,
   } = workspace;
+
+  useUndoRedoKeyboard(history);
+  const actionConsole = useActionConsole();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
+  const annotationBeforeEditRef = useRef<string>("");
 
   const { selection, selectWord, clearSelection } = useWordSelection({
     isLocked: settings.isLocked,
@@ -75,6 +83,7 @@ export function App() {
     selectWord,
     clearSelection,
     onHighlightAdded: useCallback((layerId: string, highlightId: string) => {
+      annotationBeforeEditRef.current = "";
       setEditingAnnotation({ layerId, highlightId });
     }, []),
   });
@@ -87,17 +96,34 @@ export function App() {
     (layerId: string, highlightId: string, annotation: string) => {
       if (!annotation.trim()) {
         removeHighlight(layerId, highlightId);
+      } else {
+        const oldText = annotationBeforeEditRef.current;
+        if (oldText !== annotation) {
+          history.record({
+            type: "updateAnnotation",
+            description: "Updated annotation",
+            undo: () => {
+              updateHighlightAnnotation(layerId, highlightId, oldText);
+            },
+            redo: () => {
+              updateHighlightAnnotation(layerId, highlightId, annotation);
+            },
+          });
+        }
       }
       setEditingAnnotation(null);
     },
-    [removeHighlight]
+    [removeHighlight, history, updateHighlightAnnotation]
   );
 
   const handleAnnotationClick = useCallback(
     (layerId: string, highlightId: string) => {
+      const layer = layers.find((l) => l.id === layerId);
+      const highlight = layer?.highlights.find((h) => h.id === highlightId);
+      annotationBeforeEditRef.current = highlight?.annotation ?? "";
       setEditingAnnotation({ layerId, highlightId });
     },
-    []
+    [layers]
   );
 
   const hasAnyAnnotations = useMemo(
@@ -110,6 +136,11 @@ export function App() {
   return (
     <WorkspaceProvider value={workspace}>
       <Toaster />
+      <ActionConsole
+        log={history.log}
+        isOpen={actionConsole.isOpen}
+        onClose={() => actionConsole.setIsOpen(false)}
+      />
       <div className="flex h-screen">
         <ButtonPane isDrawing={isDrawing} />
         {isManagementPaneOpen && <ManagementPane />}

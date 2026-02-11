@@ -1,0 +1,21 @@
+import { useState, useEffect } from "react"
+import { isEditableElement } from "@/lib/dom"
+
+export function useActionConsole() {
+  const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== "`") return
+      if (isEditableElement(e.target)) return
+
+      e.preventDefault()
+      setIsOpen((v) => !v)
+    }
+
+    document.addEventListener("keydown", handler)
+    return () => document.removeEventListener("keydown", handler)
+  }, [])
+
+  return { isOpen, setIsOpen }
+}

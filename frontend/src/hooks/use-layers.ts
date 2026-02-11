@@ -11,18 +11,19 @@ export function useLayers() {
     setLayers((prev) => prev.map((l) => (l.id === id ? updater(l) : l)))
   }
 
-  const addLayer = useCallback(() => {
+  const addLayer = useCallback((opts?: { id?: string; name?: string; color?: string }) => {
     layerCounterRef.current += 1
     const nextNumber = layerCounterRef.current
-    const id = crypto.randomUUID()
+    const id = opts?.id ?? crypto.randomUUID()
     setLayers((prev) => {
       const usedColors = new Set(prev.map((l) => l.color))
-      const color = TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
+      const color = opts?.color ?? TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
       if (!color) return prev
-      const name = `Layer ${nextNumber}`
+      const name = opts?.name ?? `Layer ${nextNumber}`
       setActiveLayerId(id)
       return [...prev, { id, name, color, visible: true, highlights: [], arrows: [] }]
     })
+    return id
   }, [])
 
   const removeLayer = useCallback((id: string) => {
@@ -65,8 +66,8 @@ export function useLayers() {
   }, [])
 
   const addHighlight = useCallback(
-    (layerId: string, highlight: Omit<Highlight, "id">): string => {
-      const id = crypto.randomUUID()
+    (layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
+      const id = opts?.id ?? crypto.randomUUID()
       updateLayer(layerId, (l) => ({
         ...l,
         highlights: [...l.highlights, { ...highlight, id }],
@@ -100,11 +101,13 @@ export function useLayers() {
   }, [])
 
   const addArrow = useCallback(
-    (layerId: string, arrow: Omit<Arrow, "id">) => {
+    (layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
+      const id = opts?.id ?? crypto.randomUUID()
       updateLayer(layerId, (l) => ({
         ...l,
-        arrows: [...l.arrows, { ...arrow, id: crypto.randomUUID() }],
+        arrows: [...l.arrows, { ...arrow, id }],
       }))
+      return id
     },
     []
   )
@@ -137,5 +140,7 @@ export function useLayers() {
     addArrow,
     removeArrow,
     clearLayerArrows,
+    setLayers,
+    setActiveLayerId,
   }
 }

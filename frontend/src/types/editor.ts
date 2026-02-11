@@ -57,6 +57,21 @@ export interface WordSelection {
   text: string
 }
 
+export interface ActionEntry {
+  id: string
+  type: string
+  description: string
+  timestamp: number
+  undone: boolean
+}
+
+export interface ActionCommand {
+  type: string
+  description: string
+  undo: () => void
+  redo: () => void
+}
+
 export const TAILWIND_300_COLORS = [
   "#fca5a5", // red-300
   "#fcd34d", // amber-300

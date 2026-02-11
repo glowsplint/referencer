@@ -123,5 +123,9 @@ export function useEditors() {
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,
+    setEditorCount,
+    setSectionNames,
+    setSectionVisibility,
+    setSplitPositions,
   }
 }

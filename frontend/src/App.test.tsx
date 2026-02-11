@@ -48,6 +48,14 @@ const mockWorkspace = {
   handleDividerResize: vi.fn(),
   handleEditorMount: vi.fn(),
   handlePaneFocus: vi.fn(),
+  history: {
+    log: [],
+    canUndo: false,
+    canRedo: false,
+    undo: vi.fn(),
+    redo: vi.fn(),
+    record: vi.fn(),
+  },
 }
 
 vi.mock("./hooks/use-editor-workspace", () => ({

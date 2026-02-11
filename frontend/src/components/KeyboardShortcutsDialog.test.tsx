@@ -75,8 +75,8 @@ describe("KeyboardShortcutsDialog", () => {
 
   it("displays undo/redo shortcuts", () => {
     renderDialog();
-    expect(screen.getByText("Undo")).toBeInTheDocument();
-    expect(screen.getByText("Redo")).toBeInTheDocument();
+    expect(screen.getByText("Undo (workspace when locked)")).toBeInTheDocument();
+    expect(screen.getByText("Redo (workspace when locked)")).toBeInTheDocument();
   });
 
   it("has a close button in the footer", () => {

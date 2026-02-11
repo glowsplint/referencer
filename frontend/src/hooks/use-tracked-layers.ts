@@ -1,0 +1,200 @@
+import { useCallback } from "react"
+import type { useLayers } from "./use-layers"
+import type { useActionHistory } from "./use-action-history"
+import type { Highlight, Arrow } from "@/types/editor"
+
+type LayersHook = ReturnType<typeof useLayers>
+type History = ReturnType<typeof useActionHistory>
+
+export function useTrackedLayers(raw: LayersHook, history: History) {
+  const { record } = history
+
+  const addLayer = useCallback(
+    (opts?: { id?: string; name?: string; color?: string }) => {
+      const prevActiveLayerId = raw.activeLayerId
+      const id = raw.addLayer(opts)
+      // Defer reading the created layer until undo time — the name/color
+      // are determined inside the setter so we capture them via closure
+      // over the id and read from state at undo time.
+      const layerOpts = opts
+      record({
+        type: "addLayer",
+        description: `Created layer '${opts?.name ?? "Layer"}'`,
+        undo: () => {
+          raw.removeLayer(id)
+          if (prevActiveLayerId) raw.setActiveLayerId(prevActiveLayerId)
+          else raw.setActiveLayerId(null)
+        },
+        redo: () => {
+          raw.addLayer({ id, ...layerOpts })
+        },
+      })
+      return id
+    },
+    [raw, record]
+  )
+
+  const removeLayer = useCallback(
+    (id: string) => {
+      const layer = raw.layers.find((l) => l.id === id)
+      if (!layer) return
+      const index = raw.layers.indexOf(layer)
+      const snapshot = { ...layer }
+      const prevActiveLayerId = raw.activeLayerId
+      raw.removeLayer(id)
+      record({
+        type: "removeLayer",
+        description: `Deleted layer '${snapshot.name}'`,
+        undo: () => {
+          raw.setLayers((prev) => {
+            const copy = [...prev]
+            copy.splice(index, 0, snapshot)
+            return copy
+          })
+          if (prevActiveLayerId === id) raw.setActiveLayerId(id)
+        },
+        redo: () => {
+          raw.removeLayer(id)
+        },
+      })
+    },
+    [raw, record]
+  )
+
+  const addHighlight = useCallback(
+    (layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
+      const id = raw.addHighlight(layerId, highlight, opts)
+      const text = highlight.text
+      record({
+        type: "addHighlight",
+        description: `Added highlight on '${text.length > 30 ? text.slice(0, 30) + "..." : text}'`,
+        undo: () => {
+          raw.removeHighlight(layerId, id)
+        },
+        redo: () => {
+          raw.addHighlight(layerId, highlight, { id })
+        },
+      })
+      return id
+    },
+    [raw, record]
+  )
+
+  const removeHighlight = useCallback(
+    (layerId: string, highlightId: string) => {
+      const layer = raw.layers.find((l) => l.id === layerId)
+      const highlight = layer?.highlights.find((h) => h.id === highlightId)
+      if (!highlight) {
+        raw.removeHighlight(layerId, highlightId)
+        return
+      }
+      const snapshot = { ...highlight }
+      raw.removeHighlight(layerId, highlightId)
+      record({
+        type: "removeHighlight",
+        description: "Removed highlight",
+        undo: () => {
+          const { id, ...rest } = snapshot
+          raw.addHighlight(layerId, rest, { id })
+        },
+        redo: () => {
+          raw.removeHighlight(layerId, highlightId)
+        },
+      })
+    },
+    [raw, record]
+  )
+
+  const addArrow = useCallback(
+    (layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
+      const id = raw.addArrow(layerId, arrow, opts)
+      record({
+        type: "addArrow",
+        description: "Drew arrow",
+        undo: () => {
+          raw.removeArrow(layerId, id)
+        },
+        redo: () => {
+          raw.addArrow(layerId, arrow, { id })
+        },
+      })
+      return id
+    },
+    [raw, record]
+  )
+
+  const removeArrow = useCallback(
+    (layerId: string, arrowId: string) => {
+      const layer = raw.layers.find((l) => l.id === layerId)
+      const arrow = layer?.arrows.find((a) => a.id === arrowId)
+      if (!arrow) {
+        raw.removeArrow(layerId, arrowId)
+        return
+      }
+      const snapshot = { ...arrow }
+      raw.removeArrow(layerId, arrowId)
+      record({
+        type: "removeArrow",
+        description: "Removed arrow",
+        undo: () => {
+          const { id, ...rest } = snapshot
+          raw.addArrow(layerId, rest, { id })
+        },
+        redo: () => {
+          raw.removeArrow(layerId, arrowId)
+        },
+      })
+    },
+    [raw, record]
+  )
+
+  const updateLayerName = useCallback(
+    (id: string, name: string) => {
+      const layer = raw.layers.find((l) => l.id === id)
+      const oldName = layer?.name ?? ""
+      raw.updateLayerName(id, name)
+      record({
+        type: "updateLayerName",
+        description: `Renamed layer to '${name}'`,
+        undo: () => {
+          raw.updateLayerName(id, oldName)
+        },
+        redo: () => {
+          raw.updateLayerName(id, name)
+        },
+      })
+    },
+    [raw, record]
+  )
+
+  const updateLayerColor = useCallback(
+    (id: string, color: string) => {
+      const layer = raw.layers.find((l) => l.id === id)
+      const oldColor = layer?.color ?? ""
+      raw.updateLayerColor(id, color)
+      record({
+        type: "updateLayerColor",
+        description: "Changed layer color",
+        undo: () => {
+          raw.updateLayerColor(id, oldColor)
+        },
+        redo: () => {
+          raw.updateLayerColor(id, color)
+        },
+      })
+    },
+    [raw, record]
+  )
+
+  return {
+    ...raw,
+    addLayer,
+    removeLayer,
+    addHighlight,
+    removeHighlight,
+    addArrow,
+    removeArrow,
+    updateLayerName,
+    updateLayerColor,
+  }
+}
