@@ -147,48 +147,47 @@ export function ArrowOverlay({
   )
 
   return (
-    <svg
-      data-testid="arrow-overlay"
-      className="absolute inset-0 pointer-events-none z-10"
-      style={{ width: "100%", height: "100%", mixBlendMode: isDarkMode ? "screen" : "multiply" }}
-    >
-      <defs>
-        {arrowPositions.map((pos) => (
-          <marker
-            key={`marker-${pos.arrowId}`}
-            id={`arrowhead-${pos.arrowId}`}
-            markerWidth="8"
-            markerHeight="6"
-            refX="4"
-            refY="3"
-            orient="auto"
-          >
-            <polygon points="0 0, 8 3, 0 6" fill={pos.color} />
-          </marker>
-        ))}
-        {previewPosition && drawingColor && (
-          <marker
-            id="arrowhead-preview"
-            markerWidth="8"
-            markerHeight="6"
-            refX="4"
-            refY="3"
-            orient="auto"
-          >
-            <polygon points="0 0, 8 3, 0 6" fill={blendArrow(drawingColor)} />
-          </marker>
-        )}
-      </defs>
+    <>
+      {/* Visual layer: blend mode applied here for highlighter effect */}
+      <svg
+        data-testid="arrow-overlay"
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{ width: "100%", height: "100%", mixBlendMode: isDarkMode ? "screen" : "multiply" }}
+      >
+        <defs>
+          {arrowPositions.map((pos) => (
+            <marker
+              key={`marker-${pos.arrowId}`}
+              id={`arrowhead-${pos.arrowId}`}
+              markerWidth="8"
+              markerHeight="6"
+              refX="4"
+              refY="3"
+              orient="auto"
+            >
+              <polygon points="0 0, 8 3, 0 6" fill={pos.color} />
+            </marker>
+          ))}
+          {previewPosition && drawingColor && (
+            <marker
+              id="arrowhead-preview"
+              markerWidth="8"
+              markerHeight="6"
+              refX="4"
+              refY="3"
+              orient="auto"
+            >
+              <polygon points="0 0, 8 3, 0 6" fill={blendArrow(drawingColor)} />
+            </marker>
+          )}
+        </defs>
 
-      {arrowPositions.map((pos) => {
-        const mx = (pos.x1 + pos.x2) / 2
-        const my = (pos.y1 + pos.y2) / 2
-        const arrowPath = `M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`
-        const isHovered = hoveredArrowId === pos.arrowId
-        const strokeColor = blendArrow(pos.color)
-        return (
-          <g key={pos.arrowId}>
-            <g opacity={ARROW_OPACITY}>
+        {arrowPositions.map((pos) => {
+          const mx = (pos.x1 + pos.x2) / 2
+          const my = (pos.y1 + pos.y2) / 2
+          const arrowPath = `M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`
+          return (
+            <g key={pos.arrowId} opacity={ARROW_OPACITY}>
               {pos.fromRect && (
                 <rect
                   data-testid="arrow-endpoint-rect"
@@ -218,53 +217,71 @@ export function ArrowOverlay({
                 markerMid={`url(#arrowhead-${pos.arrowId})`}
               />
             </g>
-            {/* Wider invisible hit area for easier hovering/clicking */}
-            <path
-              data-testid="arrow-hit-area"
-              d={arrowPath}
-              stroke="transparent"
-              strokeWidth={12}
-              fill="none"
-              style={{
-                pointerEvents: activeTool === "arrow" ? "none" : "auto",
-                cursor: activeTool === "arrow" ? "default" : "pointer",
-              }}
-              onMouseEnter={() => setHoveredArrowId(pos.arrowId)}
-              onMouseLeave={() => setHoveredArrowId(null)}
-              onClick={() => removeArrow(pos.layerId, pos.arrowId)}
-            />
-            {isHovered && (
-              <g
-                transform={`translate(${mx}, ${my})`}
-                style={{ pointerEvents: "none" }}
-              >
-                <circle r="8" fill="white" stroke={strokeColor} strokeWidth={1.5} />
-                <path
-                  d="M -3 -3 L 3 3 M 3 -3 L -3 3"
-                  stroke={strokeColor}
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                />
-              </g>
-            )}
-          </g>
-        )
-      })}
+          )
+        })}
 
-      {previewPosition && drawingColor && (() => {
-        const previewPath = `M ${previewPosition.x1} ${previewPosition.y1} L ${(previewPosition.x1 + previewPosition.x2) / 2} ${(previewPosition.y1 + previewPosition.y2) / 2} L ${previewPosition.x2} ${previewPosition.y2}`
-        return (
-          <path
-            data-testid="preview-arrow"
-            d={previewPath}
-            stroke={blendArrow(drawingColor)}
-            strokeWidth={2}
-            strokeDasharray="6 4"
-            fill="none"
-            markerMid="url(#arrowhead-preview)"
-          />
-        )
-      })()}
-    </svg>
+        {previewPosition && drawingColor && (() => {
+          const previewPath = `M ${previewPosition.x1} ${previewPosition.y1} L ${(previewPosition.x1 + previewPosition.x2) / 2} ${(previewPosition.y1 + previewPosition.y2) / 2} L ${previewPosition.x2} ${previewPosition.y2}`
+          return (
+            <path
+              data-testid="preview-arrow"
+              d={previewPath}
+              stroke={blendArrow(drawingColor)}
+              strokeWidth={2}
+              strokeDasharray="6 4"
+              fill="none"
+              markerMid="url(#arrowhead-preview)"
+            />
+          )
+        })()}
+      </svg>
+
+      {/* Interaction layer: separate SVG without blend mode so pointer events work */}
+      <svg
+        data-testid="arrow-interaction-layer"
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{ width: "100%", height: "100%" }}
+      >
+        {arrowPositions.map((pos) => {
+          const mx = (pos.x1 + pos.x2) / 2
+          const my = (pos.y1 + pos.y2) / 2
+          const arrowPath = `M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`
+          const isHovered = hoveredArrowId === pos.arrowId
+          const strokeColor = blendArrow(pos.color)
+          return (
+            <g key={pos.arrowId}>
+              <path
+                data-testid="arrow-hit-area"
+                d={arrowPath}
+                stroke="transparent"
+                strokeWidth={12}
+                fill="none"
+                style={{
+                  pointerEvents: activeTool === "arrow" ? "none" : "auto",
+                  cursor: activeTool === "arrow" ? "default" : "pointer",
+                }}
+                onMouseEnter={() => setHoveredArrowId(pos.arrowId)}
+                onMouseLeave={() => setHoveredArrowId(null)}
+                onClick={() => removeArrow(pos.layerId, pos.arrowId)}
+              />
+              {isHovered && (
+                <g
+                  transform={`translate(${mx}, ${my})`}
+                  style={{ pointerEvents: "none" }}
+                >
+                  <circle r="8" fill="white" stroke={strokeColor} strokeWidth={1.5} />
+                  <path
+                    d="M -3 -3 L 3 3 M 3 -3 L -3 3"
+                    stroke={strokeColor}
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                  />
+                </g>
+              )}
+            </g>
+          )
+        })}
+      </svg>
+    </>
   )
 }

@@ -359,4 +359,60 @@ describe("ArrowOverlay", () => {
     const hitArea = screen.getByTestId("arrow-hit-area")
     expect(hitArea).toHaveStyle({ pointerEvents: "none" })
   })
+
+  it("interaction layer SVG has no mix-blend-mode", () => {
+    render(<ArrowOverlay {...createDefaultProps()} />)
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    expect(interactionLayer).not.toHaveStyle({ mixBlendMode: "multiply" })
+    expect(interactionLayer).not.toHaveStyle({ mixBlendMode: "screen" })
+  })
+
+  it("hit areas are in the interaction layer, not the blended visual layer", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    expect(interactionLayer.contains(hitArea)).toBe(true)
+
+    const visualLayer = screen.getByTestId("arrow-overlay")
+    expect(visualLayer.contains(hitArea)).toBe(false)
+  })
+
+  it("shows X icon on hover and hides it on mouse leave", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const hitArea = screen.getByTestId("arrow-hit-area")
+
+    // No X icon initially
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
+
+    // Hover shows X icon
+    fireEvent.mouseEnter(hitArea)
+    const circle = interactionLayer.querySelector("circle")
+    expect(circle).toBeInTheDocument()
+
+    // Mouse leave hides X icon
+    fireEvent.mouseLeave(hitArea)
+    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
+  })
 })

@@ -89,9 +89,48 @@ test("click on arrow line deletes it", async ({ page }) => {
   // Switch to selection tool before clicking hit area
   await page.keyboard.press("s");
 
-  // Click hit area to delete
+  // Click the arrow midpoint area (no force — tests real pointer events)
+  const arrowLine = page.getByTestId("arrow-line");
+  const arrowBox = await arrowLine.boundingBox();
+  expect(arrowBox).not.toBeNull();
+  const midX = arrowBox!.x + arrowBox!.width / 2;
+  const midY = arrowBox!.y + arrowBox!.height / 2;
+  await page.mouse.click(midX, midY);
+  await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
+});
+
+test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ page }) => {
+  const firstParagraph = page.locator(".simple-editor p").first();
+  const box = await firstParagraph.boundingBox();
+  expect(box).not.toBeNull();
+  const y = box!.y + box!.height / 2;
+
+  // Draw an arrow between two words
+  const x1 = box!.x + 30;
+  const x2 = box!.x + 120;
+  await page.mouse.click(x1, y);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.mouse.click(x2, y);
+  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+
+  // Switch to selection tool
+  await page.keyboard.press("s");
+
+  // Move mouse away, then hover the arrow hit area
+  await page.mouse.move(0, 0);
   const hitArea = page.getByTestId("arrow-hit-area");
-  await hitArea.click({ force: true });
+  const hitBox = await hitArea.boundingBox();
+  expect(hitBox).not.toBeNull();
+  const hoverX = hitBox!.x + hitBox!.width / 2;
+  const hoverY = hitBox!.y + hitBox!.height / 2;
+  await page.mouse.move(hoverX, hoverY, { steps: 5 });
+
+  // X icon circle should appear in the interaction layer
+  const interactionLayer = page.getByTestId("arrow-interaction-layer");
+  await expect(interactionLayer.locator("circle")).toHaveCount(1, { timeout: 2000 });
+
+  // Click the hit area to delete
+  await page.mouse.click(hoverX, hoverY);
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
 });
 
