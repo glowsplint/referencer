@@ -61,8 +61,9 @@ export function useDragSelection({
       }
 
       dragRef.current = { anchor: word, current: word, dragging: false }
+      selectWord(editorIndex, word.from, word.to, word.text)
     },
-    [isLocked, getWordAtEvent, clearSelection]
+    [isLocked, getWordAtEvent, clearSelection, selectWord]
   )
 
   const handleMouseMove = useCallback(
@@ -74,8 +75,14 @@ export function useDragSelection({
 
       dragRef.current.current = word
       dragRef.current.dragging = true
+
+      // Live preview of the selection range during drag
+      const from = Math.min(dragRef.current.anchor.from, word.from)
+      const to = Math.max(dragRef.current.anchor.to, word.to)
+      const text = editor.state.doc.textBetween(from, to, " ")
+      selectWord(editorIndex, from, to, text)
     },
-    [isLocked, getWordAtEvent]
+    [isLocked, getWordAtEvent, selectWord]
   )
 
   const handleMouseUp = useCallback(

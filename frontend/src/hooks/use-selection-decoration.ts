@@ -33,13 +33,56 @@ export function scrollToKeepInView(
   }
 }
 
+/**
+ * Merge DOMRects that share the same visual line into single per-line rects.
+ * Adjacent inline elements (e.g. bold/italic mark boundaries) produce separate
+ * rects on the same line — this combines them.
+ */
+function mergeLineRects(clientRects: DOMRectList): { top: number; left: number; width: number; height: number }[] {
+  const rects: DOMRect[] = []
+  for (let i = 0; i < clientRects.length; i++) {
+    const r = clientRects[i]
+    if (r.width > 0 && r.height > 0) rects.push(r)
+  }
+  if (rects.length === 0) return []
+
+  rects.sort((a, b) => a.top - b.top || a.left - b.left)
+
+  const merged: { top: number; left: number; right: number; bottom: number }[] = []
+
+  for (const r of rects) {
+    const last = merged[merged.length - 1]
+    // Rects on the same visual line have similar top values
+    if (last && Math.abs(r.top - last.top) < r.height * 0.5) {
+      last.left = Math.min(last.left, r.left)
+      last.right = Math.max(last.right, r.left + r.width)
+      last.top = Math.min(last.top, r.top)
+      last.bottom = Math.max(last.bottom, r.top + r.height)
+    } else {
+      merged.push({
+        top: r.top,
+        left: r.left,
+        right: r.left + r.width,
+        bottom: r.top + r.height,
+      })
+    }
+  }
+
+  return merged.map((m) => ({
+    top: m.top,
+    left: m.left,
+    width: m.right - m.left,
+    height: m.bottom - m.top,
+  }))
+}
+
 export function useSelectionDecoration(
   editor: Editor | null,
   selection: WordSelection | null,
   editorIndex: number,
   wrapperRef: React.RefObject<HTMLDivElement | null>
-): SelectionRect | null {
-  const [rect, setRect] = useState<SelectionRect | null>(null)
+): SelectionRect[] {
+  const [rects, setRects] = useState<SelectionRect[]>([])
 
   useLayoutEffect(() => {
     if (
@@ -48,21 +91,17 @@ export function useSelectionDecoration(
       !selection ||
       selection.editorIndex !== editorIndex
     ) {
-      setRect(null)
+      setRects([])
       return
     }
 
     const wrapper = wrapperRef.current
     if (!wrapper) {
-      setRect(null)
+      setRects([])
       return
     }
 
     try {
-      // Use a DOM Range to get a single bounding rect that spans across
-      // mark boundaries (e.g. subscript/superscript), producing one unified
-      // box instead of the multiple spans ProseMirror's Decoration.inline
-      // would create at each mark boundary.
       const domStart = editor.view.domAtPos(selection.from)
       const domEnd = editor.view.domAtPos(selection.to)
 
@@ -70,34 +109,33 @@ export function useSelectionDecoration(
       range.setStart(domStart.node, domStart.offset)
       range.setEnd(domEnd.node, domEnd.offset)
 
-      const wordRect = range.getBoundingClientRect()
       const wrapperRect = wrapper.getBoundingClientRect()
+      const lineRects = mergeLineRects(range.getClientRects())
 
-      // Convert viewport coords to scroll-content coords (stable regardless
-      // of scroll position changes below).
-      const topInContent = wordRect.top - wrapperRect.top + wrapper.scrollTop
-      const leftInContent = wordRect.left - wrapperRect.left + wrapper.scrollLeft
+      const selectionRects: SelectionRect[] = lineRects.map((r) => ({
+        top: r.top - wrapperRect.top + wrapper.scrollTop,
+        left: r.left - wrapperRect.left + wrapper.scrollLeft,
+        width: r.width,
+        height: r.height,
+      }))
 
-      // Scroll the wrapper so the selected word stays in view during
-      // keyboard navigation.
-      scrollToKeepInView(
-        wrapper,
-        topInContent,
-        leftInContent,
-        wordRect.height,
-        wordRect.width
-      )
+      // Scroll to keep the last line rect in view
+      if (selectionRects.length > 0) {
+        const last = selectionRects[selectionRects.length - 1]
+        scrollToKeepInView(
+          wrapper,
+          last.top,
+          last.left,
+          last.height,
+          last.width
+        )
+      }
 
-      setRect({
-        top: topInContent,
-        left: leftInContent,
-        width: wordRect.width,
-        height: wordRect.height,
-      })
+      setRects(selectionRects)
     } catch {
-      setRect(null)
+      setRects([])
     }
   }, [editor, selection, editorIndex, wrapperRef])
 
-  return rect
+  return rects
 }

@@ -113,7 +113,7 @@ vi.mock("@/hooks/use-layer-decorations", () => ({
   useLayerDecorations: vi.fn(),
 }))
 vi.mock("@/hooks/use-selection-decoration", () => ({
-  useSelectionDecoration: vi.fn(() => null),
+  useSelectionDecoration: vi.fn(() => []),
 }))
 vi.mock("@/components/AnnotationMargin", () => ({
   AnnotationMargin: () => null,

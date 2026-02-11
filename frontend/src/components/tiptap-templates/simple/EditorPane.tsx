@@ -87,7 +87,7 @@ export function EditorPane({
   }, [editor, isLocked])
 
   useLayerDecorations(editor, layers, index, isLocked)
-  const selectionRect = useSelectionDecoration(editor, selection, index, wrapperRef)
+  const selectionRects = useSelectionDecoration(editor, selection, index, wrapperRef)
 
   const hasAnnotations = isLocked && layers.some(
     (l) => l.visible && l.highlights.some((h) => h.editorIndex === index)
@@ -135,19 +135,20 @@ export function EditorPane({
         role="presentation"
         className="simple-editor-content"
       />
-      {selectionRect && (
+      {selectionRects.map((rect, i) => (
         <div
+          key={i}
           className="word-selection"
           style={{
             position: "absolute",
-            top: selectionRect.top,
-            left: selectionRect.left,
-            width: selectionRect.width,
-            height: selectionRect.height,
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
             pointerEvents: "none",
           }}
         />
-      )}
+      ))}
       {isLocked && (
         <AnnotationMargin
           editor={editor}

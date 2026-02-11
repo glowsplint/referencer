@@ -17,7 +17,6 @@ export function useDrawingMode({
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
   const [isDrawing, setIsDrawing] = useState(false)
-  const isDrawingRef = useRef(false)
   const anchorRef = useRef<ArrowEndpoint | null>(null)
   const cursorRef = useRef<ArrowEndpoint | null>(null)
 
@@ -32,7 +31,6 @@ export function useDrawingMode({
     if (!isLocked) {
       setDrawingState(null)
       setIsDrawing(false)
-      isDrawingRef.current = false
       anchorRef.current = null
       cursorRef.current = null
     }
@@ -40,7 +38,7 @@ export function useDrawingMode({
 
   // Update cursor when selection changes during drawing
   useEffect(() => {
-    if (isDrawingRef.current && selection && anchorRef.current) {
+    if (anchorRef.current && selection) {
       const cursor: ArrowEndpoint = {
         editorIndex: selection.editorIndex,
         from: selection.from,
@@ -78,14 +76,13 @@ export function useDrawingMode({
 
       anchorRef.current = anchor
       cursorRef.current = anchor
-      isDrawingRef.current = true
       setIsDrawing(true)
       setDrawingState({ anchor, cursor: anchor })
     }
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.code !== "KeyA") return
-      if (!isDrawingRef.current) return
+      if (!anchorRef.current) return
 
       const anchor = anchorRef.current
       const cursor = cursorRef.current
@@ -105,7 +102,6 @@ export function useDrawingMode({
 
       setDrawingState(null)
       setIsDrawing(false)
-      isDrawingRef.current = false
       anchorRef.current = null
       cursorRef.current = null
     }
