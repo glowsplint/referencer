@@ -415,4 +415,281 @@ describe("ArrowOverlay", () => {
     fireEvent.mouseLeave(hitArea)
     expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
   })
+
+  it("arrow lines are in the visual layer, not the interaction layer", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const arrowLine = screen.getByTestId("arrow-line")
+    const visualLayer = screen.getByTestId("arrow-overlay")
+    expect(visualLayer.contains(arrowLine)).toBe(true)
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    expect(interactionLayer.contains(arrowLine)).toBe(false)
+  })
+
+  it("visual and interaction layers share the same arrow path geometry", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const arrowLine = screen.getByTestId("arrow-line")
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    expect(arrowLine.getAttribute("d")).toBe(hitArea.getAttribute("d"))
+  })
+
+  it("interaction layer renders one hit area per visible arrow", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+        {
+          id: "a2",
+          from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
+          to: { editorIndex: 0, from: 30, to: 35, text: "bar" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    expect(screen.getAllByTestId("arrow-hit-area")).toHaveLength(2)
+    expect(screen.getAllByTestId("arrow-line")).toHaveLength(2)
+  })
+
+  it("hit areas have pointer-events auto when selection tool is active", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], activeTool: "selection" })}
+      />
+    )
+
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    expect(hitArea).toHaveStyle({ pointerEvents: "auto" })
+    expect(hitArea).toHaveStyle({ cursor: "pointer" })
+  })
+
+  it("clicking one arrow does not remove other arrows", () => {
+    const removeArrow = vi.fn()
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+        {
+          id: "a2",
+          from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
+          to: { editorIndex: 0, from: 30, to: 35, text: "bar" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], removeArrow })}
+      />
+    )
+
+    const hitAreas = screen.getAllByTestId("arrow-hit-area")
+    fireEvent.click(hitAreas[0])
+
+    expect(removeArrow).toHaveBeenCalledTimes(1)
+    expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
+  })
+
+  it("hovering one arrow then another only shows one X icon", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+        {
+          id: "a2",
+          from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
+          to: { editorIndex: 0, from: 30, to: 35, text: "bar" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    const hitAreas = screen.getAllByTestId("arrow-hit-area")
+
+    // Hover first arrow
+    fireEvent.mouseEnter(hitAreas[0])
+    expect(interactionLayer.querySelectorAll("circle")).toHaveLength(1)
+
+    // Move to second arrow
+    fireEvent.mouseLeave(hitAreas[0])
+    fireEvent.mouseEnter(hitAreas[1])
+    expect(interactionLayer.querySelectorAll("circle")).toHaveLength(1)
+  })
+
+  it("X icon is positioned at arrow midpoint", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    fireEvent.mouseEnter(hitArea)
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
+
+    // from: {from: 1} → cx = 10, to: {from: 10} → cx = 100
+    // midX = (10 + 100) / 2 = 55
+    // both editorIndex 0 → cy = 25, midY = 25
+    expect(xIconGroup.getAttribute("transform")).toBe("translate(55, 25)")
+  })
+
+  it("X icon circle has white fill and blended stroke color", () => {
+    const layer = createLayer({
+      color: "#fca5a5",
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    const circle = interactionLayer.querySelector("circle")!
+    expect(circle.getAttribute("fill")).toBe("white")
+    expect(circle.getAttribute("r")).toBe("8")
+    // Stroke should be the blended color (not the raw layer color)
+    expect(circle.getAttribute("stroke")).not.toBe("#fca5a5")
+    expect(circle.getAttribute("stroke")).toBeTruthy()
+  })
+
+  it("X icon has pointer-events none so it does not block hit area clicks", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
+    expect(xIconGroup).toHaveStyle({ pointerEvents: "none" })
+  })
+
+  it("preview arrow is in the visual layer, not the interaction layer", () => {
+    const drawingState: DrawingState = {
+      anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+      cursor: { editorIndex: 0, from: 10, to: 15, text: "world" },
+    }
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ drawingState, drawingColor: "#fca5a5" })}
+      />
+    )
+
+    const preview = screen.getByTestId("preview-arrow")
+    const visualLayer = screen.getByTestId("arrow-overlay")
+    expect(visualLayer.contains(preview)).toBe(true)
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    expect(interactionLayer.contains(preview)).toBe(false)
+  })
+
+  it("visual layer has pointer-events-none class", () => {
+    render(<ArrowOverlay {...createDefaultProps()} />)
+
+    const visualLayer = screen.getByTestId("arrow-overlay")
+    expect(visualLayer.classList.contains("pointer-events-none")).toBe(true)
+  })
+
+  it("interaction layer has pointer-events-none class", () => {
+    render(<ArrowOverlay {...createDefaultProps()} />)
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    expect(interactionLayer.classList.contains("pointer-events-none")).toBe(true)
+  })
+
+  it("no hit areas or X icons render for invisible layers", () => {
+    const layer = createLayer({
+      visible: false,
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    expect(screen.queryByTestId("arrow-hit-area")).not.toBeInTheDocument()
+    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
+  })
+
+  it("no hit areas render when section visibility hides an endpoint", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          sectionVisibility: [true, false, true],
+        })}
+      />
+    )
+
+    expect(screen.queryByTestId("arrow-hit-area")).not.toBeInTheDocument()
+  })
 })
