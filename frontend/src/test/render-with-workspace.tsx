@@ -17,6 +17,8 @@ export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}
     editorCount: 1,
     activeEditor: null,
     editorWidths: [100],
+    workspaceId: "test-workspace-id",
+    readOnly: false,
     isManagementPaneOpen: false,
     toggleDarkMode: vi.fn(),
     toggleLayersOn: vi.fn(),

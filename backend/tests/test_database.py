@@ -31,6 +31,7 @@ async def test_init_db_creates_tables(temp_db):
         assert "arrow" in tables
         assert "editor" in tables
         assert "schema_version" in tables
+        assert "share_link" in tables
     finally:
         await db.close()
 
@@ -41,7 +42,7 @@ async def test_schema_version_is_set(temp_db):
     db = await get_db()
     try:
         version = await get_schema_version(db)
-        assert version == 1
+        assert version == 2
     finally:
         await db.close()
 
@@ -53,6 +54,6 @@ async def test_init_db_is_idempotent(temp_db):
     db = await get_db()
     try:
         version = await get_schema_version(db)
-        assert version == 1
+        assert version == 2
     finally:
         await db.close()

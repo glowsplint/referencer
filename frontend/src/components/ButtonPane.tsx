@@ -21,6 +21,7 @@ export function ButtonPane() {
   const {
     settings,
     annotations,
+    readOnly,
     isManagementPaneOpen,
     toggleManagementPane,
     toggleDarkMode,
@@ -63,7 +64,7 @@ export function ButtonPane() {
           key={tool}
           onClick={() => setActiveTool(tool)}
           title={title}
-          disabled={!settings.isLocked}
+          disabled={!settings.isLocked || readOnly}
           className={`p-2 rounded-md transition-colors ${
             annotations.activeTool === tool && settings.isLocked
               ? "bg-accent text-accent-foreground"
@@ -98,7 +99,7 @@ export function ButtonPane() {
         bool={settings.isLocked}
         callback={toggleLocked}
         title="Toggle editor lock"
-        buttonProps={{ "data-testid": "lockButton" }}
+        buttonProps={{ "data-testid": "lockButton", disabled: readOnly }}
       />
       <KeyboardShortcutsDialog
         open={shortcutsOpen}

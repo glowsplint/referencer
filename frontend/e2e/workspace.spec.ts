@@ -19,6 +19,17 @@ test("renders title bar with default Title text", async ({ page }) => {
   await expect(page.getByText("Title")).toBeVisible();
 });
 
+test("renders share button in title bar", async ({ page }) => {
+  await expect(page.getByTestId("shareButton")).toBeVisible();
+});
+
+test("share button opens share dialog", async ({ page }) => {
+  await page.getByTestId("shareButton").click();
+  await expect(page.getByTestId("shareDialog")).toBeVisible();
+  await expect(page.getByTestId("shareReadonlyButton")).toBeVisible();
+  await expect(page.getByTestId("shareEditButton")).toBeVisible();
+});
+
 test("renders at least one editor pane", async ({ page }) => {
   await expect(page.locator(".simple-editor-wrapper").first()).toBeVisible();
 });

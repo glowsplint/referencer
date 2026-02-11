@@ -8,7 +8,7 @@ import { useTrackedEditors } from "./use-tracked-editors"
 import { useWebSocket } from "./use-websocket"
 import type { Highlight, Arrow } from "@/types/editor"
 
-export function useEditorWorkspace(workspaceId?: string | null) {
+export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
   const settingsHook = useSettings()
   const rawLayersHook = useLayers()
   const rawEditorsHook = useEditors()
@@ -26,9 +26,17 @@ export function useEditorWorkspace(workspaceId?: string | null) {
   // Debounce timer ref for editor content updates
   const contentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  const guardedSendAction = useCallback(
+    (type: string, payload: Record<string, unknown>) => {
+      if (!readOnly) sendAction(type, payload)
+    },
+    [readOnly, sendAction]
+  )
+
   // Wrap tracked layer actions to also send over WebSocket
   const addLayer = useCallback(
     (opts?: { id?: string; name?: string; color?: string }) => {
+      if (readOnly) return ""
       const id = trackedLayersHook.addLayer(opts)
       const layer = rawLayersHook.layers.find((l) => l.id === id)
       // The layer may not be in state yet (setState is async), so derive from opts
@@ -37,42 +45,46 @@ export function useEditorWorkspace(workspaceId?: string | null) {
         layer?.name ??
         `Layer ${rawLayersHook.layers.length + 1}`
       const color = opts?.color ?? layer?.color ?? ""
-      sendAction("addLayer", { id, name, color })
+      guardedSendAction("addLayer", { id, name, color })
       return id
     },
-    [trackedLayersHook, rawLayersHook, sendAction]
+    [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction]
   )
 
   const removeLayer = useCallback(
     (id: string) => {
+      if (readOnly) return
       trackedLayersHook.removeLayer(id)
-      sendAction("removeLayer", { id })
+      guardedSendAction("removeLayer", { id })
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const updateLayerName = useCallback(
     (id: string, name: string) => {
+      if (readOnly) return
       trackedLayersHook.updateLayerName(id, name)
-      sendAction("updateLayerName", { id, name })
+      guardedSendAction("updateLayerName", { id, name })
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const updateLayerColor = useCallback(
     (id: string, color: string) => {
+      if (readOnly) return
       trackedLayersHook.updateLayerColor(id, color)
-      sendAction("updateLayerColor", { id, color })
+      guardedSendAction("updateLayerColor", { id, color })
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const toggleLayerVisibility = useCallback(
     (id: string) => {
+      if (readOnly) return
       trackedLayersHook.toggleLayerVisibility(id)
-      sendAction("toggleLayerVisibility", { id })
+      guardedSendAction("toggleLayerVisibility", { id })
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const addHighlight = useCallback(
@@ -81,38 +93,41 @@ export function useEditorWorkspace(workspaceId?: string | null) {
       highlight: Omit<Highlight, "id">,
       opts?: { id?: string }
     ): string => {
+      if (readOnly) return ""
       const id = trackedLayersHook.addHighlight(layerId, highlight, opts)
-      sendAction("addHighlight", {
+      guardedSendAction("addHighlight", {
         layerId,
         highlight: { ...highlight, id },
       })
       return id
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const removeHighlight = useCallback(
     (layerId: string, highlightId: string) => {
+      if (readOnly) return
       trackedLayersHook.removeHighlight(layerId, highlightId)
-      sendAction("removeHighlight", { layerId, highlightId })
+      guardedSendAction("removeHighlight", { layerId, highlightId })
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const updateHighlightAnnotation = useCallback(
     (layerId: string, highlightId: string, annotation: string) => {
+      if (readOnly) return
       trackedLayersHook.updateHighlightAnnotation(
         layerId,
         highlightId,
         annotation
       )
-      sendAction("updateHighlightAnnotation", {
+      guardedSendAction("updateHighlightAnnotation", {
         layerId,
         highlightId,
         annotation,
       })
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const addArrow = useCallback(
@@ -121,68 +136,75 @@ export function useEditorWorkspace(workspaceId?: string | null) {
       arrow: Omit<Arrow, "id">,
       opts?: { id?: string }
     ): string => {
+      if (readOnly) return ""
       const id = trackedLayersHook.addArrow(layerId, arrow, opts)
-      sendAction("addArrow", {
+      guardedSendAction("addArrow", {
         layerId,
         arrow: { ...arrow, id },
       })
       return id
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const removeArrow = useCallback(
     (layerId: string, arrowId: string) => {
+      if (readOnly) return
       trackedLayersHook.removeArrow(layerId, arrowId)
-      sendAction("removeArrow", { layerId, arrowId })
+      guardedSendAction("removeArrow", { layerId, arrowId })
     },
-    [trackedLayersHook, sendAction]
+    [readOnly, trackedLayersHook, guardedSendAction]
   )
 
   const addEditor = useCallback(() => {
+    if (readOnly) return
     trackedEditorsHook.addEditor()
     const newIndex = rawEditorsHook.editorCount
     const name =
       rawEditorsHook.sectionNames[newIndex] ??
       `Passage ${rawEditorsHook.editorCount + 1}`
-    sendAction("addEditor", { index: newIndex, name })
-  }, [trackedEditorsHook, rawEditorsHook, sendAction])
+    guardedSendAction("addEditor", { index: newIndex, name })
+  }, [readOnly, trackedEditorsHook, rawEditorsHook, guardedSendAction])
 
   const removeEditor = useCallback(
     (index: number) => {
+      if (readOnly) return
       trackedEditorsHook.removeEditor(index)
-      sendAction("removeEditor", { index })
+      guardedSendAction("removeEditor", { index })
     },
-    [trackedEditorsHook, sendAction]
+    [readOnly, trackedEditorsHook, guardedSendAction]
   )
 
   const updateSectionName = useCallback(
     (index: number, name: string) => {
+      if (readOnly) return
       rawEditorsHook.updateSectionName(index, name)
-      sendAction("updateSectionName", { index, name })
+      guardedSendAction("updateSectionName", { index, name })
     },
-    [rawEditorsHook, sendAction]
+    [readOnly, rawEditorsHook, guardedSendAction]
   )
 
   const toggleSectionVisibility = useCallback(
     (index: number) => {
+      if (readOnly) return
       rawEditorsHook.toggleSectionVisibility(index)
-      sendAction("toggleSectionVisibility", { index })
+      guardedSendAction("toggleSectionVisibility", { index })
     },
-    [rawEditorsHook, sendAction]
+    [readOnly, rawEditorsHook, guardedSendAction]
   )
 
   const updateEditorContent = useCallback(
     (editorIndex: number, contentJson: unknown) => {
+      if (readOnly) return
       if (contentTimerRef.current) {
         clearTimeout(contentTimerRef.current)
       }
       contentTimerRef.current = setTimeout(() => {
-        sendAction("updateEditorContent", { editorIndex, contentJson })
+        guardedSendAction("updateEditorContent", { editorIndex, contentJson: contentJson as Record<string, unknown> })
         contentTimerRef.current = null
       }, 2000)
     },
-    [sendAction]
+    [readOnly, guardedSendAction]
   )
 
   const [isManagementPaneOpen, setIsManagementPaneOpen] = useState(true)
@@ -232,6 +254,8 @@ export function useEditorWorkspace(workspaceId?: string | null) {
     toggleSectionVisibility,
     updateEditorContent,
     // Other
+    workspaceId: workspaceId ?? null,
+    readOnly,
     isManagementPaneOpen,
     toggleManagementPane,
     history,

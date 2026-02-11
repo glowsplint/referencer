@@ -36,9 +36,15 @@ function getWorkspaceId(): string {
   return id;
 }
 
+function getReadOnly(): boolean {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("access") === "readonly";
+}
+
 export function App() {
   const [workspaceId] = useState(getWorkspaceId);
-  const workspace = useEditorWorkspace(workspaceId);
+  const [readOnly] = useState(getReadOnly);
+  const workspace = useEditorWorkspace(workspaceId, readOnly);
   const {
     settings,
     layers,
@@ -212,15 +218,15 @@ export function App() {
                       }}
                     >
                       <EditorPane
-                        isLocked={settings.isLocked}
+                        isLocked={settings.isLocked || readOnly}
                         content={SIMPLE_EDITOR_CONTENT}
                         index={i}
                         onEditorMount={handleEditorMount}
                         onFocus={handlePaneFocus}
-                        onMouseDown={settings.isLocked ? handleMouseDown : undefined}
-                        onMouseMove={settings.isLocked ? handleMouseMove : undefined}
-                        onMouseUp={settings.isLocked ? handleMouseUp : undefined}
-                        onContentUpdate={updateEditorContent}
+                        onMouseDown={settings.isLocked && !readOnly ? handleMouseDown : undefined}
+                        onMouseMove={settings.isLocked && !readOnly ? handleMouseMove : undefined}
+                        onMouseUp={settings.isLocked && !readOnly ? handleMouseUp : undefined}
+                        onContentUpdate={readOnly ? undefined : updateEditorContent}
                         layers={layers}
                         selection={selection}
                         activeLayerColor={activeLayerColor}
