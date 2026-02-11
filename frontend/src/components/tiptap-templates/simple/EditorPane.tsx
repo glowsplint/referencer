@@ -7,6 +7,7 @@ import type { Editor } from "@tiptap/react"
 import { createSimpleEditorExtensions } from "./extensions"
 import { useLayerDecorations } from "@/hooks/use-layer-decorations"
 import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
+import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
 import type { Layer, WordSelection } from "@/types/editor"
 
@@ -84,6 +85,7 @@ export function EditorPane({
 
   useLayerDecorations(editor, layers, index, isLocked, isDarkMode)
   useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
+  useSimilarTextHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useSelectionScroll(editor, selection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {

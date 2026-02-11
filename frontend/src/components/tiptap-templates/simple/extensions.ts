@@ -10,6 +10,7 @@ import { Selection } from "@tiptap/extensions"
 
 import { LayerHighlightsExtension } from "@/lib/tiptap/extensions/layer-highlights"
 import { WordSelectionExtension } from "@/lib/tiptap/extensions/word-selection"
+import { SimilarTextHighlightsExtension } from "@/lib/tiptap/extensions/similar-text-highlights"
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension"
 import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension"
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap/upload"
@@ -37,6 +38,7 @@ export function createSimpleEditorExtensions() {
     Selection,
     LayerHighlightsExtension,
     WordSelectionExtension,
+    SimilarTextHighlightsExtension,
     ImageUploadNode.configure({
       accept: "image/*",
       maxSize: MAX_FILE_SIZE,
