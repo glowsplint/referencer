@@ -3,6 +3,7 @@ import { renderHook, act } from "@testing-library/react"
 import { toast } from "sonner"
 import { useDragSelection } from "./use-drag-selection"
 import type { Editor } from "@tiptap/react"
+import type { ActiveTool } from "@/types/editor"
 
 vi.mock("sonner", () => ({
   toast: { warning: vi.fn() },
@@ -40,6 +41,7 @@ function createMockEvent(tagName = "DIV", clientX = 100, clientY = 100) {
 function createOptions(overrides: Record<string, unknown> = {}) {
   return {
     isLocked: true,
+    activeTool: "comments" as ActiveTool,
     activeLayerId: "layer-1" as string | null,
     addHighlight: vi.fn().mockReturnValue("h-1"),
     removeHighlight: vi.fn(),
@@ -47,6 +49,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     selectWord: vi.fn(),
     clearSelection: vi.fn(),
     onHighlightAdded: vi.fn(),
+    onArrowClick: vi.fn(),
     ...overrides,
   }
 }
@@ -101,5 +104,74 @@ describe("useDragSelection", () => {
     })
 
     expect(opts.selectWord).toHaveBeenCalled()
+  })
+
+  it("does not create highlight when activeTool is not comments", () => {
+    const opts = createOptions({ activeTool: "selection" })
+    const { result } = renderHook(() => useDragSelection(opts))
+    const editor = createMockEditor()
+
+    act(() => {
+      result.current.handleMouseDown(createMockEvent(), editor, 0)
+    })
+    act(() => {
+      result.current.handleMouseUp(createMockEvent(), editor, 0)
+    })
+
+    expect(opts.addHighlight).not.toHaveBeenCalled()
+    // But word selection still happens
+    expect(opts.selectWord).toHaveBeenCalled()
+  })
+
+  it("does not create highlight when activeTool is arrow", () => {
+    const opts = createOptions({ activeTool: "arrow" })
+    const { result } = renderHook(() => useDragSelection(opts))
+    const editor = createMockEditor()
+
+    act(() => {
+      result.current.handleMouseDown(createMockEvent(), editor, 0)
+    })
+    act(() => {
+      result.current.handleMouseUp(createMockEvent(), editor, 0)
+    })
+
+    expect(opts.addHighlight).not.toHaveBeenCalled()
+    expect(opts.selectWord).toHaveBeenCalled()
+  })
+
+  it("creates highlight when activeTool is comments", () => {
+    const opts = createOptions({ activeTool: "comments" })
+    const { result } = renderHook(() => useDragSelection(opts))
+    const editor = createMockEditor()
+
+    act(() => {
+      result.current.handleMouseDown(createMockEvent(), editor, 0)
+    })
+    act(() => {
+      result.current.handleMouseUp(createMockEvent(), editor, 0)
+    })
+
+    expect(opts.addHighlight).toHaveBeenCalled()
+  })
+
+  it("calls onArrowClick when activeTool is arrow", () => {
+    const opts = createOptions({ activeTool: "arrow" })
+    const { result } = renderHook(() => useDragSelection(opts))
+    const editor = createMockEditor()
+
+    act(() => {
+      result.current.handleMouseDown(createMockEvent(), editor, 0)
+    })
+    act(() => {
+      result.current.handleMouseUp(createMockEvent(), editor, 0)
+    })
+
+    expect(opts.onArrowClick).toHaveBeenCalledWith({
+      editorIndex: 0,
+      from: 1,
+      to: 5,
+      text: "hello",
+    })
+    expect(opts.addHighlight).not.toHaveBeenCalled()
   })
 })

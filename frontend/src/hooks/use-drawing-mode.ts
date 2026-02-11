@@ -1,8 +1,6 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { toast } from "sonner"
-import type { Arrow, ArrowEndpoint, DrawingState, WordSelection } from "@/types/editor"
-
-const DRAW_ARROW_KEY = "KeyA"
+import type { Arrow, ArrowEndpoint, DrawingState, WordSelection, ActiveTool } from "@/types/editor"
 
 function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
   return {
@@ -13,16 +11,17 @@ function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
   }
 }
 
-function arrowSpansDifferentWords(anchor: ArrowEndpoint, cursor: ArrowEndpoint): boolean {
+function sameWord(a: ArrowEndpoint, b: ArrowEndpoint): boolean {
   return (
-    anchor.editorIndex !== cursor.editorIndex ||
-    anchor.from !== cursor.from ||
-    anchor.to !== cursor.to
+    a.editorIndex === b.editorIndex &&
+    a.from === b.from &&
+    a.to === b.to
   )
 }
 
 interface UseDrawingModeOptions {
   isLocked: boolean
+  activeTool: ActiveTool
   selection: WordSelection | null
   activeLayerId: string | null
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
@@ -30,12 +29,13 @@ interface UseDrawingModeOptions {
 
 export function useDrawingMode({
   isLocked,
+  activeTool,
   selection,
   activeLayerId,
   addArrow,
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
-  const drawingRef = useRef<DrawingState | null>(null)
+  const anchorRef = useRef<ArrowEndpoint | null>(null)
 
   const activeLayerIdRef = useRef(activeLayerId)
   const addArrowRef = useRef(addArrow)
@@ -44,70 +44,66 @@ export function useDrawingMode({
     addArrowRef.current = addArrow
   })
 
-  // Clear drawing state when unlocked (render-time state adjustment avoids cascading effect renders)
+  const isArrowTool = activeTool === "arrow" && isLocked
+
+  // Clear anchor when switching away from arrow tool or unlocking
+  if (!isArrowTool && anchorRef.current !== null) {
+    anchorRef.current = null
+    setDrawingState(null)
+  }
+
+  // Also clear state on render if not locked
   if (!isLocked && drawingState !== null) {
     setDrawingState(null)
   }
 
-  // Clear ref in effect (ref updates belong in effects, not render)
+  // Update preview cursor when selection changes while anchor is set
   useEffect(() => {
-    if (!isLocked) {
-      drawingRef.current = null
-    }
-  }, [isLocked])
-
-  useEffect(() => {
-    if (drawingRef.current && selection) {
+    if (anchorRef.current && selection) {
       const cursor = endpointFromSelection(selection)
-      drawingRef.current = { anchor: drawingRef.current.anchor, cursor }
-      setDrawingState(drawingRef.current)
+      setDrawingState({ anchor: anchorRef.current, cursor })
     }
   }, [selection])
 
-  useEffect(() => {
-    if (!isLocked) return
+  // Called when user explicitly clicks a word while in arrow mode
+  const handleArrowClick = useCallback(
+    (sel: WordSelection) => {
+      const endpoint = endpointFromSelection(sel)
+      const currentAnchor = anchorRef.current
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== DRAW_ARROW_KEY || e.repeat) return
-      if (!selection) return
-
-      if (!activeLayerIdRef.current) {
-        toast.warning("Add a new layer before drawing arrows")
+      if (!currentAnchor) {
+        // No anchor — check for active layer first
+        if (!activeLayerIdRef.current) {
+          toast.warning("Add a new layer before drawing arrows")
+          return
+        }
+        // Set anchor from click
+        anchorRef.current = endpoint
+        setDrawingState({ anchor: endpoint, cursor: endpoint })
         return
       }
 
-      e.preventDefault()
-
-      const anchor = endpointFromSelection(selection)
-      drawingRef.current = { anchor, cursor: anchor }
-      setDrawingState(drawingRef.current)
-    }
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code !== DRAW_ARROW_KEY) return
-      if (!drawingRef.current) return
-
-      const { anchor, cursor } = drawingRef.current
-      if (activeLayerIdRef.current && arrowSpansDifferentWords(anchor, cursor)) {
-        addArrowRef.current(activeLayerIdRef.current, {
-          from: anchor,
-          to: cursor,
-        })
+      if (sameWord(currentAnchor, endpoint)) {
+        // Same word — cancel
+        anchorRef.current = null
+        setDrawingState(null)
+        return
       }
 
-      drawingRef.current = null
+      // Different word — create arrow
+      if (activeLayerIdRef.current) {
+        addArrowRef.current(activeLayerIdRef.current, {
+          from: currentAnchor,
+          to: endpoint,
+        })
+      }
+      anchorRef.current = null
       setDrawingState(null)
-    }
-
-    document.addEventListener("keydown", handleKeyDown)
-    document.addEventListener("keyup", handleKeyUp)
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown)
-      document.removeEventListener("keyup", handleKeyUp)
-    }
-  }, [isLocked, selection])
+    },
+    []
+  )
 
   const isDrawing = drawingState !== null
 
-  return { drawingState, isDrawing }
+  return { drawingState, isDrawing, handleArrowClick }
 }

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { toast } from "sonner"
 import { useDrawingMode } from "./use-drawing-mode"
-import type { WordSelection } from "@/types/editor"
+import type { WordSelection, ActiveTool } from "@/types/editor"
 
 vi.mock("sonner", () => ({
   toast: { warning: vi.fn() },
@@ -11,19 +11,12 @@ vi.mock("sonner", () => ({
 function createOptions(overrides: Record<string, unknown> = {}) {
   return {
     isLocked: true,
+    activeTool: "arrow" as ActiveTool,
     selection: null as WordSelection | null,
     activeLayerId: "layer-1",
     addArrow: vi.fn(),
     ...overrides,
   }
-}
-
-function fireKeyDown(key: string, repeat = false, code?: string) {
-  document.dispatchEvent(new KeyboardEvent("keydown", { key, code: code ?? `Key${key.toUpperCase()}`, repeat }))
-}
-
-function fireKeyUp(key: string, code?: string) {
-  document.dispatchEvent(new KeyboardEvent("keyup", { key, code: code ?? `Key${key.toUpperCase()}` }))
 }
 
 const word1: WordSelection = { editorIndex: 0, from: 1, to: 5, text: "hello" }
@@ -34,21 +27,33 @@ describe("useDrawingMode", () => {
     vi.clearAllMocks()
   })
 
-  it("does nothing when isLocked is false", () => {
-    const opts = createOptions({ isLocked: false, selection: word1 })
+  it("does nothing when activeTool is not arrow", () => {
+    const opts = createOptions({ activeTool: "selection", selection: word1 })
     const { result } = renderHook(() => useDrawingMode(opts))
 
-    act(() => { fireKeyDown("a") })
+    act(() => { result.current.handleArrowClick(word1) })
+
+    // handleArrowClick still works but clearing happens at render
+    // When tool is not arrow, anchor gets cleared immediately
+    expect(result.current.drawingState).toBeNull()
+    expect(result.current.isDrawing).toBe(false)
+  })
+
+  it("does nothing when isLocked is false", () => {
+    const { result } = renderHook(() =>
+      useDrawingMode({ ...createOptions({ isLocked: false }), selection: word1 })
+    )
+
+    act(() => { result.current.handleArrowClick(word1) })
 
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
   })
 
-  it("sets drawingState on 'a' keydown when selection exists", () => {
-    const opts = createOptions({ selection: word1 })
-    const { result } = renderHook(() => useDrawingMode(opts))
+  it("sets anchor on first handleArrowClick", () => {
+    const { result } = renderHook(() => useDrawingMode(createOptions()))
 
-    act(() => { fireKeyDown("a") })
+    act(() => { result.current.handleArrowClick(word1) })
 
     expect(result.current.drawingState).toEqual({
       anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
@@ -57,67 +62,24 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(true)
   })
 
-  it("does not set drawingState when no selection", () => {
-    const opts = createOptions({ selection: null })
-    const { result } = renderHook(() => useDrawingMode(opts))
-
-    act(() => { fireKeyDown("a") })
-
-    expect(result.current.drawingState).toBeNull()
-    expect(result.current.isDrawing).toBe(false)
-  })
-
-  it("ignores repeat keydown events", () => {
-    const opts = createOptions({ selection: word1 })
-    const { result } = renderHook(() => useDrawingMode(opts))
-
-    act(() => { fireKeyDown("a") })
-    expect(result.current.isDrawing).toBe(true)
-
-    act(() => { fireKeyDown("a", true) })
-    expect(result.current.isDrawing).toBe(true)
-  })
-
-  it("updates cursor when selection changes during drawing", () => {
-    const { result, rerender } = renderHook(
-      (props: { selection: WordSelection | null }) =>
-        useDrawingMode({ ...createOptions(), selection: props.selection }),
-      { initialProps: { selection: word1 } }
-    )
-
-    act(() => { fireKeyDown("a") })
-    expect(result.current.drawingState?.cursor).toEqual({
-      editorIndex: 0, from: 1, to: 5, text: "hello",
-    })
-
-    rerender({ selection: word2 })
-
-    expect(result.current.drawingState?.anchor).toEqual({
-      editorIndex: 0, from: 1, to: 5, text: "hello",
-    })
-    expect(result.current.drawingState?.cursor).toEqual({
-      editorIndex: 0, from: 10, to: 15, text: "world",
-    })
-  })
-
-  it("commits arrow on 'a' keyup when anchor !== cursor", () => {
+  it("creates arrow on second click with different word", () => {
     const addArrow = vi.fn()
-    const { result, rerender } = renderHook(
-      (props: { selection: WordSelection | null }) =>
-        useDrawingMode({
-          isLocked: true,
-          selection: props.selection,
-          activeLayerId: "layer-1",
-          addArrow,
-        }),
-      { initialProps: { selection: word1 } }
+    const { result } = renderHook(() =>
+      useDrawingMode({
+        isLocked: true,
+        activeTool: "arrow",
+        selection: null,
+        activeLayerId: "layer-1",
+        addArrow,
+      })
     )
 
-    act(() => { fireKeyDown("a") })
+    // First click — sets anchor
+    act(() => { result.current.handleArrowClick(word1) })
+    expect(result.current.isDrawing).toBe(true)
 
-    rerender({ selection: word2 })
-
-    act(() => { fireKeyUp("a") })
+    // Second click — creates arrow
+    act(() => { result.current.handleArrowClick(word2) })
 
     expect(addArrow).toHaveBeenCalledWith("layer-1", {
       from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
@@ -127,47 +89,80 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(false)
   })
 
-  it("does not commit when anchor === cursor", () => {
-    const addArrow = vi.fn()
-    const opts = createOptions({ selection: word1, addArrow })
-    const { result } = renderHook(() => useDrawingMode(opts))
-
-    act(() => { fireKeyDown("a") })
-    act(() => { fireKeyUp("a") })
-
-    expect(addArrow).not.toHaveBeenCalled()
-    expect(result.current.drawingState).toBeNull()
-  })
-
-  it("shows error toast and does not enter drawing mode when activeLayerId is null", () => {
+  it("cancels when same word is clicked again", () => {
     const addArrow = vi.fn()
     const { result } = renderHook(() =>
       useDrawingMode({
         isLocked: true,
-        selection: word1,
-        activeLayerId: null,
+        activeTool: "arrow",
+        selection: null,
+        activeLayerId: "layer-1",
         addArrow,
       })
     )
 
-    act(() => { fireKeyDown("a") })
+    act(() => { result.current.handleArrowClick(word1) })
+    expect(result.current.isDrawing).toBe(true)
+
+    act(() => { result.current.handleArrowClick(word1) })
+    expect(addArrow).not.toHaveBeenCalled()
+    expect(result.current.drawingState).toBeNull()
+    expect(result.current.isDrawing).toBe(false)
+  })
+
+  it("shows error toast when no active layer on first click", () => {
+    const { result } = renderHook(() =>
+      useDrawingMode({
+        isLocked: true,
+        activeTool: "arrow",
+        selection: null,
+        activeLayerId: null,
+        addArrow: vi.fn(),
+      })
+    )
+
+    act(() => { result.current.handleArrowClick(word1) })
 
     expect(toast.warning).toHaveBeenCalledWith("Add a new layer before drawing arrows")
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
   })
 
-  it("clears drawingState on unlock", () => {
+  it("clears drawing state when switching away from arrow tool", () => {
+    const { result, rerender } = renderHook(
+      (props: { activeTool: ActiveTool }) =>
+        useDrawingMode({
+          isLocked: true,
+          activeTool: props.activeTool,
+          selection: null,
+          activeLayerId: "layer-1",
+          addArrow: vi.fn(),
+        }),
+      { initialProps: { activeTool: "arrow" as ActiveTool } }
+    )
+
+    act(() => { result.current.handleArrowClick(word1) })
+    expect(result.current.isDrawing).toBe(true)
+
+    rerender({ activeTool: "selection" })
+    expect(result.current.drawingState).toBeNull()
+    expect(result.current.isDrawing).toBe(false)
+  })
+
+  it("clears drawing state on unlock", () => {
     const { result, rerender } = renderHook(
       (props: { isLocked: boolean }) =>
         useDrawingMode({
-          ...createOptions({ selection: word1 }),
           isLocked: props.isLocked,
+          activeTool: "arrow",
+          selection: null,
+          activeLayerId: "layer-1",
+          addArrow: vi.fn(),
         }),
       { initialProps: { isLocked: true } }
     )
 
-    act(() => { fireKeyDown("a") })
+    act(() => { result.current.handleArrowClick(word1) })
     expect(result.current.isDrawing).toBe(true)
 
     rerender({ isLocked: false })
@@ -175,17 +170,32 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(false)
   })
 
-  it("ignores non-'a' keys", () => {
-    const opts = createOptions({ selection: word1 })
-    const { result } = renderHook(() => useDrawingMode(opts))
+  it("updates preview cursor when selection changes with anchor set", () => {
+    const { result, rerender } = renderHook(
+      (props: { selection: WordSelection | null }) =>
+        useDrawingMode({
+          isLocked: true,
+          activeTool: "arrow",
+          selection: props.selection,
+          activeLayerId: "layer-1",
+          addArrow: vi.fn(),
+        }),
+      { initialProps: { selection: null } }
+    )
 
-    act(() => { fireKeyDown("b") })
-    expect(result.current.drawingState).toBeNull()
+    // Set anchor via click
+    act(() => { result.current.handleArrowClick(word1) })
+    expect(result.current.drawingState?.cursor).toEqual({
+      editorIndex: 0, from: 1, to: 5, text: "hello",
+    })
 
-    act(() => { fireKeyDown("a") })
-    expect(result.current.isDrawing).toBe(true)
-
-    act(() => { fireKeyUp("b") })
-    expect(result.current.isDrawing).toBe(true)
+    // Selection changes (e.g., keyboard navigation) — cursor updates
+    rerender({ selection: word2 })
+    expect(result.current.drawingState?.anchor).toEqual({
+      editorIndex: 0, from: 1, to: 5, text: "hello",
+    })
+    expect(result.current.drawingState?.cursor).toEqual({
+      editorIndex: 0, from: 10, to: 15, text: "world",
+    })
   })
 })

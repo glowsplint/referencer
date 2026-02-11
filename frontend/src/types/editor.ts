@@ -5,8 +5,10 @@ export interface EditorSettings {
   isLocked: boolean
 }
 
+export type ActiveTool = "selection" | "arrow" | "comments"
+
 export interface AnnotationSettings {
-  isPainterMode: boolean
+  activeTool: ActiveTool
 }
 
 export interface Highlight {

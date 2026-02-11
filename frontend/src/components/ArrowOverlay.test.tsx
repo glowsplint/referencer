@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react"
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { ArrowOverlay } from "./ArrowOverlay"
-import type { Layer, DrawingState } from "@/types/editor"
+import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
 import type { Editor } from "@tiptap/react"
 
 // Mock getWordCenter to return deterministic positions
@@ -39,6 +39,7 @@ function createDefaultProps(overrides: Record<string, unknown> = {}) {
     editorsRef: { current: new Map() } as React.RefObject<Map<number, Editor>>,
     containerRef: { current: containerEl } as React.RefObject<HTMLDivElement | null>,
     removeArrow: vi.fn(),
+    activeTool: "selection" as ActiveTool,
     sectionVisibility: [true, true, true],
     isDarkMode: false,
     ...overrides,
@@ -206,5 +207,25 @@ describe("ArrowOverlay", () => {
 
     fireEvent.click(screen.getByTestId("arrow-hit-area"))
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
+  })
+
+  it("arrow hit areas have pointer-events none when arrow tool is active", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], activeTool: "arrow" })}
+      />
+    )
+
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    expect(hitArea).toHaveStyle({ pointerEvents: "none" })
   })
 })

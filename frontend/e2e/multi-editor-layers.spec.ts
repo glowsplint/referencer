@@ -37,12 +37,21 @@ async function drawArrowRight(
 ) {
   // Dismiss any auto-focused annotation input so arrow keys navigate words
   await page.keyboard.press("Escape");
-  await page.keyboard.down("a");
+  // Switch to arrow tool
+  await page.keyboard.press("a");
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right to destination
   for (let i = 0; i < steps; i++) {
     await page.keyboard.press("ArrowRight");
     await page.waitForTimeout(30);
   }
-  await page.keyboard.up("a");
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
+  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
+  await page.keyboard.press("s");
 }
 
 async function drawArrowToEditor(
@@ -53,13 +62,22 @@ async function drawArrowToEditor(
 ) {
   // Dismiss any auto-focused annotation input so arrow keys navigate words
   await page.keyboard.press("Escape");
-  await page.keyboard.down("a");
+  // Switch to arrow tool
+  await page.keyboard.press("a");
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right until reaching target editor
   for (let i = 0; i < maxSteps; i++) {
     await page.keyboard.press("ArrowRight");
     await page.waitForTimeout(30);
     if ((await editorOfSelection(page, editorCount)) === targetEditor) break;
   }
-  await page.keyboard.up("a");
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
+  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
+  await page.keyboard.press("s");
 }
 
 test.describe("cross-editor arrows (2 editors)", () => {
@@ -151,7 +169,7 @@ test.describe("cross-editor arrows (2 editors)", () => {
     });
 
     const highlights = page.locator(
-      '.simple-editor span[style*="background-color"]:not(.word-selection)'
+      '.simple-editor span[style*="background-color"]:not(.word-selection):not(.similar-text-highlight)'
     );
     await expect(highlights).toHaveCount(0, { timeout: 2000 });
 
@@ -254,6 +272,8 @@ test.describe("multiple layers (2 editors)", () => {
   test("highlights on different layers coexist across editors", async ({
     page,
   }) => {
+    // Switch to comments tool for annotation creation
+    await page.keyboard.press("c");
     // Click word in E1 → highlight on Layer 1
     await clickWordInEditor(page, 0);
 

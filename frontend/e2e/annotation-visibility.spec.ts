@@ -45,6 +45,9 @@ test.describe("annotation visibility with layers", () => {
     // Lock editor
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("hiding layer hides its annotations", async ({ page }) => {
@@ -163,6 +166,9 @@ test.describe("annotation visibility with passages", () => {
     // Lock editor
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("hiding passage hides annotations from that passage", async ({
@@ -277,6 +283,9 @@ test.describe("combined layer + passage annotation visibility", () => {
     // Lock editor
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("hiding layer then passage, restoring in reverse order", async ({

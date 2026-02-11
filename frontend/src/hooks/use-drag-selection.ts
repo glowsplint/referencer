@@ -2,6 +2,7 @@ import { useCallback, useRef } from "react"
 import { toast } from "sonner"
 import type { Editor } from "@tiptap/react"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
+import type { ActiveTool, WordSelection } from "@/types/editor"
 
 interface DragRange {
   editorIndex: number
@@ -12,6 +13,7 @@ interface DragRange {
 
 interface UseDragSelectionOptions {
   isLocked: boolean
+  activeTool: ActiveTool
   activeLayerId: string | null
   addHighlight: (
     layerId: string,
@@ -22,10 +24,12 @@ interface UseDragSelectionOptions {
   selectWord: (editorIndex: number, from: number, to: number, text: string) => void
   clearSelection: () => void
   onHighlightAdded?: (layerId: string, highlightId: string) => void
+  onArrowClick?: (sel: WordSelection) => void
 }
 
 export function useDragSelection({
   isLocked,
+  activeTool,
   activeLayerId,
   addHighlight,
   removeHighlight,
@@ -33,6 +37,7 @@ export function useDragSelection({
   selectWord,
   clearSelection,
   onHighlightAdded,
+  onArrowClick,
 }: UseDragSelectionOptions) {
   const dragRef = useRef<{
     anchor: DragRange
@@ -104,6 +109,15 @@ export function useDragSelection({
 
       selectWord(editorIndex, from, to, text)
 
+      // Arrow tool: delegate click to drawing mode
+      if (activeTool === "arrow") {
+        onArrowClick?.({ editorIndex, from, to, text })
+        return
+      }
+
+      // Only create/toggle highlights when comments tool is active
+      if (activeTool !== "comments") return
+
       if (!activeLayerId) {
         toast.warning("Add a new layer to create annotations")
         return
@@ -136,7 +150,7 @@ export function useDragSelection({
       })
       onHighlightAdded?.(activeLayerId, highlightId)
     },
-    [isLocked, activeLayerId, layers, addHighlight, removeHighlight, selectWord, onHighlightAdded]
+    [isLocked, activeTool, activeLayerId, layers, addHighlight, removeHighlight, selectWord, onHighlightAdded, onArrowClick]
   )
 
   return { handleMouseDown, handleMouseMove, handleMouseUp }

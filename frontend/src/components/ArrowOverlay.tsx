@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import type { Editor } from "@tiptap/react"
-import type { Layer, DrawingState } from "@/types/editor"
+import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
 import { getWordCenter } from "@/lib/tiptap/nearest-word"
 import { blendWithBackground } from "@/lib/color"
 
@@ -13,6 +13,7 @@ interface ArrowOverlayProps {
   editorsRef: React.RefObject<Map<number, Editor>>
   containerRef: React.RefObject<HTMLDivElement | null>
   removeArrow: (layerId: string, arrowId: string) => void
+  activeTool: ActiveTool
   sectionVisibility: boolean[]
   isDarkMode: boolean
 }
@@ -34,6 +35,7 @@ export function ArrowOverlay({
   editorsRef,
   containerRef,
   removeArrow,
+  activeTool,
   sectionVisibility,
   isDarkMode,
 }: ArrowOverlayProps) {
@@ -171,7 +173,10 @@ export function ArrowOverlay({
               stroke="transparent"
               strokeWidth={12}
               fill="none"
-              style={{ pointerEvents: "auto", cursor: "pointer" }}
+              style={{
+                pointerEvents: activeTool === "arrow" ? "none" : "auto",
+                cursor: activeTool === "arrow" ? "default" : "pointer",
+              }}
               onMouseEnter={() => setHoveredArrowId(pos.arrowId)}
               onMouseLeave={() => setHoveredArrowId(null)}
               onClick={() => removeArrow(pos.layerId, pos.arrowId)}

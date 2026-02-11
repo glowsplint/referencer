@@ -13,39 +13,27 @@ test.beforeEach(async ({ page }) => {
   await page.getByTestId("lockButton").click();
   await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
-  // Click a word to start selection
+  // Switch to arrow tool
+  await page.keyboard.press("a");
+});
+
+test("clicking two different words draws an arrow between them", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
+
+  // Click first word (sets anchor)
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Dismiss auto-focused annotation input so arrow keys navigate words
+  // Navigate to see preview (keyboard nav updates preview but doesn't finalize)
   await page.keyboard.press("Escape");
-});
-
-test("holding 'a' + arrow keys shows dashed preview arrow", async ({ page }) => {
-  await page.keyboard.down("a");
   await page.keyboard.press("ArrowRight");
-
-  // Preview arrow should appear in the DOM
   const preview = page.getByTestId("preview-arrow");
   await expect(preview).toHaveCount(1, { timeout: 2000 });
 
-  const dashArray = await preview.getAttribute("stroke-dasharray");
-  expect(dashArray).toBe("6 4");
-
-  await page.keyboard.up("a");
-});
-
-test("releasing 'a' finalizes arrow (solid line appears, preview disappears)", async ({ page }) => {
-  await page.keyboard.down("a");
-  await page.keyboard.press("ArrowRight");
-
-  await expect(page.getByTestId("preview-arrow")).toHaveCount(1, { timeout: 2000 });
-
-  // Release 'a' to finalize
-  await page.keyboard.up("a");
+  // Click second word (creates arrow)
+  await page.mouse.click(box!.x + 120, box!.y + box!.height / 2);
 
   // Solid arrow line should appear
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
@@ -53,34 +41,53 @@ test("releasing 'a' finalizes arrow (solid line appears, preview disappears)", a
   await expect(page.getByTestId("preview-arrow")).toHaveCount(0, { timeout: 2000 });
 });
 
-test("no arrow created when 'a' released without moving", async ({ page }) => {
-  await page.keyboard.down("a");
-  await page.keyboard.up("a");
+test("no arrow created when clicking same word twice", async ({ page }) => {
+  const firstParagraph = page.locator(".simple-editor p").first();
+  const box = await firstParagraph.boundingBox();
+  expect(box).not.toBeNull();
+
+  // Click first word (sets anchor)
+  await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Click same word again (cancels)
+  await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
 });
 
 test("multiple arrows can be drawn sequentially", async ({ page }) => {
-  // Draw first arrow
-  await page.keyboard.down("a");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.up("a");
+  const firstParagraph = page.locator(".simple-editor p").first();
+  const box = await firstParagraph.boundingBox();
+  expect(box).not.toBeNull();
+  const y = box!.y + box!.height / 2;
+
+  // Draw first arrow: click word1, click word2
+  await page.mouse.click(box!.x + 30, y);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.mouse.click(box!.x + 120, y);
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Draw second arrow from current position
-  await page.keyboard.down("a");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.up("a");
+  // Draw second arrow: click word2 (new anchor), click word3
+  await page.mouse.click(box!.x + 120, y);
+  await page.mouse.click(box!.x + 200, y);
   await expect(page.getByTestId("arrow-line")).toHaveCount(2, { timeout: 2000 });
 });
 
 test("click on arrow line deletes it", async ({ page }) => {
-  // Draw an arrow
-  await page.keyboard.down("a");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.up("a");
+  const firstParagraph = page.locator(".simple-editor p").first();
+  const box = await firstParagraph.boundingBox();
+  expect(box).not.toBeNull();
+  const y = box!.y + box!.height / 2;
 
+  // Draw an arrow
+  await page.mouse.click(box!.x + 30, y);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.mouse.click(box!.x + 120, y);
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+
+  // Switch to selection tool before clicking hit area
+  await page.keyboard.press("s");
 
   // Click hit area to delete
   const hitArea = page.getByTestId("arrow-hit-area");
@@ -89,11 +96,15 @@ test("click on arrow line deletes it", async ({ page }) => {
 });
 
 test("layer visibility toggle hides/shows arrows", async ({ page }) => {
-  // Draw an arrow
-  await page.keyboard.down("a");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.up("a");
+  const firstParagraph = page.locator(".simple-editor p").first();
+  const box = await firstParagraph.boundingBox();
+  expect(box).not.toBeNull();
+  const y = box!.y + box!.height / 2;
 
+  // Draw an arrow
+  await page.mouse.click(box!.x + 30, y);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.mouse.click(box!.x + 120, y);
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
   // Toggle layer visibility off
@@ -103,4 +114,9 @@ test("layer visibility toggle hides/shows arrows", async ({ page }) => {
   // Toggle layer visibility back on
   await page.getByTestId("layerVisibility-0").click();
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+});
+
+test("arrow tool button shows depressed state when active", async ({ page }) => {
+  const arrowBtn = page.getByTestId("arrowToolButton");
+  await expect(arrowBtn).toHaveClass(/bg-accent/, { timeout: 2000 });
 });

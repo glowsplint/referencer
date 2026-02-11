@@ -5,22 +5,19 @@ import {
   Columns2,
   Rows2,
   MousePointer2,
-  Paintbrush,
   Lock,
   LockOpen,
   Menu,
   ArrowUpRight,
+  MessageSquare,
   Keyboard,
 } from "lucide-react";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import type { ActiveTool } from "@/types/editor";
 
-interface ButtonPaneProps {
-  isDrawing?: boolean;
-}
-
-export function ButtonPane({ isDrawing = false }: ButtonPaneProps) {
+export function ButtonPane() {
   const {
     settings,
     annotations,
@@ -28,17 +25,17 @@ export function ButtonPane({ isDrawing = false }: ButtonPaneProps) {
     toggleManagementPane,
     toggleDarkMode,
     toggleMultipleRowsLayout,
-    togglePainterMode,
+    setActiveTool,
     toggleLocked,
   } = useWorkspace();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
-  const painterIcon = isDrawing
-    ? <ArrowUpRight size={20} />
-    : annotations.isPainterMode
-      ? <Paintbrush size={20} />
-      : <MousePointer2 size={20} />;
+  const toolButtons: { tool: ActiveTool; icon: React.ReactNode; title: string; testId: string }[] = [
+    { tool: "selection", icon: <MousePointer2 size={20} />, title: "Selection tool", testId: "selectionToolButton" },
+    { tool: "arrow", icon: <ArrowUpRight size={20} />, title: "Arrow tool", testId: "arrowToolButton" },
+    { tool: "comments", icon: <MessageSquare size={20} />, title: "Comments tool", testId: "commentsToolButton" },
+  ];
 
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1">
@@ -50,14 +47,21 @@ export function ButtonPane({ isDrawing = false }: ButtonPaneProps) {
       >
         <Keyboard size={20} />
       </button>
-      <button
-        onClick={togglePainterMode}
-        title="Toggle Painter mode"
-        className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        data-testid="painterModeButton"
-      >
-        {painterIcon}
-      </button>
+      {toolButtons.map(({ tool, icon, title, testId }) => (
+        <button
+          key={tool}
+          onClick={() => setActiveTool(tool)}
+          title={title}
+          className={`p-2 rounded-md transition-colors ${
+            annotations.activeTool === tool
+              ? "bg-accent text-accent-foreground"
+              : "hover:bg-accent hover:text-accent-foreground"
+          }`}
+          data-testid={testId}
+        >
+          {icon}
+        </button>
+      ))}
       <SwitchingButtonIcon
         iconOne={<Menu size={20} />}
         iconTwo={<Menu size={20} />}

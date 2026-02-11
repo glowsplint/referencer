@@ -26,7 +26,9 @@ const LEFT_SECTIONS: ShortcutSection[] = [
     title: "Workspace",
     shortcuts: [
       { keys: ["L"], description: "Cycle to next layer" },
-      { keys: ["A"], description: "Hold to draw arrow" },
+      { keys: ["S"], description: "Selection tool" },
+      { keys: ["A"], description: "Arrow tool" },
+      { keys: ["C"], description: "Comments tool" },
       { keys: ["Arrow keys"], description: "Navigate between words" },
       { keys: ["`"], description: "Toggle action console" },
     ],

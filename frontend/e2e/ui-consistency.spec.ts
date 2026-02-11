@@ -34,12 +34,21 @@ async function drawArrowRight(
   steps: number
 ) {
   await page.keyboard.press("Escape");
-  await page.keyboard.down("a");
+  // Switch to arrow tool
+  await page.keyboard.press("a");
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right to destination
   for (let i = 0; i < steps; i++) {
     await page.keyboard.press("ArrowRight");
     await page.waitForTimeout(30);
   }
-  await page.keyboard.up("a");
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
+  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
+  await page.keyboard.press("s");
 }
 
 async function editorOfSelection(
@@ -64,13 +73,22 @@ async function drawArrowToEditor(
   maxSteps = 80
 ) {
   await page.keyboard.press("Escape");
-  await page.keyboard.down("a");
+  // Switch to arrow tool
+  await page.keyboard.press("a");
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right until reaching target editor
   for (let i = 0; i < maxSteps; i++) {
     await page.keyboard.press("ArrowRight");
     await page.waitForTimeout(30);
     if ((await editorOfSelection(page, editorCount)) === targetEditor) break;
   }
-  await page.keyboard.up("a");
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
+  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
+  await page.keyboard.press("s");
 }
 
 test.describe("no dangling highlights when layer is hidden", () => {
@@ -83,6 +101,9 @@ test.describe("no dangling highlights when layer is hidden", () => {
 
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("hiding layer removes all highlight decorations for that layer", async ({
@@ -172,6 +193,9 @@ test.describe("no dangling elements when passage is hidden", () => {
 
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("hiding passage removes annotation panel when only annotation is in that passage", async ({
@@ -241,6 +265,9 @@ test.describe("no orphaned connector lines", () => {
 
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("connector line count matches annotation card count", async ({
@@ -315,6 +342,9 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
 
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("all 3 element types appear and disappear together on layer toggle", async ({
@@ -326,6 +356,9 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
+
+    // Switch back to comments tool after drawing arrow
+    await page.keyboard.press("c");
 
     // Create annotation on Layer 1
     await clickWordInEditor(page, 0, 100);
@@ -402,6 +435,9 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
 
+    // Switch back to comments tool after drawing arrow
+    await page.keyboard.press("c");
+
     // Create annotation on Layer 2 in passage 2
     await clickWordInEditor(page, 1, 30);
     await addAnnotation(page, "L2 note");
@@ -435,6 +471,8 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     // Create arrow + annotation on Layer 1
     await clickWordInEditor(page, 0, 30);
     await drawArrowRight(page, 2);
+    // Switch back to comments tool after drawing arrow
+    await page.keyboard.press("c");
     await clickWordInEditor(page, 0, 100);
     await addAnnotation(page, "Rapid test");
 
@@ -494,12 +532,17 @@ test.describe("all elements hidden state", () => {
 
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("no visible artifacts when all layers are hidden", async ({ page }) => {
     // Create arrow + annotation
     await clickWordInEditor(page, 0, 30);
     await drawArrowRight(page, 2);
+    // Switch back to comments tool after drawing arrow
+    await page.keyboard.press("c");
     await clickWordInEditor(page, 0, 100);
     await addAnnotation(page, "Will hide");
 
@@ -515,7 +558,7 @@ test.describe("all elements hidden state", () => {
     });
     await expect(
       page.locator(
-        '.simple-editor span[style*="background-color"]:not(.word-selection)'
+        '.simple-editor span[style*="background-color"]:not(.word-selection):not(.similar-text-highlight)'
       )
     ).toHaveCount(0, { timeout: 2000 });
 

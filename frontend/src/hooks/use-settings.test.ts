@@ -20,7 +20,7 @@ describe("useSettings", () => {
 
   it("returns initial annotations state", () => {
     const { result } = renderHook(() => useSettings())
-    expect(result.current.annotations).toEqual({ isPainterMode: false })
+    expect(result.current.annotations).toEqual({ activeTool: "selection" })
   })
 
   it("toggleDarkMode toggles isDarkMode and updates classList", () => {
@@ -56,14 +56,17 @@ describe("useSettings", () => {
     expect(result.current.settings.isLocked).toBe(true)
   })
 
-  it("togglePainterMode toggles isPainterMode", () => {
+  it("setActiveTool changes the active tool", () => {
     const { result } = renderHook(() => useSettings())
 
-    act(() => { result.current.togglePainterMode() })
-    expect(result.current.annotations.isPainterMode).toBe(true)
+    act(() => { result.current.setActiveTool("arrow") })
+    expect(result.current.annotations.activeTool).toBe("arrow")
 
-    act(() => { result.current.togglePainterMode() })
-    expect(result.current.annotations.isPainterMode).toBe(false)
+    act(() => { result.current.setActiveTool("comments") })
+    expect(result.current.annotations.activeTool).toBe("comments")
+
+    act(() => { result.current.setActiveTool("selection") })
+    expect(result.current.annotations.activeTool).toBe("selection")
   })
 
   it("toggling one setting does not affect others", () => {

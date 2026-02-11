@@ -18,7 +18,7 @@ describe("useEditorWorkspace", () => {
       isMultipleRowsLayout: false,
       isLocked: false,
     })
-    expect(result.current.annotations).toEqual({ isPainterMode: false })
+    expect(result.current.annotations).toEqual({ activeTool: "selection" })
     expect(result.current.layers).toEqual([])
     expect(result.current.editorCount).toBe(1)
     expect(result.current.activeEditor).toBeNull()
@@ -54,20 +54,20 @@ describe("useEditorWorkspace", () => {
     expect(result.current.settings.isLocked).toBe(true)
   })
 
-  it("togglePainterMode toggles isPainterMode", () => {
+  it("setActiveTool changes the active tool", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
     act(() => {
-      result.current.togglePainterMode()
+      result.current.setActiveTool("arrow")
     })
 
-    expect(result.current.annotations.isPainterMode).toBe(true)
+    expect(result.current.annotations.activeTool).toBe("arrow")
 
     act(() => {
-      result.current.togglePainterMode()
+      result.current.setActiveTool("selection")
     })
 
-    expect(result.current.annotations.isPainterMode).toBe(false)
+    expect(result.current.annotations.activeTool).toBe("selection")
   })
 
   it("addLayer adds a layer with the next colour in order and a default name", () => {

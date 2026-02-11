@@ -12,6 +12,7 @@ import {
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
+import { useToolShortcuts } from "./hooks/use-tool-shortcuts";
 import { useCycleLayer } from "./hooks/use-cycle-layer";
 import { useDragSelection } from "./hooks/use-drag-selection";
 import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
@@ -44,9 +45,12 @@ export function App() {
     handleDividerResize,
     handleEditorMount,
     handlePaneFocus,
+    annotations,
+    setActiveTool,
     history,
   } = workspace;
 
+  useToolShortcuts({ isLocked: settings.isLocked, setActiveTool });
   useUndoRedoKeyboard(history);
   const actionConsole = useActionConsole();
 
@@ -61,8 +65,9 @@ export function App() {
     editorCount,
   });
 
-  const { drawingState, isDrawing } = useDrawingMode({
+  const { drawingState, handleArrowClick } = useDrawingMode({
     isLocked: settings.isLocked,
+    activeTool: annotations.activeTool,
     selection,
     activeLayerId,
     addArrow,
@@ -76,6 +81,7 @@ export function App() {
 
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragSelection({
     isLocked: settings.isLocked,
+    activeTool: annotations.activeTool,
     activeLayerId,
     addHighlight,
     removeHighlight,
@@ -86,6 +92,7 @@ export function App() {
       annotationBeforeEditRef.current = "";
       setEditingAnnotation({ layerId, highlightId });
     }, []),
+    onArrowClick: handleArrowClick,
   });
 
   const activeLayerColor = activeLayerId
@@ -142,7 +149,7 @@ export function App() {
         onClose={() => actionConsole.setIsOpen(false)}
       />
       <div className="flex h-screen">
-        <ButtonPane isDrawing={isDrawing} />
+        <ButtonPane />
         {isManagementPaneOpen && <ManagementPane />}
         <EditorContext.Provider value={{ editor: activeEditor }}>
           <div className="flex flex-col flex-1 min-w-0">
@@ -161,6 +168,7 @@ export function App() {
                   editorsRef={editorsRef}
                   containerRef={containerRef}
                   removeArrow={removeArrow}
+                  activeTool={annotations.activeTool}
                   sectionVisibility={sectionVisibility}
                   isDarkMode={settings.isDarkMode}
                 />

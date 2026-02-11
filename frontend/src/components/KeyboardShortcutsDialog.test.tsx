@@ -33,7 +33,9 @@ describe("KeyboardShortcutsDialog", () => {
   it("displays workspace shortcuts", () => {
     renderDialog();
     expect(screen.getByText("Cycle to next layer")).toBeInTheDocument();
-    expect(screen.getByText("Hold to draw arrow")).toBeInTheDocument();
+    expect(screen.getByText("Selection tool")).toBeInTheDocument();
+    expect(screen.getByText("Arrow tool")).toBeInTheDocument();
+    expect(screen.getByText("Comments tool")).toBeInTheDocument();
     expect(screen.getByText("Navigate between words")).toBeInTheDocument();
   });
 

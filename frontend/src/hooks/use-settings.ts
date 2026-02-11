@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react"
-import type { EditorSettings, AnnotationSettings } from "@/types/editor"
+import type { EditorSettings, AnnotationSettings, ActiveTool } from "@/types/editor"
 
 function useToggle<T>(
   setter: React.Dispatch<React.SetStateAction<T>>,
@@ -20,7 +20,7 @@ export function useSettings() {
     isLocked: false,
   })
   const [annotations, setAnnotations] = useState<AnnotationSettings>({
-    isPainterMode: false,
+    activeTool: "selection",
   })
 
   useEffect(() => {
@@ -31,7 +31,10 @@ export function useSettings() {
   const toggleLayersOn = useToggle(setSettings, "isLayersOn")
   const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout")
   const toggleLocked = useToggle(setSettings, "isLocked")
-  const togglePainterMode = useToggle(setAnnotations, "isPainterMode")
+  const setActiveTool = useCallback(
+    (tool: ActiveTool) => setAnnotations({ activeTool: tool }),
+    []
+  )
 
   return {
     settings,
@@ -40,6 +43,6 @@ export function useSettings() {
     toggleLayersOn,
     toggleMultipleRowsLayout,
     toggleLocked,
-    togglePainterMode,
+    setActiveTool,
   }
 }

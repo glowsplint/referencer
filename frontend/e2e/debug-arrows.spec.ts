@@ -21,10 +21,17 @@ test("debug arrow endpoint highlights", async ({ page }) => {
   // Dismiss auto-focused annotation input so arrow keys navigate words
   await page.keyboard.press("Escape");
 
-  // Draw an arrow
-  await page.keyboard.down("a");
+  // Switch to arrow tool and draw an arrow
+  await page.keyboard.press("a");
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right to destination
   await page.keyboard.press("ArrowRight");
-  await page.keyboard.up("a");
+  await page.waitForTimeout(30);
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
 
   // Wait for arrow to appear
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });

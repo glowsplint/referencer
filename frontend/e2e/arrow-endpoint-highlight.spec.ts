@@ -22,13 +22,21 @@ test.beforeEach(async ({ page }) => {
 
   // Dismiss auto-focused annotation input so arrow keys navigate words
   await page.keyboard.press("Escape");
+
+  // Switch to arrow tool
+  await page.keyboard.press("a");
 });
 
 test("arrow endpoints are highlighted with layer color after drawing", async ({ page }) => {
-  // Draw an arrow: hold 'a', move right, release 'a'
-  await page.keyboard.down("a");
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right to destination
   await page.keyboard.press("ArrowRight");
-  await page.keyboard.up("a");
+  await page.waitForTimeout(30);
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
 
   // Arrow should be drawn
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
@@ -53,10 +61,15 @@ test("arrow endpoints are highlighted with layer color after drawing", async ({ 
 });
 
 test("arrow endpoint highlights disappear when layer is hidden", async ({ page }) => {
-  // Draw an arrow
-  await page.keyboard.down("a");
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right to destination
   await page.keyboard.press("ArrowRight");
-  await page.keyboard.up("a");
+  await page.waitForTimeout(30);
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
@@ -78,10 +91,15 @@ test("arrow endpoint highlights disappear when layer is hidden", async ({ page }
 });
 
 test("arrow endpoint highlights disappear when unlocked", async ({ page }) => {
-  // Draw an arrow
-  await page.keyboard.down("a");
+  // Click current word to set anchor
+  const sel = page.locator(".word-selection").first();
+  await sel.click({ force: true });
+  // Navigate right to destination
   await page.keyboard.press("ArrowRight");
-  await page.keyboard.up("a");
+  await page.waitForTimeout(30);
+  // Click destination word to finalize arrow
+  const destSel = page.locator(".word-selection").first();
+  await destSel.click({ force: true });
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 

@@ -169,6 +169,9 @@ test.describe("drag-to-select multiple words", () => {
     // Lock editor
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool for annotation creation
+    await page.keyboard.press("c");
   });
 
   test("dragging across words creates multi-word selection", async ({

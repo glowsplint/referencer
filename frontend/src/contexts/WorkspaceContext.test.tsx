@@ -6,7 +6,7 @@ import type { WorkspaceContextValue } from "./WorkspaceContext"
 function makeMockWorkspace(): WorkspaceContextValue {
   return {
     settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false },
-    annotations: { isPainterMode: false },
+    annotations: { activeTool: "selection" as const },
     layers: [],
     activeLayerId: null,
     editorCount: 1,
@@ -14,7 +14,7 @@ function makeMockWorkspace(): WorkspaceContextValue {
     editorWidths: [100],
     isManagementPaneOpen: false,
     toggleSetting: () => vi.fn(),
-    togglePainterMode: vi.fn(),
+    setActiveTool: vi.fn(),
     toggleManagementPane: vi.fn(),
     addLayer: vi.fn(),
     removeLayer: vi.fn(),

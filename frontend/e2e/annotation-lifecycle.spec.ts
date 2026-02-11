@@ -28,6 +28,9 @@ test.describe("annotation lifecycle", () => {
     // Lock the editor
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+    // Switch to comments tool
+    await page.keyboard.press("c");
   });
 
   test("clicking a word creates annotation card in panel", async ({

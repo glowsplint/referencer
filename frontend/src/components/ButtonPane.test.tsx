@@ -3,19 +3,54 @@ import { describe, it, expect } from "vitest"
 import { ButtonPane } from "./ButtonPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
 
-function renderButtonPane(overrides = {}, props: { isDrawing?: boolean } = {}) {
-  return renderWithWorkspace(<ButtonPane {...props} />, overrides)
+function renderButtonPane(overrides = {}) {
+  return renderWithWorkspace(<ButtonPane />, overrides)
 }
 
 describe("ButtonPane", () => {
   it("renders all toggle buttons", () => {
     renderButtonPane()
     expect(screen.getByTestId("keyboardShortcutsButton")).toBeInTheDocument()
+    expect(screen.getByTestId("selectionToolButton")).toBeInTheDocument()
+    expect(screen.getByTestId("arrowToolButton")).toBeInTheDocument()
+    expect(screen.getByTestId("commentsToolButton")).toBeInTheDocument()
     expect(screen.getByTestId("menuButton")).toBeInTheDocument()
     expect(screen.getByTestId("darkModeButton")).toBeInTheDocument()
     expect(screen.getByTestId("editorLayoutButton")).toBeInTheDocument()
-    expect(screen.getByTestId("painterModeButton")).toBeInTheDocument()
     expect(screen.getByTestId("lockButton")).toBeInTheDocument()
+  })
+
+  it("calls setActiveTool('selection') when selection button is clicked", () => {
+    const { workspace } = renderButtonPane()
+    fireEvent.click(screen.getByTestId("selectionToolButton"))
+    expect(workspace.setActiveTool).toHaveBeenCalledWith("selection")
+  })
+
+  it("calls setActiveTool('arrow') when arrow button is clicked", () => {
+    const { workspace } = renderButtonPane()
+    fireEvent.click(screen.getByTestId("arrowToolButton"))
+    expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow")
+  })
+
+  it("calls setActiveTool('comments') when comments button is clicked", () => {
+    const { workspace } = renderButtonPane()
+    fireEvent.click(screen.getByTestId("commentsToolButton"))
+    expect(workspace.setActiveTool).toHaveBeenCalledWith("comments")
+  })
+
+  it("shows depressed state on the active tool button", () => {
+    renderButtonPane({ annotations: { activeTool: "arrow" } })
+    const arrowBtn = screen.getByTestId("arrowToolButton")
+    expect(arrowBtn.className.split(" ")).toContain("bg-accent")
+    // Non-active buttons should not have bare bg-accent class
+    const selBtn = screen.getByTestId("selectionToolButton")
+    expect(selBtn.className.split(" ")).not.toContain("bg-accent")
+  })
+
+  it("selection tool has depressed state by default", () => {
+    renderButtonPane()
+    const selBtn = screen.getByTestId("selectionToolButton")
+    expect(selBtn.className.split(" ")).toContain("bg-accent")
   })
 
   it("calls toggleManagementPane when menu button is clicked", () => {
@@ -36,22 +71,10 @@ describe("ButtonPane", () => {
     expect(workspace.toggleMultipleRowsLayout).toHaveBeenCalledOnce()
   })
 
-  it("calls togglePainterMode when painter button is clicked", () => {
-    const { workspace } = renderButtonPane()
-    fireEvent.click(screen.getByTestId("painterModeButton"))
-    expect(workspace.togglePainterMode).toHaveBeenCalledOnce()
-  })
-
   it("calls toggleLocked when lock button is clicked", () => {
     const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("lockButton"))
     expect(workspace.toggleLocked).toHaveBeenCalledOnce()
-  })
-
-  it("shows arrowhead icon when isDrawing is true", () => {
-    renderButtonPane({}, { isDrawing: true })
-    const button = screen.getByTestId("painterModeButton")
-    expect(button.querySelector("svg")).toBeInTheDocument()
   })
 
   it("keyboard shortcuts button is the first button in the pane", () => {
