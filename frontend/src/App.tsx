@@ -101,8 +101,10 @@ export function App() {
   );
 
   const hasAnyAnnotations = useMemo(
-    () => layers.some((l) => l.visible && l.highlights.length > 0),
-    [layers]
+    () => layers.some((l) => l.visible && l.highlights.some(
+      (h) => sectionVisibility[h.editorIndex] !== false
+    )),
+    [layers, sectionVisibility]
   );
 
   return (
@@ -179,6 +181,7 @@ export function App() {
                   onAnnotationBlur={handleAnnotationBlur}
                   onAnnotationClick={handleAnnotationClick}
                   isDarkMode={settings.isDarkMode}
+                  sectionVisibility={sectionVisibility}
                 />
               )}
             </div>

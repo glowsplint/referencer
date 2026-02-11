@@ -13,7 +13,8 @@ export interface HighlightPosition {
 export function useAllHighlightPositions(
   editorsRef: React.RefObject<Map<number, Editor>>,
   layers: Layer[],
-  containerRef: React.RefObject<HTMLDivElement | null>
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  sectionVisibility?: boolean[]
 ): HighlightPosition[] {
   const [positions, setPositions] = useState<HighlightPosition[]>([])
 
@@ -35,6 +36,7 @@ export function useAllHighlightPositions(
       for (const layer of layers) {
         if (!layer.visible) continue
         for (const highlight of layer.highlights) {
+          if (sectionVisibility && sectionVisibility[highlight.editorIndex] === false) continue
           const editor = editorsRef.current.get(highlight.editorIndex)
           if (!editor || editor.isDestroyed) continue
 
@@ -81,7 +83,7 @@ export function useAllHighlightPositions(
         el.removeEventListener("scroll", handler)
       }
     }
-  }, [editorsRef, layers, containerRef])
+  }, [editorsRef, layers, containerRef, sectionVisibility])
 
   return positions
 }

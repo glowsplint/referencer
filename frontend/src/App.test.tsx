@@ -213,6 +213,27 @@ describe("App", () => {
     expect(capturedAnnotationPanelProps!.onAnnotationClick).toBeDefined()
   })
 
+  it("does not render AnnotationPanel when all annotated passages are hidden", () => {
+    mockWorkspace.settings.isLocked = true
+    mockWorkspace.sectionVisibility = [false]
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note" }], arrows: [] },
+    ]
+    render(<App />)
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
+  })
+
+  it("passes sectionVisibility to AnnotationPanel", () => {
+    mockWorkspace.settings.isLocked = true
+    mockWorkspace.sectionVisibility = [true]
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note" }], arrows: [] },
+    ]
+    render(<App />)
+    expect(capturedAnnotationPanelProps).not.toBeNull()
+    expect(capturedAnnotationPanelProps!.sectionVisibility).toEqual([true])
+  })
+
   it("does not pass annotation props to EditorPane", () => {
     mockWorkspace.settings.isLocked = true
     render(<App />)

@@ -15,6 +15,7 @@ interface AnnotationPanelProps {
   onAnnotationBlur: (layerId: string, highlightId: string, annotation: string) => void
   onAnnotationClick: (layerId: string, highlightId: string) => void
   isDarkMode: boolean
+  sectionVisibility: boolean[]
 }
 
 const PANEL_WIDTH = 224 // w-56
@@ -30,8 +31,9 @@ export function AnnotationPanel({
   onAnnotationBlur,
   onAnnotationClick,
   isDarkMode,
+  sectionVisibility,
 }: AnnotationPanelProps) {
-  const positions = useAllHighlightPositions(editorsRef, layers, containerRef)
+  const positions = useAllHighlightPositions(editorsRef, layers, containerRef, sectionVisibility)
 
   const resolvedPositions = useMemo(() => {
     return resolveAnnotationOverlaps(

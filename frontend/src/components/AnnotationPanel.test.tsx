@@ -56,6 +56,7 @@ function createProps(overrides: Record<string, unknown> = {}) {
     onAnnotationBlur: vi.fn(),
     onAnnotationClick: vi.fn(),
     isDarkMode: false,
+    sectionVisibility: [true, true, true],
     ...overrides,
   }
 }
@@ -109,6 +110,18 @@ describe("AnnotationPanel", () => {
 
     const cardContainer = container.querySelector(".z-10") as HTMLElement
     expect(cardContainer).toBeTruthy()
+  })
+
+  it("passes sectionVisibility to useAllHighlightPositions", () => {
+    const props = createProps({ sectionVisibility: [true, false] })
+    render(<AnnotationPanel {...props} />)
+
+    expect(useAllHighlightPositions).toHaveBeenCalledWith(
+      props.editorsRef,
+      props.layers,
+      props.containerRef,
+      [true, false]
+    )
   })
 
   it("handles multiple highlights across editors", () => {
