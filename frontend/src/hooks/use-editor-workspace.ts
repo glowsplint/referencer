@@ -38,6 +38,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     (opts?: { id?: string; name?: string; color?: string }) => {
       if (readOnly) return ""
       const id = trackedLayersHook.addLayer(opts)
+      if (!id) return ""
       const layer = rawLayersHook.layers.find((l) => l.id === id)
       // The layer may not be in state yet (setState is async), so derive from opts
       const name =

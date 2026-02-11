@@ -16,7 +16,9 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
   const addLayer = useCallback(
     (opts?: { id?: string; name?: string; color?: string }) => {
       const prevActiveLayerId = raw.activeLayerId
-      const { id, name } = raw.addLayer(opts)
+      const result = raw.addLayer(opts)
+      if (!result) return ""
+      const { id, name } = result
       record({
         type: "addLayer",
         description: `Created layer '${name}'`,
