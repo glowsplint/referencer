@@ -118,10 +118,6 @@ vi.mock("@/hooks/use-selection-highlight", () => ({
 vi.mock("@/hooks/use-selection-decoration", () => ({
   useSelectionScroll: vi.fn(),
 }))
-vi.mock("@/components/AnnotationMargin", () => ({
-  AnnotationMargin: () => null,
-}))
-
 // Mock tiptap extensions
 vi.mock("@tiptap/starter-kit", () => ({
   StarterKit: { configure: () => ({}) },
@@ -160,7 +156,6 @@ const defaultEditorPaneProps = {
   layers: [],
   selection: null,
   activeLayerColor: null,
-  editingAnnotation: null,
 }
 
 beforeEach(() => {

@@ -79,6 +79,16 @@ vi.mock("./components/tiptap-templates/simple", () => ({
   SIMPLE_EDITOR_CONTENT: {},
 }))
 
+// Mock AnnotationPanel
+let capturedAnnotationPanelProps: Record<string, unknown> | null = null
+
+vi.mock("./components/AnnotationPanel", () => ({
+  AnnotationPanel: (props: Record<string, unknown>) => {
+    capturedAnnotationPanelProps = props
+    return <div data-testid="annotation-panel" />
+  },
+}))
+
 beforeEach(() => {
   // Reset mock state
   mockWorkspace.settings = {
@@ -95,6 +105,7 @@ beforeEach(() => {
   mockWorkspace.removeHighlight = vi.fn()
   mockWorkspace.updateHighlightAnnotation = vi.fn()
   capturedEditorPaneProps = []
+  capturedAnnotationPanelProps = null
 })
 
 describe("App", () => {
@@ -164,13 +175,51 @@ describe("App", () => {
     expect(capturedEditorPaneProps[0].selection).toBeNull()
   })
 
-  it("passes annotation-related props to EditorPane", () => {
+  it("does not render AnnotationPanel when not locked", () => {
+    mockWorkspace.settings.isLocked = false
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note" }], arrows: [] },
+    ]
+    render(<App />)
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
+  })
+
+  it("does not render AnnotationPanel when locked but no annotations", () => {
+    mockWorkspace.settings.isLocked = true
+    mockWorkspace.layers = []
+    render(<App />)
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
+  })
+
+  it("renders AnnotationPanel when locked with annotations", () => {
+    mockWorkspace.settings.isLocked = true
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note" }], arrows: [] },
+    ]
+    render(<App />)
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument()
+  })
+
+  it("passes annotation handlers to AnnotationPanel", () => {
+    mockWorkspace.settings.isLocked = true
+    mockWorkspace.layers = [
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note" }], arrows: [] },
+    ]
+    render(<App />)
+
+    expect(capturedAnnotationPanelProps).not.toBeNull()
+    expect(capturedAnnotationPanelProps!.onAnnotationChange).toBeDefined()
+    expect(capturedAnnotationPanelProps!.onAnnotationBlur).toBeDefined()
+    expect(capturedAnnotationPanelProps!.onAnnotationClick).toBeDefined()
+  })
+
+  it("does not pass annotation props to EditorPane", () => {
     mockWorkspace.settings.isLocked = true
     render(<App />)
 
-    expect(capturedEditorPaneProps[0].editingAnnotation).toBeNull()
-    expect(capturedEditorPaneProps[0].onAnnotationChange).toBeDefined()
-    expect(capturedEditorPaneProps[0].onAnnotationBlur).toBeDefined()
-    expect(capturedEditorPaneProps[0].onAnnotationClick).toBeDefined()
+    expect(capturedEditorPaneProps[0].editingAnnotation).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onAnnotationChange).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onAnnotationBlur).toBeUndefined()
+    expect(capturedEditorPaneProps[0].onAnnotationClick).toBeUndefined()
   })
 })

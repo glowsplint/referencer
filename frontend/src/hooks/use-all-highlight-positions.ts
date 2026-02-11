@@ -1,0 +1,86 @@
+import { useLayoutEffect, useState } from "react"
+import type { Editor } from "@tiptap/react"
+import type { Layer } from "@/types/editor"
+
+export interface HighlightPosition {
+  highlightId: string
+  layerId: string
+  editorIndex: number
+  top: number
+  rightEdge: number
+}
+
+export function useAllHighlightPositions(
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  layers: Layer[],
+  containerRef: React.RefObject<HTMLDivElement | null>
+): HighlightPosition[] {
+  const [positions, setPositions] = useState<HighlightPosition[]>([])
+
+  useLayoutEffect(() => {
+    const container = containerRef.current
+    if (!container) {
+      setPositions([])
+      return
+    }
+
+    function compute() {
+      const container = containerRef.current
+      if (!container) return
+
+      const containerRect = container.getBoundingClientRect()
+      const result: HighlightPosition[] = []
+
+      for (const layer of layers) {
+        if (!layer.visible) continue
+        for (const highlight of layer.highlights) {
+          const editor = editorsRef.current.get(highlight.editorIndex)
+          if (!editor || editor.isDestroyed) continue
+
+          try {
+            const coords = editor.view.coordsAtPos(highlight.from)
+            const endCoords = editor.view.coordsAtPos(highlight.to)
+
+            const top = coords.top - containerRect.top + container.scrollTop
+            const rightEdge = endCoords.right - containerRect.left + container.scrollLeft
+
+            result.push({
+              highlightId: highlight.id,
+              layerId: layer.id,
+              editorIndex: highlight.editorIndex,
+              top,
+              rightEdge,
+            })
+          } catch {
+            // Position may be invalid — skip
+          }
+        }
+      }
+
+      setPositions(result)
+    }
+
+    compute()
+
+    // Listen to scroll events on each editor's wrapper element
+    const scrollHandlers: { el: Element; handler: () => void }[] = []
+    for (const [, editor] of editorsRef.current) {
+      if (editor.isDestroyed) continue
+      const editorDom = editor.view.dom
+      const wrapper = editorDom.closest(".simple-editor-wrapper")
+      if (wrapper) {
+        const handler = () => compute()
+        wrapper.addEventListener("scroll", handler, { passive: true })
+        scrollHandlers.push({ el: wrapper, handler })
+      }
+    }
+
+    return () => {
+      for (const { el, handler } of scrollHandlers) {
+        el.removeEventListener("scroll", handler)
+      }
+    }
+  }, [editorsRef, layers, containerRef])
+
+  return positions
+}

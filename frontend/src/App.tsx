@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, Fragment } from "react";
+import { useRef, useState, useCallback, useMemo, Fragment } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -15,6 +15,7 @@ import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useCycleLayer } from "./hooks/use-cycle-layer";
 import { useDragSelection } from "./hooks/use-drag-selection";
 import { ArrowOverlay } from "./components/ArrowOverlay";
+import { AnnotationPanel } from "./components/AnnotationPanel";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
@@ -103,6 +104,11 @@ export function App() {
     []
   );
 
+  const hasAnyAnnotations = useMemo(
+    () => layers.some((l) => l.visible && l.highlights.length > 0),
+    [layers]
+  );
+
   return (
     <WorkspaceProvider value={workspace}>
       <Toaster />
@@ -113,58 +119,67 @@ export function App() {
           <div className="flex flex-col flex-1 min-w-0">
             <TitleBar />
             <SimpleEditorToolbar isLocked={settings.isLocked} />
-            <div
-              ref={containerRef}
-              data-testid="editorContainer"
-              className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
-            >
-              <ArrowOverlay
-                layers={layers}
-                drawingState={drawingState}
-                drawingColor={activeLayerColor}
-                editorsRef={editorsRef}
-                containerRef={containerRef}
-                removeArrow={removeArrow}
-                sectionVisibility={sectionVisibility}
-              />
-              {editorWidths.map((width, i) => (
-                <Fragment key={i}>
-                  {i > 0 && sectionVisibility[i - 1] && sectionVisibility[i] && (
-                    <Divider
-                      onResize={(pct) => handleDividerResize(i - 1, pct)}
-                      containerRef={containerRef}
-                      direction={
-                        settings.isMultipleRowsLayout ? "vertical" : "horizontal"
-                      }
-                    />
-                  )}
-                  <div
-                    className="min-w-0 min-h-0 overflow-hidden"
-                    style={{
-                      flex: `${width} 0 0%`,
-                      display: sectionVisibility[i] === false ? "none" : undefined,
-                    }}
-                  >
-                    <EditorPane
-                      isLocked={settings.isLocked}
-                      content={SIMPLE_EDITOR_CONTENT}
-                      index={i}
-                      onEditorMount={handleEditorMount}
-                      onFocus={handlePaneFocus}
-                      onMouseDown={settings.isLocked ? handleMouseDown : undefined}
-                      onMouseMove={settings.isLocked ? handleMouseMove : undefined}
-                      onMouseUp={settings.isLocked ? handleMouseUp : undefined}
-                      layers={layers}
-                      selection={selection}
-                      activeLayerColor={activeLayerColor}
-                      editingAnnotation={editingAnnotation}
-                      onAnnotationChange={handleAnnotationChange}
-                      onAnnotationBlur={handleAnnotationBlur}
-                      onAnnotationClick={handleAnnotationClick}
-                    />
-                  </div>
-                </Fragment>
-              ))}
+            <div className="flex flex-1 min-w-0 min-h-0">
+              <div
+                ref={containerRef}
+                data-testid="editorContainer"
+                className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
+              >
+                <ArrowOverlay
+                  layers={layers}
+                  drawingState={drawingState}
+                  drawingColor={activeLayerColor}
+                  editorsRef={editorsRef}
+                  containerRef={containerRef}
+                  removeArrow={removeArrow}
+                  sectionVisibility={sectionVisibility}
+                />
+                {editorWidths.map((width, i) => (
+                  <Fragment key={i}>
+                    {i > 0 && sectionVisibility[i - 1] && sectionVisibility[i] && (
+                      <Divider
+                        onResize={(pct) => handleDividerResize(i - 1, pct)}
+                        containerRef={containerRef}
+                        direction={
+                          settings.isMultipleRowsLayout ? "vertical" : "horizontal"
+                        }
+                      />
+                    )}
+                    <div
+                      className="min-w-0 min-h-0 overflow-hidden"
+                      style={{
+                        flex: `${width} 0 0%`,
+                        display: sectionVisibility[i] === false ? "none" : undefined,
+                      }}
+                    >
+                      <EditorPane
+                        isLocked={settings.isLocked}
+                        content={SIMPLE_EDITOR_CONTENT}
+                        index={i}
+                        onEditorMount={handleEditorMount}
+                        onFocus={handlePaneFocus}
+                        onMouseDown={settings.isLocked ? handleMouseDown : undefined}
+                        onMouseMove={settings.isLocked ? handleMouseMove : undefined}
+                        onMouseUp={settings.isLocked ? handleMouseUp : undefined}
+                        layers={layers}
+                        selection={selection}
+                        activeLayerColor={activeLayerColor}
+                      />
+                    </div>
+                  </Fragment>
+                ))}
+              </div>
+              {settings.isLocked && hasAnyAnnotations && (
+                <AnnotationPanel
+                  layers={layers}
+                  editorsRef={editorsRef}
+                  containerRef={containerRef}
+                  editingAnnotation={editingAnnotation}
+                  onAnnotationChange={handleAnnotationChange}
+                  onAnnotationBlur={handleAnnotationBlur}
+                  onAnnotationClick={handleAnnotationClick}
+                />
+              )}
             </div>
           </div>
         </EditorContext.Provider>

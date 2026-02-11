@@ -77,12 +77,6 @@ body,
   flex: 1;
 }
 
-.simple-editor-wrapper.has-annotations .simple-editor-content {
-  margin: 0;
-  width: auto;
-  max-width: min(648px, calc(100% - 224px)); // 192px card + 32px gap
-}
-
 .simple-editor-content .tiptap.ProseMirror.simple-editor {
   flex: 1;
   padding: 1.5rem 1.5rem 30vh;

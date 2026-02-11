@@ -8,8 +8,7 @@ import { createSimpleEditorExtensions } from "./extensions"
 import { useLayerDecorations } from "@/hooks/use-layer-decorations"
 import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
-import { AnnotationMargin } from "@/components/AnnotationMargin"
-import type { Layer, WordSelection, EditingAnnotation } from "@/types/editor"
+import type { Layer, WordSelection } from "@/types/editor"
 
 // --- Node SCSS ---
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
@@ -35,10 +34,6 @@ export function EditorPane({
   layers,
   selection,
   activeLayerColor,
-  editingAnnotation,
-  onAnnotationChange,
-  onAnnotationBlur,
-  onAnnotationClick,
 }: {
   isLocked: boolean
   content?: Record<string, unknown>
@@ -51,10 +46,6 @@ export function EditorPane({
   layers: Layer[]
   selection: WordSelection | null
   activeLayerColor: string | null
-  editingAnnotation: EditingAnnotation | null
-  onAnnotationChange?: (layerId: string, highlightId: string, annotation: string) => void
-  onAnnotationBlur?: (layerId: string, highlightId: string, annotation: string) => void
-  onAnnotationClick?: (layerId: string, highlightId: string) => void
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -93,10 +84,6 @@ export function EditorPane({
   useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor)
   useSelectionScroll(editor, selection, index, wrapperRef)
 
-  const hasAnnotations = isLocked && layers.some(
-    (l) => l.visible && l.highlights.some((h) => h.editorIndex === index)
-  )
-
   const handleFocus = useCallback(() => {
     onFocus(index)
   }, [index, onFocus])
@@ -128,7 +115,7 @@ export function EditorPane({
   return (
     <div
       ref={wrapperRef}
-      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}${hasAnnotations ? " has-annotations" : ""}`}
+      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`}
       onFocusCapture={handleFocus}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -139,18 +126,6 @@ export function EditorPane({
         role="presentation"
         className="simple-editor-content"
       />
-      {isLocked && (
-        <AnnotationMargin
-          editor={editor}
-          editorIndex={index}
-          layers={layers}
-          wrapperRef={wrapperRef}
-          editingAnnotation={editingAnnotation}
-          onAnnotationChange={onAnnotationChange}
-          onAnnotationBlur={onAnnotationBlur}
-          onAnnotationClick={onAnnotationClick}
-        />
-      )}
     </div>
   )
 }
