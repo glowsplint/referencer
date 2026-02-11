@@ -17,24 +17,37 @@ export function useActionHistory() {
     setCanRedo(redoStackRef.current.length > 0)
   }, [])
 
-  const record = useCallback(
-    (command: ActionCommand) => {
-      const id = crypto.randomUUID()
-      const stored: StoredCommand = { ...command, id }
-      undoStackRef.current.push(stored)
-      redoStackRef.current = []
-
+  const addLogEntry = useCallback(
+    (type: string, description: string): ActionEntry => {
       const entry: ActionEntry = {
-        id,
-        type: command.type,
-        description: command.description,
+        id: crypto.randomUUID(),
+        type,
+        description,
         timestamp: Date.now(),
         undone: false,
       }
       setLog((prev) => [...prev, entry])
+      return entry
+    },
+    []
+  )
+
+  const record = useCallback(
+    (command: ActionCommand) => {
+      const entry = addLogEntry(command.type, command.description)
+      const stored: StoredCommand = { ...command, id: entry.id }
+      undoStackRef.current.push(stored)
+      redoStackRef.current = []
       updateFlags()
     },
-    [updateFlags]
+    [addLogEntry, updateFlags]
+  )
+
+  const logOnly = useCallback(
+    (type: string, description: string) => {
+      addLogEntry(type, description)
+    },
+    [addLogEntry]
   )
 
   const undo = useCallback(() => {
@@ -65,5 +78,5 @@ export function useActionHistory() {
     updateFlags()
   }, [updateFlags])
 
-  return { record, undo, redo, canUndo, canRedo, log }
+  return { record, logOnly, undo, redo, canUndo, canRedo, log }
 }

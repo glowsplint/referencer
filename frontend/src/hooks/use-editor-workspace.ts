@@ -81,10 +81,16 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const toggleLayerVisibility = useCallback(
     (id: string) => {
       if (readOnly) return
+      const layer = rawLayersHook.layers.find((l) => l.id === id)
+      const wasVisible = layer?.visible ?? true
       trackedLayersHook.toggleLayerVisibility(id)
       guardedSendAction("toggleLayerVisibility", { id })
+      history.logOnly(
+        wasVisible ? "hideLayer" : "showLayer",
+        `${wasVisible ? "Hid" : "Showed"} layer '${layer?.name ?? "layer"}'`
+      )
     },
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction, history]
   )
 
   const addHighlight = useCallback(
@@ -187,10 +193,16 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const toggleSectionVisibility = useCallback(
     (index: number) => {
       if (readOnly) return
+      const wasVisible = rawEditorsHook.sectionVisibility[index] ?? true
+      const name = rawEditorsHook.sectionNames[index] ?? `Passage ${index + 1}`
       rawEditorsHook.toggleSectionVisibility(index)
       guardedSendAction("toggleSectionVisibility", { index })
+      history.logOnly(
+        wasVisible ? "hidePassage" : "showPassage",
+        `${wasVisible ? "Hid" : "Showed"} passage '${name}'`
+      )
     },
-    [readOnly, rawEditorsHook, guardedSendAction]
+    [readOnly, rawEditorsHook, guardedSendAction, history]
   )
 
   const updateEditorContent = useCallback(
@@ -207,6 +219,35 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, guardedSendAction]
   )
 
+  const toggleLocked = useCallback(() => {
+    const wasLocked = settingsHook.settings.isLocked
+    settingsHook.toggleLocked()
+    history.logOnly(
+      wasLocked ? "unlock" : "lock",
+      wasLocked ? "Unlocked editor" : "Locked editor"
+    )
+  }, [settingsHook, history])
+
+  const setActiveTool = useCallback(
+    (tool: Parameters<typeof settingsHook.setActiveTool>[0]) => {
+      settingsHook.setActiveTool(tool)
+      history.logOnly("setActiveTool", `Switched to ${tool} tool`)
+    },
+    [settingsHook, history]
+  )
+
+  const toggleDarkMode = useCallback(() => {
+    const wasDark = settingsHook.settings.isDarkMode
+    settingsHook.toggleDarkMode()
+    history.logOnly("toggleDarkMode", `Switched to ${wasDark ? "light" : "dark"} mode`)
+  }, [settingsHook, history])
+
+  const toggleMultipleRowsLayout = useCallback(() => {
+    const wasRows = settingsHook.settings.isMultipleRowsLayout
+    settingsHook.toggleMultipleRowsLayout()
+    history.logOnly("toggleLayout", `Switched to ${wasRows ? "column" : "row"} layout`)
+  }, [settingsHook, history])
+
   const [isManagementPaneOpen, setIsManagementPaneOpen] = useState(true)
 
   const toggleManagementPane = useCallback(
@@ -216,6 +257,10 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
 
   return {
     ...settingsHook,
+    toggleLocked,
+    setActiveTool,
+    toggleDarkMode,
+    toggleMultipleRowsLayout,
     // Spread remaining properties from tracked hooks (layers state, activeLayerId, etc.)
     layers: trackedLayersHook.layers,
     activeLayerId: trackedLayersHook.activeLayerId,

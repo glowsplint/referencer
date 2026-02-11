@@ -6,6 +6,10 @@ import type { Highlight, Arrow } from "@/types/editor"
 type LayersHook = ReturnType<typeof useLayers>
 type History = ReturnType<typeof useActionHistory>
 
+function truncate(text: string, max = 30): string {
+  return text.length > max ? text.slice(0, max) + "..." : text
+}
+
 export function useTrackedLayers(raw: LayersHook, history: History) {
   const { record } = history
 
@@ -63,7 +67,7 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
       const text = highlight.text
       record({
         type: "addHighlight",
-        description: `Added highlight on '${text.length > 30 ? text.slice(0, 30) + "..." : text}'`,
+        description: `Highlighted '${truncate(text)}' in ${raw.layers.find((l) => l.id === layerId)?.name ?? "layer"}`,
         undo: () => {
           raw.removeHighlight(layerId, id)
         },
@@ -88,7 +92,7 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
       raw.removeHighlight(layerId, highlightId)
       record({
         type: "removeHighlight",
-        description: "Removed highlight",
+        description: `Removed highlight on '${truncate(snapshot.text)}' from ${layer?.name ?? "layer"}`,
         undo: () => {
           const { id, ...rest } = snapshot
           raw.addHighlight(layerId, rest, { id })
@@ -106,7 +110,7 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
       const id = raw.addArrow(layerId, arrow, opts)
       record({
         type: "addArrow",
-        description: "Drew arrow",
+        description: `Drew arrow from '${truncate(arrow.from.text)}' to '${truncate(arrow.to.text)}'`,
         undo: () => {
           raw.removeArrow(layerId, id)
         },
@@ -131,7 +135,7 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
       raw.removeArrow(layerId, arrowId)
       record({
         type: "removeArrow",
-        description: "Removed arrow",
+        description: `Removed arrow from '${truncate(snapshot.from.text)}' to '${truncate(snapshot.to.text)}'`,
         undo: () => {
           const { id, ...rest } = snapshot
           raw.addArrow(layerId, rest, { id })
@@ -151,7 +155,7 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
       raw.updateLayerName(id, name)
       record({
         type: "updateLayerName",
-        description: `Renamed layer to '${name}'`,
+        description: `Renamed layer '${oldName}' to '${name}'`,
         undo: () => {
           raw.updateLayerName(id, oldName)
         },
@@ -170,7 +174,7 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
       raw.updateLayerColor(id, color)
       record({
         type: "updateLayerColor",
-        description: "Changed layer color",
+        description: `Changed '${layer?.name ?? "layer"}' color from ${oldColor} to ${color}`,
         undo: () => {
           raw.updateLayerColor(id, oldColor)
         },

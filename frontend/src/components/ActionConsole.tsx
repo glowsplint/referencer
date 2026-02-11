@@ -4,6 +4,8 @@ import type { ActionEntry } from "@/types/editor"
 const TYPE_COLORS: Record<string, string> = {
   addLayer: "text-emerald-400",
   removeLayer: "text-red-400",
+  showLayer: "text-emerald-400",
+  hideLayer: "text-red-400",
   addHighlight: "text-cyan-400",
   removeHighlight: "text-orange-400",
   addArrow: "text-blue-400",
@@ -12,7 +14,14 @@ const TYPE_COLORS: Record<string, string> = {
   updateLayerColor: "text-violet-400",
   addEditor: "text-emerald-400",
   removeEditor: "text-red-400",
+  showPassage: "text-emerald-400",
+  hidePassage: "text-red-400",
   updateAnnotation: "text-yellow-400",
+  lock: "text-yellow-400",
+  unlock: "text-yellow-400",
+  setActiveTool: "text-blue-400",
+  toggleDarkMode: "text-zinc-300",
+  toggleLayout: "text-zinc-300",
 }
 
 function formatTime(timestamp: number): string {

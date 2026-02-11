@@ -34,12 +34,12 @@ describe("ActionConsole", () => {
   it("displays log entries", () => {
     const entries = [
       makeEntry({ type: "addLayer", description: "Created layer 'Layer 1'" }),
-      makeEntry({ type: "addHighlight", description: "Added highlight on 'hello'" }),
+      makeEntry({ type: "addHighlight", description: "Highlighted 'hello' in Layer 1" }),
     ]
     render(<ActionConsole log={entries} isOpen={true} onClose={vi.fn()} />)
 
     expect(screen.getByText("Created layer 'Layer 1'")).toBeInTheDocument()
-    expect(screen.getByText("Added highlight on 'hello'")).toBeInTheDocument()
+    expect(screen.getByText("Highlighted 'hello' in Layer 1")).toBeInTheDocument()
     expect(screen.getByText("[addLayer]")).toBeInTheDocument()
     expect(screen.getByText("[addHighlight]")).toBeInTheDocument()
   })

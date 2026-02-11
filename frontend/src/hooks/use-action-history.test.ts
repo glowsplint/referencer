@@ -152,6 +152,21 @@ describe("useActionHistory", () => {
     expect(result.current.log[1].undone).toBe(false)
   })
 
+  it("logOnly adds to log without affecting undo/redo stacks", () => {
+    const { result } = renderHook(() => useActionHistory())
+
+    act(() => {
+      result.current.logOnly("hideLayer", "Hid layer 'Layer 1'")
+    })
+
+    expect(result.current.log).toHaveLength(1)
+    expect(result.current.log[0].type).toBe("hideLayer")
+    expect(result.current.log[0].description).toBe("Hid layer 'Layer 1'")
+    expect(result.current.log[0].undone).toBe(false)
+    expect(result.current.canUndo).toBe(false)
+    expect(result.current.canRedo).toBe(false)
+  })
+
   it("log entries have unique ids and timestamps", () => {
     const { result } = renderHook(() => useActionHistory())
 

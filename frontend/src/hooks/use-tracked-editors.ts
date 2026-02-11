@@ -14,7 +14,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
     const name = raw.addEditor()
     record({
       type: "addEditor",
-      description: "Added passage",
+      description: `Added passage '${name}'`,
       undo: () => {
         raw.removeEditor(prevCount)
       },
