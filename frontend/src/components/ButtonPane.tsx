@@ -9,7 +9,7 @@ import {
   LockOpen,
   Menu,
   ArrowUpRight,
-  MessageSquare,
+  MessageSquareText,
   Keyboard,
 } from "lucide-react";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
@@ -34,7 +34,7 @@ export function ButtonPane() {
   const toolButtons: { tool: ActiveTool; icon: React.ReactNode; title: string; testId: string }[] = [
     { tool: "selection", icon: <MousePointer2 size={20} />, title: "Selection tool", testId: "selectionToolButton" },
     { tool: "arrow", icon: <ArrowUpRight size={20} />, title: "Arrow tool", testId: "arrowToolButton" },
-    { tool: "comments", icon: <MessageSquare size={20} />, title: "Comments tool", testId: "commentsToolButton" },
+    { tool: "comments", icon: <MessageSquareText size={20} />, title: "Comments tool", testId: "commentsToolButton" },
   ];
 
   return (
