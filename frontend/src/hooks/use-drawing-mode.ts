@@ -20,14 +20,20 @@ export function useDrawingMode({
 
   // Keep refs in sync for keyup handler
   const activeLayerIdRef = useRef(activeLayerId)
-  activeLayerIdRef.current = activeLayerId
   const addArrowRef = useRef(addArrow)
-  addArrowRef.current = addArrow
+  useEffect(() => {
+    activeLayerIdRef.current = activeLayerId
+    addArrowRef.current = addArrow
+  })
 
-  // Clear drawing state when unlocked
+  // Clear drawing state when unlocked (render-time state adjustment avoids cascading effect renders)
+  if (!isLocked && drawingState !== null) {
+    setDrawingState(null)
+  }
+
+  // Clear ref in effect (ref updates belong in effects, not render)
   useEffect(() => {
     if (!isLocked) {
-      setDrawingState(null)
       drawingRef.current = null
     }
   }, [isLocked])

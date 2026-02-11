@@ -253,6 +253,12 @@ test.describe("multiple layers (2 editors)", () => {
     // Click word in E1 → highlight on Layer 1
     await clickWordInEditor(page, 0);
 
+    // Add annotation so highlight persists across layer switch
+    // (blank-annotation highlights are cleaned up when switching layers)
+    await page.getByText("Add annotation...").click();
+    await page.getByPlaceholder("Add annotation...").fill("E1 note");
+    await page.getByPlaceholder("Add annotation...").press("Enter");
+
     // Clear selection so it doesn't merge with highlight spans
     const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
     await hr.click();
@@ -267,6 +273,11 @@ test.describe("multiple layers (2 editors)", () => {
     // Cycle to Layer 2 and click word in E2
     await page.keyboard.press("l");
     await clickWordInEditor(page, 1, 60);
+
+    // Add annotation for E2 highlight too
+    await page.getByText("Add annotation...").click();
+    await page.getByPlaceholder("Add annotation...").fill("E2 note");
+    await page.getByPlaceholder("Add annotation...").press("Enter");
 
     // Clear selection again
     await hr.click();
