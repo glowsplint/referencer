@@ -74,6 +74,9 @@ export function App() {
     layers,
     selectWord,
     clearSelection,
+    onHighlightAdded: useCallback((layerId: string, highlightId: string) => {
+      setEditingAnnotation({ layerId, highlightId });
+    }, []),
   });
 
   const activeLayerColor = activeLayerId

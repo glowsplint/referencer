@@ -20,6 +20,7 @@ interface UseDragSelectionOptions {
   layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[]
   selectWord: (editorIndex: number, from: number, to: number, text: string) => void
   clearSelection: () => void
+  onHighlightAdded?: (layerId: string, highlightId: string) => void
 }
 
 export function useDragSelection({
@@ -30,6 +31,7 @@ export function useDragSelection({
   layers,
   selectWord,
   clearSelection,
+  onHighlightAdded,
 }: UseDragSelectionOptions) {
   const dragRef = useRef<{
     anchor: DragRange
@@ -121,15 +123,16 @@ export function useDragSelection({
           }
         }
       }
-      addHighlight(activeLayerId, {
+      const highlightId = addHighlight(activeLayerId, {
         editorIndex,
         from,
         to,
         text,
         annotation: "",
       })
+      onHighlightAdded?.(activeLayerId, highlightId)
     },
-    [isLocked, activeLayerId, layers, addHighlight, removeHighlight, selectWord]
+    [isLocked, activeLayerId, layers, addHighlight, removeHighlight, selectWord, onHighlightAdded]
   )
 
   return { handleMouseDown, handleMouseMove, handleMouseUp }
