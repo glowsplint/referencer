@@ -156,6 +156,7 @@ export function App() {
                       onMouseUp={settings.isLocked ? handleMouseUp : undefined}
                       layers={layers}
                       selection={selection}
+                      activeLayerColor={activeLayerColor}
                       editingAnnotation={editingAnnotation}
                       onAnnotationChange={handleAnnotationChange}
                       onAnnotationBlur={handleAnnotationBlur}

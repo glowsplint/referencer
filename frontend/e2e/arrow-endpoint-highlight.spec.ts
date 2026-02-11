@@ -22,10 +22,6 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("arrow endpoints are highlighted with layer color after drawing", async ({ page }) => {
-  // Before drawing, the word click highlight from beforeEach should exist
-  const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
-  await expect(highlightSpans).toHaveCount(1);
-
   // Draw an arrow: hold 'a', move right, release 'a'
   await page.keyboard.down("a");
   await page.keyboard.press("ArrowRight");
@@ -34,8 +30,15 @@ test("arrow endpoints are highlighted with layer color after drawing", async ({ 
   // Arrow should be drawn
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
+  // Clear selection to count highlights cleanly
+  const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
+  await hr.click();
+  await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
+
   // Both arrow endpoints should be highlighted with background-color
-  // ProseMirror inline decorations create <span> elements with inline style
+  // (committed highlight from beforeEach + 2 arrow endpoints, but the
+  // committed highlight overlaps with one endpoint, so we see 2 distinct spans)
+  const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
   await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });
 
   // Each highlight should contain the layer's color (rgba with 0.3 opacity)
@@ -54,6 +57,11 @@ test("arrow endpoint highlights disappear when layer is hidden", async ({ page }
   await page.keyboard.up("a");
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+
+  // Clear selection to count highlights cleanly
+  const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
+  await hr.click();
+  await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 
   const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
   await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });
@@ -74,6 +82,11 @@ test("arrow endpoint highlights disappear when unlocked", async ({ page }) => {
   await page.keyboard.up("a");
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+
+  // Clear selection to count highlights cleanly
+  const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
+  await hr.click();
+  await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 
   const highlightSpans = page.locator('.simple-editor span[style*="background-color"]');
   await expect(highlightSpans).toHaveCount(2, { timeout: 2000 });

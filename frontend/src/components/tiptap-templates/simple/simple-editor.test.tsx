@@ -112,8 +112,11 @@ vi.mock("@/hooks/use-cursor-visibility", () => ({
 vi.mock("@/hooks/use-layer-decorations", () => ({
   useLayerDecorations: vi.fn(),
 }))
+vi.mock("@/hooks/use-selection-highlight", () => ({
+  useSelectionHighlight: vi.fn(),
+}))
 vi.mock("@/hooks/use-selection-decoration", () => ({
-  useSelectionDecoration: vi.fn(() => []),
+  useSelectionScroll: vi.fn(),
 }))
 vi.mock("@/components/AnnotationMargin", () => ({
   AnnotationMargin: () => null,
@@ -156,6 +159,7 @@ vi.mock("@/components/tiptap-templates/simple/data/content.json", () => ({
 const defaultEditorPaneProps = {
   layers: [],
   selection: null,
+  activeLayerColor: null,
   editingAnnotation: null,
 }
 

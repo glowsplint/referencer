@@ -16,9 +16,7 @@ export function useDrawingMode({
   addArrow,
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
-  const [isDrawing, setIsDrawing] = useState(false)
-  const anchorRef = useRef<ArrowEndpoint | null>(null)
-  const cursorRef = useRef<ArrowEndpoint | null>(null)
+  const drawingRef = useRef<DrawingState | null>(null)
 
   // Keep refs in sync for keyup handler
   const activeLayerIdRef = useRef(activeLayerId)
@@ -30,26 +28,21 @@ export function useDrawingMode({
   useEffect(() => {
     if (!isLocked) {
       setDrawingState(null)
-      setIsDrawing(false)
-      anchorRef.current = null
-      cursorRef.current = null
+      drawingRef.current = null
     }
   }, [isLocked])
 
   // Update cursor when selection changes during drawing
   useEffect(() => {
-    if (anchorRef.current && selection) {
+    if (drawingRef.current && selection) {
       const cursor: ArrowEndpoint = {
         editorIndex: selection.editorIndex,
         from: selection.from,
         to: selection.to,
         text: selection.text,
       }
-      cursorRef.current = cursor
-      setDrawingState({
-        anchor: anchorRef.current,
-        cursor,
-      })
+      drawingRef.current = { anchor: drawingRef.current.anchor, cursor }
+      setDrawingState(drawingRef.current)
     }
   }, [selection])
 
@@ -74,21 +67,16 @@ export function useDrawingMode({
         text: selection.text,
       }
 
-      anchorRef.current = anchor
-      cursorRef.current = anchor
-      setIsDrawing(true)
-      setDrawingState({ anchor, cursor: anchor })
+      drawingRef.current = { anchor, cursor: anchor }
+      setDrawingState(drawingRef.current)
     }
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.code !== "KeyA") return
-      if (!anchorRef.current) return
+      if (!drawingRef.current) return
 
-      const anchor = anchorRef.current
-      const cursor = cursorRef.current
+      const { anchor, cursor } = drawingRef.current
       if (
-        anchor &&
-        cursor &&
         activeLayerIdRef.current &&
         (anchor.editorIndex !== cursor.editorIndex ||
           anchor.from !== cursor.from ||
@@ -100,10 +88,8 @@ export function useDrawingMode({
         })
       }
 
+      drawingRef.current = null
       setDrawingState(null)
-      setIsDrawing(false)
-      anchorRef.current = null
-      cursorRef.current = null
     }
 
     document.addEventListener("keydown", handleKeyDown)
@@ -113,6 +99,8 @@ export function useDrawingMode({
       document.removeEventListener("keyup", handleKeyUp)
     }
   }, [isLocked, selection])
+
+  const isDrawing = drawingState !== null
 
   return { drawingState, isDrawing }
 }

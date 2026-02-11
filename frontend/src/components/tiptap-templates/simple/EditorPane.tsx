@@ -6,7 +6,8 @@ import type { Editor } from "@tiptap/react"
 
 import { createSimpleEditorExtensions } from "./extensions"
 import { useLayerDecorations } from "@/hooks/use-layer-decorations"
-import { useSelectionDecoration } from "@/hooks/use-selection-decoration"
+import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
+import { useSelectionScroll } from "@/hooks/use-selection-decoration"
 import { AnnotationMargin } from "@/components/AnnotationMargin"
 import type { Layer, WordSelection, EditingAnnotation } from "@/types/editor"
 
@@ -33,6 +34,7 @@ export function EditorPane({
   onMouseUp,
   layers,
   selection,
+  activeLayerColor,
   editingAnnotation,
   onAnnotationChange,
   onAnnotationBlur,
@@ -48,6 +50,7 @@ export function EditorPane({
   onMouseUp?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
   layers: Layer[]
   selection: WordSelection | null
+  activeLayerColor: string | null
   editingAnnotation: EditingAnnotation | null
   onAnnotationChange?: (layerId: string, highlightId: string, annotation: string) => void
   onAnnotationBlur?: (layerId: string, highlightId: string, annotation: string) => void
@@ -87,7 +90,8 @@ export function EditorPane({
   }, [editor, isLocked])
 
   useLayerDecorations(editor, layers, index, isLocked)
-  const selectionRects = useSelectionDecoration(editor, selection, index, wrapperRef)
+  useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor)
+  useSelectionScroll(editor, selection, index, wrapperRef)
 
   const hasAnnotations = isLocked && layers.some(
     (l) => l.visible && l.highlights.some((h) => h.editorIndex === index)
@@ -135,20 +139,6 @@ export function EditorPane({
         role="presentation"
         className="simple-editor-content"
       />
-      {selectionRects.map((rect, i) => (
-        <div
-          key={i}
-          className="word-selection"
-          style={{
-            position: "absolute",
-            top: rect.top,
-            left: rect.left,
-            width: rect.width,
-            height: rect.height,
-            pointerEvents: "none",
-          }}
-        />
-      ))}
       {isLocked && (
         <AnnotationMargin
           editor={editor}

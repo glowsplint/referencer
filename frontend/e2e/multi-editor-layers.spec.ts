@@ -99,6 +99,11 @@ test.describe("cross-editor arrows (2 editors)", () => {
       timeout: 2000,
     });
 
+    // Clear selection so it doesn't merge with highlight spans
+    const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
+    await hr.click();
+    await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
+
     const e1Highlights = page
       .locator(".simple-editor-wrapper")
       .nth(0)
@@ -142,7 +147,7 @@ test.describe("cross-editor arrows (2 editors)", () => {
     });
 
     const highlights = page.locator(
-      '.simple-editor span[style*="background-color"]'
+      '.simple-editor span[style*="background-color"]:not(.word-selection)'
     );
     await expect(highlights).toHaveCount(0, { timeout: 2000 });
 
@@ -248,6 +253,11 @@ test.describe("multiple layers (2 editors)", () => {
     // Click word in E1 → highlight on Layer 1
     await clickWordInEditor(page, 0);
 
+    // Clear selection so it doesn't merge with highlight spans
+    const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
+    await hr.click();
+    await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
+
     const e1Highlights = page
       .locator(".simple-editor-wrapper")
       .nth(0)
@@ -257,6 +267,10 @@ test.describe("multiple layers (2 editors)", () => {
     // Cycle to Layer 2 and click word in E2
     await page.keyboard.press("l");
     await clickWordInEditor(page, 1, 60);
+
+    // Clear selection again
+    await hr.click();
+    await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 
     const e2Highlights = page
       .locator(".simple-editor-wrapper")

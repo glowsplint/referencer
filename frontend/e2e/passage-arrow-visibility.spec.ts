@@ -260,10 +260,10 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await drawArrowRight(page, 2);
 
     const highlights = page.locator(
-      '.simple-editor-wrapper:nth-child(1) span[style*="background-color"]'
+      '.simple-editor-wrapper:nth-child(1) span[style*="background-color"]:not(.word-selection)'
     );
     const countBefore = await page
-      .locator('.simple-editor span[style*="background-color"]')
+      .locator('.simple-editor span[style*="background-color"]:not(.word-selection)')
       .count();
     expect(countBefore).toBeGreaterThan(0);
 
@@ -275,7 +275,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await page.waitForTimeout(300);
 
     const countAfter = await page
-      .locator('.simple-editor span[style*="background-color"]')
+      .locator('.simple-editor span[style*="background-color"]:not(.word-selection)')
       .count();
     expect(countAfter).toBe(countBefore);
   });

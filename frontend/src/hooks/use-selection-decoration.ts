@@ -1,13 +1,6 @@
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"
-
-export interface SelectionRect {
-  top: number
-  left: number
-  width: number
-  height: number
-}
 
 const SCROLL_PADDING = 40
 
@@ -33,57 +26,13 @@ export function scrollToKeepInView(
   }
 }
 
-/**
- * Merge DOMRects that share the same visual line into single per-line rects.
- * Adjacent inline elements (e.g. bold/italic mark boundaries) produce separate
- * rects on the same line — this combines them.
- */
-function mergeLineRects(clientRects: DOMRectList): { top: number; left: number; width: number; height: number }[] {
-  const rects: DOMRect[] = []
-  for (let i = 0; i < clientRects.length; i++) {
-    const r = clientRects[i]
-    if (r.width > 0 && r.height > 0) rects.push(r)
-  }
-  if (rects.length === 0) return []
-
-  rects.sort((a, b) => a.top - b.top || a.left - b.left)
-
-  const merged: { top: number; left: number; right: number; bottom: number }[] = []
-
-  for (const r of rects) {
-    const last = merged[merged.length - 1]
-    // Rects on the same visual line have similar top values
-    if (last && Math.abs(r.top - last.top) < r.height * 0.5) {
-      last.left = Math.min(last.left, r.left)
-      last.right = Math.max(last.right, r.left + r.width)
-      last.top = Math.min(last.top, r.top)
-      last.bottom = Math.max(last.bottom, r.top + r.height)
-    } else {
-      merged.push({
-        top: r.top,
-        left: r.left,
-        right: r.left + r.width,
-        bottom: r.top + r.height,
-      })
-    }
-  }
-
-  return merged.map((m) => ({
-    top: m.top,
-    left: m.left,
-    width: m.right - m.left,
-    height: m.bottom - m.top,
-  }))
-}
-
-export function useSelectionDecoration(
+/** Scroll the wrapper to keep the current word selection in view. */
+export function useSelectionScroll(
   editor: Editor | null,
   selection: WordSelection | null,
   editorIndex: number,
   wrapperRef: React.RefObject<HTMLDivElement | null>
-): SelectionRect[] {
-  const [rects, setRects] = useState<SelectionRect[]>([])
-
+): void {
   useLayoutEffect(() => {
     if (
       !editor ||
@@ -91,15 +40,11 @@ export function useSelectionDecoration(
       !selection ||
       selection.editorIndex !== editorIndex
     ) {
-      setRects([])
       return
     }
 
     const wrapper = wrapperRef.current
-    if (!wrapper) {
-      setRects([])
-      return
-    }
+    if (!wrapper) return
 
     try {
       const domStart = editor.view.domAtPos(selection.from)
@@ -109,33 +54,21 @@ export function useSelectionDecoration(
       range.setStart(domStart.node, domStart.offset)
       range.setEnd(domEnd.node, domEnd.offset)
 
+      const wordRect = range.getBoundingClientRect()
       const wrapperRect = wrapper.getBoundingClientRect()
-      const lineRects = mergeLineRects(range.getClientRects())
 
-      const selectionRects: SelectionRect[] = lineRects.map((r) => ({
-        top: r.top - wrapperRect.top + wrapper.scrollTop,
-        left: r.left - wrapperRect.left + wrapper.scrollLeft,
-        width: r.width,
-        height: r.height,
-      }))
+      const topInContent = wordRect.top - wrapperRect.top + wrapper.scrollTop
+      const leftInContent = wordRect.left - wrapperRect.left + wrapper.scrollLeft
 
-      // Scroll to keep the last line rect in view
-      if (selectionRects.length > 0) {
-        const last = selectionRects[selectionRects.length - 1]
-        scrollToKeepInView(
-          wrapper,
-          last.top,
-          last.left,
-          last.height,
-          last.width
-        )
-      }
-
-      setRects(selectionRects)
+      scrollToKeepInView(
+        wrapper,
+        topInContent,
+        leftInContent,
+        wordRect.height,
+        wordRect.width
+      )
     } catch {
-      setRects([])
+      // Position may be invalid — skip
     }
   }, [editor, selection, editorIndex, wrapperRef])
-
-  return rects
 }
