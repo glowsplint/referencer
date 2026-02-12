@@ -17,6 +17,7 @@ describe("useEditorWorkspace", () => {
       isLayersOn: false,
       isMultipleRowsLayout: false,
       isLocked: false,
+      showDrawingToasts: true,
     })
     expect(result.current.annotations).toEqual({ activeTool: "selection" })
     expect(result.current.layers).toEqual([])

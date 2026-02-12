@@ -25,6 +25,7 @@ interface UseDrawingModeOptions {
   selection: WordSelection | null
   activeLayerId: string | null
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
+  showDrawingToasts: boolean
 }
 
 export function useDrawingMode({
@@ -33,6 +34,7 @@ export function useDrawingMode({
   selection,
   activeLayerId,
   addArrow,
+  showDrawingToasts,
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
   const anchorRef = useRef<ArrowEndpoint | null>(null)
@@ -43,6 +45,9 @@ export function useDrawingMode({
     activeLayerIdRef.current = activeLayerId
     addArrowRef.current = addArrow
   }, [activeLayerId, addArrow])
+
+  const showDrawingToastsRef = useRef(showDrawingToasts)
+  showDrawingToastsRef.current = showDrawingToasts
 
   const isArrowTool = activeTool === "arrow" && isLocked
   const isArrowToolRef = useRef(isArrowTool)
@@ -82,7 +87,7 @@ export function useDrawingMode({
         // Set anchor from click
         anchorRef.current = endpoint
         setDrawingState({ anchor: endpoint, cursor: endpoint })
-        toast.info("Now click the target word", { id: "arrow-drawing" })
+        if (showDrawingToastsRef.current) toast.info("Now click the target word", { id: "arrow-drawing" })
         return
       }
 
@@ -103,7 +108,7 @@ export function useDrawingMode({
       }
       anchorRef.current = null
       setDrawingState(null)
-      toast.success("Arrow created", { id: "arrow-drawing", duration: 1500 })
+      if (showDrawingToastsRef.current) toast.success("Arrow created", { id: "arrow-drawing", duration: 1500 })
     },
     []
   )

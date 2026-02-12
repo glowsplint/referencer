@@ -17,6 +17,7 @@ export function useSettings() {
     isLayersOn: false,
     isMultipleRowsLayout: false,
     isLocked: false,
+    showDrawingToasts: true,
   })
   const [annotations, setAnnotations] = useState<AnnotationSettings>({
     activeTool: "selection",
@@ -30,6 +31,7 @@ export function useSettings() {
   const toggleLayersOn = useToggle(setSettings, "isLayersOn")
   const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout")
   const toggleLocked = useToggle(setSettings, "isLocked")
+  const toggleShowDrawingToasts = useToggle(setSettings, "showDrawingToasts")
   const setActiveTool = useCallback(
     (tool: ActiveTool) => setAnnotations({ activeTool: tool }),
     []
@@ -42,6 +44,7 @@ export function useSettings() {
     toggleLayersOn,
     toggleMultipleRowsLayout,
     toggleLocked,
+    toggleShowDrawingToasts,
     setActiveTool,
   }
 }

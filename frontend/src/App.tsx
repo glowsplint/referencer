@@ -97,6 +97,7 @@ export function App() {
     selection,
     activeLayerId,
     addArrow,
+    showDrawingToasts: settings.showDrawingToasts,
   });
 
   useCycleLayer({

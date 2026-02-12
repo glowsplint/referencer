@@ -15,6 +15,7 @@ describe("useSettings", () => {
       isLayersOn: false,
       isMultipleRowsLayout: false,
       isLocked: false,
+      showDrawingToasts: true,
     })
   })
 
@@ -69,6 +70,18 @@ describe("useSettings", () => {
     expect(result.current.annotations.activeTool).toBe("selection")
   })
 
+  it("toggleShowDrawingToasts toggles showDrawingToasts", () => {
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings.showDrawingToasts).toBe(true)
+
+    act(() => { result.current.toggleShowDrawingToasts() })
+    expect(result.current.settings.showDrawingToasts).toBe(false)
+
+    act(() => { result.current.toggleShowDrawingToasts() })
+    expect(result.current.settings.showDrawingToasts).toBe(true)
+  })
+
   it("toggling one setting does not affect others", () => {
     const { result } = renderHook(() => useSettings())
 
@@ -77,5 +90,6 @@ describe("useSettings", () => {
     expect(result.current.settings.isLayersOn).toBe(false)
     expect(result.current.settings.isMultipleRowsLayout).toBe(false)
     expect(result.current.settings.isLocked).toBe(false)
+    expect(result.current.settings.showDrawingToasts).toBe(true)
   })
 })

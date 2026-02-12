@@ -7,6 +7,8 @@ import {
   MousePointer2,
   Lock,
   LockOpen,
+  BellRing,
+  BellOff,
   Menu,
   ArrowBigRight,
   MessageSquareText,
@@ -30,6 +32,7 @@ export function ButtonPane() {
     toggleMultipleRowsLayout,
     setActiveTool,
     toggleLocked,
+    toggleShowDrawingToasts,
   } = useWorkspace();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -88,6 +91,14 @@ export function ButtonPane() {
       ))}
       <div className="w-6 border-t border-border" role="separator" />
       {/* Settings group */}
+      <SwitchingButtonIcon
+        iconOne={<BellRing size={20} />}
+        iconTwo={<BellOff size={20} />}
+        bool={settings.showDrawingToasts}
+        callback={toggleShowDrawingToasts}
+        title="Toggle drawing notifications"
+        buttonProps={{ "data-testid": "drawingToastsButton" }}
+      />
       <SwitchingButtonIcon
         iconOne={<MoonStar size={20} />}
         iconTwo={<Sun size={20} />}

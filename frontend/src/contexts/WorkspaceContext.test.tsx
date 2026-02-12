@@ -5,7 +5,7 @@ import type { WorkspaceContextValue } from "./WorkspaceContext"
 
 function makeMockWorkspace(): WorkspaceContextValue {
   return {
-    settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false },
+    settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false, showDrawingToasts: true },
     annotations: { activeTool: "selection" as const },
     layers: [],
     activeLayerId: null,

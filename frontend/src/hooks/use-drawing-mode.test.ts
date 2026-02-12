@@ -15,6 +15,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     selection: null as WordSelection | null,
     activeLayerId: "layer-1",
     addArrow: vi.fn(),
+    showDrawingToasts: true,
     ...overrides,
   }
 }
@@ -72,6 +73,7 @@ describe("useDrawingMode", () => {
         selection: null,
         activeLayerId: "layer-1",
         addArrow,
+        showDrawingToasts: true,
       })
     )
 
@@ -100,6 +102,7 @@ describe("useDrawingMode", () => {
         selection: null,
         activeLayerId: "layer-1",
         addArrow,
+        showDrawingToasts: true,
       })
     )
 
@@ -121,6 +124,7 @@ describe("useDrawingMode", () => {
         selection: null,
         activeLayerId: null,
         addArrow: vi.fn(),
+        showDrawingToasts: true,
       })
     )
 
@@ -140,6 +144,7 @@ describe("useDrawingMode", () => {
           selection: null,
           activeLayerId: "layer-1",
           addArrow: vi.fn(),
+          showDrawingToasts: true,
         }),
       { initialProps: { activeTool: "arrow" as ActiveTool } }
     )
@@ -162,6 +167,7 @@ describe("useDrawingMode", () => {
           selection: null,
           activeLayerId: "layer-1",
           addArrow: vi.fn(),
+          showDrawingToasts: true,
         }),
       { initialProps: { isLocked: true } }
     )
@@ -183,6 +189,7 @@ describe("useDrawingMode", () => {
           selection: props.selection,
           activeLayerId: "layer-1",
           addArrow: vi.fn(),
+          showDrawingToasts: true,
         }),
       { initialProps: { selection: null } }
     )
@@ -201,5 +208,50 @@ describe("useDrawingMode", () => {
     expect(result.current.drawingState?.cursor).toEqual({
       editorIndex: 0, from: 10, to: 15, text: "world",
     })
+  })
+
+  it("suppresses info toast when showDrawingToasts is false", () => {
+    const { result } = renderHook(() =>
+      useDrawingMode(createOptions({ showDrawingToasts: false }))
+    )
+
+    act(() => { result.current.handleArrowClick(word1) })
+
+    expect(result.current.isDrawing).toBe(true)
+    expect(toast.info).not.toHaveBeenCalled()
+  })
+
+  it("suppresses success toast when showDrawingToasts is false", () => {
+    const addArrow = vi.fn()
+    const { result } = renderHook(() =>
+      useDrawingMode(createOptions({ showDrawingToasts: false, addArrow }))
+    )
+
+    act(() => { result.current.handleArrowClick(word1) })
+    act(() => { result.current.handleArrowClick(word2) })
+
+    expect(addArrow).toHaveBeenCalled()
+    expect(toast.success).not.toHaveBeenCalled()
+  })
+
+  it("still shows warning toast when showDrawingToasts is false", () => {
+    const { result } = renderHook(() =>
+      useDrawingMode(createOptions({ showDrawingToasts: false, activeLayerId: null }))
+    )
+
+    act(() => { result.current.handleArrowClick(word1) })
+
+    expect(toast.warning).toHaveBeenCalledWith("Add a new layer before drawing arrows")
+  })
+
+  it("still dismisses toast when showDrawingToasts is false", () => {
+    const { result } = renderHook(() =>
+      useDrawingMode(createOptions({ showDrawingToasts: false }))
+    )
+
+    act(() => { result.current.handleArrowClick(word1) })
+    act(() => { result.current.handleArrowClick(word1) })
+
+    expect(toast.dismiss).toHaveBeenCalledWith("arrow-drawing")
   })
 })

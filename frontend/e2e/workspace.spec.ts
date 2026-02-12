@@ -4,13 +4,14 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("renders all 9 button pane buttons", async ({ page }) => {
+test("renders all 10 button pane buttons", async ({ page }) => {
   await expect(page.getByTestId("keyboardShortcutsButton")).toBeVisible();
   await expect(page.getByTestId("faqButton")).toBeVisible();
   await expect(page.getByTestId("selectionToolButton")).toBeVisible();
   await expect(page.getByTestId("arrowToolButton")).toBeVisible();
   await expect(page.getByTestId("commentsToolButton")).toBeVisible();
   await expect(page.getByTestId("menuButton")).toBeVisible();
+  await expect(page.getByTestId("drawingToastsButton")).toBeVisible();
   await expect(page.getByTestId("darkModeButton")).toBeVisible();
   await expect(page.getByTestId("editorLayoutButton")).toBeVisible();
   await expect(page.getByTestId("lockButton")).toBeVisible();
