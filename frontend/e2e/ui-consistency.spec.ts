@@ -33,7 +33,7 @@ async function drawArrowRight(
   page: import("@playwright/test").Page,
   steps: number
 ) {
-  await page.keyboard.press("Escape");
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   // Switch to arrow tool
   await page.keyboard.press("a");
   // Click current word to set anchor
@@ -72,7 +72,7 @@ async function drawArrowToEditor(
   editorCount: number,
   maxSteps = 80
 ) {
-  await page.keyboard.press("Escape");
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   // Switch to arrow tool
   await page.keyboard.press("a");
   // Click current word to set anchor

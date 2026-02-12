@@ -20,8 +20,8 @@ test.beforeEach(async ({ page }) => {
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Dismiss auto-focused annotation input so arrow keys navigate words
-  await page.keyboard.press("Escape");
+  // Blur auto-focused annotation input so arrow keys navigate words
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
   // Switch to arrow tool
   await page.keyboard.press("a");

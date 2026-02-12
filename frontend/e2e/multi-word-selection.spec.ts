@@ -37,7 +37,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
   }) => {
     await clickWordInEditor(page, 0, 30);
     // Dismiss auto-focused annotation so keyboard reaches word selection handler
-    await page.keyboard.press("Escape");
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
     const selection = page.locator(".word-selection");
     const initialBox = await selection.boundingBox();
@@ -59,7 +59,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
   }) => {
     // Click a word that's not the first one (offset further right)
     await clickWordInEditor(page, 0, 100);
-    await page.keyboard.press("Escape");
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
     const selection = page.locator(".word-selection");
     const initialBox = await selection.boundingBox();
@@ -82,7 +82,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
     page,
   }) => {
     await clickWordInEditor(page, 0, 30);
-    await page.keyboard.press("Escape");
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
     const selection = page.locator(".word-selection");
     const box1 = await selection.boundingBox();
@@ -111,7 +111,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
 
     // Click word in editor 1
     await clickWordInEditor(page, 0, 30);
-    await page.keyboard.press("Escape");
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
     // Press Shift+ArrowRight many times to try to cross editor boundary
     for (let i = 0; i < 50; i++) {
@@ -132,7 +132,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
     page,
   }) => {
     await clickWordInEditor(page, 0, 30);
-    await page.keyboard.press("Escape");
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
     const singleBox = await page.locator(".word-selection").boundingBox();
     expect(singleBox).not.toBeNull();
@@ -285,7 +285,7 @@ test.describe("selection clears on state changes", () => {
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
     await clickWordInEditor(page, 0, 30);
-    await page.keyboard.press("Escape");
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
     // Expand selection
     await page.keyboard.press("Shift+ArrowRight");

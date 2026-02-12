@@ -123,6 +123,96 @@ export function resolveNavigationTarget(
 }
 
 /**
+ * Return the word with the smallest `from` in the given passage (editorIndex).
+ */
+export function findFirstWordInPassage(
+  editorIndex: number,
+  allCandidates: WordCenter[]
+): CollectedWord | null {
+  const inPassage = allCandidates.filter(
+    (c) => c.word.editorIndex === editorIndex
+  )
+  if (inPassage.length === 0) return null
+  return inPassage.reduce((best, c) =>
+    c.word.from < best.word.from ? c : best
+  ).word
+}
+
+/**
+ * Return the word with the largest `to` in the given passage (editorIndex).
+ */
+export function findLastWordInPassage(
+  editorIndex: number,
+  allCandidates: WordCenter[]
+): CollectedWord | null {
+  const inPassage = allCandidates.filter(
+    (c) => c.word.editorIndex === editorIndex
+  )
+  if (inPassage.length === 0) return null
+  return inPassage.reduce((best, c) =>
+    c.word.to > best.word.to ? c : best
+  ).word
+}
+
+/**
+ * Like `findHorizontalTarget` but constrained to the same passage (editorIndex).
+ */
+export function findHorizontalTargetConstrained(
+  key: "ArrowLeft" | "ArrowRight",
+  currentCenter: { cx: number; cy: number },
+  allCandidates: WordCenter[],
+  currentWord: WordSelection
+): NavigationResult {
+  const sameEditor = allCandidates.filter(
+    (c) => c.word.editorIndex === currentWord.editorIndex
+  )
+  const sameLine = findNearestWordOnSameLine(currentCenter, sameEditor, key)
+  if (sameLine) return { target: sameLine, stickyX: null }
+
+  const wrapped = findFirstWordOnAdjacentLine(currentCenter, sameEditor, key)
+  return { target: wrapped, stickyX: null }
+}
+
+/**
+ * Like `findVerticalTarget` step 1 only — stays within the same passage.
+ * No cross-editor fallback.
+ */
+export function findVerticalTargetConstrained(
+  key: "ArrowUp" | "ArrowDown",
+  currentCenter: { cx: number; cy: number },
+  allCandidates: WordCenter[],
+  currentWord: WordSelection,
+  stickyX: number | null
+): NavigationResult {
+  const effectiveStickyX = stickyX ?? currentCenter.cx
+  const navCenter = { cx: effectiveStickyX, cy: currentCenter.cy }
+
+  const sameEditorCandidates = allCandidates.filter(
+    (c) => c.word.editorIndex === currentWord.editorIndex
+  )
+  const nearest = findNearestWord(navCenter, sameEditorCandidates, key)
+  return { target: nearest, stickyX: effectiveStickyX }
+}
+
+/**
+ * Compute a WordSelection spanning the entire passage (first to last word).
+ */
+export function computeSelectAllInPassage(
+  editorIndex: number,
+  allCandidates: WordCenter[],
+  editor: Editor
+): WordSelection | null {
+  const first = findFirstWordInPassage(editorIndex, allCandidates)
+  const last = findLastWordInPassage(editorIndex, allCandidates)
+  if (!first || !last) return null
+
+  const from = first.from
+  const to = last.to
+  const text = editor.state.doc.textBetween(from, to, " ")
+  return { editorIndex, from, to, text }
+}
+
+/**
  * Compute the merged range selection after a shift+arrow navigation.
  *
  * Returns the new `WordSelection` spanning from anchor to the new head,

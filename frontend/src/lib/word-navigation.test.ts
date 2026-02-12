@@ -26,6 +26,11 @@ import {
   findVerticalTarget,
   resolveNavigationTarget,
   computeRangeSelection,
+  findFirstWordInPassage,
+  findLastWordInPassage,
+  findHorizontalTargetConstrained,
+  findVerticalTargetConstrained,
+  computeSelectAllInPassage,
 } from "./word-navigation"
 
 // ── helpers ──────────────────────────────────────────────────────────
@@ -345,5 +350,193 @@ describe("computeRangeSelection", () => {
       to: 16,
       text: "quick brown",
     })
+  })
+})
+
+// ── findFirstWordInPassage / findLastWordInPassage ───────────────
+
+describe("findFirstWordInPassage", () => {
+  const a = makeWord(0, 10, 15, "alpha")
+  const b = makeWord(0, 1, 5, "beta")
+  const c = makeWord(1, 3, 8, "gamma")
+
+  const candidates: WordCenter[] = [
+    makeCenter(a, 100, 100),
+    makeCenter(b, 50, 100),
+    makeCenter(c, 400, 100),
+  ]
+
+  it("returns word with smallest from in the passage", () => {
+    const result = findFirstWordInPassage(0, candidates)
+    expect(result?.text).toBe("beta")
+    expect(result?.from).toBe(1)
+  })
+
+  it("filters by editorIndex", () => {
+    const result = findFirstWordInPassage(1, candidates)
+    expect(result?.text).toBe("gamma")
+  })
+
+  it("returns null for empty passage", () => {
+    expect(findFirstWordInPassage(2, candidates)).toBeNull()
+  })
+})
+
+describe("findLastWordInPassage", () => {
+  const a = makeWord(0, 1, 5, "alpha")
+  const b = makeWord(0, 10, 20, "beta")
+  const c = makeWord(1, 3, 8, "gamma")
+
+  const candidates: WordCenter[] = [
+    makeCenter(a, 50, 100),
+    makeCenter(b, 150, 100),
+    makeCenter(c, 400, 100),
+  ]
+
+  it("returns word with largest to in the passage", () => {
+    const result = findLastWordInPassage(0, candidates)
+    expect(result?.text).toBe("beta")
+    expect(result?.to).toBe(20)
+  })
+
+  it("filters by editorIndex", () => {
+    const result = findLastWordInPassage(1, candidates)
+    expect(result?.text).toBe("gamma")
+  })
+
+  it("returns null for empty passage", () => {
+    expect(findLastWordInPassage(2, candidates)).toBeNull()
+  })
+})
+
+// ── findHorizontalTargetConstrained ─────────────────────────────
+
+describe("findHorizontalTargetConstrained", () => {
+  // Editor 0: "the"(50,100) "quick"(120,100)
+  // Editor 1: "over"(350,100)
+  const the = makeWord(0, 1, 4, "the")
+  const quick = makeWord(0, 5, 10, "quick")
+  const over = makeWord(1, 1, 5, "over")
+
+  const candidates: WordCenter[] = [
+    makeCenter(the, 50, 100),
+    makeCenter(quick, 120, 100),
+    makeCenter(over, 350, 100),
+  ]
+
+  it("finds next word within same passage", () => {
+    const sel: WordSelection = { editorIndex: 0, from: 1, to: 4, text: "the" }
+    const result = findHorizontalTargetConstrained("ArrowRight", { cx: 50, cy: 100 }, candidates, sel)
+    expect(result.target?.text).toBe("quick")
+  })
+
+  it("returns null at passage boundary (does not cross to other editor)", () => {
+    const sel: WordSelection = { editorIndex: 0, from: 5, to: 10, text: "quick" }
+    const result = findHorizontalTargetConstrained("ArrowRight", { cx: 120, cy: 100 }, candidates, sel)
+    expect(result.target).toBeNull()
+  })
+
+  it("always clears stickyX", () => {
+    const sel: WordSelection = { editorIndex: 0, from: 1, to: 4, text: "the" }
+    const result = findHorizontalTargetConstrained("ArrowRight", { cx: 50, cy: 100 }, candidates, sel)
+    expect(result.stickyX).toBeNull()
+  })
+})
+
+// ── findVerticalTargetConstrained ───────────────────────────────
+
+describe("findVerticalTargetConstrained", () => {
+  // Editor 0: "and"(100,100) "pro"(80,130)
+  // Editor 1: "Integrate"(400,100)
+  const and_ = makeWord(0, 1, 4, "and")
+  const pro = makeWord(0, 10, 13, "pro")
+  const integrate = makeWord(1, 1, 10, "Integrate")
+
+  const candidates: WordCenter[] = [
+    makeCenter(and_, 100, 100),
+    makeCenter(pro, 80, 130),
+    makeCenter(integrate, 400, 100),
+  ]
+
+  it("finds word on next line within same passage", () => {
+    const sel: WordSelection = { editorIndex: 0, from: 1, to: 4, text: "and" }
+    const result = findVerticalTargetConstrained("ArrowDown", { cx: 100, cy: 100 }, candidates, sel, null)
+    expect(result.target?.text).toBe("pro")
+  })
+
+  it("returns null when no more lines in same passage", () => {
+    const sel: WordSelection = { editorIndex: 0, from: 10, to: 13, text: "pro" }
+    const result = findVerticalTargetConstrained("ArrowDown", { cx: 80, cy: 130 }, candidates, sel, null)
+    expect(result.target).toBeNull()
+  })
+
+  it("preserves stickyX", () => {
+    const sel: WordSelection = { editorIndex: 0, from: 10, to: 13, text: "pro" }
+    const result = findVerticalTargetConstrained("ArrowUp", { cx: 80, cy: 130 }, candidates, sel, 100)
+    expect(result.stickyX).toBe(100)
+  })
+})
+
+// ── computeSelectAllInPassage ───────────────────────────────────
+
+describe("computeSelectAllInPassage", () => {
+  it("spans from first to last word in passage", () => {
+    const a = makeWord(0, 1, 5, "alpha")
+    const b = makeWord(0, 6, 12, "bravo")
+    const c = makeWord(0, 13, 20, "charlie")
+
+    const candidates: WordCenter[] = [
+      makeCenter(a, 50, 100),
+      makeCenter(b, 120, 100),
+      makeCenter(c, 200, 100),
+    ]
+
+    const fakeEditor = {
+      state: {
+        doc: {
+          textBetween: (from: number, to: number) => {
+            if (from === 1 && to === 20) return "alpha bravo charlie"
+            return ""
+          },
+        },
+      },
+    } as unknown as Editor
+
+    const result = computeSelectAllInPassage(0, candidates, fakeEditor)
+    expect(result).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 20,
+      text: "alpha bravo charlie",
+    })
+  })
+
+  it("handles a single word", () => {
+    const a = makeWord(0, 5, 10, "alone")
+    const candidates: WordCenter[] = [makeCenter(a, 100, 100)]
+
+    const fakeEditor = {
+      state: {
+        doc: {
+          textBetween: (from: number, to: number) => {
+            if (from === 5 && to === 10) return "alone"
+            return ""
+          },
+        },
+      },
+    } as unknown as Editor
+
+    const result = computeSelectAllInPassage(0, candidates, fakeEditor)
+    expect(result).toEqual({
+      editorIndex: 0,
+      from: 5,
+      to: 10,
+      text: "alone",
+    })
+  })
+
+  it("returns null for empty passage", () => {
+    const fakeEditor = {} as Editor
+    expect(computeSelectAllInPassage(2, [], fakeEditor)).toBeNull()
   })
 })

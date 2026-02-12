@@ -582,3 +582,507 @@ describe("useWordSelection shift+arrow range selection", () => {
     })
   })
 })
+
+// ── Enhanced keyboard navigation ──────────────────────────────────
+
+describe("useWordSelection Escape key", () => {
+  it("Escape clears selection", () => {
+    const { result } = renderHook(() => useWordSelection(createOptions()))
+
+    act(() => { result.current.selectWord(0, 1, 5, "hello") })
+    expect(result.current.selection).not.toBeNull()
+
+    act(() => { fireKey("Escape") })
+    expect(result.current.selection).toBeNull()
+  })
+
+  it("second Escape is a no-op", () => {
+    const { result } = renderHook(() => useWordSelection(createOptions()))
+
+    act(() => { result.current.selectWord(0, 1, 5, "hello") })
+    act(() => { fireKey("Escape") })
+    expect(result.current.selection).toBeNull()
+
+    act(() => { fireKey("Escape") })
+    expect(result.current.selection).toBeNull()
+  })
+})
+
+describe("useWordSelection Home/End keys", () => {
+  // Layout: Editor 0 has two lines
+  //   Line 1: "the"(50,100) "quick"(120,100) "brown"(200,100)
+  //   Line 2: "fox"(60,130) "jumps"(130,130)
+
+  const wordsE0 = [
+    { editorIndex: 0, from: 1, to: 4, text: "the" },
+    { editorIndex: 0, from: 5, to: 10, text: "quick" },
+    { editorIndex: 0, from: 11, to: 16, text: "brown" },
+    { editorIndex: 0, from: 20, to: 23, text: "fox" },
+    { editorIndex: 0, from: 24, to: 29, text: "jumps" },
+  ]
+
+  const centersMap: Record<string, { cx: number; cy: number }> = {
+    "0-1-4": { cx: 50, cy: 100 },
+    "0-5-10": { cx: 120, cy: 100 },
+    "0-11-16": { cx: 200, cy: 100 },
+    "0-20-23": { cx: 60, cy: 130 },
+    "0-24-29": { cx: 130, cy: 130 },
+  }
+
+  function setupHomeEndMocks() {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    const fakeEditor = {
+      state: {
+        doc: {
+          textBetween: (from: number, to: number) => {
+            const inRange = wordsE0.filter(w => w.from >= from && w.to <= to)
+            return inRange.map(w => w.text).join(" ")
+          },
+        },
+      },
+    } as unknown as Editor
+    editorsRef.current.set(0, fakeEditor)
+
+    const containerEl = document.createElement("div")
+    containerEl.getBoundingClientRect = () => ({
+      left: 0, top: 0, right: 800, bottom: 600,
+      width: 800, height: 600, x: 0, y: 0, toJSON: () => {},
+    })
+    const containerRef = { current: containerEl } as React.RefObject<HTMLDivElement | null>
+
+    vi.mocked(collectAllWords).mockImplementation(() => [...wordsE0])
+    vi.mocked(getWordCenter).mockImplementation((word) => {
+      const key = `${word.editorIndex}-${word.from}-${word.to}`
+      return centersMap[key] ?? null
+    })
+
+    return { editorsRef, containerRef }
+  }
+
+  beforeEach(() => { vi.clearAllMocks() })
+
+  it("Home jumps to first word in passage", () => {
+    const { editorsRef, containerRef } = setupHomeEndMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 11, 16, "brown") })
+    act(() => { fireKey("Home") })
+    expect(result.current.selection?.text).toBe("the")
+    expect(result.current.selection?.from).toBe(1)
+  })
+
+  it("End jumps to last word in passage", () => {
+    const { editorsRef, containerRef } = setupHomeEndMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+    act(() => { fireKey("End") })
+    expect(result.current.selection?.text).toBe("jumps")
+    expect(result.current.selection?.to).toBe(29)
+  })
+
+  it("Shift+End progressively extends: first to line end, then to passage end", () => {
+    const { editorsRef, containerRef } = setupHomeEndMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Start from "the" at line start
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+
+    // First Shift+End: extend to line end ("brown")
+    act(() => { fireKey("End", { shiftKey: true }) })
+    expect(result.current.selection?.to).toBe(16) // "brown" ends at 16
+
+    // Second Shift+End: head is now at "brown" (line end), extend to passage end ("jumps")
+    act(() => { fireKey("End", { shiftKey: true }) })
+    expect(result.current.selection?.to).toBe(29) // "jumps" ends at 29
+  })
+
+  it("Shift+Home progressively extends: first to line start, then to passage start", () => {
+    const { editorsRef, containerRef } = setupHomeEndMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Start from "jumps" at line end
+    act(() => { result.current.selectWord(0, 24, 29, "jumps") })
+
+    // First Shift+Home: extend to line start ("fox")
+    act(() => { fireKey("Home", { shiftKey: true }) })
+    expect(result.current.selection?.from).toBe(20) // "fox" starts at 20
+
+    // Second Shift+Home: head is now at "fox" (line start), extend to passage start ("the")
+    act(() => { fireKey("Home", { shiftKey: true }) })
+    expect(result.current.selection?.from).toBe(1) // "the" starts at 1
+  })
+})
+
+describe("useWordSelection Cmd+Arrow keys", () => {
+  // Two-editor layout
+  const wordsE0 = [
+    { editorIndex: 0, from: 1, to: 4, text: "and" },
+    { editorIndex: 0, from: 10, to: 13, text: "pro" },
+  ]
+  const wordsE1 = [
+    { editorIndex: 1, from: 1, to: 10, text: "Integrate" },
+  ]
+
+  const centersMap: Record<string, { cx: number; cy: number }> = {
+    "0-1-4": { cx: 100, cy: 100 },
+    "0-10-13": { cx: 80, cy: 130 },
+    "1-1-10": { cx: 400, cy: 100 },
+  }
+
+  function setupCmdMocks() {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    editorsRef.current.set(0, {} as Editor)
+    editorsRef.current.set(1, {} as Editor)
+
+    const containerEl = document.createElement("div")
+    containerEl.getBoundingClientRect = () => ({
+      left: 0, top: 0, right: 800, bottom: 600,
+      width: 800, height: 600, x: 0, y: 0, toJSON: () => {},
+    })
+    const containerRef = { current: containerEl } as React.RefObject<HTMLDivElement | null>
+
+    vi.mocked(collectAllWords).mockImplementation((_editor, editorIndex) => {
+      if (editorIndex === 0) return [...wordsE0]
+      if (editorIndex === 1) return [...wordsE1]
+      return []
+    })
+
+    vi.mocked(getWordCenter).mockImplementation((word) => {
+      const key = `${word.editorIndex}-${word.from}-${word.to}`
+      return centersMap[key] ?? null
+    })
+
+    return { editorsRef, containerRef }
+  }
+
+  beforeEach(() => { vi.clearAllMocks() })
+
+  it("Cmd+ArrowDown stays in same passage (does not cross editors)", () => {
+    const { editorsRef, containerRef } = setupCmdMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "and") })
+    // Cmd+Down: should go to "pro" (same editor), not cross to editor 1
+    act(() => { fireKey("ArrowDown", { ctrlKey: true }) })
+    expect(result.current.selection?.text).toBe("pro")
+    expect(result.current.selection?.editorIndex).toBe(0)
+  })
+
+  it("Cmd+ArrowDown at bottom of passage stays put (returns null target)", () => {
+    const { editorsRef, containerRef } = setupCmdMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
+    )
+
+    act(() => { result.current.selectWord(0, 10, 13, "pro") })
+    act(() => { fireKey("ArrowDown", { ctrlKey: true }) })
+    // No word below in same editor, so selection stays on "pro"
+    expect(result.current.selection?.text).toBe("pro")
+  })
+
+  it("plain ArrowDown still crosses editors (regression)", () => {
+    const { editorsRef, containerRef } = setupCmdMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
+    )
+
+    act(() => { result.current.selectWord(0, 10, 13, "pro") })
+    act(() => { fireKey("ArrowDown") })
+    // Plain ArrowDown crosses editors
+    expect(result.current.selection?.editorIndex).toBe(1)
+  })
+})
+
+describe("useWordSelection Cmd+Shift+Arrow keys", () => {
+  const wordsE0 = [
+    { editorIndex: 0, from: 1, to: 4, text: "the" },
+    { editorIndex: 0, from: 5, to: 10, text: "quick" },
+    { editorIndex: 0, from: 11, to: 16, text: "brown" },
+    { editorIndex: 0, from: 20, to: 23, text: "fox" },
+    { editorIndex: 0, from: 24, to: 29, text: "jumps" },
+  ]
+
+  const centersMap: Record<string, { cx: number; cy: number }> = {
+    "0-1-4": { cx: 50, cy: 100 },
+    "0-5-10": { cx: 120, cy: 100 },
+    "0-11-16": { cx: 200, cy: 100 },
+    "0-20-23": { cx: 60, cy: 130 },
+    "0-24-29": { cx: 130, cy: 130 },
+  }
+
+  function setupCmdShiftMocks() {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    const fakeEditor = {
+      state: {
+        doc: {
+          textBetween: (from: number, to: number) => {
+            const inRange = wordsE0.filter(w => w.from >= from && w.to <= to)
+            return inRange.map(w => w.text).join(" ")
+          },
+        },
+      },
+    } as unknown as Editor
+    editorsRef.current.set(0, fakeEditor)
+
+    const containerEl = document.createElement("div")
+    containerEl.getBoundingClientRect = () => ({
+      left: 0, top: 0, right: 800, bottom: 600,
+      width: 800, height: 600, x: 0, y: 0, toJSON: () => {},
+    })
+    const containerRef = { current: containerEl } as React.RefObject<HTMLDivElement | null>
+
+    vi.mocked(collectAllWords).mockImplementation(() => [...wordsE0])
+    vi.mocked(getWordCenter).mockImplementation((word) => {
+      const key = `${word.editorIndex}-${word.from}-${word.to}`
+      return centersMap[key] ?? null
+    })
+
+    return { editorsRef, containerRef }
+  }
+
+  beforeEach(() => { vi.clearAllMocks() })
+
+  it("Cmd+Shift+ArrowRight extends to last word on line", () => {
+    const { editorsRef, containerRef } = setupCmdShiftMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+    act(() => { fireKey("ArrowRight", { ctrlKey: true, shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 16,
+      text: "the quick brown",
+    })
+  })
+
+  it("Cmd+Shift+ArrowLeft extends to first word on line", () => {
+    const { editorsRef, containerRef } = setupCmdShiftMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 11, 16, "brown") })
+    act(() => { fireKey("ArrowLeft", { ctrlKey: true, shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 16,
+      text: "the quick brown",
+    })
+  })
+
+  it("Cmd+Shift+ArrowDown extends to last word in passage", () => {
+    const { editorsRef, containerRef } = setupCmdShiftMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "the") })
+    act(() => { fireKey("ArrowDown", { ctrlKey: true, shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 29,
+      text: "the quick brown fox jumps",
+    })
+  })
+
+  it("Cmd+Shift+ArrowUp extends to first word in passage", () => {
+    const { editorsRef, containerRef } = setupCmdShiftMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 24, 29, "jumps") })
+    act(() => { fireKey("ArrowUp", { ctrlKey: true, shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 29,
+      text: "the quick brown fox jumps",
+    })
+  })
+})
+
+describe("useWordSelection Cmd+A", () => {
+  const wordsE0 = [
+    { editorIndex: 0, from: 1, to: 4, text: "the" },
+    { editorIndex: 0, from: 5, to: 10, text: "quick" },
+    { editorIndex: 0, from: 20, to: 23, text: "fox" },
+  ]
+
+  const centersMap: Record<string, { cx: number; cy: number }> = {
+    "0-1-4": { cx: 50, cy: 100 },
+    "0-5-10": { cx: 120, cy: 100 },
+    "0-20-23": { cx: 60, cy: 130 },
+  }
+
+  function setupCmdAMocks() {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    const fakeEditor = {
+      state: {
+        doc: {
+          textBetween: (from: number, to: number) => {
+            if (from === 1 && to === 23) return "the quick fox"
+            return ""
+          },
+        },
+      },
+    } as unknown as Editor
+    editorsRef.current.set(0, fakeEditor)
+
+    const containerEl = document.createElement("div")
+    containerEl.getBoundingClientRect = () => ({
+      left: 0, top: 0, right: 800, bottom: 600,
+      width: 800, height: 600, x: 0, y: 0, toJSON: () => {},
+    })
+    const containerRef = { current: containerEl } as React.RefObject<HTMLDivElement | null>
+
+    vi.mocked(collectAllWords).mockImplementation(() => [...wordsE0])
+    vi.mocked(getWordCenter).mockImplementation((word) => {
+      const key = `${word.editorIndex}-${word.from}-${word.to}`
+      return centersMap[key] ?? null
+    })
+
+    return { editorsRef, containerRef }
+  }
+
+  beforeEach(() => { vi.clearAllMocks() })
+
+  it("Cmd+A selects all words in active passage", () => {
+    const { editorsRef, containerRef } = setupCmdAMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 5, 10, "quick") })
+    act(() => { fireKey("a", { ctrlKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 23,
+      text: "the quick fox",
+    })
+  })
+
+  it("Cmd+A works without existing selection (defaults to editor 0)", () => {
+    const { editorsRef, containerRef } = setupCmdAMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    expect(result.current.selection).toBeNull()
+    act(() => { fireKey("a", { ctrlKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 23,
+      text: "the quick fox",
+    })
+  })
+})
+
+describe("useWordSelection Tab/Shift+Tab passage cycling", () => {
+  const wordsE0 = [
+    { editorIndex: 0, from: 1, to: 4, text: "and" },
+  ]
+  const wordsE1 = [
+    { editorIndex: 1, from: 1, to: 10, text: "Integrate" },
+  ]
+
+  const centersMap: Record<string, { cx: number; cy: number }> = {
+    "0-1-4": { cx: 100, cy: 100 },
+    "1-1-10": { cx: 400, cy: 100 },
+  }
+
+  function setupTabMocks() {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    editorsRef.current.set(0, {} as Editor)
+    editorsRef.current.set(1, {} as Editor)
+
+    const containerEl = document.createElement("div")
+    containerEl.getBoundingClientRect = () => ({
+      left: 0, top: 0, right: 800, bottom: 600,
+      width: 800, height: 600, x: 0, y: 0, toJSON: () => {},
+    })
+    const containerRef = { current: containerEl } as React.RefObject<HTMLDivElement | null>
+
+    vi.mocked(collectAllWords).mockImplementation((_editor, editorIndex) => {
+      if (editorIndex === 0) return [...wordsE0]
+      if (editorIndex === 1) return [...wordsE1]
+      return []
+    })
+
+    vi.mocked(getWordCenter).mockImplementation((word) => {
+      const key = `${word.editorIndex}-${word.from}-${word.to}`
+      return centersMap[key] ?? null
+    })
+
+    return { editorsRef, containerRef }
+  }
+
+  beforeEach(() => { vi.clearAllMocks() })
+
+  it("Tab moves to first word of next passage", () => {
+    const { editorsRef, containerRef } = setupTabMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
+    )
+
+    act(() => { result.current.selectWord(0, 1, 4, "and") })
+    act(() => { fireKey("Tab") })
+    expect(result.current.selection?.text).toBe("Integrate")
+    expect(result.current.selection?.editorIndex).toBe(1)
+  })
+
+  it("Tab wraps around from last passage to first", () => {
+    const { editorsRef, containerRef } = setupTabMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
+    )
+
+    act(() => { result.current.selectWord(1, 1, 10, "Integrate") })
+    act(() => { fireKey("Tab") })
+    expect(result.current.selection?.text).toBe("and")
+    expect(result.current.selection?.editorIndex).toBe(0)
+  })
+
+  it("Shift+Tab moves to first word of previous passage", () => {
+    const { editorsRef, containerRef } = setupTabMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
+    )
+
+    act(() => { result.current.selectWord(1, 1, 10, "Integrate") })
+    act(() => { fireKey("Tab", { shiftKey: true }) })
+    expect(result.current.selection?.text).toBe("and")
+    expect(result.current.selection?.editorIndex).toBe(0)
+  })
+
+  it("Tab works without existing selection", () => {
+    const { editorsRef, containerRef } = setupTabMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
+    )
+
+    expect(result.current.selection).toBeNull()
+    act(() => { fireKey("Tab") })
+    // currentIndex is -1 (no selection), Tab goes to passage 0
+    expect(result.current.selection?.text).toBe("and")
+    expect(result.current.selection?.editorIndex).toBe(0)
+  })
+})

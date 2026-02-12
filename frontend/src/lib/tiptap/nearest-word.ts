@@ -174,6 +174,62 @@ export function getWordCenter(
   }
 }
 
+/**
+ * Return the leftmost word on the same visual line as `center`.
+ */
+export function findFirstWordOnLine(
+  center: { cx: number; cy: number },
+  candidates: WordCenter[]
+): CollectedWord | null {
+  const sameLine = candidates.filter(
+    (c) => Math.abs(c.cy - center.cy) <= LINE_TOLERANCE
+  )
+  if (sameLine.length === 0) return null
+  return sameLine.reduce((best, c) => (c.cx < best.cx ? c : best)).word
+}
+
+/**
+ * Return the rightmost word on the same visual line as `center`.
+ */
+export function findLastWordOnLine(
+  center: { cx: number; cy: number },
+  candidates: WordCenter[]
+): CollectedWord | null {
+  const sameLine = candidates.filter(
+    (c) => Math.abs(c.cy - center.cy) <= LINE_TOLERANCE
+  )
+  if (sameLine.length === 0) return null
+  return sameLine.reduce((best, c) => (c.cx > best.cx ? c : best)).word
+}
+
+/**
+ * True if there are no words to the left of `center` on the same visual line.
+ */
+export function isAtLineStart(
+  center: { cx: number; cy: number },
+  sameEditorCandidates: WordCenter[]
+): boolean {
+  return sameEditorCandidates.filter(
+    (c) =>
+      Math.abs(c.cy - center.cy) <= LINE_TOLERANCE &&
+      c.cx < center.cx - SAME_POSITION_THRESHOLD
+  ).length === 0
+}
+
+/**
+ * True if `word` is the rightmost word on its visual line among `sameEditorCandidates`.
+ */
+export function isAtLineEnd(
+  center: { cx: number; cy: number },
+  sameEditorCandidates: WordCenter[]
+): boolean {
+  return sameEditorCandidates.filter(
+    (c) =>
+      Math.abs(c.cy - center.cy) <= LINE_TOLERANCE &&
+      c.cx > center.cx + SAME_POSITION_THRESHOLD
+  ).length === 0
+}
+
 export function findNearestWord(
   currentCenter: { cx: number; cy: number },
   candidates: WordCenter[],

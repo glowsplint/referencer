@@ -26,8 +26,7 @@ test("clicking two different words draws an arrow between them", async ({ page }
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Navigate to see preview (keyboard nav updates preview but doesn't finalize)
-  await page.keyboard.press("Escape");
+  // Navigate with ArrowRight to see preview arrow
   await page.keyboard.press("ArrowRight");
   const preview = page.getByTestId("preview-arrow");
   await expect(preview).toHaveCount(1, { timeout: 2000 });

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest"
-import { findNearestWord, findNearestWordOnSameLine, findFirstWordOnAdjacentLine, findWordInReadingOrder, getWordRect } from "./nearest-word"
+import { findNearestWord, findNearestWordOnSameLine, findFirstWordOnAdjacentLine, findWordInReadingOrder, getWordRect, findFirstWordOnLine, findLastWordOnLine, isAtLineStart, isAtLineEnd } from "./nearest-word"
 import type { CollectedWord } from "./word-collection"
 import type { Editor } from "@tiptap/react"
 
@@ -344,5 +344,108 @@ describe("findWordInReadingOrder", () => {
     const result = findWordInReadingOrder(words[2], shuffled, "ArrowRight")
     expect(result?.text).toBe("another")
     expect(result?.editorIndex).toBe(1)
+  })
+})
+
+// ── findFirstWordOnLine / findLastWordOnLine ──────────────────────
+
+describe("findFirstWordOnLine", () => {
+  it("returns leftmost word on the same visual line", () => {
+    const candidates = [
+      makeCandidateAt(200, 100, "middle"),
+      makeCandidateAt(50, 100, "left"),
+      makeCandidateAt(350, 100, "right"),
+      makeCandidateAt(100, 200, "other-line"),
+    ]
+    const result = findFirstWordOnLine({ cx: 200, cy: 100 }, candidates)
+    expect(result?.text).toBe("left")
+  })
+
+  it("returns the only word on a single-word line", () => {
+    const candidates = [makeCandidateAt(100, 100, "only")]
+    const result = findFirstWordOnLine({ cx: 100, cy: 100 }, candidates)
+    expect(result?.text).toBe("only")
+  })
+
+  it("returns null for empty candidates", () => {
+    expect(findFirstWordOnLine({ cx: 100, cy: 100 }, [])).toBeNull()
+  })
+
+  it("ignores words on different lines", () => {
+    const candidates = [
+      makeCandidateAt(50, 200, "far-below"),
+    ]
+    expect(findFirstWordOnLine({ cx: 100, cy: 100 }, candidates)).toBeNull()
+  })
+})
+
+describe("findLastWordOnLine", () => {
+  it("returns rightmost word on the same visual line", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "left"),
+      makeCandidateAt(200, 100, "middle"),
+      makeCandidateAt(350, 100, "right"),
+      makeCandidateAt(100, 200, "other-line"),
+    ]
+    const result = findLastWordOnLine({ cx: 100, cy: 100 }, candidates)
+    expect(result?.text).toBe("right")
+  })
+
+  it("returns the only word on a single-word line", () => {
+    const candidates = [makeCandidateAt(100, 100, "only")]
+    const result = findLastWordOnLine({ cx: 100, cy: 100 }, candidates)
+    expect(result?.text).toBe("only")
+  })
+
+  it("returns null for empty candidates", () => {
+    expect(findLastWordOnLine({ cx: 100, cy: 100 }, [])).toBeNull()
+  })
+})
+
+// ── isAtLineStart / isAtLineEnd ─────────────────────────────────
+
+describe("isAtLineStart", () => {
+  it("returns true when word is leftmost on its line", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "first"),
+      makeCandidateAt(150, 100, "second"),
+      makeCandidateAt(250, 100, "third"),
+    ]
+    expect(isAtLineStart({ cx: 50, cy: 100 }, candidates)).toBe(true)
+  })
+
+  it("returns false when there are words to the left", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "first"),
+      makeCandidateAt(150, 100, "second"),
+    ]
+    expect(isAtLineStart({ cx: 150, cy: 100 }, candidates)).toBe(false)
+  })
+
+  it("returns true for empty candidates", () => {
+    expect(isAtLineStart({ cx: 100, cy: 100 }, [])).toBe(true)
+  })
+})
+
+describe("isAtLineEnd", () => {
+  it("returns true when word is rightmost on its line", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "first"),
+      makeCandidateAt(150, 100, "second"),
+      makeCandidateAt(250, 100, "third"),
+    ]
+    expect(isAtLineEnd({ cx: 250, cy: 100 }, candidates)).toBe(true)
+  })
+
+  it("returns false when there are words to the right", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "first"),
+      makeCandidateAt(150, 100, "second"),
+    ]
+    expect(isAtLineEnd({ cx: 50, cy: 100 }, candidates)).toBe(false)
+  })
+
+  it("returns true for empty candidates", () => {
+    expect(isAtLineEnd({ cx: 100, cy: 100 }, [])).toBe(true)
   })
 })

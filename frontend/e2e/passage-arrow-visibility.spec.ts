@@ -35,8 +35,8 @@ async function drawArrowRight(
   page: import("@playwright/test").Page,
   steps: number
 ) {
-  // Dismiss any auto-focused annotation input so arrow keys navigate words
-  await page.keyboard.press("Escape");
+  // Blur any auto-focused annotation input so arrow keys navigate words
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   // Switch to arrow tool
   await page.keyboard.press("a");
   // Click current word to set anchor
@@ -60,8 +60,8 @@ async function drawArrowToEditor(
   editorCount: number,
   maxSteps = 80
 ) {
-  // Dismiss any auto-focused annotation input so arrow keys navigate words
-  await page.keyboard.press("Escape");
+  // Blur any auto-focused annotation input so arrow keys navigate words
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   // Switch to arrow tool
   await page.keyboard.press("a");
   // Click current word to set anchor
