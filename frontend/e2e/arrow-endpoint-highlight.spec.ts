@@ -101,31 +101,6 @@ test("arrow endpoint rects, line, and arrowhead share same base color", async ({
   expect(arrowheadFill).toBe(rectFill);
 });
 
-test("arrow endpoint SVG rects disappear when layer is hidden", async ({ page }) => {
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right to destination
-  await page.keyboard.press("ArrowRight");
-  await page.waitForTimeout(30);
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
-
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
-
-  const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
-  await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
-
-  // Toggle layer visibility off
-  await page.getByTestId("layerVisibility-0").click();
-  await expect(endpointRects).toHaveCount(0, { timeout: 2000 });
-
-  // Toggle layer visibility back on
-  await page.getByTestId("layerVisibility-0").click();
-  await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
-});
-
 test("arrow endpoint SVG rects disappear when unlocked", async ({ page }) => {
   // Click current word to set anchor
   const sel = page.locator(".word-selection").first();

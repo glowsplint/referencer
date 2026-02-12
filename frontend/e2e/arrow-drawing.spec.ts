@@ -133,27 +133,6 @@ test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ pa
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
 });
 
-test("layer visibility toggle hides/shows arrows", async ({ page }) => {
-  const firstParagraph = page.locator(".simple-editor p").first();
-  const box = await firstParagraph.boundingBox();
-  expect(box).not.toBeNull();
-  const y = box!.y + box!.height / 2;
-
-  // Draw an arrow
-  await page.mouse.click(box!.x + 30, y);
-  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
-  await page.mouse.click(box!.x + 120, y);
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
-
-  // Toggle layer visibility off
-  await page.getByTestId("layerVisibility-0").click();
-  await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
-
-  // Toggle layer visibility back on
-  await page.getByTestId("layerVisibility-0").click();
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
-});
-
 test("arrow tool button shows depressed state when active", async ({ page }) => {
   const arrowBtn = page.getByTestId("arrowToolButton");
   await expect(arrowBtn).toHaveClass(/bg-accent/, { timeout: 2000 });

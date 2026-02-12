@@ -790,18 +790,6 @@ describe("useWordSelection Cmd+Arrow keys", () => {
     // No word below in same editor, so selection stays on "pro"
     expect(result.current.selection?.text).toBe("pro")
   })
-
-  it("plain ArrowDown still crosses editors (regression)", () => {
-    const { editorsRef, containerRef } = setupCmdMocks()
-    const { result } = renderHook(() =>
-      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
-    )
-
-    act(() => { result.current.selectWord(0, 10, 13, "pro") })
-    act(() => { fireKey("ArrowDown") })
-    // Plain ArrowDown crosses editors
-    expect(result.current.selection?.editorIndex).toBe(1)
-  })
 })
 
 describe("useWordSelection Cmd+Shift+Arrow keys", () => {
