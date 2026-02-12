@@ -53,9 +53,11 @@ export function useDrawingMode({
   const isArrowToolRef = useRef(isArrowTool)
   isArrowToolRef.current = isArrowTool
 
-  // Clear anchor when switching away from arrow tool or unlocking
+  // Show toast when entering arrow mode, dismiss when leaving
   useEffect(() => {
-    if (!isArrowTool) {
+    if (isArrowTool) {
+      toast.info("Click a word to start drawing an arrow", { id: "arrow-drawing" })
+    } else {
       anchorRef.current = null
       setDrawingState(null)
       toast.dismiss("arrow-drawing")

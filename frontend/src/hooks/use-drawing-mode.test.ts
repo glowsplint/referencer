@@ -28,6 +28,12 @@ describe("useDrawingMode", () => {
     vi.clearAllMocks()
   })
 
+  it("shows entry toast when arrow tool is activated", () => {
+    renderHook(() => useDrawingMode(createOptions()))
+
+    expect(toast.info).toHaveBeenCalledWith("Click a word to start drawing an arrow", { id: "arrow-drawing" })
+  })
+
   it("does nothing when activeTool is not arrow", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 })
     const { result } = renderHook(() => useDrawingMode(opts))
