@@ -5,7 +5,7 @@ import { useDrawingMode } from "./use-drawing-mode"
 import type { WordSelection, ActiveTool } from "@/types/editor"
 
 vi.mock("sonner", () => ({
-  toast: { warning: vi.fn() },
+  toast: { warning: vi.fn(), info: vi.fn(), success: vi.fn(), dismiss: vi.fn() },
 }))
 
 function createOptions(overrides: Record<string, unknown> = {}) {
@@ -50,7 +50,7 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(false)
   })
 
-  it("sets anchor on first handleArrowClick", () => {
+  it("sets anchor on first handleArrowClick and shows target toast", () => {
     const { result } = renderHook(() => useDrawingMode(createOptions()))
 
     act(() => { result.current.handleArrowClick(word1) })
@@ -60,6 +60,7 @@ describe("useDrawingMode", () => {
       cursor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
     })
     expect(result.current.isDrawing).toBe(true)
+    expect(toast.info).toHaveBeenCalledWith("Now click the target word", { id: "arrow-drawing" })
   })
 
   it("creates arrow on second click with different word", () => {
@@ -87,9 +88,10 @@ describe("useDrawingMode", () => {
     })
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
+    expect(toast.success).toHaveBeenCalledWith("Arrow created", { id: "arrow-drawing", duration: 1500 })
   })
 
-  it("cancels when same word is clicked again", () => {
+  it("dismisses toast when same word is clicked again", () => {
     const addArrow = vi.fn()
     const { result } = renderHook(() =>
       useDrawingMode({
@@ -108,6 +110,7 @@ describe("useDrawingMode", () => {
     expect(addArrow).not.toHaveBeenCalled()
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
+    expect(toast.dismiss).toHaveBeenCalledWith("arrow-drawing")
   })
 
   it("shows error toast when no active layer on first click", () => {
@@ -147,6 +150,7 @@ describe("useDrawingMode", () => {
     rerender({ activeTool: "selection" })
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
+    expect(toast.dismiss).toHaveBeenCalledWith("arrow-drawing")
   })
 
   it("clears drawing state on unlock", () => {

@@ -53,6 +53,7 @@ export function useDrawingMode({
     if (!isArrowTool) {
       anchorRef.current = null
       setDrawingState(null)
+      toast.dismiss("arrow-drawing")
     }
   }, [isArrowTool])
 
@@ -81,6 +82,7 @@ export function useDrawingMode({
         // Set anchor from click
         anchorRef.current = endpoint
         setDrawingState({ anchor: endpoint, cursor: endpoint })
+        toast.info("Now click the target word", { id: "arrow-drawing" })
         return
       }
 
@@ -88,6 +90,7 @@ export function useDrawingMode({
         // Same word — cancel
         anchorRef.current = null
         setDrawingState(null)
+        toast.dismiss("arrow-drawing")
         return
       }
 
@@ -100,6 +103,7 @@ export function useDrawingMode({
       }
       anchorRef.current = null
       setDrawingState(null)
+      toast.success("Arrow created", { id: "arrow-drawing", duration: 1500 })
     },
     []
   )
