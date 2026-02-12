@@ -142,6 +142,47 @@ describe("ArrowOverlay", () => {
     expect(preview.getAttribute("stroke-dasharray")).toBe("6 4")
   })
 
+  it("renders anchor highlight rect during preview", () => {
+    const drawingState: DrawingState = {
+      anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+      cursor: { editorIndex: 0, from: 10, to: 15, text: "world" },
+    }
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          drawingState,
+          drawingColor: "#fca5a5",
+        })}
+      />
+    )
+
+    const anchorRect = screen.getByTestId("preview-anchor-rect")
+    expect(anchorRect).toBeInTheDocument()
+    expect(anchorRect.getAttribute("fill")).toBe("#fca5a5")
+    // Anchor word: from=1, to=5 → x=10, y=15, width=40, height=20
+    expect(anchorRect.getAttribute("x")).toBe("10")
+    expect(anchorRect.getAttribute("width")).toBe("40")
+  })
+
+  it("renders anchor highlight rect even when anchor === cursor", () => {
+    const drawingState: DrawingState = {
+      anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+      cursor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+    }
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          drawingState,
+          drawingColor: "#fca5a5",
+        })}
+      />
+    )
+
+    const anchorRect = screen.getByTestId("preview-anchor-rect")
+    expect(anchorRect).toBeInTheDocument()
+    expect(screen.queryByTestId("preview-arrow")).not.toBeInTheDocument()
+  })
+
   it("does not render preview when anchor === cursor", () => {
     const drawingState: DrawingState = {
       anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
@@ -340,7 +381,7 @@ describe("ArrowOverlay", () => {
     expect(polygon?.getAttribute("fill")).toBe(layerColor)
   })
 
-  it("arrow hit areas have pointer-events none when arrow tool is active", () => {
+  it("arrow hit areas have pointer-events auto when arrow tool is active", () => {
     const layer = createLayer({
       arrows: [
         {
@@ -357,7 +398,8 @@ describe("ArrowOverlay", () => {
     )
 
     const hitArea = screen.getByTestId("arrow-hit-area")
-    expect(hitArea).toHaveStyle({ pointerEvents: "none" })
+    expect(hitArea).toHaveStyle({ pointerEvents: "auto" })
+    expect(hitArea).toHaveStyle({ cursor: "pointer" })
   })
 
   it("interaction layer SVG has no mix-blend-mode", () => {

@@ -131,12 +131,14 @@ export function ArrowOverlay({
     const fromCenter = getWordCenter(drawingState.anchor, editorsRef, containerRect)
     const toCenter = getWordCenter(drawingState.cursor, editorsRef, containerRect)
     if (!fromCenter || !toCenter) return null
-    if (fromCenter.cx === toCenter.cx && fromCenter.cy === toCenter.cy) return null
+    const anchorRect = getWordRect(drawingState.anchor, editorsRef, containerRect)
+    if (fromCenter.cx === toCenter.cx && fromCenter.cy === toCenter.cy) return { anchorRect }
     return {
       x1: fromCenter.cx,
       y1: fromCenter.cy,
       x2: toCenter.cx,
       y2: toCenter.cy,
+      anchorRect,
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drawingState, editorsRef, containerRect?.width, containerRect?.height, tick])
@@ -221,17 +223,31 @@ export function ArrowOverlay({
         })}
 
         {previewPosition && drawingColor && (() => {
-          const previewPath = `M ${previewPosition.x1} ${previewPosition.y1} L ${(previewPosition.x1 + previewPosition.x2) / 2} ${(previewPosition.y1 + previewPosition.y2) / 2} L ${previewPosition.x2} ${previewPosition.y2}`
+          const hasLine = "x1" in previewPosition
           return (
-            <path
-              data-testid="preview-arrow"
-              d={previewPath}
-              stroke={blendArrow(drawingColor)}
-              strokeWidth={2}
-              strokeDasharray="6 4"
-              fill="none"
-              markerMid="url(#arrowhead-preview)"
-            />
+            <g opacity={ARROW_OPACITY}>
+              {previewPosition.anchorRect && (
+                <rect
+                  data-testid="preview-anchor-rect"
+                  x={previewPosition.anchorRect.x}
+                  y={previewPosition.anchorRect.y}
+                  width={previewPosition.anchorRect.width}
+                  height={previewPosition.anchorRect.height}
+                  fill={drawingColor}
+                />
+              )}
+              {hasLine && (
+                <path
+                  data-testid="preview-arrow"
+                  d={`M ${previewPosition.x1} ${previewPosition.y1} L ${(previewPosition.x1! + previewPosition.x2!) / 2} ${(previewPosition.y1! + previewPosition.y2!) / 2} L ${previewPosition.x2} ${previewPosition.y2}`}
+                  stroke={blendArrow(drawingColor)}
+                  strokeWidth={2}
+                  strokeDasharray="6 4"
+                  fill="none"
+                  markerMid="url(#arrowhead-preview)"
+                />
+              )}
+            </g>
           )
         })()}
       </svg>
@@ -257,8 +273,8 @@ export function ArrowOverlay({
                 strokeWidth={12}
                 fill="none"
                 style={{
-                  pointerEvents: activeTool === "arrow" ? "none" : "auto",
-                  cursor: activeTool === "arrow" ? "default" : "pointer",
+                  pointerEvents: "auto",
+                  cursor: "pointer",
                 }}
                 onMouseEnter={() => setHoveredArrowId(pos.arrowId)}
                 onMouseLeave={() => setHoveredArrowId(null)}
