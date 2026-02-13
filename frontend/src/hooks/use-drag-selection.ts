@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react"
 import { toast } from "sonner"
 import type { Editor } from "@tiptap/react"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
-import type { ActiveTool, WordSelection } from "@/types/editor"
+import type { ActiveTool } from "@/types/editor"
 
 interface DragRange {
   editorIndex: number
@@ -24,7 +24,6 @@ interface UseDragSelectionOptions {
   selectWord: (editorIndex: number, from: number, to: number, text: string) => void
   clearSelection: () => void
   onHighlightAdded?: (layerId: string, highlightId: string) => void
-  onArrowClick?: (sel: WordSelection) => void
 }
 
 export function useDragSelection({
@@ -37,7 +36,6 @@ export function useDragSelection({
   selectWord,
   clearSelection,
   onHighlightAdded,
-  onArrowClick,
 }: UseDragSelectionOptions) {
   const dragRef = useRef<{
     anchor: DragRange
@@ -109,11 +107,8 @@ export function useDragSelection({
 
       selectWord(editorIndex, from, to, text)
 
-      // Arrow tool: delegate click to drawing mode
-      if (activeTool === "arrow") {
-        onArrowClick?.({ editorIndex, from, to, text })
-        return
-      }
+      // Arrow tool: selection is set, user confirms with Enter
+      if (activeTool === "arrow") return
 
       // Only create/toggle highlights when comments tool is active
       if (activeTool !== "comments") return
@@ -150,7 +145,7 @@ export function useDragSelection({
       })
       onHighlightAdded?.(activeLayerId, highlightId)
     },
-    [isLocked, activeTool, activeLayerId, layers, addHighlight, removeHighlight, selectWord, onHighlightAdded, onArrowClick]
+    [isLocked, activeTool, activeLayerId, layers, addHighlight, removeHighlight, selectWord, onHighlightAdded]
   )
 
   return { handleMouseDown, handleMouseMove, handleMouseUp }

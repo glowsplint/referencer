@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { toast } from "sonner"
-import type { Arrow, ArrowEndpoint, DrawingState, WordSelection, ActiveTool } from "@/types/editor"
+import type { Arrow, ArrowEndpoint, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
 
 function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
   return {
@@ -11,7 +11,7 @@ function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
   }
 }
 
-function sameWord(a: ArrowEndpoint, b: ArrowEndpoint): boolean {
+function sameEndpoint(a: ArrowEndpoint, b: ArrowEndpoint): boolean {
   return (
     a.editorIndex === b.editorIndex &&
     a.from === b.from &&
@@ -26,6 +26,8 @@ interface UseDrawingModeOptions {
   activeLayerId: string | null
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
   showDrawingToasts: boolean
+  setActiveTool: (tool: ActiveTool) => void
+  clearSelection: () => void
 }
 
 export function useDrawingMode({
@@ -35,9 +37,12 @@ export function useDrawingMode({
   activeLayerId,
   addArrow,
   showDrawingToasts,
+  setActiveTool,
+  clearSelection,
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
   const anchorRef = useRef<ArrowEndpoint | null>(null)
+  const phaseRef = useRef<DrawingPhase>("idle")
 
   const activeLayerIdRef = useRef(activeLayerId)
   const addArrowRef = useRef(addArrow)
@@ -49,59 +54,84 @@ export function useDrawingMode({
   const showDrawingToastsRef = useRef(showDrawingToasts)
   showDrawingToastsRef.current = showDrawingToasts
 
-  const isArrowTool = activeTool === "arrow" && isLocked
-  const isArrowToolRef = useRef(isArrowTool)
-  isArrowToolRef.current = isArrowTool
+  const setActiveToolRef = useRef(setActiveTool)
+  setActiveToolRef.current = setActiveTool
 
-  // Show toast when entering arrow mode, dismiss when leaving
+  const clearSelectionRef = useRef(clearSelection)
+  clearSelectionRef.current = clearSelection
+
+  const isArrowTool = activeTool === "arrow" && isLocked
+
+  // Entry/exit effect: entering arrow mode → selecting-anchor; leaving → idle
   useEffect(() => {
     if (isArrowTool) {
-      toast.info("Click a word to start drawing an arrow", { id: "arrow-drawing" })
+      phaseRef.current = "selecting-anchor"
+      clearSelectionRef.current()
+      if (showDrawingToastsRef.current) {
+        toast.info("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
+      }
     } else {
+      const wasActive = phaseRef.current !== "idle"
+      phaseRef.current = "idle"
       anchorRef.current = null
       setDrawingState(null)
-      toast.dismiss("arrow-drawing")
+      if (wasActive) {
+        toast.dismiss("arrow-drawing")
+      }
     }
   }, [isArrowTool])
 
-  // Update preview cursor when selection changes while anchor is set
+  // Preview effect: update cursor during anchor-confirmed phase when selection changes
   useEffect(() => {
-    if (anchorRef.current && selection) {
+    if (phaseRef.current === "anchor-confirmed" && anchorRef.current && selection) {
       const cursor = endpointFromSelection(selection)
       setDrawingState({ anchor: anchorRef.current, cursor })
     }
   }, [selection])
 
-  // Called when user explicitly clicks a word while in arrow mode
-  const handleArrowClick = useCallback(
-    (sel: WordSelection) => {
-      if (!isArrowToolRef.current) return
+  const selectionRef = useRef(selection)
+  selectionRef.current = selection
 
-      const endpoint = endpointFromSelection(sel)
-      const currentAnchor = anchorRef.current
+  // Called when Enter is pressed with a valid selection
+  const confirmSelection = useCallback(() => {
+    const sel = selectionRef.current
+    if (!sel) return
 
-      if (!currentAnchor) {
-        // No anchor — check for active layer first
-        if (!activeLayerIdRef.current) {
-          toast.warning("Add a new layer before drawing arrows")
-          return
-        }
-        // Set anchor from click
-        anchorRef.current = endpoint
-        setDrawingState({ anchor: endpoint, cursor: endpoint })
-        if (showDrawingToastsRef.current) toast.info("Now click the target word", { id: "arrow-drawing" })
+    const phase = phaseRef.current
+    const endpoint = endpointFromSelection(sel)
+
+    if (phase === "selecting-anchor") {
+      // Check for active layer first
+      if (!activeLayerIdRef.current) {
+        toast.warning("Add a new layer before drawing arrows")
         return
       }
+      // Set anchor from selection
+      anchorRef.current = endpoint
+      phaseRef.current = "anchor-confirmed"
+      setDrawingState({ anchor: endpoint, cursor: endpoint })
+      clearSelectionRef.current()
+      if (showDrawingToastsRef.current) {
+        toast.info("Now select the target and press Enter", { id: "arrow-drawing" })
+      }
+      return
+    }
 
-      if (sameWord(currentAnchor, endpoint)) {
-        // Same word — cancel
+    if (phase === "anchor-confirmed") {
+      const currentAnchor = anchorRef.current!
+
+      if (sameEndpoint(currentAnchor, endpoint)) {
+        // Same selection as anchor — revert to selecting-anchor
         anchorRef.current = null
+        phaseRef.current = "selecting-anchor"
         setDrawingState(null)
-        toast.dismiss("arrow-drawing")
+        if (showDrawingToastsRef.current) {
+          toast.info("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
+        }
         return
       }
 
-      // Different word — create arrow
+      // Different selection — create arrow
       if (activeLayerIdRef.current) {
         addArrowRef.current(activeLayerIdRef.current, {
           from: currentAnchor,
@@ -109,13 +139,17 @@ export function useDrawingMode({
         })
       }
       anchorRef.current = null
+      phaseRef.current = "idle"
       setDrawingState(null)
-      if (showDrawingToastsRef.current) toast.success("Arrow created", { id: "arrow-drawing", duration: 1500 })
-    },
-    []
-  )
+      if (showDrawingToastsRef.current) {
+        toast.success("Arrow created", { id: "arrow-drawing", duration: 1500 })
+      }
+      setActiveToolRef.current("selection")
+      return
+    }
+  }, [])
 
   const isDrawing = drawingState !== null
 
-  return { drawingState, isDrawing, handleArrowClick }
+  return { drawingState, isDrawing, confirmSelection }
 }

@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useMemo, Fragment } from "react";
+import { useRef, useState, useCallback, useMemo, Fragment, type RefObject } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -83,22 +83,28 @@ export function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
   const annotationBeforeEditRef = useRef<string>("");
+  const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
 
   const { selection, selectWord, clearSelection } = useWordSelection({
     isLocked: settings.isLocked,
     editorsRef,
     containerRef,
     editorCount,
+    onEnter: useCallback(() => confirmRef.current(), []),
   });
 
-  const { drawingState, handleArrowClick } = useDrawingMode({
+  const { drawingState, confirmSelection } = useDrawingMode({
     isLocked: settings.isLocked,
     activeTool: annotations.activeTool,
     selection,
     activeLayerId,
     addArrow,
     showDrawingToasts: settings.showDrawingToasts,
+    setActiveTool,
+    clearSelection,
   });
+
+  confirmRef.current = confirmSelection;
 
   useCycleLayer({
     layers,
@@ -119,7 +125,6 @@ export function App() {
       annotationBeforeEditRef.current = "";
       setEditingAnnotation({ layerId, highlightId });
     }, []),
-    onArrowClick: handleArrowClick,
   });
 
   const activeLayerColor = activeLayerId

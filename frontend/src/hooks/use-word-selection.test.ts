@@ -107,6 +107,36 @@ describe("useWordSelection", () => {
   })
 })
 
+describe("useWordSelection Enter key", () => {
+  it("calls onEnter when Enter pressed with a selection", () => {
+    const onEnter = vi.fn()
+    const { result } = renderHook(() => useWordSelection(createOptions({ onEnter })))
+
+    act(() => { result.current.selectWord(0, 1, 5, "hello") })
+    act(() => { fireKey("Enter") })
+
+    expect(onEnter).toHaveBeenCalledTimes(1)
+  })
+
+  it("does not call onEnter when no selection exists", () => {
+    const onEnter = vi.fn()
+    renderHook(() => useWordSelection(createOptions({ onEnter })))
+
+    act(() => { fireKey("Enter") })
+
+    expect(onEnter).not.toHaveBeenCalled()
+  })
+
+  it("does not throw when onEnter is not provided", () => {
+    const { result } = renderHook(() => useWordSelection(createOptions()))
+
+    act(() => { result.current.selectWord(0, 1, 5, "hello") })
+    expect(() => {
+      act(() => { fireKey("Enter") })
+    }).not.toThrow()
+  })
+})
+
 describe("useWordSelection keyboard navigation", () => {
   // Layout: two side-by-side editors
   //

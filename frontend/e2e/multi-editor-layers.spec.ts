@@ -1,20 +1,5 @@
 import { test, expect } from "@playwright/test";
 
-async function editorOfSelection(
-  page: import("@playwright/test").Page,
-  editorCount: number
-) {
-  for (let e = 0; e < editorCount; e++) {
-    const count = await page
-      .locator(".simple-editor-wrapper")
-      .nth(e)
-      .locator(".word-selection")
-      .count();
-    if (count > 0) return e;
-  }
-  return -1;
-}
-
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
@@ -31,53 +16,71 @@ async function clickWordInEditor(
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 }
 
-async function drawArrowRight(
+async function drawArrowInEditor(
   page: import("@playwright/test").Page,
-  steps: number
+  editorIndex: number,
+  anchorXOffset = 30,
+  targetXOffset = 120
 ) {
-  // Blur any auto-focused annotation input so arrow keys navigate words
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
-  // Switch to arrow tool
   await page.keyboard.press("a");
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right to destination
-  for (let i = 0; i < steps; i++) {
-    await page.keyboard.press("ArrowRight");
-    await page.waitForTimeout(30);
-  }
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
-  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
-  await page.keyboard.press("s");
+
+  const p = page
+    .locator(".simple-editor-wrapper")
+    .nth(editorIndex)
+    .locator("p")
+    .first();
+  const box = await p.boundingBox();
+  expect(box).not.toBeNull();
+
+  // Select and confirm anchor
+  await page.mouse.click(box!.x + anchorXOffset, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+
+  // Select and confirm target
+  await page.mouse.click(box!.x + targetXOffset, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+  // Tool auto-switches to selection
 }
 
-async function drawArrowToEditor(
+async function drawArrowBetweenEditors(
   page: import("@playwright/test").Page,
+  sourceEditor: number,
   targetEditor: number,
-  editorCount: number,
-  maxSteps = 50
+  anchorXOffset = 30,
+  targetXOffset = 30
 ) {
-  // Blur any auto-focused annotation input so arrow keys navigate words
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
-  // Switch to arrow tool
   await page.keyboard.press("a");
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right until reaching target editor
-  for (let i = 0; i < maxSteps; i++) {
-    await page.keyboard.press("ArrowRight");
-    await page.waitForTimeout(30);
-    if ((await editorOfSelection(page, editorCount)) === targetEditor) break;
-  }
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
-  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
-  await page.keyboard.press("s");
+
+  const srcP = page
+    .locator(".simple-editor-wrapper")
+    .nth(sourceEditor)
+    .locator("p")
+    .first();
+  const srcBox = await srcP.boundingBox();
+  expect(srcBox).not.toBeNull();
+
+  // Select and confirm anchor
+  await page.mouse.click(srcBox!.x + anchorXOffset, srcBox!.y + srcBox!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+
+  const tgtP = page
+    .locator(".simple-editor-wrapper")
+    .nth(targetEditor)
+    .locator("p")
+    .first();
+  const tgtBox = await tgtP.boundingBox();
+  expect(tgtBox).not.toBeNull();
+
+  // Select and confirm target
+  await page.mouse.click(tgtBox!.x + targetXOffset, tgtBox!.y + tgtBox!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+  // Tool auto-switches to selection
 }
 
 test.describe("cross-editor arrows (2 editors)", () => {
@@ -96,15 +99,11 @@ test.describe("cross-editor arrows (2 editors)", () => {
 
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
-
-    await clickWordInEditor(page, 0);
-    expect(await editorOfSelection(page, 2)).toBe(0);
   });
 
   test("arrow can be drawn from editor 1 to editor 2", async ({ page }) => {
-    await drawArrowToEditor(page, 1, 2);
+    await drawArrowBetweenEditors(page, 0, 1);
 
-    expect(await editorOfSelection(page, 2)).toBe(1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -116,7 +115,7 @@ test.describe("cross-editor arrows (2 editors)", () => {
   test("cross-editor arrow highlights appear as SVG rects", async ({
     page,
   }) => {
-    await drawArrowToEditor(page, 1, 2);
+    await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -127,11 +126,12 @@ test.describe("cross-editor arrows (2 editors)", () => {
   });
 
   test("cross-editor arrow can be deleted by clicking", async ({ page }) => {
-    await drawArrowToEditor(page, 1, 2);
+    await drawArrowBetweenEditors(page, 0, 1);
 
     const arrowLine = page.getByTestId("arrow-line");
     await expect(arrowLine).toHaveCount(1, { timeout: 2000 });
 
+    // Tool auto-switched to selection, so clicking arrow deletes it
     await arrowLine.click({ force: true });
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
@@ -141,7 +141,7 @@ test.describe("cross-editor arrows (2 editors)", () => {
   test("hiding layer removes cross-editor arrow and all highlights", async ({
     page,
   }) => {
-    await drawArrowToEditor(page, 1, 2);
+    await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -189,8 +189,7 @@ test.describe("multiple layers (2 editors)", () => {
 
   test("arrows on different layers are independent", async ({ page }) => {
     // Draw arrow on Layer 1 in E1
-    await clickWordInEditor(page, 0);
-    await drawArrowRight(page, 1);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -200,8 +199,7 @@ test.describe("multiple layers (2 editors)", () => {
     await expect(page.getByTestId("layerActiveTag-1")).toBeVisible();
 
     // Draw arrow on Layer 2 in E2
-    await clickWordInEditor(page, 1);
-    await drawArrowRight(page, 1);
+    await drawArrowInEditor(page, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,
     });
@@ -211,16 +209,14 @@ test.describe("multiple layers (2 editors)", () => {
     page,
   }) => {
     // Draw arrow on Layer 1 in E1
-    await clickWordInEditor(page, 0);
-    await drawArrowRight(page, 1);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
 
     // Cycle to Layer 2 and draw arrow in E2
     await page.keyboard.press("l");
-    await clickWordInEditor(page, 1);
-    await drawArrowRight(page, 1);
+    await drawArrowInEditor(page, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,
     });
@@ -264,8 +260,6 @@ test.describe("multiple layers (2 editors)", () => {
     await clickWordInEditor(page, 0);
 
     // Add annotation so highlight persists across layer switch
-    // (blank-annotation highlights are cleaned up when switching layers)
-    // Annotation input auto-focuses after highlight creation
     await page.getByPlaceholder("Add annotation...").fill("E1 note");
     await page.getByPlaceholder("Add annotation...").press("Enter");
 
@@ -285,7 +279,6 @@ test.describe("multiple layers (2 editors)", () => {
     await clickWordInEditor(page, 1, 60);
 
     // Add annotation for E2 highlight too
-    // Annotation input auto-focuses after highlight creation
     await page.getByPlaceholder("Add annotation...").fill("E2 note");
     await page.getByPlaceholder("Add annotation...").press("Enter");
 
@@ -354,8 +347,7 @@ test.describe("section visibility with layers (2 editors)", () => {
   test("arrows in visible editor persist after hiding another passage", async ({
     page,
   }) => {
-    await clickWordInEditor(page, 0);
-    await drawArrowRight(page, 1);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -376,13 +368,12 @@ test.describe("section visibility with layers (2 editors)", () => {
   test("cross-editor arrow disappears when destination passage is hidden", async ({
     page,
   }) => {
-    // Close management pane for cross-editor navigation
+    // Close management pane for cross-editor click
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
 
     // Draw cross-editor arrow from E1 to E2
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 2);
+    await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });

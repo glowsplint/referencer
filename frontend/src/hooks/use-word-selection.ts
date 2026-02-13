@@ -33,6 +33,7 @@ interface UseWordSelectionOptions {
   editorsRef: React.RefObject<Map<number, Editor>>
   containerRef: React.RefObject<HTMLDivElement | null>
   editorCount: number
+  onEnter?: () => void
 }
 
 export function useWordSelection({
@@ -40,11 +41,14 @@ export function useWordSelection({
   editorsRef,
   containerRef,
   editorCount,
+  onEnter,
 }: UseWordSelectionOptions) {
   const [selection, setSelection] = useState<WordSelection | null>(null)
   const stickyXRef = useRef<number | null>(null)
   const anchorRef = useRef<WordSelection | null>(null)
   const headRef = useRef<WordSelection | null>(null)
+  const onEnterRef = useRef(onEnter)
+  onEnterRef.current = onEnter
 
   const selectWord = useCallback(
     (editorIndex: number, from: number, to: number, text: string) => {
@@ -76,6 +80,15 @@ export function useWordSelection({
       if (isEditableElement(document.activeElement)) return
 
       const cmd = isCmdKey(e)
+
+      // ── Enter ───────────────────────────────────────────────────
+      if (e.key === "Enter") {
+        if (selection && onEnterRef.current) {
+          e.preventDefault()
+          onEnterRef.current()
+        }
+        return
+      }
 
       // ── Escape ──────────────────────────────────────────────────
       if (e.key === "Escape") {

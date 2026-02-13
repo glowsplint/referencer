@@ -8,6 +8,8 @@ export interface EditorSettings {
 
 export type ActiveTool = "selection" | "arrow" | "comments"
 
+export type DrawingPhase = "idle" | "selecting-anchor" | "anchor-confirmed"
+
 export interface AnnotationSettings {
   activeTool: ActiveTool
 }

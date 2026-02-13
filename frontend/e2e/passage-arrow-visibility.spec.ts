@@ -1,25 +1,14 @@
 import { test, expect } from "@playwright/test";
 
-async function editorOfSelection(
-  page: import("@playwright/test").Page,
-  editorCount: number
-) {
-  for (let e = 0; e < editorCount; e++) {
-    const count = await page
-      .locator(".simple-editor-wrapper")
-      .nth(e)
-      .locator(".word-selection")
-      .count();
-    if (count > 0) return e;
-  }
-  return -1;
-}
-
-async function clickWordInEditor(
+async function drawArrowInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  anchorXOffset = 30,
+  targetXOffset = 120
 ) {
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+  await page.keyboard.press("a");
+
   const p = page
     .locator(".simple-editor-wrapper")
     .nth(editorIndex)
@@ -27,57 +16,55 @@ async function clickWordInEditor(
     .first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
-  await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
+
+  // Select and confirm anchor
+  await page.mouse.click(box!.x + anchorXOffset, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+
+  // Select and confirm target
+  await page.mouse.click(box!.x + targetXOffset, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+  // Tool auto-switches to selection
 }
 
-async function drawArrowRight(
+async function drawArrowBetweenEditors(
   page: import("@playwright/test").Page,
-  steps: number
-) {
-  // Blur any auto-focused annotation input so arrow keys navigate words
-  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
-  // Switch to arrow tool
-  await page.keyboard.press("a");
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right to destination
-  for (let i = 0; i < steps; i++) {
-    await page.keyboard.press("ArrowRight");
-    await page.waitForTimeout(30);
-  }
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
-  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
-  await page.keyboard.press("s");
-}
-
-async function drawArrowToEditor(
-  page: import("@playwright/test").Page,
+  sourceEditor: number,
   targetEditor: number,
-  editorCount: number,
-  maxSteps = 80
+  anchorXOffset = 30,
+  targetXOffset = 30
 ) {
-  // Blur any auto-focused annotation input so arrow keys navigate words
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
-  // Switch to arrow tool
   await page.keyboard.press("a");
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right until reaching target editor
-  for (let i = 0; i < maxSteps; i++) {
-    await page.keyboard.press("ArrowRight");
-    await page.waitForTimeout(30);
-    if ((await editorOfSelection(page, editorCount)) === targetEditor) break;
-  }
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
-  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
-  await page.keyboard.press("s");
+
+  const srcP = page
+    .locator(".simple-editor-wrapper")
+    .nth(sourceEditor)
+    .locator("p")
+    .first();
+  const srcBox = await srcP.boundingBox();
+  expect(srcBox).not.toBeNull();
+
+  // Select and confirm anchor
+  await page.mouse.click(srcBox!.x + anchorXOffset, srcBox!.y + srcBox!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+
+  const tgtP = page
+    .locator(".simple-editor-wrapper")
+    .nth(targetEditor)
+    .locator("p")
+    .first();
+  const tgtBox = await tgtP.boundingBox();
+  expect(tgtBox).not.toBeNull();
+
+  // Select and confirm target
+  await page.mouse.click(tgtBox!.x + targetXOffset, tgtBox!.y + tgtBox!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+  // Tool auto-switches to selection
 }
 
 function parseArrowCoords(d: string): number[] {
@@ -105,8 +92,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
   test("hiding source passage hides same-editor arrow, re-showing restores it", async ({
     page,
   }) => {
-    await clickWordInEditor(page, 0);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -134,8 +120,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
   test("cross-editor arrow hides when source passage is hidden", async ({
     page,
   }) => {
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 2);
+    await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -163,8 +148,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     page,
   }) => {
     // Draw cross-editor arrow E1→E2
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 2);
+    await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -195,8 +179,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
   test("combined layer hidden + section hidden restores correctly", async ({
     page,
   }) => {
-    await clickWordInEditor(page, 0);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -226,8 +209,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
   });
 
   test("rapid section toggle does not lose arrows", async ({ page }) => {
-    await clickWordInEditor(page, 0);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -263,8 +245,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await page.getByTestId("menuButton").click();
 
     // Draw arrow in E1 while E2 is hidden
-    await clickWordInEditor(page, 0);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -278,8 +259,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
   });
 
   test("highlights persist after hide/show cycle", async ({ page }) => {
-    await clickWordInEditor(page, 0);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
 
     const countBefore = await page
       .locator('.simple-editor span[style*="background-color"]:not(.word-selection)')
@@ -329,23 +309,20 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     page,
   }) => {
     // Draw E1→E2 on Layer 1
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 3);
+    await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
 
-    // Draw E1→E3 on Layer 1
-    await clickWordInEditor(page, 0, 60);
-    await drawArrowToEditor(page, 2, 3);
+    // Draw E1→E3 on Layer 1 (use offset 60 for different anchor word)
+    await drawArrowBetweenEditors(page, 0, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,
     });
 
     // Switch to Layer 2, draw E2→E3
     await page.keyboard.press("l");
-    await clickWordInEditor(page, 1, 60);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
     });
@@ -380,17 +357,14 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     page,
   }) => {
     // Draw E1→E2 on Layer 1
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 3);
+    await drawArrowBetweenEditors(page, 0, 1);
 
     // Draw E1→E3 on Layer 1
-    await clickWordInEditor(page, 0, 60);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 0, 2, 60);
 
     // Draw E2→E3 on Layer 2
     await page.keyboard.press("l");
-    await clickWordInEditor(page, 1, 60);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
     });
@@ -413,17 +387,14 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     page,
   }) => {
     // Draw E1→E2 on Layer 1
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 3);
+    await drawArrowBetweenEditors(page, 0, 1);
 
     // Draw E1→E3 on Layer 1
-    await clickWordInEditor(page, 0, 60);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 0, 2, 60);
 
     // Draw E2→E3 on Layer 2
     await page.keyboard.press("l");
-    await clickWordInEditor(page, 1, 60);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
     });
@@ -444,15 +415,12 @@ test.describe("passage visibility with arrows (3 editors)", () => {
 
   test("hiding E1 and E3 removes all arrows", async ({ page }) => {
     // Draw E1→E2, E1→E3 on Layer 1
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 3);
-    await clickWordInEditor(page, 0, 60);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 0, 1);
+    await drawArrowBetweenEditors(page, 0, 2, 60);
 
     // Draw E2→E3 on Layer 2
     await page.keyboard.press("l");
-    await clickWordInEditor(page, 1, 60);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
     });
@@ -477,8 +445,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     page,
   }) => {
     // Draw E1→E2 on Layer 1
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 3);
+    await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -517,12 +484,10 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     page,
   }) => {
     // Draw E1→E2 on Layer 1, E2→E3 on Layer 2
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 1, 3);
+    await drawArrowBetweenEditors(page, 0, 1);
 
     await page.keyboard.press("l");
-    await clickWordInEditor(page, 1, 60);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,
     });
@@ -558,8 +523,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     page,
   }) => {
     // Draw E1→E3 on Layer 1
-    await clickWordInEditor(page, 0);
-    await drawArrowToEditor(page, 2, 3);
+    await drawArrowBetweenEditors(page, 0, 2);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });

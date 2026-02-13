@@ -11,11 +11,15 @@ test("shows error toast when drawing without an active layer", async ({ page }) 
   // Switch to arrow tool
   await page.keyboard.press("a");
 
-  // Click a word to start selection (this triggers anchor-set which checks for layer)
+  // Click a word to start selection
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Press Enter to confirm anchor — triggers layer check
+  await page.keyboard.press("Enter");
 
   // Toast should appear with error message
   const toast = page.locator("[data-sonner-toast]").filter({ hasText: "Add a new layer before drawing arrows" });

@@ -13,30 +13,28 @@ test.beforeEach(async ({ page }) => {
   await page.getByTestId("lockButton").click();
   await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
-  // Click a word to start selection
-  const firstParagraph = page.locator(".simple-editor p").first();
-  const box = await firstParagraph.boundingBox();
-  expect(box).not.toBeNull();
-  await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
-  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
-
-  // Blur auto-focused annotation input so arrow keys navigate words
-  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
-
   // Switch to arrow tool
   await page.keyboard.press("a");
 });
 
+async function drawArrowViaEnter(page: import("@playwright/test").Page) {
+  const firstParagraph = page.locator(".simple-editor p").first();
+  const box = await firstParagraph.boundingBox();
+  expect(box).not.toBeNull();
+
+  // Click anchor word and confirm
+  await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+
+  // Click target word and confirm
+  await page.mouse.click(box!.x + 120, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+}
+
 test("arrow endpoints are highlighted as SVG rects after drawing", async ({ page }) => {
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right to destination
-  await page.keyboard.press("ArrowRight");
-  await page.waitForTimeout(30);
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
+  await drawArrowViaEnter(page);
 
   // Arrow should be drawn
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
@@ -47,20 +45,11 @@ test("arrow endpoints are highlighted as SVG rects after drawing", async ({ page
 });
 
 test("arrow overlay uses mix-blend-mode multiply for text visibility", async ({ page }) => {
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right to destination
-  await page.keyboard.press("ArrowRight");
-  await page.waitForTimeout(30);
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
+  await drawArrowViaEnter(page);
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
   // Verify the SVG overlay uses mix-blend-mode multiply (light mode default)
-  // so endpoint highlights don't obscure text underneath
   const svg = page.getByTestId("arrow-overlay");
   const blendMode = await svg.evaluate((el) =>
     window.getComputedStyle(el).mixBlendMode
@@ -69,15 +58,7 @@ test("arrow overlay uses mix-blend-mode multiply for text visibility", async ({ 
 });
 
 test("arrow endpoint rects, line, and arrowhead share same base color", async ({ page }) => {
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right to destination
-  await page.keyboard.press("ArrowRight");
-  await page.waitForTimeout(30);
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
+  await drawArrowViaEnter(page);
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
@@ -102,15 +83,7 @@ test("arrow endpoint rects, line, and arrowhead share same base color", async ({
 });
 
 test("arrow endpoint SVG rects disappear when unlocked", async ({ page }) => {
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right to destination
-  await page.keyboard.press("ArrowRight");
-  await page.waitForTimeout(30);
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
+  await drawArrowViaEnter(page);
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 

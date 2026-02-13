@@ -17,22 +17,26 @@ test.beforeEach(async ({ page }) => {
   await page.keyboard.press("a");
 });
 
-test("clicking two different words draws an arrow between them", async ({ page }) => {
+test("selecting two different words and pressing Enter draws an arrow", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
 
-  // Click first word (sets anchor)
+  // Click first word (sets selection)
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Navigate with ArrowRight to see preview arrow
-  await page.keyboard.press("ArrowRight");
+  // Press Enter to confirm anchor
+  await page.keyboard.press("Enter");
+
+  // Click second word (sets target selection, preview arrow should appear)
+  await page.mouse.click(box!.x + 120, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   const preview = page.getByTestId("preview-arrow");
   await expect(preview).toHaveCount(1, { timeout: 2000 });
 
-  // Click second word (creates arrow)
-  await page.mouse.click(box!.x + 120, box!.y + box!.height / 2);
+  // Press Enter to confirm target and create arrow
+  await page.keyboard.press("Enter");
 
   // Solid arrow line should appear
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
@@ -40,37 +44,26 @@ test("clicking two different words draws an arrow between them", async ({ page }
   await expect(page.getByTestId("preview-arrow")).toHaveCount(0, { timeout: 2000 });
 });
 
-test("no arrow created when clicking same word twice", async ({ page }) => {
+test("no arrow created when confirming same word twice", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
 
-  // Click first word (sets anchor)
+  // Click first word (sets selection)
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Click same word again (cancels)
+  // Press Enter to confirm anchor
+  await page.keyboard.press("Enter");
+
+  // Click same word again
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Press Enter — same word as anchor, should cancel
+  await page.keyboard.press("Enter");
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
-});
-
-test("multiple arrows can be drawn sequentially", async ({ page }) => {
-  const firstParagraph = page.locator(".simple-editor p").first();
-  const box = await firstParagraph.boundingBox();
-  expect(box).not.toBeNull();
-  const y = box!.y + box!.height / 2;
-
-  // Draw first arrow: click word1, click word2
-  await page.mouse.click(box!.x + 30, y);
-  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
-  await page.mouse.click(box!.x + 120, y);
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
-
-  // Draw second arrow: click word2 (new anchor), click word3
-  await page.mouse.click(box!.x + 120, y);
-  await page.mouse.click(box!.x + 200, y);
-  await expect(page.getByTestId("arrow-line")).toHaveCount(2, { timeout: 2000 });
 });
 
 test("click on arrow line deletes it", async ({ page }) => {
@@ -79,16 +72,16 @@ test("click on arrow line deletes it", async ({ page }) => {
   expect(box).not.toBeNull();
   const y = box!.y + box!.height / 2;
 
-  // Draw an arrow
+  // Draw an arrow: select word, Enter, select target, Enter
   await page.mouse.click(box!.x + 30, y);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
   await page.mouse.click(box!.x + 120, y);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Switch to selection tool before clicking hit area
-  await page.keyboard.press("s");
-
-  // Click the arrow midpoint area (no force — tests real pointer events)
+  // Tool auto-switched to selection, so we can click the arrow to delete
   const arrowLine = page.getByTestId("arrow-line");
   const arrowBox = await arrowLine.boundingBox();
   expect(arrowBox).not.toBeNull();
@@ -105,15 +98,15 @@ test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ pa
   const y = box!.y + box!.height / 2;
 
   // Draw an arrow between two words
-  const x1 = box!.x + 30;
-  const x2 = box!.x + 120;
-  await page.mouse.click(x1, y);
+  await page.mouse.click(box!.x + 30, y);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
-  await page.mouse.click(x2, y);
+  await page.keyboard.press("Enter");
+  await page.mouse.click(box!.x + 120, y);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Switch to selection tool
-  await page.keyboard.press("s");
+  // Tool auto-switched to selection
 
   // Move mouse away, then hover the arrow hit area
   await page.mouse.move(0, 0);

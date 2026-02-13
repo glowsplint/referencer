@@ -49,7 +49,6 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     selectWord: vi.fn(),
     clearSelection: vi.fn(),
     onHighlightAdded: vi.fn(),
-    onArrowClick: vi.fn(),
     ...overrides,
   }
 }
@@ -154,7 +153,7 @@ describe("useDragSelection", () => {
     expect(opts.addHighlight).toHaveBeenCalled()
   })
 
-  it("calls onArrowClick when activeTool is arrow", () => {
+  it("sets selection but does not call additional callbacks when arrow tool", () => {
     const opts = createOptions({ activeTool: "arrow" })
     const { result } = renderHook(() => useDragSelection(opts))
     const editor = createMockEditor()
@@ -166,12 +165,8 @@ describe("useDragSelection", () => {
       result.current.handleMouseUp(createMockEvent(), editor, 0)
     })
 
-    expect(opts.onArrowClick).toHaveBeenCalledWith({
-      editorIndex: 0,
-      from: 1,
-      to: 5,
-      text: "hello",
-    })
+    expect(opts.selectWord).toHaveBeenCalledWith(0, 1, 5, "hello")
     expect(opts.addHighlight).not.toHaveBeenCalled()
+    expect(opts.onHighlightAdded).not.toHaveBeenCalled()
   })
 })

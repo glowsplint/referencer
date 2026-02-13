@@ -29,66 +29,71 @@ async function addAnnotation(
   await expect(page.getByText(text)).toBeVisible({ timeout: 2000 });
 }
 
-async function drawArrowRight(
+async function drawArrowInEditor(
   page: import("@playwright/test").Page,
-  steps: number
+  editorIndex: number,
+  anchorXOffset = 30,
+  targetXOffset = 120
 ) {
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
-  // Switch to arrow tool
   await page.keyboard.press("a");
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right to destination
-  for (let i = 0; i < steps; i++) {
-    await page.keyboard.press("ArrowRight");
-    await page.waitForTimeout(30);
-  }
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
-  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
-  await page.keyboard.press("s");
+
+  const p = page
+    .locator(".simple-editor-wrapper")
+    .nth(editorIndex)
+    .locator("p")
+    .first();
+  const box = await p.boundingBox();
+  expect(box).not.toBeNull();
+
+  // Select and confirm anchor
+  await page.mouse.click(box!.x + anchorXOffset, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+
+  // Select and confirm target
+  await page.mouse.click(box!.x + targetXOffset, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+  // Tool auto-switches to selection
 }
 
-async function editorOfSelection(
+async function drawArrowBetweenEditors(
   page: import("@playwright/test").Page,
-  editorCount: number
-) {
-  for (let e = 0; e < editorCount; e++) {
-    const count = await page
-      .locator(".simple-editor-wrapper")
-      .nth(e)
-      .locator(".word-selection")
-      .count();
-    if (count > 0) return e;
-  }
-  return -1;
-}
-
-async function drawArrowToEditor(
-  page: import("@playwright/test").Page,
+  sourceEditor: number,
   targetEditor: number,
-  editorCount: number,
-  maxSteps = 80
+  anchorXOffset = 30,
+  targetXOffset = 30
 ) {
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
-  // Switch to arrow tool
   await page.keyboard.press("a");
-  // Click current word to set anchor
-  const sel = page.locator(".word-selection").first();
-  await sel.click({ force: true });
-  // Navigate right until reaching target editor
-  for (let i = 0; i < maxSteps; i++) {
-    await page.keyboard.press("ArrowRight");
-    await page.waitForTimeout(30);
-    if ((await editorOfSelection(page, editorCount)) === targetEditor) break;
-  }
-  // Click destination word to finalize arrow
-  const destSel = page.locator(".word-selection").first();
-  await destSel.click({ force: true });
-  // Switch back to selection tool so subsequent clickWordInEditor won't trigger arrow
-  await page.keyboard.press("s");
+
+  const srcP = page
+    .locator(".simple-editor-wrapper")
+    .nth(sourceEditor)
+    .locator("p")
+    .first();
+  const srcBox = await srcP.boundingBox();
+  expect(srcBox).not.toBeNull();
+
+  // Select and confirm anchor
+  await page.mouse.click(srcBox!.x + anchorXOffset, srcBox!.y + srcBox!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+
+  const tgtP = page
+    .locator(".simple-editor-wrapper")
+    .nth(targetEditor)
+    .locator("p")
+    .first();
+  const tgtBox = await tgtP.boundingBox();
+  expect(tgtBox).not.toBeNull();
+
+  // Select and confirm target
+  await page.mouse.click(tgtBox!.x + targetXOffset, tgtBox!.y + tgtBox!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await page.keyboard.press("Enter");
+  // Tool auto-switches to selection
 }
 
 test.describe("no dangling highlights when layer is hidden", () => {
@@ -144,8 +149,7 @@ test.describe("no dangling highlights when layer is hidden", () => {
     page,
   }) => {
     // Draw an arrow
-    await clickWordInEditor(page, 0, 30);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -216,8 +220,7 @@ test.describe("no dangling elements when passage is hidden", () => {
   test("cross-editor arrow disappears when destination passage hidden", async ({
     page,
   }) => {
-    await clickWordInEditor(page, 0, 30);
-    await drawArrowToEditor(page, 1, 2);
+    await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -341,8 +344,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     page,
   }) => {
     // Create arrow on Layer 1
-    await clickWordInEditor(page, 0, 30);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -414,8 +416,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await addAnnotation(page, "L1 note");
 
     // Draw arrow on Layer 1
-    await clickWordInEditor(page, 0, 100);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0, 100, 200);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -439,8 +440,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await addAnnotation(page, "L2 note");
 
     // Draw arrow on Layer 2 in passage 2
-    await clickWordInEditor(page, 1, 100);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 1, 100, 200);
 
     // Both layers' arrows
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
@@ -465,8 +465,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     page,
   }) => {
     // Create arrow + annotation on Layer 1
-    await clickWordInEditor(page, 0, 30);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     // Switch back to comments tool after drawing arrow
     await page.keyboard.press("c");
     await clickWordInEditor(page, 0, 100);
@@ -535,8 +534,7 @@ test.describe("all elements hidden state", () => {
 
   test("no visible artifacts when all layers are hidden", async ({ page }) => {
     // Create arrow + annotation
-    await clickWordInEditor(page, 0, 30);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     // Switch back to comments tool after drawing arrow
     await page.keyboard.press("c");
     await clickWordInEditor(page, 0, 100);
@@ -572,8 +570,7 @@ test.describe("all elements hidden state", () => {
     page,
   }) => {
     // Draw an arrow
-    await clickWordInEditor(page, 0, 30);
-    await drawArrowRight(page, 2);
+    await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
