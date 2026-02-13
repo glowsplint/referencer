@@ -159,6 +159,75 @@ describe("ManagementPane", () => {
 
   // --- Section name editing ---
 
+  // --- Passage reordering ---
+
+  it("calls reorderEditors with correct permutation when dragging passage 0 to position 2", () => {
+    const { workspace } = renderPane({
+      editorCount: 3,
+      sectionVisibility: [true, true, true],
+      sectionNames: ["A", "B", "C"],
+    })
+    const row0 = screen.getByTestId("passageRow-0")
+    const row2 = screen.getByTestId("passageRow-2")
+    fireEvent.dragStart(row0, {
+      dataTransfer: { setData: () => {}, types: ["application/x-section-index"] },
+    })
+    fireEvent.drop(row2, {
+      dataTransfer: {
+        getData: (type: string) =>
+          type === "application/x-section-index" ? "0" : "",
+        types: ["application/x-section-index"],
+      },
+    })
+    // Moving index 0 to position 2: [B, C, A] → permutation [1, 2, 0]
+    expect(workspace.reorderEditors).toHaveBeenCalledWith([1, 2, 0])
+  })
+
+  it("calls reorderEditors with correct permutation when dragging passage 2 to position 0", () => {
+    const { workspace } = renderPane({
+      editorCount: 3,
+      sectionVisibility: [true, true, true],
+      sectionNames: ["A", "B", "C"],
+    })
+    const row2 = screen.getByTestId("passageRow-2")
+    const row0 = screen.getByTestId("passageRow-0")
+    fireEvent.dragStart(row2, {
+      dataTransfer: { setData: () => {}, types: ["application/x-section-index"] },
+    })
+    fireEvent.drop(row0, {
+      dataTransfer: {
+        getData: (type: string) =>
+          type === "application/x-section-index" ? "2" : "",
+        types: ["application/x-section-index"],
+      },
+    })
+    // Moving index 2 to position 0: [C, A, B] → permutation [2, 0, 1]
+    expect(workspace.reorderEditors).toHaveBeenCalledWith([2, 0, 1])
+  })
+
+  it("does not call reorderEditors when dropping on same position", () => {
+    const { workspace } = renderPane({
+      editorCount: 3,
+      sectionVisibility: [true, true, true],
+      sectionNames: ["A", "B", "C"],
+    })
+    const row1 = screen.getByTestId("passageRow-1")
+    fireEvent.drop(row1, {
+      dataTransfer: {
+        getData: (type: string) =>
+          type === "application/x-section-index" ? "1" : "",
+        types: ["application/x-section-index"],
+      },
+    })
+    expect(workspace.reorderEditors).not.toHaveBeenCalled()
+  })
+
+  it("passage rows are not draggable with only 1 editor", () => {
+    renderPane({ editorCount: 1, sectionVisibility: [true], sectionNames: ["A"] })
+    const row = screen.getByTestId("passageRow-0")
+    expect(row).not.toHaveAttribute("draggable", "true")
+  })
+
   it("forwards sectionNames and updateSectionName to SectionList", () => {
     const { workspace } = renderPane({ sectionNames: ["Custom Name"] })
     expect(screen.getByText("Custom Name")).toBeInTheDocument()

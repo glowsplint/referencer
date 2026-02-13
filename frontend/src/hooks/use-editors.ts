@@ -97,6 +97,21 @@ export function useEditors() {
     }
   }, [])
 
+  const reorderEditors = useCallback((permutation: number[]) => {
+    setSectionNames(prev => permutation.map(old => prev[old]))
+    setSectionVisibility(prev => permutation.map(old => prev[old]))
+    setSplitPositions(computeEvenSplitPositions(permutation.length))
+    // Re-key editorsRef according to permutation
+    const oldMap = editorsRef.current
+    const newMap = new Map<number, Editor>()
+    for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
+      const oldIdx = permutation[newIdx]
+      const editor = oldMap.get(oldIdx)
+      if (editor) newMap.set(newIdx, editor)
+    }
+    editorsRef.current = newMap
+  }, [])
+
   const handlePaneFocus = useCallback((index: number) => {
     const editor = editorsRef.current.get(index)
     if (editor) {
@@ -127,6 +142,7 @@ export function useEditors() {
     toggleSectionVisibility,
     toggleAllSectionVisibility,
     handleDividerResize,
+    reorderEditors,
     handleEditorMount,
     handlePaneFocus,
     setEditorCount,

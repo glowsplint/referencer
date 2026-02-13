@@ -118,6 +118,9 @@ export function validateActionPayload(payload: Record<string, unknown>): boolean
     case "toggleSectionVisibility":
       return isNumber(payload.index)
 
+    case "reorderEditors":
+      return Array.isArray(payload.permutation) && payload.permutation.every(isNumber)
+
     default:
       // Unknown action — let it through; the switch in applyRemoteAction will ignore it
       return true
@@ -354,5 +357,30 @@ function applyRemoteAction(
     case "toggleSectionVisibility":
       rawEditors.toggleSectionVisibility(payload.index as number)
       break
+
+    case "reorderEditors": {
+      const permutation = payload.permutation as number[]
+      // Build index map for layer remapping
+      const indexMap = new Map<number, number>()
+      for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
+        indexMap.set(permutation[newIdx], newIdx)
+      }
+      rawEditors.reorderEditors(permutation)
+      rawLayers.setLayers(prev =>
+        prev.map(layer => ({
+          ...layer,
+          highlights: layer.highlights.map(h => ({
+            ...h,
+            editorIndex: indexMap.get(h.editorIndex) ?? h.editorIndex,
+          })),
+          arrows: layer.arrows.map(a => ({
+            ...a,
+            from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
+            to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
+          })),
+        }))
+      )
+      break
+    }
   }
 }

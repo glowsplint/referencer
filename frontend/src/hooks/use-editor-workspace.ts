@@ -197,6 +197,73 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, trackedEditorsHook, guardedSendAction]
   )
 
+  const reorderEditors = useCallback(
+    guarded((permutation: number[]) => {
+      // Build index map: oldIndex → newIndex
+      const indexMap = new Map<number, number>()
+      for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
+        indexMap.set(permutation[newIdx], newIdx)
+      }
+
+      // Compute inverse permutation for undo
+      const inverse = new Array<number>(permutation.length)
+      for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
+        inverse[permutation[newIdx]] = newIdx
+      }
+
+      // Snapshot layers before for undo
+      const layersBefore = rawLayersHook.layers.map(l => ({ ...l }))
+
+      // Apply editor reorder
+      rawEditorsHook.reorderEditors(permutation)
+
+      // Remap editorIndex in all highlights and arrows
+      rawLayersHook.setLayers(prev =>
+        prev.map(layer => ({
+          ...layer,
+          highlights: layer.highlights.map(h => ({
+            ...h,
+            editorIndex: indexMap.get(h.editorIndex) ?? h.editorIndex,
+          })),
+          arrows: layer.arrows.map(a => ({
+            ...a,
+            from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
+            to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
+          })),
+        }))
+      )
+
+      guardedSendAction("reorderEditors", { permutation })
+
+      history.record({
+        type: "reorderEditors",
+        description: "Reordered passages",
+        undo: () => {
+          rawEditorsHook.reorderEditors(inverse)
+          rawLayersHook.setLayers(layersBefore)
+        },
+        redo: () => {
+          rawEditorsHook.reorderEditors(permutation)
+          rawLayersHook.setLayers(prev =>
+            prev.map(layer => ({
+              ...layer,
+              highlights: layer.highlights.map(h => ({
+                ...h,
+                editorIndex: indexMap.get(h.editorIndex) ?? h.editorIndex,
+              })),
+              arrows: layer.arrows.map(a => ({
+                ...a,
+                from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
+                to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
+              })),
+            }))
+          )
+        },
+      })
+    }),
+    [readOnly, rawEditorsHook, rawLayersHook, guardedSendAction, history]
+  )
+
   const toggleSectionVisibility = useCallback(
     guarded((index: number) => {
       const wasVisible = rawEditorsHook.sectionVisibility[index] ?? true
@@ -321,6 +388,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     // WS-wrapped editor actions
     addEditor,
     removeEditor,
+    reorderEditors,
     updateSectionName,
     toggleSectionVisibility,
     updateEditorContent,

@@ -21,6 +21,7 @@ export function ManagementPane() {
     toggleAllLayerVisibility,
     addEditor,
     removeEditor,
+    reorderEditors,
     updateSectionName,
     toggleSectionVisibility,
     toggleAllSectionVisibility,
@@ -90,6 +91,7 @@ export function ManagementPane() {
         sectionNames={sectionNames}
         addEditor={addEditor}
         onUpdateName={updateSectionName}
+        onReorder={reorderEditors}
         toggleSectionVisibility={toggleSectionVisibility}
         toggleAllSectionVisibility={toggleAllSectionVisibility}
       />

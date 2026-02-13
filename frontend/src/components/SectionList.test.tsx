@@ -10,6 +10,7 @@ function renderList(overrides = {}) {
     addEditor: vi.fn(),
     removeEditor: vi.fn(),
     onUpdateName: vi.fn(),
+    onReorder: vi.fn(),
     toggleSectionVisibility: vi.fn(),
     toggleAllSectionVisibility: vi.fn(),
   }

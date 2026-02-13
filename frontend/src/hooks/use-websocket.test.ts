@@ -392,6 +392,31 @@ describe("validateActionPayload", () => {
     ).toBe(false)
   })
 
+  // -- reorderEditors --
+  it("validates reorderEditors", () => {
+    expect(
+      validateActionPayload({ actionType: "reorderEditors", permutation: [1, 2, 0] })
+    ).toBe(true)
+  })
+
+  it("rejects reorderEditors with non-number permutation", () => {
+    expect(
+      validateActionPayload({ actionType: "reorderEditors", permutation: ["a", "b"] })
+    ).toBe(false)
+  })
+
+  it("rejects reorderEditors when permutation is not array", () => {
+    expect(
+      validateActionPayload({ actionType: "reorderEditors", permutation: "abc" })
+    ).toBe(false)
+  })
+
+  it("rejects reorderEditors when permutation is missing", () => {
+    expect(
+      validateActionPayload({ actionType: "reorderEditors" })
+    ).toBe(false)
+  })
+
   // -- unknown action type passes through --
   it("allows unknown action types through", () => {
     expect(

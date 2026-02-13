@@ -45,6 +45,7 @@ export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}
     sectionNames: ["Passage 1"],
     addEditor: vi.fn(),
     removeEditor: vi.fn(),
+    reorderEditors: vi.fn(),
     updateSectionName: vi.fn(),
     toggleSectionVisibility: vi.fn(),
     toggleAllSectionVisibility: vi.fn(),

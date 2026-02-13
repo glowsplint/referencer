@@ -69,6 +69,7 @@ export type ActionType =
   | "removeArrow"
   | "addEditor"
   | "removeEditor"
+  | "reorderEditors"
   | "updateSectionName"
   | "toggleSectionVisibility"
   | "updateEditorContent"
