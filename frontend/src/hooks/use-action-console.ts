@@ -8,6 +8,7 @@ export function useActionConsole() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== "`") return
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
       if (isEditableElement(e.target)) return
 
       e.preventDefault()

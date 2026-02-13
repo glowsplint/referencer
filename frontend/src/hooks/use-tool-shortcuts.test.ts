@@ -2,9 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useToolShortcuts } from "./use-tool-shortcuts"
 
-function fireKeyDown(code: string, options: { repeat?: boolean } = {}) {
+function fireKeyDown(code: string, options: Partial<KeyboardEvent> = {}) {
+  const { repeat = false, ...rest } = options
   document.dispatchEvent(
-    new KeyboardEvent("keydown", { code, repeat: options.repeat ?? false })
+    new KeyboardEvent("keydown", { code, repeat, ...rest })
   )
 }
 
@@ -59,6 +60,19 @@ describe("useToolShortcuts", () => {
 
     act(() => { fireKeyDown("KeyB") })
     act(() => { fireKeyDown("KeyX") })
+    expect(setActiveTool).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    { modifier: "metaKey" },
+    { modifier: "ctrlKey" },
+    { modifier: "altKey" },
+    { modifier: "shiftKey" },
+  ])("ignores shortcut when $modifier is held", ({ modifier }) => {
+    const setActiveTool = vi.fn()
+    renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }))
+
+    act(() => { fireKeyDown("KeyS", { [modifier]: true }) })
     expect(setActiveTool).not.toHaveBeenCalled()
   })
 

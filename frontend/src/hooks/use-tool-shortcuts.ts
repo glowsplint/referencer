@@ -27,6 +27,7 @@ export function useToolShortcuts({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
       if (isEditableElement(e.target)) return
 
       const tool = KEY_MAP[e.code]

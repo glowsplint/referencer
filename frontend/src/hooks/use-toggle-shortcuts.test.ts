@@ -2,9 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useToggleShortcuts } from "./use-toggle-shortcuts"
 
-function fireKeyDown(code: string, options: { repeat?: boolean } = {}) {
+function fireKeyDown(code: string, options: Partial<KeyboardEvent> = {}) {
+  const { repeat = false, ...rest } = options
   document.dispatchEvent(
-    new KeyboardEvent("keydown", { code, repeat: options.repeat ?? false })
+    new KeyboardEvent("keydown", { code, repeat, ...rest })
   )
 }
 
@@ -72,6 +73,19 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleMultipleRowsLayout).not.toHaveBeenCalled()
     expect(callbacks.toggleLocked).not.toHaveBeenCalled()
     expect(callbacks.toggleManagementPane).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    { modifier: "metaKey" },
+    { modifier: "ctrlKey" },
+    { modifier: "altKey" },
+    { modifier: "shiftKey" },
+  ])("ignores shortcut when $modifier is held", ({ modifier }) => {
+    const callbacks = makeCallbacks()
+    renderHook(() => useToggleShortcuts(callbacks))
+
+    act(() => { fireKeyDown("KeyR", { [modifier]: true }) })
+    expect(callbacks.toggleMultipleRowsLayout).not.toHaveBeenCalled()
   })
 
   it("ignores keys when target is editable element", () => {

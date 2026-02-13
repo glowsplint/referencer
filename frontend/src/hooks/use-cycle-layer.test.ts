@@ -110,6 +110,26 @@ describe("useCycleLayer", () => {
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
+  it.each([
+    { modifier: "metaKey" },
+    { modifier: "ctrlKey" },
+    { modifier: "altKey" },
+    { modifier: "shiftKey" },
+  ])("ignores L key when $modifier is held", ({ modifier }) => {
+    const layers = makeLayers(3);
+    const setActiveLayer = vi.fn();
+    renderHook(() =>
+      useCycleLayer({
+        layers,
+        activeLayerId: "layer-0",
+        setActiveLayer,
+      })
+    );
+
+    pressKey("KeyL", { [modifier]: true });
+    expect(setActiveLayer).not.toHaveBeenCalled();
+  });
+
   it("ignores L key when target is contentEditable", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();

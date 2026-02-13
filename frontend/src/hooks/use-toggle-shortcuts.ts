@@ -31,6 +31,7 @@ export function useToggleShortcuts({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
       if (isEditableElement(e.target)) return
 
       const action = KEY_MAP[e.code]
