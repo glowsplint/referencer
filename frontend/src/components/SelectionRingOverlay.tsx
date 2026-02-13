@@ -12,11 +12,6 @@ interface OverlayRect {
 const PADDING_X = 2
 const PADDING_Y = 1
 
-/** Two rects are on the same visual line if they vertically overlap. */
-function verticallyOverlaps(a: OverlayRect, b: OverlayRect): boolean {
-  return a.top < b.top + b.height && a.top + a.height > b.top
-}
-
 /** Merge b into a, expanding a to encompass both. */
 function mergeInto(a: OverlayRect, b: OverlayRect): void {
   const newTop = Math.min(a.top, b.top)
@@ -58,18 +53,14 @@ function getSelectionRects(
     })
   }
 
-  // Merge rects that vertically overlap (same visual line)
-  const merged: OverlayRect[] = []
-  for (const rect of rects) {
-    const last = merged[merged.length - 1]
-    if (last && verticallyOverlaps(last, rect)) {
-      mergeInto(last, rect)
-    } else {
-      merged.push({ ...rect })
-    }
+  // Merge all rects into a single bounding box (selection is always contiguous)
+  const first = rects[0]
+  const merged: OverlayRect = { ...first }
+  for (let i = 1; i < rects.length; i++) {
+    mergeInto(merged, rects[i])
   }
 
-  return merged
+  return [merged]
 }
 
 export function SelectionRingOverlay({
