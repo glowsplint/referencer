@@ -12,6 +12,8 @@ import { LayerHighlightsExtension } from "@/lib/tiptap/extensions/layer-highligh
 import { WordSelectionExtension } from "@/lib/tiptap/extensions/word-selection"
 import { SimilarTextHighlightsExtension } from "@/lib/tiptap/extensions/similar-text-highlights"
 import { WordHoverExtension } from "@/lib/tiptap/extensions/word-hover"
+import { ArrowEndpointHighlightsExtension } from "@/lib/tiptap/extensions/arrow-endpoint-highlights"
+import { ArrowLinesExtension } from "@/lib/tiptap/extensions/arrow-lines-plugin"
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension"
 import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension"
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap/upload"
@@ -41,6 +43,8 @@ export function createSimpleEditorExtensions() {
     WordSelectionExtension,
     SimilarTextHighlightsExtension,
     WordHoverExtension,
+    ArrowEndpointHighlightsExtension,
+    ArrowLinesExtension,
     ImageUploadNode.configure({
       accept: "image/*",
       maxSize: MAX_FILE_SIZE,

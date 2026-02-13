@@ -71,7 +71,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -88,7 +88,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -115,7 +115,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -245,7 +245,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -268,7 +268,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -287,7 +287,7 @@ describe("ArrowOverlay", () => {
     expect(getWordCenter.mock.calls.length).toBeGreaterThan(callsBefore)
   })
 
-  it("renders endpoint rects when isLocked", () => {
+  it("does not render visual arrow-line for within-editor arrows (handled by plugin)", () => {
     const layer = createLayer({
       arrows: [
         {
@@ -297,33 +297,12 @@ describe("ArrowOverlay", () => {
         },
       ],
     })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], isLocked: true })}
-      />
-    )
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
 
-    const rects = screen.getAllByTestId("arrow-endpoint-rect")
-    expect(rects).toHaveLength(2)
-  })
-
-  it("does not render endpoint rects when not locked", () => {
-    const layer = createLayer({
-      arrows: [
-        {
-          id: "a1",
-          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
-        },
-      ],
-    })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], isLocked: false })}
-      />
-    )
-
-    expect(screen.queryByTestId("arrow-endpoint-rect")).not.toBeInTheDocument()
+    // Visual arrow-line is rendered by the plugin, not ArrowOverlay
+    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
+    // But interaction hit area IS rendered here for all arrows
+    expect(screen.getByTestId("arrow-hit-area")).toBeInTheDocument()
   })
 
   it("SVG overlay uses mix-blend-mode multiply in light mode", () => {
@@ -348,7 +327,7 @@ describe("ArrowOverlay", () => {
     expect(svg).toHaveStyle({ mixBlendMode: "screen" })
   })
 
-  it("endpoint rects, arrow line, and arrowhead share same base color", () => {
+  it("arrow line and arrowhead share same base color", () => {
     const layerColor = "#fca5a5"
     const layer = createLayer({
       color: layerColor,
@@ -356,20 +335,15 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
     render(
       <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], isLocked: true })}
+        {...createDefaultProps({ layers: [layer] })}
       />
     )
-
-    const rects = screen.getAllByTestId("arrow-endpoint-rect")
-    for (const rect of rects) {
-      expect(rect.getAttribute("fill")).toBe(layerColor)
-    }
 
     const line = screen.getByTestId("arrow-line")
     expect(line.getAttribute("stroke")).toBe(layerColor)
@@ -385,7 +359,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -414,7 +388,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -434,7 +408,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -462,7 +436,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -482,7 +456,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -499,12 +473,12 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
         {
           id: "a2",
           from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
-          to: { editorIndex: 0, from: 30, to: 35, text: "bar" },
+          to: { editorIndex: 1, from: 30, to: 35, text: "bar" },
         },
       ],
     })
@@ -520,7 +494,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -542,12 +516,12 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
         {
           id: "a2",
           from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
-          to: { editorIndex: 0, from: 30, to: 35, text: "bar" },
+          to: { editorIndex: 1, from: 30, to: 35, text: "bar" },
         },
       ],
     })
@@ -570,12 +544,12 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
         {
           id: "a2",
           from: { editorIndex: 0, from: 20, to: 25, text: "foo" },
-          to: { editorIndex: 0, from: 30, to: 35, text: "bar" },
+          to: { editorIndex: 1, from: 30, to: 35, text: "bar" },
         },
       ],
     })
@@ -600,7 +574,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -612,10 +586,10 @@ describe("ArrowOverlay", () => {
     const interactionLayer = screen.getByTestId("arrow-interaction-layer")
     const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
 
-    // from: {from: 1} → cx = 10, to: {from: 10} → cx = 100
-    // midX = (10 + 100) / 2 = 55
-    // both editorIndex 0 → cy = 25, midY = 25
-    expect(xIconGroup.getAttribute("transform")).toBe("translate(55, 25)")
+    // from: {editorIndex: 0, from: 1} → cx = 10, cy = 25
+    // to: {editorIndex: 1, from: 10} → cx = 100, cy = 75
+    // midX = (10 + 100) / 2 = 55, midY = (25 + 75) / 2 = 50
+    expect(xIconGroup.getAttribute("transform")).toBe("translate(55, 50)")
   })
 
   it("X icon circle has white fill and blended stroke color", () => {
@@ -625,7 +599,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -648,7 +622,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -701,7 +675,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -717,7 +691,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })
@@ -736,7 +710,7 @@ describe("ArrowOverlay", () => {
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
     })

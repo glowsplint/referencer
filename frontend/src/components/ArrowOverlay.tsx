@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
-import { flushSync } from "react-dom"
+import { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from "react"
 import type { Editor } from "@tiptap/react"
-import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
+import type { Layer, DrawingState, ActiveTool, Arrow } from "@/types/editor"
 import { getWordCenter, getWordRect } from "@/lib/tiptap/nearest-word"
 import { blendWithBackground } from "@/lib/color"
 
@@ -20,23 +19,24 @@ interface ArrowOverlayProps {
   isLocked: boolean
 }
 
-interface WordRect {
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
-interface ArrowPosition {
+interface CrossEditorArrow {
   layerId: string
   arrowId: string
   color: string
-  x1: number
-  y1: number
-  x2: number
-  y2: number
-  fromRect: WordRect | null
-  toRect: WordRect | null
+  arrow: Arrow
+}
+
+function computePath(
+  arrow: Arrow,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  containerRect: DOMRect
+): string | null {
+  const fromCenter = getWordCenter(arrow.from, editorsRef, containerRect)
+  const toCenter = getWordCenter(arrow.to, editorsRef, containerRect)
+  if (!fromCenter || !toCenter) return null
+  const mx = (fromCenter.cx + toCenter.cx) / 2
+  const my = (fromCenter.cy + toCenter.cy) / 2
+  return `M ${fromCenter.cx} ${fromCenter.cy} L ${mx} ${my} L ${toCenter.cx} ${toCenter.cy}`
 }
 
 export function ArrowOverlay({
@@ -51,98 +51,185 @@ export function ArrowOverlay({
   isDarkMode,
   isLocked,
 }: ArrowOverlayProps) {
-  const [tick, setTick] = useState(0)
   const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null)
+  // Structural tick — only for structural changes (layers, visibility, preview), NOT scroll
+  const [structuralTick, setStructuralTick] = useState(0)
 
-  const recalc = useCallback(() => setTick((t) => t + 1), [])
+  // Refs for imperative path updates on scroll
+  const visualPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
+  const hitPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
+  const xIconRefs = useRef<Map<string, SVGGElement>>(new Map())
 
-  // Recalculate on resize
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const ro = new ResizeObserver(recalc)
-    ro.observe(container)
-    window.addEventListener("resize", recalc)
-    return () => {
-      ro.disconnect()
-      window.removeEventListener("resize", recalc)
+  // Cross-editor arrows only (for visual rendering — within-editor visuals are in the plugin)
+  const crossEditorArrows = useMemo(() => {
+    const result: CrossEditorArrow[] = []
+    for (const layer of layers) {
+      if (!layer.visible) continue
+      for (const arrow of layer.arrows) {
+        if (arrow.from.editorIndex === arrow.to.editorIndex) continue
+        if (sectionVisibility[arrow.from.editorIndex] === false) continue
+        if (sectionVisibility[arrow.to.editorIndex] === false) continue
+        result.push({
+          layerId: layer.id,
+          arrowId: arrow.id,
+          color: layer.color,
+          arrow,
+        })
+      }
     }
-  }, [containerRef, recalc])
+    return result
+  }, [layers, sectionVisibility])
 
-  // Recalculate on scroll — flushSync ensures the React re-render happens
-  // synchronously within the scroll event, so SVG updates paint in the same
-  // frame as the scroll position change (no 1-2 frame lag from batching).
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const onScroll = () => flushSync(recalc)
-    container.addEventListener("scroll", onScroll, true)
-    return () => container.removeEventListener("scroll", onScroll, true)
-  }, [containerRef, recalc])
-
-  // Recalculate when layers, drawingState, or sectionVisibility change
-  useEffect(() => {
-    recalc()
-  }, [layers, drawingState, sectionVisibility, recalc])
-
-  const containerRect = containerRef.current?.getBoundingClientRect()
-
-  const arrowPositions = useMemo(() => {
-    if (!containerRect) return []
-    const positions: ArrowPosition[] = []
-
+  // All visible arrows (for interaction layer — handles hit areas for ALL arrows)
+  const allVisibleArrows = useMemo(() => {
+    const result: CrossEditorArrow[] = []
     for (const layer of layers) {
       if (!layer.visible) continue
       for (const arrow of layer.arrows) {
         if (sectionVisibility[arrow.from.editorIndex] === false) continue
         if (sectionVisibility[arrow.to.editorIndex] === false) continue
-        const fromCenter = getWordCenter(arrow.from, editorsRef, containerRect)
-        const toCenter = getWordCenter(arrow.to, editorsRef, containerRect)
+        result.push({
+          layerId: layer.id,
+          arrowId: arrow.id,
+          color: layer.color,
+          arrow,
+        })
+      }
+    }
+    return result
+  }, [layers, sectionVisibility])
+
+  // Imperatively update all path `d` attributes and X-icon positions
+  const updatePositions = useCallback(() => {
+    const containerRect = containerRef.current?.getBoundingClientRect()
+    if (!containerRect) return
+
+    // Update visual paths (cross-editor only)
+    for (const data of crossEditorArrows) {
+      const d = computePath(data.arrow, editorsRef, containerRect)
+      if (!d) continue
+      visualPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
+    }
+
+    // Update hit areas and X icons (all arrows)
+    for (const data of allVisibleArrows) {
+      const d = computePath(data.arrow, editorsRef, containerRect)
+      if (!d) continue
+      hitPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
+
+      // Update X icon position if hovered
+      const xIcon = xIconRefs.current.get(data.arrowId)
+      if (xIcon) {
+        const fromCenter = getWordCenter(data.arrow.from, editorsRef, containerRect)
+        const toCenter = getWordCenter(data.arrow.to, editorsRef, containerRect)
         if (fromCenter && toCenter) {
-          positions.push({
-            layerId: layer.id,
-            arrowId: arrow.id,
-            color: layer.color,
-            x1: fromCenter.cx,
-            y1: fromCenter.cy,
-            x2: toCenter.cx,
-            y2: toCenter.cy,
-            fromRect: isLocked ? getWordRect(arrow.from, editorsRef, containerRect) : null,
-            toRect: isLocked ? getWordRect(arrow.to, editorsRef, containerRect) : null,
-          })
+          const mx = (fromCenter.cx + toCenter.cx) / 2
+          const my = (fromCenter.cy + toCenter.cy) / 2
+          xIcon.setAttribute("transform", `translate(${mx}, ${my})`)
         }
       }
     }
 
-    return positions
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layers, editorsRef, containerRect?.width, containerRect?.height, tick, sectionVisibility, isLocked])
+    // Update preview
+    if (drawingState && drawingColor) {
+      updatePreviewPositions(containerRect)
+    }
+  }, [crossEditorArrows, allVisibleArrows, editorsRef, containerRef, drawingState, drawingColor])
 
-  const previewPosition = useMemo(() => {
-    if (!drawingState || !containerRect) return null
-    if (sectionVisibility[drawingState.anchor.editorIndex] === false) return null
-    if (sectionVisibility[drawingState.cursor.editorIndex] === false) return null
+  // Refs for preview elements
+  const previewPathRef = useRef<SVGPathElement | null>(null)
+  const previewRectRef = useRef<SVGRectElement | null>(null)
+  const previewMarkerPolygonRef = useRef<SVGPolygonElement | null>(null)
+
+  const updatePreviewPositions = useCallback((containerRect: DOMRect) => {
+    if (!drawingState) return
+    if (sectionVisibility[drawingState.anchor.editorIndex] === false) return
+    if (sectionVisibility[drawingState.cursor.editorIndex] === false) return
+
     const fromCenter = getWordCenter(drawingState.anchor, editorsRef, containerRect)
     const toCenter = getWordCenter(drawingState.cursor, editorsRef, containerRect)
-    if (!fromCenter || !toCenter) return null
+    if (!fromCenter || !toCenter) return
+
+    // Update anchor rect
     const anchorRect = getWordRect(drawingState.anchor, editorsRef, containerRect)
-    if (fromCenter.cx === toCenter.cx && fromCenter.cy === toCenter.cy) return { anchorRect }
-    return {
-      x1: fromCenter.cx,
-      y1: fromCenter.cy,
-      x2: toCenter.cx,
-      y2: toCenter.cy,
-      anchorRect,
+    if (anchorRect && previewRectRef.current) {
+      previewRectRef.current.setAttribute("x", String(anchorRect.x))
+      previewRectRef.current.setAttribute("y", String(anchorRect.y))
+      previewRectRef.current.setAttribute("width", String(anchorRect.width))
+      previewRectRef.current.setAttribute("height", String(anchorRect.height))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawingState, editorsRef, containerRect?.width, containerRect?.height, tick])
+
+    // Update preview arrow path
+    if (fromCenter.cx !== toCenter.cx || fromCenter.cy !== toCenter.cy) {
+      const mx = (fromCenter.cx + toCenter.cx) / 2
+      const my = (fromCenter.cy + toCenter.cy) / 2
+      const d = `M ${fromCenter.cx} ${fromCenter.cy} L ${mx} ${my} L ${toCenter.cx} ${toCenter.cy}`
+      previewPathRef.current?.setAttribute("d", d)
+    }
+  }, [drawingState, editorsRef, sectionVisibility])
+
+  // After React renders (structural changes), compute initial positions
+  useLayoutEffect(() => {
+    updatePositions()
+  })
+
+  // Scroll → imperative update (no React re-render)
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const onScroll = () => updatePositions()
+    container.addEventListener("scroll", onScroll, true)
+    return () => container.removeEventListener("scroll", onScroll, true)
+  }, [containerRef, updatePositions])
+
+  // Resize → structural re-render (arrow positions shift)
+  const recalcStructural = useCallback(() => setStructuralTick((t) => t + 1), [])
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const ro = new ResizeObserver(recalcStructural)
+    ro.observe(container)
+    window.addEventListener("resize", recalcStructural)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener("resize", recalcStructural)
+    }
+  }, [containerRef, recalcStructural])
+
+  // Structural recalc on layer/drawing/visibility changes
+  useEffect(() => {
+    recalcStructural()
+  }, [layers, drawingState, sectionVisibility, recalcStructural])
 
   const blendArrow = useCallback(
     (hex: string) => blendWithBackground(hex, ARROW_OPACITY, isDarkMode),
     [isDarkMode]
   )
+
+  // Preview data for React rendering structure (show/hide elements)
+  const previewStructure = useMemo(() => {
+    if (!drawingState || !drawingColor) return null
+    if (sectionVisibility[drawingState.anchor.editorIndex] === false) return null
+    if (sectionVisibility[drawingState.cursor.editorIndex] === false) return null
+
+    const containerRect = containerRef.current?.getBoundingClientRect()
+    if (!containerRect) return null
+
+    const fromCenter = getWordCenter(drawingState.anchor, editorsRef, containerRect)
+    const toCenter = getWordCenter(drawingState.cursor, editorsRef, containerRect)
+    if (!fromCenter || !toCenter) return null
+
+    const anchorRect = getWordRect(drawingState.anchor, editorsRef, containerRect)
+    const samePoint = fromCenter.cx === toCenter.cx && fromCenter.cy === toCenter.cy
+
+    return { anchorRect, hasLine: !samePoint }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drawingState, drawingColor, editorsRef, containerRef, sectionVisibility, structuralTick])
+
+  // Force a void read of structuralTick so the dependency is used
+  void structuralTick
 
   return (
     <>
@@ -153,20 +240,20 @@ export function ArrowOverlay({
         style={{ width: "100%", height: "100%", mixBlendMode: isDarkMode ? "screen" : "multiply" }}
       >
         <defs>
-          {arrowPositions.map((pos) => (
+          {crossEditorArrows.map((data) => (
             <marker
-              key={`marker-${pos.arrowId}`}
-              id={`arrowhead-${pos.arrowId}`}
+              key={`marker-${data.arrowId}`}
+              id={`arrowhead-${data.arrowId}`}
               markerWidth="8"
               markerHeight="6"
               refX="4"
               refY="3"
               orient="auto"
             >
-              <polygon points="0 0, 8 3, 0 6" fill={pos.color} />
+              <polygon points="0 0, 8 3, 0 6" fill={data.color} />
             </marker>
           ))}
-          {previewPosition && drawingColor && (
+          {previewStructure && drawingColor && (
             <marker
               id="arrowhead-preview"
               markerWidth="8"
@@ -175,77 +262,59 @@ export function ArrowOverlay({
               refY="3"
               orient="auto"
             >
-              <polygon points="0 0, 8 3, 0 6" fill={blendArrow(drawingColor)} />
+              <polygon
+                ref={previewMarkerPolygonRef}
+                points="0 0, 8 3, 0 6"
+                fill={blendArrow(drawingColor)}
+              />
             </marker>
           )}
         </defs>
 
-        {arrowPositions.map((pos) => {
-          const mx = (pos.x1 + pos.x2) / 2
-          const my = (pos.y1 + pos.y2) / 2
-          const arrowPath = `M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`
-          return (
-            <g key={pos.arrowId} opacity={ARROW_OPACITY}>
-              {pos.fromRect && (
-                <rect
-                  data-testid="arrow-endpoint-rect"
-                  x={pos.fromRect.x}
-                  y={pos.fromRect.y}
-                  width={pos.fromRect.width}
-                  height={pos.fromRect.height}
-                  fill={pos.color}
-                />
-              )}
-              {pos.toRect && (
-                <rect
-                  data-testid="arrow-endpoint-rect"
-                  x={pos.toRect.x}
-                  y={pos.toRect.y}
-                  width={pos.toRect.width}
-                  height={pos.toRect.height}
-                  fill={pos.color}
-                />
-              )}
-              <path
-                data-testid="arrow-line"
-                d={arrowPath}
-                stroke={pos.color}
-                strokeWidth={2}
-                fill="none"
-                markerMid={hoveredArrowId === pos.arrowId ? undefined : `url(#arrowhead-${pos.arrowId})`}
-              />
-            </g>
-          )
-        })}
+        {crossEditorArrows.map((data) => (
+          <g key={data.arrowId} opacity={ARROW_OPACITY}>
+            <path
+              ref={(el) => {
+                if (el) visualPathRefs.current.set(data.arrowId, el)
+                else visualPathRefs.current.delete(data.arrowId)
+              }}
+              data-testid="arrow-line"
+              d=""
+              stroke={data.color}
+              strokeWidth={2}
+              fill="none"
+              markerMid={hoveredArrowId === data.arrowId ? undefined : `url(#arrowhead-${data.arrowId})`}
+            />
+          </g>
+        ))}
 
-        {previewPosition && drawingColor && (() => {
-          const hasLine = "x1" in previewPosition
-          return (
-            <g opacity={ARROW_OPACITY}>
-              {previewPosition.anchorRect && (
-                <rect
-                  data-testid="preview-anchor-rect"
-                  x={previewPosition.anchorRect.x}
-                  y={previewPosition.anchorRect.y}
-                  width={previewPosition.anchorRect.width}
-                  height={previewPosition.anchorRect.height}
-                  fill={drawingColor}
-                />
-              )}
-              {hasLine && (
-                <path
-                  data-testid="preview-arrow"
-                  d={`M ${previewPosition.x1} ${previewPosition.y1} L ${(previewPosition.x1! + previewPosition.x2!) / 2} ${(previewPosition.y1! + previewPosition.y2!) / 2} L ${previewPosition.x2} ${previewPosition.y2}`}
-                  stroke={blendArrow(drawingColor)}
-                  strokeWidth={2}
-                  strokeDasharray="6 4"
-                  fill="none"
-                  markerMid="url(#arrowhead-preview)"
-                />
-              )}
-            </g>
-          )
-        })()}
+        {previewStructure && drawingColor && (
+          <g opacity={ARROW_OPACITY}>
+            {previewStructure.anchorRect && (
+              <rect
+                ref={previewRectRef}
+                data-testid="preview-anchor-rect"
+                x={previewStructure.anchorRect.x}
+                y={previewStructure.anchorRect.y}
+                width={previewStructure.anchorRect.width}
+                height={previewStructure.anchorRect.height}
+                fill={drawingColor}
+              />
+            )}
+            {previewStructure.hasLine && (
+              <path
+                ref={previewPathRef}
+                data-testid="preview-arrow"
+                d=""
+                stroke={blendArrow(drawingColor)}
+                strokeWidth={2}
+                strokeDasharray="6 4"
+                fill="none"
+                markerMid="url(#arrowhead-preview)"
+              />
+            )}
+          </g>
+        )}
       </svg>
 
       {/* Interaction layer: separate SVG without blend mode so pointer events work */}
@@ -254,17 +323,18 @@ export function ArrowOverlay({
         className="absolute inset-0 pointer-events-none z-10"
         style={{ width: "100%", height: "100%" }}
       >
-        {arrowPositions.map((pos) => {
-          const mx = (pos.x1 + pos.x2) / 2
-          const my = (pos.y1 + pos.y2) / 2
-          const arrowPath = `M ${pos.x1} ${pos.y1} L ${mx} ${my} L ${pos.x2} ${pos.y2}`
-          const isHovered = hoveredArrowId === pos.arrowId
-          const strokeColor = blendArrow(pos.color)
+        {allVisibleArrows.map((data) => {
+          const isHovered = hoveredArrowId === data.arrowId
+          const strokeColor = blendArrow(data.color)
           return (
-            <g key={pos.arrowId}>
+            <g key={data.arrowId}>
               <path
+                ref={(el) => {
+                  if (el) hitPathRefs.current.set(data.arrowId, el)
+                  else hitPathRefs.current.delete(data.arrowId)
+                }}
                 data-testid="arrow-hit-area"
-                d={arrowPath}
+                d=""
                 stroke="transparent"
                 strokeWidth={12}
                 fill="none"
@@ -272,13 +342,17 @@ export function ArrowOverlay({
                   pointerEvents: "auto",
                   cursor: "pointer",
                 }}
-                onMouseEnter={() => setHoveredArrowId(pos.arrowId)}
+                onMouseEnter={() => setHoveredArrowId(data.arrowId)}
                 onMouseLeave={() => setHoveredArrowId(null)}
-                onClick={() => removeArrow(pos.layerId, pos.arrowId)}
+                onClick={() => removeArrow(data.layerId, data.arrowId)}
               />
               {isHovered && (
                 <g
-                  transform={`translate(${mx}, ${my})`}
+                  ref={(el) => {
+                    if (el) xIconRefs.current.set(data.arrowId, el)
+                    else xIconRefs.current.delete(data.arrowId)
+                  }}
+                  transform="translate(0, 0)"
                   style={{ pointerEvents: "none" }}
                 >
                   <circle r="8" fill="white" stroke={strokeColor} strokeWidth={1.5} />

@@ -38,6 +38,9 @@ async function drawArrowInEditor(
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
 
+  // Wait for status bar to confirm anchor was accepted
+  await expect(page.getByTestId("status-bar")).toContainText("select the target", { timeout: 2000 });
+
   // Select and confirm target
   await page.mouse.click(box!.x + targetXOffset, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
@@ -67,6 +70,9 @@ async function drawArrowBetweenEditors(
   await page.mouse.click(srcBox!.x + anchorXOffset, srcBox!.y + srcBox!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
+
+  // Wait for status bar to confirm anchor was accepted
+  await expect(page.getByTestId("status-bar")).toContainText("select the target", { timeout: 2000 });
 
   const tgtP = page
     .locator(".simple-editor-wrapper")
@@ -113,7 +119,7 @@ test.describe("cross-editor arrows (2 editors)", () => {
     });
   });
 
-  test("cross-editor arrow highlights appear as SVG rects", async ({
+  test("cross-editor arrow highlights appear as inline decorations", async ({
     page,
   }) => {
     await drawArrowBetweenEditors(page, 0, 1);
@@ -121,9 +127,9 @@ test.describe("cross-editor arrows (2 editors)", () => {
       timeout: 2000,
     });
 
-    // Both arrow endpoints should be highlighted as SVG rects in the overlay
-    const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
-    await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
+    // Both arrow endpoints should be highlighted as inline decorations
+    const endpointDecorations = page.locator('.ProseMirror .arrow-endpoint');
+    await expect(endpointDecorations).toHaveCount(2, { timeout: 2000 });
   });
 
   test("cross-editor arrow can be deleted by clicking", async ({ page }) => {
@@ -156,14 +162,14 @@ test.describe("cross-editor arrows (2 editors)", () => {
       timeout: 2000,
     });
 
-    const endpointRects = page.locator('[data-testid="arrow-endpoint-rect"]');
-    await expect(endpointRects).toHaveCount(0, { timeout: 2000 });
+    const endpointDecorations = page.locator('.ProseMirror .arrow-endpoint');
+    await expect(endpointDecorations).toHaveCount(0, { timeout: 2000 });
 
     await page.getByTestId("layerVisibility-0").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
-    await expect(endpointRects).toHaveCount(2, { timeout: 2000 });
+    await expect(endpointDecorations).toHaveCount(2, { timeout: 2000 });
   });
 });
 

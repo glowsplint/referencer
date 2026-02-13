@@ -263,6 +263,8 @@ export function App() {
                         selection={selection}
                         activeLayerColor={activeLayerColor}
                         isDarkMode={settings.isDarkMode}
+                        removeArrow={removeArrow}
+                        sectionVisibility={sectionVisibility}
                       />
                     </div>
                   </Fragment>

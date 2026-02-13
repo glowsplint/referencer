@@ -10,6 +10,8 @@ import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
 import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
 import { useWordHover } from "@/hooks/use-word-hover"
+import { useArrowEndpointDecorations } from "@/hooks/use-arrow-endpoint-decorations"
+import { useEditorArrows } from "@/hooks/use-editor-arrows"
 import { SelectionRingOverlay } from "@/components/SelectionRingOverlay"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
 
@@ -40,6 +42,8 @@ export function EditorPane({
   selection,
   activeLayerColor,
   isDarkMode,
+  removeArrow,
+  sectionVisibility,
 }: {
   isLocked: boolean
   activeTool?: ActiveTool
@@ -55,6 +59,8 @@ export function EditorPane({
   selection: WordSelection | null
   activeLayerColor: string | null
   isDarkMode: boolean
+  removeArrow: (layerId: string, arrowId: string) => void
+  sectionVisibility: boolean[]
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -101,6 +107,8 @@ export function EditorPane({
   useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useSimilarTextHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useWordHover(editor, index, isLocked, isDarkMode, selection)
+  useArrowEndpointDecorations(editor, layers, index, isLocked, isDarkMode)
+  useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow)
   useSelectionScroll(editor, selection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {

@@ -118,7 +118,7 @@ test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ pa
   await page.mouse.move(hoverX, hoverY, { steps: 5 });
 
   // X icon circle should appear in the interaction layer
-  const interactionLayer = page.getByTestId("arrow-interaction-layer");
+  const interactionLayer = page.locator('[data-testid="arrow-interaction-layer"]');
   await expect(interactionLayer.locator("circle")).toHaveCount(1, { timeout: 2000 });
 
   // Click the hit area to delete

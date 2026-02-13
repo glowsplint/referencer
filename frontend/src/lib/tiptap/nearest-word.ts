@@ -1,4 +1,5 @@
 import type { Editor } from "@tiptap/react"
+import type { EditorView } from "@tiptap/pm/view"
 import type { CollectedWord } from "./word-collection"
 
 /** Pixels of vertical distance to group words into the same visual line */
@@ -271,4 +272,40 @@ export function findNearestWord(
   }
 
   return best.word
+}
+
+/**
+ * Get the center of a word in content-relative coordinates (stable regardless of scroll).
+ * These coordinates are relative to the scroll content, not the viewport.
+ * Accepts a raw ProseMirror EditorView.
+ */
+export function getWordCenterContentRelative(
+  word: CollectedWord,
+  editorView: EditorView,
+  wrapper: HTMLElement
+): { cx: number; cy: number } | null {
+  try {
+    const wrapperRect = wrapper.getBoundingClientRect()
+    const nodeAt = editorView.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editorView.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          cx: (rect.left + rect.right) / 2 - wrapperRect.left + wrapper.scrollLeft,
+          cy: (rect.top + rect.bottom) / 2 - wrapperRect.top + wrapper.scrollTop,
+        }
+      }
+      return null
+    }
+
+    const startCoords = editorView.coordsAtPos(word.from)
+    const endCoords = editorView.coordsAtPos(word.to)
+    return {
+      cx: (startCoords.left + endCoords.right) / 2 - wrapperRect.left + wrapper.scrollLeft,
+      cy: (startCoords.top + startCoords.bottom) / 2 - wrapperRect.top + wrapper.scrollTop,
+    }
+  } catch {
+    return null
+  }
 }
