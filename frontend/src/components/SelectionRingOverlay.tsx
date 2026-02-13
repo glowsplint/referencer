@@ -9,9 +9,25 @@ interface OverlayRect {
   height: number
 }
 
-const LINE_MERGE_THRESHOLD = 2
 const PADDING_X = 2
 const PADDING_Y = 1
+
+/** Two rects are on the same visual line if they vertically overlap. */
+function verticallyOverlaps(a: OverlayRect, b: OverlayRect): boolean {
+  return a.top < b.top + b.height && a.top + a.height > b.top
+}
+
+/** Merge b into a, expanding a to encompass both. */
+function mergeInto(a: OverlayRect, b: OverlayRect): void {
+  const newTop = Math.min(a.top, b.top)
+  const newBottom = Math.max(a.top + a.height, b.top + b.height)
+  const newLeft = Math.min(a.left, b.left)
+  const newRight = Math.max(a.left + a.width, b.left + b.width)
+  a.top = newTop
+  a.left = newLeft
+  a.width = newRight - newLeft
+  a.height = newBottom - newTop
+}
 
 function getSelectionRects(
   editor: Editor,
@@ -42,16 +58,12 @@ function getSelectionRects(
     })
   }
 
-  // Merge rects on the same line
+  // Merge rects that vertically overlap (same visual line)
   const merged: OverlayRect[] = []
   for (const rect of rects) {
     const last = merged[merged.length - 1]
-    if (last && Math.abs(rect.top - last.top) < LINE_MERGE_THRESHOLD) {
-      const newLeft = Math.min(last.left, rect.left)
-      const newRight = Math.max(last.left + last.width, rect.left + rect.width)
-      last.left = newLeft
-      last.width = newRight - newLeft
-      last.height = Math.max(last.height, rect.height)
+    if (last && verticallyOverlaps(last, rect)) {
+      mergeInto(last, rect)
     } else {
       merged.push({ ...rect })
     }
