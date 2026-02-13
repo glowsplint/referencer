@@ -44,6 +44,7 @@ const mockWorkspace = {
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
   sectionNames: ["Passage 1"],
+  editorKeys: [1],
   addEditor: vi.fn(),
   removeEditor: vi.fn(),
   updateSectionName: vi.fn(),
@@ -156,6 +157,7 @@ describe("App", () => {
 
   it("renders multiple editor panes when editorWidths has multiple entries", () => {
     mockWorkspace.editorWidths = [50, 50]
+    mockWorkspace.editorKeys = [1, 2]
     render(<App />)
     const panes = screen.getAllByTestId("editor-pane")
     expect(panes).toHaveLength(2)

@@ -380,6 +380,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     editorWidths: trackedEditorsHook.editorWidths,
     sectionVisibility: trackedEditorsHook.sectionVisibility,
     sectionNames: trackedEditorsHook.sectionNames,
+    editorKeys: trackedEditorsHook.editorKeys,
     editorsRef: trackedEditorsHook.editorsRef,
     handleDividerResize: trackedEditorsHook.handleDividerResize,
     handleEditorMount: trackedEditorsHook.handleEditorMount,

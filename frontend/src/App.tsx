@@ -63,6 +63,7 @@ export function App() {
     addArrow,
     removeArrow,
     editorsRef,
+    editorKeys,
     sectionVisibility,
     handleDividerResize,
     handleEditorMount,
@@ -232,7 +233,7 @@ export function App() {
                   const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]
                   const dividerDirection = settings.isMultipleRowsLayout ? "vertical" as const : "horizontal" as const
                   return (
-                  <Fragment key={i}>
+                  <Fragment key={editorKeys[i]}>
                     {showDivider && (
                       <Divider
                         onResize={(pct) => handleDividerResize(i - 1, pct)}

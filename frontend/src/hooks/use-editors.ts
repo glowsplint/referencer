@@ -12,10 +12,12 @@ export function useEditors() {
   const [splitPositions, setSplitPositions] = useState<number[]>([])
   const [sectionVisibility, setSectionVisibility] = useState<boolean[]>([true])
   const [sectionNames, setSectionNames] = useState<string[]>(["Passage 1"])
+  const [editorKeys, setEditorKeys] = useState<number[]>([0])
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null)
   const editorsRef = useRef<Map<number, Editor>>(new Map())
   const passageCounterRef = useRef(1)
   const editorCountRef = useRef(1)
+  const editorKeyCounterRef = useRef(1)
 
   const addEditor = useCallback((opts?: { name?: string }): string => {
     if (editorCountRef.current >= 3) {
@@ -31,6 +33,8 @@ export function useEditors() {
     setSplitPositions(computeEvenSplitPositions(newCount))
     setSectionVisibility((prev) => [...prev, true])
     setSectionNames((prev) => [...prev, name])
+    const key = editorKeyCounterRef.current++
+    setEditorKeys((prev) => [...prev, key])
     return name
   }, [])
 
@@ -54,6 +58,7 @@ export function useEditors() {
     setSplitPositions(computeEvenSplitPositions(newCount))
     setSectionVisibility((prev) => prev.filter((_, i) => i !== index))
     setSectionNames((prev) => prev.filter((_, i) => i !== index))
+    setEditorKeys((prev) => prev.filter((_, i) => i !== index))
     // Set active editor to the first remaining editor
     const firstEditor = newMap.get(0)
     if (firstEditor) setActiveEditor(firstEditor)
@@ -102,6 +107,7 @@ export function useEditors() {
   const reorderEditors = useCallback((permutation: number[]) => {
     setSectionNames(prev => permutation.map(old => prev[old]))
     setSectionVisibility(prev => permutation.map(old => prev[old]))
+    setEditorKeys(prev => permutation.map(old => prev[old]))
     setSplitPositions(computeEvenSplitPositions(permutation.length))
     // Re-key editorsRef according to permutation
     const oldMap = editorsRef.current
@@ -137,6 +143,7 @@ export function useEditors() {
     editorWidths,
     sectionVisibility,
     sectionNames,
+    editorKeys,
     editorsRef,
     addEditor,
     removeEditor,
