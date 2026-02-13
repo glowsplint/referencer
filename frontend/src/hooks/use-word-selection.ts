@@ -34,6 +34,7 @@ interface UseWordSelectionOptions {
   containerRef: React.RefObject<HTMLDivElement | null>
   editorCount: number
   onEnter?: () => void
+  onEscape?: () => void
 }
 
 export function useWordSelection({
@@ -42,6 +43,7 @@ export function useWordSelection({
   containerRef,
   editorCount,
   onEnter,
+  onEscape,
 }: UseWordSelectionOptions) {
   const [selection, setSelection] = useState<WordSelection | null>(null)
   const stickyXRef = useRef<number | null>(null)
@@ -49,6 +51,8 @@ export function useWordSelection({
   const headRef = useRef<WordSelection | null>(null)
   const onEnterRef = useRef(onEnter)
   onEnterRef.current = onEnter
+  const onEscapeRef = useRef(onEscape)
+  onEscapeRef.current = onEscape
 
   const selectWord = useCallback(
     (editorIndex: number, from: number, to: number, text: string) => {
@@ -97,6 +101,9 @@ export function useWordSelection({
           anchorRef.current = null
           headRef.current = null
           setSelection(null)
+        } else if (onEscapeRef.current) {
+          e.preventDefault()
+          onEscapeRef.current()
         }
         return
       }

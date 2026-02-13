@@ -1,5 +1,4 @@
 import { useCallback, useRef } from "react"
-import { toast } from "sonner"
 import type { Editor } from "@tiptap/react"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
 import type { ActiveTool } from "@/types/editor"
@@ -14,28 +13,15 @@ interface DragRange {
 interface UseDragSelectionOptions {
   isLocked: boolean
   activeTool: ActiveTool
-  activeLayerId: string | null
-  addHighlight: (
-    layerId: string,
-    highlight: { editorIndex: number; from: number; to: number; text: string; annotation: string }
-  ) => string
-  removeHighlight: (layerId: string, highlightId: string) => void
-  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[]
   selectWord: (editorIndex: number, from: number, to: number, text: string) => void
   clearSelection: () => void
-  onHighlightAdded?: (layerId: string, highlightId: string) => void
 }
 
 export function useDragSelection({
   isLocked,
   activeTool,
-  activeLayerId,
-  addHighlight,
-  removeHighlight,
-  layers,
   selectWord,
   clearSelection,
-  onHighlightAdded,
 }: UseDragSelectionOptions) {
   const dragRef = useRef<{
     anchor: DragRange
@@ -106,46 +92,8 @@ export function useDragSelection({
       const text = editor.state.doc.textBetween(from, to, " ")
 
       selectWord(editorIndex, from, to, text)
-
-      // Arrow tool: selection is set, user confirms with Enter
-      if (activeTool === "arrow") return
-
-      // Only create/toggle highlights when comments tool is active
-      if (activeTool !== "comments") return
-
-      if (!activeLayerId) {
-        toast.warning("Add a new layer to create annotations")
-        return
-      }
-
-      const layer = layers.find((l) => l.id === activeLayerId)
-      // Check for exact match to toggle off
-      const existing = layer?.highlights.find(
-        (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
-      )
-      if (existing) {
-        removeHighlight(activeLayerId, existing.id)
-        return
-      }
-
-      // Remove any empty-annotation highlights on this layer before adding a new one
-      if (layer) {
-        for (const h of layer.highlights) {
-          if (!h.annotation.trim()) {
-            removeHighlight(activeLayerId, h.id)
-          }
-        }
-      }
-      const highlightId = addHighlight(activeLayerId, {
-        editorIndex,
-        from,
-        to,
-        text,
-        annotation: "",
-      })
-      onHighlightAdded?.(activeLayerId, highlightId)
     },
-    [isLocked, activeTool, activeLayerId, layers, addHighlight, removeHighlight, selectWord, onHighlightAdded]
+    [isLocked, activeTool, selectWord]
   )
 
   return { handleMouseDown, handleMouseMove, handleMouseUp }

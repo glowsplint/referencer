@@ -1,13 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
-import { toast } from "sonner"
 import { useDragSelection } from "./use-drag-selection"
 import type { Editor } from "@tiptap/react"
 import type { ActiveTool } from "@/types/editor"
-
-vi.mock("sonner", () => ({
-  toast: { warning: vi.fn() },
-}))
 
 vi.mock("@/lib/tiptap/word-boundaries", () => ({
   getWordBoundaries: (_doc: unknown, pos: number) => {
@@ -42,13 +37,8 @@ function createOptions(overrides: Record<string, unknown> = {}) {
   return {
     isLocked: true,
     activeTool: "comments" as ActiveTool,
-    activeLayerId: "layer-1" as string | null,
-    addHighlight: vi.fn().mockReturnValue("h-1"),
-    removeHighlight: vi.fn(),
-    layers: [] as { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[],
     selectWord: vi.fn(),
     clearSelection: vi.fn(),
-    onHighlightAdded: vi.fn(),
     ...overrides,
   }
 }
@@ -58,103 +48,20 @@ describe("useDragSelection", () => {
     vi.clearAllMocks()
   })
 
-  it("shows warning toast when selection is made without an active layer", () => {
-    const opts = createOptions({ activeLayerId: null })
+  it("calls selectWord on mouseDown", () => {
+    const opts = createOptions()
     const { result } = renderHook(() => useDragSelection(opts))
     const editor = createMockEditor()
 
     act(() => {
       result.current.handleMouseDown(createMockEvent(), editor, 0)
     })
-    act(() => {
-      result.current.handleMouseUp(createMockEvent(), editor, 0)
-    })
 
-    expect(toast.warning).toHaveBeenCalledWith("Add a new layer to create annotations")
-    expect(opts.addHighlight).not.toHaveBeenCalled()
+    expect(opts.selectWord).toHaveBeenCalledWith(0, 1, 5, "hello")
   })
 
-  it("does not show warning toast when active layer exists", () => {
-    const opts = createOptions({ activeLayerId: "layer-1" })
-    const { result } = renderHook(() => useDragSelection(opts))
-    const editor = createMockEditor()
-
-    act(() => {
-      result.current.handleMouseDown(createMockEvent(), editor, 0)
-    })
-    act(() => {
-      result.current.handleMouseUp(createMockEvent(), editor, 0)
-    })
-
-    expect(toast.warning).not.toHaveBeenCalled()
-    expect(opts.addHighlight).toHaveBeenCalled()
-  })
-
-  it("still sets word selection even without active layer", () => {
-    const opts = createOptions({ activeLayerId: null })
-    const { result } = renderHook(() => useDragSelection(opts))
-    const editor = createMockEditor()
-
-    act(() => {
-      result.current.handleMouseDown(createMockEvent(), editor, 0)
-    })
-    act(() => {
-      result.current.handleMouseUp(createMockEvent(), editor, 0)
-    })
-
-    expect(opts.selectWord).toHaveBeenCalled()
-  })
-
-  it("does not create highlight when activeTool is not comments", () => {
-    const opts = createOptions({ activeTool: "selection" })
-    const { result } = renderHook(() => useDragSelection(opts))
-    const editor = createMockEditor()
-
-    act(() => {
-      result.current.handleMouseDown(createMockEvent(), editor, 0)
-    })
-    act(() => {
-      result.current.handleMouseUp(createMockEvent(), editor, 0)
-    })
-
-    expect(opts.addHighlight).not.toHaveBeenCalled()
-    // But word selection still happens
-    expect(opts.selectWord).toHaveBeenCalled()
-  })
-
-  it("does not create highlight when activeTool is arrow", () => {
-    const opts = createOptions({ activeTool: "arrow" })
-    const { result } = renderHook(() => useDragSelection(opts))
-    const editor = createMockEditor()
-
-    act(() => {
-      result.current.handleMouseDown(createMockEvent(), editor, 0)
-    })
-    act(() => {
-      result.current.handleMouseUp(createMockEvent(), editor, 0)
-    })
-
-    expect(opts.addHighlight).not.toHaveBeenCalled()
-    expect(opts.selectWord).toHaveBeenCalled()
-  })
-
-  it("creates highlight when activeTool is comments", () => {
-    const opts = createOptions({ activeTool: "comments" })
-    const { result } = renderHook(() => useDragSelection(opts))
-    const editor = createMockEditor()
-
-    act(() => {
-      result.current.handleMouseDown(createMockEvent(), editor, 0)
-    })
-    act(() => {
-      result.current.handleMouseUp(createMockEvent(), editor, 0)
-    })
-
-    expect(opts.addHighlight).toHaveBeenCalled()
-  })
-
-  it("sets selection but does not call additional callbacks when arrow tool", () => {
-    const opts = createOptions({ activeTool: "arrow" })
+  it("calls selectWord on mouseUp", () => {
+    const opts = createOptions()
     const { result } = renderHook(() => useDragSelection(opts))
     const editor = createMockEditor()
 
@@ -166,7 +73,59 @@ describe("useDragSelection", () => {
     })
 
     expect(opts.selectWord).toHaveBeenCalledWith(0, 1, 5, "hello")
-    expect(opts.addHighlight).not.toHaveBeenCalled()
-    expect(opts.onHighlightAdded).not.toHaveBeenCalled()
+  })
+
+  it("does not create highlights for any tool", () => {
+    for (const tool of ["selection", "arrow", "comments"] as ActiveTool[]) {
+      const opts = createOptions({ activeTool: tool })
+      const { result } = renderHook(() => useDragSelection(opts))
+      const editor = createMockEditor()
+
+      act(() => {
+        result.current.handleMouseDown(createMockEvent(), editor, 0)
+      })
+      act(() => {
+        result.current.handleMouseUp(createMockEvent(), editor, 0)
+      })
+
+      // selectWord is called, but no highlight creation
+      expect(opts.selectWord).toHaveBeenCalled()
+    }
+  })
+
+  it("clears selection when clicking on empty space", () => {
+    const opts = createOptions()
+    const editor = createMockEditor(null)
+    const { result } = renderHook(() => useDragSelection(opts))
+
+    act(() => {
+      result.current.handleMouseDown(createMockEvent(), editor, 0)
+    })
+
+    expect(opts.clearSelection).toHaveBeenCalled()
+  })
+
+  it("does nothing when not locked", () => {
+    const opts = createOptions({ isLocked: false })
+    const { result } = renderHook(() => useDragSelection(opts))
+    const editor = createMockEditor()
+
+    act(() => {
+      result.current.handleMouseDown(createMockEvent(), editor, 0)
+    })
+
+    expect(opts.selectWord).not.toHaveBeenCalled()
+  })
+
+  it("does not interfere with textarea clicks", () => {
+    const opts = createOptions()
+    const { result } = renderHook(() => useDragSelection(opts))
+    const editor = createMockEditor()
+
+    act(() => {
+      result.current.handleMouseDown(createMockEvent("TEXTAREA"), editor, 0)
+    })
+
+    expect(opts.selectWord).not.toHaveBeenCalled()
   })
 })

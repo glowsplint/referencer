@@ -12,6 +12,7 @@ import {
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
+import { useCommentMode } from "./hooks/use-comment-mode";
 import { useToolShortcuts } from "./hooks/use-tool-shortcuts";
 import { useToggleShortcuts } from "./hooks/use-toggle-shortcuts";
 import { useCycleLayer } from "./hooks/use-cycle-layer";
@@ -91,6 +92,7 @@ export function App() {
     containerRef,
     editorCount,
     onEnter: useCallback(() => confirmRef.current(), []),
+    onEscape: useCallback(() => setActiveTool("selection"), [setActiveTool]),
   });
 
   const { drawingState, confirmSelection } = useDrawingMode({
@@ -103,7 +105,26 @@ export function App() {
     setActiveTool,
   });
 
-  confirmRef.current = confirmSelection;
+  const { confirmComment } = useCommentMode({
+    isLocked: settings.isLocked,
+    activeTool: annotations.activeTool,
+    selection,
+    activeLayerId,
+    layers,
+    addHighlight,
+    removeHighlight,
+    clearSelection,
+    onHighlightAdded: useCallback((layerId: string, highlightId: string) => {
+      annotationBeforeEditRef.current = "";
+      setEditingAnnotation({ layerId, highlightId });
+    }, []),
+    showCommentToasts: settings.showDrawingToasts,
+  });
+
+  confirmRef.current = () => {
+    confirmSelection();
+    confirmComment();
+  };
 
   useCycleLayer({
     layers,
@@ -114,16 +135,8 @@ export function App() {
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragSelection({
     isLocked: settings.isLocked,
     activeTool: annotations.activeTool,
-    activeLayerId,
-    addHighlight,
-    removeHighlight,
-    layers,
     selectWord,
     clearSelection,
-    onHighlightAdded: useCallback((layerId: string, highlightId: string) => {
-      annotationBeforeEditRef.current = "";
-      setEditingAnnotation({ layerId, highlightId });
-    }, []),
   });
 
   const activeLayerColor = activeLayerId

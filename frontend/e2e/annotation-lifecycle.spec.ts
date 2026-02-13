@@ -33,14 +33,15 @@ test.describe("annotation lifecycle", () => {
     await page.keyboard.press("c");
   });
 
-  test("clicking a word creates annotation card in panel", async ({
+  test("clicking a word and pressing Enter creates annotation card in panel", async ({
     page,
   }) => {
     // No annotation panel initially
     await expect(page.getByTestId("annotation-panel")).toHaveCount(0);
 
-    // Click a word to create a highlight
+    // Click a word to select it, then press Enter to confirm
     await clickWordInEditor(page, 0);
+    await page.keyboard.press("Enter");
 
     // Annotation panel should now appear with one card
     await expect(page.getByTestId("annotation-panel")).toBeVisible({
@@ -55,6 +56,7 @@ test.describe("annotation lifecycle", () => {
     page,
   }) => {
     await clickWordInEditor(page, 0);
+    await page.keyboard.press("Enter");
 
     // Annotation input auto-focuses
     const input = page.getByPlaceholder("Add annotation...");
@@ -71,6 +73,7 @@ test.describe("annotation lifecycle", () => {
 
   test("clicking annotation card enters edit mode", async ({ page }) => {
     await clickWordInEditor(page, 0);
+    await page.keyboard.press("Enter");
 
     // Type and save an annotation
     const input = page.getByPlaceholder("Add annotation...");
@@ -93,6 +96,7 @@ test.describe("annotation lifecycle", () => {
     page,
   }) => {
     await clickWordInEditor(page, 0);
+    await page.keyboard.press("Enter");
 
     // Don't type anything, just press Escape to blur
     const input = page.getByPlaceholder("Add annotation...");
@@ -107,6 +111,7 @@ test.describe("annotation lifecycle", () => {
 
   test("empty annotation is removed when textarea blurs", async ({ page }) => {
     await clickWordInEditor(page, 0);
+    await page.keyboard.press("Enter");
 
     // Annotation auto-focuses. Don't type anything, just click elsewhere
     await expect(page.getByPlaceholder("Add annotation...")).toBeVisible({
@@ -127,6 +132,7 @@ test.describe("annotation lifecycle", () => {
 
   test("clicking same word again removes its highlight", async ({ page }) => {
     await clickWordInEditor(page, 0);
+    await page.keyboard.press("Enter");
 
     // Save an annotation first
     const input = page.getByPlaceholder("Add annotation...");
@@ -138,8 +144,9 @@ test.describe("annotation lifecycle", () => {
       timeout: 2000,
     });
 
-    // Click the exact same word again to toggle highlight off
+    // Click the exact same word again and press Enter to toggle highlight off
     await clickWordInEditor(page, 0);
+    await page.keyboard.press("Enter");
 
     // The annotation should be gone
     await expect(page.getByText("To be removed")).toHaveCount(0, {
@@ -150,15 +157,17 @@ test.describe("annotation lifecycle", () => {
   test("multiple annotations from different words show in panel", async ({
     page,
   }) => {
-    // Click first word, add annotation
+    // Click first word, confirm and add annotation
     await clickWordInEditor(page, 0, 30);
+    await page.keyboard.press("Enter");
     const input1 = page.getByPlaceholder("Add annotation...");
     await expect(input1).toBeVisible({ timeout: 2000 });
     await input1.fill("First note");
     await input1.press("Enter");
 
-    // Click second word (different position), add annotation
+    // Click second word (different position), confirm and add annotation
     await clickWordInEditor(page, 0, 100);
+    await page.keyboard.press("Enter");
     const input2 = page.getByPlaceholder("Add annotation...");
     await expect(input2).toBeVisible({ timeout: 2000 });
     await input2.fill("Second note");
@@ -174,6 +183,7 @@ test.describe("annotation lifecycle", () => {
   }) => {
     // Create annotation
     await clickWordInEditor(page, 0);
+    await page.keyboard.press("Enter");
     const input = page.getByPlaceholder("Add annotation...");
     await expect(input).toBeVisible({ timeout: 2000 });
     await input.fill("Persisted");

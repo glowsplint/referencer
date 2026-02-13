@@ -22,6 +22,7 @@ async function addAnnotation(
   page: import("@playwright/test").Page,
   text: string
 ) {
+  await page.keyboard.press("Enter");
   const input = page.getByPlaceholder("Add annotation...");
   await expect(input).toBeVisible({ timeout: 2000 });
   await input.fill(text);

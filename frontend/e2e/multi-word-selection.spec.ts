@@ -222,6 +222,9 @@ test.describe("drag-to-select multiple words", () => {
     await page.mouse.move(endX, y, { steps: 10 });
     await page.mouse.up();
 
+    // Confirm selection with Enter to create highlight
+    await page.keyboard.press("Enter");
+
     // Annotation panel should appear
     await expect(page.getByTestId("annotation-panel")).toBeVisible({
       timeout: 2000,
@@ -245,7 +248,8 @@ test.describe("drag-to-select multiple words", () => {
     await page.mouse.move(endX, y, { steps: 10 });
     await page.mouse.up();
 
-    // Save annotation so highlight persists
+    // Confirm selection and save annotation so highlight persists
+    await page.keyboard.press("Enter");
     const input = page.getByPlaceholder("Add annotation...");
     await expect(input).toBeVisible({ timeout: 2000 });
     await input.fill("Drag note");

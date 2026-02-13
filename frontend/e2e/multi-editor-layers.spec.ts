@@ -260,7 +260,8 @@ test.describe("multiple layers (2 editors)", () => {
     // Click word in E1 → highlight on Layer 1
     await clickWordInEditor(page, 0);
 
-    // Add annotation so highlight persists across layer switch
+    // Confirm selection and add annotation so highlight persists across layer switch
+    await page.keyboard.press("Enter");
     await page.getByPlaceholder("Add annotation...").fill("E1 note");
     await page.getByPlaceholder("Add annotation...").press("Enter");
 
@@ -279,7 +280,8 @@ test.describe("multiple layers (2 editors)", () => {
     await page.keyboard.press("l");
     await clickWordInEditor(page, 1, 60);
 
-    // Add annotation for E2 highlight too
+    // Confirm selection and add annotation for E2 highlight too
+    await page.keyboard.press("Enter");
     await page.getByPlaceholder("Add annotation...").fill("E2 note");
     await page.getByPlaceholder("Add annotation...").press("Enter");
 
