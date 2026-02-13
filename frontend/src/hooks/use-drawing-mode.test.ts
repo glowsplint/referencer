@@ -36,11 +36,11 @@ describe("useDrawingMode", () => {
     expect(toast.info).toHaveBeenCalledWith("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
   })
 
-  it("calls clearSelection when entering arrow mode", () => {
+  it("does not clear selection when entering arrow mode", () => {
     const clearSelection = vi.fn()
     renderHook(() => useDrawingMode(createOptions({ clearSelection })))
 
-    expect(clearSelection).toHaveBeenCalled()
+    expect(clearSelection).not.toHaveBeenCalled()
   })
 
   it("does nothing when activeTool is not arrow", () => {
@@ -93,8 +93,8 @@ describe("useDrawingMode", () => {
     })
     expect(result.current.isDrawing).toBe(true)
     expect(toast.info).toHaveBeenCalledWith("Now select the target and press Enter", { id: "arrow-drawing" })
-    // clearSelection called on entry + after anchor confirmed
-    expect(clearSelection).toHaveBeenCalledTimes(2)
+    // clearSelection called only after anchor confirmed (not on entry)
+    expect(clearSelection).toHaveBeenCalledTimes(1)
   })
 
   it("calls clearSelection after anchor confirmed", () => {

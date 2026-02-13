@@ -66,7 +66,6 @@ export function useDrawingMode({
   useEffect(() => {
     if (isArrowTool) {
       phaseRef.current = "selecting-anchor"
-      clearSelectionRef.current()
       if (showDrawingToastsRef.current) {
         toast.info("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
       }
