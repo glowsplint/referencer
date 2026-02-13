@@ -64,7 +64,8 @@ async function drawArrowBetweenEditors(
   await page.mouse.click(tgtBox!.x + targetXOffset, tgtBox!.y + tgtBox!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
-  // Tool auto-switches to selection
+  // Wait for tool to switch back to selection before returning
+  await expect(page.getByTestId("arrowToolButton")).not.toHaveClass(/(^|\s)bg-accent(\s|$)/, { timeout: 2000 });
 }
 
 function parseArrowCoords(d: string): number[] {
