@@ -1,5 +1,5 @@
 import { Eye, EyeOff, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useInlineEdit } from "@/hooks/use-inline-edit";
 
@@ -27,6 +27,14 @@ export function SectionList({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [dragFromIndex, setDragFromIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+
+  // Reset drag state when editorCount changes (e.g., passage deleted via trash
+  // drop). The browser skips the dragend event when the source element is removed
+  // from the DOM, so we can't rely on it for cleanup.
+  useEffect(() => {
+    setDragFromIndex(null);
+    setDropTargetIndex(null);
+  }, [editorCount]);
 
   const { isEditing, inputProps, startEditing } = useInlineEdit({
     currentName: editingIndex !== null ? sectionNames[editingIndex] : "",
