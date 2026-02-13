@@ -32,7 +32,7 @@ describe("useDrawingMode", () => {
   it("shows entry toast when arrow tool is activated", () => {
     renderHook(() => useDrawingMode(createOptions()))
 
-    expect(toast.info).toHaveBeenCalledWith("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
+    expect(toast.info).toHaveBeenCalledWith(expect.anything(), { id: "arrow-drawing" })
   })
 
   it("does nothing when activeTool is not arrow", () => {
@@ -83,7 +83,7 @@ describe("useDrawingMode", () => {
       cursor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
     })
     expect(result.current.isDrawing).toBe(true)
-    expect(toast.info).toHaveBeenCalledWith("Now select the target and press Enter", { id: "arrow-drawing" })
+    expect(toast.info).toHaveBeenCalledWith(expect.anything(), { id: "arrow-drawing" })
   })
 
   it("creates arrow on second confirm with different word", () => {
@@ -148,7 +148,7 @@ describe("useDrawingMode", () => {
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
     // Should show the anchor instruction toast again
-    expect(toast.info).toHaveBeenCalledWith("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
+    expect(toast.info).toHaveBeenCalledWith(expect.anything(), { id: "arrow-drawing" })
   })
 
   it("shows error toast when no active layer on confirm", () => {

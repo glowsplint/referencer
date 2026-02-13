@@ -4,6 +4,7 @@ export interface EditorSettings {
   isMultipleRowsLayout: boolean
   isLocked: boolean
   showDrawingToasts: boolean
+  showCommentsToasts: boolean
 }
 
 export type ActiveTool = "selection" | "arrow" | "comments"

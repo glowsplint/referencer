@@ -5,7 +5,7 @@ import { useCommentMode } from "./use-comment-mode"
 import type { WordSelection, ActiveTool } from "@/types/editor"
 
 vi.mock("sonner", () => ({
-  toast: { warning: vi.fn(), info: vi.fn(), dismiss: vi.fn() },
+  toast: { warning: vi.fn(), info: vi.fn(), success: vi.fn(), dismiss: vi.fn() },
 }))
 
 function createOptions(overrides: Record<string, unknown> = {}) {
@@ -35,7 +35,7 @@ describe("useCommentMode", () => {
   it("shows entry toast when comments tool is activated", () => {
     renderHook(() => useCommentMode(createOptions()))
 
-    expect(toast.info).toHaveBeenCalledWith("Select words, then press Enter", { id: "comment-mode" })
+    expect(toast.info).toHaveBeenCalledWith(expect.anything(), { id: "comment-mode" })
   })
 
   it("dismisses toast when exiting comments tool", () => {
@@ -148,6 +148,26 @@ describe("useCommentMode", () => {
     expect(opts.removeHighlight).toHaveBeenCalledWith("layer-1", "h-existing")
     expect(opts.addHighlight).not.toHaveBeenCalled()
     expect(opts.clearSelection).toHaveBeenCalled()
+  })
+
+  it("shows success toast when highlight is created and showCommentToasts is true", () => {
+    const opts = createOptions({ selection: word1, showCommentToasts: true })
+    const { result } = renderHook(() => useCommentMode(opts))
+
+    act(() => { result.current.confirmComment() })
+
+    expect(opts.addHighlight).toHaveBeenCalled()
+    expect(toast.success).toHaveBeenCalledWith("Comment added", { id: "comment-mode", duration: 1500 })
+  })
+
+  it("does not show success toast when showCommentToasts is false", () => {
+    const opts = createOptions({ selection: word1, showCommentToasts: false })
+    const { result } = renderHook(() => useCommentMode(opts))
+
+    act(() => { result.current.confirmComment() })
+
+    expect(opts.addHighlight).toHaveBeenCalled()
+    expect(toast.success).not.toHaveBeenCalled()
   })
 
   it("suppresses entry toast when showCommentToasts is false", () => {

@@ -1,23 +1,21 @@
 import { useState } from "react";
 import {
-  Sun,
-  MoonStar,
   Columns2,
   Rows2,
   MousePointer2,
   Lock,
   LockOpen,
-  BellRing,
-  BellOff,
   Menu,
   ArrowBigRight,
   MessageSquareText,
   Keyboard,
   CircleHelp,
+  Settings,
 } from "lucide-react";
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { FAQDialog } from "./FAQDialog";
+import { SettingsDialog } from "./SettingsDialog";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import type { ActiveTool } from "@/types/editor";
 
@@ -33,10 +31,12 @@ export function ButtonPane() {
     setActiveTool,
     toggleLocked,
     toggleShowDrawingToasts,
+    toggleShowCommentsToasts,
   } = useWorkspace();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const toolButtons: { tool: ActiveTool; icon: React.ReactNode; title: string; testId: string }[] = [
     { tool: "selection", icon: <MousePointer2 size={20} />, title: "Selection tool", testId: "selectionToolButton" },
@@ -71,6 +71,14 @@ export function ButtonPane() {
       >
         <CircleHelp size={20} />
       </button>
+      <button
+        onClick={() => setSettingsOpen(true)}
+        title="Settings"
+        className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+        data-testid="settingsButton"
+      >
+        <Settings size={20} />
+      </button>
       <div className="w-6 border-t border-border" role="separator" />
       {/* Tools group */}
       {toolButtons.map(({ tool, icon, title, testId }) => (
@@ -92,22 +100,6 @@ export function ButtonPane() {
       <div className="w-6 border-t border-border" role="separator" />
       {/* Settings group */}
       <SwitchingButtonIcon
-        iconOne={<BellRing size={20} />}
-        iconTwo={<BellOff size={20} />}
-        bool={settings.showDrawingToasts}
-        callback={toggleShowDrawingToasts}
-        title="Toggle drawing notifications"
-        buttonProps={{ "data-testid": "drawingToastsButton" }}
-      />
-      <SwitchingButtonIcon
-        iconOne={<MoonStar size={20} />}
-        iconTwo={<Sun size={20} />}
-        bool={settings.isDarkMode}
-        callback={toggleDarkMode}
-        title="Toggle dark mode"
-        buttonProps={{ "data-testid": "darkModeButton" }}
-      />
-      <SwitchingButtonIcon
         iconTwo={<Columns2 size={20} />}
         iconOne={<Rows2 size={20} />}
         bool={settings.isMultipleRowsLayout}
@@ -128,6 +120,16 @@ export function ButtonPane() {
         onOpenChange={setShortcutsOpen}
       />
       <FAQDialog open={faqOpen} onOpenChange={setFaqOpen} />
+      <SettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        isDarkMode={settings.isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        showDrawingToasts={settings.showDrawingToasts}
+        toggleShowDrawingToasts={toggleShowDrawingToasts}
+        showCommentsToasts={settings.showCommentsToasts}
+        toggleShowCommentsToasts={toggleShowCommentsToasts}
+      />
     </div>
   );
 }

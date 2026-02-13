@@ -118,7 +118,7 @@ export function App() {
       annotationBeforeEditRef.current = "";
       setEditingAnnotation({ layerId, highlightId });
     }, []),
-    showCommentToasts: settings.showDrawingToasts,
+    showCommentToasts: settings.showCommentsToasts,
   });
 
   confirmRef.current = () => {

@@ -12,50 +12,49 @@ describe("ButtonPane", () => {
     renderButtonPane()
     expect(screen.getByTestId("keyboardShortcutsButton")).toBeInTheDocument()
     expect(screen.getByTestId("faqButton")).toBeInTheDocument()
+    expect(screen.getByTestId("settingsButton")).toBeInTheDocument()
     expect(screen.getByTestId("selectionToolButton")).toBeInTheDocument()
     expect(screen.getByTestId("arrowToolButton")).toBeInTheDocument()
     expect(screen.getByTestId("commentsToolButton")).toBeInTheDocument()
     expect(screen.getByTestId("menuButton")).toBeInTheDocument()
-    expect(screen.getByTestId("darkModeButton")).toBeInTheDocument()
     expect(screen.getByTestId("editorLayoutButton")).toBeInTheDocument()
     expect(screen.getByTestId("lockButton")).toBeInTheDocument()
-    expect(screen.getByTestId("drawingToastsButton")).toBeInTheDocument()
   })
 
   it("tool buttons are disabled when editor is not locked", () => {
-    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false, showDrawingToasts: true } })
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false, showDrawingToasts: true, showCommentsToasts: true } })
     expect(screen.getByTestId("selectionToolButton")).toBeDisabled()
     expect(screen.getByTestId("arrowToolButton")).toBeDisabled()
     expect(screen.getByTestId("commentsToolButton")).toBeDisabled()
   })
 
   it("tool buttons are enabled when editor is locked", () => {
-    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true } })
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true } })
     expect(screen.getByTestId("selectionToolButton")).toBeEnabled()
     expect(screen.getByTestId("arrowToolButton")).toBeEnabled()
     expect(screen.getByTestId("commentsToolButton")).toBeEnabled()
   })
 
   it("calls setActiveTool('selection') when selection button is clicked", () => {
-    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true } })
+    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true } })
     fireEvent.click(screen.getByTestId("selectionToolButton"))
     expect(workspace.setActiveTool).toHaveBeenCalledWith("selection")
   })
 
   it("calls setActiveTool('arrow') when arrow button is clicked", () => {
-    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true } })
+    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true } })
     fireEvent.click(screen.getByTestId("arrowToolButton"))
     expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow")
   })
 
   it("calls setActiveTool('comments') when comments button is clicked", () => {
-    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true } })
+    const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true } })
     fireEvent.click(screen.getByTestId("commentsToolButton"))
     expect(workspace.setActiveTool).toHaveBeenCalledWith("comments")
   })
 
   it("shows depressed state on the active tool button when locked", () => {
-    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true }, annotations: { activeTool: "arrow" } })
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true }, annotations: { activeTool: "arrow" } })
     const arrowBtn = screen.getByTestId("arrowToolButton")
     expect(arrowBtn.className.split(" ")).toContain("bg-accent")
     // Non-active buttons should not have bare bg-accent class
@@ -64,7 +63,7 @@ describe("ButtonPane", () => {
   })
 
   it("does not show depressed state on active tool button when unlocked", () => {
-    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false, showDrawingToasts: true }, annotations: { activeTool: "arrow" } })
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: false, showDrawingToasts: true, showCommentsToasts: true }, annotations: { activeTool: "arrow" } })
     const arrowBtn = screen.getByTestId("arrowToolButton")
     expect(arrowBtn.className.split(" ")).not.toContain("bg-accent")
   })
@@ -73,12 +72,6 @@ describe("ButtonPane", () => {
     const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("menuButton"))
     expect(workspace.toggleManagementPane).toHaveBeenCalledOnce()
-  })
-
-  it("calls toggleDarkMode when dark mode button is clicked", () => {
-    const { workspace } = renderButtonPane()
-    fireEvent.click(screen.getByTestId("darkModeButton"))
-    expect(workspace.toggleDarkMode).toHaveBeenCalledOnce()
   })
 
   it("calls toggleMultipleRowsLayout when layout button is clicked", () => {
@@ -91,12 +84,6 @@ describe("ButtonPane", () => {
     const { workspace } = renderButtonPane()
     fireEvent.click(screen.getByTestId("lockButton"))
     expect(workspace.toggleLocked).toHaveBeenCalledOnce()
-  })
-
-  it("calls toggleShowDrawingToasts when drawing toasts button is clicked", () => {
-    const { workspace } = renderButtonPane()
-    fireEvent.click(screen.getByTestId("drawingToastsButton"))
-    expect(workspace.toggleShowDrawingToasts).toHaveBeenCalledOnce()
   })
 
   it("menu button is the first button in the pane", () => {
@@ -125,5 +112,12 @@ describe("ButtonPane", () => {
     fireEvent.click(screen.getByTestId("faqButton"))
     expect(screen.getByTestId("faqDialog")).toBeInTheDocument()
     expect(screen.getByText("Frequently Asked Questions")).toBeInTheDocument()
+  })
+
+  it("opens settings dialog when settings button is clicked", () => {
+    renderButtonPane()
+    fireEvent.click(screen.getByTestId("settingsButton"))
+    expect(screen.getByTestId("settingsDialog")).toBeInTheDocument()
+    expect(screen.getByText("Settings")).toBeInTheDocument()
   })
 })

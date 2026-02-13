@@ -16,6 +16,7 @@ describe("useSettings", () => {
       isMultipleRowsLayout: false,
       isLocked: false,
       showDrawingToasts: true,
+      showCommentsToasts: true,
     })
   })
 
@@ -82,6 +83,18 @@ describe("useSettings", () => {
     expect(result.current.settings.showDrawingToasts).toBe(true)
   })
 
+  it("toggleShowCommentsToasts toggles showCommentsToasts", () => {
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings.showCommentsToasts).toBe(true)
+
+    act(() => { result.current.toggleShowCommentsToasts() })
+    expect(result.current.settings.showCommentsToasts).toBe(false)
+
+    act(() => { result.current.toggleShowCommentsToasts() })
+    expect(result.current.settings.showCommentsToasts).toBe(true)
+  })
+
   it("toggling one setting does not affect others", () => {
     const { result } = renderHook(() => useSettings())
 
@@ -91,5 +104,6 @@ describe("useSettings", () => {
     expect(result.current.settings.isMultipleRowsLayout).toBe(false)
     expect(result.current.settings.isLocked).toBe(false)
     expect(result.current.settings.showDrawingToasts).toBe(true)
+    expect(result.current.settings.showCommentsToasts).toBe(true)
   })
 })

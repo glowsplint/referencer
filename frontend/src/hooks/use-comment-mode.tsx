@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from "react"
 import { toast } from "sonner"
+import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
 
 interface UseCommentModeOptions {
@@ -64,7 +65,7 @@ export function useCommentMode({
   useEffect(() => {
     if (isCommentTool) {
       if (showCommentToastsRef.current) {
-        toast.info("Select words, then press Enter", { id: "comment-mode" })
+        toast.info(<>Select words, then press <ToastKbd>Enter</ToastKbd></>, { id: "comment-mode" })
       }
     } else {
       toast.dismiss("comment-mode")
@@ -112,6 +113,9 @@ export function useCommentMode({
       text: sel.text,
       annotation: "",
     })
+    if (showCommentToastsRef.current) {
+      toast.success("Comment added", { id: "comment-mode", duration: 1500 })
+    }
     onHighlightAddedRef.current?.(layerId, highlightId)
     clearSelectionRef.current()
     // Stay in comments mode — do NOT switch to selection tool

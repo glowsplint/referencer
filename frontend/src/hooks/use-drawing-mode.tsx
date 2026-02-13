@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { toast } from "sonner"
+import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { Arrow, ArrowEndpoint, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
 
 function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
@@ -62,7 +63,7 @@ export function useDrawingMode({
     if (isArrowTool) {
       phaseRef.current = "selecting-anchor"
       if (showDrawingToastsRef.current) {
-        toast.info("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
+        toast.info(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>, { id: "arrow-drawing" })
       }
     } else {
       const wasActive = phaseRef.current !== "idle"
@@ -105,7 +106,7 @@ export function useDrawingMode({
       phaseRef.current = "anchor-confirmed"
       setDrawingState({ anchor: endpoint, cursor: endpoint })
       if (showDrawingToastsRef.current) {
-        toast.info("Now select the target and press Enter", { id: "arrow-drawing" })
+        toast.info(<>Now select the target and press <ToastKbd>Enter</ToastKbd></>, { id: "arrow-drawing" })
       }
       return
     }
@@ -119,7 +120,7 @@ export function useDrawingMode({
         phaseRef.current = "selecting-anchor"
         setDrawingState(null)
         if (showDrawingToastsRef.current) {
-          toast.info("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
+          toast.info(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>, { id: "arrow-drawing" })
         }
         return
       }

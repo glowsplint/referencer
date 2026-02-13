@@ -9,6 +9,8 @@ const mockWorkspace = {
     isLayersOn: false,
     isMultipleRowsLayout: false,
     isLocked: false,
+    showDrawingToasts: true,
+    showCommentsToasts: true,
   },
   annotations: { activeTool: "selection" as const },
   layers: [] as { id: string; color: string; name: string; visible: boolean; highlights: { id: string; editorIndex: number; from: number; to: number; text: string; annotation: string }[]; arrows: unknown[] }[],
@@ -21,6 +23,8 @@ const mockWorkspace = {
   toggleLayersOn: vi.fn(),
   toggleMultipleRowsLayout: vi.fn(),
   toggleLocked: vi.fn(),
+  toggleShowDrawingToasts: vi.fn(),
+  toggleShowCommentsToasts: vi.fn(),
   setActiveTool: vi.fn(),
   toggleManagementPane: vi.fn(),
   addLayer: vi.fn(),
@@ -121,7 +125,7 @@ describe("App", () => {
     render(<App />)
 
     expect(screen.getByTestId("menuButton")).toBeInTheDocument()
-    expect(screen.getByTestId("darkModeButton")).toBeInTheDocument()
+    expect(screen.getByTestId("settingsButton")).toBeInTheDocument()
     expect(screen.getByTestId("lockButton")).toBeInTheDocument()
   })
 
