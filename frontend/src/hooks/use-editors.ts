@@ -15,46 +15,48 @@ export function useEditors() {
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null)
   const editorsRef = useRef<Map<number, Editor>>(new Map())
   const passageCounterRef = useRef(1)
+  const editorCountRef = useRef(1)
 
   const addEditor = useCallback((opts?: { name?: string }): string => {
+    if (editorCountRef.current >= 3) {
+      return opts?.name ?? `Passage ${passageCounterRef.current}`
+    }
     if (!opts?.name) {
       passageCounterRef.current += 1
     }
     const name = opts?.name ?? `Passage ${passageCounterRef.current}`
-    setEditorCount((count) => {
-      if (count >= 3) return count
-      const newCount = count + 1
-      setSplitPositions(computeEvenSplitPositions(newCount))
-      setSectionVisibility((prev) => [...prev, true])
-      setSectionNames((prev) => [...prev, name])
-      return newCount
-    })
+    const newCount = editorCountRef.current + 1
+    editorCountRef.current = newCount
+    setEditorCount(newCount)
+    setSplitPositions(computeEvenSplitPositions(newCount))
+    setSectionVisibility((prev) => [...prev, true])
+    setSectionNames((prev) => [...prev, name])
     return name
   }, [])
 
   const removeEditor = useCallback((index: number) => {
-    setEditorCount((count) => {
-      if (count <= 1) return count
-      const newCount = count - 1
-      editorsRef.current.delete(index)
-      // Re-key remaining editors
-      const newMap = new Map<number, Editor>()
-      let newIndex = 0
-      for (let i = 0; i < count; i++) {
-        if (i === index) continue
-        const editor = editorsRef.current.get(i)
-        if (editor) newMap.set(newIndex, editor)
-        newIndex++
-      }
-      editorsRef.current = newMap
-      setSplitPositions(computeEvenSplitPositions(newCount))
-      setSectionVisibility((prev) => prev.filter((_, i) => i !== index))
-      setSectionNames((prev) => prev.filter((_, i) => i !== index))
-      // Set active editor to the first remaining editor
-      const firstEditor = newMap.get(0)
-      if (firstEditor) setActiveEditor(firstEditor)
-      return newCount
-    })
+    if (editorCountRef.current <= 1) return
+    const oldCount = editorCountRef.current
+    const newCount = oldCount - 1
+    editorCountRef.current = newCount
+    editorsRef.current.delete(index)
+    // Re-key remaining editors
+    const newMap = new Map<number, Editor>()
+    let newIndex = 0
+    for (let i = 0; i < oldCount; i++) {
+      if (i === index) continue
+      const editor = editorsRef.current.get(i)
+      if (editor) newMap.set(newIndex, editor)
+      newIndex++
+    }
+    editorsRef.current = newMap
+    setEditorCount(newCount)
+    setSplitPositions(computeEvenSplitPositions(newCount))
+    setSectionVisibility((prev) => prev.filter((_, i) => i !== index))
+    setSectionNames((prev) => prev.filter((_, i) => i !== index))
+    // Set active editor to the first remaining editor
+    const firstEditor = newMap.get(0)
+    if (firstEditor) setActiveEditor(firstEditor)
   }, [])
 
   const updateSectionName = useCallback((index: number, name: string) => {
@@ -145,7 +147,10 @@ export function useEditors() {
     reorderEditors,
     handleEditorMount,
     handlePaneFocus,
-    setEditorCount,
+    setEditorCount: (count: number) => {
+      editorCountRef.current = count
+      setEditorCount(count)
+    },
     setSectionNames,
     setSectionVisibility,
     setSplitPositions,
