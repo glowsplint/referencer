@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
+import { flushSync } from "react-dom"
 import type { Editor } from "@tiptap/react"
 import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
 import { getWordCenter, getWordRect } from "@/lib/tiptap/nearest-word"
@@ -69,21 +70,16 @@ export function ArrowOverlay({
     }
   }, [containerRef, recalc])
 
-  // Recalculate on scroll (capture phase since scroll doesn't bubble)
-  const rafId = useRef(0)
+  // Recalculate on scroll — flushSync ensures the React re-render happens
+  // synchronously within the scroll event, so SVG updates paint in the same
+  // frame as the scroll position change (no 1-2 frame lag from batching).
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
-    const onScroll = () => {
-      cancelAnimationFrame(rafId.current)
-      rafId.current = requestAnimationFrame(recalc)
-    }
+    const onScroll = () => flushSync(recalc)
     container.addEventListener("scroll", onScroll, true)
-    return () => {
-      container.removeEventListener("scroll", onScroll, true)
-      cancelAnimationFrame(rafId.current)
-    }
+    return () => container.removeEventListener("scroll", onScroll, true)
   }, [containerRef, recalc])
 
   // Recalculate when layers, drawingState, or sectionVisibility change

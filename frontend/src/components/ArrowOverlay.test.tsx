@@ -259,7 +259,7 @@ describe("ArrowOverlay", () => {
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
   })
 
-  it("recalculates positions on scroll within container", async () => {
+  it("recalculates positions on scroll within container synchronously", async () => {
     const { getWordCenter } = vi.mocked(
       await import("@/lib/tiptap/nearest-word")
     )
@@ -277,13 +277,11 @@ describe("ArrowOverlay", () => {
 
     const callsBefore = getWordCenter.mock.calls.length
 
-    // Dispatch scroll on the container (capture listeners fire on target too)
-    await act(async () => {
+    // flushSync makes the update synchronous — no RAF wait needed
+    act(() => {
       props.containerRef.current!.dispatchEvent(
         new Event("scroll", { bubbles: false })
       )
-      // Wait for requestAnimationFrame to flush
-      await new Promise((r) => requestAnimationFrame(r))
     })
 
     expect(getWordCenter.mock.calls.length).toBeGreaterThan(callsBefore)
