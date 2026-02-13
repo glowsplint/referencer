@@ -14,7 +14,6 @@ interface UseCommentModeOptions {
     highlight: { editorIndex: number; from: number; to: number; text: string; annotation: string }
   ) => string
   removeHighlight: (layerId: string, highlightId: string) => void
-  clearSelection: () => void
   onHighlightAdded?: (layerId: string, highlightId: string) => void
   showCommentToasts: boolean
 }
@@ -27,7 +26,6 @@ export function useCommentMode({
   layers,
   addHighlight,
   removeHighlight,
-  clearSelection,
   onHighlightAdded,
   showCommentToasts,
 }: UseCommentModeOptions) {
@@ -35,7 +33,6 @@ export function useCommentMode({
   const addHighlightRef = useRef(addHighlight)
   const removeHighlightRef = useRef(removeHighlight)
   const layersRef = useRef(layers)
-  const clearSelectionRef = useRef(clearSelection)
   const onHighlightAddedRef = useRef(onHighlightAdded)
   const selectionRef = useRef(selection)
 
@@ -44,9 +41,8 @@ export function useCommentMode({
     addHighlightRef.current = addHighlight
     removeHighlightRef.current = removeHighlight
     layersRef.current = layers
-    clearSelectionRef.current = clearSelection
     onHighlightAddedRef.current = onHighlightAdded
-  }, [activeLayerId, addHighlight, removeHighlight, layers, clearSelection, onHighlightAdded])
+  }, [activeLayerId, addHighlight, removeHighlight, layers, onHighlightAdded])
 
   selectionRef.current = selection
 
@@ -101,7 +97,6 @@ export function useCommentMode({
     )
     if (existing) {
       removeHighlightRef.current(layerId, existing.id)
-      clearSelectionRef.current()
       return
     }
 
@@ -117,7 +112,7 @@ export function useCommentMode({
       toast.success("Comment added", { id: "comment-mode", duration: 1500 })
     }
     onHighlightAddedRef.current?.(layerId, highlightId)
-    clearSelectionRef.current()
+    // Keep selection so user can continue keyboard navigation after Escape
     // Stay in comments mode — do NOT switch to selection tool
   }, [])
 

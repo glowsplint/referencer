@@ -17,7 +17,6 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     layers: [] as { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[],
     addHighlight: vi.fn().mockReturnValue("h-1"),
     removeHighlight: vi.fn(),
-    clearSelection: vi.fn(),
     onHighlightAdded: vi.fn(),
     showCommentToasts: true,
     ...overrides,
@@ -102,13 +101,15 @@ describe("useCommentMode", () => {
     expect(opts.onHighlightAdded).toHaveBeenCalledWith("layer-1", "h-1")
   })
 
-  it("clears selection after creating highlight", () => {
+  it("preserves selection after creating highlight for keyboard navigation", () => {
+    const clearSelection = vi.fn()
     const opts = createOptions({ selection: word1 })
     const { result } = renderHook(() => useCommentMode(opts))
 
     act(() => { result.current.confirmComment() })
 
-    expect(opts.clearSelection).toHaveBeenCalled()
+    // Selection should NOT be cleared so user can continue navigating
+    expect(clearSelection).not.toHaveBeenCalled()
   })
 
   it("removes empty-annotation highlights before creating new one", () => {
@@ -147,7 +148,6 @@ describe("useCommentMode", () => {
 
     expect(opts.removeHighlight).toHaveBeenCalledWith("layer-1", "h-existing")
     expect(opts.addHighlight).not.toHaveBeenCalled()
-    expect(opts.clearSelection).toHaveBeenCalled()
   })
 
   it("shows success toast when highlight is created and showCommentToasts is true", () => {

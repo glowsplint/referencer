@@ -113,7 +113,6 @@ export function App() {
     layers,
     addHighlight,
     removeHighlight,
-    clearSelection,
     onHighlightAdded: useCallback((layerId: string, highlightId: string) => {
       annotationBeforeEditRef.current = "";
       setEditingAnnotation({ layerId, highlightId });
