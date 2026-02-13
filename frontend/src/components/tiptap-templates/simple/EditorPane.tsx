@@ -9,6 +9,7 @@ import { useLayerDecorations } from "@/hooks/use-layer-decorations"
 import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
 import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
+import { SelectionRingOverlay } from "@/components/SelectionRingOverlay"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
 
 // --- Node SCSS ---
@@ -141,6 +142,14 @@ export function EditorPane({
         editor={editor}
         role="presentation"
         className="simple-editor-content"
+      />
+      <SelectionRingOverlay
+        editor={editor}
+        selection={selection}
+        editorIndex={index}
+        isLocked={isLocked}
+        isDarkMode={isDarkMode}
+        wrapperRef={wrapperRef}
       />
     </div>
   )

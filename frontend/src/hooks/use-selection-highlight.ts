@@ -35,11 +35,9 @@ export function useSelectionHighlight(
       ? blendWithBackground(activeLayerColor, 0.3, isDarkMode)
       : blendWithBackground("#3b82f6", 0.25, isDarkMode)
 
-    const ringColor = isDarkMode ? "#60a5fa" : "#3b82f6"
-
     try {
       const decoration = Decoration.inline(selection.from, selection.to, {
-        style: `background-color: ${bgColor}; box-shadow: 0 0 0 1.5px ${ringColor}; box-decoration-break: clone; -webkit-box-decoration-break: clone; border-radius: 2px`,
+        style: `background-color: ${bgColor}; border-radius: 2px`,
         class: "word-selection",
       })
       const decorationSet = DecorationSet.create(editor.state.doc, [decoration])
