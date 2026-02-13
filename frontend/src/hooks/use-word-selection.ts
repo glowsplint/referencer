@@ -64,6 +64,20 @@ export function useWordSelection({
     []
   )
 
+  const selectRange = useCallback(
+    (
+      anchor: WordSelection,
+      head: WordSelection,
+      merged: WordSelection
+    ) => {
+      if (!HAS_ALPHANUMERIC.test(merged.text)) return
+      anchorRef.current = anchor
+      headRef.current = head
+      setSelection(merged)
+    },
+    []
+  )
+
   const clearSelection = useCallback(() => {
     anchorRef.current = null
     headRef.current = null
@@ -436,5 +450,5 @@ export function useWordSelection({
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [isLocked, selection, editorsRef, containerRef, editorCount])
 
-  return { selection, selectWord, clearSelection }
+  return { selection, selectWord, selectRange, clearSelection }
 }

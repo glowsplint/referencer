@@ -38,6 +38,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     isLocked: true,
     activeTool: "comments" as ActiveTool,
     selectWord: vi.fn(),
+    selectRange: vi.fn(),
     clearSelection: vi.fn(),
     ...overrides,
   }
@@ -115,6 +116,53 @@ describe("useDragSelection", () => {
     })
 
     expect(opts.selectWord).not.toHaveBeenCalled()
+  })
+
+  it("calls selectRange on mouseUp after multi-word drag", () => {
+    const opts = createOptions()
+    const { result } = renderHook(() => useDragSelection(opts))
+    const editor = createMockEditor()
+
+    // mouseDown on first word (pos=5 → from:1, to:5, text:"hello")
+    act(() => {
+      result.current.handleMouseDown(createMockEvent(), editor, 0)
+    })
+
+    // mouseMove to second word (pos=12 → from:10, to:15, text:"world")
+    const editor2 = createMockEditor({ pos: 12 })
+    ;(editor2.state.doc.textBetween as ReturnType<typeof vi.fn>).mockReturnValue("hello world")
+    act(() => {
+      result.current.handleMouseMove(createMockEvent("DIV", 200, 100), editor2, 0)
+    })
+
+    // mouseUp finalizes
+    act(() => {
+      result.current.handleMouseUp(createMockEvent(), editor2, 0)
+    })
+
+    expect(opts.selectRange).toHaveBeenCalledWith(
+      { editorIndex: 0, from: 1, to: 5, text: "hello" },
+      { editorIndex: 0, from: 10, to: 15, text: "world" },
+      { editorIndex: 0, from: 1, to: 15, text: "hello world" }
+    )
+    // selectWord called for mouseDown + mouseMove preview, but NOT mouseUp
+    expect(opts.selectWord).toHaveBeenCalledTimes(2)
+  })
+
+  it("calls selectWord (not selectRange) on single-click mouseUp", () => {
+    const opts = createOptions()
+    const { result } = renderHook(() => useDragSelection(opts))
+    const editor = createMockEditor()
+
+    act(() => {
+      result.current.handleMouseDown(createMockEvent(), editor, 0)
+    })
+    act(() => {
+      result.current.handleMouseUp(createMockEvent(), editor, 0)
+    })
+
+    expect(opts.selectRange).not.toHaveBeenCalled()
+    expect(opts.selectWord).toHaveBeenCalledWith(0, 1, 5, "hello")
   })
 
   it("does not interfere with textarea clicks", () => {

@@ -86,7 +86,7 @@ export function App() {
   const annotationBeforeEditRef = useRef<string>("");
   const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
 
-  const { selection, selectWord, clearSelection } = useWordSelection({
+  const { selection, selectWord, selectRange, clearSelection } = useWordSelection({
     isLocked: settings.isLocked,
     editorsRef,
     containerRef,
@@ -135,6 +135,7 @@ export function App() {
     isLocked: settings.isLocked,
     activeTool: annotations.activeTool,
     selectWord,
+    selectRange,
     clearSelection,
   });
 

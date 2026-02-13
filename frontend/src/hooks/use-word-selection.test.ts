@@ -569,6 +569,61 @@ describe("useWordSelection shift+arrow range selection", () => {
     })
   })
 
+  it("selectRange preserves anchor/head for shift+arrow after drag", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(1)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Simulate drag: anchor="the"(1,4), head="quick"(5,10), merged="the quick"(1,10)
+    act(() => {
+      result.current.selectRange(
+        { editorIndex: 0, from: 1, to: 4, text: "the" },
+        { editorIndex: 0, from: 5, to: 10, text: "quick" },
+        { editorIndex: 0, from: 1, to: 10, text: "the quick" }
+      )
+    })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0, from: 1, to: 10, text: "the quick",
+    })
+
+    // Shift+ArrowRight: head moves from "quick" → "brown"
+    // Anchor stays at "the", so selection becomes "the quick brown"
+    act(() => { fireKey("ArrowRight", { shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 16,
+      text: "the quick brown",
+    })
+  })
+
+  it("selectRange allows shift+arrow to shrink selection back", () => {
+    const { editorsRef, containerRef } = setupShiftMocks(1)
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Simulate drag: anchor="the"(1,4), head="brown"(11,16)
+    act(() => {
+      result.current.selectRange(
+        { editorIndex: 0, from: 1, to: 4, text: "the" },
+        { editorIndex: 0, from: 11, to: 16, text: "brown" },
+        { editorIndex: 0, from: 1, to: 16, text: "the quick brown" }
+      )
+    })
+
+    // Shift+ArrowLeft: head moves from "brown" → "quick"
+    // Anchor stays at "the", so selection shrinks to "the quick"
+    act(() => { fireKey("ArrowLeft", { shiftKey: true }) })
+    expect(result.current.selection).toEqual({
+      editorIndex: 0,
+      from: 1,
+      to: 10,
+      text: "the quick",
+    })
+  })
+
   it("selectWord resets the anchor for next shift+arrow", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1)
     const { result } = renderHook(() =>

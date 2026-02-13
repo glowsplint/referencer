@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
-import type { ActiveTool } from "@/types/editor"
+import type { ActiveTool, WordSelection } from "@/types/editor"
 
 interface DragRange {
   editorIndex: number
@@ -14,6 +14,7 @@ interface UseDragSelectionOptions {
   isLocked: boolean
   activeTool: ActiveTool
   selectWord: (editorIndex: number, from: number, to: number, text: string) => void
+  selectRange: (anchor: WordSelection, head: WordSelection, merged: WordSelection) => void
   clearSelection: () => void
 }
 
@@ -21,6 +22,7 @@ export function useDragSelection({
   isLocked,
   activeTool,
   selectWord,
+  selectRange,
   clearSelection,
 }: UseDragSelectionOptions) {
   const dragRef = useRef<{
@@ -83,7 +85,7 @@ export function useDragSelection({
       // Don't interfere with annotation textareas
       if ((e.target as HTMLElement).tagName === "TEXTAREA") return
 
-      const { anchor, current } = dragRef.current
+      const { anchor, current, dragging } = dragRef.current
       dragRef.current = null
 
       // Compute the merged range
@@ -91,9 +93,18 @@ export function useDragSelection({
       const to = Math.max(anchor.to, current.to)
       const text = editor.state.doc.textBetween(from, to, " ")
 
-      selectWord(editorIndex, from, to, text)
+      if (dragging && anchor.from !== current.from) {
+        // Drag produced a range — set anchor/head so Shift+Arrow can extend
+        selectRange(
+          { editorIndex, from: anchor.from, to: anchor.to, text: anchor.text },
+          { editorIndex, from: current.from, to: current.to, text: current.text },
+          { editorIndex, from, to, text }
+        )
+      } else {
+        selectWord(editorIndex, from, to, text)
+      }
     },
-    [isLocked, activeTool, selectWord]
+    [isLocked, activeTool, selectWord, selectRange]
   )
 
   return { handleMouseDown, handleMouseMove, handleMouseUp }
