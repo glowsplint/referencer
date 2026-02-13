@@ -27,7 +27,6 @@ interface UseDrawingModeOptions {
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
   showDrawingToasts: boolean
   setActiveTool: (tool: ActiveTool) => void
-  clearSelection: () => void
 }
 
 export function useDrawingMode({
@@ -38,7 +37,6 @@ export function useDrawingMode({
   addArrow,
   showDrawingToasts,
   setActiveTool,
-  clearSelection,
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
   const anchorRef = useRef<ArrowEndpoint | null>(null)
@@ -56,9 +54,6 @@ export function useDrawingMode({
 
   const setActiveToolRef = useRef(setActiveTool)
   setActiveToolRef.current = setActiveTool
-
-  const clearSelectionRef = useRef(clearSelection)
-  clearSelectionRef.current = clearSelection
 
   const isArrowTool = activeTool === "arrow" && isLocked
 
@@ -109,7 +104,6 @@ export function useDrawingMode({
       anchorRef.current = endpoint
       phaseRef.current = "anchor-confirmed"
       setDrawingState({ anchor: endpoint, cursor: endpoint })
-      clearSelectionRef.current()
       if (showDrawingToastsRef.current) {
         toast.info("Now select the target and press Enter", { id: "arrow-drawing" })
       }

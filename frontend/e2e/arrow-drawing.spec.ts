@@ -126,6 +126,64 @@ test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ pa
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
 });
 
+test("arrow key navigation works after confirming anchor", async ({ page }) => {
+  const firstParagraph = page.locator(".simple-editor p").first();
+  const box = await firstParagraph.boundingBox();
+  expect(box).not.toBeNull();
+
+  // Click first word to select it
+  await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Press Enter to confirm anchor — selection should be preserved
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Navigate to a different word using arrow keys
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Preview arrow should appear since we're in anchor-confirmed phase with a new selection
+  await expect(page.getByTestId("preview-arrow")).toHaveCount(1, { timeout: 2000 });
+
+  // Press Enter to confirm target and create arrow
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+});
+
+test("selection is preserved when activating arrow tool, allowing arrow key navigation", async ({ page }) => {
+  // This test starts fresh: lock, select a word, then activate arrow tool
+  const firstParagraph = page.locator(".simple-editor p").first();
+  const box = await firstParagraph.boundingBox();
+  expect(box).not.toBeNull();
+
+  // Switch back to selection tool first
+  await page.keyboard.press("s");
+
+  // Click a word to select it
+  await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Press 'a' to activate arrow tool — selection should be preserved
+  await page.keyboard.press("a");
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Navigate with arrow keys — should work since selection is preserved
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+
+  // Confirm anchor
+  await page.keyboard.press("Enter");
+
+  // Navigate to target
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByTestId("preview-arrow")).toHaveCount(1, { timeout: 2000 });
+
+  // Confirm target
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+});
+
 test("arrow tool button shows depressed state when active", async ({ page }) => {
   const arrowBtn = page.getByTestId("arrowToolButton");
   await expect(arrowBtn).toHaveClass(/bg-accent/, { timeout: 2000 });

@@ -17,7 +17,6 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     addArrow: vi.fn(),
     showDrawingToasts: true,
     setActiveTool: vi.fn(),
-    clearSelection: vi.fn(),
     ...overrides,
   }
 }
@@ -34,13 +33,6 @@ describe("useDrawingMode", () => {
     renderHook(() => useDrawingMode(createOptions()))
 
     expect(toast.info).toHaveBeenCalledWith("Select words for the anchor, then press Enter", { id: "arrow-drawing" })
-  })
-
-  it("does not clear selection when entering arrow mode", () => {
-    const clearSelection = vi.fn()
-    renderHook(() => useDrawingMode(createOptions({ clearSelection })))
-
-    expect(clearSelection).not.toHaveBeenCalled()
   })
 
   it("does nothing when activeTool is not arrow", () => {
@@ -76,10 +68,9 @@ describe("useDrawingMode", () => {
   })
 
   it("sets anchor on confirmSelection and shows target toast", () => {
-    const clearSelection = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ selection: props.selection, clearSelection })),
+        useDrawingMode(createOptions({ selection: props.selection })),
       { initialProps: { selection: null } }
     )
 
@@ -93,23 +84,6 @@ describe("useDrawingMode", () => {
     })
     expect(result.current.isDrawing).toBe(true)
     expect(toast.info).toHaveBeenCalledWith("Now select the target and press Enter", { id: "arrow-drawing" })
-    // clearSelection called only after anchor confirmed (not on entry)
-    expect(clearSelection).toHaveBeenCalledTimes(1)
-  })
-
-  it("calls clearSelection after anchor confirmed", () => {
-    const clearSelection = vi.fn()
-    const { result, rerender } = renderHook(
-      (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ selection: props.selection, clearSelection })),
-      { initialProps: { selection: null } }
-    )
-
-    rerender({ selection: word1 })
-    clearSelection.mockClear()
-    act(() => { result.current.confirmSelection() })
-
-    expect(clearSelection).toHaveBeenCalled()
   })
 
   it("creates arrow on second confirm with different word", () => {
@@ -284,6 +258,41 @@ describe("useDrawingMode", () => {
     act(() => { result.current.confirmSelection() })
 
     expect(toast.warning).toHaveBeenCalledWith("Add a new layer before drawing arrows")
+  })
+
+  it("selection is preserved after confirming anchor", () => {
+    const { result, rerender } = renderHook(
+      (props: { selection: WordSelection | null }) =>
+        useDrawingMode(createOptions({ selection: props.selection })),
+      { initialProps: { selection: word1 } }
+    )
+
+    act(() => { result.current.confirmSelection() })
+
+    // Drawing state should be set (anchor confirmed), but
+    // the hook does not call clearSelection — selection remains as-is
+    expect(result.current.isDrawing).toBe(true)
+    // The selection prop was not changed by the hook; it stays word1
+    // (the parent would still pass word1 as selection)
+  })
+
+  it("selection is preserved after entering arrow mode", () => {
+    const { result, rerender } = renderHook(
+      (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
+        useDrawingMode(createOptions({ activeTool: props.activeTool, selection: props.selection })),
+      { initialProps: { activeTool: "selection" as ActiveTool, selection: word1 } }
+    )
+
+    // Switch to arrow tool — selection should not be cleared
+    rerender({ activeTool: "arrow", selection: word1 })
+
+    // The hook does not modify selection; it should still be word1
+    // Confirm the preserved selection sets the anchor
+    act(() => { result.current.confirmSelection() })
+    expect(result.current.drawingState).toEqual({
+      anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+      cursor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+    })
   })
 
   it("does not dismiss toast when exiting from idle phase", () => {

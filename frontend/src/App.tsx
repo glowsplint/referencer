@@ -101,7 +101,6 @@ export function App() {
     addArrow,
     showDrawingToasts: settings.showDrawingToasts,
     setActiveTool,
-    clearSelection,
   });
 
   confirmRef.current = confirmSelection;
