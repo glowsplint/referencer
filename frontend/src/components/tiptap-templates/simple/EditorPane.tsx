@@ -9,6 +9,7 @@ import { useLayerDecorations } from "@/hooks/use-layer-decorations"
 import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
 import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
+import { useWordHover } from "@/hooks/use-word-hover"
 import { SelectionRingOverlay } from "@/components/SelectionRingOverlay"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
 
@@ -99,6 +100,7 @@ export function EditorPane({
   useLayerDecorations(editor, layers, index, isLocked, isDarkMode)
   useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useSimilarTextHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
+  useWordHover(editor, index, isLocked, isDarkMode, selection)
   useSelectionScroll(editor, selection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {

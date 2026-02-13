@@ -115,6 +115,9 @@ vi.mock("@/hooks/use-layer-decorations", () => ({
 vi.mock("@/hooks/use-selection-highlight", () => ({
   useSelectionHighlight: vi.fn(),
 }))
+vi.mock("@/hooks/use-word-hover", () => ({
+  useWordHover: vi.fn(),
+}))
 vi.mock("@/hooks/use-selection-decoration", () => ({
   useSelectionScroll: vi.fn(),
 }))
@@ -137,6 +140,10 @@ vi.mock("@/lib/tiptap/extensions/layer-highlights", () => ({
 vi.mock("@/lib/tiptap/extensions/word-selection", () => ({
   WordSelectionExtension: {},
   wordSelectionPluginKey: {},
+}))
+vi.mock("@/lib/tiptap/extensions/word-hover", () => ({
+  WordHoverExtension: {},
+  wordHoverPluginKey: {},
 }))
 vi.mock("@/components/tiptap-node/image-upload-node/image-upload-node-extension", () => ({
   ImageUploadNode: { configure: () => ({}) },

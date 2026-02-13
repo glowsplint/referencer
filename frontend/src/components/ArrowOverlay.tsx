@@ -216,7 +216,7 @@ export function ArrowOverlay({
                 stroke={pos.color}
                 strokeWidth={2}
                 fill="none"
-                markerMid={`url(#arrowhead-${pos.arrowId})`}
+                markerMid={hoveredArrowId === pos.arrowId ? undefined : `url(#arrowhead-${pos.arrowId})`}
               />
             </g>
           )

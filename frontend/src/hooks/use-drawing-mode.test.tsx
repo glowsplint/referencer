@@ -17,6 +17,8 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     addArrow: vi.fn(),
     showDrawingToasts: true,
     setActiveTool: vi.fn(),
+    setStatus: vi.fn(),
+    clearStatus: vi.fn(),
     ...overrides,
   }
 }
@@ -29,10 +31,13 @@ describe("useDrawingMode", () => {
     vi.clearAllMocks()
   })
 
-  it("shows entry toast when arrow tool is activated", () => {
-    renderHook(() => useDrawingMode(createOptions()))
+  it("shows entry status when arrow tool is activated", () => {
+    const setStatus = vi.fn()
+    renderHook(() => useDrawingMode(createOptions({ setStatus })))
 
-    expect(toast.info).toHaveBeenCalledWith(expect.anything(), { id: "arrow-drawing" })
+    expect(setStatus).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "info" })
+    )
   })
 
   it("does nothing when activeTool is not arrow", () => {
@@ -57,20 +62,22 @@ describe("useDrawingMode", () => {
   })
 
   it("confirmSelection with no selection does nothing", () => {
-    const { result } = renderHook(() => useDrawingMode(createOptions()))
+    const setStatus = vi.fn()
+    const { result } = renderHook(() => useDrawingMode(createOptions({ setStatus })))
 
     act(() => { result.current.confirmSelection() })
 
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
-    // Only the entry toast, no target toast
-    expect(toast.info).toHaveBeenCalledTimes(1)
+    // Only the entry status, no target status
+    expect(setStatus).toHaveBeenCalledTimes(1)
   })
 
-  it("sets anchor on confirmSelection and shows target toast", () => {
+  it("sets anchor on confirmSelection and shows target status", () => {
+    const setStatus = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ selection: props.selection })),
+        useDrawingMode(createOptions({ selection: props.selection, setStatus })),
       { initialProps: { selection: null } }
     )
 
@@ -83,15 +90,17 @@ describe("useDrawingMode", () => {
       cursor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
     })
     expect(result.current.isDrawing).toBe(true)
-    expect(toast.info).toHaveBeenCalledWith(expect.anything(), { id: "arrow-drawing" })
+    // Entry + target = 2 calls
+    expect(setStatus).toHaveBeenCalledTimes(2)
   })
 
   it("creates arrow on second confirm with different word", () => {
     const addArrow = vi.fn()
     const setActiveTool = vi.fn()
+    const setStatus = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ selection: props.selection, addArrow, setActiveTool })),
+        useDrawingMode(createOptions({ selection: props.selection, addArrow, setActiveTool, setStatus })),
       { initialProps: { selection: null } }
     )
 
@@ -110,7 +119,9 @@ describe("useDrawingMode", () => {
     })
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
-    expect(toast.success).toHaveBeenCalledWith("Arrow created", { id: "arrow-drawing", duration: 1500 })
+    expect(setStatus).toHaveBeenCalledWith(
+      { text: "Arrow created", type: "success" }, 1500
+    )
   })
 
   it("calls setActiveTool('selection') after arrow created", () => {
@@ -130,9 +141,10 @@ describe("useDrawingMode", () => {
   })
 
   it("same selection as anchor reverts to selecting-anchor phase", () => {
+    const setStatus = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ selection: props.selection })),
+        useDrawingMode(createOptions({ selection: props.selection, setStatus })),
       { initialProps: { selection: null } }
     )
 
@@ -147,8 +159,8 @@ describe("useDrawingMode", () => {
 
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
-    // Should show the anchor instruction toast again
-    expect(toast.info).toHaveBeenCalledWith(expect.anything(), { id: "arrow-drawing" })
+    // Entry + target + revert = 3 calls
+    expect(setStatus).toHaveBeenCalledTimes(3)
   })
 
   it("shows error toast when no active layer on confirm", () => {
@@ -166,10 +178,11 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(false)
   })
 
-  it("clears drawing state when switching away from arrow tool", () => {
+  it("clears status when switching away from arrow tool", () => {
+    const clearStatus = vi.fn()
     const { result, rerender } = renderHook(
       (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ activeTool: props.activeTool, selection: props.selection })),
+        useDrawingMode(createOptions({ activeTool: props.activeTool, selection: props.selection, clearStatus })),
       { initialProps: { activeTool: "arrow" as ActiveTool, selection: null } }
     )
 
@@ -180,7 +193,7 @@ describe("useDrawingMode", () => {
     rerender({ activeTool: "selection", selection: word1 })
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
-    expect(toast.dismiss).toHaveBeenCalledWith("arrow-drawing")
+    expect(clearStatus).toHaveBeenCalled()
   })
 
   it("clears drawing state on unlock", () => {
@@ -224,17 +237,19 @@ describe("useDrawingMode", () => {
     })
   })
 
-  it("suppresses info toast when showDrawingToasts is false", () => {
-    renderHook(() => useDrawingMode(createOptions({ showDrawingToasts: false })))
+  it("suppresses info status when showDrawingToasts is false", () => {
+    const setStatus = vi.fn()
+    renderHook(() => useDrawingMode(createOptions({ showDrawingToasts: false, setStatus })))
 
-    expect(toast.info).not.toHaveBeenCalled()
+    expect(setStatus).not.toHaveBeenCalled()
   })
 
-  it("suppresses success toast when showDrawingToasts is false", () => {
+  it("suppresses success status when showDrawingToasts is false", () => {
     const addArrow = vi.fn()
+    const setStatus = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ showDrawingToasts: false, addArrow, selection: props.selection })),
+        useDrawingMode(createOptions({ showDrawingToasts: false, addArrow, selection: props.selection, setStatus })),
       { initialProps: { selection: null } }
     )
 
@@ -244,7 +259,7 @@ describe("useDrawingMode", () => {
     act(() => { result.current.confirmSelection() })
 
     expect(addArrow).toHaveBeenCalled()
-    expect(toast.success).not.toHaveBeenCalled()
+    expect(setStatus).not.toHaveBeenCalled()
   })
 
   it("still shows warning toast when showDrawingToasts is false", () => {
@@ -295,15 +310,16 @@ describe("useDrawingMode", () => {
     })
   })
 
-  it("does not dismiss toast when exiting from idle phase", () => {
+  it("does not clear status when exiting from idle phase", () => {
+    const clearStatus = vi.fn()
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
-        useDrawingMode(createOptions({ activeTool: props.activeTool, showDrawingToasts: false })),
+        useDrawingMode(createOptions({ activeTool: props.activeTool, showDrawingToasts: false, clearStatus })),
       { initialProps: { activeTool: "selection" as ActiveTool } }
     )
 
-    // Never entered arrow mode, switching tools should not dismiss
+    // Never entered arrow mode, switching tools should not clear
     rerender({ activeTool: "comments" })
-    expect(toast.dismiss).not.toHaveBeenCalled()
+    expect(clearStatus).not.toHaveBeenCalled()
   })
 })

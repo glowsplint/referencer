@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
 import { toast } from "sonner"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { Arrow, ArrowEndpoint, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
+import type { StatusMessage } from "@/hooks/use-status-message"
 
 function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
   return {
@@ -28,6 +29,8 @@ interface UseDrawingModeOptions {
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
   showDrawingToasts: boolean
   setActiveTool: (tool: ActiveTool) => void
+  setStatus: (msg: StatusMessage, duration?: number) => void
+  clearStatus: () => void
 }
 
 export function useDrawingMode({
@@ -38,6 +41,8 @@ export function useDrawingMode({
   addArrow,
   showDrawingToasts,
   setActiveTool,
+  setStatus,
+  clearStatus,
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
   const anchorRef = useRef<ArrowEndpoint | null>(null)
@@ -56,24 +61,34 @@ export function useDrawingMode({
   const setActiveToolRef = useRef(setActiveTool)
   setActiveToolRef.current = setActiveTool
 
+  const setStatusRef = useRef(setStatus)
+  setStatusRef.current = setStatus
+  const clearStatusRef = useRef(clearStatus)
+  clearStatusRef.current = clearStatus
+
   const isArrowTool = activeTool === "arrow" && isLocked
+
+  const showInfo = (text: ReactNode) => {
+    if (showDrawingToastsRef.current) {
+      setStatusRef.current({ text, type: "info" })
+    }
+  }
 
   // Entry/exit effect: entering arrow mode → selecting-anchor; leaving → idle
   useEffect(() => {
     if (isArrowTool) {
       phaseRef.current = "selecting-anchor"
-      if (showDrawingToastsRef.current) {
-        toast.info(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>, { id: "arrow-drawing" })
-      }
+      showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>)
     } else {
       const wasActive = phaseRef.current !== "idle"
       phaseRef.current = "idle"
       anchorRef.current = null
       setDrawingState(null)
       if (wasActive) {
-        toast.dismiss("arrow-drawing")
+        clearStatusRef.current()
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isArrowTool])
 
   // Preview effect: update cursor during anchor-confirmed phase when selection changes
@@ -105,9 +120,7 @@ export function useDrawingMode({
       anchorRef.current = endpoint
       phaseRef.current = "anchor-confirmed"
       setDrawingState({ anchor: endpoint, cursor: endpoint })
-      if (showDrawingToastsRef.current) {
-        toast.info(<>Now select the target and press <ToastKbd>Enter</ToastKbd></>, { id: "arrow-drawing" })
-      }
+      showInfo(<>Now select the target and press <ToastKbd>Enter</ToastKbd></>)
       return
     }
 
@@ -119,9 +132,7 @@ export function useDrawingMode({
         anchorRef.current = null
         phaseRef.current = "selecting-anchor"
         setDrawingState(null)
-        if (showDrawingToastsRef.current) {
-          toast.info(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>, { id: "arrow-drawing" })
-        }
+        showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>)
         return
       }
 
@@ -136,7 +147,7 @@ export function useDrawingMode({
       phaseRef.current = "idle"
       setDrawingState(null)
       if (showDrawingToastsRef.current) {
-        toast.success("Arrow created", { id: "arrow-drawing", duration: 1500 })
+        setStatusRef.current({ text: "Arrow created", type: "success" }, 1500)
       }
       setActiveToolRef.current("selection")
       return

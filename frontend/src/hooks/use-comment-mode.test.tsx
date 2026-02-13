@@ -19,6 +19,8 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     removeHighlight: vi.fn(),
     onHighlightAdded: vi.fn(),
     showCommentToasts: true,
+    setStatus: vi.fn(),
+    clearStatus: vi.fn(),
     ...overrides,
   }
 }
@@ -31,21 +33,25 @@ describe("useCommentMode", () => {
     vi.clearAllMocks()
   })
 
-  it("shows entry toast when comments tool is activated", () => {
-    renderHook(() => useCommentMode(createOptions()))
+  it("shows entry status when comments tool is activated", () => {
+    const setStatus = vi.fn()
+    renderHook(() => useCommentMode(createOptions({ setStatus })))
 
-    expect(toast.info).toHaveBeenCalledWith(expect.anything(), { id: "comment-mode" })
+    expect(setStatus).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "info" })
+    )
   })
 
-  it("dismisses toast when exiting comments tool", () => {
+  it("clears status when exiting comments tool", () => {
+    const clearStatus = vi.fn()
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
-        useCommentMode(createOptions({ activeTool: props.activeTool })),
+        useCommentMode(createOptions({ activeTool: props.activeTool, clearStatus })),
       { initialProps: { activeTool: "comments" as ActiveTool } }
     )
 
     rerender({ activeTool: "selection" })
-    expect(toast.dismiss).toHaveBeenCalledWith("comment-mode")
+    expect(clearStatus).toHaveBeenCalled()
   })
 
   it("does nothing when activeTool is not comments", () => {
@@ -150,30 +156,39 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled()
   })
 
-  it("shows success toast when highlight is created and showCommentToasts is true", () => {
-    const opts = createOptions({ selection: word1, showCommentToasts: true })
+  it("shows success status when highlight is created and showCommentToasts is true", () => {
+    const setStatus = vi.fn()
+    const opts = createOptions({ selection: word1, showCommentToasts: true, setStatus })
     const { result } = renderHook(() => useCommentMode(opts))
 
     act(() => { result.current.confirmComment() })
 
     expect(opts.addHighlight).toHaveBeenCalled()
-    expect(toast.success).toHaveBeenCalledWith("Comment added", { id: "comment-mode", duration: 1500 })
+    expect(setStatus).toHaveBeenCalledWith(
+      { text: "Comment added", type: "success" }, 1500
+    )
   })
 
-  it("does not show success toast when showCommentToasts is false", () => {
-    const opts = createOptions({ selection: word1, showCommentToasts: false })
+  it("does not show success status when showCommentToasts is false", () => {
+    const setStatus = vi.fn()
+    const opts = createOptions({ selection: word1, showCommentToasts: false, setStatus })
     const { result } = renderHook(() => useCommentMode(opts))
 
     act(() => { result.current.confirmComment() })
 
     expect(opts.addHighlight).toHaveBeenCalled()
-    expect(toast.success).not.toHaveBeenCalled()
+    // Only clearStatus called (on cleanup), not setStatus for success
+    const successCalls = setStatus.mock.calls.filter(
+      (c: unknown[]) => (c[0] as { type: string })?.type === "success"
+    )
+    expect(successCalls).toHaveLength(0)
   })
 
-  it("suppresses entry toast when showCommentToasts is false", () => {
-    renderHook(() => useCommentMode(createOptions({ showCommentToasts: false })))
+  it("suppresses entry status when showCommentToasts is false", () => {
+    const setStatus = vi.fn()
+    renderHook(() => useCommentMode(createOptions({ showCommentToasts: false, setStatus })))
 
-    expect(toast.info).not.toHaveBeenCalled()
+    expect(setStatus).not.toHaveBeenCalled()
   })
 
   it("stays in comments mode (does NOT switch to selection)", () => {

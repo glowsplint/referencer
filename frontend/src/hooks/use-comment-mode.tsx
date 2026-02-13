@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from "react"
 import { toast } from "sonner"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
+import type { StatusMessage } from "@/hooks/use-status-message"
 
 interface UseCommentModeOptions {
   isLocked: boolean
@@ -16,6 +17,8 @@ interface UseCommentModeOptions {
   removeHighlight: (layerId: string, highlightId: string) => void
   onHighlightAdded?: (layerId: string, highlightId: string) => void
   showCommentToasts: boolean
+  setStatus: (msg: StatusMessage, duration?: number) => void
+  clearStatus: () => void
 }
 
 export function useCommentMode({
@@ -28,6 +31,8 @@ export function useCommentMode({
   removeHighlight,
   onHighlightAdded,
   showCommentToasts,
+  setStatus,
+  clearStatus,
 }: UseCommentModeOptions) {
   const activeLayerIdRef = useRef(activeLayerId)
   const addHighlightRef = useRef(addHighlight)
@@ -55,17 +60,23 @@ export function useCommentMode({
   const showCommentToastsRef = useRef(showCommentToasts)
   showCommentToastsRef.current = showCommentToasts
 
+  const setStatusRef = useRef(setStatus)
+  setStatusRef.current = setStatus
+  const clearStatusRef = useRef(clearStatus)
+  clearStatusRef.current = clearStatus
+
   const isCommentTool = activeTool === "comments" && isLocked
 
   // Entry/exit effect
   useEffect(() => {
     if (isCommentTool) {
       if (showCommentToastsRef.current) {
-        toast.info(<>Select words, then press <ToastKbd>Enter</ToastKbd></>, { id: "comment-mode" })
+        setStatusRef.current({ text: <>Select words, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
       }
     } else {
-      toast.dismiss("comment-mode")
+      clearStatusRef.current()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCommentTool])
 
   const confirmComment = useCallback(() => {
@@ -109,7 +120,7 @@ export function useCommentMode({
       annotation: "",
     })
     if (showCommentToastsRef.current) {
-      toast.success("Comment added", { id: "comment-mode", duration: 1500 })
+      setStatusRef.current({ text: "Comment added", type: "success" }, 1500)
     }
     onHighlightAddedRef.current?.(layerId, highlightId)
     // Keep selection so user can continue keyboard navigation after Escape

@@ -1,7 +1,8 @@
-import { useRef, useState, useCallback, useMemo, Fragment, type RefObject } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
+import { StatusBar } from "./components/StatusBar";
 import { Divider } from "./components/ui/Divider";
 import {
   TitleBar,
@@ -13,6 +14,7 @@ import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useCommentMode } from "./hooks/use-comment-mode";
+import { useStatusMessage } from "./hooks/use-status-message";
 import { useToolShortcuts } from "./hooks/use-tool-shortcuts";
 import { useToggleShortcuts } from "./hooks/use-toggle-shortcuts";
 import { useCycleLayer } from "./hooks/use-cycle-layer";
@@ -80,6 +82,7 @@ export function App() {
   });
   useUndoRedoKeyboard(history);
   const actionConsole = useActionConsole();
+  const { message: statusMessage, setStatus, clearStatus } = useStatusMessage();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
@@ -103,6 +106,8 @@ export function App() {
     addArrow,
     showDrawingToasts: settings.showDrawingToasts,
     setActiveTool,
+    setStatus,
+    clearStatus,
   });
 
   const { confirmComment } = useCommentMode({
@@ -118,7 +123,16 @@ export function App() {
       setEditingAnnotation({ layerId, highlightId });
     }, []),
     showCommentToasts: settings.showCommentsToasts,
+    setStatus,
+    clearStatus,
   });
+
+  // Default status message when locked with selection tool and no selection
+  useEffect(() => {
+    if (settings.isLocked && annotations.activeTool === "selection" && !selection) {
+      setStatus({ text: "Click a word or use arrow keys to navigate", type: "info" })
+    }
+  }, [settings.isLocked, annotations.activeTool, selection, setStatus])
 
   confirmRef.current = () => {
     confirmSelection();
@@ -195,6 +209,7 @@ export function App() {
           <div className="flex flex-col flex-1 min-w-0">
             <TitleBar />
             <SimpleEditorToolbar isLocked={settings.isLocked} />
+            {settings.isLocked && <StatusBar message={statusMessage} />}
             <div className="flex flex-1 min-w-0 min-h-0">
               <div
                 ref={containerRef}

@@ -1,4 +1,4 @@
-import { screen, fireEvent } from "@testing-library/react"
+import { screen, fireEvent, act } from "@testing-library/react"
 import { describe, it, expect } from "vitest"
 import { ButtonPane } from "./ButtonPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
@@ -119,5 +119,60 @@ describe("ButtonPane", () => {
     fireEvent.click(screen.getByTestId("settingsButton"))
     expect(screen.getByTestId("settingsDialog")).toBeInTheDocument()
     expect(screen.getByText("Settings")).toBeInTheDocument()
+  })
+
+  it("shows tooltip with shortcut key on focus for selection tool", async () => {
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true } })
+    const btn = screen.getByTestId("selectionToolButton")
+
+    await act(async () => { fireEvent.focus(btn) })
+
+    const tooltip = await screen.findByRole("tooltip")
+    expect(tooltip).toHaveTextContent("Selection tool")
+    expect(tooltip.querySelector("kbd")).toHaveTextContent("S")
+  })
+
+  it("shows tooltip with shortcut key on focus for arrow tool", async () => {
+    renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true } })
+    const btn = screen.getByTestId("arrowToolButton")
+
+    await act(async () => { fireEvent.focus(btn) })
+
+    const tooltip = await screen.findByRole("tooltip")
+    expect(tooltip).toHaveTextContent("Arrow tool")
+    expect(tooltip.querySelector("kbd")).toHaveTextContent("A")
+  })
+
+  it("shows tooltip for lock toggle with shortcut", async () => {
+    renderButtonPane()
+    const btn = screen.getByTestId("lockButton")
+
+    await act(async () => { fireEvent.focus(btn) })
+
+    const tooltip = await screen.findByRole("tooltip")
+    expect(tooltip).toHaveTextContent("Toggle editor lock")
+    expect(tooltip.querySelector("kbd")).toHaveTextContent("K")
+  })
+
+  it("shows tooltip for menu button with shortcut", async () => {
+    renderButtonPane()
+    const btn = screen.getByTestId("menuButton")
+
+    await act(async () => { fireEvent.focus(btn) })
+
+    const tooltip = await screen.findByRole("tooltip")
+    expect(tooltip).toHaveTextContent("Toggle management pane")
+    expect(tooltip.querySelector("kbd")).toHaveTextContent("M")
+  })
+
+  it("shows tooltip without shortcut for keyboard shortcuts button", async () => {
+    renderButtonPane()
+    const btn = screen.getByTestId("keyboardShortcutsButton")
+
+    await act(async () => { fireEvent.focus(btn) })
+
+    const tooltip = await screen.findByRole("tooltip")
+    expect(tooltip).toHaveTextContent("Keyboard shortcuts")
+    expect(tooltip.querySelector("kbd")).not.toBeInTheDocument()
   })
 })

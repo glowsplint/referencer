@@ -713,6 +713,45 @@ describe("ArrowOverlay", () => {
     expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
   })
 
+  it("hides arrowhead marker when arrow is hovered", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const arrowLine = screen.getByTestId("arrow-line")
+    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
+
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
+    expect(arrowLine.getAttribute("marker-mid")).toBeNull()
+  })
+
+  it("restores arrowhead marker when hover ends", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    fireEvent.mouseEnter(hitArea)
+    fireEvent.mouseLeave(hitArea)
+
+    const arrowLine = screen.getByTestId("arrow-line")
+    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
+  })
+
   it("no hit areas render when section visibility hides an endpoint", () => {
     const layer = createLayer({
       arrows: [
