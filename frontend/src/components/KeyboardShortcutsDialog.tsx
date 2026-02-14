@@ -29,6 +29,7 @@ const LEFT_SECTIONS: ShortcutSection[] = [
       { keys: ["S"], description: "Selection tool" },
       { keys: ["A"], description: "Arrow tool" },
       { keys: ["C"], description: "Comments tool" },
+      { keys: ["H"], description: "Highlight tool" },
       { keys: ["Arrow keys"], description: "Navigate between words" },
       { keys: ["`"], description: "Toggle action console" },
       { keys: ["D"], description: "Toggle dark mode" },

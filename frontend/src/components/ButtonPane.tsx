@@ -8,6 +8,7 @@ import {
   Menu,
   ArrowBigRight,
   MessageSquareText,
+  Highlighter,
   Keyboard,
   CircleHelp,
   Settings,
@@ -28,6 +29,7 @@ const TOOL_SHORTCUTS: Record<ActiveTool, string> = {
   selection: "S",
   arrow: "A",
   comments: "C",
+  highlight: "H",
 };
 
 export function ButtonPane() {
@@ -43,6 +45,7 @@ export function ButtonPane() {
     toggleLocked,
     toggleShowDrawingToasts,
     toggleShowCommentsToasts,
+    toggleShowHighlightToasts,
   } = useWorkspace();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -52,6 +55,7 @@ export function ButtonPane() {
   const toolButtons: { tool: ActiveTool; icon: React.ReactNode; label: string; testId: string }[] = [
     { tool: "selection", icon: <MousePointer2 size={20} />, label: "Selection tool", testId: "selectionToolButton" },
     { tool: "arrow", icon: <ArrowBigRight size={20} />, label: "Arrow tool", testId: "arrowToolButton" },
+    { tool: "highlight", icon: <Highlighter size={20} />, label: "Highlight tool", testId: "highlightToolButton" },
     { tool: "comments", icon: <MessageSquareText size={20} />, label: "Comments tool", testId: "commentsToolButton" },
   ];
 
@@ -167,6 +171,8 @@ export function ButtonPane() {
         toggleShowDrawingToasts={toggleShowDrawingToasts}
         showCommentsToasts={settings.showCommentsToasts}
         toggleShowCommentsToasts={toggleShowCommentsToasts}
+        showHighlightToasts={settings.showHighlightToasts}
+        toggleShowHighlightToasts={toggleShowHighlightToasts}
       />
     </div>
   );

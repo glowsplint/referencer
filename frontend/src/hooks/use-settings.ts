@@ -19,6 +19,7 @@ export function useSettings() {
     isLocked: false,
     showDrawingToasts: true,
     showCommentsToasts: true,
+    showHighlightToasts: true,
   })
   const [annotations, setAnnotations] = useState<AnnotationSettings>({
     activeTool: "selection",
@@ -34,6 +35,7 @@ export function useSettings() {
   const toggleLocked = useToggle(setSettings, "isLocked")
   const toggleShowDrawingToasts = useToggle(setSettings, "showDrawingToasts")
   const toggleShowCommentsToasts = useToggle(setSettings, "showCommentsToasts")
+  const toggleShowHighlightToasts = useToggle(setSettings, "showHighlightToasts")
   const setActiveTool = useCallback(
     (tool: ActiveTool) => setAnnotations({ activeTool: tool }),
     []
@@ -48,6 +50,7 @@ export function useSettings() {
     toggleLocked,
     toggleShowDrawingToasts,
     toggleShowCommentsToasts,
+    toggleShowHighlightToasts,
     setActiveTool,
   }
 }

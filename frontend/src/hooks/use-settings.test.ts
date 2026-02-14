@@ -17,6 +17,7 @@ describe("useSettings", () => {
       isLocked: false,
       showDrawingToasts: true,
       showCommentsToasts: true,
+      showHighlightToasts: true,
     })
   })
 
@@ -105,5 +106,18 @@ describe("useSettings", () => {
     expect(result.current.settings.isLocked).toBe(false)
     expect(result.current.settings.showDrawingToasts).toBe(true)
     expect(result.current.settings.showCommentsToasts).toBe(true)
+    expect(result.current.settings.showHighlightToasts).toBe(true)
+  })
+
+  it("toggleShowHighlightToasts toggles showHighlightToasts", () => {
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings.showHighlightToasts).toBe(true)
+
+    act(() => { result.current.toggleShowHighlightToasts() })
+    expect(result.current.settings.showHighlightToasts).toBe(false)
+
+    act(() => { result.current.toggleShowHighlightToasts() })
+    expect(result.current.settings.showHighlightToasts).toBe(true)
   })
 })

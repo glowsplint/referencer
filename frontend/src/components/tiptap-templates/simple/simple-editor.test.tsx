@@ -109,8 +109,8 @@ vi.mock("@/hooks/use-window-size", () => ({
 vi.mock("@/hooks/use-cursor-visibility", () => ({
   useCursorVisibility: () => ({ x: 0, y: 0, width: 0, height: 0 }),
 }))
-vi.mock("@/hooks/use-layer-decorations", () => ({
-  useLayerDecorations: vi.fn(),
+vi.mock("@/hooks/use-unified-decorations", () => ({
+  useUnifiedDecorations: vi.fn(),
 }))
 vi.mock("@/hooks/use-selection-highlight", () => ({
   useSelectionHighlight: vi.fn(),

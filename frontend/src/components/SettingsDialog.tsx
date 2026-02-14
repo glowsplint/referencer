@@ -46,6 +46,8 @@ interface SettingsDialogProps {
   toggleShowDrawingToasts: () => void;
   showCommentsToasts: boolean;
   toggleShowCommentsToasts: () => void;
+  showHighlightToasts: boolean;
+  toggleShowHighlightToasts: () => void;
 }
 
 export function SettingsDialog({
@@ -57,6 +59,8 @@ export function SettingsDialog({
   toggleShowDrawingToasts,
   showCommentsToasts,
   toggleShowCommentsToasts,
+  showHighlightToasts,
+  toggleShowHighlightToasts,
 }: SettingsDialogProps) {
   const rows: SettingsRow[] = [
     {
@@ -79,6 +83,13 @@ export function SettingsDialog({
       description: "Show toasts when using the comments tool",
       checked: showCommentsToasts,
       onCheckedChange: toggleShowCommentsToasts,
+    },
+    {
+      id: "highlight-notifications",
+      label: "Highlight notifications",
+      description: "Show toasts when using the highlight tool",
+      checked: showHighlightToasts,
+      onCheckedChange: toggleShowHighlightToasts,
     },
   ];
 

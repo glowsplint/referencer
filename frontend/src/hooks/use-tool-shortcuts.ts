@@ -6,6 +6,7 @@ const KEY_MAP: Record<string, ActiveTool> = {
   KeyS: "selection",
   KeyA: "arrow",
   KeyC: "comments",
+  KeyH: "highlight",
 }
 
 interface UseToolShortcutsOptions {

@@ -21,3 +21,41 @@ export function blendWithBackground(hex: string, alpha: number, isDarkMode: bool
   const blend = (f: number, b: number) => Math.round(f * alpha + b * (1 - alpha))
   return `rgb(${blend(fg.r, bg.r)}, ${blend(fg.g, bg.g)}, ${blend(fg.b, bg.b)})`
 }
+
+/**
+ * Blend multiple colors via sequential alpha compositing onto the page background.
+ * Entries are sorted by hex+opacity for deterministic results.
+ */
+export function blendColors(
+  entries: { hex: string; opacity: number }[],
+  isDarkMode: boolean
+): string {
+  if (entries.length === 0) {
+    const bg = isDarkMode ? DARK_BG : LIGHT_BG
+    return `rgb(${bg.r}, ${bg.g}, ${bg.b})`
+  }
+  if (entries.length === 1) {
+    return blendWithBackground(entries[0].hex, entries[0].opacity, isDarkMode)
+  }
+
+  // Sort for deterministic blending order
+  const sorted = [...entries].sort((a, b) =>
+    a.hex < b.hex ? -1 : a.hex > b.hex ? 1 : a.opacity - b.opacity
+  )
+
+  // Start with page background
+  const bg = isDarkMode ? DARK_BG : LIGHT_BG
+  let r = bg.r
+  let g = bg.g
+  let b = bg.b
+
+  // Sequentially composite each color
+  for (const { hex, opacity } of sorted) {
+    const fg = hexToRgb(hex)
+    r = Math.round(fg.r * opacity + r * (1 - opacity))
+    g = Math.round(fg.g * opacity + g * (1 - opacity))
+    b = Math.round(fg.b * opacity + b * (1 - opacity))
+  }
+
+  return `rgb(${r}, ${g}, ${b})`
+}

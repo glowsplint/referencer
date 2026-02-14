@@ -1,4 +1,4 @@
-import { Eye, EyeOff, ChevronRight, ChevronDown, MessageSquareText, ArrowRight, X } from "lucide-react";
+import { Eye, EyeOff, ChevronRight, ChevronDown, MessageSquareText, Highlighter, ArrowRight, X } from "lucide-react";
 import { ColorPicker } from "./ColorPicker";
 import { useState } from "react";
 import { DRAG_TYPE_LAYER } from "@/constants/drag-types";
@@ -145,7 +145,7 @@ export function LayerRow({
                 className="group flex items-center gap-1.5 pt-2.5 px-1 text-xs text-muted-foreground"
                 data-testid={`layerHighlight-${h.id}`}
               >
-                <MessageSquareText size={12} className="shrink-0" />
+                {h.annotation ? <MessageSquareText size={12} className="shrink-0" /> : <Highlighter size={12} className="shrink-0" />}
                 <span className="truncate" title={fullTitle}>{label}</span>
                 <button
                   className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"

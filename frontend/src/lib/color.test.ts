@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { parseHexToRgba, blendWithBackground } from "./color"
+import { parseHexToRgba, blendWithBackground, blendColors } from "./color"
 
 describe("parseHexToRgba", () => {
   it("converts a standard hex colour with alpha", () => {
@@ -44,5 +44,87 @@ describe("blendWithBackground", () => {
   it("returns foreground color at alpha 1", () => {
     expect(blendWithBackground("#ff0000", 1, false)).toBe("rgb(255, 0, 0)")
     expect(blendWithBackground("#ff0000", 1, true)).toBe("rgb(255, 0, 0)")
+  })
+})
+
+describe("blendColors", () => {
+  it("returns background color for empty entries", () => {
+    expect(blendColors([], false)).toBe("rgb(255, 255, 255)")
+    expect(blendColors([], true)).toBe("rgb(14, 14, 17)")
+  })
+
+  it("matches blendWithBackground for a single entry", () => {
+    const single = blendColors([{ hex: "#fca5a5", opacity: 0.3 }], false)
+    const direct = blendWithBackground("#fca5a5", 0.3, false)
+    expect(single).toBe(direct)
+  })
+
+  it("matches blendWithBackground for a single entry in dark mode", () => {
+    const single = blendColors([{ hex: "#93c5fd", opacity: 0.6 }], true)
+    const direct = blendWithBackground("#93c5fd", 0.6, true)
+    expect(single).toBe(direct)
+  })
+
+  it("blends two colors together", () => {
+    const result = blendColors(
+      [
+        { hex: "#fca5a5", opacity: 0.3 },
+        { hex: "#93c5fd", opacity: 0.3 },
+      ],
+      false
+    )
+    const redOnly = blendWithBackground("#fca5a5", 0.3, false)
+    const blueOnly = blendWithBackground("#93c5fd", 0.3, false)
+    expect(result).not.toBe(redOnly)
+    expect(result).not.toBe(blueOnly)
+    expect(result).toMatch(/^rgb\(\d+, \d+, \d+\)$/)
+  })
+
+  it("produces deterministic results regardless of input order", () => {
+    const a = blendColors(
+      [
+        { hex: "#fca5a5", opacity: 0.3 },
+        { hex: "#93c5fd", opacity: 0.6 },
+      ],
+      false
+    )
+    const b = blendColors(
+      [
+        { hex: "#93c5fd", opacity: 0.6 },
+        { hex: "#fca5a5", opacity: 0.3 },
+      ],
+      false
+    )
+    expect(a).toBe(b)
+  })
+
+  it("blends three colors", () => {
+    const result = blendColors(
+      [
+        { hex: "#fca5a5", opacity: 0.3 },
+        { hex: "#93c5fd", opacity: 0.3 },
+        { hex: "#bef264", opacity: 0.3 },
+      ],
+      false
+    )
+    expect(result).toMatch(/^rgb\(\d+, \d+, \d+\)$/)
+  })
+
+  it("differs between light and dark mode", () => {
+    const light = blendColors(
+      [
+        { hex: "#fca5a5", opacity: 0.3 },
+        { hex: "#93c5fd", opacity: 0.3 },
+      ],
+      false
+    )
+    const dark = blendColors(
+      [
+        { hex: "#fca5a5", opacity: 0.3 },
+        { hex: "#93c5fd", opacity: 0.3 },
+      ],
+      true
+    )
+    expect(light).not.toBe(dark)
   })
 })

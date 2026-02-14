@@ -5,12 +5,11 @@ import { EditorContent, useEditor } from "@tiptap/react"
 import type { Editor } from "@tiptap/react"
 
 import { createSimpleEditorExtensions } from "./extensions"
-import { useLayerDecorations } from "@/hooks/use-layer-decorations"
+import { useUnifiedDecorations } from "@/hooks/use-unified-decorations"
 import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
 import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
 import { useWordHover } from "@/hooks/use-word-hover"
-import { useArrowEndpointDecorations } from "@/hooks/use-arrow-endpoint-decorations"
 import { useEditorArrows } from "@/hooks/use-editor-arrows"
 import { SelectionRingOverlay } from "@/components/SelectionRingOverlay"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
@@ -103,11 +102,10 @@ export function EditorPane({
     }
   }, [editor, isLocked])
 
-  useLayerDecorations(editor, layers, index, isLocked, isDarkMode)
+  useUnifiedDecorations(editor, layers, index, isLocked, isDarkMode)
   useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useSimilarTextHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useWordHover(editor, index, isLocked, isDarkMode, selection, activeLayerColor, layers)
-  useArrowEndpointDecorations(editor, layers, index, isLocked, isDarkMode)
   useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow)
   useSelectionScroll(editor, selection, index, wrapperRef)
 

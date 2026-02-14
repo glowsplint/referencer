@@ -5,9 +5,10 @@ export interface EditorSettings {
   isLocked: boolean
   showDrawingToasts: boolean
   showCommentsToasts: boolean
+  showHighlightToasts: boolean
 }
 
-export type ActiveTool = "selection" | "arrow" | "comments"
+export type ActiveTool = "selection" | "arrow" | "comments" | "highlight"
 
 export type DrawingPhase = "idle" | "selecting-anchor" | "anchor-confirmed"
 

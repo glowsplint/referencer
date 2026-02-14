@@ -14,6 +14,7 @@ import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useCommentMode } from "./hooks/use-comment-mode";
+import { useHighlightMode } from "./hooks/use-highlight-mode";
 import { useStatusMessage } from "./hooks/use-status-message";
 import { useToolShortcuts } from "./hooks/use-tool-shortcuts";
 import { useToggleShortcuts } from "./hooks/use-toggle-shortcuts";
@@ -132,6 +133,20 @@ export function App() {
     clearStatus,
   });
 
+  const { confirmHighlight } = useHighlightMode({
+    isLocked: settings.isLocked,
+    activeTool: annotations.activeTool,
+    selection,
+    activeLayerId,
+    addLayer,
+    layers,
+    addHighlight,
+    removeHighlight,
+    showHighlightToasts: settings.showHighlightToasts,
+    setStatus,
+    clearStatus,
+  });
+
   // Hint to lock the editor when unlocked
   useEffect(() => {
     if (!settings.isLocked && !readOnly) {
@@ -149,6 +164,7 @@ export function App() {
   confirmRef.current = () => {
     confirmSelection();
     confirmComment();
+    confirmHighlight();
   };
 
   useCycleLayer({
