@@ -19,6 +19,8 @@ export function ManagementPane() {
     updateLayerName,
     toggleLayerVisibility,
     toggleAllLayerVisibility,
+    removeHighlight,
+    removeArrow,
     addEditor,
     removeEditor,
     reorderEditors,
@@ -77,9 +79,12 @@ export function ManagementPane() {
               index={index}
               isActive={layer.id === activeLayerId}
               onSetActive={() => setActiveLayer(layer.id)}
+              sectionNames={sectionNames}
               onUpdateColor={(color) => updateLayerColor(layer.id, color)}
               onUpdateName={(name) => updateLayerName(layer.id, name)}
               onToggleVisibility={() => toggleLayerVisibility(layer.id)}
+              onRemoveHighlight={removeHighlight}
+              onRemoveArrow={removeArrow}
             />
           ))}
         </div>

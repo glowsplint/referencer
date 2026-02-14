@@ -39,6 +39,7 @@ export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}
     toggleAllLayerVisibility: vi.fn(),
     addHighlight: vi.fn(),
     removeHighlight: vi.fn(),
+    removeArrow: vi.fn(),
     clearLayerHighlights: vi.fn(),
     editorsRef: { current: new Map() },
     sectionVisibility: [true],

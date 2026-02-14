@@ -3,19 +3,32 @@ import { describe, it, expect, vi } from "vitest"
 import { LayerRow } from "./LayerRow"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
-import type { Layer } from "@/types/editor"
+import type { Layer, Highlight, Arrow } from "@/types/editor"
 
 const defaultLayer: Layer = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [], arrows: [] }
+
+const makeHighlight = (id: string, text: string, annotation = "", editorIndex = 0): Highlight => ({
+  id, editorIndex, from: 0, to: 5, text, annotation,
+})
+
+const makeArrow = (id: string, fromText: string, toText: string, fromEditor = 0, toEditor = 1): Arrow => ({
+  id,
+  from: { editorIndex: fromEditor, from: 0, to: 5, text: fromText },
+  to: { editorIndex: toEditor, from: 0, to: 5, text: toText },
+})
 
 function renderRow(overrides = {}) {
   const defaults = {
     layer: defaultLayer,
     index: 0,
     isActive: false,
+    sectionNames: ["Passage 1", "Passage 2"],
     onSetActive: vi.fn(),
     onUpdateColor: vi.fn(),
     onUpdateName: vi.fn(),
     onToggleVisibility: vi.fn(),
+    onRemoveHighlight: vi.fn(),
+    onRemoveArrow: vi.fn(),
   }
   const props = { ...defaults, ...overrides }
   return { ...render(<LayerRow {...props} />), props }
@@ -209,5 +222,137 @@ describe("LayerRow", () => {
     const input = screen.getByTestId("layerNameInput-0")
     expect(input.tagName).toBe("INPUT")
     expect(input).toHaveClass("ring-border")
+  })
+
+  // --- Expand / collapse ---
+
+  it("does not show chevron or count badge for empty layer", () => {
+    renderRow()
+    expect(screen.queryByTestId("layerExpand-0")).not.toBeInTheDocument()
+    expect(screen.queryByTestId("layerItemCount-0")).not.toBeInTheDocument()
+  })
+
+  it("shows chevron and count badge when layer has highlights", () => {
+    const layer = { ...defaultLayer, highlights: [makeHighlight("h1", "hello")] }
+    renderRow({ layer })
+    expect(screen.getByTestId("layerExpand-0")).toBeInTheDocument()
+    expect(screen.getByTestId("layerItemCount-0")).toHaveTextContent("1")
+  })
+
+  it("shows chevron and count badge when layer has arrows", () => {
+    const layer = { ...defaultLayer, arrows: [makeArrow("a1", "foo", "bar")] }
+    renderRow({ layer })
+    expect(screen.getByTestId("layerExpand-0")).toBeInTheDocument()
+    expect(screen.getByTestId("layerItemCount-0")).toHaveTextContent("1")
+  })
+
+  it("shows combined count for highlights and arrows", () => {
+    const layer = {
+      ...defaultLayer,
+      highlights: [makeHighlight("h1", "hello"), makeHighlight("h2", "world")],
+      arrows: [makeArrow("a1", "foo", "bar")],
+    }
+    renderRow({ layer })
+    expect(screen.getByTestId("layerItemCount-0")).toHaveTextContent("3")
+  })
+
+  it("expands when chevron is clicked and hides count badge", () => {
+    const layer = { ...defaultLayer, highlights: [makeHighlight("h1", "hello")] }
+    renderRow({ layer })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    expect(screen.getByTestId("layerItems-0")).toBeInTheDocument()
+    expect(screen.queryByTestId("layerItemCount-0")).not.toBeInTheDocument()
+  })
+
+  it("collapses when chevron is clicked again", () => {
+    const layer = { ...defaultLayer, highlights: [makeHighlight("h1", "hello")] }
+    renderRow({ layer })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    expect(screen.getByTestId("layerItems-0")).toBeInTheDocument()
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    expect(screen.queryByTestId("layerItems-0")).not.toBeInTheDocument()
+  })
+
+  it("renders highlight items with annotation text when expanded", () => {
+    const layer = {
+      ...defaultLayer,
+      highlights: [makeHighlight("h1", "selected text", "my note")],
+    }
+    renderRow({ layer })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    expect(screen.getByTestId("layerHighlight-h1")).toBeInTheDocument()
+    expect(screen.getByText("my note")).toBeInTheDocument()
+  })
+
+  it("renders highlight with selected text when annotation is empty", () => {
+    const layer = {
+      ...defaultLayer,
+      highlights: [makeHighlight("h1", "selected text", "")],
+    }
+    renderRow({ layer })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    expect(screen.getByText("selected text")).toBeInTheDocument()
+  })
+
+  it("renders arrow items with from/to text when expanded", () => {
+    const layer = {
+      ...defaultLayer,
+      arrows: [makeArrow("a1", "hello", "world")],
+    }
+    renderRow({ layer })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    expect(screen.getByTestId("layerArrow-a1")).toBeInTheDocument()
+    expect(screen.getByText("hello → world")).toBeInTheDocument()
+  })
+
+  it("calls onRemoveHighlight when highlight delete button is clicked", () => {
+    const layer = {
+      ...defaultLayer,
+      highlights: [makeHighlight("h1", "hello")],
+    }
+    const { props } = renderRow({ layer })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    fireEvent.click(screen.getByTestId("removeHighlight-h1"))
+    expect(props.onRemoveHighlight).toHaveBeenCalledWith("a", "h1")
+  })
+
+  it("calls onRemoveArrow when arrow delete button is clicked", () => {
+    const layer = {
+      ...defaultLayer,
+      arrows: [makeArrow("a1", "hello", "world")],
+    }
+    const { props } = renderRow({ layer })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    fireEvent.click(screen.getByTestId("removeArrow-a1"))
+    expect(props.onRemoveArrow).toHaveBeenCalledWith("a", "a1")
+  })
+
+  it("chevron click does not trigger onSetActive", () => {
+    const layer = { ...defaultLayer, highlights: [makeHighlight("h1", "hello")] }
+    const { props } = renderRow({ layer })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    expect(props.onSetActive).not.toHaveBeenCalled()
+  })
+
+  it("highlight title includes passage name", () => {
+    const layer = {
+      ...defaultLayer,
+      highlights: [makeHighlight("h1", "hello", "note", 1)],
+    }
+    renderRow({ layer, sectionNames: ["Intro", "Body"] })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    const span = screen.getByText("note")
+    expect(span).toHaveAttribute("title", "note (Body)")
+  })
+
+  it("arrow title includes passage names", () => {
+    const layer = {
+      ...defaultLayer,
+      arrows: [makeArrow("a1", "foo", "bar", 0, 1)],
+    }
+    renderRow({ layer, sectionNames: ["Intro", "Body"] })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    const span = screen.getByText("foo → bar")
+    expect(span).toHaveAttribute("title", "foo (Intro) → bar (Body)")
   })
 })

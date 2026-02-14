@@ -3,8 +3,14 @@ import { describe, it, expect } from "vitest"
 import { ManagementPane } from "./ManagementPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
 
-const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as unknown[], arrows: [] as unknown[] }
-const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as unknown[], arrows: [] as unknown[] }
+import type { Highlight, Arrow } from "@/types/editor"
+
+const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[] }
+const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[] }
+
+const highlight1: Highlight = { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "my note" }
+const arrow1: Arrow = { id: "a1", from: { editorIndex: 0, from: 0, to: 3, text: "foo" }, to: { editorIndex: 1, from: 0, to: 3, text: "bar" } }
+const layerWithItems = { ...layerA, highlights: [highlight1], arrows: [arrow1] }
 
 function renderPane(overrides = {}) {
   return renderWithWorkspace(<ManagementPane />, overrides)
@@ -235,5 +241,28 @@ describe("ManagementPane", () => {
     fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } })
     fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" })
     expect(workspace.updateSectionName).toHaveBeenCalledWith(0, "Renamed")
+  })
+
+  // --- Expandable layer items ---
+
+  it("calls removeHighlight with layer id and highlight id when delete button is clicked", () => {
+    const { workspace } = renderPane({ layers: [layerWithItems] })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    fireEvent.click(screen.getByTestId("removeHighlight-h1"))
+    expect(workspace.removeHighlight).toHaveBeenCalledWith("a", "h1")
+  })
+
+  it("calls removeArrow with layer id and arrow id when delete button is clicked", () => {
+    const { workspace } = renderPane({ layers: [layerWithItems] })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    fireEvent.click(screen.getByTestId("removeArrow-a1"))
+    expect(workspace.removeArrow).toHaveBeenCalledWith("a", "a1")
+  })
+
+  it("passes sectionNames to LayerRow for item display", () => {
+    const { workspace } = renderPane({ layers: [layerWithItems], sectionNames: ["Intro", "Body"] })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    const span = screen.getByText("my note")
+    expect(span).toHaveAttribute("title", "my note (Intro)")
   })
 })
