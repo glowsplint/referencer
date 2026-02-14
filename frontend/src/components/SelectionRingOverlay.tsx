@@ -94,11 +94,19 @@ export function SelectionRingOverlay({
       return
     }
 
-    try {
-      setRects(getSelectionRects(editor, selection, wrapper))
-    } catch {
-      setRects([])
+    function compute() {
+      try {
+        setRects(getSelectionRects(editor, selection, wrapper))
+      } catch {
+        setRects([])
+      }
     }
+
+    compute()
+
+    const ro = new ResizeObserver(() => compute())
+    ro.observe(wrapper)
+    return () => ro.disconnect()
   }, [editor, selection, editorIndex, isLocked, wrapperRef])
 
   if (rects.length === 0) return null
