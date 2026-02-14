@@ -4,6 +4,7 @@ import type { Layer, DrawingState, ActiveTool, Arrow, ArrowStyle } from "@/types
 import { getWordCenter, getWordRect, getWordCenterRelativeToWrapper, getWordRectRelativeToWrapper } from "@/lib/tiptap/nearest-word"
 import { blendWithBackground } from "@/lib/color"
 import { getArrowStyleAttrs, computeDoubleLinePaths } from "@/lib/arrow-styles"
+import { getArrowLinesView } from "@/lib/tiptap/extensions/arrow-lines-plugin"
 
 const ARROW_OPACITY = 0.6
 const SVG_NS = "http://www.w3.org/2000/svg"
@@ -61,6 +62,13 @@ export function ArrowOverlay({
   const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null)
   // Structural tick — only for structural changes (layers, visibility, preview), NOT scroll
   const [structuralTick, setStructuralTick] = useState(0)
+
+  // Propagate hoveredArrowId to within-editor plugin views so they hide arrowheads
+  useEffect(() => {
+    for (const editor of editorsRef.current.values()) {
+      getArrowLinesView(editor.view)?.setHoveredArrowId(hoveredArrowId)
+    }
+  }, [hoveredArrowId, editorsRef])
 
   // Which editor the mouse is currently over (for wrapper-level arrow rendering)
   const [hoveredEditorIndex, setHoveredEditorIndex] = useState<number | null>(null)
