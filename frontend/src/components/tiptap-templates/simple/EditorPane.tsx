@@ -40,6 +40,7 @@ export function EditorPane({
   onContentUpdate,
   layers,
   selection,
+  selectionHidden,
   activeLayerColor,
   isDarkMode,
   removeArrow,
@@ -57,6 +58,7 @@ export function EditorPane({
   onContentUpdate?: (index: number, json: Record<string, unknown>) => void
   layers: Layer[]
   selection: WordSelection | null
+  selectionHidden?: boolean
   activeLayerColor: string | null
   isDarkMode: boolean
   removeArrow: (layerId: string, arrowId: string) => void
@@ -103,13 +105,15 @@ export function EditorPane({
     }
   }, [editor, isLocked])
 
+  const visibleSelection = selectionHidden ? null : selection
+
   useUnifiedDecorations(editor, layers, index, isLocked, isDarkMode)
   useLayerUnderlineDecorations(editor, layers, index, isLocked, isDarkMode)
-  useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode, activeTool)
-  useSimilarTextHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
-  useWordHover(editor, index, isLocked, isDarkMode, selection, activeLayerColor, layers)
+  useSelectionHighlight(editor, visibleSelection, index, isLocked, activeLayerColor, isDarkMode, activeTool)
+  useSimilarTextHighlight(editor, visibleSelection, index, isLocked, activeLayerColor, isDarkMode)
+  useWordHover(editor, index, isLocked, isDarkMode, visibleSelection, activeLayerColor, layers)
   useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow)
-  useSelectionScroll(editor, selection, index, wrapperRef)
+  useSelectionScroll(editor, visibleSelection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {
     onFocus(index)
@@ -155,7 +159,7 @@ export function EditorPane({
       />
       <SelectionRingOverlay
         editor={editor}
-        selection={selection}
+        selection={visibleSelection}
         editorIndex={index}
         isLocked={isLocked}
         isDarkMode={isDarkMode}

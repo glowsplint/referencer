@@ -100,13 +100,16 @@ export function App() {
   const annotationBeforeEditRef = useRef<string>("");
   const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
 
-  const { selection, selectWord, selectRange, clearSelection } = useWordSelection({
+  const { selection, selectionHidden, selectWord, selectRange, clearSelection, hideSelection } = useWordSelection({
     isLocked: settings.isLocked,
     editorsRef,
     containerRef,
     editorCount,
     onEnter: useCallback(() => confirmRef.current(), []),
-    onEscape: useCallback(() => setActiveTool("selection"), [setActiveTool]),
+    onEscape: useCallback(() => {
+      setActiveTool("selection");
+      workspace.setSelectedArrow(null);
+    }, [setActiveTool, workspace]),
   });
 
   const { drawingState, confirmSelection } = useDrawingMode({
@@ -176,12 +179,19 @@ export function App() {
     }
   }, [settings.isLocked, readOnly, setStatus])
 
-  // Default status message when locked with selection tool and no selection
+  // Default status message when locked with selection tool and no visible selection
   useEffect(() => {
-    if (settings.isLocked && annotations.activeTool === "selection" && !selection) {
+    if (settings.isLocked && annotations.activeTool === "selection" && (!selection || selectionHidden)) {
       setStatus({ text: "Click a word or use arrow keys to navigate", type: "info" })
     }
-  }, [settings.isLocked, annotations.activeTool, selection, setStatus])
+  }, [settings.isLocked, annotations.activeTool, selection, selectionHidden, setStatus])
+
+  // Mutual exclusivity: visible word selection clears arrow selection
+  useEffect(() => {
+    if (selection && !selectionHidden) {
+      workspace.setSelectedArrow(null);
+    }
+  }, [selection, selectionHidden, workspace])
 
   confirmRef.current = () => {
     confirmSelection();
@@ -203,6 +213,15 @@ export function App() {
     selectRange,
     clearSelection,
   });
+
+  // Mutual exclusivity: selecting an arrow hides word selection
+  const handleSetSelectedArrow = useCallback(
+    (arrow: { layerId: string; arrowId: string } | null) => {
+      workspace.setSelectedArrow(arrow);
+      if (arrow) hideSelection();
+    },
+    [workspace, hideSelection]
+  );
 
   const activeLayerColor = activeLayerId
     ? layers.find((l) => l.id === activeLayerId)?.color ?? null
@@ -277,7 +296,7 @@ export function App() {
                   containerRef={containerRef}
                   removeArrow={removeArrow}
                   selectedArrow={workspace.selectedArrow}
-                  setSelectedArrow={workspace.setSelectedArrow}
+                  setSelectedArrow={handleSetSelectedArrow}
                   activeTool={annotations.activeTool}
                   sectionVisibility={sectionVisibility}
                   isDarkMode={settings.isDarkMode}
@@ -315,6 +334,7 @@ export function App() {
                         onContentUpdate={readOnly ? undefined : updateEditorContent}
                         layers={layers}
                         selection={selection}
+                        selectionHidden={selectionHidden}
                         activeLayerColor={activeLayerColor}
                         isDarkMode={settings.isDarkMode}
                         removeArrow={removeArrow}

@@ -46,6 +46,7 @@ export function useWordSelection({
   onEscape,
 }: UseWordSelectionOptions) {
   const [selection, setSelection] = useState<WordSelection | null>(null)
+  const [selectionHidden, setSelectionHidden] = useState(false)
   const stickyXRef = useRef<number | null>(null)
   const anchorRef = useRef<WordSelection | null>(null)
   const headRef = useRef<WordSelection | null>(null)
@@ -59,6 +60,7 @@ export function useWordSelection({
       if (!HAS_ALPHANUMERIC.test(text)) return
       anchorRef.current = null
       headRef.current = null
+      setSelectionHidden(false)
       setSelection({ editorIndex, from, to, text })
     },
     []
@@ -73,6 +75,7 @@ export function useWordSelection({
       if (!HAS_ALPHANUMERIC.test(merged.text)) return
       anchorRef.current = anchor
       headRef.current = head
+      setSelectionHidden(false)
       setSelection(merged)
     },
     []
@@ -82,15 +85,21 @@ export function useWordSelection({
     anchorRef.current = null
     headRef.current = null
     setSelection(null)
+    setSelectionHidden(false)
+  }, [])
+
+  const hideSelection = useCallback(() => {
+    setSelectionHidden(true)
   }, [])
 
   useEffect(() => {
     if (!isLocked) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- reset on prop change
       setSelection(null)
+      setSelectionHidden(false)
       return
     }
-    // Seed selection at first word so arrow keys work immediately
+    // Seed selection at first word (hidden) so arrow keys work immediately
     const container = containerRef.current
     if (!container) return
     const containerRect = container.getBoundingClientRect()
@@ -98,7 +107,10 @@ export function useWordSelection({
     const allCandidates = collectCandidates(ctx)
     const first = findFirstWordInPassage(0, allCandidates)
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initialise on prop change
-    if (first) setSelection(first)
+    if (first) {
+      setSelection(first)
+      setSelectionHidden(true)
+    }
   }, [isLocked, editorsRef, containerRef, editorCount])
 
   useEffect(() => {
@@ -120,14 +132,29 @@ export function useWordSelection({
 
       // ── Escape ──────────────────────────────────────────────────
       if (e.key === "Escape") {
-        if (selection) {
-          e.preventDefault()
+        e.preventDefault()
+        if (selection && !selectionHidden) {
+          // First Escape: clear visible selection
           anchorRef.current = null
           headRef.current = null
           setSelection(null)
-        } else if (onEscapeRef.current) {
-          e.preventDefault()
-          onEscapeRef.current()
+        } else {
+          // Double Escape: reset to first word (hidden) and notify parent
+          anchorRef.current = null
+          headRef.current = null
+          stickyXRef.current = null
+          const container = containerRef.current
+          if (container) {
+            const containerRect = container.getBoundingClientRect()
+            const ctx = { editorsRef, containerRect, editorCount }
+            const allCandidates = collectCandidates(ctx)
+            const first = findFirstWordInPassage(0, allCandidates)
+            if (first) {
+              setSelection(first)
+              setSelectionHidden(true)
+            }
+          }
+          onEscapeRef.current?.()
         }
         return
       }
@@ -138,6 +165,7 @@ export function useWordSelection({
       // ── Cmd+A — select all in passage ──────────────────────────
       if (cmd && e.key === "a") {
         e.preventDefault()
+        setSelectionHidden(false)
         const container = containerRef.current
         if (!container) return
         const containerRect = container.getBoundingClientRect()
@@ -162,6 +190,7 @@ export function useWordSelection({
       // ── Tab / Shift+Tab — cycle passages ───────────────────────
       if (e.key === "Tab") {
         e.preventDefault()
+        setSelectionHidden(false)
         const container = containerRef.current
         if (!container) return
         const containerRect = container.getBoundingClientRect()
@@ -190,6 +219,7 @@ export function useWordSelection({
       if (e.key === "Home" || e.key === "End") {
         if (!selection) return
         e.preventDefault()
+        setSelectionHidden(false)
         const container = containerRef.current
         if (!container) return
         const containerRect = container.getBoundingClientRect()
@@ -214,6 +244,8 @@ export function useWordSelection({
       if (!selection) return
 
       e.preventDefault()
+      // Unhide selection on any navigation
+      if (selectionHidden) setSelectionHidden(false)
 
       const container = containerRef.current
       if (!container) return
@@ -458,7 +490,7 @@ export function useWordSelection({
 
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [isLocked, selection, editorsRef, containerRef, editorCount])
+  }, [isLocked, selection, selectionHidden, editorsRef, containerRef, editorCount])
 
-  return { selection, selectWord, selectRange, clearSelection }
+  return { selection, selectionHidden, selectWord, selectRange, clearSelection, hideSelection }
 }

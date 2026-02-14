@@ -671,25 +671,134 @@ describe("useWordSelection shift+arrow range selection", () => {
 // ── Enhanced keyboard navigation ──────────────────────────────────
 
 describe("useWordSelection Escape key", () => {
-  it("Escape clears selection", () => {
+  it("Escape clears visible selection", () => {
     const { result } = renderHook(() => useWordSelection(createOptions()))
 
     act(() => { result.current.selectWord(0, 1, 5, "hello") })
     expect(result.current.selection).not.toBeNull()
+    expect(result.current.selectionHidden).toBe(false)
 
     act(() => { fireKey("Escape") })
     expect(result.current.selection).toBeNull()
   })
 
-  it("second Escape is a no-op", () => {
-    const { result } = renderHook(() => useWordSelection(createOptions()))
+  it("second Escape calls onEscape", () => {
+    const onEscape = vi.fn()
+    const { result } = renderHook(() => useWordSelection(createOptions({ onEscape })))
 
     act(() => { result.current.selectWord(0, 1, 5, "hello") })
     act(() => { fireKey("Escape") })
-    expect(result.current.selection).toBeNull()
+    expect(onEscape).not.toHaveBeenCalled()
 
     act(() => { fireKey("Escape") })
+    expect(onEscape).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("useWordSelection double-escape reset", () => {
+  const words = [
+    { editorIndex: 0, from: 1, to: 4, text: "the" },
+    { editorIndex: 0, from: 5, to: 10, text: "quick" },
+  ]
+  const centersMap: Record<string, { cx: number; cy: number }> = {
+    "0-1-4": { cx: 50, cy: 100 },
+    "0-5-10": { cx: 120, cy: 100 },
+  }
+
+  function setupEscapeMocks() {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    editorsRef.current.set(0, {} as Editor)
+
+    const containerEl = document.createElement("div")
+    containerEl.getBoundingClientRect = () => ({
+      left: 0, top: 0, right: 800, bottom: 600,
+      width: 800, height: 600, x: 0, y: 0, toJSON: () => {},
+    })
+    const containerRef = { current: containerEl } as React.RefObject<HTMLDivElement | null>
+
+    vi.mocked(collectAllWords).mockImplementation(() => [...words])
+    vi.mocked(getWordCenter).mockImplementation((word) => {
+      const key = `${word.editorIndex}-${word.from}-${word.to}`
+      return centersMap[key] ?? null
+    })
+
+    return { editorsRef, containerRef }
+  }
+
+  beforeEach(() => { vi.clearAllMocks() })
+
+  it("double Escape resets selection to first word, hidden", () => {
+    const { editorsRef, containerRef } = setupEscapeMocks()
+    const onEscape = vi.fn()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1, onEscape })
+    )
+
+    // Select "quick"
+    act(() => { result.current.selectWord(0, 5, 10, "quick") })
+    expect(result.current.selectionHidden).toBe(false)
+
+    // First Escape: clears visible selection
+    act(() => { fireKey("Escape") })
     expect(result.current.selection).toBeNull()
+
+    // Second Escape: resets to first word, hidden
+    act(() => { fireKey("Escape") })
+    expect(result.current.selection?.text).toBe("the")
+    expect(result.current.selection?.from).toBe(1)
+    expect(result.current.selectionHidden).toBe(true)
+    expect(onEscape).toHaveBeenCalledTimes(1)
+  })
+
+  it("initial seed on lock is hidden", () => {
+    const { editorsRef, containerRef } = setupEscapeMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    expect(result.current.selection?.text).toBe("the")
+    expect(result.current.selectionHidden).toBe(true)
+  })
+
+  it("arrow key navigation unhides selection", () => {
+    const { editorsRef, containerRef } = setupEscapeMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    // Seeded and hidden
+    expect(result.current.selectionHidden).toBe(true)
+
+    // Arrow right unhides
+    act(() => { fireKey("ArrowRight") })
+    expect(result.current.selectionHidden).toBe(false)
+  })
+
+  it("selectWord unhides selection", () => {
+    const { editorsRef, containerRef } = setupEscapeMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    expect(result.current.selectionHidden).toBe(true)
+
+    act(() => { result.current.selectWord(0, 5, 10, "quick") })
+    expect(result.current.selectionHidden).toBe(false)
+  })
+
+  it("hideSelection hides without changing position", () => {
+    const { editorsRef, containerRef } = setupEscapeMocks()
+    const { result } = renderHook(() =>
+      useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
+    )
+
+    act(() => { result.current.selectWord(0, 5, 10, "quick") })
+    expect(result.current.selectionHidden).toBe(false)
+    expect(result.current.selection?.text).toBe("quick")
+
+    act(() => { result.current.hideSelection() })
+    expect(result.current.selectionHidden).toBe(true)
+    expect(result.current.selection?.text).toBe("quick")
   })
 })
 
