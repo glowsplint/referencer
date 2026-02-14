@@ -81,6 +81,7 @@ export function ButtonPane() {
     toggleShowDrawingToasts,
     toggleShowCommentsToasts,
     toggleShowHighlightToasts,
+    toggleOverscrollEnabled,
   } = useWorkspace();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -285,6 +286,8 @@ export function ButtonPane() {
         toggleShowCommentsToasts={toggleShowCommentsToasts}
         showHighlightToasts={settings.showHighlightToasts}
         toggleShowHighlightToasts={toggleShowHighlightToasts}
+        overscrollEnabled={settings.overscrollEnabled}
+        toggleOverscrollEnabled={toggleOverscrollEnabled}
       />
     </div>
   );

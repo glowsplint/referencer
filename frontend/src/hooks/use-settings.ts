@@ -20,6 +20,7 @@ export function useSettings() {
     showDrawingToasts: true,
     showCommentsToasts: true,
     showHighlightToasts: true,
+    overscrollEnabled: false,
   })
   const [annotations, setAnnotations] = useState<AnnotationSettings>({
     activeTool: "selection",
@@ -32,6 +33,10 @@ export function useSettings() {
     document.documentElement.classList.toggle("dark", settings.isDarkMode)
   }, [settings.isDarkMode])
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("overscroll-enabled", settings.overscrollEnabled)
+  }, [settings.overscrollEnabled])
+
   const toggleDarkMode = useToggle(setSettings, "isDarkMode")
   const toggleLayersOn = useToggle(setSettings, "isLayersOn")
   const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout")
@@ -39,6 +44,7 @@ export function useSettings() {
   const toggleShowDrawingToasts = useToggle(setSettings, "showDrawingToasts")
   const toggleShowCommentsToasts = useToggle(setSettings, "showCommentsToasts")
   const toggleShowHighlightToasts = useToggle(setSettings, "showHighlightToasts")
+  const toggleOverscrollEnabled = useToggle(setSettings, "overscrollEnabled")
   const setActiveTool = useCallback(
     (tool: ActiveTool) => setAnnotations({ activeTool: tool }),
     []
@@ -60,6 +66,7 @@ export function useSettings() {
     toggleShowDrawingToasts,
     toggleShowCommentsToasts,
     toggleShowHighlightToasts,
+    toggleOverscrollEnabled,
     setActiveTool,
   }
 }

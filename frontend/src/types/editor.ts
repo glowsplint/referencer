@@ -6,6 +6,7 @@ export interface EditorSettings {
   showDrawingToasts: boolean
   showCommentsToasts: boolean
   showHighlightToasts: boolean
+  overscrollEnabled: boolean
 }
 
 export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline"

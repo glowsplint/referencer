@@ -16,11 +16,14 @@ body {
   font-weight: 400;
   font-style: normal;
   padding: 0;
+}
+
+html:not(.overscroll-enabled) body {
   overscroll-behavior-y: none;
 }
 
-html,
-body {
+html:not(.overscroll-enabled),
+html:not(.overscroll-enabled) body {
   overscroll-behavior-x: none;
 }
 

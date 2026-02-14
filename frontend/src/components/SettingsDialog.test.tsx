@@ -12,6 +12,10 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
     toggleShowDrawingToasts: vi.fn(),
     showCommentsToasts: true,
     toggleShowCommentsToasts: vi.fn(),
+    showHighlightToasts: true,
+    toggleShowHighlightToasts: vi.fn(),
+    overscrollEnabled: false,
+    toggleOverscrollEnabled: vi.fn(),
     ...overrides,
   }
   render(<SettingsDialog {...props} />)
@@ -26,11 +30,13 @@ describe("SettingsDialog", () => {
     expect(screen.getByText("Customize your workspace preferences.")).toBeInTheDocument()
   })
 
-  it("renders all three setting rows", () => {
+  it("renders all setting rows", () => {
     renderDialog()
     expect(screen.getByText("Dark mode")).toBeInTheDocument()
     expect(screen.getByText("Drawing notifications")).toBeInTheDocument()
     expect(screen.getByText("Comments notifications")).toBeInTheDocument()
+    expect(screen.getByText("Highlight notifications")).toBeInTheDocument()
+    expect(screen.getByText("Overscroll")).toBeInTheDocument()
   })
 
   it("renders switches with correct checked state", () => {
@@ -56,6 +62,17 @@ describe("SettingsDialog", () => {
     const props = renderDialog()
     fireEvent.click(screen.getByTestId("comments-notifications-switch"))
     expect(props.toggleShowCommentsToasts).toHaveBeenCalledOnce()
+  })
+
+  it("renders overscroll switch with correct checked state", () => {
+    renderDialog({ overscrollEnabled: true })
+    expect(screen.getByTestId("overscroll-switch")).toHaveAttribute("data-state", "checked")
+  })
+
+  it("calls toggleOverscrollEnabled when overscroll switch is clicked", () => {
+    const props = renderDialog()
+    fireEvent.click(screen.getByTestId("overscroll-switch"))
+    expect(props.toggleOverscrollEnabled).toHaveBeenCalledOnce()
   })
 
   it("does not render when open is false", () => {

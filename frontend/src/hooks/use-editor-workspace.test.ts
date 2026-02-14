@@ -20,6 +20,7 @@ describe("useEditorWorkspace", () => {
       showDrawingToasts: true,
       showCommentsToasts: true,
       showHighlightToasts: true,
+      overscrollEnabled: false,
     })
     expect(result.current.annotations).toEqual({ activeTool: "selection" })
     expect(result.current.layers).toEqual([])

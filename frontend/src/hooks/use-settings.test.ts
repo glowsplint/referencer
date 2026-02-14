@@ -5,6 +5,7 @@ import { useSettings } from "./use-settings"
 beforeEach(() => {
   vi.clearAllMocks()
   document.documentElement.classList.remove("dark")
+  document.documentElement.classList.remove("overscroll-enabled")
 })
 
 describe("useSettings", () => {
@@ -18,6 +19,7 @@ describe("useSettings", () => {
       showDrawingToasts: true,
       showCommentsToasts: true,
       showHighlightToasts: true,
+      overscrollEnabled: false,
     })
   })
 
@@ -107,6 +109,7 @@ describe("useSettings", () => {
     expect(result.current.settings.showDrawingToasts).toBe(true)
     expect(result.current.settings.showCommentsToasts).toBe(true)
     expect(result.current.settings.showHighlightToasts).toBe(true)
+    expect(result.current.settings.overscrollEnabled).toBe(false)
   })
 
   it("toggleShowHighlightToasts toggles showHighlightToasts", () => {
@@ -119,5 +122,20 @@ describe("useSettings", () => {
 
     act(() => { result.current.toggleShowHighlightToasts() })
     expect(result.current.settings.showHighlightToasts).toBe(true)
+  })
+
+  it("toggleOverscrollEnabled toggles overscrollEnabled and updates classList", () => {
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings.overscrollEnabled).toBe(false)
+    expect(document.documentElement.classList.contains("overscroll-enabled")).toBe(false)
+
+    act(() => { result.current.toggleOverscrollEnabled() })
+    expect(result.current.settings.overscrollEnabled).toBe(true)
+    expect(document.documentElement.classList.contains("overscroll-enabled")).toBe(true)
+
+    act(() => { result.current.toggleOverscrollEnabled() })
+    expect(result.current.settings.overscrollEnabled).toBe(false)
+    expect(document.documentElement.classList.contains("overscroll-enabled")).toBe(false)
   })
 })

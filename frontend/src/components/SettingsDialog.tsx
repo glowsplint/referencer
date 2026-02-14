@@ -48,6 +48,8 @@ interface SettingsDialogProps {
   toggleShowCommentsToasts: () => void;
   showHighlightToasts: boolean;
   toggleShowHighlightToasts: () => void;
+  overscrollEnabled: boolean;
+  toggleOverscrollEnabled: () => void;
 }
 
 export function SettingsDialog({
@@ -61,6 +63,8 @@ export function SettingsDialog({
   toggleShowCommentsToasts,
   showHighlightToasts,
   toggleShowHighlightToasts,
+  overscrollEnabled,
+  toggleOverscrollEnabled,
 }: SettingsDialogProps) {
   const rows: SettingsRow[] = [
     {
@@ -90,6 +94,13 @@ export function SettingsDialog({
       description: "Show toasts when using the highlight tool",
       checked: showHighlightToasts,
       onCheckedChange: toggleShowHighlightToasts,
+    },
+    {
+      id: "overscroll",
+      label: "Overscroll",
+      description: "Allow elastic bounce when scrolling past edges",
+      checked: overscrollEnabled,
+      onCheckedChange: toggleOverscrollEnabled,
     },
   ];
 
