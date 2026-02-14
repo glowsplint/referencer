@@ -41,7 +41,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // Wrap tracked layer actions to also send over WebSocket
   const addLayer = useCallback(
     guarded(
-      (opts?: { id?: string; name?: string; color?: string }) => {
+      (opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }) => {
         const id = trackedLayersHook.addLayer(opts)
         if (!id) return ""
         const layer = rawLayersHook.layers.find((l) => l.id === id)

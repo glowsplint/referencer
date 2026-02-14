@@ -4,6 +4,7 @@ import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
 import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useCustomColors } from "@/hooks/use-custom-colors";
 
 export function ManagementPane() {
   const {
@@ -29,6 +30,7 @@ export function ManagementPane() {
     toggleAllSectionVisibility,
   } = useWorkspace();
 
+  const { customColors, addCustomColor, removeCustomColor } = useCustomColors();
   const [dragOver, setDragOver] = useState(false);
 
   const hasVisibleLayers = layers.some((l) => l.visible);
@@ -55,7 +57,7 @@ export function ManagementPane() {
           <div className="flex items-center gap-1">
             <button
               className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
-              onClick={addLayer}
+              onClick={() => addLayer({ extraColors: customColors })}
               title="Add layer"
               data-testid="addLayerButton"
             >
@@ -85,6 +87,9 @@ export function ManagementPane() {
               onToggleVisibility={() => toggleLayerVisibility(layer.id)}
               onRemoveHighlight={removeHighlight}
               onRemoveArrow={removeArrow}
+              customColors={customColors}
+              onAddCustomColor={addCustomColor}
+              onRemoveCustomColor={removeCustomColor}
             />
           ))}
         </div>

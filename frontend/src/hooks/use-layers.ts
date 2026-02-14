@@ -14,9 +14,12 @@ export function useLayers() {
     setLayers((prev) => prev.map((l) => (l.id === id ? updater(l) : l)))
   }
 
-  const addLayer = useCallback((opts?: { id?: string; name?: string; color?: string }): { id: string; name: string } | null => {
+  const addLayer = useCallback((opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }): { id: string; name: string } | null => {
     const usedColors = new Set(layersRef.current.map((l) => l.color))
-    const color = opts?.color ?? TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
+    const allColors = opts?.extraColors
+      ? [...TAILWIND_300_COLORS, ...opts.extraColors.filter((c) => !TAILWIND_300_COLORS.includes(c))]
+      : TAILWIND_300_COLORS
+    const color = opts?.color ?? allColors.find((c) => !usedColors.has(c))
     if (!color) {
       toast.warning("All colors are in use — remove a layer first")
       return null

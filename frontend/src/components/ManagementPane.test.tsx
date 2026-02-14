@@ -1,9 +1,24 @@
 import { screen, fireEvent } from "@testing-library/react"
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, beforeEach, vi } from "vitest"
 import { ManagementPane } from "./ManagementPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
 
 import type { Highlight, Arrow } from "@/types/editor"
+
+function makeStorageMock() {
+  const store: Record<string, string> = {}
+  return {
+    getItem: vi.fn((key: string) => store[key] ?? null),
+    setItem: vi.fn((key: string, value: string) => { store[key] = value }),
+    removeItem: vi.fn((key: string) => { delete store[key] }),
+    clear: vi.fn(() => { for (const k of Object.keys(store)) delete store[k] }),
+    get length() { return Object.keys(store).length },
+    key: vi.fn((i: number) => Object.keys(store)[i] ?? null),
+    _store: store,
+  }
+}
+
+let storageMock: ReturnType<typeof makeStorageMock>
 
 const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[] }
 const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[] }
@@ -11,6 +26,11 @@ const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, high
 const highlight1: Highlight = { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "my note" }
 const arrow1: Arrow = { id: "a1", from: { editorIndex: 0, from: 0, to: 3, text: "foo" }, to: { editorIndex: 1, from: 0, to: 3, text: "bar" } }
 const layerWithItems = { ...layerA, highlights: [highlight1], arrows: [arrow1] }
+
+beforeEach(() => {
+  storageMock = makeStorageMock()
+  vi.stubGlobal("localStorage", storageMock)
+})
 
 function renderPane(overrides = {}) {
   return renderWithWorkspace(<ManagementPane />, overrides)
@@ -264,5 +284,27 @@ describe("ManagementPane", () => {
     fireEvent.click(screen.getByTestId("layerExpand-0"))
     const span = screen.getByText("my note")
     expect(span).toHaveAttribute("title", "my note (Intro)")
+  })
+
+  // --- Custom colors ---
+
+  it("renders add custom color button in color picker", () => {
+    renderPane({ layers: [layerA] })
+    fireEvent.click(screen.getByTestId("layerSwatch-0"))
+    expect(screen.getByTestId("addCustomColorButton")).toBeInTheDocument()
+  })
+
+  it("renders custom color swatches from localStorage", () => {
+    storageMock._store["referencer-custom-colors"] = JSON.stringify(["#ff0000"])
+    renderPane({ layers: [layerA] })
+    fireEvent.click(screen.getByTestId("layerSwatch-0"))
+    expect(screen.getByTestId("customColorOption-#ff0000")).toBeInTheDocument()
+  })
+
+  it("calls addLayer with extraColors when add layer button is clicked", () => {
+    storageMock._store["referencer-custom-colors"] = JSON.stringify(["#ff0000"])
+    const { workspace } = renderPane()
+    fireEvent.click(screen.getByTestId("addLayerButton"))
+    expect(workspace.addLayer).toHaveBeenCalledWith({ extraColors: ["#ff0000"] })
   })
 })

@@ -283,6 +283,30 @@ describe("useLayers", () => {
     expect(result.current.layers).toEqual([])
   })
 
+  it("addLayer uses extra colors when preset colors are exhausted", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => {
+      for (let i = 0; i < TAILWIND_300_COLORS.length; i++) {
+        result.current.addLayer()
+      }
+    })
+    expect(result.current.layers).toHaveLength(TAILWIND_300_COLORS.length)
+
+    act(() => { result.current.addLayer({ extraColors: ["#custom1", "#custom2"] }) })
+    expect(result.current.layers).toHaveLength(TAILWIND_300_COLORS.length + 1)
+    expect(result.current.layers[result.current.layers.length - 1].color).toBe("#custom1")
+  })
+
+  it("addLayer with extra colors does not duplicate preset colors", () => {
+    const { result } = renderHook(() => useLayers())
+
+    act(() => { result.current.addLayer() })
+    // Pass a preset color as extra — it should already be used, so next preset is assigned
+    act(() => { result.current.addLayer({ extraColors: [TAILWIND_300_COLORS[0]] }) })
+    expect(result.current.layers[1].color).toBe(TAILWIND_300_COLORS[1])
+  })
+
   it("addLayer reuses freed colours from removed layers", () => {
     const { result } = renderHook(() => useLayers())
 
