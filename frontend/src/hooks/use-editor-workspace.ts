@@ -6,7 +6,7 @@ import { useActionHistory } from "./use-action-history"
 import { useTrackedLayers } from "./use-tracked-layers"
 import { useTrackedEditors } from "./use-tracked-editors"
 import { useWebSocket } from "./use-websocket"
-import type { Highlight, Arrow, ArrowStyle } from "@/types/editor"
+import type { Highlight, Arrow, ArrowStyle, LayerUnderline } from "@/types/editor"
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
   const settingsHook = useSettings()
@@ -178,6 +178,33 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, trackedLayersHook, guardedSendAction]
   )
 
+  const addUnderline = useCallback(
+    guarded(
+      (
+        layerId: string,
+        underline: Omit<LayerUnderline, "id">,
+        opts?: { id?: string }
+      ): string => {
+        const id = trackedLayersHook.addUnderline(layerId, underline, opts)
+        guardedSendAction("addUnderline", {
+          layerId,
+          underline: { ...underline, id },
+        })
+        return id
+      },
+      ""
+    ),
+    [readOnly, trackedLayersHook, guardedSendAction]
+  )
+
+  const removeUnderline = useCallback(
+    guarded((layerId: string, underlineId: string) => {
+      trackedLayersHook.removeUnderline(layerId, underlineId)
+      guardedSendAction("removeUnderline", { layerId, underlineId })
+    }),
+    [readOnly, trackedLayersHook, guardedSendAction]
+  )
+
   const addEditor = useCallback(
     guarded(() => {
       trackedEditorsHook.addEditor()
@@ -226,7 +253,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       // Apply editor reorder
       rawEditorsHook.reorderEditors(permutation)
 
-      // Remap editorIndex in all highlights and arrows
+      // Remap editorIndex in all highlights, arrows, and underlines
       rawLayersHook.setLayers(prev =>
         prev.map(layer => ({
           ...layer,
@@ -238,6 +265,10 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
             ...a,
             from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
             to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
+          })),
+          underlines: layer.underlines.map(u => ({
+            ...u,
+            editorIndex: indexMap.get(u.editorIndex) ?? u.editorIndex,
           })),
         }))
       )
@@ -264,6 +295,10 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
                 ...a,
                 from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
                 to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
+              })),
+              underlines: layer.underlines.map(u => ({
+                ...u,
+                editorIndex: indexMap.get(u.editorIndex) ?? u.editorIndex,
               })),
             }))
           )
@@ -376,6 +411,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     toggleAllLayerVisibility: trackedLayersHook.toggleAllLayerVisibility,
     clearLayerHighlights: trackedLayersHook.clearLayerHighlights,
     clearLayerArrows: trackedLayersHook.clearLayerArrows,
+    clearLayerUnderlines: trackedLayersHook.clearLayerUnderlines,
     // WS-wrapped layer actions
     addLayer,
     removeLayer,
@@ -388,6 +424,8 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     updateHighlightAnnotation,
     addArrow,
     removeArrow,
+    addUnderline,
+    removeUnderline,
     // Editor state from tracked hook
     editorCount: trackedEditorsHook.editorCount,
     activeEditor: trackedEditorsHook.activeEditor,

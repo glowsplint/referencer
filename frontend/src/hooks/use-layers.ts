@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from "react"
 import { toast } from "sonner"
-import type { Layer, Highlight, Arrow, ArrowStyle } from "@/types/editor"
+import type { Layer, Highlight, Arrow, ArrowStyle, LayerUnderline } from "@/types/editor"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
 export function useLayers() {
@@ -30,7 +30,7 @@ export function useLayers() {
     const nextNumber = layerCounterRef.current
     const id = opts?.id ?? crypto.randomUUID()
     const name = opts?.name ?? `Layer ${nextNumber}`
-    const newLayer: Layer = { id, name, color, visible: true, arrowStyle: "solid", highlights: [], arrows: [] }
+    const newLayer: Layer = { id, name, color, visible: true, arrowStyle: "solid", highlights: [], arrows: [], underlines: [] }
     // Eagerly update ref so rapid calls within the same batch see the new layer
     layersRef.current = [...layersRef.current, newLayer]
     setLayers((prev) => [...prev, newLayer])
@@ -139,6 +139,29 @@ export function useLayers() {
     updateLayer(layerId, (l) => ({ ...l, arrows: [] }))
   }, [])
 
+  const addUnderline = useCallback(
+    (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
+      const id = opts?.id ?? crypto.randomUUID()
+      updateLayer(layerId, (l) => ({
+        ...l,
+        underlines: [...l.underlines, { ...underline, id }],
+      }))
+      return id
+    },
+    []
+  )
+
+  const removeUnderline = useCallback((layerId: string, underlineId: string) => {
+    updateLayer(layerId, (l) => ({
+      ...l,
+      underlines: l.underlines.filter((u) => u.id !== underlineId),
+    }))
+  }, [])
+
+  const clearLayerUnderlines = useCallback((layerId: string) => {
+    updateLayer(layerId, (l) => ({ ...l, underlines: [] }))
+  }, [])
+
   return {
     layers,
     activeLayerId,
@@ -157,6 +180,9 @@ export function useLayers() {
     addArrow,
     removeArrow,
     clearLayerArrows,
+    addUnderline,
+    removeUnderline,
+    clearLayerUnderlines,
     setLayers,
     setActiveLayerId,
   }

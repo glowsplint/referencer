@@ -1,4 +1,4 @@
-import { Eye, EyeOff, ChevronRight, ChevronDown, MessageSquareText, Highlighter, ArrowRight, X } from "lucide-react";
+import { Eye, EyeOff, ChevronRight, ChevronDown, MessageSquareText, Highlighter, ArrowRight, Underline, X } from "lucide-react";
 import { ColorPicker } from "./ColorPicker";
 import { ArrowStylePicker } from "./ArrowStylePicker";
 import { useState } from "react";
@@ -19,6 +19,7 @@ interface LayerRowProps {
   onToggleVisibility: () => void;
   onRemoveHighlight: (layerId: string, highlightId: string) => void;
   onRemoveArrow: (layerId: string, arrowId: string) => void;
+  onRemoveUnderline: (layerId: string, underlineId: string) => void;
   customColors?: string[];
   onAddCustomColor?: (hex: string) => void;
   onRemoveCustomColor?: (hex: string) => void;
@@ -36,6 +37,7 @@ export function LayerRow({
   onToggleVisibility,
   onRemoveHighlight,
   onRemoveArrow,
+  onRemoveUnderline,
   customColors,
   onAddCustomColor,
   onRemoveCustomColor,
@@ -48,7 +50,7 @@ export function LayerRow({
     onCommit: onUpdateName,
   });
 
-  const itemCount = layer.highlights.length + layer.arrows.length;
+  const itemCount = layer.highlights.length + layer.arrows.length + layer.underlines.length;
   const hasItems = itemCount > 0;
 
   return (
@@ -234,6 +236,28 @@ export function LayerRow({
                   onClick={() => onRemoveArrow(layer.id, a.id)}
                   title="Remove arrow"
                   data-testid={`removeArrow-${a.id}`}
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            );
+          })}
+          {layer.underlines.map((u) => {
+            const passageName = sectionNames[u.editorIndex] ?? `Passage ${u.editorIndex + 1}`;
+            const fullTitle = `${u.text} (${passageName})`;
+            return (
+              <div
+                key={u.id}
+                className="group flex items-center gap-1.5 pt-2.5 px-1 text-xs text-muted-foreground"
+                data-testid={`layerUnderline-${u.id}`}
+              >
+                <Underline size={12} className="shrink-0" />
+                <span className="truncate" title={fullTitle}>{u.text}</span>
+                <button
+                  className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                  onClick={() => onRemoveUnderline(layer.id, u.id)}
+                  title="Remove underline"
+                  data-testid={`removeUnderline-${u.id}`}
                 >
                   <X size={12} />
                 </button>

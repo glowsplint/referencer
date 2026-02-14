@@ -9,6 +9,7 @@ import {
   ArrowBigRight,
   MessageSquareText,
   Highlighter,
+  Underline,
   Keyboard,
   CircleHelp,
   Settings,
@@ -30,6 +31,7 @@ const TOOL_SHORTCUTS: Record<ActiveTool, string> = {
   arrow: "A",
   comments: "C",
   highlight: "H",
+  underline: "U",
 };
 
 export function ButtonPane() {
@@ -57,6 +59,7 @@ export function ButtonPane() {
     { tool: "arrow", icon: <ArrowBigRight size={20} />, label: "Arrow tool", testId: "arrowToolButton" },
     { tool: "highlight", icon: <Highlighter size={20} />, label: "Highlight tool", testId: "highlightToolButton" },
     { tool: "comments", icon: <MessageSquareText size={20} />, label: "Comments tool", testId: "commentsToolButton" },
+    { tool: "underline", icon: <Underline size={20} />, label: "Underline tool", testId: "underlineToolButton" },
   ];
 
   return (

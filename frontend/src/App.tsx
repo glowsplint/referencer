@@ -15,6 +15,7 @@ import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useCommentMode } from "./hooks/use-comment-mode";
 import { useHighlightMode } from "./hooks/use-highlight-mode";
+import { useUnderlineMode } from "./hooks/use-underline-mode";
 import { useStatusMessage } from "./hooks/use-status-message";
 import { useToolShortcuts } from "./hooks/use-tool-shortcuts";
 import { useToggleShortcuts } from "./hooks/use-toggle-shortcuts";
@@ -65,6 +66,8 @@ export function App() {
     addLayer,
     addArrow,
     removeArrow,
+    addUnderline,
+    removeUnderline,
     editorsRef,
     editorKeys,
     sectionVisibility,
@@ -147,6 +150,20 @@ export function App() {
     clearStatus,
   });
 
+  const { confirmUnderline } = useUnderlineMode({
+    isLocked: settings.isLocked,
+    activeTool: annotations.activeTool,
+    selection,
+    activeLayerId,
+    addLayer,
+    layers,
+    addUnderline,
+    removeUnderline,
+    showUnderlineToasts: settings.showHighlightToasts,
+    setStatus,
+    clearStatus,
+  });
+
   // Hint to lock the editor when unlocked
   useEffect(() => {
     if (!settings.isLocked && !readOnly) {
@@ -165,6 +182,7 @@ export function App() {
     confirmSelection();
     confirmComment();
     confirmHighlight();
+    confirmUnderline();
   };
 
   useCycleLayer({

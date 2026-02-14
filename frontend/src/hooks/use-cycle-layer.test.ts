@@ -11,6 +11,7 @@ function makeLayers(count: number): Layer[] {
     visible: true,
     highlights: [],
     arrows: [],
+    underlines: [],
   }));
 }
 

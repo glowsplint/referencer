@@ -6,6 +6,7 @@ import type { Editor } from "@tiptap/react"
 
 import { createSimpleEditorExtensions } from "./extensions"
 import { useUnifiedDecorations } from "@/hooks/use-unified-decorations"
+import { useLayerUnderlineDecorations } from "@/hooks/use-layer-underline-decorations"
 import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
 import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
@@ -103,7 +104,8 @@ export function EditorPane({
   }, [editor, isLocked])
 
   useUnifiedDecorations(editor, layers, index, isLocked, isDarkMode)
-  useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
+  useLayerUnderlineDecorations(editor, layers, index, isLocked, isDarkMode)
+  useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode, activeTool)
   useSimilarTextHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useWordHover(editor, index, isLocked, isDarkMode, selection, activeLayerColor, layers)
   useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow)

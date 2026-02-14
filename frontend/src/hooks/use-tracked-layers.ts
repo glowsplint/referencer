@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import type { useLayers } from "./use-layers"
 import type { useActionHistory } from "./use-action-history"
-import type { Highlight, Arrow, ActionDetail, ArrowStyle } from "@/types/editor"
+import type { Highlight, Arrow, LayerUnderline, ActionDetail, ArrowStyle } from "@/types/editor"
 
 type LayersHook = ReturnType<typeof useLayers>
 type History = ReturnType<typeof useActionHistory>
@@ -56,6 +56,7 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
           { label: "name", before: snapshot.name },
           { label: "highlights", before: String(snapshot.highlights.length) },
           { label: "arrows", before: String(snapshot.arrows.length) },
+          { label: "underlines", before: String(snapshot.underlines.length) },
         ],
         undo: () => {
           raw.setLayers((prev) => {
@@ -299,6 +300,82 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
     [raw, record]
   )
 
+  const addUnderline = useCallback(
+    (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
+      const id = raw.addUnderline(layerId, underline, opts)
+      const text = underline.text
+      const layerName = raw.layers.find((l) => l.id === layerId)?.name ?? "layer"
+      record({
+        type: "addUnderline",
+        description: `Underlined '${truncate(text)}' in ${layerName}`,
+        details: [
+          { label: "text", after: truncate(text) },
+          { label: "layer", after: layerName },
+        ],
+        undo: () => {
+          raw.removeUnderline(layerId, id)
+        },
+        redo: () => {
+          raw.addUnderline(layerId, underline, { id })
+        },
+      })
+      return id
+    },
+    [raw, record]
+  )
+
+  const removeUnderline = useCallback(
+    (layerId: string, underlineId: string) => {
+      const layer = raw.layers.find((l) => l.id === layerId)
+      const underline = layer?.underlines.find((u) => u.id === underlineId)
+      if (!underline) {
+        raw.removeUnderline(layerId, underlineId)
+        return
+      }
+      const snapshot = { ...underline }
+      raw.removeUnderline(layerId, underlineId)
+      record({
+        type: "removeUnderline",
+        description: `Removed underline on '${truncate(snapshot.text)}' from ${layer?.name ?? "layer"}`,
+        details: [
+          { label: "text", before: truncate(snapshot.text) },
+        ],
+        undo: () => {
+          const { id, ...rest } = snapshot
+          raw.addUnderline(layerId, rest, { id })
+        },
+        redo: () => {
+          raw.removeUnderline(layerId, underlineId)
+        },
+      })
+    },
+    [raw, record]
+  )
+
+  const clearLayerUnderlines = useCallback(
+    (layerId: string) => {
+      const layer = raw.layers.find((l) => l.id === layerId)
+      if (!layer || layer.underlines.length === 0) return
+      const snapshot = [...layer.underlines]
+      raw.clearLayerUnderlines(layerId)
+      record({
+        type: "clearUnderlines",
+        description: `Cleared ${snapshot.length} underline${snapshot.length === 1 ? "" : "s"} from '${layer.name}'`,
+        details: [{ label: "count", before: String(snapshot.length) }],
+        undo: () => {
+          for (const u of snapshot) {
+            const { id, ...rest } = u
+            raw.addUnderline(layerId, rest, { id })
+          }
+        },
+        redo: () => {
+          raw.clearLayerUnderlines(layerId)
+        },
+      })
+    },
+    [raw, record]
+  )
+
   return {
     ...raw,
     addLayer,
@@ -313,5 +390,8 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
     toggleAllLayerVisibility,
     clearLayerHighlights,
     clearLayerArrows,
+    addUnderline,
+    removeUnderline,
+    clearLayerUnderlines,
   }
 }

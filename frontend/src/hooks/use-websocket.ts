@@ -109,6 +109,17 @@ export function validateActionPayload(payload: Record<string, unknown>): boolean
     case "removeArrow":
       return isString(payload.layerId) && isString(payload.arrowId)
 
+    case "addUnderline": {
+      if (!isString(payload.layerId) || !isObject(payload.underline)) return false
+      const u = payload.underline
+      return (
+        isString(u.id) && isNumber(u.editorIndex) && isNumber(u.from) && isNumber(u.to)
+      )
+    }
+
+    case "removeUnderline":
+      return isString(payload.layerId) && isString(payload.underlineId)
+
     case "addEditor":
       return isString(payload.name)
 
@@ -236,6 +247,13 @@ function hydrateState(
         text: a.to.text,
       },
     })),
+    underlines: (l.underlines as Array<Record<string, unknown>> ?? []).map((u) => ({
+      id: u.id as string,
+      editorIndex: u.editorIndex as number,
+      from: u.from as number,
+      to: u.to as number,
+      text: u.text as string,
+    })),
   }))
   rawLayers.setLayers(layers)
   if (layers.length > 0 && !rawLayers.activeLayerId) {
@@ -349,6 +367,28 @@ function applyRemoteAction(
       )
       break
 
+    case "addUnderline": {
+      const u = payload.underline as Record<string, unknown>
+      rawLayers.addUnderline(
+        payload.layerId as string,
+        {
+          editorIndex: u.editorIndex as number,
+          from: u.from as number,
+          to: u.to as number,
+          text: (u.text as string) ?? "",
+        },
+        { id: u.id as string }
+      )
+      break
+    }
+
+    case "removeUnderline":
+      rawLayers.removeUnderline(
+        payload.layerId as string,
+        payload.underlineId as string
+      )
+      break
+
     case "addEditor":
       rawEditors.addEditor({ name: payload.name as string })
       break
@@ -387,6 +427,10 @@ function applyRemoteAction(
             ...a,
             from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
             to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
+          })),
+          underlines: layer.underlines.map(u => ({
+            ...u,
+            editorIndex: indexMap.get(u.editorIndex) ?? u.editorIndex,
           })),
         }))
       )

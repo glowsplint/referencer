@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest"
 import { ManagementPane } from "./ManagementPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
 
-import type { Highlight, Arrow } from "@/types/editor"
+import type { Highlight, Arrow, LayerUnderline } from "@/types/editor"
 
 function makeStorageMock() {
   const store: Record<string, string> = {}
@@ -20,8 +20,8 @@ function makeStorageMock() {
 
 let storageMock: ReturnType<typeof makeStorageMock>
 
-const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[] }
-const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[] }
+const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[], underlines: [] as LayerUnderline[] }
+const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[], underlines: [] as LayerUnderline[] }
 
 const highlight1: Highlight = { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "my note", type: "comment" }
 const arrow1: Arrow = { id: "a1", from: { editorIndex: 0, from: 0, to: 3, text: "foo" }, to: { editorIndex: 1, from: 0, to: 3, text: "bar" } }

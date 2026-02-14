@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import type { Editor } from "@tiptap/react"
-import type { WordSelection } from "@/types/editor"
+import type { ActiveTool, WordSelection } from "@/types/editor"
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import { wordSelectionPluginKey } from "@/lib/tiptap/extensions/word-selection"
 import { blendWithBackground } from "@/lib/color"
@@ -16,7 +16,8 @@ export function useSelectionHighlight(
   editorIndex: number,
   isLocked: boolean,
   activeLayerColor: string | null,
-  isDarkMode: boolean
+  isDarkMode: boolean,
+  activeTool?: ActiveTool
 ) {
   useEffect(() => {
     if (!editor || editor.isDestroyed) return
@@ -31,13 +32,18 @@ export function useSelectionHighlight(
       return
     }
 
+    const isUnderlinePreview = activeTool === "underline"
     const bgColor = activeLayerColor
       ? blendWithBackground(activeLayerColor, 0.3, isDarkMode)
       : blendWithBackground("#3b82f6", 0.25, isDarkMode)
+    const underlineColor = activeLayerColor ?? "#3b82f6"
 
     try {
+      const style = isUnderlinePreview
+        ? `text-decoration: underline; text-decoration-color: ${underlineColor}; text-decoration-thickness: 2px; text-underline-offset: 2px`
+        : `background-color: ${bgColor}; border-radius: 2px`
       const decoration = Decoration.inline(selection.from, selection.to, {
-        style: `background-color: ${bgColor}; border-radius: 2px`,
+        style,
         class: "word-selection",
       })
       const decorationSet = DecorationSet.create(editor.state.doc, [decoration])
@@ -47,5 +53,5 @@ export function useSelectionHighlight(
       const tr = editor.state.tr.setMeta(wordSelectionPluginKey, DecorationSet.empty)
       editor.view.dispatch(tr)
     }
-  }, [editor, selection, editorIndex, isLocked, activeLayerColor, isDarkMode])
+  }, [editor, selection, editorIndex, isLocked, activeLayerColor, isDarkMode, activeTool])
 }

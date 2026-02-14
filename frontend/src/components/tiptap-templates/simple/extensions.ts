@@ -9,6 +9,7 @@ import { Superscript } from "@tiptap/extension-superscript"
 import { Selection } from "@tiptap/extensions"
 
 import { LayerHighlightsExtension } from "@/lib/tiptap/extensions/layer-highlights"
+import { LayerUnderlineExtension } from "@/lib/tiptap/extensions/layer-underlines"
 import { WordSelectionExtension } from "@/lib/tiptap/extensions/word-selection"
 import { SimilarTextHighlightsExtension } from "@/lib/tiptap/extensions/similar-text-highlights"
 import { WordHoverExtension } from "@/lib/tiptap/extensions/word-hover"
@@ -39,6 +40,7 @@ export function createSimpleEditorExtensions() {
     Subscript,
     Selection,
     LayerHighlightsExtension,
+    LayerUnderlineExtension,
     WordSelectionExtension,
     SimilarTextHighlightsExtension,
     WordHoverExtension,

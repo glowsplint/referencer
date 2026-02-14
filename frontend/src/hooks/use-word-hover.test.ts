@@ -152,6 +152,7 @@ describe("useWordHover", () => {
         visible: true,
         highlights: [{ id: "h1", editorIndex: 0, from: 3, to: 8, text: "lo wo", annotation: "", type: "highlight" as const }],
         arrows: [],
+        underlines: [],
       },
     ]
     renderHook(() => useWordHover(editor, 0, true, false, null, "#ff0000", layers))

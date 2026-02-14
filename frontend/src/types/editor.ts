@@ -8,7 +8,7 @@ export interface EditorSettings {
   showHighlightToasts: boolean
 }
 
-export type ActiveTool = "selection" | "arrow" | "comments" | "highlight"
+export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline"
 
 export type DrawingPhase = "idle" | "selecting-anchor" | "anchor-confirmed"
 
@@ -28,6 +28,14 @@ export interface Highlight {
   type: HighlightType
 }
 
+export interface LayerUnderline {
+  id: string
+  editorIndex: number
+  from: number
+  to: number
+  text: string
+}
+
 export interface EditingAnnotation {
   layerId: string
   highlightId: string
@@ -43,6 +51,7 @@ export interface Layer {
   arrowStyle: ArrowStyle
   highlights: Highlight[]
   arrows: Arrow[]
+  underlines: LayerUnderline[]
 }
 
 export interface ArrowEndpoint {

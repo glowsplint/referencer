@@ -5,10 +5,10 @@ import { TAILWIND_300_COLORS } from "@/types/editor"
 
 import type { Layer, Highlight, Arrow } from "@/types/editor"
 
-const defaultLayer: Layer = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [], arrows: [] }
+const defaultLayer: Layer = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [], arrows: [], underlines: [] }
 
 const makeHighlight = (id: string, text: string, annotation = "", editorIndex = 0): Highlight => ({
-  id, editorIndex, from: 0, to: 5, text, annotation,
+  id, editorIndex, from: 0, to: 5, text, annotation, type: "comment",
 })
 
 const makeArrow = (id: string, fromText: string, toText: string, fromEditor = 0, toEditor = 1): Arrow => ({

@@ -23,6 +23,7 @@ describe("validateStatePayload", () => {
         visible: true,
         highlights: [],
         arrows: [],
+        underlines: [],
       },
     ],
     editors: [{ index: 0, name: "Editor 1", visible: true, contentJson: null }],
@@ -86,6 +87,7 @@ describe("validateStatePayload", () => {
             visible: "yes", // should be boolean
             highlights: [],
             arrows: [],
+            underlines: [],
           },
         ],
       })
@@ -104,6 +106,7 @@ describe("validateStatePayload", () => {
             visible: true,
             highlights: "nope",
             arrows: [],
+            underlines: [],
           },
         ],
       })

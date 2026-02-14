@@ -11,9 +11,10 @@ const mockWorkspace = {
     isLocked: false,
     showDrawingToasts: true,
     showCommentsToasts: true,
+    showHighlightToasts: true,
   },
   annotations: { activeTool: "selection" as const },
-  layers: [] as { id: string; color: string; name: string; visible: boolean; arrowStyle: string; highlights: { id: string; editorIndex: number; from: number; to: number; text: string; annotation: string; type: string }[]; arrows: unknown[] }[],
+  layers: [] as { id: string; color: string; name: string; visible: boolean; arrowStyle: string; highlights: { id: string; editorIndex: number; from: number; to: number; text: string; annotation: string; type: string }[]; arrows: unknown[]; underlines: unknown[] }[],
   activeLayerId: null as string | null,
   editorCount: 1,
   activeEditor: null,
@@ -181,7 +182,7 @@ describe("App", () => {
 
   it("passes layers and selection props to EditorPane", () => {
     mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [], arrows: [] },
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [], arrows: [], underlines: [] },
     ]
     render(<App />)
 
@@ -192,7 +193,7 @@ describe("App", () => {
   it("does not render AnnotationPanel when not locked", () => {
     mockWorkspace.settings.isLocked = false
     mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [] },
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
     render(<App />)
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
@@ -208,7 +209,7 @@ describe("App", () => {
   it("renders AnnotationPanel when locked with annotations", () => {
     mockWorkspace.settings.isLocked = true
     mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [] },
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
     render(<App />)
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument()
@@ -217,7 +218,7 @@ describe("App", () => {
   it("passes annotation handlers to AnnotationPanel", () => {
     mockWorkspace.settings.isLocked = true
     mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [] },
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
     render(<App />)
 
@@ -231,7 +232,7 @@ describe("App", () => {
     mockWorkspace.settings.isLocked = true
     mockWorkspace.sectionVisibility = [false]
     mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [] },
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
     render(<App />)
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
@@ -241,7 +242,7 @@ describe("App", () => {
     mockWorkspace.settings.isLocked = true
     mockWorkspace.sectionVisibility = [true]
     mockWorkspace.layers = [
-      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [] },
+      { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
     render(<App />)
     expect(capturedAnnotationPanelProps).not.toBeNull()

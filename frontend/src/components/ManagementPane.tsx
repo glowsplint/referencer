@@ -23,6 +23,7 @@ export function ManagementPane() {
     toggleAllLayerVisibility,
     removeHighlight,
     removeArrow,
+    removeUnderline,
     addEditor,
     removeEditor,
     reorderEditors,
@@ -89,6 +90,7 @@ export function ManagementPane() {
               onToggleVisibility={() => toggleLayerVisibility(layer.id)}
               onRemoveHighlight={removeHighlight}
               onRemoveArrow={removeArrow}
+              onRemoveUnderline={removeUnderline}
               customColors={customColors}
               onAddCustomColor={addCustomColor}
               onRemoveCustomColor={removeCustomColor}

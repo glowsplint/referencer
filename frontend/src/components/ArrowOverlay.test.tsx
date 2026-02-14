@@ -41,6 +41,7 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
     arrowStyle: "solid",
     highlights: [],
     arrows: [],
+    underlines: [],
     ...overrides,
   }
 }

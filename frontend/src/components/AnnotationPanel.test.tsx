@@ -40,6 +40,7 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
       },
     ],
     arrows: [],
+    underlines: [],
     ...overrides,
   }
 }
