@@ -70,7 +70,7 @@ export function useHighlightMode({
   useEffect(() => {
     if (isHighlightTool) {
       if (showHighlightToastsRef.current) {
-        setStatusRef.current({ text: <>Select words, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
+        setStatusRef.current({ text: <>Select words to highlight, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
       }
     } else {
       clearStatusRef.current()
