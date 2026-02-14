@@ -17,3 +17,23 @@ Use linear history. Always rebase instead of merge (`git rebase`, not `git merge
 ## Testing
 
 Add or update tests for every code change. Use **Vitest** with **React Testing Library**. Before considering any code change complete, run both unit tests (`bun run test:run`) and e2e tests (`bun run test:e2e`) from the `frontend/` directory and ensure all tests pass.
+
+## Visual Verification
+
+After making UI/frontend code changes, visually verify the result using headless Playwright. Start the dev server if not already running (`bun run dev` from `frontend/`), then use a script like:
+
+```bash
+cd frontend && node -e "
+const { chromium } = require('playwright');
+(async () => {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  await page.goto('http://localhost:5173');
+  await page.waitForLoadState('networkidle');
+  await page.screenshot({ path: '/tmp/verify.png', fullPage: true });
+  await browser.close();
+})();
+"
+```
+
+Read the screenshot at `/tmp/verify.png` to visually confirm the change looks correct. Use `page.locator()` to interact with or screenshot specific elements when verifying targeted changes.
