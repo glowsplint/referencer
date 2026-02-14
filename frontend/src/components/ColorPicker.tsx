@@ -75,6 +75,7 @@ export function ColorPicker({
               <input
                 ref={inputRef}
                 type="color"
+                defaultValue="#ffffff"
                 className="sr-only"
                 data-testid="customColorInput"
                 onChange={(e) => {
