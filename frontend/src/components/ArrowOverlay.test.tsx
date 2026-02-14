@@ -771,6 +771,70 @@ describe("ArrowOverlay", () => {
     expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
   })
 
+  it("shows hover ring on mouseEnter", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument()
+
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
+    expect(screen.getByTestId("arrow-hover-ring")).toBeInTheDocument()
+    expect(screen.getByTestId("arrow-hover-ring").getAttribute("stroke-width")).toBe("6")
+    expect(screen.getByTestId("arrow-hover-ring").getAttribute("stroke-opacity")).toBe("0.15")
+  })
+
+  it("hides hover ring on mouseLeave", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
+    expect(screen.getByTestId("arrow-hover-ring")).toBeInTheDocument()
+
+    fireEvent.mouseLeave(screen.getByTestId("arrow-hit-area"))
+    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument()
+  })
+
+  it("does not show hover ring when arrow is selected", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
+      />
+    )
+
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
+    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument()
+    // Selection ring should be shown instead
+    expect(screen.getByTestId("arrow-selection-ring")).toBeInTheDocument()
+  })
+
   it("keeps arrowhead marker when arrow is hovered without selection", () => {
     const layer = createLayer({
       arrows: [

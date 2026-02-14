@@ -79,6 +79,7 @@ export function ArrowOverlay({
   const hitPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
   const xIconRefs = useRef<Map<string, SVGGElement>>(new Map())
   const selectionPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
+  const hoverPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
 
   // Ref for the container-level visual SVG and its gap clip path
   const containerVisualSvgRef = useRef<SVGSVGElement | null>(null)
@@ -251,6 +252,7 @@ export function ArrowOverlay({
       const isHovered = hoveredArrowId === data.arrowId
       const isSelected = selectedArrow?.arrowId === data.arrowId
       const hideMarker = isHovered || isSelected
+      const showHoverRing = isHovered && !isSelected
 
       const marker = document.createElementNS(SVG_NS, "marker")
       marker.setAttribute("id", `wrapper-arrowhead-${data.arrowId}`)
@@ -304,6 +306,17 @@ export function ArrowOverlay({
         g.appendChild(path)
       }
       svg.appendChild(g)
+
+      if (showHoverRing) {
+        const hoverRing = document.createElementNS(SVG_NS, "path")
+        hoverRing.setAttribute("d", arrowPath)
+        hoverRing.setAttribute("stroke", data.color)
+        hoverRing.setAttribute("stroke-width", "6")
+        hoverRing.setAttribute("stroke-opacity", "0.15")
+        hoverRing.setAttribute("fill", "none")
+        hoverRing.style.pointerEvents = "none"
+        svg.appendChild(hoverRing)
+      }
     }
 
     // Preview in wrapper mode
@@ -452,6 +465,7 @@ export function ArrowOverlay({
       if (!d) continue
       hitPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
       selectionPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
+      hoverPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
 
       // Update X icon position if hovered
       const xIcon = xIconRefs.current.get(data.arrowId)
@@ -707,6 +721,21 @@ export function ArrowOverlay({
           const strokeColor = blendArrow(data.color)
           return (
             <g key={data.arrowId}>
+              {isHovered && !isSelected && (
+                <path
+                  ref={(el) => {
+                    if (el) hoverPathRefs.current.set(data.arrowId, el)
+                    else hoverPathRefs.current.delete(data.arrowId)
+                  }}
+                  data-testid="arrow-hover-ring"
+                  d=""
+                  stroke={data.color}
+                  strokeWidth={6}
+                  strokeOpacity={0.15}
+                  fill="none"
+                  style={{ pointerEvents: "none" }}
+                />
+              )}
               {isSelected && (
                 <path
                   ref={(el) => {

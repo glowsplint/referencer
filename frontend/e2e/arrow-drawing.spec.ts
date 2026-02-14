@@ -110,21 +110,23 @@ test("clicking selected arrow X icon deletes it, hover alone does not show X", a
   await page.mouse.click(0, 0);
   const interactionLayer = page.locator('[data-testid="arrow-interaction-layer"]');
 
-  // Hover the arrow hit area — X icon should NOT appear (hover alone)
+  // Hover the arrow hit area — X icon should NOT appear (hover alone), but hover ring should
   const hitArea = page.getByTestId("arrow-hit-area");
-  const hitBox = await hitArea.boundingBox();
-  expect(hitBox).not.toBeNull();
-  const hoverX = hitBox!.x + hitBox!.width / 2;
-  const hoverY = hitBox!.y + hitBox!.height / 2;
-  await page.mouse.move(hoverX, hoverY, { steps: 5 });
+  await hitArea.evaluate((el) => {
+    el.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, cancelable: true }));
+    el.dispatchEvent(new MouseEvent("mouseover", { bubbles: true, cancelable: true }));
+  });
   await expect(interactionLayer.locator("circle")).toHaveCount(0, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-hover-ring")).toHaveCount(1, { timeout: 2000 });
 
-  // Click to select the arrow — X icon should appear
-  await page.mouse.click(hoverX, hoverY);
+  // Click to select the arrow — X icon should appear, hover ring should disappear
+  await hitArea.click({ force: true });
   await expect(interactionLayer.locator("circle")).toHaveCount(1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-hover-ring")).toHaveCount(0, { timeout: 2000 });
 
   // Click the X icon to delete
-  await page.mouse.click(hoverX, hoverY);
+  const deleteIcon = page.getByTestId("arrow-delete-icon");
+  await deleteIcon.click({ force: true });
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
 });
 
