@@ -4,13 +4,25 @@ import { ArrowOverlay } from "./ArrowOverlay"
 import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
 import type { Editor } from "@tiptap/react"
 
-// Mock getWordCenter and getWordRect to return deterministic positions
+// Mock getWordCenter, getWordRect, and wrapper-relative variants to return deterministic positions
 vi.mock("@/lib/tiptap/nearest-word", () => ({
   getWordCenter: vi.fn((word: { editorIndex: number; from: number }) => {
     // Return predictable positions based on from offset
     return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 }
   }),
   getWordRect: vi.fn((word: { editorIndex: number; from: number; to: number }) => {
+    return {
+      x: word.from * 10,
+      y: word.editorIndex * 50 + 15,
+      width: (word.to - word.from) * 10,
+      height: 20,
+    }
+  }),
+  getWordCenterRelativeToWrapper: vi.fn((word: { editorIndex: number; from: number }) => {
+    // Same formula as getWordCenter for simplicity in tests
+    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 }
+  }),
+  getWordRectRelativeToWrapper: vi.fn((word: { editorIndex: number; from: number; to: number }) => {
     return {
       x: word.from * 10,
       y: word.editorIndex * 50 + 15,
@@ -744,5 +756,214 @@ describe("ArrowOverlay", () => {
     )
 
     expect(screen.queryByTestId("arrow-hit-area")).not.toBeInTheDocument()
+  })
+})
+
+// ── Editor hover tracking and wrapper SVG tests ──
+
+function createMockEditorWithWrapper(wrapper: HTMLElement) {
+  return {
+    view: {
+      dom: {
+        closest: vi.fn((selector: string) => {
+          if (selector === ".simple-editor-wrapper") return wrapper
+          return null
+        }),
+      },
+    },
+  } as unknown as Editor
+}
+
+function createMockWrapper() {
+  const wrapper = document.createElement("div")
+  wrapper.className = "simple-editor-wrapper"
+  Object.defineProperty(wrapper, "scrollWidth", { value: 400, configurable: true })
+  Object.defineProperty(wrapper, "scrollHeight", { value: 300, configurable: true })
+  document.body.appendChild(wrapper)
+  return wrapper
+}
+
+describe("ArrowOverlay editor hover tracking", () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  afterEach(() => {
+    document.querySelectorAll(".simple-editor-wrapper").forEach((el) => el.remove())
+  })
+
+  it("hides container visual paths when hovering an editor with cross-editor arrows", () => {
+    const wrapper0 = createMockWrapper()
+    const wrapper1 = createMockWrapper()
+    const editor0 = createMockEditorWithWrapper(wrapper0)
+    const editor1 = createMockEditorWithWrapper(wrapper1)
+
+    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+
+    const containerSvg = screen.getByTestId("arrow-overlay")
+
+    // Before hover, no clip-path on container SVG
+    expect(containerSvg.getAttribute("clip-path")).toBeNull()
+
+    // Hover editor 0
+    act(() => {
+      fireEvent.mouseEnter(wrapper0)
+    })
+
+    // Container SVG should be clipped to the gap (excluding editor wrapper areas)
+    expect(containerSvg.getAttribute("clip-path")).toBe("url(#container-gap-clip)")
+  })
+
+  it("removes container clip-path when leaving an editor", () => {
+    const wrapper0 = createMockWrapper()
+    const wrapper1 = createMockWrapper()
+    const editor0 = createMockEditorWithWrapper(wrapper0)
+    const editor1 = createMockEditorWithWrapper(wrapper1)
+
+    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+
+    const containerSvg = screen.getByTestId("arrow-overlay")
+
+    // Hover then leave
+    act(() => {
+      fireEvent.mouseEnter(wrapper0)
+    })
+    expect(containerSvg.getAttribute("clip-path")).toBe("url(#container-gap-clip)")
+
+    act(() => {
+      fireEvent.mouseLeave(wrapper0)
+    })
+
+    // Clip-path should be removed
+    expect(containerSvg.getAttribute("clip-path")).toBeNull()
+  })
+
+  it("shows wrapper SVG when hovering and hides when leaving", () => {
+    const wrapper0 = createMockWrapper()
+    const wrapper1 = createMockWrapper()
+    const editor0 = createMockEditorWithWrapper(wrapper0)
+    const editor1 = createMockEditorWithWrapper(wrapper1)
+
+    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+
+    const wrapperSvg0 = wrapper0.querySelector("[data-testid='wrapper-arrow-svg-0']") as SVGSVGElement
+    expect(wrapperSvg0).toBeTruthy()
+    expect(wrapperSvg0.style.display).toBe("none")
+
+    // Hover editor 0
+    act(() => {
+      fireEvent.mouseEnter(wrapper0)
+    })
+
+    expect(wrapperSvg0.style.display).toBe("")
+
+    // Leave editor 0
+    act(() => {
+      fireEvent.mouseLeave(wrapper0)
+    })
+
+    expect(wrapperSvg0.style.display).toBe("none")
+  })
+
+  it("interaction layer stays at container level during hover", () => {
+    const wrapper0 = createMockWrapper()
+    const wrapper1 = createMockWrapper()
+    const editor0 = createMockEditorWithWrapper(wrapper0)
+    const editor1 = createMockEditorWithWrapper(wrapper1)
+
+    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+
+    // Hover editor 0
+    act(() => {
+      fireEvent.mouseEnter(wrapper0)
+    })
+
+    // Hit area should still be in the interaction layer
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    expect(interactionLayer.contains(hitArea)).toBe(true)
+
+    // Hit area should still have a valid d (non-empty) for interaction
+    expect(hitArea.getAttribute("d")).not.toBe("")
+  })
+
+  it("shows all wrapper SVGs when hovering any editor (each clips its portion)", () => {
+    const wrapper0 = createMockWrapper()
+    const wrapper1 = createMockWrapper()
+    const editor0 = createMockEditorWithWrapper(wrapper0)
+    const editor1 = createMockEditorWithWrapper(wrapper1)
+
+    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+
+    const wrapperSvg0 = wrapper0.querySelector("[data-testid='wrapper-arrow-svg-0']") as SVGSVGElement
+    const wrapperSvg1 = wrapper1.querySelector("[data-testid='wrapper-arrow-svg-1']") as SVGSVGElement
+
+    // Hover editor 0 — both wrappers should show (each clips to its own bounds)
+    act(() => {
+      fireEvent.mouseEnter(wrapper0)
+    })
+
+    expect(wrapperSvg0.style.display).toBe("")
+    expect(wrapperSvg1.style.display).toBe("")
   })
 })

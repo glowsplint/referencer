@@ -275,6 +275,87 @@ export function findNearestWord(
 }
 
 /**
+ * Get the center of a word in coordinates relative to an arbitrary wrapper element.
+ * Used for rendering cross-editor arrows inside a specific editor's wrapper SVG.
+ * The word may belong to a different editor than the target wrapper.
+ */
+export function getWordCenterRelativeToWrapper(
+  word: CollectedWord,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  targetWrapper: HTMLElement
+): { cx: number; cy: number } | null {
+  const editor = editorsRef.current.get(word.editorIndex)
+  if (!editor) return null
+
+  try {
+    const wrapperRect = targetWrapper.getBoundingClientRect()
+    const nodeAt = editor.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editor.view.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          cx: (rect.left + rect.right) / 2 - wrapperRect.left + targetWrapper.scrollLeft,
+          cy: (rect.top + rect.bottom) / 2 - wrapperRect.top + targetWrapper.scrollTop,
+        }
+      }
+      return null
+    }
+
+    const startCoords = editor.view.coordsAtPos(word.from)
+    const endCoords = editor.view.coordsAtPos(word.to)
+    return {
+      cx: (startCoords.left + endCoords.right) / 2 - wrapperRect.left + targetWrapper.scrollLeft,
+      cy: (startCoords.top + startCoords.bottom) / 2 - wrapperRect.top + targetWrapper.scrollTop,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Get the bounding rect of a word in coordinates relative to an arbitrary wrapper element.
+ * Used for rendering the preview anchor rectangle inside a specific editor's wrapper SVG.
+ */
+export function getWordRectRelativeToWrapper(
+  word: CollectedWord,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  targetWrapper: HTMLElement
+): { x: number; y: number; width: number; height: number } | null {
+  const editor = editorsRef.current.get(word.editorIndex)
+  if (!editor) return null
+
+  try {
+    const wrapperRect = targetWrapper.getBoundingClientRect()
+    const nodeAt = editor.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editor.view.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          x: rect.left - wrapperRect.left + targetWrapper.scrollLeft,
+          y: rect.top - wrapperRect.top + targetWrapper.scrollTop,
+          width: rect.width,
+          height: rect.height,
+        }
+      }
+      return null
+    }
+
+    const startCoords = editor.view.coordsAtPos(word.from)
+    const endCoords = editor.view.coordsAtPos(word.to)
+    return {
+      x: startCoords.left - wrapperRect.left + targetWrapper.scrollLeft,
+      y: startCoords.top - wrapperRect.top + targetWrapper.scrollTop,
+      width: endCoords.right - startCoords.left,
+      height: startCoords.bottom - startCoords.top,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
  * Get the center of a word in content-relative coordinates (stable regardless of scroll).
  * These coordinates are relative to the scroll content, not the viewport.
  * Accepts a raw ProseMirror EditorView.

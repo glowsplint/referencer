@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, DrawingState, ActiveTool, Arrow } from "@/types/editor"
-import { getWordCenter, getWordRect } from "@/lib/tiptap/nearest-word"
+import { getWordCenter, getWordRect, getWordCenterRelativeToWrapper, getWordRectRelativeToWrapper } from "@/lib/tiptap/nearest-word"
 import { blendWithBackground } from "@/lib/color"
 
 const ARROW_OPACITY = 0.6
+const SVG_NS = "http://www.w3.org/2000/svg"
 
 interface ArrowOverlayProps {
   layers: Layer[]
@@ -55,10 +56,21 @@ export function ArrowOverlay({
   // Structural tick — only for structural changes (layers, visibility, preview), NOT scroll
   const [structuralTick, setStructuralTick] = useState(0)
 
+  // Which editor the mouse is currently over (for wrapper-level arrow rendering)
+  const [hoveredEditorIndex, setHoveredEditorIndex] = useState<number | null>(null)
+
   // Refs for imperative path updates on scroll
   const visualPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
   const hitPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
   const xIconRefs = useRef<Map<string, SVGGElement>>(new Map())
+
+  // Ref for the container-level visual SVG and its gap clip path
+  const containerVisualSvgRef = useRef<SVGSVGElement | null>(null)
+  const gapClipPathRef = useRef<SVGPathElement | null>(null)
+
+  // Per-wrapper SVGs for rendering cross-editor arrows inside editor scroll containers
+  const wrapperSvgRefs = useRef<Map<number, SVGSVGElement>>(new Map())
+  const wrapperResizeObservers = useRef<Map<number, ResizeObserver>>(new Map())
 
   // Cross-editor arrows only (for visual rendering — within-editor visuals are in the plugin)
   const crossEditorArrows = useMemo(() => {
@@ -99,19 +111,280 @@ export function ArrowOverlay({
     return result
   }, [layers, sectionVisibility])
 
+  // Track which editor is hovered via mouseenter/mouseleave on editor wrappers
+  useEffect(() => {
+    const editors = editorsRef.current
+    const cleanups: (() => void)[] = []
+
+    for (const [index, editor] of editors) {
+      const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
+      if (!wrapper) continue
+
+      const onEnter = () => setHoveredEditorIndex(index)
+      const onLeave = () => setHoveredEditorIndex((prev) => (prev === index ? null : prev))
+
+      wrapper.addEventListener("mouseenter", onEnter)
+      wrapper.addEventListener("mouseleave", onLeave)
+      cleanups.push(() => {
+        wrapper.removeEventListener("mouseenter", onEnter)
+        wrapper.removeEventListener("mouseleave", onLeave)
+      })
+    }
+
+    return () => cleanups.forEach((fn) => fn())
+  }, [editorsRef, structuralTick])
+
+  // Pre-mount per-wrapper SVGs for cross-editor arrow rendering.
+  // SVGs are created incrementally and persist — no destroy/recreate cycle
+  // that would cause a blank-frame flicker between useEffect cleanup and repaint.
+  useEffect(() => {
+    const editors = editorsRef.current
+    const currentSvgs = wrapperSvgRefs.current
+    const currentObservers = wrapperResizeObservers.current
+
+    // Create SVGs for new editors
+    for (const [index, editor] of editors) {
+      if (currentSvgs.has(index)) continue
+
+      const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
+      if (!wrapper) continue
+
+      const svg = document.createElementNS(SVG_NS, "svg")
+      svg.setAttribute("data-testid", `wrapper-arrow-svg-${index}`)
+      svg.style.position = "absolute"
+      svg.style.top = "0"
+      svg.style.left = "0"
+      svg.style.pointerEvents = "none"
+      svg.style.zIndex = "10"
+      svg.style.display = "none"
+      svg.style.mixBlendMode = isDarkMode ? "screen" : "multiply"
+      svg.style.width = `${wrapper.scrollWidth}px`
+      svg.style.height = `${wrapper.scrollHeight}px`
+
+      wrapper.appendChild(svg)
+      currentSvgs.set(index, svg)
+
+      const ro = new ResizeObserver(() => {
+        svg.style.width = `${wrapper.scrollWidth}px`
+        svg.style.height = `${wrapper.scrollHeight}px`
+      })
+      ro.observe(wrapper)
+      currentObservers.set(index, ro)
+    }
+
+    // Remove SVGs for editors that no longer exist
+    for (const [index, svg] of [...currentSvgs]) {
+      if (!editors.has(index)) {
+        svg.remove()
+        currentSvgs.delete(index)
+        currentObservers.get(index)?.disconnect()
+        currentObservers.delete(index)
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorsRef, structuralTick])
+
+  // Clean up all wrapper SVGs on unmount
+  useEffect(() => {
+    return () => {
+      for (const [index, svg] of wrapperSvgRefs.current) {
+        svg.remove()
+        wrapperSvgRefs.current.delete(index)
+        wrapperResizeObservers.current.get(index)?.disconnect()
+        wrapperResizeObservers.current.delete(index)
+      }
+    }
+  }, [])
+
+  // Sync dark mode on wrapper SVGs
+  useEffect(() => {
+    const blendMode = isDarkMode ? "screen" : "multiply"
+    for (const svg of wrapperSvgRefs.current.values()) {
+      svg.style.mixBlendMode = blendMode
+    }
+  }, [isDarkMode])
+
+  // Draw cross-editor arrows into a wrapper SVG imperatively
+  const drawIntoWrapperSvg = useCallback((
+    svg: SVGSVGElement,
+    wrapper: HTMLElement,
+    arrows: CrossEditorArrow[],
+    drawState: DrawingState | null,
+    drawColor: string | null,
+  ) => {
+    while (svg.firstChild) svg.removeChild(svg.firstChild)
+
+    // Update SVG size to match wrapper content
+    svg.style.width = `${wrapper.scrollWidth}px`
+    svg.style.height = `${wrapper.scrollHeight}px`
+
+    const defs = document.createElementNS(SVG_NS, "defs")
+
+    for (const data of arrows) {
+      const fromCenter = getWordCenterRelativeToWrapper(data.arrow.from, editorsRef, wrapper)
+      const toCenter = getWordCenterRelativeToWrapper(data.arrow.to, editorsRef, wrapper)
+      if (!fromCenter || !toCenter) continue
+
+      const { cx: x1, cy: y1 } = fromCenter
+      const { cx: x2, cy: y2 } = toCenter
+      const mx = (x1 + x2) / 2
+      const my = (y1 + y2) / 2
+      const arrowPath = `M ${x1} ${y1} L ${mx} ${my} L ${x2} ${y2}`
+      const isHovered = hoveredArrowId === data.arrowId
+
+      const marker = document.createElementNS(SVG_NS, "marker")
+      marker.setAttribute("id", `wrapper-arrowhead-${data.arrowId}`)
+      marker.setAttribute("markerWidth", "8")
+      marker.setAttribute("markerHeight", "6")
+      marker.setAttribute("refX", "4")
+      marker.setAttribute("refY", "3")
+      marker.setAttribute("orient", "auto")
+      const polygon = document.createElementNS(SVG_NS, "polygon")
+      polygon.setAttribute("points", "0 0, 8 3, 0 6")
+      polygon.setAttribute("fill", data.color)
+      marker.appendChild(polygon)
+      defs.appendChild(marker)
+
+      const g = document.createElementNS(SVG_NS, "g")
+      g.setAttribute("opacity", String(ARROW_OPACITY))
+      const path = document.createElementNS(SVG_NS, "path")
+      path.setAttribute("data-testid", "wrapper-arrow-line")
+      path.setAttribute("d", arrowPath)
+      path.setAttribute("stroke", data.color)
+      path.setAttribute("stroke-width", "2")
+      path.setAttribute("fill", "none")
+      if (!isHovered) {
+        path.setAttribute("marker-mid", `url(#wrapper-arrowhead-${data.arrowId})`)
+      }
+      g.appendChild(path)
+      svg.appendChild(g)
+    }
+
+    // Preview in wrapper mode
+    if (drawState && drawColor) {
+      const fromCenter = getWordCenterRelativeToWrapper(drawState.anchor, editorsRef, wrapper)
+      const toCenter = getWordCenterRelativeToWrapper(drawState.cursor, editorsRef, wrapper)
+      if (fromCenter && toCenter) {
+        const blendedColor = blendWithBackground(drawColor, ARROW_OPACITY, isDarkMode)
+
+        // Anchor rect
+        const anchorRect = getWordRectRelativeToWrapper(drawState.anchor, editorsRef, wrapper)
+        if (anchorRect) {
+          const g = document.createElementNS(SVG_NS, "g")
+          g.setAttribute("opacity", String(ARROW_OPACITY))
+          const rect = document.createElementNS(SVG_NS, "rect")
+          rect.setAttribute("data-testid", "wrapper-preview-anchor-rect")
+          rect.setAttribute("x", String(anchorRect.x))
+          rect.setAttribute("y", String(anchorRect.y))
+          rect.setAttribute("width", String(anchorRect.width))
+          rect.setAttribute("height", String(anchorRect.height))
+          rect.setAttribute("fill", drawColor)
+          g.appendChild(rect)
+          svg.appendChild(g)
+        }
+
+        // Preview arrow path (only if anchor !== cursor)
+        if (fromCenter.cx !== toCenter.cx || fromCenter.cy !== toCenter.cy) {
+          const previewMarker = document.createElementNS(SVG_NS, "marker")
+          previewMarker.setAttribute("id", "wrapper-arrowhead-preview")
+          previewMarker.setAttribute("markerWidth", "8")
+          previewMarker.setAttribute("markerHeight", "6")
+          previewMarker.setAttribute("refX", "4")
+          previewMarker.setAttribute("refY", "3")
+          previewMarker.setAttribute("orient", "auto")
+          const previewPoly = document.createElementNS(SVG_NS, "polygon")
+          previewPoly.setAttribute("points", "0 0, 8 3, 0 6")
+          previewPoly.setAttribute("fill", blendedColor)
+          previewMarker.appendChild(previewPoly)
+          defs.appendChild(previewMarker)
+
+          const { cx: x1, cy: y1 } = fromCenter
+          const { cx: x2, cy: y2 } = toCenter
+          const mx = (x1 + x2) / 2
+          const my = (y1 + y2) / 2
+          const d = `M ${x1} ${y1} L ${mx} ${my} L ${x2} ${y2}`
+
+          const g = document.createElementNS(SVG_NS, "g")
+          g.setAttribute("opacity", String(ARROW_OPACITY))
+          const path = document.createElementNS(SVG_NS, "path")
+          path.setAttribute("data-testid", "wrapper-preview-arrow")
+          path.setAttribute("d", d)
+          path.setAttribute("stroke", blendedColor)
+          path.setAttribute("stroke-width", "2")
+          path.setAttribute("stroke-dasharray", "6 4")
+          path.setAttribute("fill", "none")
+          path.setAttribute("marker-mid", "url(#wrapper-arrowhead-preview)")
+          g.appendChild(path)
+          svg.appendChild(g)
+        }
+      }
+    }
+
+    if (defs.children.length > 0) {
+      svg.insertBefore(defs, svg.firstChild)
+    }
+  }, [editorsRef, hoveredArrowId, isDarkMode])
+
   // Imperatively update all path `d` attributes and X-icon positions
   const updatePositions = useCallback(() => {
     const containerRect = containerRef.current?.getBoundingClientRect()
     if (!containerRect) return
 
-    // Update visual paths (cross-editor only)
+    // Suppress wrapper mode during drawing to prevent preview flicker
+    // from rapid hoveredEditorIndex changes as the mouse moves between editors
+    const activeEditorIndex = drawingState ? null : hoveredEditorIndex
+
+    // Always update container visual paths with real geometry
+    // (needed so elements retain clickable area for interaction/testing)
     for (const data of crossEditorArrows) {
       const d = computePath(data.arrow, editorsRef, containerRect)
       if (!d) continue
       visualPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
     }
 
-    // Update hit areas and X icons (all arrows)
+    // Always update container preview
+    if (drawingState && drawingColor) {
+      updatePreviewPositions(containerRect)
+    }
+
+    if (activeEditorIndex !== null) {
+      // Wrapper mode: clip container SVG to the gap between editors (evenodd
+      // path with holes for each wrapper rect). Wrapper SVGs render inside
+      // each editor's scroll container so they rubber-band with content.
+      const cw = containerRect.width
+      const ch = containerRect.height
+      let clipD = `M 0 0 H ${cw} V ${ch} H 0 Z`
+      for (const [, editor] of editorsRef.current) {
+        const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
+        if (!wrapper) continue
+        const wr = wrapper.getBoundingClientRect()
+        const x = wr.left - containerRect.left
+        const y = wr.top - containerRect.top
+        clipD += ` M ${x} ${y} H ${x + wr.width} V ${y + wr.height} H ${x} Z`
+      }
+      gapClipPathRef.current?.setAttribute("d", clipD)
+      containerVisualSvgRef.current?.setAttribute("clip-path", "url(#container-gap-clip)")
+
+      // Show and draw into every wrapper SVG
+      for (const [index, svg] of wrapperSvgRefs.current) {
+        const editor = editorsRef.current.get(index)
+        const wrapper = editor?.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
+        if (!wrapper) {
+          svg.style.display = "none"
+          continue
+        }
+        svg.style.display = ""
+        drawIntoWrapperSvg(svg, wrapper, crossEditorArrows, drawingState, drawingColor)
+      }
+    } else {
+      // No hover: remove clip, hide all wrapper SVGs
+      containerVisualSvgRef.current?.removeAttribute("clip-path")
+      for (const svg of wrapperSvgRefs.current.values()) {
+        svg.style.display = "none"
+      }
+    }
+
+    // Update hit areas and X icons (all arrows) — always at container level
     for (const data of allVisibleArrows) {
       const d = computePath(data.arrow, editorsRef, containerRect)
       if (!d) continue
@@ -129,12 +402,7 @@ export function ArrowOverlay({
         }
       }
     }
-
-    // Update preview
-    if (drawingState && drawingColor) {
-      updatePreviewPositions(containerRect)
-    }
-  }, [crossEditorArrows, allVisibleArrows, editorsRef, containerRef, drawingState, drawingColor])
+  }, [crossEditorArrows, allVisibleArrows, editorsRef, containerRef, drawingState, drawingColor, hoveredEditorIndex, drawIntoWrapperSvg])
 
   // Refs for preview elements
   const previewPathRef = useRef<SVGPathElement | null>(null)
@@ -235,11 +503,15 @@ export function ArrowOverlay({
     <>
       {/* Visual layer: blend mode applied here for highlighter effect */}
       <svg
+        ref={containerVisualSvgRef}
         data-testid="arrow-overlay"
         className="absolute inset-0 pointer-events-none z-10"
         style={{ width: "100%", height: "100%", mixBlendMode: isDarkMode ? "screen" : "multiply" }}
       >
         <defs>
+          <clipPath id="container-gap-clip">
+            <path ref={gapClipPathRef} clipRule="evenodd" d="" />
+          </clipPath>
           {crossEditorArrows.map((data) => (
             <marker
               key={`marker-${data.arrowId}`}
