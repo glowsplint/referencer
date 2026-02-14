@@ -17,6 +17,7 @@ export function ManagementPane() {
     removeLayer,
     setActiveLayer,
     updateLayerColor,
+    updateLayerArrowStyle,
     updateLayerName,
     toggleLayerVisibility,
     toggleAllLayerVisibility,
@@ -83,6 +84,7 @@ export function ManagementPane() {
               onSetActive={() => setActiveLayer(layer.id)}
               sectionNames={sectionNames}
               onUpdateColor={(color) => updateLayerColor(layer.id, color)}
+              onUpdateArrowStyle={(style) => updateLayerArrowStyle(layer.id, style)}
               onUpdateName={(name) => updateLayerName(layer.id, name)}
               onToggleVisibility={() => toggleLayerVisibility(layer.id)}
               onRemoveHighlight={removeHighlight}

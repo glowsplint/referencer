@@ -203,6 +203,25 @@ describe("validateActionPayload", () => {
     ).toBe(false)
   })
 
+  // -- updateLayerArrowStyle --
+  it("validates updateLayerArrowStyle", () => {
+    expect(
+      validateActionPayload({ actionType: "updateLayerArrowStyle", id: "l1", arrowStyle: "dashed" })
+    ).toBe(true)
+  })
+
+  it("rejects updateLayerArrowStyle missing arrowStyle", () => {
+    expect(
+      validateActionPayload({ actionType: "updateLayerArrowStyle", id: "l1" })
+    ).toBe(false)
+  })
+
+  it("rejects updateLayerArrowStyle with numeric arrowStyle", () => {
+    expect(
+      validateActionPayload({ actionType: "updateLayerArrowStyle", id: "l1", arrowStyle: 42 })
+    ).toBe(false)
+  })
+
   // -- toggleLayerVisibility --
   it("validates toggleLayerVisibility", () => {
     expect(

@@ -38,6 +38,7 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
     name: "Layer 1",
     color: "#fca5a5",
     visible: true,
+    arrowStyle: "solid",
     highlights: [],
     arrows: [],
     ...overrides,
@@ -774,6 +775,78 @@ describe("ArrowOverlay", () => {
 
     const arrowLine = screen.getByTestId("arrow-line")
     expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
+  })
+
+  it("renders dashed arrow with stroke-dasharray '8 4'", () => {
+    const layer = createLayer({
+      arrowStyle: "dashed",
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const line = screen.getByTestId("arrow-line")
+    expect(line.getAttribute("stroke-dasharray")).toBe("8 4")
+  })
+
+  it("renders dotted arrow with stroke-dasharray '2 4'", () => {
+    const layer = createLayer({
+      arrowStyle: "dotted",
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const line = screen.getByTestId("arrow-line")
+    expect(line.getAttribute("stroke-dasharray")).toBe("2 4")
+  })
+
+  it("renders solid arrow without stroke-dasharray", () => {
+    const layer = createLayer({
+      arrowStyle: "solid",
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const line = screen.getByTestId("arrow-line")
+    expect(line.getAttribute("stroke-dasharray")).toBeNull()
+  })
+
+  it("renders double arrow with two path elements", () => {
+    const layer = createLayer({
+      arrowStyle: "double",
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+
+    const lines = screen.getAllByTestId("arrow-line")
+    expect(lines).toHaveLength(2)
+    // Both paths should have stroke-width 1
+    for (const line of lines) {
+      expect(line.getAttribute("stroke-width")).toBe("1")
+    }
   })
 
   it("no hit areas render when section visibility hides an endpoint", () => {

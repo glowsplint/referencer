@@ -30,11 +30,14 @@ export interface EditingAnnotation {
   highlightId: string
 }
 
+export type ArrowStyle = "solid" | "dashed" | "dotted" | "double"
+
 export interface Layer {
   id: string
   name: string
   color: string
   visible: boolean
+  arrowStyle: ArrowStyle
   highlights: Highlight[]
   arrows: Arrow[]
 }

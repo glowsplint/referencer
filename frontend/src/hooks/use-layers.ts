@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from "react"
 import { toast } from "sonner"
-import type { Layer, Highlight, Arrow } from "@/types/editor"
+import type { Layer, Highlight, Arrow, ArrowStyle } from "@/types/editor"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
 export function useLayers() {
@@ -30,7 +30,7 @@ export function useLayers() {
     const nextNumber = layerCounterRef.current
     const id = opts?.id ?? crypto.randomUUID()
     const name = opts?.name ?? `Layer ${nextNumber}`
-    const newLayer: Layer = { id, name, color, visible: true, highlights: [], arrows: [] }
+    const newLayer: Layer = { id, name, color, visible: true, arrowStyle: "solid", highlights: [], arrows: [] }
     // Eagerly update ref so rapid calls within the same batch see the new layer
     layersRef.current = [...layersRef.current, newLayer]
     setLayers((prev) => [...prev, newLayer])
@@ -60,6 +60,10 @@ export function useLayers() {
 
   const updateLayerColor = useCallback((id: string, color: string) => {
     updateLayer(id, (l) => ({ ...l, color }))
+  }, [])
+
+  const updateLayerArrowStyle = useCallback((id: string, arrowStyle: ArrowStyle) => {
+    updateLayer(id, (l) => ({ ...l, arrowStyle }))
   }, [])
 
   const toggleLayerVisibility = useCallback((id: string) => {
@@ -142,6 +146,7 @@ export function useLayers() {
     removeLayer,
     setActiveLayer,
     updateLayerColor,
+    updateLayerArrowStyle,
     toggleLayerVisibility,
     toggleAllLayerVisibility,
     updateLayerName,

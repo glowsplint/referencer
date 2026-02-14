@@ -38,6 +38,7 @@ export function useEditorArrows(
           layerId: layer.id,
           arrowId: arrow.id,
           color: layer.color,
+          arrowStyle: layer.arrowStyle ?? "solid",
           from: arrow.from,
           to: arrow.to,
         })

@@ -1,10 +1,11 @@
 import { Eye, EyeOff, ChevronRight, ChevronDown, MessageSquareText, Highlighter, ArrowRight, X } from "lucide-react";
 import { ColorPicker } from "./ColorPicker";
+import { ArrowStylePicker } from "./ArrowStylePicker";
 import { useState } from "react";
 import { DRAG_TYPE_LAYER } from "@/constants/drag-types";
 import { useInlineEdit } from "@/hooks/use-inline-edit";
 
-import type { Layer } from "@/types/editor";
+import type { Layer, ArrowStyle } from "@/types/editor";
 
 interface LayerRowProps {
   layer: Layer;
@@ -13,6 +14,7 @@ interface LayerRowProps {
   sectionNames: string[];
   onSetActive: () => void;
   onUpdateColor: (color: string) => void;
+  onUpdateArrowStyle: (style: ArrowStyle) => void;
   onUpdateName: (name: string) => void;
   onToggleVisibility: () => void;
   onRemoveHighlight: (layerId: string, highlightId: string) => void;
@@ -29,6 +31,7 @@ export function LayerRow({
   sectionNames,
   onSetActive,
   onUpdateColor,
+  onUpdateArrowStyle,
   onUpdateName,
   onToggleVisibility,
   onRemoveHighlight,
@@ -38,6 +41,7 @@ export function LayerRow({
   onRemoveCustomColor,
 }: LayerRowProps) {
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
+  const [arrowStylePickerOpen, setArrowStylePickerOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const { isEditing, inputProps, startEditing } = useInlineEdit({
     currentName: layer.name,
@@ -79,11 +83,45 @@ export function LayerRow({
           style={{ backgroundColor: layer.color }}
           onClick={(e) => {
             e.stopPropagation();
+            setArrowStylePickerOpen(false);
             setColorPickerOpen(!colorPickerOpen);
           }}
           title="Change colour"
           data-testid={`layerSwatch-${index}`}
         />
+        <button
+          className="shrink-0 cursor-pointer rounded hover:bg-accent/50 p-0.5 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            setColorPickerOpen(false);
+            setArrowStylePickerOpen(!arrowStylePickerOpen);
+          }}
+          title="Change arrow style"
+          data-testid={`layerArrowStyle-${index}`}
+        >
+          <svg width="16" height="10" viewBox="0 0 16 10" className="block">
+            {layer.arrowStyle === "double" ? (
+              <>
+                <line x1="1" y1="3" x2="15" y2="3" stroke={layer.color} strokeWidth={1} />
+                <line x1="1" y1="7" x2="15" y2="7" stroke={layer.color} strokeWidth={1} />
+              </>
+            ) : (
+              <line
+                x1="1"
+                y1="5"
+                x2="15"
+                y2="5"
+                stroke={layer.color}
+                strokeWidth={2}
+                strokeDasharray={
+                  layer.arrowStyle === "dashed" ? "4 2" :
+                  layer.arrowStyle === "dotted" ? "1.5 2" :
+                  undefined
+                }
+              />
+            )}
+          </svg>
+        </button>
         {isEditing ? (
           <input
             {...inputProps}
@@ -140,6 +178,17 @@ export function LayerRow({
           customColors={customColors}
           onAddCustomColor={onAddCustomColor}
           onRemoveCustomColor={onRemoveCustomColor}
+        />
+      )}
+      {arrowStylePickerOpen && (
+        <ArrowStylePicker
+          index={index}
+          activeStyle={layer.arrowStyle ?? "solid"}
+          color={layer.color}
+          onSelectStyle={(style) => {
+            onUpdateArrowStyle(style);
+            setArrowStylePickerOpen(false);
+          }}
         />
       )}
       {expanded && hasItems && (

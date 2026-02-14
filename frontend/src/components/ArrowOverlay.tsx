@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from "react"
 import type { Editor } from "@tiptap/react"
-import type { Layer, DrawingState, ActiveTool, Arrow } from "@/types/editor"
+import type { Layer, DrawingState, ActiveTool, Arrow, ArrowStyle } from "@/types/editor"
 import { getWordCenter, getWordRect, getWordCenterRelativeToWrapper, getWordRectRelativeToWrapper } from "@/lib/tiptap/nearest-word"
 import { blendWithBackground } from "@/lib/color"
+import { getArrowStyleAttrs, computeDoubleLinePaths } from "@/lib/arrow-styles"
 
 const ARROW_OPACITY = 0.6
 const SVG_NS = "http://www.w3.org/2000/svg"
@@ -24,6 +25,7 @@ interface CrossEditorArrow {
   layerId: string
   arrowId: string
   color: string
+  arrowStyle: ArrowStyle
   arrow: Arrow
 }
 
@@ -61,6 +63,7 @@ export function ArrowOverlay({
 
   // Refs for imperative path updates on scroll
   const visualPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
+  const visualPathRefs2 = useRef<Map<string, SVGPathElement>>(new Map())
   const hitPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
   const xIconRefs = useRef<Map<string, SVGGElement>>(new Map())
 
@@ -85,6 +88,7 @@ export function ArrowOverlay({
           layerId: layer.id,
           arrowId: arrow.id,
           color: layer.color,
+          arrowStyle: layer.arrowStyle ?? "solid",
           arrow,
         })
       }
@@ -104,6 +108,7 @@ export function ArrowOverlay({
           layerId: layer.id,
           arrowId: arrow.id,
           color: layer.color,
+          arrowStyle: layer.arrowStyle ?? "solid",
           arrow,
         })
       }
@@ -247,16 +252,42 @@ export function ArrowOverlay({
 
       const g = document.createElementNS(SVG_NS, "g")
       g.setAttribute("opacity", String(ARROW_OPACITY))
-      const path = document.createElementNS(SVG_NS, "path")
-      path.setAttribute("data-testid", "wrapper-arrow-line")
-      path.setAttribute("d", arrowPath)
-      path.setAttribute("stroke", data.color)
-      path.setAttribute("stroke-width", "2")
-      path.setAttribute("fill", "none")
-      if (!isHovered) {
-        path.setAttribute("marker-mid", `url(#wrapper-arrowhead-${data.arrowId})`)
+      const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
+
+      if (styleAttrs.isDouble) {
+        const [pathA, pathB] = computeDoubleLinePaths(x1, y1, mx, my, x2, y2)
+        for (const d of [pathA, pathB]) {
+          const p = document.createElementNS(SVG_NS, "path")
+          p.setAttribute("data-testid", "wrapper-arrow-line")
+          p.setAttribute("d", d)
+          p.setAttribute("stroke", data.color)
+          p.setAttribute("stroke-width", String(styleAttrs.strokeWidth))
+          p.setAttribute("fill", "none")
+          g.appendChild(p)
+        }
+        if (!isHovered) {
+          const markerPath = document.createElementNS(SVG_NS, "path")
+          markerPath.setAttribute("d", arrowPath)
+          markerPath.setAttribute("stroke", "none")
+          markerPath.setAttribute("fill", "none")
+          markerPath.setAttribute("marker-mid", `url(#wrapper-arrowhead-${data.arrowId})`)
+          g.appendChild(markerPath)
+        }
+      } else {
+        const path = document.createElementNS(SVG_NS, "path")
+        path.setAttribute("data-testid", "wrapper-arrow-line")
+        path.setAttribute("d", arrowPath)
+        path.setAttribute("stroke", data.color)
+        path.setAttribute("stroke-width", String(styleAttrs.strokeWidth))
+        path.setAttribute("fill", "none")
+        if (styleAttrs.strokeDasharray) {
+          path.setAttribute("stroke-dasharray", styleAttrs.strokeDasharray)
+        }
+        if (!isHovered) {
+          path.setAttribute("marker-mid", `url(#wrapper-arrowhead-${data.arrowId})`)
+        }
+        g.appendChild(path)
       }
-      g.appendChild(path)
       svg.appendChild(g)
     }
 
@@ -339,7 +370,23 @@ export function ArrowOverlay({
     for (const data of crossEditorArrows) {
       const d = computePath(data.arrow, editorsRef, containerRect)
       if (!d) continue
-      visualPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
+
+      const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
+      if (styleAttrs.isDouble) {
+        const fromCenter = getWordCenter(data.arrow.from, editorsRef, containerRect)
+        const toCenter = getWordCenter(data.arrow.to, editorsRef, containerRect)
+        if (fromCenter && toCenter) {
+          const mx = (fromCenter.cx + toCenter.cx) / 2
+          const my = (fromCenter.cy + toCenter.cy) / 2
+          const [pathA, pathB] = computeDoubleLinePaths(
+            fromCenter.cx, fromCenter.cy, mx, my, toCenter.cx, toCenter.cy
+          )
+          visualPathRefs.current.get(data.arrowId)?.setAttribute("d", pathA)
+          visualPathRefs2.current.get(data.arrowId)?.setAttribute("d", pathB)
+        }
+      } else {
+        visualPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
+      }
     }
 
     // Always update container preview
@@ -543,22 +590,63 @@ export function ArrowOverlay({
           )}
         </defs>
 
-        {crossEditorArrows.map((data) => (
-          <g key={data.arrowId} opacity={ARROW_OPACITY}>
-            <path
-              ref={(el) => {
-                if (el) visualPathRefs.current.set(data.arrowId, el)
-                else visualPathRefs.current.delete(data.arrowId)
-              }}
-              data-testid="arrow-line"
-              d=""
-              stroke={data.color}
-              strokeWidth={2}
-              fill="none"
-              markerMid={hoveredArrowId === data.arrowId ? undefined : `url(#arrowhead-${data.arrowId})`}
-            />
-          </g>
-        ))}
+        {crossEditorArrows.map((data) => {
+          const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
+          const isHovered = hoveredArrowId === data.arrowId
+          if (styleAttrs.isDouble) {
+            return (
+              <g key={data.arrowId} opacity={ARROW_OPACITY}>
+                <path
+                  ref={(el) => {
+                    if (el) visualPathRefs.current.set(data.arrowId, el)
+                    else visualPathRefs.current.delete(data.arrowId)
+                  }}
+                  data-testid="arrow-line"
+                  d=""
+                  stroke={data.color}
+                  strokeWidth={styleAttrs.strokeWidth}
+                  fill="none"
+                />
+                <path
+                  ref={(el) => {
+                    if (el) visualPathRefs2.current.set(data.arrowId, el)
+                    else visualPathRefs2.current.delete(data.arrowId)
+                  }}
+                  data-testid="arrow-line"
+                  d=""
+                  stroke={data.color}
+                  strokeWidth={styleAttrs.strokeWidth}
+                  fill="none"
+                />
+                {!isHovered && (
+                  <path
+                    d=""
+                    stroke="none"
+                    fill="none"
+                    markerMid={`url(#arrowhead-${data.arrowId})`}
+                  />
+                )}
+              </g>
+            )
+          }
+          return (
+            <g key={data.arrowId} opacity={ARROW_OPACITY}>
+              <path
+                ref={(el) => {
+                  if (el) visualPathRefs.current.set(data.arrowId, el)
+                  else visualPathRefs.current.delete(data.arrowId)
+                }}
+                data-testid="arrow-line"
+                d=""
+                stroke={data.color}
+                strokeWidth={styleAttrs.strokeWidth}
+                fill="none"
+                strokeDasharray={styleAttrs.strokeDasharray ?? undefined}
+                markerMid={isHovered ? undefined : `url(#arrowhead-${data.arrowId})`}
+              />
+            </g>
+          )
+        })}
 
         {previewStructure && drawingColor && (
           <g opacity={ARROW_OPACITY}>

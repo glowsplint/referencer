@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import type { useLayers } from "./use-layers"
 import type { useActionHistory } from "./use-action-history"
-import type { Highlight, Arrow, ActionDetail } from "@/types/editor"
+import type { Highlight, Arrow, ActionDetail, ArrowStyle } from "@/types/editor"
 
 type LayersHook = ReturnType<typeof useLayers>
 type History = ReturnType<typeof useActionHistory>
@@ -220,6 +220,26 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
     [raw, record]
   )
 
+  const updateLayerArrowStyle = useCallback(
+    (id: string, arrowStyle: ArrowStyle) => {
+      const layer = raw.layers.find((l) => l.id === id)
+      const oldStyle = layer?.arrowStyle ?? "solid"
+      raw.updateLayerArrowStyle(id, arrowStyle)
+      record({
+        type: "updateLayerArrowStyle",
+        description: `Changed '${layer?.name ?? "layer"}' arrow style from ${oldStyle} to ${arrowStyle}`,
+        details: [{ label: "arrowStyle", before: oldStyle, after: arrowStyle }],
+        undo: () => {
+          raw.updateLayerArrowStyle(id, oldStyle)
+        },
+        redo: () => {
+          raw.updateLayerArrowStyle(id, arrowStyle)
+        },
+      })
+    },
+    [raw, record]
+  )
+
   const toggleAllLayerVisibility = useCallback(() => {
     const anyVisible = raw.layers.some((l) => l.visible)
     raw.toggleAllLayerVisibility()
@@ -289,6 +309,7 @@ export function useTrackedLayers(raw: LayersHook, history: History) {
     removeArrow,
     updateLayerName,
     updateLayerColor,
+    updateLayerArrowStyle,
     toggleAllLayerVisibility,
     clearLayerHighlights,
     clearLayerArrows,

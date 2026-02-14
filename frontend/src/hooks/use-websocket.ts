@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { WorkspaceWSClient } from "@/lib/ws-client"
 import type { ServerMessage, WorkspaceStatePayload } from "@/lib/ws-protocol"
-import type { Layer } from "@/types/editor"
+import type { Layer, ArrowStyle } from "@/types/editor"
 import type { useLayers } from "./use-layers"
 import type { useEditors } from "./use-editors"
 
@@ -72,6 +72,9 @@ export function validateActionPayload(payload: Record<string, unknown>): boolean
 
     case "updateLayerColor":
       return isString(payload.id) && isString(payload.color)
+
+    case "updateLayerArrowStyle":
+      return isString(payload.id) && isString(payload.arrowStyle)
 
     case "toggleLayerVisibility":
       return isString(payload.id)
@@ -208,6 +211,7 @@ function hydrateState(
     name: l.name,
     color: l.color,
     visible: l.visible,
+    arrowStyle: (l.arrowStyle as ArrowStyle) ?? "solid",
     highlights: l.highlights.map((h) => ({
       id: h.id,
       editorIndex: h.editorIndex,
@@ -273,6 +277,10 @@ function applyRemoteAction(
 
     case "updateLayerColor":
       rawLayers.updateLayerColor(payload.id as string, payload.color as string)
+      break
+
+    case "updateLayerArrowStyle":
+      rawLayers.updateLayerArrowStyle(payload.id as string, payload.arrowStyle as ArrowStyle)
       break
 
     case "toggleLayerVisibility":

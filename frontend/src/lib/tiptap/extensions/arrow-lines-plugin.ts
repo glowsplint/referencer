@@ -1,8 +1,9 @@
 import { Extension } from "@tiptap/core"
 import { Plugin, PluginKey } from "@tiptap/pm/state"
 import type { EditorView } from "@tiptap/pm/view"
-import type { ArrowEndpoint } from "@/types/editor"
+import type { ArrowEndpoint, ArrowStyle } from "@/types/editor"
 import { getWordCenterContentRelative } from "@/lib/tiptap/nearest-word"
+import { getArrowStyleAttrs, computeDoubleLinePaths } from "@/lib/arrow-styles"
 
 const ARROW_OPACITY = 0.6
 const SVG_NS = "http://www.w3.org/2000/svg"
@@ -20,6 +21,7 @@ export interface ArrowData {
   layerId: string
   arrowId: string
   color: string
+  arrowStyle: ArrowStyle
   from: ArrowEndpoint
   to: ArrowEndpoint
 }
@@ -140,19 +142,46 @@ export class ArrowLinesView {
       marker.appendChild(polygon)
       defs.appendChild(marker)
 
-      // Visual arrow path
+      // Visual arrow path(s)
       const g = document.createElementNS(SVG_NS, "g")
       g.setAttribute("opacity", String(ARROW_OPACITY))
-      const path = document.createElementNS(SVG_NS, "path")
-      path.setAttribute("data-testid", "arrow-line")
-      path.setAttribute("d", arrowPath)
-      path.setAttribute("stroke", arrow.color)
-      path.setAttribute("stroke-width", "2")
-      path.setAttribute("fill", "none")
-      if (!isHovered) {
-        path.setAttribute("marker-mid", `url(#arrowhead-${arrow.arrowId})`)
+      const styleAttrs = getArrowStyleAttrs(arrow.arrowStyle)
+
+      if (styleAttrs.isDouble) {
+        const [pathA, pathB] = computeDoubleLinePaths(x1, y1, mx, my, x2, y2)
+        for (const d of [pathA, pathB]) {
+          const p = document.createElementNS(SVG_NS, "path")
+          p.setAttribute("data-testid", "arrow-line")
+          p.setAttribute("d", d)
+          p.setAttribute("stroke", arrow.color)
+          p.setAttribute("stroke-width", String(styleAttrs.strokeWidth))
+          p.setAttribute("fill", "none")
+          g.appendChild(p)
+        }
+        // Marker on a center path (invisible, just for the arrowhead)
+        if (!isHovered) {
+          const markerPath = document.createElementNS(SVG_NS, "path")
+          markerPath.setAttribute("d", arrowPath)
+          markerPath.setAttribute("stroke", "none")
+          markerPath.setAttribute("fill", "none")
+          markerPath.setAttribute("marker-mid", `url(#arrowhead-${arrow.arrowId})`)
+          g.appendChild(markerPath)
+        }
+      } else {
+        const path = document.createElementNS(SVG_NS, "path")
+        path.setAttribute("data-testid", "arrow-line")
+        path.setAttribute("d", arrowPath)
+        path.setAttribute("stroke", arrow.color)
+        path.setAttribute("stroke-width", String(styleAttrs.strokeWidth))
+        path.setAttribute("fill", "none")
+        if (styleAttrs.strokeDasharray) {
+          path.setAttribute("stroke-dasharray", styleAttrs.strokeDasharray)
+        }
+        if (!isHovered) {
+          path.setAttribute("marker-mid", `url(#arrowhead-${arrow.arrowId})`)
+        }
+        g.appendChild(path)
       }
-      g.appendChild(path)
       this.visualSvg.appendChild(g)
     }
 
