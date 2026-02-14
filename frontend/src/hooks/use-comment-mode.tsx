@@ -1,5 +1,4 @@
 import { useEffect, useRef, useCallback } from "react"
-import { toast } from "sonner"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
@@ -9,6 +8,7 @@ interface UseCommentModeOptions {
   activeTool: ActiveTool
   selection: WordSelection | null
   activeLayerId: string | null
+  addLayer: () => string
   layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[]
   addHighlight: (
     layerId: string,
@@ -26,6 +26,7 @@ export function useCommentMode({
   activeTool,
   selection,
   activeLayerId,
+  addLayer,
   layers,
   addHighlight,
   removeHighlight,
@@ -35,6 +36,7 @@ export function useCommentMode({
   clearStatus,
 }: UseCommentModeOptions) {
   const activeLayerIdRef = useRef(activeLayerId)
+  const addLayerRef = useRef(addLayer)
   const addHighlightRef = useRef(addHighlight)
   const removeHighlightRef = useRef(removeHighlight)
   const layersRef = useRef(layers)
@@ -43,11 +45,12 @@ export function useCommentMode({
 
   useEffect(() => {
     activeLayerIdRef.current = activeLayerId
+    addLayerRef.current = addLayer
     addHighlightRef.current = addHighlight
     removeHighlightRef.current = removeHighlight
     layersRef.current = layers
     onHighlightAddedRef.current = onHighlightAdded
-  }, [activeLayerId, addHighlight, removeHighlight, layers, onHighlightAdded])
+  }, [activeLayerId, addLayer, addHighlight, removeHighlight, layers, onHighlightAdded])
 
   selectionRef.current = selection
 
@@ -85,10 +88,12 @@ export function useCommentMode({
     const sel = selectionRef.current
     if (!sel) return
 
-    const layerId = activeLayerIdRef.current
+    let layerId = activeLayerIdRef.current
     if (!layerId) {
-      toast.warning("Add a new layer to create annotations")
-      return
+      const id = addLayerRef.current()
+      if (!id) return
+      layerId = id
+      activeLayerIdRef.current = id
     }
 
     const layer = layersRef.current.find((l) => l.id === layerId)

@@ -1,12 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
-import { toast } from "sonner"
 import { useCommentMode } from "./use-comment-mode"
 import type { WordSelection, ActiveTool } from "@/types/editor"
-
-vi.mock("sonner", () => ({
-  toast: { warning: vi.fn(), info: vi.fn(), success: vi.fn(), dismiss: vi.fn() },
-}))
 
 function createOptions(overrides: Record<string, unknown> = {}) {
   return {
@@ -14,6 +9,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     activeTool: "comments" as ActiveTool,
     selection: null as WordSelection | null,
     activeLayerId: "layer-1",
+    addLayer: vi.fn(() => "auto-layer-1"),
     layers: [] as { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[],
     addHighlight: vi.fn().mockReturnValue("h-1"),
     removeHighlight: vi.fn(),
@@ -81,13 +77,30 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled()
   })
 
-  it("warns when no active layer", () => {
-    const opts = createOptions({ activeLayerId: null, selection: word1 })
+  it("auto-creates a layer when no active layer", () => {
+    const addLayer = vi.fn(() => "auto-layer-1")
+    const addHighlight = vi.fn().mockReturnValue("h-1")
+    const onHighlightAdded = vi.fn()
+    const opts = createOptions({ activeLayerId: null, addLayer, addHighlight, onHighlightAdded, selection: word1 })
     const { result } = renderHook(() => useCommentMode(opts))
 
     act(() => { result.current.confirmComment() })
 
-    expect(toast.warning).toHaveBeenCalledWith("Add a new layer to create annotations")
+    expect(addLayer).toHaveBeenCalled()
+    expect(addHighlight).toHaveBeenCalledWith("auto-layer-1", {
+      editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "",
+    })
+    expect(onHighlightAdded).toHaveBeenCalledWith("auto-layer-1", "h-1")
+  })
+
+  it("does nothing when addLayer fails (all colors used)", () => {
+    const addLayer = vi.fn(() => "")
+    const opts = createOptions({ activeLayerId: null, addLayer, selection: word1 })
+    const { result } = renderHook(() => useCommentMode(opts))
+
+    act(() => { result.current.confirmComment() })
+
+    expect(addLayer).toHaveBeenCalled()
     expect(opts.addHighlight).not.toHaveBeenCalled()
   })
 

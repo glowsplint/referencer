@@ -118,6 +118,7 @@ export function App() {
     activeTool: annotations.activeTool,
     selection,
     activeLayerId,
+    addLayer,
     layers,
     addHighlight,
     removeHighlight,
