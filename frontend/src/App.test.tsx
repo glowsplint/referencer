@@ -26,7 +26,16 @@ const mockWorkspace = {
   toggleLocked: vi.fn(),
   toggleShowDrawingToasts: vi.fn(),
   toggleShowCommentsToasts: vi.fn(),
+  toggleShowHighlightToasts: vi.fn(),
   setActiveTool: vi.fn(),
+  setArrowStylePickerOpen: vi.fn(),
+  arrowStylePickerOpen: false,
+  activeArrowStyle: "solid" as const,
+  setActiveArrowStyle: vi.fn(),
+  selectedArrow: null as { layerId: string; arrowId: string } | null,
+  setSelectedArrow: vi.fn(),
+  updateArrowStyle: vi.fn(),
+  readOnly: false,
   toggleManagementPane: vi.fn(),
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
@@ -118,6 +127,8 @@ beforeEach(() => {
   mockWorkspace.addHighlight = vi.fn()
   mockWorkspace.removeHighlight = vi.fn()
   mockWorkspace.updateHighlightAnnotation = vi.fn()
+  mockWorkspace.setArrowStylePickerOpen = vi.fn()
+  mockWorkspace.selectedArrow = null
   capturedEditorPaneProps = []
   capturedAnnotationPanelProps = null
 })

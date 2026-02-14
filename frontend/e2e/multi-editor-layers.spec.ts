@@ -132,14 +132,24 @@ test.describe("cross-editor arrows (2 editors)", () => {
     await expect(endpointDecorations).toHaveCount(2, { timeout: 2000 });
   });
 
-  test("cross-editor arrow can be deleted by clicking", async ({ page }) => {
+  test("cross-editor arrow can be deleted by hovering and clicking X", async ({ page }) => {
     await drawArrowBetweenEditors(page, 0, 1);
 
     const arrowLine = page.getByTestId("arrow-line");
     await expect(arrowLine).toHaveCount(1, { timeout: 2000 });
 
-    // Tool auto-switched to selection, so clicking arrow deletes it
-    await arrowLine.click({ force: true });
+    // Hover the arrow hit area to reveal X icon, then click X to delete
+    const hitArea = page.getByTestId("arrow-hit-area");
+    const hitBox = await hitArea.boundingBox();
+    expect(hitBox).not.toBeNull();
+    const hoverX = hitBox!.x + hitBox!.width / 2;
+    const hoverY = hitBox!.y + hitBox!.height / 2;
+    await page.mouse.move(hoverX, hoverY, { steps: 5 });
+
+    const interactionLayer = page.locator('[data-testid="arrow-interaction-layer"]');
+    await expect(interactionLayer.locator("circle")).toHaveCount(1, { timeout: 2000 });
+
+    await page.mouse.click(hoverX, hoverY);
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });

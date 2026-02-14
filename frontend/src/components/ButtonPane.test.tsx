@@ -41,11 +41,9 @@ describe("ButtonPane", () => {
     expect(workspace.setActiveTool).toHaveBeenCalledWith("selection")
   })
 
-  it("calls setActiveTool('arrow') when arrow button is short-pressed", () => {
+  it("calls setActiveTool('arrow') when arrow button is clicked", () => {
     const { workspace } = renderButtonPane({ settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true } })
-    const btn = screen.getByTestId("arrowToolButton")
-    fireEvent.mouseDown(btn)
-    fireEvent.mouseUp(btn)
+    fireEvent.click(screen.getByTestId("arrowToolButton"))
     expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow")
   })
 
@@ -178,6 +176,30 @@ describe("ButtonPane", () => {
     expect(tooltip.querySelector("kbd")).not.toBeInTheDocument()
   })
 
+  it("auto-opens picker when activeTool is arrow", () => {
+    const { workspace } = renderButtonPane({
+      settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
+      annotations: { activeTool: "arrow" },
+    })
+    expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(true)
+  })
+
+  it("closes picker when activeTool is not arrow", () => {
+    const { workspace } = renderButtonPane({
+      settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
+      annotations: { activeTool: "selection" },
+    })
+    expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(false)
+  })
+
+  it("activates arrow tool when an arrow is selected", () => {
+    const { workspace } = renderButtonPane({
+      settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
+      selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
+    })
+    expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow")
+  })
+
   it("shows arrow style popover when arrowStylePickerOpen is true", () => {
     renderButtonPane({
       settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
@@ -195,62 +217,7 @@ describe("ButtonPane", () => {
     expect(screen.queryByTestId("arrowStylePopover")).not.toBeInTheDocument()
   })
 
-  it("opens arrow style popover on long press (500ms)", () => {
-    vi.useFakeTimers()
-    const { workspace } = renderButtonPane({
-      settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
-    })
-    const btn = screen.getByTestId("arrowToolButton")
-
-    fireEvent.mouseDown(btn)
-    act(() => { vi.advanceTimersByTime(500) })
-
-    expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(true)
-    // Long press should NOT activate the tool
-    expect(workspace.setActiveTool).not.toHaveBeenCalled()
-
-    fireEvent.mouseUp(btn)
-    // After long press fired, mouseUp should not activate tool either
-    expect(workspace.setActiveTool).not.toHaveBeenCalled()
-
-    vi.useRealTimers()
-  })
-
-  it("does not open popover on short press of arrow button", () => {
-    vi.useFakeTimers()
-    const { workspace } = renderButtonPane({
-      settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
-    })
-    const btn = screen.getByTestId("arrowToolButton")
-
-    fireEvent.mouseDown(btn)
-    act(() => { vi.advanceTimersByTime(200) })
-    fireEvent.mouseUp(btn)
-
-    expect(workspace.setArrowStylePickerOpen).not.toHaveBeenCalled()
-    expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow")
-
-    vi.useRealTimers()
-  })
-
-  it("cancels long press when mouse leaves arrow button", () => {
-    vi.useFakeTimers()
-    const { workspace } = renderButtonPane({
-      settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
-    })
-    const btn = screen.getByTestId("arrowToolButton")
-
-    fireEvent.mouseDown(btn)
-    act(() => { vi.advanceTimersByTime(200) })
-    fireEvent.mouseLeave(btn)
-    act(() => { vi.advanceTimersByTime(500) })
-
-    expect(workspace.setArrowStylePickerOpen).not.toHaveBeenCalled()
-
-    vi.useRealTimers()
-  })
-
-  it("selecting a style calls setActiveArrowStyle, closes popover, and activates arrow tool", () => {
+  it("selecting a style calls setActiveArrowStyle", () => {
     const { workspace } = renderButtonPane({
       settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
       arrowStylePickerOpen: true,
@@ -259,8 +226,6 @@ describe("ButtonPane", () => {
     fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"))
 
     expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed")
-    expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(false)
-    expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow")
   })
 
   it("calls updateArrowStyle when a style is selected and an arrow is selected", () => {
@@ -287,35 +252,6 @@ describe("ButtonPane", () => {
 
     expect(workspace.updateArrowStyle).not.toHaveBeenCalled()
     expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed")
-  })
-
-  it("auto-closes picker when clicking outside", () => {
-    const { workspace } = renderButtonPane({
-      settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
-      arrowStylePickerOpen: true,
-    })
-
-    // Click somewhere outside the popover and arrow button
-    fireEvent.mouseDown(document.body)
-
-    expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(false)
-  })
-
-  it("does not auto-close picker when clicking inside the popover", () => {
-    const { workspace } = renderButtonPane({
-      settings: { isDarkMode: false, isLayersOn: false, isMultipleRowsLayout: false, isLocked: true, showDrawingToasts: true, showCommentsToasts: true },
-      arrowStylePickerOpen: true,
-    })
-
-    const popover = screen.getByTestId("arrowStylePopover")
-    fireEvent.mouseDown(popover)
-
-    // setArrowStylePickerOpen should not have been called with false from the auto-close handler
-    // (it may be called by the style select handler, but not by the outside click handler)
-    const falseCalls = (workspace.setArrowStylePickerOpen as ReturnType<typeof vi.fn>).mock.calls.filter(
-      (args: unknown[]) => args[0] === false
-    )
-    expect(falseCalls).toHaveLength(0)
   })
 
   it("renders arrow style icon matching activeArrowStyle", () => {

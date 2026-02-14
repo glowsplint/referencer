@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   Columns2,
   Rows2,
@@ -33,8 +33,6 @@ const TOOL_SHORTCUTS: Record<ActiveTool, string> = {
   highlight: "H",
   underline: "U",
 };
-
-const LONG_PRESS_MS = 500;
 
 function ArrowStyleIcon({ style, size = 20 }: { style: ArrowStyle; size?: number }) {
   const pad = 3;
@@ -88,35 +86,17 @@ export function ButtonPane() {
   const [faqOpen, setFaqOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const longPressFiredRef = useRef(false);
-  const arrowButtonRef = useRef<HTMLButtonElement>(null);
+  // Sync picker open state with active tool
+  useEffect(() => {
+    setArrowStylePickerOpen(annotations.activeTool === "arrow");
+  }, [annotations.activeTool, setArrowStylePickerOpen]);
 
-  const cancelLongPress = useCallback(() => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleArrowMouseDown = useCallback(() => {
-    longPressFiredRef.current = false;
-    longPressTimerRef.current = setTimeout(() => {
-      longPressFiredRef.current = true;
-      setArrowStylePickerOpen(true);
-    }, LONG_PRESS_MS);
-  }, []);
-
-  const handleArrowMouseUp = useCallback(() => {
-    cancelLongPress();
-    if (!longPressFiredRef.current) {
+  // Activate arrow tool when an arrow is selected
+  useEffect(() => {
+    if (selectedArrow) {
       setActiveTool("arrow");
     }
-  }, [cancelLongPress, setActiveTool]);
-
-  const handleArrowMouseLeave = useCallback(() => {
-    cancelLongPress();
-  }, [cancelLongPress]);
+  }, [selectedArrow, setActiveTool]);
 
   const handleArrowStyleSelect = useCallback(
     (style: ArrowStyle) => {
@@ -124,26 +104,9 @@ export function ButtonPane() {
       if (selectedArrow) {
         updateArrowStyle(selectedArrow.layerId, selectedArrow.arrowId, style);
       }
-      setArrowStylePickerOpen(false);
-      setActiveTool("arrow");
     },
-    [setActiveArrowStyle, setActiveTool, selectedArrow, updateArrowStyle]
+    [setActiveArrowStyle, selectedArrow, updateArrowStyle]
   );
-
-  // Auto-close picker when clicking outside the popover and arrow button
-  useEffect(() => {
-    if (!arrowStylePickerOpen) return;
-    const handler = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const popover = document.querySelector('[data-testid="arrowStylePopover"]');
-      const arrowBtn = arrowButtonRef.current;
-      if (popover?.contains(target)) return;
-      if (arrowBtn?.contains(target)) return;
-      setArrowStylePickerOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [arrowStylePickerOpen, setArrowStylePickerOpen]);
 
   const toolButtons: { tool: ActiveTool; icon: React.ReactNode; label: string; testId: string }[] = [
     { tool: "selection", icon: <MousePointer2 size={20} />, label: "Selection tool", testId: "selectionToolButton" },
@@ -213,11 +176,7 @@ export function ButtonPane() {
             <Tooltip placement="right">
               <TooltipTrigger asChild>
                 <button
-                  ref={isArrow ? arrowButtonRef : undefined}
-                  onClick={isArrow ? undefined : () => setActiveTool(tool)}
-                  onMouseDown={isArrow ? handleArrowMouseDown : undefined}
-                  onMouseUp={isArrow ? handleArrowMouseUp : undefined}
-                  onMouseLeave={isArrow ? handleArrowMouseLeave : undefined}
+                  onClick={() => setActiveTool(tool)}
                   disabled={!settings.isLocked || readOnly}
                   className={`p-2 rounded-md transition-colors ${
                     annotations.activeTool === tool && settings.isLocked
@@ -229,7 +188,7 @@ export function ButtonPane() {
                   {icon}
                 </button>
               </TooltipTrigger>
-              <TooltipContent>{label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>{isArrow && " (hold to pick style)"}</TooltipContent>
+              <TooltipContent>{label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd></TooltipContent>
             </Tooltip>
             {isArrow && arrowStylePickerOpen && (
               <div className="absolute left-full top-0 ml-1 z-50" data-testid="arrowStylePopover">

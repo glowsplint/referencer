@@ -83,7 +83,6 @@ export function App() {
   useToolShortcuts({
     isLocked: settings.isLocked,
     setActiveTool,
-    onArrowLongPress: useCallback(() => workspace.setArrowStylePickerOpen(true), [workspace]),
   });
   useToggleShortcuts({
     toggleDarkMode: workspace.toggleDarkMode,

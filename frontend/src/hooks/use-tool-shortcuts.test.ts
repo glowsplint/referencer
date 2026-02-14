@@ -9,10 +9,6 @@ function fireKeyDown(code: string, options: Partial<KeyboardEvent> = {}) {
   )
 }
 
-function fireKeyUp(code: string) {
-  document.dispatchEvent(new KeyboardEvent("keyup", { code }))
-}
-
 describe("useToolShortcuts", () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -104,47 +100,6 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).not.toHaveBeenCalled()
 
     rerender({ isLocked: true })
-
-    act(() => { fireKeyDown("KeyA") })
-    expect(setActiveTool).toHaveBeenCalledWith("arrow")
-  })
-
-  it("short press A with onArrowLongPress still activates arrow tool", () => {
-    vi.useFakeTimers()
-    const setActiveTool = vi.fn()
-    const onArrowLongPress = vi.fn()
-    renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool, onArrowLongPress }))
-
-    act(() => { fireKeyDown("KeyA") })
-    act(() => { vi.advanceTimersByTime(200) })
-    act(() => { fireKeyUp("KeyA") })
-
-    expect(setActiveTool).toHaveBeenCalledWith("arrow")
-    expect(onArrowLongPress).not.toHaveBeenCalled()
-    vi.useRealTimers()
-  })
-
-  it("long press A (500ms) calls onArrowLongPress instead of setActiveTool", () => {
-    vi.useFakeTimers()
-    const setActiveTool = vi.fn()
-    const onArrowLongPress = vi.fn()
-    renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool, onArrowLongPress }))
-
-    act(() => { fireKeyDown("KeyA") })
-    act(() => { vi.advanceTimersByTime(500) })
-
-    expect(onArrowLongPress).toHaveBeenCalledOnce()
-    expect(setActiveTool).not.toHaveBeenCalled()
-
-    // keyup after long press should not activate tool
-    act(() => { fireKeyUp("KeyA") })
-    expect(setActiveTool).not.toHaveBeenCalled()
-    vi.useRealTimers()
-  })
-
-  it("A key without onArrowLongPress activates arrow tool immediately on keydown", () => {
-    const setActiveTool = vi.fn()
-    renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }))
 
     act(() => { fireKeyDown("KeyA") })
     expect(setActiveTool).toHaveBeenCalledWith("arrow")

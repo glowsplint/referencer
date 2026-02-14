@@ -66,7 +66,7 @@ test("no arrow created when confirming same word twice", async ({ page }) => {
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
 });
 
-test("click on arrow line deletes it", async ({ page }) => {
+test("click on arrow line selects it and activates arrow tool", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
@@ -81,14 +81,12 @@ test("click on arrow line deletes it", async ({ page }) => {
   await page.keyboard.press("Enter");
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Tool auto-switched to selection, so we can click the arrow to delete
-  const arrowLine = page.getByTestId("arrow-line");
-  const arrowBox = await arrowLine.boundingBox();
-  expect(arrowBox).not.toBeNull();
-  const midX = arrowBox!.x + arrowBox!.width / 2;
-  const midY = arrowBox!.y + arrowBox!.height / 2;
-  await page.mouse.click(midX, midY);
-  await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
+  // Click the arrow line to select it (hit area has transparent stroke, use force)
+  await page.getByTestId("arrow-hit-area").click({ force: true });
+  await expect(page.getByTestId("arrow-selection-ring")).toHaveCount(1, { timeout: 2000 });
+
+  // Arrow tool should be active (selecting an arrow activates arrow tool)
+  await expect(page.getByTestId("arrowToolButton")).toHaveClass(/bg-accent/, { timeout: 2000 });
 });
 
 test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ page }) => {
@@ -121,7 +119,7 @@ test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ pa
   const interactionLayer = page.locator('[data-testid="arrow-interaction-layer"]');
   await expect(interactionLayer.locator("circle")).toHaveCount(1, { timeout: 2000 });
 
-  // Click the hit area to delete
+  // Click the X icon to delete
   await page.mouse.click(hoverX, hoverY);
   await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
 });

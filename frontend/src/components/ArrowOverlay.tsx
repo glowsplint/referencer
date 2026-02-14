@@ -737,6 +737,7 @@ export function ArrowOverlay({
                     else xIconRefs.current.delete(data.arrowId)
                   }}
                   transform="translate(0, 0)"
+                  data-testid="arrow-delete-icon"
                   style={{ pointerEvents: "auto", cursor: "pointer" }}
                   onClick={(e) => {
                     e.stopPropagation()
