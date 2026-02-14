@@ -62,7 +62,7 @@ describe("useWordHover", () => {
 
   it("attaches mousemove and mouseleave listeners when locked", () => {
     const { editor, dom } = createMockEditor()
-    renderHook(() => useWordHover(editor, 0, true, false, null))
+    renderHook(() => useWordHover(editor, 0, true, false, null, "#ff0000", []))
 
     expect(dom.addEventListener).toHaveBeenCalledWith("mousemove", expect.any(Function))
     expect(dom.addEventListener).toHaveBeenCalledWith("mouseleave", expect.any(Function))
@@ -70,13 +70,13 @@ describe("useWordHover", () => {
 
   it("does not attach listeners when not locked", () => {
     const { editor, dom } = createMockEditor()
-    renderHook(() => useWordHover(editor, 0, false, false, null))
+    renderHook(() => useWordHover(editor, 0, false, false, null, "#ff0000", []))
 
     expect(dom.addEventListener).not.toHaveBeenCalled()
   })
 
   it("does not attach listeners when editor is null", () => {
-    renderHook(() => useWordHover(null, 0, true, false, null))
+    renderHook(() => useWordHover(null, 0, true, false, null, "#ff0000", []))
     // No error thrown = pass
   })
 
@@ -88,7 +88,7 @@ describe("useWordHover", () => {
     const { editor, listeners, dispatch } = createMockEditor()
     editor.view.posAtCoords.mockReturnValue({ pos: 3 })
 
-    renderHook(() => useWordHover(editor, 0, true, false, null))
+    renderHook(() => useWordHover(editor, 0, true, false, null, "#ff0000", []))
 
     const mousemoveHandler = listeners["mousemove"]?.[0]
     mousemoveHandler?.({ clientX: 100, clientY: 50 })
@@ -104,7 +104,7 @@ describe("useWordHover", () => {
     const { editor, listeners, dispatch, tr } = createMockEditor()
     editor.view.posAtCoords.mockReturnValue({ pos: 3 })
 
-    renderHook(() => useWordHover(editor, 0, true, false, null))
+    renderHook(() => useWordHover(editor, 0, true, false, null, "#ff0000", []))
 
     // First hover over a word
     listeners["mousemove"]?.[0]?.({ clientX: 100, clientY: 50 })
@@ -127,7 +127,7 @@ describe("useWordHover", () => {
     editor.view.posAtCoords.mockReturnValue({ pos: 3 })
 
     const selection = { editorIndex: 0, from: 1, to: 5, text: "hello" }
-    renderHook(() => useWordHover(editor, 0, true, false, selection))
+    renderHook(() => useWordHover(editor, 0, true, false, selection, "#ff0000", []))
 
     dispatch.mockClear()
     listeners["mousemove"]?.[0]?.({ clientX: 100, clientY: 50 })
@@ -136,9 +136,35 @@ describe("useWordHover", () => {
     expect(dispatch).not.toHaveBeenCalled()
   })
 
+  it("does not apply decoration when hovered word overlaps a layer highlight", async () => {
+    const { getWordBoundaries } = await import("@/lib/tiptap/word-boundaries")
+    const mockedGetWordBoundaries = vi.mocked(getWordBoundaries)
+    mockedGetWordBoundaries.mockReturnValue({ from: 1, to: 5, text: "hello" })
+
+    const { editor, listeners, dispatch } = createMockEditor()
+    editor.view.posAtCoords.mockReturnValue({ pos: 3 })
+
+    const layers = [
+      {
+        id: "layer-1",
+        name: "Layer 1",
+        color: "#ff0000",
+        visible: true,
+        highlights: [{ id: "h1", editorIndex: 0, from: 3, to: 8, text: "lo wo", annotation: "" }],
+        arrows: [],
+      },
+    ]
+    renderHook(() => useWordHover(editor, 0, true, false, null, "#ff0000", layers))
+
+    dispatch.mockClear()
+    listeners["mousemove"]?.[0]?.({ clientX: 100, clientY: 50 })
+
+    expect(dispatch).not.toHaveBeenCalled()
+  })
+
   it("removes listeners on cleanup", () => {
     const { editor, dom } = createMockEditor()
-    const { unmount } = renderHook(() => useWordHover(editor, 0, true, false, null))
+    const { unmount } = renderHook(() => useWordHover(editor, 0, true, false, null, "#ff0000", []))
 
     unmount()
 

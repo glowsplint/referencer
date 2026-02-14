@@ -106,7 +106,7 @@ export function EditorPane({
   useLayerDecorations(editor, layers, index, isLocked, isDarkMode)
   useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
   useSimilarTextHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
-  useWordHover(editor, index, isLocked, isDarkMode, selection)
+  useWordHover(editor, index, isLocked, isDarkMode, selection, activeLayerColor, layers)
   useArrowEndpointDecorations(editor, layers, index, isLocked, isDarkMode)
   useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow)
   useSelectionScroll(editor, selection, index, wrapperRef)

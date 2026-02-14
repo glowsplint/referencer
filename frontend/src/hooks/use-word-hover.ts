@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import type { Editor } from "@tiptap/react"
-import type { WordSelection } from "@/types/editor"
+import type { Layer, WordSelection } from "@/types/editor"
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import { wordHoverPluginKey } from "@/lib/tiptap/extensions/word-hover"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
@@ -11,7 +11,9 @@ export function useWordHover(
   editorIndex: number,
   isLocked: boolean,
   isDarkMode: boolean,
-  selection: WordSelection | null
+  selection: WordSelection | null,
+  activeLayerColor: string | null,
+  layers: Layer[]
 ) {
   const lastWordRef = useRef<{ from: number; to: number } | null>(null)
 
@@ -61,8 +63,25 @@ export function useWordHover(
         return
       }
 
+      // Skip if hovered word overlaps a visible layer highlight
+      const overlapsLayerHighlight = layers.some(
+        (layer) =>
+          layer.visible &&
+          layer.highlights.some(
+            (h) => h.editorIndex === editorIndex && h.from < word.to && h.to > word.from
+          )
+      )
+      if (overlapsLayerHighlight) {
+        if (lastWordRef.current) {
+          lastWordRef.current = null
+          const tr = editor.state.tr.setMeta(wordHoverPluginKey, DecorationSet.empty)
+          editor.view.dispatch(tr)
+        }
+        return
+      }
+
       lastWordRef.current = { from: word.from, to: word.to }
-      const bgColor = blendWithBackground("#94a3b8", 0.08, isDarkMode)
+      const bgColor = blendWithBackground(activeLayerColor ?? "#3b82f6", 0.08, isDarkMode)
       try {
         const decoration = Decoration.inline(word.from, word.to, {
           style: `background-color: ${bgColor}; border-radius: 2px`,
@@ -96,5 +115,5 @@ export function useWordHover(
       }
       lastWordRef.current = null
     }
-  }, [editor, editorIndex, isLocked, isDarkMode, selection])
+  }, [editor, editorIndex, isLocked, isDarkMode, selection, activeLayerColor, layers])
 }
