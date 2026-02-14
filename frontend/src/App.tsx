@@ -338,6 +338,7 @@ export function App() {
                         isDarkMode={settings.isDarkMode}
                         removeArrow={removeArrow}
                         sectionVisibility={sectionVisibility}
+                        selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
                       />
                     </div>
                   </Fragment>

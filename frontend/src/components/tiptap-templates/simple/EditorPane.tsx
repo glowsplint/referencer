@@ -45,6 +45,7 @@ export function EditorPane({
   isDarkMode,
   removeArrow,
   sectionVisibility,
+  selectedArrowId,
 }: {
   isLocked: boolean
   activeTool?: ActiveTool
@@ -63,6 +64,7 @@ export function EditorPane({
   isDarkMode: boolean
   removeArrow: (layerId: string, arrowId: string) => void
   sectionVisibility: boolean[]
+  selectedArrowId: string | null
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -112,7 +114,7 @@ export function EditorPane({
   useSelectionHighlight(editor, visibleSelection, index, isLocked, activeLayerColor, isDarkMode, activeTool)
   useSimilarTextHighlight(editor, visibleSelection, index, isLocked, activeLayerColor, isDarkMode)
   useWordHover(editor, index, isLocked, isDarkMode, visibleSelection, activeLayerColor, layers)
-  useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow)
+  useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow, selectedArrowId)
   useSelectionScroll(editor, visibleSelection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {

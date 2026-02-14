@@ -164,6 +164,7 @@ const defaultEditorPaneProps = {
   selection: null,
   activeLayerColor: null,
   isDarkMode: false,
+  selectedArrowId: null,
 }
 
 beforeEach(() => {

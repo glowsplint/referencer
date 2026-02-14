@@ -10,7 +10,8 @@ export function useEditorArrows(
   isLocked: boolean,
   isDarkMode: boolean,
   sectionVisibility: boolean[],
-  removeArrow: (layerId: string, arrowId: string) => void
+  removeArrow: (layerId: string, arrowId: string) => void,
+  selectedArrowId: string | null
 ) {
   // Update dark mode
   useEffect(() => {
@@ -47,6 +48,13 @@ export function useEditorArrows(
 
     view.setArrows(arrowData)
   }, [editor, layers, editorIndex, sectionVisibility, isLocked])
+
+  // Update selected arrow in plugin
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return
+    const view = getArrowLinesView(editor.view)
+    view?.setSelectedArrowId(selectedArrowId)
+  }, [editor, selectedArrowId])
 
   // removeArrow is used by ArrowOverlay interaction layer, not the plugin
   void removeArrow

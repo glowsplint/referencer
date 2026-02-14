@@ -241,6 +241,8 @@ export function ArrowOverlay({
       const my = (y1 + y2) / 2
       const arrowPath = `M ${x1} ${y1} L ${mx} ${my} L ${x2} ${y2}`
       const isHovered = hoveredArrowId === data.arrowId
+      const isSelected = selectedArrow?.arrowId === data.arrowId
+      const hideMarker = isHovered || isSelected
 
       const marker = document.createElementNS(SVG_NS, "marker")
       marker.setAttribute("id", `wrapper-arrowhead-${data.arrowId}`)
@@ -270,7 +272,7 @@ export function ArrowOverlay({
           p.setAttribute("fill", "none")
           g.appendChild(p)
         }
-        if (!isHovered) {
+        if (!hideMarker) {
           const markerPath = document.createElementNS(SVG_NS, "path")
           markerPath.setAttribute("d", arrowPath)
           markerPath.setAttribute("stroke", "none")
@@ -288,7 +290,7 @@ export function ArrowOverlay({
         if (styleAttrs.strokeDasharray) {
           path.setAttribute("stroke-dasharray", styleAttrs.strokeDasharray)
         }
-        if (!isHovered) {
+        if (!hideMarker) {
           path.setAttribute("marker-mid", `url(#wrapper-arrowhead-${data.arrowId})`)
         }
         g.appendChild(path)
@@ -359,7 +361,7 @@ export function ArrowOverlay({
     if (defs.children.length > 0) {
       svg.insertBefore(defs, svg.firstChild)
     }
-  }, [editorsRef, hoveredArrowId, isDarkMode])
+  }, [editorsRef, hoveredArrowId, selectedArrow, isDarkMode])
 
   // Imperatively update all path `d` attributes and X-icon positions
   const updatePositions = useCallback(() => {
@@ -599,6 +601,8 @@ export function ArrowOverlay({
         {crossEditorArrows.map((data) => {
           const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
           const isHovered = hoveredArrowId === data.arrowId
+          const isSelected = selectedArrow?.arrowId === data.arrowId
+          const hideMarker = isHovered || isSelected
           if (styleAttrs.isDouble) {
             return (
               <g key={data.arrowId} opacity={ARROW_OPACITY}>
@@ -624,7 +628,7 @@ export function ArrowOverlay({
                   strokeWidth={styleAttrs.strokeWidth}
                   fill="none"
                 />
-                {!isHovered && (
+                {!hideMarker && (
                   <path
                     d=""
                     stroke="none"
@@ -648,7 +652,7 @@ export function ArrowOverlay({
                 strokeWidth={styleAttrs.strokeWidth}
                 fill="none"
                 strokeDasharray={styleAttrs.strokeDasharray ?? undefined}
-                markerMid={isHovered ? undefined : `url(#arrowhead-${data.arrowId})`}
+                markerMid={hideMarker ? undefined : `url(#arrowhead-${data.arrowId})`}
               />
             </g>
           )
@@ -730,7 +734,7 @@ export function ArrowOverlay({
                   setSelectedArrow({ layerId: data.layerId, arrowId: data.arrowId })
                 }}
               />
-              {isHovered && (
+              {(isHovered || isSelected) && (
                 <g
                   ref={(el) => {
                     if (el) xIconRefs.current.set(data.arrowId, el)

@@ -39,6 +39,7 @@ export class ArrowLinesView {
   private arrows: ArrowData[] = []
   private isDarkMode = false
   private hoveredArrowId: string | null = null
+  private selectedArrowId: string | null = null
   private resizeObserver: ResizeObserver | null = null
 
   constructor(view: EditorView) {
@@ -109,6 +110,12 @@ export class ArrowLinesView {
     this.redraw()
   }
 
+  setSelectedArrowId(arrowId: string | null) {
+    if (this.selectedArrowId === arrowId) return
+    this.selectedArrowId = arrowId
+    this.redraw()
+  }
+
   private redraw() {
     if (!this.ensureWrapper()) return
 
@@ -129,7 +136,7 @@ export class ArrowLinesView {
       const mx = (x1 + x2) / 2
       const my = (y1 + y2) / 2
       const arrowPath = `M ${x1} ${y1} L ${mx} ${my} L ${x2} ${y2}`
-      const isHovered = this.hoveredArrowId === arrow.arrowId
+      const hideMarker = this.hoveredArrowId === arrow.arrowId || this.selectedArrowId === arrow.arrowId
 
       // Marker (arrowhead)
       const marker = document.createElementNS(SVG_NS, "marker")
@@ -162,7 +169,7 @@ export class ArrowLinesView {
           g.appendChild(p)
         }
         // Marker on a center path (invisible, just for the arrowhead)
-        if (!isHovered) {
+        if (!hideMarker) {
           const markerPath = document.createElementNS(SVG_NS, "path")
           markerPath.setAttribute("d", arrowPath)
           markerPath.setAttribute("stroke", "none")
@@ -180,7 +187,7 @@ export class ArrowLinesView {
         if (styleAttrs.strokeDasharray) {
           path.setAttribute("stroke-dasharray", styleAttrs.strokeDasharray)
         }
-        if (!isHovered) {
+        if (!hideMarker) {
           path.setAttribute("marker-mid", `url(#arrowhead-${arrow.arrowId})`)
         }
         g.appendChild(path)
