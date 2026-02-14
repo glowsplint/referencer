@@ -136,7 +136,7 @@ export class ArrowLinesView {
       const mx = (x1 + x2) / 2
       const my = (y1 + y2) / 2
       const arrowPath = `M ${x1} ${y1} L ${mx} ${my} L ${x2} ${y2}`
-      const hideMarker = this.hoveredArrowId === arrow.arrowId || this.selectedArrowId === arrow.arrowId
+      const hideMarker = this.selectedArrowId === arrow.arrowId
 
       // Marker (arrowhead)
       const marker = document.createElementNS(SVG_NS, "marker")

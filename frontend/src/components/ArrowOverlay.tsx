@@ -610,7 +610,7 @@ export function ArrowOverlay({
           const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
           const isHovered = hoveredArrowId === data.arrowId
           const isSelected = selectedArrow?.arrowId === data.arrowId
-          const hideMarker = isHovered || isSelected
+          const hideMarker = isSelected
           if (styleAttrs.isDouble) {
             return (
               <g key={data.arrowId} opacity={ARROW_OPACITY}>

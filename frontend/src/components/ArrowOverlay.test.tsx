@@ -771,7 +771,7 @@ describe("ArrowOverlay", () => {
     expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
   })
 
-  it("hides arrowhead marker when arrow is hovered", () => {
+  it("keeps arrowhead marker when arrow is hovered without selection", () => {
     const layer = createLayer({
       arrows: [
         {
@@ -787,10 +787,10 @@ describe("ArrowOverlay", () => {
     expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
 
     fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
-    expect(arrowLine.getAttribute("marker-mid")).toBeNull()
+    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
   })
 
-  it("restores arrowhead marker when hover ends", () => {
+  it("hides arrowhead marker when arrow is selected", () => {
     const layer = createLayer({
       arrows: [
         {
@@ -800,11 +800,46 @@ describe("ArrowOverlay", () => {
         },
       ],
     })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    const { rerender } = render(
+      <ArrowOverlay {...createDefaultProps({ layers: [layer] })} />
+    )
 
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    fireEvent.mouseEnter(hitArea)
-    fireEvent.mouseLeave(hitArea)
+    const arrowLine = screen.getByTestId("arrow-line")
+    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
+
+    rerender(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
+      />
+    )
+    expect(arrowLine.getAttribute("marker-mid")).toBeNull()
+  })
+
+  it("restores arrowhead marker when arrow is deselected", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    const { rerender } = render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
+      />
+    )
+
+    rerender(
+      <ArrowOverlay {...createDefaultProps({ layers: [layer] })} />
+    )
 
     const arrowLine = screen.getByTestId("arrow-line")
     expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
