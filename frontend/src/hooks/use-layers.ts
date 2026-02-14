@@ -7,31 +7,31 @@ export function useLayers() {
   const [layers, setLayers] = useState<Layer[]>([])
   const [activeLayerId, setActiveLayerId] = useState<string | null>(null)
   const layerCounterRef = useRef(0)
+  const layersRef = useRef(layers)
+  layersRef.current = layers
 
   const updateLayer = (id: string, updater: (layer: Layer) => Layer) => {
     setLayers((prev) => prev.map((l) => (l.id === id ? updater(l) : l)))
   }
 
   const addLayer = useCallback((opts?: { id?: string; name?: string; color?: string }): { id: string; name: string } | null => {
+    const usedColors = new Set(layersRef.current.map((l) => l.color))
+    const color = opts?.color ?? TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
+    if (!color) {
+      toast.warning("All colors are in use — remove a layer first")
+      return null
+    }
     if (!opts?.name) {
       layerCounterRef.current += 1
     }
     const nextNumber = layerCounterRef.current
     const id = opts?.id ?? crypto.randomUUID()
     const name = opts?.name ?? `Layer ${nextNumber}`
-    let added = false
-    setLayers((prev) => {
-      const usedColors = new Set(prev.map((l) => l.color))
-      const color = opts?.color ?? TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
-      if (!color) return prev
-      added = true
-      setActiveLayerId(id)
-      return [...prev, { id, name, color, visible: true, highlights: [], arrows: [] }]
-    })
-    if (!added) {
-      toast.warning("All colors are in use — remove a layer first")
-      return null
-    }
+    const newLayer: Layer = { id, name, color, visible: true, highlights: [], arrows: [] }
+    // Eagerly update ref so rapid calls within the same batch see the new layer
+    layersRef.current = [...layersRef.current, newLayer]
+    setLayers((prev) => [...prev, newLayer])
+    setActiveLayerId(id)
     return { id, name }
   }, [])
 
