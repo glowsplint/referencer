@@ -72,7 +72,7 @@ export function useUnderlineMode({
       if (showUnderlineToastsRef.current) {
         setStatusRef.current({ text: <>Select words to underline, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
       }
-    } else {
+    } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

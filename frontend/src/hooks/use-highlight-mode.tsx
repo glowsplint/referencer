@@ -72,7 +72,7 @@ export function useHighlightMode({
       if (showHighlightToastsRef.current) {
         setStatusRef.current({ text: <>Select words to highlight, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
       }
-    } else {
+    } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

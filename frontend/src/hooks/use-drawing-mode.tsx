@@ -73,6 +73,12 @@ export function useDrawingMode({
   const clearStatusRef = useRef(clearStatus)
   clearStatusRef.current = clearStatus
 
+  const activeToolRef = useRef(activeTool)
+  activeToolRef.current = activeTool
+
+  const isLockedRef = useRef(isLocked)
+  isLockedRef.current = isLocked
+
   const isArrowTool = activeTool === "arrow" && isLocked
 
   const showInfo = (text: ReactNode) => {
@@ -91,7 +97,7 @@ export function useDrawingMode({
       phaseRef.current = "idle"
       anchorRef.current = null
       setDrawingState(null)
-      if (wasActive) {
+      if (wasActive && (activeToolRef.current === "selection" || !isLockedRef.current)) {
         clearStatusRef.current()
       }
     }

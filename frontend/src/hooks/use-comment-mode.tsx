@@ -76,7 +76,7 @@ export function useCommentMode({
       if (showCommentToastsRef.current) {
         setStatusRef.current({ text: <>Select words to comment on, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
       }
-    } else {
+    } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
