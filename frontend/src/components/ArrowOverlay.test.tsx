@@ -442,6 +442,46 @@ describe("ArrowOverlay", () => {
     expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
   })
 
+  it("clicking arrow clears hover state so X icon does not persist after undo", () => {
+    const removeArrow = vi.fn()
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    const { rerender } = render(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], removeArrow })}
+      />
+    )
+
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+
+    // Hover shows X icon
+    fireEvent.mouseEnter(hitArea)
+    expect(interactionLayer.querySelector("circle")).toBeInTheDocument()
+
+    // Click to delete — X icon should disappear
+    fireEvent.click(hitArea)
+    expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
+    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
+
+    // Simulate undo: re-render with the same arrow restored
+    rerender(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], removeArrow })}
+      />
+    )
+
+    // X icon should NOT reappear after undo
+    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
+  })
+
   it("arrow lines are in the visual layer, not the interaction layer", () => {
     const layer = createLayer({
       arrows: [

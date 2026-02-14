@@ -616,7 +616,10 @@ export function ArrowOverlay({
                 }}
                 onMouseEnter={() => setHoveredArrowId(data.arrowId)}
                 onMouseLeave={() => setHoveredArrowId(null)}
-                onClick={() => removeArrow(data.layerId, data.arrowId)}
+                onClick={() => {
+                  removeArrow(data.layerId, data.arrowId)
+                  setHoveredArrowId(null)
+                }}
               />
               {isHovered && (
                 <g
