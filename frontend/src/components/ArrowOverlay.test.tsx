@@ -417,7 +417,7 @@ describe("ArrowOverlay", () => {
     expect(visualLayer.contains(hitArea)).toBe(false)
   })
 
-  it("shows X icon on hover and hides it on mouse leave", () => {
+  it("does not show X icon on hover alone", () => {
     const layer = createLayer({
       arrows: [
         {
@@ -430,23 +430,17 @@ describe("ArrowOverlay", () => {
     render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
 
     const hitArea = screen.getByTestId("arrow-hit-area")
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
 
     // No X icon initially
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
     expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
 
-    // Hover shows X icon
+    // Hover does NOT show X icon
     fireEvent.mouseEnter(hitArea)
-    const circle = interactionLayer.querySelector("circle")
-    expect(circle).toBeInTheDocument()
-
-    // Mouse leave hides X icon
-    fireEvent.mouseLeave(hitArea)
     expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
   })
 
-  it("clicking X icon on hovered arrow calls removeArrow and clears hover state", () => {
-    const removeArrow = vi.fn()
+  it("shows X icon when arrow is selected and hides on deselect", () => {
     const layer = createLayer({
       arrows: [
         {
@@ -458,32 +452,56 @@ describe("ArrowOverlay", () => {
     })
     const { rerender } = render(
       <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], removeArrow })}
+        {...createDefaultProps({
+          layers: [layer],
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
       />
     )
 
-    const hitArea = screen.getByTestId("arrow-hit-area")
     const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    expect(interactionLayer.querySelector("circle")).toBeInTheDocument()
 
-    // Hover shows X icon
-    fireEvent.mouseEnter(hitArea)
+    // Deselect hides X icon
+    rerender(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], selectedArrow: null })}
+      />
+    )
+    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
+  })
+
+  it("clicking X icon on selected arrow calls removeArrow", () => {
+    const removeArrow = vi.fn()
+    const setSelectedArrow = vi.fn()
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          removeArrow,
+          setSelectedArrow,
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
+      />
+    )
+
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
     expect(interactionLayer.querySelector("circle")).toBeInTheDocument()
 
     // Click X icon to delete
     const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
     fireEvent.click(xIconGroup)
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
-    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
-
-    // Simulate undo: re-render with the same arrow restored
-    rerender(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], removeArrow })}
-      />
-    )
-
-    // X icon should NOT reappear after undo
-    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
+    expect(setSelectedArrow).toHaveBeenCalledWith(null)
   })
 
   it("arrow lines are in the visual layer, not the interaction layer", () => {
@@ -594,7 +612,7 @@ describe("ArrowOverlay", () => {
     expect(setSelectedArrow).toHaveBeenCalledWith({ layerId: "layer-1", arrowId: "a1" })
   })
 
-  it("hovering one arrow then another only shows one X icon", () => {
+  it("only selected arrow shows X icon, not other arrows", () => {
     const layer = createLayer({
       arrows: [
         {
@@ -609,18 +627,16 @@ describe("ArrowOverlay", () => {
         },
       ],
     })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
+      />
+    )
 
     const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    const hitAreas = screen.getAllByTestId("arrow-hit-area")
-
-    // Hover first arrow
-    fireEvent.mouseEnter(hitAreas[0])
-    expect(interactionLayer.querySelectorAll("circle")).toHaveLength(1)
-
-    // Move to second arrow
-    fireEvent.mouseLeave(hitAreas[0])
-    fireEvent.mouseEnter(hitAreas[1])
     expect(interactionLayer.querySelectorAll("circle")).toHaveLength(1)
   })
 
@@ -634,10 +650,14 @@ describe("ArrowOverlay", () => {
         },
       ],
     })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
-
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    fireEvent.mouseEnter(hitArea)
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
+      />
+    )
 
     const interactionLayer = screen.getByTestId("arrow-interaction-layer")
     const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
@@ -659,9 +679,14 @@ describe("ArrowOverlay", () => {
         },
       ],
     })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
-
-    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
+      />
+    )
 
     const interactionLayer = screen.getByTestId("arrow-interaction-layer")
     const circle = interactionLayer.querySelector("circle")!
@@ -682,9 +707,14 @@ describe("ArrowOverlay", () => {
         },
       ],
     })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
-
-    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({
+          layers: [layer],
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
+      />
+    )
 
     const interactionLayer = screen.getByTestId("arrow-interaction-layer")
     const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
@@ -911,12 +941,15 @@ describe("ArrowOverlay", () => {
     })
     render(
       <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], removeArrow, setSelectedArrow })}
+        {...createDefaultProps({
+          layers: [layer],
+          removeArrow,
+          setSelectedArrow,
+          selectedArrow: { layerId: "layer-1", arrowId: "a1" },
+        })}
       />
     )
 
-    // Hover to show X icon
-    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
     const interactionLayer = screen.getByTestId("arrow-interaction-layer")
     const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
 
@@ -924,8 +957,7 @@ describe("ArrowOverlay", () => {
     fireEvent.click(xIconGroup)
 
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
-    // setSelectedArrow should NOT have been called with a selection (the X icon stopPropagation prevents hit area click)
-    expect(setSelectedArrow).not.toHaveBeenCalledWith({ layerId: "layer-1", arrowId: "a1" })
+    expect(setSelectedArrow).toHaveBeenCalledWith(null)
   })
 
   it("X icon click clears selectedArrow if the removed arrow was selected", () => {
@@ -951,8 +983,6 @@ describe("ArrowOverlay", () => {
       />
     )
 
-    // Hover to show X icon
-    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
     const interactionLayer = screen.getByTestId("arrow-interaction-layer")
     const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
 

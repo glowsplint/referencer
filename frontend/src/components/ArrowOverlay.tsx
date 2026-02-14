@@ -742,7 +742,7 @@ export function ArrowOverlay({
                   setSelectedArrow({ layerId: data.layerId, arrowId: data.arrowId })
                 }}
               />
-              {(isHovered || isSelected) && (
+              {isSelected && (
                 <g
                   ref={(el) => {
                     if (el) xIconRefs.current.set(data.arrowId, el)

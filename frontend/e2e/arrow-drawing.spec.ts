@@ -89,7 +89,7 @@ test("click on arrow line selects it and activates arrow tool", async ({ page })
   await expect(page.getByTestId("arrowToolButton")).toHaveClass(/bg-accent/, { timeout: 2000 });
 });
 
-test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ page }) => {
+test("clicking selected arrow X icon deletes it, hover alone does not show X", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
@@ -104,19 +104,23 @@ test("hovering arrow midpoint shows X icon, clicking deletes arrow", async ({ pa
   await page.keyboard.press("Enter");
   await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
 
-  // Tool auto-switched to selection
+  // Tool auto-switched to selection; arrow is selected after creation
 
-  // Move mouse away, then hover the arrow hit area
-  await page.mouse.move(0, 0);
+  // Deselect by clicking empty area
+  await page.mouse.click(0, 0);
+  const interactionLayer = page.locator('[data-testid="arrow-interaction-layer"]');
+
+  // Hover the arrow hit area — X icon should NOT appear (hover alone)
   const hitArea = page.getByTestId("arrow-hit-area");
   const hitBox = await hitArea.boundingBox();
   expect(hitBox).not.toBeNull();
   const hoverX = hitBox!.x + hitBox!.width / 2;
   const hoverY = hitBox!.y + hitBox!.height / 2;
   await page.mouse.move(hoverX, hoverY, { steps: 5 });
+  await expect(interactionLayer.locator("circle")).toHaveCount(0, { timeout: 2000 });
 
-  // X icon circle should appear in the interaction layer
-  const interactionLayer = page.locator('[data-testid="arrow-interaction-layer"]');
+  // Click to select the arrow — X icon should appear
+  await page.mouse.click(hoverX, hoverY);
   await expect(interactionLayer.locator("circle")).toHaveCount(1, { timeout: 2000 });
 
   // Click the X icon to delete
