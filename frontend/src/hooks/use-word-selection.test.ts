@@ -1052,13 +1052,14 @@ describe("useWordSelection Cmd+A", () => {
     })
   })
 
-  it("Cmd+A works without existing selection (defaults to editor 0)", () => {
+  it("Cmd+A works without explicit selection (uses seeded first word)", () => {
     const { editorsRef, containerRef } = setupCmdAMocks()
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 })
     )
 
-    expect(result.current.selection).toBeNull()
+    // Selection is seeded to first word on lock
+    expect(result.current.selection).not.toBeNull()
     act(() => { fireKey("a", { ctrlKey: true }) })
     expect(result.current.selection).toEqual({
       editorIndex: 0,
@@ -1146,15 +1147,13 @@ describe("useWordSelection Tab/Shift+Tab passage cycling", () => {
     expect(result.current.selection?.editorIndex).toBe(0)
   })
 
-  it("Tab works without existing selection", () => {
+  it("selection is seeded to first word on lock", () => {
     const { editorsRef, containerRef } = setupTabMocks()
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 })
     )
 
-    expect(result.current.selection).toBeNull()
-    act(() => { fireKey("Tab") })
-    // currentIndex is -1 (no selection), Tab goes to passage 0
+    // Selection is seeded to first word of first passage on lock
     expect(result.current.selection?.text).toBe("and")
     expect(result.current.selection?.editorIndex).toBe(0)
   })
