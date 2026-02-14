@@ -73,9 +73,6 @@ export function validateActionPayload(payload: Record<string, unknown>): boolean
     case "updateLayerColor":
       return isString(payload.id) && isString(payload.color)
 
-    case "updateLayerArrowStyle":
-      return isString(payload.id) && isString(payload.arrowStyle)
-
     case "toggleLayerVisibility":
       return isString(payload.id)
 
@@ -222,7 +219,6 @@ function hydrateState(
     name: l.name,
     color: l.color,
     visible: l.visible,
-    arrowStyle: (l.arrowStyle as ArrowStyle) ?? "solid",
     highlights: l.highlights.map((h) => ({
       id: h.id,
       editorIndex: h.editorIndex,
@@ -246,6 +242,7 @@ function hydrateState(
         to: a.to.to,
         text: a.to.text,
       },
+      arrowStyle: ((a.arrowStyle as string) ?? "solid") as ArrowStyle,
     })),
     underlines: (l.underlines as Array<Record<string, unknown>> ?? []).map((u) => ({
       id: u.id as string,
@@ -296,10 +293,6 @@ function applyRemoteAction(
 
     case "updateLayerColor":
       rawLayers.updateLayerColor(payload.id as string, payload.color as string)
-      break
-
-    case "updateLayerArrowStyle":
-      rawLayers.updateLayerArrowStyle(payload.id as string, payload.arrowStyle as ArrowStyle)
       break
 
     case "toggleLayerVisibility":
@@ -354,6 +347,7 @@ function applyRemoteAction(
         {
           from: arrow.from as { editorIndex: number; from: number; to: number; text: string },
           to: arrow.to as { editorIndex: number; from: number; to: number; text: string },
+          arrowStyle: ((arrow.arrowStyle as string) ?? "solid") as ArrowStyle,
         },
         { id: arrow.id as string }
       )

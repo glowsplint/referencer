@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
 import { ToastKbd } from "@/components/ui/ToastKbd"
-import type { Arrow, ArrowEndpoint, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
+import type { Arrow, ArrowEndpoint, ArrowStyle, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
 
 function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
@@ -25,6 +25,7 @@ interface UseDrawingModeOptions {
   activeTool: ActiveTool
   selection: WordSelection | null
   activeLayerId: string | null
+  activeArrowStyle: ArrowStyle
   addLayer: () => string
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
   showDrawingToasts: boolean
@@ -38,6 +39,7 @@ export function useDrawingMode({
   activeTool,
   selection,
   activeLayerId,
+  activeArrowStyle,
   addLayer,
   addArrow,
   showDrawingToasts,
@@ -52,11 +54,13 @@ export function useDrawingMode({
   const activeLayerIdRef = useRef(activeLayerId)
   const addLayerRef = useRef(addLayer)
   const addArrowRef = useRef(addArrow)
+  const activeArrowStyleRef = useRef(activeArrowStyle)
   useEffect(() => {
     activeLayerIdRef.current = activeLayerId
     addLayerRef.current = addLayer
     addArrowRef.current = addArrow
-  }, [activeLayerId, addLayer, addArrow])
+    activeArrowStyleRef.current = activeArrowStyle
+  }, [activeLayerId, addLayer, addArrow, activeArrowStyle])
 
   const showDrawingToastsRef = useRef(showDrawingToasts)
   showDrawingToastsRef.current = showDrawingToasts
@@ -145,6 +149,7 @@ export function useDrawingMode({
         addArrowRef.current(activeLayerIdRef.current, {
           from: currentAnchor,
           to: endpoint,
+          arrowStyle: activeArrowStyleRef.current,
         })
       }
       anchorRef.current = null

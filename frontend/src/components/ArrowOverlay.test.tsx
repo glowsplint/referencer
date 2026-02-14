@@ -38,7 +38,6 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
     name: "Layer 1",
     color: "#fca5a5",
     visible: true,
-    arrowStyle: "solid",
     highlights: [],
     arrows: [],
     underlines: [],
@@ -780,12 +779,12 @@ describe("ArrowOverlay", () => {
 
   it("renders dashed arrow with stroke-dasharray '8 4'", () => {
     const layer = createLayer({
-      arrowStyle: "dashed",
       arrows: [
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+          arrowStyle: "dashed",
         },
       ],
     })
@@ -797,12 +796,12 @@ describe("ArrowOverlay", () => {
 
   it("renders dotted arrow with stroke-dasharray '2 4'", () => {
     const layer = createLayer({
-      arrowStyle: "dotted",
       arrows: [
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+          arrowStyle: "dotted",
         },
       ],
     })
@@ -814,12 +813,12 @@ describe("ArrowOverlay", () => {
 
   it("renders solid arrow without stroke-dasharray", () => {
     const layer = createLayer({
-      arrowStyle: "solid",
       arrows: [
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+          arrowStyle: "solid",
         },
       ],
     })
@@ -831,12 +830,12 @@ describe("ArrowOverlay", () => {
 
   it("renders double arrow with two path elements", () => {
     const layer = createLayer({
-      arrowStyle: "double",
       arrows: [
         {
           id: "a1",
           from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+          arrowStyle: "double",
         },
       ],
     })

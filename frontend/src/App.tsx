@@ -80,7 +80,11 @@ export function App() {
     updateEditorContent,
   } = workspace;
 
-  useToolShortcuts({ isLocked: settings.isLocked, setActiveTool });
+  useToolShortcuts({
+    isLocked: settings.isLocked,
+    setActiveTool,
+    onArrowLongPress: useCallback(() => workspace.setArrowStylePickerOpen(true), [workspace]),
+  });
   useToggleShortcuts({
     toggleDarkMode: workspace.toggleDarkMode,
     toggleMultipleRowsLayout: workspace.toggleMultipleRowsLayout,
@@ -110,6 +114,7 @@ export function App() {
     activeTool: annotations.activeTool,
     selection,
     activeLayerId,
+    activeArrowStyle: workspace.activeArrowStyle,
     addLayer,
     addArrow,
     showDrawingToasts: settings.showDrawingToasts,

@@ -9,6 +9,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     activeTool: "arrow" as ActiveTool,
     selection: null as WordSelection | null,
     activeLayerId: "layer-1",
+    activeArrowStyle: "solid" as import("@/types/editor").ArrowStyle,
     addLayer: vi.fn(() => "auto-layer-1"),
     addArrow: vi.fn(),
     showDrawingToasts: true,
@@ -112,6 +113,7 @@ describe("useDrawingMode", () => {
     expect(addArrow).toHaveBeenCalledWith("layer-1", {
       from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
       to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+      arrowStyle: "solid",
     })
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
@@ -182,6 +184,7 @@ describe("useDrawingMode", () => {
     expect(addArrow).toHaveBeenCalledWith("auto-layer-1", {
       from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
       to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+      arrowStyle: "solid",
     })
   })
 
@@ -346,5 +349,43 @@ describe("useDrawingMode", () => {
     // Never entered arrow mode, switching tools should not clear
     rerender({ activeTool: "comments" })
     expect(clearStatus).not.toHaveBeenCalled()
+  })
+
+  it("includes activeArrowStyle in created arrow", () => {
+    const addArrow = vi.fn()
+    const { result, rerender } = renderHook(
+      (props: { selection: WordSelection | null }) =>
+        useDrawingMode(createOptions({ selection: props.selection, addArrow, activeArrowStyle: "dashed" })),
+      { initialProps: { selection: null } }
+    )
+
+    rerender({ selection: word1 })
+    act(() => { result.current.confirmSelection() })
+    rerender({ selection: word2 })
+    act(() => { result.current.confirmSelection() })
+
+    expect(addArrow).toHaveBeenCalledWith("layer-1", {
+      from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+      to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+      arrowStyle: "dashed",
+    })
+  })
+
+  it("uses default solid style when activeArrowStyle not specified", () => {
+    const addArrow = vi.fn()
+    const { result, rerender } = renderHook(
+      (props: { selection: WordSelection | null }) =>
+        useDrawingMode(createOptions({ selection: props.selection, addArrow })),
+      { initialProps: { selection: null } }
+    )
+
+    rerender({ selection: word1 })
+    act(() => { result.current.confirmSelection() })
+    rerender({ selection: word2 })
+    act(() => { result.current.confirmSelection() })
+
+    expect(addArrow).toHaveBeenCalledWith("layer-1", expect.objectContaining({
+      arrowStyle: "solid",
+    }))
   })
 })

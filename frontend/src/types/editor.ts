@@ -48,7 +48,6 @@ export interface Layer {
   name: string
   color: string
   visible: boolean
-  arrowStyle: ArrowStyle
   highlights: Highlight[]
   arrows: Arrow[]
   underlines: LayerUnderline[]
@@ -65,6 +64,7 @@ export interface Arrow {
   id: string
   from: ArrowEndpoint
   to: ArrowEndpoint
+  arrowStyle?: ArrowStyle
 }
 
 export interface DrawingState {

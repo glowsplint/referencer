@@ -375,27 +375,6 @@ describe("useLayers", () => {
     expect(result.current.layers[0].arrows).toEqual([])
   })
 
-  it("addLayer defaults arrowStyle to 'solid'", () => {
-    const { result } = renderHook(() => useLayers())
-    act(() => { result.current.addLayer() })
-    expect(result.current.layers[0].arrowStyle).toBe("solid")
-  })
-
-  it("updateLayerArrowStyle changes a layer's arrow style", () => {
-    const { result } = renderHook(() => useLayers())
-    act(() => { result.current.addLayer() })
-    const id = result.current.layers[0].id
-    act(() => { result.current.updateLayerArrowStyle(id, "dashed") })
-    expect(result.current.layers[0].arrowStyle).toBe("dashed")
-  })
-
-  it("updateLayerArrowStyle with non-existent id does nothing", () => {
-    const { result } = renderHook(() => useLayers())
-    act(() => { result.current.addLayer() })
-    act(() => { result.current.updateLayerArrowStyle("non-existent", "dotted") })
-    expect(result.current.layers[0].arrowStyle).toBe("solid")
-  })
-
   it("addArrow adds an arrow to the specified layer", () => {
     const { result } = renderHook(() => useLayers())
     act(() => { result.current.addLayer() })

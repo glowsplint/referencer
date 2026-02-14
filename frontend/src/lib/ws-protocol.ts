@@ -19,6 +19,7 @@ export interface ArrowPayload {
   id: string
   from: ArrowEndpointPayload
   to: ArrowEndpointPayload
+  arrowStyle?: string
 }
 
 export interface LayerPayload {
@@ -26,7 +27,6 @@ export interface LayerPayload {
   name: string
   color: string
   visible: boolean
-  arrowStyle?: string
   highlights: HighlightPayload[]
   arrows: ArrowPayload[]
 }
@@ -74,5 +74,4 @@ export type ActionType =
   | "reorderEditors"
   | "updateSectionName"
   | "toggleSectionVisibility"
-  | "updateLayerArrowStyle"
   | "updateEditorContent"

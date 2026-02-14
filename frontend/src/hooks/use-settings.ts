@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react"
-import type { EditorSettings, AnnotationSettings, ActiveTool } from "@/types/editor"
+import type { EditorSettings, AnnotationSettings, ActiveTool, ArrowStyle } from "@/types/editor"
 
 function useToggle<T>(
   setter: React.Dispatch<React.SetStateAction<T>>,
@@ -24,6 +24,8 @@ export function useSettings() {
   const [annotations, setAnnotations] = useState<AnnotationSettings>({
     activeTool: "selection",
   })
+  const [activeArrowStyle, setActiveArrowStyle] = useState<ArrowStyle>("solid")
+  const [arrowStylePickerOpen, setArrowStylePickerOpen] = useState(false)
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", settings.isDarkMode)
@@ -44,6 +46,10 @@ export function useSettings() {
   return {
     settings,
     annotations,
+    activeArrowStyle,
+    setActiveArrowStyle,
+    arrowStylePickerOpen,
+    setArrowStylePickerOpen,
     toggleDarkMode,
     toggleLayersOn,
     toggleMultipleRowsLayout,

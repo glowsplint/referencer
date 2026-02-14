@@ -5,7 +5,7 @@ import { TAILWIND_300_COLORS } from "@/types/editor"
 
 import type { Layer, Highlight, Arrow } from "@/types/editor"
 
-const defaultLayer: Layer = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [], arrows: [], underlines: [] }
+const defaultLayer: Layer = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [], arrows: [], underlines: [] }
 
 const makeHighlight = (id: string, text: string, annotation = "", editorIndex = 0): Highlight => ({
   id, editorIndex, from: 0, to: 5, text, annotation, type: "comment",
@@ -15,6 +15,7 @@ const makeArrow = (id: string, fromText: string, toText: string, fromEditor = 0,
   id,
   from: { editorIndex: fromEditor, from: 0, to: 5, text: fromText },
   to: { editorIndex: toEditor, from: 0, to: 5, text: toText },
+  arrowStyle: "solid",
 })
 
 function renderRow(overrides = {}) {
@@ -25,7 +26,6 @@ function renderRow(overrides = {}) {
     sectionNames: ["Passage 1", "Passage 2"],
     onSetActive: vi.fn(),
     onUpdateColor: vi.fn(),
-    onUpdateArrowStyle: vi.fn(),
     onUpdateName: vi.fn(),
     onToggleVisibility: vi.fn(),
     onRemoveHighlight: vi.fn(),
@@ -357,62 +357,4 @@ describe("LayerRow", () => {
     expect(span).toHaveAttribute("title", "foo (Intro) → bar (Body)")
   })
 
-  // --- Arrow style picker ---
-
-  it("renders arrow style button", () => {
-    renderRow()
-    expect(screen.getByTestId("layerArrowStyle-0")).toBeInTheDocument()
-  })
-
-  it("opens arrow style picker when style button is clicked", () => {
-    renderRow()
-    expect(screen.queryByTestId("arrowStylePicker-0")).not.toBeInTheDocument()
-    fireEvent.click(screen.getByTestId("layerArrowStyle-0"))
-    expect(screen.getByTestId("arrowStylePicker-0")).toBeInTheDocument()
-  })
-
-  it("closes arrow style picker when style button is clicked again", () => {
-    renderRow()
-    fireEvent.click(screen.getByTestId("layerArrowStyle-0"))
-    expect(screen.getByTestId("arrowStylePicker-0")).toBeInTheDocument()
-    fireEvent.click(screen.getByTestId("layerArrowStyle-0"))
-    expect(screen.queryByTestId("arrowStylePicker-0")).not.toBeInTheDocument()
-  })
-
-  it("calls onUpdateArrowStyle when a style is selected", () => {
-    const { props } = renderRow()
-    fireEvent.click(screen.getByTestId("layerArrowStyle-0"))
-    fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"))
-    expect(props.onUpdateArrowStyle).toHaveBeenCalledWith("dashed")
-  })
-
-  it("closes arrow style picker after selecting a style", () => {
-    renderRow()
-    fireEvent.click(screen.getByTestId("layerArrowStyle-0"))
-    fireEvent.click(screen.getByTestId("arrowStyleOption-dotted"))
-    expect(screen.queryByTestId("arrowStylePicker-0")).not.toBeInTheDocument()
-  })
-
-  it("arrow style picker and color picker are mutually exclusive", () => {
-    renderRow()
-    // Open color picker
-    fireEvent.click(screen.getByTestId("layerSwatch-0"))
-    expect(screen.getByTestId("colorPicker-0")).toBeInTheDocument()
-
-    // Open arrow style picker — should close color picker
-    fireEvent.click(screen.getByTestId("layerArrowStyle-0"))
-    expect(screen.getByTestId("arrowStylePicker-0")).toBeInTheDocument()
-    expect(screen.queryByTestId("colorPicker-0")).not.toBeInTheDocument()
-
-    // Open color picker — should close arrow style picker
-    fireEvent.click(screen.getByTestId("layerSwatch-0"))
-    expect(screen.getByTestId("colorPicker-0")).toBeInTheDocument()
-    expect(screen.queryByTestId("arrowStylePicker-0")).not.toBeInTheDocument()
-  })
-
-  it("arrow style button does not trigger onSetActive", () => {
-    const { props } = renderRow()
-    fireEvent.click(screen.getByTestId("layerArrowStyle-0"))
-    expect(props.onSetActive).not.toHaveBeenCalled()
-  })
 })

@@ -88,7 +88,7 @@ export function ArrowOverlay({
           layerId: layer.id,
           arrowId: arrow.id,
           color: layer.color,
-          arrowStyle: layer.arrowStyle ?? "solid",
+          arrowStyle: arrow.arrowStyle ?? "solid",
           arrow,
         })
       }
@@ -108,7 +108,7 @@ export function ArrowOverlay({
           layerId: layer.id,
           arrowId: arrow.id,
           color: layer.color,
-          arrowStyle: layer.arrowStyle ?? "solid",
+          arrowStyle: arrow.arrowStyle ?? "solid",
           arrow,
         })
       }
