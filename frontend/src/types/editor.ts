@@ -63,17 +63,25 @@ export interface WordSelection {
   text: string
 }
 
+export interface ActionDetail {
+  label: string
+  before?: string
+  after?: string
+}
+
 export interface ActionEntry {
   id: string
   type: string
   description: string
   timestamp: number
   undone: boolean
+  details?: ActionDetail[]
 }
 
 export interface ActionCommand {
   type: string
   description: string
+  details?: ActionDetail[]
   undo: () => void
   redo: () => void
 }

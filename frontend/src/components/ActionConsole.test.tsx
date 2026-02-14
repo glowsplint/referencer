@@ -57,7 +57,8 @@ describe("ActionConsole", () => {
     render(<ActionConsole {...defaultProps} log={[entry]} />)
 
     const desc = screen.getByText("Undone action")
-    expect(desc.parentElement).toHaveClass("line-through")
+    // description → inner flex row → outer wrapper with line-through
+    expect(desc.parentElement?.parentElement).toHaveClass("line-through")
   })
 
   it("calls onClose when close button is clicked", () => {
@@ -119,5 +120,77 @@ describe("ActionConsole", () => {
     expect(onHeightChange).toHaveBeenCalledWith(600)
 
     fireEvent.mouseUp(document)
+  })
+
+  it("renders details below an entry with before and after", () => {
+    const entry = makeEntry({
+      details: [{ label: "name", before: "Old", after: "New" }],
+    })
+    render(<ActionConsole {...defaultProps} log={[entry]} />)
+
+    const detail = screen.getByTestId("actionDetail")
+    expect(detail).toHaveTextContent("name:")
+    expect(detail).toHaveTextContent("Old")
+    expect(detail).toHaveTextContent("→")
+    expect(detail).toHaveTextContent("New")
+  })
+
+  it("renders before-only detail without arrow", () => {
+    const entry = makeEntry({
+      details: [{ label: "count", before: "3" }],
+    })
+    render(<ActionConsole {...defaultProps} log={[entry]} />)
+
+    const detail = screen.getByTestId("actionDetail")
+    expect(detail).toHaveTextContent("count:")
+    expect(detail).toHaveTextContent("3")
+    expect(detail).not.toHaveTextContent("→")
+  })
+
+  it("renders after-only detail without arrow", () => {
+    const entry = makeEntry({
+      details: [{ label: "text", after: "hello" }],
+    })
+    render(<ActionConsole {...defaultProps} log={[entry]} />)
+
+    const detail = screen.getByTestId("actionDetail")
+    expect(detail).toHaveTextContent("text:")
+    expect(detail).toHaveTextContent("hello")
+    expect(detail).not.toHaveTextContent("→")
+  })
+
+  it("renders multiple detail lines", () => {
+    const entry = makeEntry({
+      details: [
+        { label: "name", after: "Layer 1" },
+        { label: "color", after: "#fca5a5" },
+      ],
+    })
+    render(<ActionConsole {...defaultProps} log={[entry]} />)
+
+    const details = screen.getAllByTestId("actionDetail")
+    expect(details).toHaveLength(2)
+    expect(details[0]).toHaveTextContent("name:")
+    expect(details[1]).toHaveTextContent("color:")
+  })
+
+  it("renders color swatch for hex color values", () => {
+    const entry = makeEntry({
+      details: [{ label: "color", before: "#fca5a5", after: "#93c5fd" }],
+    })
+    render(<ActionConsole {...defaultProps} log={[entry]} />)
+
+    const swatches = screen.getAllByTestId("colorSwatch")
+    expect(swatches).toHaveLength(2)
+    expect(swatches[0].style.backgroundColor).toBeTruthy()
+    expect(swatches[1].style.backgroundColor).toBeTruthy()
+  })
+
+  it("entries without details still render normally", () => {
+    const entry = makeEntry()
+    render(<ActionConsole {...defaultProps} log={[entry]} />)
+
+    expect(screen.getByText("Created layer 'Layer 1'")).toBeInTheDocument()
+    expect(screen.queryByTestId("actionDetail")).not.toBeInTheDocument()
   })
 })

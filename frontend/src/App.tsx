@@ -168,9 +168,11 @@ export function App() {
       } else {
         const oldText = annotationBeforeEditRef.current;
         if (oldText !== annotation) {
+          const truncated = (s: string) => s.length > 80 ? s.slice(0, 80) + "..." : s
           history.record({
             type: "updateAnnotation",
-            description: `Updated annotation to '${annotation.length > 80 ? annotation.slice(0, 80) + "..." : annotation}'`,
+            description: `Updated annotation to '${truncated(annotation)}'`,
+            details: [{ label: "annotation", before: truncated(oldText), after: truncated(annotation) }],
             undo: () => {
               updateHighlightAnnotation(layerId, highlightId, oldText);
             },

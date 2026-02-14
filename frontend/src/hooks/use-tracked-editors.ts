@@ -15,6 +15,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
     record({
       type: "addEditor",
       description: `Added passage '${name}'`,
+      details: [{ label: "name", after: name }],
       undo: () => {
         raw.removeEditor(prevCount)
       },
@@ -33,6 +34,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
       record({
         type: "removeEditor",
         description: `Removed passage '${name}'`,
+        details: [{ label: "name", before: name }],
         undo: () => {
           raw.addEditor({ name })
           if (!visibility) {
@@ -58,6 +60,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
       record({
         type: "updateSectionName",
         description: `Renamed passage '${oldName}' to '${name}'`,
+        details: [{ label: "name", before: oldName, after: name }],
         undo: () => {
           raw.updateSectionName(index, oldName)
         },

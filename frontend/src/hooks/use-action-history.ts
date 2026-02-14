@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react"
-import type { ActionEntry, ActionCommand } from "@/types/editor"
+import type { ActionEntry, ActionCommand, ActionDetail } from "@/types/editor"
 
 interface StoredCommand extends ActionCommand {
   id: string
@@ -18,13 +18,14 @@ export function useActionHistory() {
   }, [])
 
   const addLogEntry = useCallback(
-    (type: string, description: string): ActionEntry => {
+    (type: string, description: string, details?: ActionDetail[]): ActionEntry => {
       const entry: ActionEntry = {
         id: crypto.randomUUID(),
         type,
         description,
         timestamp: Date.now(),
         undone: false,
+        ...(details && { details }),
       }
       setLog((prev) => [...prev, entry])
       return entry
@@ -34,7 +35,7 @@ export function useActionHistory() {
 
   const record = useCallback(
     (command: ActionCommand) => {
-      const entry = addLogEntry(command.type, command.description)
+      const entry = addLogEntry(command.type, command.description, command.details)
       const stored: StoredCommand = { ...command, id: entry.id }
       undoStackRef.current.push(stored)
       redoStackRef.current = []

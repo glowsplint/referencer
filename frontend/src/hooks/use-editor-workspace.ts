@@ -92,6 +92,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       history.record({
         type: wasVisible ? "hideLayer" : "showLayer",
         description: `${wasVisible ? "Hid" : "Showed"} layer '${layer?.name ?? "layer"}'`,
+        details: [{ label: "visible", before: String(wasVisible), after: String(!wasVisible) }],
         undo: () => rawLayersHook.toggleLayerVisibility(id),
         redo: () => rawLayersHook.toggleLayerVisibility(id),
       })
@@ -273,6 +274,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       history.record({
         type: wasVisible ? "hidePassage" : "showPassage",
         description: `${wasVisible ? "Hid" : "Showed"} passage '${name}'`,
+        details: [{ label: "visible", before: String(wasVisible), after: String(!wasVisible) }],
         undo: () => rawEditorsHook.toggleSectionVisibility(index),
         redo: () => rawEditorsHook.toggleSectionVisibility(index),
       })
@@ -312,6 +314,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       history.record({
         type: "setActiveTool",
         description: `Switched to ${tool} tool`,
+        details: [{ label: "tool", before: oldTool, after: tool }],
         undo: () => settingsHook.setActiveTool(oldTool),
         redo: () => settingsHook.setActiveTool(tool),
       })
@@ -325,6 +328,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     history.record({
       type: "toggleDarkMode",
       description: `Switched to ${wasDark ? "light" : "dark"} mode`,
+      details: [{ label: "mode", before: wasDark ? "dark" : "light", after: wasDark ? "light" : "dark" }],
       undo: () => settingsHook.toggleDarkMode(),
       redo: () => settingsHook.toggleDarkMode(),
     })
@@ -336,6 +340,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     history.record({
       type: "toggleLayout",
       description: `Switched to ${wasRows ? "column" : "row"} layout`,
+      details: [{ label: "layout", before: wasRows ? "row" : "column", after: wasRows ? "column" : "row" }],
       undo: () => settingsHook.toggleMultipleRowsLayout(),
       redo: () => settingsHook.toggleMultipleRowsLayout(),
     })

@@ -18,7 +18,7 @@ test("backtick toggles action console", async ({ page }) => {
   await expect(page.getByTestId("actionConsole")).not.toBeVisible();
 });
 
-test("action console shows log entries after actions", async ({ page }) => {
+test("action console shows log entries with details after actions", async ({ page }) => {
   // Add a layer
   await page.getByTestId("addLayerButton").click();
   await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
@@ -30,6 +30,12 @@ test("action console shows log entries after actions", async ({ page }) => {
   // Should show the addLayer entry
   await expect(page.getByText("[addLayer]")).toBeVisible();
   await expect(page.getByText(/Created layer/)).toBeVisible();
+
+  // Should show details for the addLayer action
+  const details = page.getByTestId("actionDetail");
+  await expect(details.first()).toBeVisible();
+  // name and color details
+  await expect(details).toHaveCount(2);
 });
 
 test("close button closes the console", async ({ page }) => {
@@ -50,6 +56,7 @@ test("undone entries appear with strikethrough", async ({ page }) => {
   await expect(page.getByTestId("actionConsole")).toBeVisible();
 
   // The undone entry should have line-through styling
-  const entry = page.getByText(/Created layer/).locator("..");
+  // description → inner flex row → outer wrapper with line-through
+  const entry = page.getByText(/Created layer/).locator("../..");
   await expect(entry).toHaveClass(/line-through/);
 });

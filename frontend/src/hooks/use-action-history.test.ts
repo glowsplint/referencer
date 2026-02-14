@@ -178,4 +178,39 @@ describe("useActionHistory", () => {
     expect(result.current.log[0].id).not.toBe(result.current.log[1].id)
     expect(result.current.log[0].timestamp).toBeLessThanOrEqual(result.current.log[1].timestamp)
   })
+
+  it("record passes details into log entries", () => {
+    const { result } = renderHook(() => useActionHistory())
+    const details = [
+      { label: "name", after: "Layer 1" },
+      { label: "color", after: "#fca5a5" },
+    ]
+
+    act(() => {
+      result.current.record({
+        type: "addLayer",
+        description: "Created layer",
+        details,
+        undo: vi.fn(),
+        redo: vi.fn(),
+      })
+    })
+
+    expect(result.current.log[0].details).toEqual(details)
+  })
+
+  it("record without details leaves details undefined", () => {
+    const { result } = renderHook(() => useActionHistory())
+
+    act(() => {
+      result.current.record({
+        type: "lock",
+        description: "Locked editor",
+        undo: vi.fn(),
+        redo: vi.fn(),
+      })
+    })
+
+    expect(result.current.log[0].details).toBeUndefined()
+  })
 })
