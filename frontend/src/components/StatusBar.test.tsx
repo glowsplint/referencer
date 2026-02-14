@@ -3,9 +3,11 @@ import { describe, it, expect } from "vitest"
 import { StatusBar } from "./StatusBar"
 
 describe("StatusBar", () => {
-  it("renders nothing when message is null", () => {
-    const { container } = render(<StatusBar message={null} />)
-    expect(container.firstChild).toBeNull()
+  it("renders empty container when message is null", () => {
+    render(<StatusBar message={null} />)
+    const bar = screen.getByTestId("status-bar")
+    expect(bar).toBeInTheDocument()
+    expect(bar).toBeEmptyDOMElement()
   })
 
   it("renders info message text", () => {

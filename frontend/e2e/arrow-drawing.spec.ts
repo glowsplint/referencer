@@ -159,9 +159,12 @@ test("selection is preserved when activating arrow tool, allowing arrow key navi
 
   // Switch back to selection tool first
   await page.keyboard.press("s");
+  // Wait for arrow-mode class to be removed (tool switch reflected in DOM)
+  await expect(page.locator(".simple-editor-wrapper.arrow-mode")).toHaveCount(0, { timeout: 2000 });
 
   // Click a word to select it
-  await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
+  const freshBox = await firstParagraph.boundingBox();
+  await page.mouse.click(freshBox!.x + 30, freshBox!.y + freshBox!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
   // Press 'a' to activate arrow tool — selection should be preserved
