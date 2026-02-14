@@ -142,7 +142,7 @@ export function LayerRow({
             return (
               <div
                 key={h.id}
-                className="group flex items-center gap-1.5 py-0.5 px-1 text-xs text-muted-foreground"
+                className="group flex items-center gap-1.5 pt-2.5 px-1 text-xs text-muted-foreground"
                 data-testid={`layerHighlight-${h.id}`}
               >
                 <MessageSquareText size={12} className="shrink-0" />
@@ -166,7 +166,7 @@ export function LayerRow({
             return (
               <div
                 key={a.id}
-                className="group flex items-center gap-1.5 py-0.5 px-1 text-xs text-muted-foreground"
+                className="group flex items-center gap-1.5 pt-2.5 px-1 text-xs text-muted-foreground"
                 data-testid={`layerArrow-${a.id}`}
               >
                 <ArrowRight size={12} className="shrink-0" />
