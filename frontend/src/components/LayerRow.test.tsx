@@ -295,15 +295,15 @@ describe("LayerRow", () => {
     expect(screen.getByText("selected text")).toBeInTheDocument()
   })
 
-  it("renders arrow items with from/to text when expanded", () => {
+  it("renders arrow items with first word and word count when expanded", () => {
     const layer = {
       ...defaultLayer,
-      arrows: [makeArrow("a1", "hello", "world")],
+      arrows: [makeArrow("a1", "hello beautiful world", "goodbye cruel world")],
     }
     renderRow({ layer })
     fireEvent.click(screen.getByTestId("layerExpand-0"))
     expect(screen.getByTestId("layerArrow-a1")).toBeInTheDocument()
-    expect(screen.getByText("hello → world")).toBeInTheDocument()
+    expect(screen.getByText("hello (3) → goodbye (3)")).toBeInTheDocument()
   })
 
   it("calls onRemoveHighlight when highlight delete button is clicked", () => {
@@ -353,7 +353,7 @@ describe("LayerRow", () => {
     }
     renderRow({ layer, sectionNames: ["Intro", "Body"] })
     fireEvent.click(screen.getByTestId("layerExpand-0"))
-    const span = screen.getByText("foo → bar")
+    const span = screen.getByText("foo (1) → bar (1)")
     expect(span).toHaveAttribute("title", "foo (Intro) → bar (Body)")
   })
 

@@ -172,7 +172,9 @@ export function LayerRow({
           {layer.arrows.map((a) => {
             const fromName = sectionNames[a.from.editorIndex] ?? `Passage ${a.from.editorIndex + 1}`;
             const toName = sectionNames[a.to.editorIndex] ?? `Passage ${a.to.editorIndex + 1}`;
-            const label = `${a.from.text} \u2192 ${a.to.text}`;
+            const fromWords = a.from.text.split(/\s+/).filter(Boolean);
+            const toWords = a.to.text.split(/\s+/).filter(Boolean);
+            const label = `${fromWords[0] ?? ""} (${fromWords.length}) \u2192 ${toWords[0] ?? ""} (${toWords.length})`;
             const fullTitle = `${a.from.text} (${fromName}) \u2192 ${a.to.text} (${toName})`;
             return (
               <div
