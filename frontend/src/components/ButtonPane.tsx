@@ -43,8 +43,8 @@ function ArrowStyleIcon({ style, size = 20 }: { style: ArrowStyle; size?: number
     const gap = 2;
     return (
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-        <line x1={pad} y1={mid - gap} x2={right - arrowSize} y2={mid - gap} />
-        <line x1={pad} y1={mid + gap} x2={right - arrowSize} y2={mid + gap} />
+        <line x1={pad} y1={mid - gap} x2={right} y2={mid - gap} />
+        <line x1={pad} y1={mid + gap} x2={right} y2={mid + gap} />
         <polyline points={`${right - arrowSize},${mid - arrowSize} ${right},${mid} ${right - arrowSize},${mid + arrowSize}`} />
       </svg>
     );
@@ -53,7 +53,7 @@ function ArrowStyleIcon({ style, size = 20 }: { style: ArrowStyle; size?: number
     style === "dashed" ? "4 2.5" : style === "dotted" ? "1.5 2.5" : undefined;
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <line x1={pad} y1={mid} x2={right - arrowSize} y2={mid} strokeDasharray={dasharray} />
+      <line x1={pad} y1={mid} x2={right} y2={mid} strokeDasharray={dasharray} />
       <polyline points={`${right - arrowSize},${mid - arrowSize} ${right},${mid} ${right - arrowSize},${mid + arrowSize}`} strokeDasharray={undefined} />
     </svg>
   );
