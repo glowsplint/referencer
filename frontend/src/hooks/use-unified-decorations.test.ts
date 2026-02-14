@@ -73,7 +73,7 @@ describe("useUnifiedDecorations", () => {
     const editor = createMockEditor()
     const layer = createLayer({
       highlights: [
-        { id: "h1", editorIndex: 0, from: 1, to: 5, text: "test", annotation: "" },
+        { id: "h1", editorIndex: 0, from: 1, to: 5, text: "test", annotation: "", type: "highlight" },
       ],
     })
     renderHook(() =>
@@ -87,7 +87,7 @@ describe("useUnifiedDecorations", () => {
     const editor = createMockEditor()
     const layer = createLayer({
       highlights: [
-        { id: "h1", editorIndex: 1, from: 1, to: 5, text: "test", annotation: "" },
+        { id: "h1", editorIndex: 1, from: 1, to: 5, text: "test", annotation: "", type: "highlight" },
       ],
     })
     renderHook(() =>
@@ -120,7 +120,7 @@ describe("useUnifiedDecorations", () => {
     const editor = createMockEditor()
     const layer = createLayer({
       highlights: [
-        { id: "h1", editorIndex: 0, from: 1, to: 10, text: "highlight", annotation: "" },
+        { id: "h1", editorIndex: 0, from: 1, to: 10, text: "highlight", annotation: "", type: "highlight" },
       ],
       arrows: [
         {
@@ -160,14 +160,14 @@ describe("useUnifiedDecorations", () => {
       id: "l1",
       color: "#fca5a5",
       highlights: [
-        { id: "h1", editorIndex: 0, from: 1, to: 10, text: "overlap", annotation: "" },
+        { id: "h1", editorIndex: 0, from: 1, to: 10, text: "overlap", annotation: "", type: "highlight" },
       ],
     })
     const layer2 = createLayer({
       id: "l2",
       color: "#93c5fd",
       highlights: [
-        { id: "h2", editorIndex: 0, from: 5, to: 15, text: "overlap", annotation: "" },
+        { id: "h2", editorIndex: 0, from: 5, to: 15, text: "overlap", annotation: "", type: "highlight" },
       ],
     })
     renderHook(() =>
@@ -191,7 +191,7 @@ describe("useUnifiedDecorations", () => {
     const layer = createLayer({
       visible: false,
       highlights: [
-        { id: "h1", editorIndex: 0, from: 1, to: 5, text: "test", annotation: "" },
+        { id: "h1", editorIndex: 0, from: 1, to: 5, text: "test", annotation: "", type: "highlight" },
       ],
     })
     renderHook(() =>

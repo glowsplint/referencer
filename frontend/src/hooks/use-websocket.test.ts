@@ -254,7 +254,7 @@ describe("validateActionPayload", () => {
       validateActionPayload({
         actionType: "addHighlight",
         layerId: "l1",
-        highlight: { id: "h1", editorIndex: 0, from: 5, to: 10 },
+        highlight: { id: "h1", type: "comment", editorIndex: 0, from: 5, to: 10 },
       })
     ).toBe(true)
   })
@@ -263,7 +263,7 @@ describe("validateActionPayload", () => {
     expect(
       validateActionPayload({
         actionType: "addHighlight",
-        highlight: { id: "h1", editorIndex: 0, from: 5, to: 10 },
+        highlight: { id: "h1", type: "comment", editorIndex: 0, from: 5, to: 10 },
       })
     ).toBe(false)
   })
@@ -279,7 +279,7 @@ describe("validateActionPayload", () => {
       validateActionPayload({
         actionType: "addHighlight",
         layerId: "l1",
-        highlight: { id: "h1", editorIndex: 0, to: 10 },
+        highlight: { id: "h1", type: "comment", editorIndex: 0, to: 10 },
       })
     ).toBe(false)
   })

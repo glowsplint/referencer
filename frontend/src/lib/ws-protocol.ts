@@ -12,6 +12,7 @@ export interface HighlightPayload {
   to: number
   text: string
   annotation: string
+  type?: string
 }
 
 export interface ArrowPayload {

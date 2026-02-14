@@ -10,7 +10,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     selection: null as WordSelection | null,
     activeLayerId: "layer-1",
     addLayer: vi.fn(() => "auto-layer-1"),
-    layers: [] as { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[],
+    layers: [] as { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string; type: "highlight" | "comment" }[] }[],
     addHighlight: vi.fn().mockReturnValue("h-1"),
     removeHighlight: vi.fn(),
     onHighlightAdded: vi.fn(),
@@ -88,7 +88,7 @@ describe("useCommentMode", () => {
 
     expect(addLayer).toHaveBeenCalled()
     expect(addHighlight).toHaveBeenCalledWith("auto-layer-1", {
-      editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "",
+      editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "", type: "comment",
     })
     expect(onHighlightAdded).toHaveBeenCalledWith("auto-layer-1", "h-1")
   })
@@ -116,6 +116,7 @@ describe("useCommentMode", () => {
       to: 5,
       text: "hello",
       annotation: "",
+      type: "comment",
     })
     expect(opts.onHighlightAdded).toHaveBeenCalledWith("layer-1", "h-1")
   })
@@ -137,8 +138,8 @@ describe("useCommentMode", () => {
       layers: [{
         id: "layer-1",
         highlights: [
-          { id: "h-empty", editorIndex: 0, from: 20, to: 25, annotation: "" },
-          { id: "h-saved", editorIndex: 0, from: 30, to: 35, annotation: "saved" },
+          { id: "h-empty", editorIndex: 0, from: 20, to: 25, annotation: "", type: "comment" as const },
+          { id: "h-saved", editorIndex: 0, from: 30, to: 35, annotation: "saved", type: "comment" as const },
         ],
       }],
     })
@@ -157,7 +158,7 @@ describe("useCommentMode", () => {
       layers: [{
         id: "layer-1",
         highlights: [
-          { id: "h-existing", editorIndex: 0, from: 1, to: 5, annotation: "note" },
+          { id: "h-existing", editorIndex: 0, from: 1, to: 5, annotation: "note", type: "comment" as const },
         ],
       }],
     })

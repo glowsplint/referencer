@@ -35,7 +35,7 @@ export function useAllHighlightPositions(
 
       for (const layer of layers) {
         if (!layer.visible) continue
-        for (const highlight of layer.highlights) {
+        for (const highlight of layer.highlights.filter((h) => h.type === "comment")) {
           if (sectionVisibility && sectionVisibility[highlight.editorIndex] === false) continue
           const editor = editorsRef.current.get(highlight.editorIndex)
           if (!editor || editor.isDestroyed) continue

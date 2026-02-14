@@ -36,6 +36,7 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
         to: 5,
         text: "hello",
         annotation: "Test note",
+        type: "comment",
       },
     ],
     arrows: [],
@@ -135,8 +136,8 @@ describe("AnnotationPanel", () => {
 
     const layer = createLayer({
       highlights: [
-        { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "Note 1" },
-        { id: "h2", editorIndex: 1, from: 0, to: 3, text: "hey", annotation: "Note 2" },
+        { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "Note 1", type: "comment" },
+        { id: "h2", editorIndex: 1, from: 0, to: 3, text: "hey", annotation: "Note 2", type: "comment" },
       ],
     })
 

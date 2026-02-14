@@ -16,6 +16,8 @@ export interface AnnotationSettings {
   activeTool: ActiveTool
 }
 
+export type HighlightType = "highlight" | "comment"
+
 export interface Highlight {
   id: string
   editorIndex: number
@@ -23,6 +25,7 @@ export interface Highlight {
   to: number
   text: string
   annotation: string
+  type: HighlightType
 }
 
 export interface EditingAnnotation {

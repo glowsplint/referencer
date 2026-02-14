@@ -49,7 +49,7 @@ export function useLayers() {
         setLayers((layers) =>
           layers.map((l) =>
             l.id === prevId
-              ? { ...l, highlights: l.highlights.filter((h) => h.annotation.trim()) }
+              ? { ...l, highlights: l.highlights.filter((h) => h.type !== "comment" || h.annotation.trim()) }
               : l
           )
         )

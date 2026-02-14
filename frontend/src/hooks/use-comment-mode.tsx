@@ -98,10 +98,10 @@ export function useCommentMode({
 
     const layer = layersRef.current.find((l) => l.id === layerId)
 
-    // Remove any existing empty-annotation highlights on this layer
+    // Remove any existing empty-annotation comments on this layer (not pure highlights)
     if (layer) {
       for (const h of layer.highlights) {
-        if (!h.annotation.trim()) {
+        if (h.type === "comment" && !h.annotation.trim()) {
           removeHighlightRef.current(layerId, h.id)
         }
       }
@@ -116,13 +116,14 @@ export function useCommentMode({
       return
     }
 
-    // Create highlight with empty annotation
+    // Create comment with empty annotation
     const highlightId = addHighlightRef.current(layerId, {
       editorIndex: sel.editorIndex,
       from: sel.from,
       to: sel.to,
       text: sel.text,
       annotation: "",
+      type: "comment",
     })
     if (showCommentToastsRef.current) {
       setStatusRef.current({ text: "Comment added", type: "success" }, 1500)

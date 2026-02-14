@@ -203,7 +203,7 @@ export function LayerRow({
                 className="group flex items-center gap-1.5 pt-2.5 px-1 text-xs text-muted-foreground"
                 data-testid={`layerHighlight-${h.id}`}
               >
-                {h.annotation ? <MessageSquareText size={12} className="shrink-0" /> : <Highlighter size={12} className="shrink-0" />}
+                {h.type === "comment" ? <MessageSquareText size={12} className="shrink-0" /> : <Highlighter size={12} className="shrink-0" />}
                 <span className="truncate" title={fullTitle}>{label}</span>
                 <button
                   className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"

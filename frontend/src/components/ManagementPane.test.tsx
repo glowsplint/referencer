@@ -23,7 +23,7 @@ let storageMock: ReturnType<typeof makeStorageMock>
 const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[] }
 const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[] }
 
-const highlight1: Highlight = { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "my note" }
+const highlight1: Highlight = { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "my note", type: "comment" }
 const arrow1: Arrow = { id: "a1", from: { editorIndex: 0, from: 0, to: 3, text: "foo" }, to: { editorIndex: 1, from: 0, to: 3, text: "bar" } }
 const layerWithItems = { ...layerA, highlights: [highlight1], arrows: [arrow1] }
 

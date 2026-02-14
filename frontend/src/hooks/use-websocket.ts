@@ -219,6 +219,7 @@ function hydrateState(
       to: h.to,
       text: h.text,
       annotation: h.annotation,
+      type: (h.type as "highlight" | "comment") || "comment",
     })),
     arrows: l.arrows.map((a) => ({
       id: a.id,
@@ -306,6 +307,7 @@ function applyRemoteAction(
           to: h.to as number,
           text: (h.text as string) ?? "",
           annotation: (h.annotation as string) ?? "",
+          type: (h.type as "highlight" | "comment") || "comment",
         },
         { id: h.id as string }
       )

@@ -117,6 +117,7 @@ export function useHighlightMode({
       to: sel.to,
       text: sel.text,
       annotation: "",
+      type: "highlight",
     })
     if (showHighlightToastsRef.current) {
       setStatusRef.current({ text: "Highlight added", type: "success" }, 1500)
