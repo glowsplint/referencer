@@ -21,6 +21,7 @@ import { useCycleLayer } from "./hooks/use-cycle-layer";
 import { useDragSelection } from "./hooks/use-drag-selection";
 import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/use-action-console";
+import { ToastKbd } from "./components/ui/ToastKbd";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
 import { ActionConsole } from "./components/ActionConsole";
@@ -131,6 +132,13 @@ export function App() {
     clearStatus,
   });
 
+  // Hint to lock the editor when unlocked
+  useEffect(() => {
+    if (!settings.isLocked && !readOnly) {
+      setStatus({ text: <>Press <ToastKbd>K</ToastKbd> to lock the editor once you've finalised the contents</>, type: "info" })
+    }
+  }, [settings.isLocked, readOnly, setStatus])
+
   // Default status message when locked with selection tool and no selection
   useEffect(() => {
     if (settings.isLocked && annotations.activeTool === "selection" && !selection) {
@@ -215,7 +223,7 @@ export function App() {
           <div className="flex flex-col flex-1 min-w-0">
             <TitleBar />
             <SimpleEditorToolbar isLocked={settings.isLocked} />
-            {settings.isLocked && <StatusBar message={statusMessage} />}
+            <StatusBar message={statusMessage} />
             <div className="flex flex-1 min-w-0 min-h-0">
               <div
                 ref={containerRef}
