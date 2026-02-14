@@ -49,6 +49,30 @@ describe("useHighlightMode", () => {
     expect(clearStatus).toHaveBeenCalled()
   })
 
+  it("does not clear status when switching to another annotation tool", () => {
+    const clearStatus = vi.fn()
+    const { rerender } = renderHook(
+      (props: { activeTool: ActiveTool }) =>
+        useHighlightMode(createOptions({ activeTool: props.activeTool, clearStatus })),
+      { initialProps: { activeTool: "highlight" as ActiveTool } }
+    )
+
+    rerender({ activeTool: "arrow" })
+    expect(clearStatus).not.toHaveBeenCalled()
+  })
+
+  it("clears status when unlocking while highlight tool is active", () => {
+    const clearStatus = vi.fn()
+    const { rerender } = renderHook(
+      (props: { isLocked: boolean }) =>
+        useHighlightMode(createOptions({ isLocked: props.isLocked, clearStatus })),
+      { initialProps: { isLocked: true } }
+    )
+
+    rerender({ isLocked: false })
+    expect(clearStatus).toHaveBeenCalled()
+  })
+
   it("does nothing when activeTool is not highlight", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 })
     const { result } = renderHook(() => useHighlightMode(opts))

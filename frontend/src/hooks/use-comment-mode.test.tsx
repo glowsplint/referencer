@@ -50,6 +50,30 @@ describe("useCommentMode", () => {
     expect(clearStatus).toHaveBeenCalled()
   })
 
+  it("does not clear status when switching to another annotation tool", () => {
+    const clearStatus = vi.fn()
+    const { rerender } = renderHook(
+      (props: { activeTool: ActiveTool }) =>
+        useCommentMode(createOptions({ activeTool: props.activeTool, clearStatus })),
+      { initialProps: { activeTool: "comments" as ActiveTool } }
+    )
+
+    rerender({ activeTool: "underline" })
+    expect(clearStatus).not.toHaveBeenCalled()
+  })
+
+  it("clears status when unlocking while comments tool is active", () => {
+    const clearStatus = vi.fn()
+    const { rerender } = renderHook(
+      (props: { isLocked: boolean }) =>
+        useCommentMode(createOptions({ isLocked: props.isLocked, clearStatus })),
+      { initialProps: { isLocked: true } }
+    )
+
+    rerender({ isLocked: false })
+    expect(clearStatus).toHaveBeenCalled()
+  })
+
   it("does nothing when activeTool is not comments", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 })
     const { result } = renderHook(() => useCommentMode(opts))

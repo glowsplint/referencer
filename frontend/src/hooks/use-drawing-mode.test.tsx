@@ -222,6 +222,40 @@ describe("useDrawingMode", () => {
     expect(clearStatus).toHaveBeenCalled()
   })
 
+  it("does not clear status when switching to another annotation tool", () => {
+    const clearStatus = vi.fn()
+    const { result, rerender } = renderHook(
+      (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
+        useDrawingMode(createOptions({ activeTool: props.activeTool, selection: props.selection, clearStatus })),
+      { initialProps: { activeTool: "arrow" as ActiveTool, selection: null } }
+    )
+
+    // Enter drawing phase so wasActive will be true
+    rerender({ activeTool: "arrow", selection: word1 })
+    act(() => { result.current.confirmSelection() })
+    expect(result.current.isDrawing).toBe(true)
+
+    // Switch to underline (not selection) — should NOT clear status
+    rerender({ activeTool: "underline", selection: word1 })
+    expect(clearStatus).not.toHaveBeenCalled()
+  })
+
+  it("clears status when unlocking while arrow tool is active", () => {
+    const clearStatus = vi.fn()
+    const { result, rerender } = renderHook(
+      (props: { isLocked: boolean; selection: WordSelection | null }) =>
+        useDrawingMode(createOptions({ isLocked: props.isLocked, selection: props.selection, clearStatus })),
+      { initialProps: { isLocked: true, selection: null } }
+    )
+
+    rerender({ isLocked: true, selection: word1 })
+    act(() => { result.current.confirmSelection() })
+    expect(result.current.isDrawing).toBe(true)
+
+    rerender({ isLocked: false, selection: word1 })
+    expect(clearStatus).toHaveBeenCalled()
+  })
+
   it("clears drawing state on unlock", () => {
     const { result, rerender } = renderHook(
       (props: { isLocked: boolean; selection: WordSelection | null }) =>
