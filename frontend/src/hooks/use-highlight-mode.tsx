@@ -9,10 +9,10 @@ interface UseHighlightModeOptions {
   selection: WordSelection | null
   activeLayerId: string | null
   addLayer: () => string
-  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[]
+  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string; type: "highlight" | "comment" }[] }[]
   addHighlight: (
     layerId: string,
-    highlight: { editorIndex: number; from: number; to: number; text: string; annotation: string }
+    highlight: { editorIndex: number; from: number; to: number; text: string; annotation: string; type: "highlight" | "comment" }
   ) => string
   removeHighlight: (layerId: string, highlightId: string) => void
   showHighlightToasts: boolean

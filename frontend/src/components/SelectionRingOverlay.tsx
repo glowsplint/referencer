@@ -96,7 +96,7 @@ export function SelectionRingOverlay({
 
     function compute() {
       try {
-        setRects(getSelectionRects(editor, selection, wrapper))
+        setRects(getSelectionRects(editor!, selection!, wrapper!))
       } catch {
         setRects([])
       }

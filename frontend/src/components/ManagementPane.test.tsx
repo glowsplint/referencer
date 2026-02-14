@@ -280,7 +280,7 @@ describe("ManagementPane", () => {
   })
 
   it("passes sectionNames to LayerRow for item display", () => {
-    const { workspace } = renderPane({ layers: [layerWithItems], sectionNames: ["Intro", "Body"] })
+    renderPane({ layers: [layerWithItems], sectionNames: ["Intro", "Body"] })
     fireEvent.click(screen.getByTestId("layerExpand-0"))
     const span = screen.getByText("my note")
     expect(span).toHaveAttribute("title", "my note (Intro)")

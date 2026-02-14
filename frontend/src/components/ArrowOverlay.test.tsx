@@ -368,7 +368,7 @@ describe("ArrowOverlay", () => {
     expect(polygon?.getAttribute("fill")).toBe(layerColor)
   })
 
-  it("arrow hit areas have pointer-events auto when arrow tool is active", () => {
+  it("arrow hit areas have pointer-events none when arrow tool is active", () => {
     const layer = createLayer({
       arrows: [
         {
@@ -381,6 +381,26 @@ describe("ArrowOverlay", () => {
     render(
       <ArrowOverlay
         {...createDefaultProps({ layers: [layer], activeTool: "arrow" })}
+      />
+    )
+
+    const hitArea = screen.getByTestId("arrow-hit-area")
+    expect(hitArea).toHaveStyle({ pointerEvents: "none" })
+  })
+
+  it("arrow hit areas have pointer-events auto when selection tool is active", () => {
+    const layer = createLayer({
+      arrows: [
+        {
+          id: "a1",
+          from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+          to: { editorIndex: 1, from: 10, to: 15, text: "world" },
+        },
+      ],
+    })
+    render(
+      <ArrowOverlay
+        {...createDefaultProps({ layers: [layer], activeTool: "selection" })}
       />
     )
 

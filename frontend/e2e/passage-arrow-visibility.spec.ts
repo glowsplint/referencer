@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 
+// Click near the top of the paragraph's first line to avoid the arrow style
+// picker overlay that appears when the arrow tool is activated.
+const FIRST_LINE_Y_OFFSET = 15;
+
 async function drawArrowInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
@@ -18,12 +22,12 @@ async function drawArrowInEditor(
   expect(box).not.toBeNull();
 
   // Select and confirm anchor
-  await page.mouse.click(box!.x + anchorXOffset, box!.y + box!.height / 2);
+  await page.mouse.click(box!.x + anchorXOffset, box!.y + FIRST_LINE_Y_OFFSET);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
 
   // Select and confirm target
-  await page.mouse.click(box!.x + targetXOffset, box!.y + box!.height / 2);
+  await page.mouse.click(box!.x + targetXOffset, box!.y + FIRST_LINE_Y_OFFSET);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
   // Tool auto-switches to selection
@@ -48,7 +52,7 @@ async function drawArrowBetweenEditors(
   expect(srcBox).not.toBeNull();
 
   // Select and confirm anchor
-  await page.mouse.click(srcBox!.x + anchorXOffset, srcBox!.y + srcBox!.height / 2);
+  await page.mouse.click(srcBox!.x + anchorXOffset, srcBox!.y + FIRST_LINE_Y_OFFSET);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
 
@@ -61,7 +65,7 @@ async function drawArrowBetweenEditors(
   expect(tgtBox).not.toBeNull();
 
   // Select and confirm target
-  await page.mouse.click(tgtBox!.x + targetXOffset, tgtBox!.y + tgtBox!.height / 2);
+  await page.mouse.click(tgtBox!.x + targetXOffset, tgtBox!.y + FIRST_LINE_Y_OFFSET);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
   // Wait for tool to switch back to selection before returning

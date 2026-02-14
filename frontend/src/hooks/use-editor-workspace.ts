@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useSettings } from "./use-settings"
 import { useLayers } from "./use-layers"
 import { useEditors } from "./use-editors"

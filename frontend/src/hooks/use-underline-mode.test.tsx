@@ -21,7 +21,6 @@ function createOptions(overrides: Record<string, unknown> = {}) {
 }
 
 const word1: WordSelection = { editorIndex: 0, from: 1, to: 5, text: "hello" }
-const word2: WordSelection = { editorIndex: 0, from: 10, to: 15, text: "world" }
 
 describe("useUnderlineMode", () => {
   beforeEach(() => {

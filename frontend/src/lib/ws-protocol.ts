@@ -29,6 +29,7 @@ export interface LayerPayload {
   visible: boolean
   highlights: HighlightPayload[]
   arrows: ArrowPayload[]
+  underlines?: Array<Record<string, unknown>>
 }
 
 export interface EditorPayload {

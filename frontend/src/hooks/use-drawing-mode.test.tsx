@@ -75,7 +75,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection, setStatus })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     // Set selection, then confirm
@@ -98,7 +98,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection, addArrow, setActiveTool, setStatus })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     // Set selection and confirm anchor
@@ -127,7 +127,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection, setActiveTool })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     rerender({ selection: word1 })
@@ -143,7 +143,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection, setStatus })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     // Confirm anchor
@@ -167,7 +167,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection, activeLayerId: null, addLayer, addArrow })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     // First confirm — should auto-create layer and set anchor
@@ -193,7 +193,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection, activeLayerId: null, addLayer })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     rerender({ selection: word1 })
@@ -209,7 +209,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ activeTool: props.activeTool, selection: props.selection, clearStatus })),
-      { initialProps: { activeTool: "arrow" as ActiveTool, selection: null } }
+      { initialProps: { activeTool: "arrow" as ActiveTool, selection: null as WordSelection | null } }
     )
 
     rerender({ activeTool: "arrow", selection: word1 })
@@ -227,7 +227,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ activeTool: props.activeTool, selection: props.selection, clearStatus })),
-      { initialProps: { activeTool: "arrow" as ActiveTool, selection: null } }
+      { initialProps: { activeTool: "arrow" as ActiveTool, selection: null as WordSelection | null } }
     )
 
     // Enter drawing phase so wasActive will be true
@@ -245,7 +245,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { isLocked: boolean; selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ isLocked: props.isLocked, selection: props.selection, clearStatus })),
-      { initialProps: { isLocked: true, selection: null } }
+      { initialProps: { isLocked: true, selection: null as WordSelection | null } }
     )
 
     rerender({ isLocked: true, selection: word1 })
@@ -260,7 +260,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { isLocked: boolean; selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ isLocked: props.isLocked, selection: props.selection })),
-      { initialProps: { isLocked: true, selection: null } }
+      { initialProps: { isLocked: true, selection: null as WordSelection | null } }
     )
 
     rerender({ isLocked: true, selection: word1 })
@@ -276,7 +276,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     // During selecting-anchor phase, selection changes should NOT create a preview
@@ -310,7 +310,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ showDrawingToasts: false, addArrow, selection: props.selection, setStatus })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     rerender({ selection: word1 })
@@ -327,7 +327,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ showDrawingToasts: false, activeLayerId: null, addLayer, selection: props.selection })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     rerender({ selection: word1 })
@@ -338,10 +338,10 @@ describe("useDrawingMode", () => {
   })
 
   it("selection is preserved after confirming anchor", () => {
-    const { result, rerender } = renderHook(
+    const { result } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection })),
-      { initialProps: { selection: word1 } }
+      { initialProps: { selection: word1 as WordSelection | null } }
     )
 
     act(() => { result.current.confirmSelection() })
@@ -357,7 +357,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ activeTool: props.activeTool, selection: props.selection })),
-      { initialProps: { activeTool: "selection" as ActiveTool, selection: word1 } }
+      { initialProps: { activeTool: "selection" as ActiveTool, selection: word1 as WordSelection | null } }
     )
 
     // Switch to arrow tool — selection should not be cleared
@@ -390,7 +390,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection, addArrow, activeArrowStyle: "dashed" })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     rerender({ selection: word1 })
@@ -410,7 +410,7 @@ describe("useDrawingMode", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection, addArrow })),
-      { initialProps: { selection: null } }
+      { initialProps: { selection: null as WordSelection | null } }
     )
 
     rerender({ selection: word1 })

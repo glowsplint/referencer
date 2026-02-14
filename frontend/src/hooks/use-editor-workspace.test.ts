@@ -616,6 +616,8 @@ describe("useEditorWorkspace", () => {
         from: 1,
         to: 5,
         text: "hello",
+        annotation: "",
+        type: "highlight" as const,
       })
     })
 
@@ -643,6 +645,8 @@ describe("useEditorWorkspace", () => {
         from: 1,
         to: 5,
         text: "hello",
+        annotation: "",
+        type: "highlight" as const,
       })
     })
 
@@ -665,12 +669,16 @@ describe("useEditorWorkspace", () => {
         from: 1,
         to: 5,
         text: "hello",
+        annotation: "",
+        type: "highlight" as const,
       })
       result.current.addHighlight(layerId, {
         editorIndex: 0,
         from: 10,
         to: 15,
         text: "world",
+        annotation: "",
+        type: "highlight" as const,
       })
     })
 
@@ -701,12 +709,16 @@ describe("useEditorWorkspace", () => {
         from: 1,
         to: 5,
         text: "hello",
+        annotation: "",
+        type: "highlight" as const,
       })
       result.current.addHighlight(layerId, {
         editorIndex: 0,
         from: 10,
         to: 15,
         text: "world",
+        annotation: "",
+        type: "highlight" as const,
       })
     })
 
