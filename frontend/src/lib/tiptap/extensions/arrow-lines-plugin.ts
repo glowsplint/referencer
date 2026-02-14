@@ -66,7 +66,10 @@ export class ArrowLinesView {
     this.wrapper.appendChild(this.visualSvg)
     this.updateSvgSize()
 
-    this.resizeObserver = new ResizeObserver(() => this.updateSvgSize())
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateSvgSize()
+      this.redraw()
+    })
     this.resizeObserver.observe(this.wrapper)
     return true
   }

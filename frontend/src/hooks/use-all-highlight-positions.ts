@@ -87,10 +87,15 @@ export function useAllHighlightPositions(
       }
     }
 
+    // Recompute on container resize (e.g. opening dev console, browser resize)
+    const ro = new ResizeObserver(() => compute())
+    ro.observe(container)
+
     return () => {
       for (const { el, handler } of scrollHandlers) {
         el.removeEventListener("scroll", handler)
       }
+      ro.disconnect()
     }
   }, [editorsRef, layers, containerRef, sectionVisibility])
 
