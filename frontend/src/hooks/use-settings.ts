@@ -1,6 +1,30 @@
 import { useEffect, useState, useCallback } from "react"
 import type { EditorSettings, AnnotationSettings, ActiveTool, ArrowStyle } from "@/types/editor"
 
+const STORAGE_KEY = "referencer-settings"
+
+const DEFAULT_SETTINGS: EditorSettings = {
+  isDarkMode: false,
+  isLayersOn: false,
+  isMultipleRowsLayout: false,
+  isLocked: false,
+  showDrawingToasts: true,
+  showCommentsToasts: true,
+  showHighlightToasts: true,
+  overscrollEnabled: false,
+}
+
+function loadSettings(): EditorSettings {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return DEFAULT_SETTINGS
+    const parsed = JSON.parse(raw)
+    return { ...DEFAULT_SETTINGS, ...parsed }
+  } catch {
+    return DEFAULT_SETTINGS
+  }
+}
+
 function useToggle<T>(
   setter: React.Dispatch<React.SetStateAction<T>>,
   key: keyof T
@@ -12,22 +36,17 @@ function useToggle<T>(
 }
 
 export function useSettings() {
-  const [settings, setSettings] = useState<EditorSettings>({
-    isDarkMode: false,
-    isLayersOn: false,
-    isMultipleRowsLayout: false,
-    isLocked: false,
-    showDrawingToasts: true,
-    showCommentsToasts: true,
-    showHighlightToasts: true,
-    overscrollEnabled: false,
-  })
+  const [settings, setSettings] = useState<EditorSettings>(loadSettings)
   const [annotations, setAnnotations] = useState<AnnotationSettings>({
     activeTool: "selection",
   })
   const [activeArrowStyle, setActiveArrowStyle] = useState<ArrowStyle>("solid")
   const [arrowStylePickerOpen, setArrowStylePickerOpen] = useState(false)
   const [selectedArrow, setSelectedArrow] = useState<{ layerId: string; arrowId: string } | null>(null)
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
+  }, [settings])
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", settings.isDarkMode)

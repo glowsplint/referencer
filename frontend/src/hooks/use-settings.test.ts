@@ -4,6 +4,7 @@ import { useSettings } from "./use-settings"
 
 beforeEach(() => {
   vi.clearAllMocks()
+  localStorage.clear()
   document.documentElement.classList.remove("dark")
   document.documentElement.classList.remove("overscroll-enabled")
 })
@@ -137,5 +138,75 @@ describe("useSettings", () => {
     act(() => { result.current.toggleOverscrollEnabled() })
     expect(result.current.settings.overscrollEnabled).toBe(false)
     expect(document.documentElement.classList.contains("overscroll-enabled")).toBe(false)
+  })
+
+  it("persists settings to localStorage when toggled", () => {
+    const { result } = renderHook(() => useSettings())
+
+    act(() => { result.current.toggleDarkMode() })
+
+    const stored = JSON.parse(localStorage.getItem("referencer-settings")!)
+    expect(stored.isDarkMode).toBe(true)
+  })
+
+  it("restores settings from localStorage on init", () => {
+    localStorage.setItem("referencer-settings", JSON.stringify({
+      isDarkMode: true,
+      isLayersOn: true,
+      isMultipleRowsLayout: false,
+      isLocked: false,
+      showDrawingToasts: false,
+      showCommentsToasts: true,
+      showHighlightToasts: true,
+      overscrollEnabled: false,
+    }))
+
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings.isDarkMode).toBe(true)
+    expect(result.current.settings.isLayersOn).toBe(true)
+    expect(result.current.settings.showDrawingToasts).toBe(false)
+  })
+
+  it("falls back to defaults when localStorage has invalid JSON", () => {
+    localStorage.setItem("referencer-settings", "not-json{{{")
+
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings).toEqual({
+      isDarkMode: false,
+      isLayersOn: false,
+      isMultipleRowsLayout: false,
+      isLocked: false,
+      showDrawingToasts: true,
+      showCommentsToasts: true,
+      showHighlightToasts: true,
+      overscrollEnabled: false,
+    })
+  })
+
+  it("fills missing keys with defaults when localStorage has partial data", () => {
+    localStorage.setItem("referencer-settings", JSON.stringify({
+      isDarkMode: true,
+    }))
+
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings.isDarkMode).toBe(true)
+    expect(result.current.settings.isLayersOn).toBe(false)
+    expect(result.current.settings.showDrawingToasts).toBe(true)
+    expect(result.current.settings.showCommentsToasts).toBe(true)
+    expect(result.current.settings.showHighlightToasts).toBe(true)
+    expect(result.current.settings.overscrollEnabled).toBe(false)
+  })
+
+  it("applies dark mode class on mount from persisted settings", () => {
+    localStorage.setItem("referencer-settings", JSON.stringify({
+      isDarkMode: true,
+    }))
+
+    renderHook(() => useSettings())
+
+    expect(document.documentElement.classList.contains("dark")).toBe(true)
   })
 })
