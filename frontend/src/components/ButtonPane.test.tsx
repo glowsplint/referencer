@@ -1,5 +1,5 @@
 import { screen, fireEvent, act } from "@testing-library/react"
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect } from "vitest"
 import { ButtonPane } from "./ButtonPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
 

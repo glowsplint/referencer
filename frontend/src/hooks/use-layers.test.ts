@@ -341,7 +341,7 @@ describe("useLayers", () => {
     const { result } = renderHook(() => useLayers())
 
     let ret: { id: string; name: string } = { id: "", name: "" }
-    act(() => { ret = result.current.addLayer() })
+    act(() => { ret = result.current.addLayer() as { id: string; name: string } })
 
     expect(ret.id).toBe(result.current.layers[0].id)
     expect(ret.name).toBe("Layer 1")

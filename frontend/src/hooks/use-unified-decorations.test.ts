@@ -13,8 +13,8 @@ vi.mock("@tiptap/pm/view", async () => {
   return {
     ...actual,
     DecorationSet: {
-      ...actual.DecorationSet,
-      empty: actual.DecorationSet.empty,
+      ...(actual as any).DecorationSet,
+      empty: (actual as any).DecorationSet.empty,
       create: vi.fn((_doc: unknown, decorations: unknown[]) => {
         capturedDecorations = decorations
         return { __decorationCount: decorations.length }
@@ -49,6 +49,7 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
     visible: true,
     highlights: [],
     arrows: [],
+    underlines: [],
     ...overrides,
   }
 }

@@ -165,6 +165,8 @@ const defaultEditorPaneProps = {
   activeLayerColor: null,
   isDarkMode: false,
   selectedArrowId: null,
+  removeArrow: vi.fn(),
+  sectionVisibility: [true],
 }
 
 beforeEach(() => {

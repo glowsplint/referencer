@@ -30,6 +30,7 @@ function renderRow(overrides = {}) {
     onToggleVisibility: vi.fn(),
     onRemoveHighlight: vi.fn(),
     onRemoveArrow: vi.fn(),
+    onRemoveUnderline: vi.fn(),
   }
   const props = { ...defaults, ...overrides }
   return { ...render(<LayerRow {...props} />), props }

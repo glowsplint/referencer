@@ -12,6 +12,7 @@ const mockWorkspace = {
     showDrawingToasts: true,
     showCommentsToasts: true,
     showHighlightToasts: true,
+    overscrollEnabled: false,
   },
   annotations: { activeTool: "selection" as const },
   layers: [] as { id: string; color: string; name: string; visible: boolean; arrowStyle: string; highlights: { id: string; editorIndex: number; from: number; to: number; text: string; annotation: string; type: string }[]; arrows: unknown[]; underlines: unknown[] }[],
@@ -119,6 +120,10 @@ beforeEach(() => {
     isLayersOn: false,
     isMultipleRowsLayout: false,
     isLocked: false,
+    showDrawingToasts: true,
+    showCommentsToasts: true,
+    showHighlightToasts: true,
+    overscrollEnabled: false,
   }
   mockWorkspace.layers = []
   mockWorkspace.activeLayerId = null

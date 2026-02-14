@@ -546,7 +546,7 @@ test.describe("all elements hidden state", () => {
     await drawArrowInEditor(page, 0);
     // Switch back to comments tool after drawing arrow
     await page.keyboard.press("c");
-    await clickWordInEditor(page, 0, 100);
+    await clickWordInEditor(page, 0, 200);
     await addAnnotation(page, "Will hide");
 
     // Hide the only layer

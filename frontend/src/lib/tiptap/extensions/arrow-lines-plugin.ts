@@ -1,5 +1,5 @@
 import { Extension } from "@tiptap/core"
-import { Plugin, PluginKey } from "@tiptap/pm/state"
+import { Plugin, PluginKey, type EditorState } from "@tiptap/pm/state"
 import type { EditorView } from "@tiptap/pm/view"
 import type { ArrowEndpoint, ArrowStyle } from "@/types/editor"
 import { getWordCenterContentRelative } from "@/lib/tiptap/nearest-word"
@@ -37,7 +37,6 @@ export class ArrowLinesView {
   private wrapper: HTMLElement | null = null
   private view: EditorView
   private arrows: ArrowData[] = []
-  private isDarkMode = false
   private hoveredArrowId: string | null = null
   private selectedArrowId: string | null = null
   private resizeObserver: ResizeObserver | null = null
@@ -81,7 +80,7 @@ export class ArrowLinesView {
     this.visualSvg.style.height = `${this.wrapper.scrollHeight}px`
   }
 
-  update(view: EditorView, prevState: { doc: { eq: (doc: unknown) => boolean } }) {
+  update(view: EditorView, prevState: EditorState) {
     this.view = view
     viewInstances.set(view, this)
     this.ensureWrapper()
@@ -98,7 +97,6 @@ export class ArrowLinesView {
   }
 
   setDarkMode(isDarkMode: boolean) {
-    this.isDarkMode = isDarkMode
     this.ensureWrapper()
     this.visualSvg.style.mixBlendMode = isDarkMode ? "screen" : "multiply"
     this.redraw()

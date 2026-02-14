@@ -57,7 +57,6 @@ export function ArrowOverlay({
   activeTool,
   sectionVisibility,
   isDarkMode,
-  isLocked,
 }: ArrowOverlayProps) {
   const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null)
   // Structural tick — only for structural changes (layers, visibility, preview), NOT scroll
@@ -622,7 +621,6 @@ export function ArrowOverlay({
 
         {crossEditorArrows.map((data) => {
           const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
-          const isHovered = hoveredArrowId === data.arrowId
           const isSelected = selectedArrow?.arrowId === data.arrowId
           const hideMarker = isSelected
           if (styleAttrs.isDouble) {
@@ -762,7 +760,7 @@ export function ArrowOverlay({
                 strokeWidth={12}
                 fill="none"
                 style={{
-                  pointerEvents: "auto",
+                  pointerEvents: activeTool === "arrow" ? "none" : "auto",
                   cursor: "pointer",
                 }}
                 onMouseEnter={() => setHoveredArrowId(data.arrowId)}
