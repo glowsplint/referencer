@@ -32,13 +32,13 @@ import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
 
 function getWorkspaceId(): string {
+  const base = import.meta.env.BASE_URL;
   const path = window.location.pathname;
-  const match = path.match(/^\/space\/(.+)$/);
-  if (match) return match[1];
+  const prefix = `${base}space/`;
+  if (path.startsWith(prefix)) return path.slice(prefix.length);
 
-  // On /space with no id, generate one and redirect
   const id = crypto.randomUUID();
-  window.history.replaceState(null, "", `/space/${id}`);
+  window.history.replaceState(null, "", `${prefix}${id}`);
   return id;
 }
 
