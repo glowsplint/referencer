@@ -276,6 +276,8 @@ export function App() {
                   editorsRef={editorsRef}
                   containerRef={containerRef}
                   removeArrow={removeArrow}
+                  selectedArrow={workspace.selectedArrow}
+                  setSelectedArrow={workspace.setSelectedArrow}
                   activeTool={annotations.activeTool}
                   sectionVisibility={sectionVisibility}
                   isDarkMode={settings.isDarkMode}

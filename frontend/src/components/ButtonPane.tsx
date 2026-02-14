@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   Columns2,
   Rows2,
@@ -70,6 +70,8 @@ export function ButtonPane() {
     setActiveArrowStyle,
     arrowStylePickerOpen,
     setArrowStylePickerOpen,
+    selectedArrow,
+    updateArrowStyle,
     isManagementPaneOpen,
     toggleManagementPane,
     toggleDarkMode,
@@ -118,11 +120,29 @@ export function ButtonPane() {
   const handleArrowStyleSelect = useCallback(
     (style: ArrowStyle) => {
       setActiveArrowStyle(style);
+      if (selectedArrow) {
+        updateArrowStyle(selectedArrow.layerId, selectedArrow.arrowId, style);
+      }
       setArrowStylePickerOpen(false);
       setActiveTool("arrow");
     },
-    [setActiveArrowStyle, setActiveTool]
+    [setActiveArrowStyle, setActiveTool, selectedArrow, updateArrowStyle]
   );
+
+  // Auto-close picker when clicking outside the popover and arrow button
+  useEffect(() => {
+    if (!arrowStylePickerOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const popover = document.querySelector('[data-testid="arrowStylePopover"]');
+      const arrowBtn = arrowButtonRef.current;
+      if (popover?.contains(target)) return;
+      if (arrowBtn?.contains(target)) return;
+      setArrowStylePickerOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [arrowStylePickerOpen, setArrowStylePickerOpen]);
 
   const toolButtons: { tool: ActiveTool; icon: React.ReactNode; label: string; testId: string }[] = [
     { tool: "selection", icon: <MousePointer2 size={20} />, label: "Selection tool", testId: "selectionToolButton" },

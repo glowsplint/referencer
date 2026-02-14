@@ -15,6 +15,8 @@ interface ArrowOverlayProps {
   editorsRef: React.RefObject<Map<number, Editor>>
   containerRef: React.RefObject<HTMLDivElement | null>
   removeArrow: (layerId: string, arrowId: string) => void
+  selectedArrow: { layerId: string; arrowId: string } | null
+  setSelectedArrow: (arrow: { layerId: string; arrowId: string } | null) => void
   activeTool: ActiveTool
   sectionVisibility: boolean[]
   isDarkMode: boolean
@@ -49,6 +51,8 @@ export function ArrowOverlay({
   editorsRef,
   containerRef,
   removeArrow,
+  selectedArrow,
+  setSelectedArrow,
   activeTool,
   sectionVisibility,
   isDarkMode,
@@ -66,6 +70,7 @@ export function ArrowOverlay({
   const visualPathRefs2 = useRef<Map<string, SVGPathElement>>(new Map())
   const hitPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
   const xIconRefs = useRef<Map<string, SVGGElement>>(new Map())
+  const selectionPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
 
   // Ref for the container-level visual SVG and its gap clip path
   const containerVisualSvgRef = useRef<SVGSVGElement | null>(null)
@@ -431,11 +436,12 @@ export function ArrowOverlay({
       }
     }
 
-    // Update hit areas and X icons (all arrows) — always at container level
+    // Update hit areas, selection rings, and X icons (all arrows) — always at container level
     for (const data of allVisibleArrows) {
       const d = computePath(data.arrow, editorsRef, containerRect)
       if (!d) continue
       hitPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
+      selectionPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
 
       // Update X icon position if hovered
       const xIcon = xIconRefs.current.get(data.arrowId)
@@ -513,10 +519,10 @@ export function ArrowOverlay({
     }
   }, [containerRef, recalcStructural])
 
-  // Structural recalc on layer/drawing/visibility changes
+  // Structural recalc on layer/drawing/visibility/selection changes
   useEffect(() => {
     recalcStructural()
-  }, [layers, drawingState, sectionVisibility, recalcStructural])
+  }, [layers, drawingState, sectionVisibility, selectedArrow, recalcStructural])
 
   const blendArrow = useCallback(
     (hex: string) => blendWithBackground(hex, ARROW_OPACITY, isDarkMode),
@@ -685,9 +691,25 @@ export function ArrowOverlay({
       >
         {allVisibleArrows.map((data) => {
           const isHovered = hoveredArrowId === data.arrowId
+          const isSelected = selectedArrow?.arrowId === data.arrowId
           const strokeColor = blendArrow(data.color)
           return (
             <g key={data.arrowId}>
+              {isSelected && (
+                <path
+                  ref={(el) => {
+                    if (el) selectionPathRefs.current.set(data.arrowId, el)
+                    else selectionPathRefs.current.delete(data.arrowId)
+                  }}
+                  data-testid="arrow-selection-ring"
+                  d=""
+                  stroke={data.color}
+                  strokeWidth={8}
+                  strokeOpacity={0.3}
+                  fill="none"
+                  style={{ pointerEvents: "none" }}
+                />
+              )}
               <path
                 ref={(el) => {
                   if (el) hitPathRefs.current.set(data.arrowId, el)
@@ -705,8 +727,7 @@ export function ArrowOverlay({
                 onMouseEnter={() => setHoveredArrowId(data.arrowId)}
                 onMouseLeave={() => setHoveredArrowId(null)}
                 onClick={() => {
-                  removeArrow(data.layerId, data.arrowId)
-                  setHoveredArrowId(null)
+                  setSelectedArrow({ layerId: data.layerId, arrowId: data.arrowId })
                 }}
               />
               {isHovered && (
@@ -716,7 +737,15 @@ export function ArrowOverlay({
                     else xIconRefs.current.delete(data.arrowId)
                   }}
                   transform="translate(0, 0)"
-                  style={{ pointerEvents: "none" }}
+                  style={{ pointerEvents: "auto", cursor: "pointer" }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    removeArrow(data.layerId, data.arrowId)
+                    if (selectedArrow?.arrowId === data.arrowId) {
+                      setSelectedArrow(null)
+                    }
+                    setHoveredArrowId(null)
+                  }}
                 >
                   <circle r="8" fill="white" stroke={strokeColor} strokeWidth={1.5} />
                   <path

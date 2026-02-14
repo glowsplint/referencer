@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from "react"
 import { toast } from "sonner"
-import type { Layer, Highlight, Arrow, LayerUnderline } from "@/types/editor"
+import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
 export function useLayers() {
@@ -131,6 +131,16 @@ export function useLayers() {
     }))
   }, [])
 
+  const updateArrowStyle = useCallback(
+    (layerId: string, arrowId: string, arrowStyle: ArrowStyle) => {
+      updateLayer(layerId, (l) => ({
+        ...l,
+        arrows: l.arrows.map((a) => (a.id === arrowId ? { ...a, arrowStyle } : a)),
+      }))
+    },
+    []
+  )
+
   const clearLayerArrows = useCallback((layerId: string) => {
     updateLayer(layerId, (l) => ({ ...l, arrows: [] }))
   }, [])
@@ -174,6 +184,7 @@ export function useLayers() {
     clearLayerHighlights,
     addArrow,
     removeArrow,
+    updateArrowStyle,
     clearLayerArrows,
     addUnderline,
     removeUnderline,

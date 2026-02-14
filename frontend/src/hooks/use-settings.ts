@@ -26,6 +26,7 @@ export function useSettings() {
   })
   const [activeArrowStyle, setActiveArrowStyle] = useState<ArrowStyle>("solid")
   const [arrowStylePickerOpen, setArrowStylePickerOpen] = useState(false)
+  const [selectedArrow, setSelectedArrow] = useState<{ layerId: string; arrowId: string } | null>(null)
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", settings.isDarkMode)
@@ -50,6 +51,8 @@ export function useSettings() {
     setActiveArrowStyle,
     arrowStylePickerOpen,
     setArrowStylePickerOpen,
+    selectedArrow,
+    setSelectedArrow,
     toggleDarkMode,
     toggleLayersOn,
     toggleMultipleRowsLayout,

@@ -106,6 +106,13 @@ export function validateActionPayload(payload: Record<string, unknown>): boolean
     case "removeArrow":
       return isString(payload.layerId) && isString(payload.arrowId)
 
+    case "updateArrowStyle":
+      return (
+        isString(payload.layerId) &&
+        isString(payload.arrowId) &&
+        isString(payload.arrowStyle)
+      )
+
     case "addUnderline": {
       if (!isString(payload.layerId) || !isObject(payload.underline)) return false
       const u = payload.underline
@@ -358,6 +365,14 @@ function applyRemoteAction(
       rawLayers.removeArrow(
         payload.layerId as string,
         payload.arrowId as string
+      )
+      break
+
+    case "updateArrowStyle":
+      rawLayers.updateArrowStyle(
+        payload.layerId as string,
+        payload.arrowId as string,
+        payload.arrowStyle as ArrowStyle
       )
       break
 

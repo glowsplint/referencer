@@ -6,7 +6,7 @@ import { useActionHistory } from "./use-action-history"
 import { useTrackedLayers } from "./use-tracked-layers"
 import { useTrackedEditors } from "./use-tracked-editors"
 import { useWebSocket } from "./use-websocket"
-import type { Highlight, Arrow, LayerUnderline } from "@/types/editor"
+import type { Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
   const settingsHook = useSettings()
@@ -166,6 +166,14 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     guarded((layerId: string, arrowId: string) => {
       trackedLayersHook.removeArrow(layerId, arrowId)
       guardedSendAction("removeArrow", { layerId, arrowId })
+    }),
+    [readOnly, trackedLayersHook, guardedSendAction]
+  )
+
+  const updateArrowStyle = useCallback(
+    guarded((layerId: string, arrowId: string, arrowStyle: ArrowStyle) => {
+      trackedLayersHook.updateArrowStyle(layerId, arrowId, arrowStyle)
+      guardedSendAction("updateArrowStyle", { layerId, arrowId, arrowStyle })
     }),
     [readOnly, trackedLayersHook, guardedSendAction]
   )
@@ -415,6 +423,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     updateHighlightAnnotation,
     addArrow,
     removeArrow,
+    updateArrowStyle,
     addUnderline,
     removeUnderline,
     // Editor state from tracked hook

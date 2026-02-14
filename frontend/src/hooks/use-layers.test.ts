@@ -578,6 +578,43 @@ describe("useLayers", () => {
     expect(result.current.layers[0].highlights[0].type).toBe("highlight")
   })
 
+  it("updateArrowStyle updates the style of an existing arrow", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addArrow(layerId, {
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        arrowStyle: "solid",
+      })
+    })
+    const arrowId = result.current.layers[0].arrows[0].id
+
+    act(() => { result.current.updateArrowStyle(layerId, arrowId, "dashed") })
+
+    expect(result.current.layers[0].arrows[0].arrowStyle).toBe("dashed")
+  })
+
+  it("updateArrowStyle with non-existent arrow does nothing", () => {
+    const { result } = renderHook(() => useLayers())
+    act(() => { result.current.addLayer() })
+    const layerId = result.current.layers[0].id
+
+    act(() => {
+      result.current.addArrow(layerId, {
+        from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+        to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+        arrowStyle: "solid",
+      })
+    })
+
+    act(() => { result.current.updateArrowStyle(layerId, "non-existent", "dashed") })
+
+    expect(result.current.layers[0].arrows[0].arrowStyle).toBe("solid")
+  })
+
   it("updateHighlightAnnotation with non-existent highlight does nothing", () => {
     const { result } = renderHook(() => useLayers())
     act(() => { result.current.addLayer() })
