@@ -4,6 +4,7 @@ import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
 import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useCustomColors } from "@/hooks/use-custom-colors";
 
 export function ManagementPane() {
   const {
@@ -19,13 +20,18 @@ export function ManagementPane() {
     updateLayerName,
     toggleLayerVisibility,
     toggleAllLayerVisibility,
+    removeHighlight,
+    removeArrow,
+    removeUnderline,
     addEditor,
     removeEditor,
+    reorderEditors,
     updateSectionName,
     toggleSectionVisibility,
     toggleAllSectionVisibility,
   } = useWorkspace();
 
+  const { customColors, addCustomColor, removeCustomColor } = useCustomColors();
   const [dragOver, setDragOver] = useState(false);
 
   const hasVisibleLayers = layers.some((l) => l.visible);
@@ -52,7 +58,7 @@ export function ManagementPane() {
           <div className="flex items-center gap-1">
             <button
               className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
-              onClick={addLayer}
+              onClick={() => addLayer({ extraColors: customColors })}
               title="Add layer"
               data-testid="addLayerButton"
             >
@@ -76,9 +82,16 @@ export function ManagementPane() {
               index={index}
               isActive={layer.id === activeLayerId}
               onSetActive={() => setActiveLayer(layer.id)}
+              sectionNames={sectionNames}
               onUpdateColor={(color) => updateLayerColor(layer.id, color)}
               onUpdateName={(name) => updateLayerName(layer.id, name)}
               onToggleVisibility={() => toggleLayerVisibility(layer.id)}
+              onRemoveHighlight={removeHighlight}
+              onRemoveArrow={removeArrow}
+              onRemoveUnderline={removeUnderline}
+              customColors={customColors}
+              onAddCustomColor={addCustomColor}
+              onRemoveCustomColor={removeCustomColor}
             />
           ))}
         </div>
@@ -90,6 +103,7 @@ export function ManagementPane() {
         sectionNames={sectionNames}
         addEditor={addEditor}
         onUpdateName={updateSectionName}
+        onReorder={reorderEditors}
         toggleSectionVisibility={toggleSectionVisibility}
         toggleAllSectionVisibility={toggleAllSectionVisibility}
       />

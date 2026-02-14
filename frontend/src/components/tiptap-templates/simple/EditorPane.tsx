@@ -5,10 +5,15 @@ import { EditorContent, useEditor } from "@tiptap/react"
 import type { Editor } from "@tiptap/react"
 
 import { createSimpleEditorExtensions } from "./extensions"
-import { useLayerDecorations } from "@/hooks/use-layer-decorations"
+import { useUnifiedDecorations } from "@/hooks/use-unified-decorations"
+import { useLayerUnderlineDecorations } from "@/hooks/use-layer-underline-decorations"
 import { useSelectionHighlight } from "@/hooks/use-selection-highlight"
+import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
-import type { Layer, WordSelection } from "@/types/editor"
+import { useWordHover } from "@/hooks/use-word-hover"
+import { useEditorArrows } from "@/hooks/use-editor-arrows"
+import { SelectionRingOverlay } from "@/components/SelectionRingOverlay"
+import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
 
 // --- Node SCSS ---
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
@@ -24,6 +29,7 @@ import "@/components/tiptap-templates/simple/simple-editor.scss"
 
 export function EditorPane({
   isLocked,
+  activeTool,
   content,
   index,
   onEditorMount,
@@ -31,12 +37,18 @@ export function EditorPane({
   onMouseDown,
   onMouseMove,
   onMouseUp,
+  onContentUpdate,
   layers,
   selection,
+  selectionHidden,
   activeLayerColor,
   isDarkMode,
+  removeArrow,
+  sectionVisibility,
+  selectedArrowId,
 }: {
   isLocked: boolean
+  activeTool?: ActiveTool
   content?: Record<string, unknown>
   index: number
   onEditorMount: (index: number, editor: Editor) => void
@@ -44,13 +56,23 @@ export function EditorPane({
   onMouseDown?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
   onMouseMove?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
   onMouseUp?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
+  onContentUpdate?: (index: number, json: Record<string, unknown>) => void
   layers: Layer[]
   selection: WordSelection | null
+  selectionHidden?: boolean
   activeLayerColor: string | null
   isDarkMode: boolean
+  removeArrow: (layerId: string, arrowId: string) => void
+  sectionVisibility: boolean[]
+  selectedArrowId: string | null
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
+
+  const onContentUpdateRef = useRef(onContentUpdate)
+  onContentUpdateRef.current = onContentUpdate
+  const indexRef = useRef(index)
+  indexRef.current = index
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -65,6 +87,9 @@ export function EditorPane({
     },
     extensions,
     content,
+    onUpdate: ({ editor }) => {
+      onContentUpdateRef.current?.(indexRef.current, editor.getJSON() as Record<string, unknown>)
+    },
   })
 
   useEffect(() => {
@@ -82,9 +107,15 @@ export function EditorPane({
     }
   }, [editor, isLocked])
 
-  useLayerDecorations(editor, layers, index, isLocked, isDarkMode)
-  useSelectionHighlight(editor, selection, index, isLocked, activeLayerColor, isDarkMode)
-  useSelectionScroll(editor, selection, index, wrapperRef)
+  const visibleSelection = selectionHidden ? null : selection
+
+  useUnifiedDecorations(editor, layers, index, isLocked, isDarkMode)
+  useLayerUnderlineDecorations(editor, layers, index, isLocked, isDarkMode)
+  useSelectionHighlight(editor, visibleSelection, index, isLocked, activeLayerColor, isDarkMode, activeTool)
+  useSimilarTextHighlight(editor, visibleSelection, index, isLocked, activeLayerColor, isDarkMode)
+  useWordHover(editor, index, isLocked, isDarkMode, visibleSelection, activeLayerColor, layers)
+  useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow, selectedArrowId)
+  useSelectionScroll(editor, visibleSelection, index, wrapperRef)
 
   const handleFocus = useCallback(() => {
     onFocus(index)
@@ -117,7 +148,7 @@ export function EditorPane({
   return (
     <div
       ref={wrapperRef}
-      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}`}
+      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}${isLocked && activeTool === "arrow" ? " arrow-mode" : ""}`}
       onFocusCapture={handleFocus}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -127,6 +158,14 @@ export function EditorPane({
         editor={editor}
         role="presentation"
         className="simple-editor-content"
+      />
+      <SelectionRingOverlay
+        editor={editor}
+        selection={visibleSelection}
+        editorIndex={index}
+        isLocked={isLocked}
+        isDarkMode={isDarkMode}
+        wrapperRef={wrapperRef}
       />
     </div>
   )

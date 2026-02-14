@@ -9,17 +9,18 @@ test("document starts without dark class", async ({ page }) => {
   await expect(html).not.toHaveClass(/dark/);
 });
 
-test("clicking dark mode button adds dark class", async ({ page }) => {
-  await page.getByTestId("darkModeButton").click();
-  const html = page.locator("html");
-  await expect(html).toHaveClass(/dark/);
+test("toggling dark mode in settings adds dark class", async ({ page }) => {
+  await page.getByTestId("settingsButton").click();
+  await page.getByTestId("dark-mode-switch").click();
+  await expect(page.locator("html")).toHaveClass(/dark/);
 });
 
-test("clicking dark mode button again removes dark class", async ({ page }) => {
-  const button = page.getByTestId("darkModeButton");
-  await button.click();
+test("toggling dark mode again in settings removes dark class", async ({ page }) => {
+  await page.getByTestId("settingsButton").click();
+  const toggle = page.getByTestId("dark-mode-switch");
+  await toggle.click();
   await expect(page.locator("html")).toHaveClass(/dark/);
 
-  await button.click();
+  await toggle.click();
   await expect(page.locator("html")).not.toHaveClass(/dark/);
 });

@@ -1,0 +1,129 @@
+import { useEffect, useRef, useCallback } from "react"
+import { ToastKbd } from "@/components/ui/ToastKbd"
+import type { ActiveTool, WordSelection } from "@/types/editor"
+import type { StatusMessage } from "@/hooks/use-status-message"
+
+interface UseHighlightModeOptions {
+  isLocked: boolean
+  activeTool: ActiveTool
+  selection: WordSelection | null
+  activeLayerId: string | null
+  addLayer: () => string
+  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[]
+  addHighlight: (
+    layerId: string,
+    highlight: { editorIndex: number; from: number; to: number; text: string; annotation: string }
+  ) => string
+  removeHighlight: (layerId: string, highlightId: string) => void
+  showHighlightToasts: boolean
+  setStatus: (msg: StatusMessage, duration?: number) => void
+  clearStatus: () => void
+}
+
+export function useHighlightMode({
+  isLocked,
+  activeTool,
+  selection,
+  activeLayerId,
+  addLayer,
+  layers,
+  addHighlight,
+  removeHighlight,
+  showHighlightToasts,
+  setStatus,
+  clearStatus,
+}: UseHighlightModeOptions) {
+  const activeLayerIdRef = useRef(activeLayerId)
+  const addLayerRef = useRef(addLayer)
+  const addHighlightRef = useRef(addHighlight)
+  const removeHighlightRef = useRef(removeHighlight)
+  const layersRef = useRef(layers)
+  const selectionRef = useRef(selection)
+
+  useEffect(() => {
+    activeLayerIdRef.current = activeLayerId
+    addLayerRef.current = addLayer
+    addHighlightRef.current = addHighlight
+    removeHighlightRef.current = removeHighlight
+    layersRef.current = layers
+  }, [activeLayerId, addLayer, addHighlight, removeHighlight, layers])
+
+  selectionRef.current = selection
+
+  const activeToolRef = useRef(activeTool)
+  activeToolRef.current = activeTool
+
+  const isLockedRef = useRef(isLocked)
+  isLockedRef.current = isLocked
+
+  const showHighlightToastsRef = useRef(showHighlightToasts)
+  showHighlightToastsRef.current = showHighlightToasts
+
+  const setStatusRef = useRef(setStatus)
+  setStatusRef.current = setStatus
+  const clearStatusRef = useRef(clearStatus)
+  clearStatusRef.current = clearStatus
+
+  const isHighlightTool = activeTool === "highlight" && isLocked
+
+  // Entry/exit effect
+  useEffect(() => {
+    if (isHighlightTool) {
+      if (showHighlightToastsRef.current) {
+        setStatusRef.current({ text: <>Select words to highlight, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
+      }
+    } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
+      clearStatusRef.current()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHighlightTool])
+
+  const confirmHighlight = useCallback(() => {
+    if (activeToolRef.current !== "highlight" || !isLockedRef.current) return
+
+    const sel = selectionRef.current
+    if (!sel) return
+
+    let layerId = activeLayerIdRef.current
+    if (!layerId) {
+      const id = addLayerRef.current()
+      if (!id) return
+      layerId = id
+      activeLayerIdRef.current = id
+    }
+
+    const layer = layersRef.current.find((l) => l.id === layerId)
+
+    // Check for exact-match toggle (same range = remove existing highlight)
+    const existing = layer?.highlights.find(
+      (h) =>
+        h.editorIndex === sel.editorIndex &&
+        h.from === sel.from &&
+        h.to === sel.to &&
+        !h.annotation.trim()
+    )
+    if (existing) {
+      removeHighlightRef.current(layerId, existing.id)
+      if (showHighlightToastsRef.current) {
+        setStatusRef.current({ text: "Highlight removed", type: "success" }, 1500)
+      }
+      return
+    }
+
+    // Create highlight with empty annotation
+    addHighlightRef.current(layerId, {
+      editorIndex: sel.editorIndex,
+      from: sel.from,
+      to: sel.to,
+      text: sel.text,
+      annotation: "",
+      type: "highlight",
+    })
+    if (showHighlightToastsRef.current) {
+      setStatusRef.current({ text: "Highlight added", type: "success" }, 1500)
+    }
+    // Stay in highlight mode — do NOT switch to selection tool
+  }, [])
+
+  return { confirmHighlight }
+}

@@ -1,19 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { Share2 } from "lucide-react"
 
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from "@/components/tiptap-ui-primitive/tooltip"
+import { ShareDialog } from "@/components/ShareDialog"
+import { useWorkspace } from "@/contexts/WorkspaceContext"
 
 export function TitleBar() {
+  const { workspaceId, readOnly } = useWorkspace()
   const [title, setTitle] = useState("Title")
   const [isEditing, setIsEditing] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const startEditing = useCallback(() => {
+    if (readOnly) return
     setIsEditing(true)
-  }, [])
+  }, [readOnly])
 
   const stopEditing = useCallback(() => {
     setIsEditing(false)
@@ -63,6 +69,27 @@ export function TitleBar() {
           </TooltipTrigger>
           <TooltipContent>Rename</TooltipContent>
         </Tooltip>
+      )}
+      <div className="ml-auto">
+        <Tooltip placement="bottom" delay={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => setShareOpen(true)}
+              className="p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+              data-testid="shareButton"
+            >
+              <Share2 size={16} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Share</TooltipContent>
+        </Tooltip>
+      </div>
+      {workspaceId && (
+        <ShareDialog
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          workspaceId={workspaceId}
+        />
       )}
     </div>
   )

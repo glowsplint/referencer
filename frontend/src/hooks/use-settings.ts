@@ -1,5 +1,29 @@
 import { useEffect, useState, useCallback } from "react"
-import type { EditorSettings, AnnotationSettings } from "@/types/editor"
+import type { EditorSettings, AnnotationSettings, ActiveTool, ArrowStyle } from "@/types/editor"
+
+const STORAGE_KEY = "referencer-settings"
+
+const DEFAULT_SETTINGS: EditorSettings = {
+  isDarkMode: false,
+  isLayersOn: false,
+  isMultipleRowsLayout: false,
+  isLocked: false,
+  showDrawingToasts: true,
+  showCommentsToasts: true,
+  showHighlightToasts: true,
+  overscrollEnabled: false,
+}
+
+function loadSettings(): EditorSettings {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return DEFAULT_SETTINGS
+    const parsed = JSON.parse(raw)
+    return { ...DEFAULT_SETTINGS, ...parsed }
+  } catch {
+    return DEFAULT_SETTINGS
+  }
+}
 
 function useToggle<T>(
   setter: React.Dispatch<React.SetStateAction<T>>,
@@ -7,39 +31,61 @@ function useToggle<T>(
 ) {
   return useCallback(
     () => setter((prev) => ({ ...prev, [key]: !prev[key] })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [setter, key]
   )
 }
 
 export function useSettings() {
-  const [settings, setSettings] = useState<EditorSettings>({
-    isDarkMode: false,
-    isLayersOn: false,
-    isMultipleRowsLayout: false,
-    isLocked: false,
-  })
+  const [settings, setSettings] = useState<EditorSettings>(loadSettings)
   const [annotations, setAnnotations] = useState<AnnotationSettings>({
-    isPainterMode: false,
+    activeTool: "selection",
   })
+  const [activeArrowStyle, setActiveArrowStyle] = useState<ArrowStyle>("solid")
+  const [arrowStylePickerOpen, setArrowStylePickerOpen] = useState(false)
+  const [selectedArrow, setSelectedArrow] = useState<{ layerId: string; arrowId: string } | null>(null)
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
+  }, [settings])
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", settings.isDarkMode)
   }, [settings.isDarkMode])
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("overscroll-enabled", settings.overscrollEnabled)
+  }, [settings.overscrollEnabled])
+
   const toggleDarkMode = useToggle(setSettings, "isDarkMode")
   const toggleLayersOn = useToggle(setSettings, "isLayersOn")
   const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout")
   const toggleLocked = useToggle(setSettings, "isLocked")
-  const togglePainterMode = useToggle(setAnnotations, "isPainterMode")
+  const toggleShowDrawingToasts = useToggle(setSettings, "showDrawingToasts")
+  const toggleShowCommentsToasts = useToggle(setSettings, "showCommentsToasts")
+  const toggleShowHighlightToasts = useToggle(setSettings, "showHighlightToasts")
+  const toggleOverscrollEnabled = useToggle(setSettings, "overscrollEnabled")
+  const setActiveTool = useCallback(
+    (tool: ActiveTool) => setAnnotations({ activeTool: tool }),
+    []
+  )
 
   return {
     settings,
     annotations,
+    activeArrowStyle,
+    setActiveArrowStyle,
+    arrowStylePickerOpen,
+    setArrowStylePickerOpen,
+    selectedArrow,
+    setSelectedArrow,
     toggleDarkMode,
     toggleLayersOn,
     toggleMultipleRowsLayout,
     toggleLocked,
-    togglePainterMode,
+    toggleShowDrawingToasts,
+    toggleShowCommentsToasts,
+    toggleShowHighlightToasts,
+    toggleOverscrollEnabled,
+    setActiveTool,
   }
 }

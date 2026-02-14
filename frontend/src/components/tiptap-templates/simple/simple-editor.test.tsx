@@ -109,11 +109,14 @@ vi.mock("@/hooks/use-window-size", () => ({
 vi.mock("@/hooks/use-cursor-visibility", () => ({
   useCursorVisibility: () => ({ x: 0, y: 0, width: 0, height: 0 }),
 }))
-vi.mock("@/hooks/use-layer-decorations", () => ({
-  useLayerDecorations: vi.fn(),
+vi.mock("@/hooks/use-unified-decorations", () => ({
+  useUnifiedDecorations: vi.fn(),
 }))
 vi.mock("@/hooks/use-selection-highlight", () => ({
   useSelectionHighlight: vi.fn(),
+}))
+vi.mock("@/hooks/use-word-hover", () => ({
+  useWordHover: vi.fn(),
 }))
 vi.mock("@/hooks/use-selection-decoration", () => ({
   useSelectionScroll: vi.fn(),
@@ -138,6 +141,10 @@ vi.mock("@/lib/tiptap/extensions/word-selection", () => ({
   WordSelectionExtension: {},
   wordSelectionPluginKey: {},
 }))
+vi.mock("@/lib/tiptap/extensions/word-hover", () => ({
+  WordHoverExtension: {},
+  wordHoverPluginKey: {},
+}))
 vi.mock("@/components/tiptap-node/image-upload-node/image-upload-node-extension", () => ({
   ImageUploadNode: { configure: () => ({}) },
 }))
@@ -157,6 +164,7 @@ const defaultEditorPaneProps = {
   selection: null,
   activeLayerColor: null,
   isDarkMode: false,
+  selectedArrowId: null,
 }
 
 beforeEach(() => {
@@ -221,6 +229,30 @@ describe("EditorPane lock/unlock", () => {
     )
     const wrapper = container.querySelector(".simple-editor-wrapper")
     expect(wrapper?.classList.contains("editor-locked")).toBe(false)
+  })
+
+  it("adds arrow-mode class when locked with arrow tool active", () => {
+    const { container } = render(
+      <EditorPane isLocked={true} activeTool="arrow" index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
+    )
+    const wrapper = container.querySelector(".simple-editor-wrapper")
+    expect(wrapper?.classList.contains("arrow-mode")).toBe(true)
+  })
+
+  it("does not add arrow-mode class when locked with selection tool", () => {
+    const { container } = render(
+      <EditorPane isLocked={true} activeTool="selection" index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
+    )
+    const wrapper = container.querySelector(".simple-editor-wrapper")
+    expect(wrapper?.classList.contains("arrow-mode")).toBe(false)
+  })
+
+  it("does not add arrow-mode class when unlocked with arrow tool", () => {
+    const { container } = render(
+      <EditorPane isLocked={false} activeTool="arrow" index={0} onEditorMount={vi.fn()} onFocus={vi.fn()} {...defaultEditorPaneProps} />
+    )
+    const wrapper = container.querySelector(".simple-editor-wrapper")
+    expect(wrapper?.classList.contains("arrow-mode")).toBe(false)
   })
 
   it("calls onEditorMount with index and editor on mount", () => {

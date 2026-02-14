@@ -26,8 +26,17 @@ const LEFT_SECTIONS: ShortcutSection[] = [
     title: "Workspace",
     shortcuts: [
       { keys: ["L"], description: "Cycle to next layer" },
-      { keys: ["A"], description: "Hold to draw arrow" },
+      { keys: ["S"], description: "Selection tool" },
+      { keys: ["A"], description: "Arrow tool" },
+      { keys: ["C"], description: "Comments tool" },
+      { keys: ["H"], description: "Highlight tool" },
+      { keys: ["U"], description: "Underline tool" },
       { keys: ["Arrow keys"], description: "Navigate between words" },
+      { keys: ["`"], description: "Toggle action console" },
+      { keys: ["D"], description: "Toggle dark mode" },
+      { keys: ["R"], description: "Toggle editor layout" },
+      { keys: ["K"], description: "Toggle editor lock" },
+      { keys: ["M"], description: "Toggle management pane" },
     ],
   },
   {
@@ -46,8 +55,8 @@ const LEFT_SECTIONS: ShortcutSection[] = [
   {
     title: "General",
     shortcuts: [
-      { keys: [CMD, "Z"], description: "Undo" },
-      { keys: [CMD, "Shift", "Z"], description: "Redo" },
+      { keys: [CMD, "Z"], description: "Undo (workspace when locked)" },
+      { keys: [CMD, "Shift", "Z"], description: "Redo (workspace when locked)" },
     ],
   },
 ];

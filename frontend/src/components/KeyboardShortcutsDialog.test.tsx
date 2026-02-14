@@ -33,8 +33,14 @@ describe("KeyboardShortcutsDialog", () => {
   it("displays workspace shortcuts", () => {
     renderDialog();
     expect(screen.getByText("Cycle to next layer")).toBeInTheDocument();
-    expect(screen.getByText("Hold to draw arrow")).toBeInTheDocument();
+    expect(screen.getByText("Selection tool")).toBeInTheDocument();
+    expect(screen.getByText("Arrow tool")).toBeInTheDocument();
+    expect(screen.getByText("Comments tool")).toBeInTheDocument();
     expect(screen.getByText("Navigate between words")).toBeInTheDocument();
+    expect(screen.getByText("Toggle dark mode")).toBeInTheDocument();
+    expect(screen.getByText("Toggle editor layout")).toBeInTheDocument();
+    expect(screen.getByText("Toggle editor lock")).toBeInTheDocument();
+    expect(screen.getByText("Toggle management pane")).toBeInTheDocument();
   });
 
   it("displays text formatting shortcuts", () => {
@@ -75,8 +81,8 @@ describe("KeyboardShortcutsDialog", () => {
 
   it("displays undo/redo shortcuts", () => {
     renderDialog();
-    expect(screen.getByText("Undo")).toBeInTheDocument();
-    expect(screen.getByText("Redo")).toBeInTheDocument();
+    expect(screen.getByText("Undo (workspace when locked)")).toBeInTheDocument();
+    expect(screen.getByText("Redo (workspace when locked)")).toBeInTheDocument();
   });
 
   it("has a close button in the footer", () => {

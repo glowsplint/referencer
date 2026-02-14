@@ -6,3 +6,8 @@ __pycache__
 
 # Bun
 bun.lockb
+
+# Database
+/data/referencer.db
+/data/referencer.db-wal
+/data/referencer.db-shm

@@ -13,7 +13,8 @@ export interface HighlightPosition {
 export function useAllHighlightPositions(
   editorsRef: React.RefObject<Map<number, Editor>>,
   layers: Layer[],
-  containerRef: React.RefObject<HTMLDivElement | null>
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  sectionVisibility?: boolean[]
 ): HighlightPosition[] {
   const [positions, setPositions] = useState<HighlightPosition[]>([])
 
@@ -34,16 +35,26 @@ export function useAllHighlightPositions(
 
       for (const layer of layers) {
         if (!layer.visible) continue
-        for (const highlight of layer.highlights) {
+        for (const highlight of layer.highlights.filter((h) => h.type === "comment")) {
+          if (sectionVisibility && sectionVisibility[highlight.editorIndex] === false) continue
           const editor = editorsRef.current.get(highlight.editorIndex)
           if (!editor || editor.isDestroyed) continue
 
           try {
-            const coords = editor.view.coordsAtPos(highlight.from)
-            const endCoords = editor.view.coordsAtPos(highlight.to)
+            // Use domAtPos + Range for accurate viewport coordinates even when
+            // scrolled out of view (coordsAtPos clamps to the visible editor area)
+            const domStart = editor.view.domAtPos(highlight.from)
+            const domEnd = editor.view.domAtPos(highlight.to)
+            const range = document.createRange()
+            range.setStart(domStart.node, domStart.offset)
+            range.setEnd(domEnd.node, domEnd.offset)
+            const rects = range.getClientRects()
+            if (rects.length === 0) continue
+            const firstRect = rects[0]
+            const lastRect = rects[rects.length - 1]
 
-            const top = coords.top - containerRect.top + container.scrollTop
-            const rightEdge = endCoords.right - containerRect.left + container.scrollLeft
+            const top = firstRect.top - containerRect.top + container.scrollTop
+            const rightEdge = lastRect.right - containerRect.left + container.scrollLeft
 
             result.push({
               highlightId: highlight.id,
@@ -76,12 +87,17 @@ export function useAllHighlightPositions(
       }
     }
 
+    // Recompute on container resize (e.g. opening dev console, browser resize)
+    const ro = new ResizeObserver(() => compute())
+    ro.observe(container)
+
     return () => {
       for (const { el, handler } of scrollHandlers) {
         el.removeEventListener("scroll", handler)
       }
+      ro.disconnect()
     }
-  }, [editorsRef, layers, containerRef])
+  }, [editorsRef, layers, containerRef, sectionVisibility])
 
   return positions
 }

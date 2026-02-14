@@ -1,4 +1,5 @@
 import type { Editor } from "@tiptap/react"
+import type { EditorView } from "@tiptap/pm/view"
 import type { CollectedWord } from "./word-collection"
 
 /** Pixels of vertical distance to group words into the same visual line */
@@ -104,6 +105,43 @@ export function findNearestWordOnSameLine(
   return closestByCx(sameLine, currentCenter.cx).word
 }
 
+export function getWordRect(
+  word: CollectedWord,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  containerRect: DOMRect
+): { x: number; y: number; width: number; height: number } | null {
+  const editor = editorsRef.current.get(word.editorIndex)
+  if (!editor) return null
+
+  try {
+    const nodeAt = editor.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editor.view.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          x: rect.left - containerRect.left,
+          y: rect.top - containerRect.top,
+          width: rect.width,
+          height: rect.height,
+        }
+      }
+      return null
+    }
+
+    const startCoords = editor.view.coordsAtPos(word.from)
+    const endCoords = editor.view.coordsAtPos(word.to)
+    return {
+      x: startCoords.left - containerRect.left,
+      y: startCoords.top - containerRect.top,
+      width: endCoords.right - startCoords.left,
+      height: startCoords.bottom - startCoords.top,
+    }
+  } catch {
+    return null
+  }
+}
+
 export function getWordCenter(
   word: CollectedWord,
   editorsRef: React.RefObject<Map<number, Editor>>,
@@ -135,6 +173,62 @@ export function getWordCenter(
   } catch {
     return null
   }
+}
+
+/**
+ * Return the leftmost word on the same visual line as `center`.
+ */
+export function findFirstWordOnLine(
+  center: { cx: number; cy: number },
+  candidates: WordCenter[]
+): CollectedWord | null {
+  const sameLine = candidates.filter(
+    (c) => Math.abs(c.cy - center.cy) <= LINE_TOLERANCE
+  )
+  if (sameLine.length === 0) return null
+  return sameLine.reduce((best, c) => (c.cx < best.cx ? c : best)).word
+}
+
+/**
+ * Return the rightmost word on the same visual line as `center`.
+ */
+export function findLastWordOnLine(
+  center: { cx: number; cy: number },
+  candidates: WordCenter[]
+): CollectedWord | null {
+  const sameLine = candidates.filter(
+    (c) => Math.abs(c.cy - center.cy) <= LINE_TOLERANCE
+  )
+  if (sameLine.length === 0) return null
+  return sameLine.reduce((best, c) => (c.cx > best.cx ? c : best)).word
+}
+
+/**
+ * True if there are no words to the left of `center` on the same visual line.
+ */
+export function isAtLineStart(
+  center: { cx: number; cy: number },
+  sameEditorCandidates: WordCenter[]
+): boolean {
+  return sameEditorCandidates.filter(
+    (c) =>
+      Math.abs(c.cy - center.cy) <= LINE_TOLERANCE &&
+      c.cx < center.cx - SAME_POSITION_THRESHOLD
+  ).length === 0
+}
+
+/**
+ * True if `word` is the rightmost word on its visual line among `sameEditorCandidates`.
+ */
+export function isAtLineEnd(
+  center: { cx: number; cy: number },
+  sameEditorCandidates: WordCenter[]
+): boolean {
+  return sameEditorCandidates.filter(
+    (c) =>
+      Math.abs(c.cy - center.cy) <= LINE_TOLERANCE &&
+      c.cx > center.cx + SAME_POSITION_THRESHOLD
+  ).length === 0
 }
 
 export function findNearestWord(
@@ -178,4 +272,121 @@ export function findNearestWord(
   }
 
   return best.word
+}
+
+/**
+ * Get the center of a word in coordinates relative to an arbitrary wrapper element.
+ * Used for rendering cross-editor arrows inside a specific editor's wrapper SVG.
+ * The word may belong to a different editor than the target wrapper.
+ */
+export function getWordCenterRelativeToWrapper(
+  word: CollectedWord,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  targetWrapper: HTMLElement
+): { cx: number; cy: number } | null {
+  const editor = editorsRef.current.get(word.editorIndex)
+  if (!editor) return null
+
+  try {
+    const wrapperRect = targetWrapper.getBoundingClientRect()
+    const nodeAt = editor.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editor.view.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          cx: (rect.left + rect.right) / 2 - wrapperRect.left + targetWrapper.scrollLeft,
+          cy: (rect.top + rect.bottom) / 2 - wrapperRect.top + targetWrapper.scrollTop,
+        }
+      }
+      return null
+    }
+
+    const startCoords = editor.view.coordsAtPos(word.from)
+    const endCoords = editor.view.coordsAtPos(word.to)
+    return {
+      cx: (startCoords.left + endCoords.right) / 2 - wrapperRect.left + targetWrapper.scrollLeft,
+      cy: (startCoords.top + startCoords.bottom) / 2 - wrapperRect.top + targetWrapper.scrollTop,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Get the bounding rect of a word in coordinates relative to an arbitrary wrapper element.
+ * Used for rendering the preview anchor rectangle inside a specific editor's wrapper SVG.
+ */
+export function getWordRectRelativeToWrapper(
+  word: CollectedWord,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  targetWrapper: HTMLElement
+): { x: number; y: number; width: number; height: number } | null {
+  const editor = editorsRef.current.get(word.editorIndex)
+  if (!editor) return null
+
+  try {
+    const wrapperRect = targetWrapper.getBoundingClientRect()
+    const nodeAt = editor.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editor.view.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          x: rect.left - wrapperRect.left + targetWrapper.scrollLeft,
+          y: rect.top - wrapperRect.top + targetWrapper.scrollTop,
+          width: rect.width,
+          height: rect.height,
+        }
+      }
+      return null
+    }
+
+    const startCoords = editor.view.coordsAtPos(word.from)
+    const endCoords = editor.view.coordsAtPos(word.to)
+    return {
+      x: startCoords.left - wrapperRect.left + targetWrapper.scrollLeft,
+      y: startCoords.top - wrapperRect.top + targetWrapper.scrollTop,
+      width: endCoords.right - startCoords.left,
+      height: startCoords.bottom - startCoords.top,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Get the center of a word in content-relative coordinates (stable regardless of scroll).
+ * These coordinates are relative to the scroll content, not the viewport.
+ * Accepts a raw ProseMirror EditorView.
+ */
+export function getWordCenterContentRelative(
+  word: CollectedWord,
+  editorView: EditorView,
+  wrapper: HTMLElement
+): { cx: number; cy: number } | null {
+  try {
+    const wrapperRect = wrapper.getBoundingClientRect()
+    const nodeAt = editorView.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editorView.nodeDOM(word.from)
+      if (dom instanceof HTMLElement) {
+        const rect = dom.getBoundingClientRect()
+        return {
+          cx: (rect.left + rect.right) / 2 - wrapperRect.left + wrapper.scrollLeft,
+          cy: (rect.top + rect.bottom) / 2 - wrapperRect.top + wrapper.scrollTop,
+        }
+      }
+      return null
+    }
+
+    const startCoords = editorView.coordsAtPos(word.from)
+    const endCoords = editorView.coordsAtPos(word.to)
+    return {
+      cx: (startCoords.left + endCoords.right) / 2 - wrapperRect.left + wrapper.scrollLeft,
+      cy: (startCoords.top + startCoords.bottom) / 2 - wrapperRect.top + wrapper.scrollTop,
+    }
+  } catch {
+    return null
+  }
 }

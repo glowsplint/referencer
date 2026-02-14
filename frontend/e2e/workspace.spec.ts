@@ -4,17 +4,31 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("renders all 6 button pane buttons", async ({ page }) => {
+test("renders all button pane buttons", async ({ page }) => {
   await expect(page.getByTestId("keyboardShortcutsButton")).toBeVisible();
+  await expect(page.getByTestId("faqButton")).toBeVisible();
+  await expect(page.getByTestId("settingsButton")).toBeVisible();
+  await expect(page.getByTestId("selectionToolButton")).toBeVisible();
+  await expect(page.getByTestId("arrowToolButton")).toBeVisible();
+  await expect(page.getByTestId("commentsToolButton")).toBeVisible();
   await expect(page.getByTestId("menuButton")).toBeVisible();
-  await expect(page.getByTestId("darkModeButton")).toBeVisible();
   await expect(page.getByTestId("editorLayoutButton")).toBeVisible();
-  await expect(page.getByTestId("painterModeButton")).toBeVisible();
   await expect(page.getByTestId("lockButton")).toBeVisible();
 });
 
 test("renders title bar with default Title text", async ({ page }) => {
   await expect(page.getByText("Title")).toBeVisible();
+});
+
+test("renders share button in title bar", async ({ page }) => {
+  await expect(page.getByTestId("shareButton")).toBeVisible();
+});
+
+test("share button opens share dialog", async ({ page }) => {
+  await page.getByTestId("shareButton").click();
+  await expect(page.getByTestId("shareDialog")).toBeVisible();
+  await expect(page.getByTestId("shareReadonlyButton")).toBeVisible();
+  await expect(page.getByTestId("shareEditButton")).toBeVisible();
 });
 
 test("renders at least one editor pane", async ({ page }) => {

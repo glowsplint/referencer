@@ -36,9 +36,11 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
         to: 5,
         text: "hello",
         annotation: "Test note",
+        type: "comment",
       },
     ],
     arrows: [],
+    underlines: [],
     ...overrides,
   }
 }
@@ -56,6 +58,7 @@ function createProps(overrides: Record<string, unknown> = {}) {
     onAnnotationBlur: vi.fn(),
     onAnnotationClick: vi.fn(),
     isDarkMode: false,
+    sectionVisibility: [true, true, true],
     ...overrides,
   }
 }
@@ -76,7 +79,7 @@ describe("AnnotationPanel", () => {
     expect(container.querySelector("[data-testid='annotation-panel']")).toBeTruthy()
   })
 
-  it("returns null when no positions exist", () => {
+  it("renders empty panel wrapper when no positions exist", () => {
     vi.mocked(useAllHighlightPositions).mockReturnValue([])
 
     const props = createProps({
@@ -84,7 +87,10 @@ describe("AnnotationPanel", () => {
     })
 
     const { container } = render(<AnnotationPanel {...props} />)
-    expect(container.innerHTML).toBe("")
+    // Wrapper div always renders to reserve layout width
+    expect(container.querySelector("[data-testid='annotation-panel']")).toBeTruthy()
+    expect(container.querySelectorAll("line")).toHaveLength(0)
+    expect(container.querySelector("svg")).toBeNull()
   })
 
   it("renders with fixed width of 224px", () => {
@@ -111,6 +117,18 @@ describe("AnnotationPanel", () => {
     expect(cardContainer).toBeTruthy()
   })
 
+  it("passes sectionVisibility to useAllHighlightPositions", () => {
+    const props = createProps({ sectionVisibility: [true, false] })
+    render(<AnnotationPanel {...props} />)
+
+    expect(useAllHighlightPositions).toHaveBeenCalledWith(
+      props.editorsRef,
+      props.layers,
+      props.containerRef,
+      [true, false]
+    )
+  })
+
   it("handles multiple highlights across editors", () => {
     vi.mocked(useAllHighlightPositions).mockReturnValue([
       { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300 },
@@ -119,8 +137,8 @@ describe("AnnotationPanel", () => {
 
     const layer = createLayer({
       highlights: [
-        { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "Note 1" },
-        { id: "h2", editorIndex: 1, from: 0, to: 3, text: "hey", annotation: "Note 2" },
+        { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "Note 1", type: "comment" },
+        { id: "h2", editorIndex: 1, from: 0, to: 3, text: "hey", annotation: "Note 2", type: "comment" },
       ],
     })
 

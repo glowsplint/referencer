@@ -1,28 +1,41 @@
 import { useRef, useState, useCallback } from "react"
-import type { Layer, Highlight, Arrow } from "@/types/editor"
+import { toast } from "sonner"
+import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
 export function useLayers() {
   const [layers, setLayers] = useState<Layer[]>([])
   const [activeLayerId, setActiveLayerId] = useState<string | null>(null)
   const layerCounterRef = useRef(0)
+  const layersRef = useRef(layers)
+  layersRef.current = layers
 
   const updateLayer = (id: string, updater: (layer: Layer) => Layer) => {
     setLayers((prev) => prev.map((l) => (l.id === id ? updater(l) : l)))
   }
 
-  const addLayer = useCallback(() => {
-    layerCounterRef.current += 1
+  const addLayer = useCallback((opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }): { id: string; name: string } | null => {
+    const usedColors = new Set(layersRef.current.map((l) => l.color))
+    const allColors = opts?.extraColors
+      ? [...TAILWIND_300_COLORS, ...opts.extraColors.filter((c) => !TAILWIND_300_COLORS.includes(c))]
+      : TAILWIND_300_COLORS
+    const color = opts?.color ?? allColors.find((c) => !usedColors.has(c))
+    if (!color) {
+      toast.warning("All colors are in use — remove a layer first")
+      return null
+    }
+    if (!opts?.name) {
+      layerCounterRef.current += 1
+    }
     const nextNumber = layerCounterRef.current
-    const id = crypto.randomUUID()
-    setLayers((prev) => {
-      const usedColors = new Set(prev.map((l) => l.color))
-      const color = TAILWIND_300_COLORS.find((c) => !usedColors.has(c))
-      if (!color) return prev
-      const name = `Layer ${nextNumber}`
-      setActiveLayerId(id)
-      return [...prev, { id, name, color, visible: true, highlights: [], arrows: [] }]
-    })
+    const id = opts?.id ?? crypto.randomUUID()
+    const name = opts?.name ?? `Layer ${nextNumber}`
+    const newLayer: Layer = { id, name, color, visible: true, highlights: [], arrows: [], underlines: [] }
+    // Eagerly update ref so rapid calls within the same batch see the new layer
+    layersRef.current = [...layersRef.current, newLayer]
+    setLayers((prev) => [...prev, newLayer])
+    setActiveLayerId(id)
+    return { id, name }
   }, [])
 
   const removeLayer = useCallback((id: string) => {
@@ -36,7 +49,7 @@ export function useLayers() {
         setLayers((layers) =>
           layers.map((l) =>
             l.id === prevId
-              ? { ...l, highlights: l.highlights.filter((h) => h.annotation.trim()) }
+              ? { ...l, highlights: l.highlights.filter((h) => h.type !== "comment" || h.annotation.trim()) }
               : l
           )
         )
@@ -65,8 +78,8 @@ export function useLayers() {
   }, [])
 
   const addHighlight = useCallback(
-    (layerId: string, highlight: Omit<Highlight, "id">): string => {
-      const id = crypto.randomUUID()
+    (layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
+      const id = opts?.id ?? crypto.randomUUID()
       updateLayer(layerId, (l) => ({
         ...l,
         highlights: [...l.highlights, { ...highlight, id }],
@@ -100,11 +113,13 @@ export function useLayers() {
   }, [])
 
   const addArrow = useCallback(
-    (layerId: string, arrow: Omit<Arrow, "id">) => {
+    (layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
+      const id = opts?.id ?? crypto.randomUUID()
       updateLayer(layerId, (l) => ({
         ...l,
-        arrows: [...l.arrows, { ...arrow, id: crypto.randomUUID() }],
+        arrows: [...l.arrows, { ...arrow, id }],
       }))
+      return id
     },
     []
   )
@@ -116,8 +131,41 @@ export function useLayers() {
     }))
   }, [])
 
+  const updateArrowStyle = useCallback(
+    (layerId: string, arrowId: string, arrowStyle: ArrowStyle) => {
+      updateLayer(layerId, (l) => ({
+        ...l,
+        arrows: l.arrows.map((a) => (a.id === arrowId ? { ...a, arrowStyle } : a)),
+      }))
+    },
+    []
+  )
+
   const clearLayerArrows = useCallback((layerId: string) => {
     updateLayer(layerId, (l) => ({ ...l, arrows: [] }))
+  }, [])
+
+  const addUnderline = useCallback(
+    (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
+      const id = opts?.id ?? crypto.randomUUID()
+      updateLayer(layerId, (l) => ({
+        ...l,
+        underlines: [...l.underlines, { ...underline, id }],
+      }))
+      return id
+    },
+    []
+  )
+
+  const removeUnderline = useCallback((layerId: string, underlineId: string) => {
+    updateLayer(layerId, (l) => ({
+      ...l,
+      underlines: l.underlines.filter((u) => u.id !== underlineId),
+    }))
+  }, [])
+
+  const clearLayerUnderlines = useCallback((layerId: string) => {
+    updateLayer(layerId, (l) => ({ ...l, underlines: [] }))
   }, [])
 
   return {
@@ -136,6 +184,12 @@ export function useLayers() {
     clearLayerHighlights,
     addArrow,
     removeArrow,
+    updateArrowStyle,
     clearLayerArrows,
+    addUnderline,
+    removeUnderline,
+    clearLayerUnderlines,
+    setLayers,
+    setActiveLayerId,
   }
 }

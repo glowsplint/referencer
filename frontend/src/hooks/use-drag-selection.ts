@@ -1,6 +1,7 @@
 import { useCallback, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
+import type { ActiveTool, WordSelection } from "@/types/editor"
 
 interface DragRange {
   editorIndex: number
@@ -11,24 +12,17 @@ interface DragRange {
 
 interface UseDragSelectionOptions {
   isLocked: boolean
-  activeLayerId: string | null
-  addHighlight: (
-    layerId: string,
-    highlight: { editorIndex: number; from: number; to: number; text: string; annotation: string }
-  ) => string
-  removeHighlight: (layerId: string, highlightId: string) => void
-  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string }[] }[]
+  activeTool: ActiveTool
   selectWord: (editorIndex: number, from: number, to: number, text: string) => void
+  selectRange: (anchor: WordSelection, head: WordSelection, merged: WordSelection) => void
   clearSelection: () => void
 }
 
 export function useDragSelection({
   isLocked,
-  activeLayerId,
-  addHighlight,
-  removeHighlight,
-  layers,
+  activeTool,
   selectWord,
+  selectRange,
   clearSelection,
 }: UseDragSelectionOptions) {
   const dragRef = useRef<{
@@ -91,7 +85,7 @@ export function useDragSelection({
       // Don't interfere with annotation textareas
       if ((e.target as HTMLElement).tagName === "TEXTAREA") return
 
-      const { anchor, current } = dragRef.current
+      const { anchor, current, dragging } = dragRef.current
       dragRef.current = null
 
       // Compute the merged range
@@ -99,37 +93,18 @@ export function useDragSelection({
       const to = Math.max(anchor.to, current.to)
       const text = editor.state.doc.textBetween(from, to, " ")
 
-      selectWord(editorIndex, from, to, text)
-
-      if (!activeLayerId) return
-
-      const layer = layers.find((l) => l.id === activeLayerId)
-      // Check for exact match to toggle off
-      const existing = layer?.highlights.find(
-        (h) => h.editorIndex === editorIndex && h.from === from && h.to === to
-      )
-      if (existing) {
-        removeHighlight(activeLayerId, existing.id)
-        return
+      if (dragging && anchor.from !== current.from) {
+        // Drag produced a range — set anchor/head so Shift+Arrow can extend
+        selectRange(
+          { editorIndex, from: anchor.from, to: anchor.to, text: anchor.text },
+          { editorIndex, from: current.from, to: current.to, text: current.text },
+          { editorIndex, from, to, text }
+        )
+      } else {
+        selectWord(editorIndex, from, to, text)
       }
-
-      // Remove any empty-annotation highlights on this layer before adding a new one
-      if (layer) {
-        for (const h of layer.highlights) {
-          if (!h.annotation.trim()) {
-            removeHighlight(activeLayerId, h.id)
-          }
-        }
-      }
-      addHighlight(activeLayerId, {
-        editorIndex,
-        from,
-        to,
-        text,
-        annotation: "",
-      })
     },
-    [isLocked, activeLayerId, layers, addHighlight, removeHighlight, selectWord]
+    [isLocked, activeTool, selectWord, selectRange]
   )
 
   return { handleMouseDown, handleMouseMove, handleMouseUp }

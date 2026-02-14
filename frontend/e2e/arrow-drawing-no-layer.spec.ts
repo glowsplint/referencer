@@ -1,12 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-test("shows error toast when drawing without an active layer", async ({ page }) => {
+test("auto-creates a layer when drawing without an active layer", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
   // Lock the editor (no layer created)
   await page.getByTestId("lockButton").click();
   await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+
+  // Switch to arrow tool
+  await page.keyboard.press("a");
 
   // Click a word to start selection
   const firstParagraph = page.locator(".simple-editor p").first();
@@ -15,18 +18,15 @@ test("shows error toast when drawing without an active layer", async ({ page }) 
   await page.mouse.click(box!.x + 30, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Try to draw an arrow
-  await page.keyboard.down("a");
+  // Press Enter to confirm anchor — should auto-create a layer
+  await page.keyboard.press("Enter");
 
-  // Toast should appear with error message
-  const toast = page.locator("[data-sonner-toast]");
-  await expect(toast).toBeVisible({ timeout: 2000 });
-  await expect(toast).toContainText("Add a new layer before drawing arrows");
+  // A layer should have been created in the management pane
+  const layerRow = page.getByTestId("layerRow");
+  await expect(layerRow).toHaveCount(1, { timeout: 2000 });
 
-  // Should NOT enter drawing mode — no preview arrow
-  await page.keyboard.press("ArrowRight");
-  await expect(page.getByTestId("preview-arrow")).toHaveCount(0);
-
-  await page.keyboard.up("a");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(0);
+  // Should enter drawing mode (anchor confirmed, waiting for target)
+  // No toast warning should appear
+  const warningToast = page.locator("[data-sonner-toast]").filter({ hasText: "Add a new layer before drawing arrows" });
+  await expect(warningToast).toHaveCount(0);
 });

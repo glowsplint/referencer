@@ -16,11 +16,14 @@ body {
   font-weight: 400;
   font-style: normal;
   padding: 0;
+}
+
+html:not(.overscroll-enabled) body {
   overscroll-behavior-y: none;
 }
 
-html,
-body {
+html:not(.overscroll-enabled),
+html:not(.overscroll-enabled) body {
   overscroll-behavior-x: none;
 }
 
@@ -64,7 +67,11 @@ body,
 .simple-editor-wrapper.editor-locked {
   user-select: none;
   -webkit-user-select: none;
-  cursor: default;
+  cursor: pointer;
+
+  &.arrow-mode {
+    cursor: crosshair;
+  }
 }
 
 .simple-editor-content {

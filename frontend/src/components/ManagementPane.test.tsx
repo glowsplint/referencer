@@ -1,10 +1,36 @@
 import { screen, fireEvent } from "@testing-library/react"
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, beforeEach, vi } from "vitest"
 import { ManagementPane } from "./ManagementPane"
 import { renderWithWorkspace } from "@/test/render-with-workspace"
 
-const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as unknown[], arrows: [] as unknown[] }
-const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as unknown[], arrows: [] as unknown[] }
+import type { Highlight, Arrow, LayerUnderline } from "@/types/editor"
+
+function makeStorageMock() {
+  const store: Record<string, string> = {}
+  return {
+    getItem: vi.fn((key: string) => store[key] ?? null),
+    setItem: vi.fn((key: string, value: string) => { store[key] = value }),
+    removeItem: vi.fn((key: string) => { delete store[key] }),
+    clear: vi.fn(() => { for (const k of Object.keys(store)) delete store[k] }),
+    get length() { return Object.keys(store).length },
+    key: vi.fn((i: number) => Object.keys(store)[i] ?? null),
+    _store: store,
+  }
+}
+
+let storageMock: ReturnType<typeof makeStorageMock>
+
+const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[], underlines: [] as LayerUnderline[] }
+const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[], underlines: [] as LayerUnderline[] }
+
+const highlight1: Highlight = { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "my note", type: "comment" }
+const arrow1: Arrow = { id: "a1", from: { editorIndex: 0, from: 0, to: 3, text: "foo" }, to: { editorIndex: 1, from: 0, to: 3, text: "bar" } }
+const layerWithItems = { ...layerA, highlights: [highlight1], arrows: [arrow1] }
+
+beforeEach(() => {
+  storageMock = makeStorageMock()
+  vi.stubGlobal("localStorage", storageMock)
+})
 
 function renderPane(overrides = {}) {
   return renderWithWorkspace(<ManagementPane />, overrides)
@@ -159,6 +185,75 @@ describe("ManagementPane", () => {
 
   // --- Section name editing ---
 
+  // --- Passage reordering ---
+
+  it("calls reorderEditors with correct permutation when dragging passage 0 to position 2", () => {
+    const { workspace } = renderPane({
+      editorCount: 3,
+      sectionVisibility: [true, true, true],
+      sectionNames: ["A", "B", "C"],
+    })
+    const row0 = screen.getByTestId("passageRow-0")
+    const row2 = screen.getByTestId("passageRow-2")
+    fireEvent.dragStart(row0, {
+      dataTransfer: { setData: () => {}, types: ["application/x-section-index"] },
+    })
+    fireEvent.drop(row2, {
+      dataTransfer: {
+        getData: (type: string) =>
+          type === "application/x-section-index" ? "0" : "",
+        types: ["application/x-section-index"],
+      },
+    })
+    // Moving index 0 to position 2: [B, C, A] → permutation [1, 2, 0]
+    expect(workspace.reorderEditors).toHaveBeenCalledWith([1, 2, 0])
+  })
+
+  it("calls reorderEditors with correct permutation when dragging passage 2 to position 0", () => {
+    const { workspace } = renderPane({
+      editorCount: 3,
+      sectionVisibility: [true, true, true],
+      sectionNames: ["A", "B", "C"],
+    })
+    const row2 = screen.getByTestId("passageRow-2")
+    const row0 = screen.getByTestId("passageRow-0")
+    fireEvent.dragStart(row2, {
+      dataTransfer: { setData: () => {}, types: ["application/x-section-index"] },
+    })
+    fireEvent.drop(row0, {
+      dataTransfer: {
+        getData: (type: string) =>
+          type === "application/x-section-index" ? "2" : "",
+        types: ["application/x-section-index"],
+      },
+    })
+    // Moving index 2 to position 0: [C, A, B] → permutation [2, 0, 1]
+    expect(workspace.reorderEditors).toHaveBeenCalledWith([2, 0, 1])
+  })
+
+  it("does not call reorderEditors when dropping on same position", () => {
+    const { workspace } = renderPane({
+      editorCount: 3,
+      sectionVisibility: [true, true, true],
+      sectionNames: ["A", "B", "C"],
+    })
+    const row1 = screen.getByTestId("passageRow-1")
+    fireEvent.drop(row1, {
+      dataTransfer: {
+        getData: (type: string) =>
+          type === "application/x-section-index" ? "1" : "",
+        types: ["application/x-section-index"],
+      },
+    })
+    expect(workspace.reorderEditors).not.toHaveBeenCalled()
+  })
+
+  it("passage rows are not draggable with only 1 editor", () => {
+    renderPane({ editorCount: 1, sectionVisibility: [true], sectionNames: ["A"] })
+    const row = screen.getByTestId("passageRow-0")
+    expect(row).not.toHaveAttribute("draggable", "true")
+  })
+
   it("forwards sectionNames and updateSectionName to SectionList", () => {
     const { workspace } = renderPane({ sectionNames: ["Custom Name"] })
     expect(screen.getByText("Custom Name")).toBeInTheDocument()
@@ -166,5 +261,50 @@ describe("ManagementPane", () => {
     fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } })
     fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" })
     expect(workspace.updateSectionName).toHaveBeenCalledWith(0, "Renamed")
+  })
+
+  // --- Expandable layer items ---
+
+  it("calls removeHighlight with layer id and highlight id when delete button is clicked", () => {
+    const { workspace } = renderPane({ layers: [layerWithItems] })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    fireEvent.click(screen.getByTestId("removeHighlight-h1"))
+    expect(workspace.removeHighlight).toHaveBeenCalledWith("a", "h1")
+  })
+
+  it("calls removeArrow with layer id and arrow id when delete button is clicked", () => {
+    const { workspace } = renderPane({ layers: [layerWithItems] })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    fireEvent.click(screen.getByTestId("removeArrow-a1"))
+    expect(workspace.removeArrow).toHaveBeenCalledWith("a", "a1")
+  })
+
+  it("passes sectionNames to LayerRow for item display", () => {
+    const { workspace } = renderPane({ layers: [layerWithItems], sectionNames: ["Intro", "Body"] })
+    fireEvent.click(screen.getByTestId("layerExpand-0"))
+    const span = screen.getByText("my note")
+    expect(span).toHaveAttribute("title", "my note (Intro)")
+  })
+
+  // --- Custom colors ---
+
+  it("renders add custom color button in color picker", () => {
+    renderPane({ layers: [layerA] })
+    fireEvent.click(screen.getByTestId("layerSwatch-0"))
+    expect(screen.getByTestId("addCustomColorButton")).toBeInTheDocument()
+  })
+
+  it("renders custom color swatches from localStorage", () => {
+    storageMock._store["referencer-custom-colors"] = JSON.stringify(["#ff0000"])
+    renderPane({ layers: [layerA] })
+    fireEvent.click(screen.getByTestId("layerSwatch-0"))
+    expect(screen.getByTestId("customColorOption-#ff0000")).toBeInTheDocument()
+  })
+
+  it("calls addLayer with extraColors when add layer button is clicked", () => {
+    storageMock._store["referencer-custom-colors"] = JSON.stringify(["#ff0000"])
+    const { workspace } = renderPane()
+    fireEvent.click(screen.getByTestId("addLayerButton"))
+    expect(workspace.addLayer).toHaveBeenCalledWith({ extraColors: ["#ff0000"] })
   })
 })

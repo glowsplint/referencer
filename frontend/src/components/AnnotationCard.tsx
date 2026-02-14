@@ -25,17 +25,27 @@ export function AnnotationCard({
 }: AnnotationCardProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  const autoResize = useCallback(() => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = "auto"
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }, [])
+
   useEffect(() => {
     if (isEditing && textareaRef.current) {
       textareaRef.current.focus()
+      autoResize()
     }
-  }, [isEditing])
+  }, [isEditing, autoResize])
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       onChange(layerId, highlightId, e.target.value)
+      autoResize()
     },
-    [layerId, highlightId, onChange]
+    [layerId, highlightId, onChange, autoResize]
   )
 
   const handleBlur = useCallback(() => {
@@ -47,6 +57,10 @@ export function AnnotationCard({
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault()
         handleBlur()
+      }
+      if (e.key === "Escape") {
+        e.preventDefault()
+        textareaRef.current?.blur()
       }
       // Stop propagation so arrow keys don't trigger word navigation
       e.stopPropagation()
@@ -76,8 +90,8 @@ export function AnnotationCard({
       {isEditing ? (
         <textarea
           ref={textareaRef}
-          className="w-full resize-none border-0 bg-transparent p-2 text-xs outline-none dark:text-zinc-200"
-          rows={2}
+          className="w-full resize-none overflow-hidden border-0 bg-transparent p-2 text-xs outline-none dark:text-zinc-200"
+          rows={1}
           value={annotation}
           onChange={handleChange}
           onKeyDown={handleKeyDown}

@@ -1,6 +1,7 @@
-import { describe, it, expect } from "vitest"
-import { findNearestWord, findNearestWordOnSameLine, findFirstWordOnAdjacentLine, findWordInReadingOrder } from "./nearest-word"
+import { describe, it, expect, vi } from "vitest"
+import { findNearestWord, findNearestWordOnSameLine, findFirstWordOnAdjacentLine, findWordInReadingOrder, getWordRect, findFirstWordOnLine, findLastWordOnLine, isAtLineStart, isAtLineEnd, getWordCenterRelativeToWrapper, getWordRectRelativeToWrapper } from "./nearest-word"
 import type { CollectedWord } from "./word-collection"
+import type { Editor } from "@tiptap/react"
 
 function makeCandidate(cx: number, cy: number, text = "word"): { word: CollectedWord; cx: number; cy: number } {
   return {
@@ -221,6 +222,73 @@ describe("findFirstWordOnAdjacentLine", () => {
   })
 })
 
+describe("getWordRect", () => {
+  function createMockEditor(coordsMap: Record<number, { left: number; right: number; top: number; bottom: number }>) {
+    return {
+      state: {
+        doc: { nodeAt: vi.fn(() => ({ type: { name: "text" } })) },
+      },
+      view: {
+        coordsAtPos: vi.fn((pos: number) => coordsMap[pos] ?? { left: 0, right: 0, top: 0, bottom: 0 }),
+        nodeDOM: vi.fn(),
+      },
+    } as unknown as Editor
+  }
+
+  const containerRect = { left: 10, top: 20, width: 800, height: 600 } as DOMRect
+
+  it("returns rect with SVG-relative coordinates", () => {
+    const editor = createMockEditor({
+      5: { left: 60, right: 70, top: 120, bottom: 140 },
+      10: { left: 100, right: 110, top: 120, bottom: 140 },
+    })
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+
+    const result = getWordRect(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      containerRect
+    )
+
+    expect(result).toEqual({
+      x: 50,    // 60 - 10
+      y: 100,   // 120 - 20
+      width: 50, // 110 - 60
+      height: 20, // 140 - 120
+    })
+  })
+
+  it("returns null when editor not found", () => {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    const result = getWordRect(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      containerRect
+    )
+    expect(result).toBeNull()
+  })
+
+  it("returns null when coordsAtPos throws", () => {
+    const editor = {
+      state: {
+        doc: { nodeAt: vi.fn(() => ({ type: { name: "text" } })) },
+      },
+      view: {
+        coordsAtPos: vi.fn(() => { throw new Error("invalid pos") }),
+        nodeDOM: vi.fn(),
+      },
+    } as unknown as Editor
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+
+    const result = getWordRect(
+      { editorIndex: 0, from: 999, to: 1000, text: "x" },
+      editorsRef,
+      containerRect
+    )
+    expect(result).toBeNull()
+  })
+})
+
 function makeWord(editorIndex: number, from: number, to: number, text: string): CollectedWord {
   return { editorIndex, from, to, text }
 }
@@ -276,5 +344,349 @@ describe("findWordInReadingOrder", () => {
     const result = findWordInReadingOrder(words[2], shuffled, "ArrowRight")
     expect(result?.text).toBe("another")
     expect(result?.editorIndex).toBe(1)
+  })
+})
+
+// ── findFirstWordOnLine / findLastWordOnLine ──────────────────────
+
+describe("findFirstWordOnLine", () => {
+  it("returns leftmost word on the same visual line", () => {
+    const candidates = [
+      makeCandidateAt(200, 100, "middle"),
+      makeCandidateAt(50, 100, "left"),
+      makeCandidateAt(350, 100, "right"),
+      makeCandidateAt(100, 200, "other-line"),
+    ]
+    const result = findFirstWordOnLine({ cx: 200, cy: 100 }, candidates)
+    expect(result?.text).toBe("left")
+  })
+
+  it("returns the only word on a single-word line", () => {
+    const candidates = [makeCandidateAt(100, 100, "only")]
+    const result = findFirstWordOnLine({ cx: 100, cy: 100 }, candidates)
+    expect(result?.text).toBe("only")
+  })
+
+  it("returns null for empty candidates", () => {
+    expect(findFirstWordOnLine({ cx: 100, cy: 100 }, [])).toBeNull()
+  })
+
+  it("ignores words on different lines", () => {
+    const candidates = [
+      makeCandidateAt(50, 200, "far-below"),
+    ]
+    expect(findFirstWordOnLine({ cx: 100, cy: 100 }, candidates)).toBeNull()
+  })
+})
+
+describe("findLastWordOnLine", () => {
+  it("returns rightmost word on the same visual line", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "left"),
+      makeCandidateAt(200, 100, "middle"),
+      makeCandidateAt(350, 100, "right"),
+      makeCandidateAt(100, 200, "other-line"),
+    ]
+    const result = findLastWordOnLine({ cx: 100, cy: 100 }, candidates)
+    expect(result?.text).toBe("right")
+  })
+
+  it("returns the only word on a single-word line", () => {
+    const candidates = [makeCandidateAt(100, 100, "only")]
+    const result = findLastWordOnLine({ cx: 100, cy: 100 }, candidates)
+    expect(result?.text).toBe("only")
+  })
+
+  it("returns null for empty candidates", () => {
+    expect(findLastWordOnLine({ cx: 100, cy: 100 }, [])).toBeNull()
+  })
+})
+
+// ── isAtLineStart / isAtLineEnd ─────────────────────────────────
+
+describe("isAtLineStart", () => {
+  it("returns true when word is leftmost on its line", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "first"),
+      makeCandidateAt(150, 100, "second"),
+      makeCandidateAt(250, 100, "third"),
+    ]
+    expect(isAtLineStart({ cx: 50, cy: 100 }, candidates)).toBe(true)
+  })
+
+  it("returns false when there are words to the left", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "first"),
+      makeCandidateAt(150, 100, "second"),
+    ]
+    expect(isAtLineStart({ cx: 150, cy: 100 }, candidates)).toBe(false)
+  })
+
+  it("returns true for empty candidates", () => {
+    expect(isAtLineStart({ cx: 100, cy: 100 }, [])).toBe(true)
+  })
+})
+
+describe("isAtLineEnd", () => {
+  it("returns true when word is rightmost on its line", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "first"),
+      makeCandidateAt(150, 100, "second"),
+      makeCandidateAt(250, 100, "third"),
+    ]
+    expect(isAtLineEnd({ cx: 250, cy: 100 }, candidates)).toBe(true)
+  })
+
+  it("returns false when there are words to the right", () => {
+    const candidates = [
+      makeCandidateAt(50, 100, "first"),
+      makeCandidateAt(150, 100, "second"),
+    ]
+    expect(isAtLineEnd({ cx: 50, cy: 100 }, candidates)).toBe(false)
+  })
+
+  it("returns true for empty candidates", () => {
+    expect(isAtLineEnd({ cx: 100, cy: 100 }, [])).toBe(true)
+  })
+})
+
+// ── getWordCenterRelativeToWrapper / getWordRectRelativeToWrapper ──
+
+function createMockEditorForWrapper(coordsMap: Record<number, { left: number; right: number; top: number; bottom: number }>) {
+  return {
+    state: {
+      doc: { nodeAt: vi.fn(() => ({ type: { name: "text" } })) },
+    },
+    view: {
+      coordsAtPos: vi.fn((pos: number) => coordsMap[pos] ?? { left: 0, right: 0, top: 0, bottom: 0 }),
+      nodeDOM: vi.fn(),
+    },
+  } as unknown as Editor
+}
+
+function createMockWrapper(rect: { left: number; top: number; width: number; height: number }, scrollLeft = 0, scrollTop = 0) {
+  return {
+    getBoundingClientRect: () => ({ ...rect, right: rect.left + rect.width, bottom: rect.top + rect.height, x: rect.left, y: rect.top, toJSON: () => {} }),
+    scrollLeft,
+    scrollTop,
+  } as unknown as HTMLElement
+}
+
+describe("getWordCenterRelativeToWrapper", () => {
+  it("returns center relative to the target wrapper", () => {
+    const editor = createMockEditorForWrapper({
+      5: { left: 60, right: 70, top: 120, bottom: 140 },
+      10: { left: 100, right: 110, top: 120, bottom: 140 },
+    })
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 10, top: 20, width: 800, height: 600 })
+
+    const result = getWordCenterRelativeToWrapper(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      wrapper
+    )
+
+    // cx = (60 + 110) / 2 - 10 + 0 = 85 - 10 = 75
+    // cy = (120 + 140) / 2 - 20 + 0 = 130 - 20 = 110
+    expect(result).toEqual({ cx: 75, cy: 110 })
+  })
+
+  it("accounts for wrapper scroll offset", () => {
+    const editor = createMockEditorForWrapper({
+      5: { left: 60, right: 70, top: 120, bottom: 140 },
+      10: { left: 100, right: 110, top: 120, bottom: 140 },
+    })
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 10, top: 20, width: 800, height: 600 }, 30, 50)
+
+    const result = getWordCenterRelativeToWrapper(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      wrapper
+    )
+
+    // cx = (60 + 110) / 2 - 10 + 30 = 105
+    // cy = (120 + 140) / 2 - 20 + 50 = 160
+    expect(result).toEqual({ cx: 105, cy: 160 })
+  })
+
+  it("works for cross-editor endpoints (word in different editor than wrapper)", () => {
+    const editor0 = createMockEditorForWrapper({
+      1: { left: 50, right: 80, top: 100, bottom: 120 },
+      5: { left: 80, right: 90, top: 100, bottom: 120 },
+    })
+    const editor1 = createMockEditorForWrapper({
+      10: { left: 400, right: 430, top: 100, bottom: 120 },
+      15: { left: 430, right: 460, top: 100, bottom: 120 },
+    })
+    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+    // Wrapper belongs to editor 0
+    const wrapper = createMockWrapper({ left: 20, top: 50, width: 300, height: 400 })
+
+    // Word from editor 1 positioned relative to editor 0's wrapper
+    const result = getWordCenterRelativeToWrapper(
+      { editorIndex: 1, from: 10, to: 15, text: "world" },
+      editorsRef,
+      wrapper
+    )
+
+    // cx = (400 + 460) / 2 - 20 + 0 = 430 - 20 = 410
+    // cy = (100 + 120) / 2 - 50 + 0 = 110 - 50 = 60
+    expect(result).toEqual({ cx: 410, cy: 60 })
+  })
+
+  it("returns null when editor not found", () => {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 0, top: 0, width: 800, height: 600 })
+
+    const result = getWordCenterRelativeToWrapper(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      wrapper
+    )
+    expect(result).toBeNull()
+  })
+
+  it("returns null when coordsAtPos throws", () => {
+    const editor = {
+      state: {
+        doc: { nodeAt: vi.fn(() => ({ type: { name: "text" } })) },
+      },
+      view: {
+        coordsAtPos: vi.fn(() => { throw new Error("invalid pos") }),
+        nodeDOM: vi.fn(),
+      },
+    } as unknown as Editor
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 0, top: 0, width: 800, height: 600 })
+
+    const result = getWordCenterRelativeToWrapper(
+      { editorIndex: 0, from: 999, to: 1000, text: "x" },
+      editorsRef,
+      wrapper
+    )
+    expect(result).toBeNull()
+  })
+
+  it("handles image nodes", () => {
+    const imgEl = document.createElement("img")
+    imgEl.getBoundingClientRect = () => ({
+      left: 100, right: 200, top: 150, bottom: 250,
+      width: 100, height: 100, x: 100, y: 150,
+      toJSON: () => {},
+    })
+    const editor = {
+      state: {
+        doc: { nodeAt: vi.fn(() => ({ type: { name: "image" } })) },
+      },
+      view: {
+        coordsAtPos: vi.fn(),
+        nodeDOM: vi.fn(() => imgEl),
+      },
+    } as unknown as Editor
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 10, top: 20, width: 800, height: 600 })
+
+    const result = getWordCenterRelativeToWrapper(
+      { editorIndex: 0, from: 0, to: 1, text: "img" },
+      editorsRef,
+      wrapper
+    )
+
+    // cx = (100 + 200) / 2 - 10 + 0 = 140
+    // cy = (150 + 250) / 2 - 20 + 0 = 180
+    expect(result).toEqual({ cx: 140, cy: 180 })
+  })
+})
+
+describe("getWordRectRelativeToWrapper", () => {
+  it("returns rect relative to the target wrapper", () => {
+    const editor = createMockEditorForWrapper({
+      5: { left: 60, right: 70, top: 120, bottom: 140 },
+      10: { left: 100, right: 110, top: 120, bottom: 140 },
+    })
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 10, top: 20, width: 800, height: 600 })
+
+    const result = getWordRectRelativeToWrapper(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      wrapper
+    )
+
+    expect(result).toEqual({
+      x: 50,      // 60 - 10
+      y: 100,     // 120 - 20
+      width: 50,  // 110 - 60
+      height: 20, // 140 - 120
+    })
+  })
+
+  it("accounts for wrapper scroll offset", () => {
+    const editor = createMockEditorForWrapper({
+      5: { left: 60, right: 70, top: 120, bottom: 140 },
+      10: { left: 100, right: 110, top: 120, bottom: 140 },
+    })
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 10, top: 20, width: 800, height: 600 }, 30, 50)
+
+    const result = getWordRectRelativeToWrapper(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      wrapper
+    )
+
+    expect(result).toEqual({
+      x: 80,      // 60 - 10 + 30
+      y: 150,     // 120 - 20 + 50
+      width: 50,  // 110 - 60
+      height: 20, // 140 - 120
+    })
+  })
+
+  it("returns null when editor not found", () => {
+    const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 0, top: 0, width: 800, height: 600 })
+
+    const result = getWordRectRelativeToWrapper(
+      { editorIndex: 0, from: 5, to: 10, text: "hello" },
+      editorsRef,
+      wrapper
+    )
+    expect(result).toBeNull()
+  })
+
+  it("handles image nodes", () => {
+    const imgEl = document.createElement("img")
+    imgEl.getBoundingClientRect = () => ({
+      left: 100, right: 200, top: 150, bottom: 250,
+      width: 100, height: 100, x: 100, y: 150,
+      toJSON: () => {},
+    })
+    const editor = {
+      state: {
+        doc: { nodeAt: vi.fn(() => ({ type: { name: "image" } })) },
+      },
+      view: {
+        coordsAtPos: vi.fn(),
+        nodeDOM: vi.fn(() => imgEl),
+      },
+    } as unknown as Editor
+    const editorsRef = { current: new Map([[0, editor]]) } as React.RefObject<Map<number, Editor>>
+    const wrapper = createMockWrapper({ left: 10, top: 20, width: 800, height: 600 })
+
+    const result = getWordRectRelativeToWrapper(
+      { editorIndex: 0, from: 0, to: 1, text: "img" },
+      editorsRef,
+      wrapper
+    )
+
+    expect(result).toEqual({
+      x: 90,      // 100 - 10
+      y: 130,     // 150 - 20
+      width: 100,
+      height: 100,
+    })
   })
 })

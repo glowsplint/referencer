@@ -28,6 +28,7 @@ export function useCycleLayer({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code !== CYCLE_LAYER_KEY || e.repeat) return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
       if (isEditableElement(e.target)) return;
 
       const currentLayers = layersRef.current;
