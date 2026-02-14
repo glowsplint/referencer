@@ -1,12 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
-import { toast } from "sonner"
 import { useDrawingMode } from "./use-drawing-mode"
 import type { WordSelection, ActiveTool } from "@/types/editor"
-
-vi.mock("sonner", () => ({
-  toast: { warning: vi.fn(), info: vi.fn(), success: vi.fn(), dismiss: vi.fn() },
-}))
 
 function createOptions(overrides: Record<string, unknown> = {}) {
   return {
@@ -14,6 +9,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     activeTool: "arrow" as ActiveTool,
     selection: null as WordSelection | null,
     activeLayerId: "layer-1",
+    addLayer: vi.fn(() => "auto-layer-1"),
     addArrow: vi.fn(),
     showDrawingToasts: true,
     setActiveTool: vi.fn(),
@@ -163,17 +159,44 @@ describe("useDrawingMode", () => {
     expect(setStatus).toHaveBeenCalledTimes(3)
   })
 
-  it("shows error toast when no active layer on confirm", () => {
+  it("auto-creates a layer when no active layer on confirm", () => {
+    const addLayer = vi.fn(() => "auto-layer-1")
+    const addArrow = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ selection: props.selection, activeLayerId: null })),
+        useDrawingMode(createOptions({ selection: props.selection, activeLayerId: null, addLayer, addArrow })),
+      { initialProps: { selection: null } }
+    )
+
+    // First confirm — should auto-create layer and set anchor
+    rerender({ selection: word1 })
+    act(() => { result.current.confirmSelection() })
+
+    expect(addLayer).toHaveBeenCalled()
+    expect(result.current.isDrawing).toBe(true)
+
+    // Second confirm — should create arrow on the auto-created layer
+    rerender({ selection: word2 })
+    act(() => { result.current.confirmSelection() })
+
+    expect(addArrow).toHaveBeenCalledWith("auto-layer-1", {
+      from: { editorIndex: 0, from: 1, to: 5, text: "hello" },
+      to: { editorIndex: 0, from: 10, to: 15, text: "world" },
+    })
+  })
+
+  it("does nothing when addLayer fails (all colors used)", () => {
+    const addLayer = vi.fn(() => "")
+    const { result, rerender } = renderHook(
+      (props: { selection: WordSelection | null }) =>
+        useDrawingMode(createOptions({ selection: props.selection, activeLayerId: null, addLayer })),
       { initialProps: { selection: null } }
     )
 
     rerender({ selection: word1 })
     act(() => { result.current.confirmSelection() })
 
-    expect(toast.warning).toHaveBeenCalledWith("Add a new layer before drawing arrows")
+    expect(addLayer).toHaveBeenCalled()
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
   })
@@ -262,17 +285,19 @@ describe("useDrawingMode", () => {
     expect(setStatus).not.toHaveBeenCalled()
   })
 
-  it("still shows warning toast when showDrawingToasts is false", () => {
+  it("auto-creates layer even when showDrawingToasts is false", () => {
+    const addLayer = vi.fn(() => "auto-layer-1")
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ showDrawingToasts: false, activeLayerId: null, selection: props.selection })),
+        useDrawingMode(createOptions({ showDrawingToasts: false, activeLayerId: null, addLayer, selection: props.selection })),
       { initialProps: { selection: null } }
     )
 
     rerender({ selection: word1 })
     act(() => { result.current.confirmSelection() })
 
-    expect(toast.warning).toHaveBeenCalledWith("Add a new layer before drawing arrows")
+    expect(addLayer).toHaveBeenCalled()
+    expect(result.current.isDrawing).toBe(true)
   })
 
   it("selection is preserved after confirming anchor", () => {

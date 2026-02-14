@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
-import { toast } from "sonner"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { Arrow, ArrowEndpoint, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
@@ -26,6 +25,7 @@ interface UseDrawingModeOptions {
   activeTool: ActiveTool
   selection: WordSelection | null
   activeLayerId: string | null
+  addLayer: () => string
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
   showDrawingToasts: boolean
   setActiveTool: (tool: ActiveTool) => void
@@ -38,6 +38,7 @@ export function useDrawingMode({
   activeTool,
   selection,
   activeLayerId,
+  addLayer,
   addArrow,
   showDrawingToasts,
   setActiveTool,
@@ -49,11 +50,13 @@ export function useDrawingMode({
   const phaseRef = useRef<DrawingPhase>("idle")
 
   const activeLayerIdRef = useRef(activeLayerId)
+  const addLayerRef = useRef(addLayer)
   const addArrowRef = useRef(addArrow)
   useEffect(() => {
     activeLayerIdRef.current = activeLayerId
+    addLayerRef.current = addLayer
     addArrowRef.current = addArrow
-  }, [activeLayerId, addArrow])
+  }, [activeLayerId, addLayer, addArrow])
 
   const showDrawingToastsRef = useRef(showDrawingToasts)
   showDrawingToastsRef.current = showDrawingToasts
@@ -111,10 +114,11 @@ export function useDrawingMode({
     const endpoint = endpointFromSelection(sel)
 
     if (phase === "selecting-anchor") {
-      // Check for active layer first
+      // Auto-create a layer if none exists
       if (!activeLayerIdRef.current) {
-        toast.warning("Add a new layer before drawing arrows")
-        return
+        const id = addLayerRef.current()
+        if (!id) return
+        activeLayerIdRef.current = id
       }
       // Set anchor from selection
       anchorRef.current = endpoint
