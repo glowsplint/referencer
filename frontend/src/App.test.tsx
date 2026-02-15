@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import { App } from "./App"
+
+// Mock the breakpoint hook for mobile detection
+let mockIsMobile = false
+vi.mock("./hooks/use-is-breakpoint", () => ({
+  useIsBreakpoint: () => mockIsMobile,
+}))
 
 // Mock the editor workspace hook
 const mockWorkspace = {
@@ -114,6 +121,9 @@ vi.mock("./components/AnnotationPanel", () => ({
 }))
 
 beforeEach(() => {
+  // Reset mobile mock
+  mockIsMobile = false
+
   // Reset mock state
   mockWorkspace.settings = {
     isDarkMode: false,
@@ -273,5 +283,61 @@ describe("App", () => {
     expect(capturedEditorPaneProps[0].onAnnotationChange).toBeUndefined()
     expect(capturedEditorPaneProps[0].onAnnotationBlur).toBeUndefined()
     expect(capturedEditorPaneProps[0].onAnnotationClick).toBeUndefined()
+  })
+
+  describe("mobile read-only mode", () => {
+    beforeEach(() => {
+      mockIsMobile = true
+    })
+
+    it("hides ButtonPane on mobile", () => {
+      render(<App />)
+      expect(screen.queryByTestId("buttonPane")).not.toBeInTheDocument()
+    })
+
+    it("shows MobileInfoDialog on mobile", () => {
+      render(<App />)
+      expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument()
+      expect(screen.getByText("Best on Desktop")).toBeInTheDocument()
+    })
+
+    it("does not show MobileInfoDialog on desktop", () => {
+      mockIsMobile = false
+      render(<App />)
+      expect(screen.queryByTestId("mobileInfoDialog")).not.toBeInTheDocument()
+    })
+
+    it("dismisses MobileInfoDialog when button is clicked", async () => {
+      const user = userEvent.setup()
+      render(<App />)
+
+      expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument()
+      await user.click(screen.getByTestId("mobileInfoDismissButton"))
+      expect(screen.queryByTestId("mobileInfoDialog")).not.toBeInTheDocument()
+    })
+
+    it("passes isLocked=true to EditorPane on mobile (read-only)", () => {
+      mockWorkspace.settings.isLocked = false
+      render(<App />)
+      expect(capturedEditorPaneProps[0].isLocked).toBe(true)
+    })
+
+    it("does not pass mouse handlers to EditorPane on mobile even when locked", () => {
+      mockWorkspace.settings.isLocked = true
+      render(<App />)
+      expect(capturedEditorPaneProps[0].onMouseDown).toBeUndefined()
+      expect(capturedEditorPaneProps[0].onMouseMove).toBeUndefined()
+      expect(capturedEditorPaneProps[0].onMouseUp).toBeUndefined()
+    })
+
+    it("does not pass onContentUpdate to EditorPane on mobile", () => {
+      render(<App />)
+      expect(capturedEditorPaneProps[0].onContentUpdate).toBeUndefined()
+    })
+
+    it("hides StatusBar on mobile", () => {
+      render(<App />)
+      expect(screen.queryByTestId("status-bar")).not.toBeInTheDocument()
+    })
   })
 })
