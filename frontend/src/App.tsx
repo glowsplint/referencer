@@ -23,28 +23,27 @@ import { useCycleLayer } from "./hooks/use-cycle-layer";
 import { useDragSelection } from "./hooks/use-drag-selection";
 import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/use-action-console";
+import { useIsBreakpoint } from "./hooks/use-is-breakpoint";
 import { ToastKbd } from "./components/ui/ToastKbd";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
 import { ActionConsole } from "./components/ActionConsole";
+import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
 
 function getWorkspaceId(): string {
-  const base = import.meta.env.BASE_URL;
-  const path = window.location.pathname;
-  const prefix = `${base}space/`;
-  if (path.startsWith(prefix)) return path.slice(prefix.length);
-
-  const id = crypto.randomUUID();
-  window.history.replaceState(null, "", `${prefix}${id}`);
-  return id;
+  const hash = window.location.hash; // e.g. "#/{uuid}?access=readonly"
+  const hashPath = hash.replace(/^#\/?/, "").split("?")[0];
+  if (hashPath) return hashPath;
+  return crypto.randomUUID();
 }
 
 function getReadOnly(): boolean {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("access") === "readonly";
+  const hash = window.location.hash;
+  const qs = hash.includes("?") ? hash.slice(hash.indexOf("?")) : "";
+  return new URLSearchParams(qs).get("access") === "readonly";
 }
 
 export function App() {
@@ -79,6 +78,10 @@ export function App() {
     history,
     updateEditorContent,
   } = workspace;
+
+  const isMobile = useIsBreakpoint("max", 768);
+  const effectiveReadOnly = readOnly || isMobile;
+  const [mobileDialogDismissed, setMobileDialogDismissed] = useState(false);
 
   useToolShortcuts({
     isLocked: settings.isLocked,
@@ -173,10 +176,10 @@ export function App() {
 
   // Hint to lock the editor when unlocked
   useEffect(() => {
-    if (!settings.isLocked && !readOnly) {
+    if (!settings.isLocked && !effectiveReadOnly) {
       setStatus({ text: <>Press <ToastKbd>K</ToastKbd> to lock the editor once you've finalised the contents</>, type: "info" })
     }
-  }, [settings.isLocked, readOnly, setStatus])
+  }, [settings.isLocked, effectiveReadOnly, setStatus])
 
   // Default status message when locked with selection tool and no visible selection
   useEffect(() => {
@@ -274,13 +277,13 @@ export function App() {
       <Toaster />
       <div className="flex flex-col h-screen">
       <div className="flex flex-1 min-h-0">
-        <ButtonPane />
-        {isManagementPaneOpen && <ManagementPane />}
+        {!isMobile && <ButtonPane />}
+        {!isMobile && isManagementPaneOpen && <ManagementPane />}
         <EditorContext.Provider value={{ editor: activeEditor }}>
           <div className="flex flex-col flex-1 min-w-0">
             <TitleBar />
             <SimpleEditorToolbar isLocked={settings.isLocked} />
-            <StatusBar message={statusMessage} />
+            {!isMobile && <StatusBar message={statusMessage} />}
             <div className="flex flex-1 min-w-0 min-h-0">
               <div
                 ref={containerRef}
@@ -299,7 +302,7 @@ export function App() {
                   activeTool={annotations.activeTool}
                   sectionVisibility={sectionVisibility}
                   isDarkMode={settings.isDarkMode}
-                  isLocked={settings.isLocked || readOnly}
+                  isLocked={settings.isLocked || effectiveReadOnly}
                 />
                 {editorWidths.map((width, i) => {
                   const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]
@@ -321,16 +324,16 @@ export function App() {
                       }}
                     >
                       <EditorPane
-                        isLocked={settings.isLocked || readOnly}
+                        isLocked={settings.isLocked || effectiveReadOnly}
                         activeTool={annotations.activeTool}
                         content={SIMPLE_EDITOR_CONTENT}
                         index={i}
                         onEditorMount={handleEditorMount}
                         onFocus={handlePaneFocus}
-                        onMouseDown={settings.isLocked && !readOnly ? handleMouseDown : undefined}
-                        onMouseMove={settings.isLocked && !readOnly ? handleMouseMove : undefined}
-                        onMouseUp={settings.isLocked && !readOnly ? handleMouseUp : undefined}
-                        onContentUpdate={readOnly ? undefined : updateEditorContent}
+                        onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
+                        onMouseMove={settings.isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
+                        onMouseUp={settings.isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
+                        onContentUpdate={effectiveReadOnly ? undefined : updateEditorContent}
                         layers={layers}
                         selection={selection}
                         selectionHidden={selectionHidden}
@@ -345,7 +348,7 @@ export function App() {
                   )
                 })}
               </div>
-              {settings.isLocked && hasAnyAnnotations && (
+              {!isMobile && settings.isLocked && hasAnyAnnotations && (
                 <AnnotationPanel
                   layers={layers}
                   editorsRef={editorsRef}
@@ -362,12 +365,18 @@ export function App() {
           </div>
         </EditorContext.Provider>
       </div>
-      <ActionConsole
-        log={history.log}
-        isOpen={actionConsole.isOpen}
-        onClose={() => actionConsole.setIsOpen(false)}
-        height={actionConsole.consoleHeight}
-        onHeightChange={actionConsole.setConsoleHeight}
+      {!isMobile && (
+        <ActionConsole
+          log={history.log}
+          isOpen={actionConsole.isOpen}
+          onClose={() => actionConsole.setIsOpen(false)}
+          height={actionConsole.consoleHeight}
+          onHeightChange={actionConsole.setConsoleHeight}
+        />
+      )}
+      <MobileInfoDialog
+        open={isMobile && !mobileDialogDismissed}
+        onOpenChange={(open) => { if (!open) setMobileDialogDismissed(true); }}
       />
       </div>
     </WorkspaceProvider>

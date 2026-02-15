@@ -15,8 +15,12 @@ function renderShareDialog(overrides = {}) {
 }
 
 describe("ShareDialog", () => {
+  let writeText: ReturnType<typeof vi.fn>
+
   beforeEach(() => {
     vi.restoreAllMocks()
+    writeText = vi.fn().mockResolvedValue(undefined)
+    Object.assign(navigator, { clipboard: { writeText } })
   })
 
   it("renders dialog with title and buttons", () => {
@@ -26,81 +30,28 @@ describe("ShareDialog", () => {
     expect(screen.getByTestId("shareEditButton")).toBeInTheDocument()
   })
 
-  it("calls API with readonly access when read-only button clicked", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ code: "abc123", url: "/s/abc123" }),
-    } as Response)
-
-    const writeText = vi.fn().mockResolvedValue(undefined)
-    Object.assign(navigator, { clipboard: { writeText } })
-
-    renderShareDialog()
-    fireEvent.click(screen.getByTestId("shareReadonlyButton"))
-
-    await waitFor(() => {
-      expect(fetchSpy).toHaveBeenCalledWith("/api/share", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: "test-workspace-123", access: "readonly" }),
-      })
-    })
-  })
-
-  it("calls API with edit access when edit button clicked", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ code: "xyz789", url: "/s/xyz789" }),
-    } as Response)
-
-    const writeText = vi.fn().mockResolvedValue(undefined)
-    Object.assign(navigator, { clipboard: { writeText } })
-
-    renderShareDialog()
-    fireEvent.click(screen.getByTestId("shareEditButton"))
-
-    await waitFor(() => {
-      expect(fetchSpy).toHaveBeenCalledWith("/api/share", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: "test-workspace-123", access: "edit" }),
-      })
-    })
-  })
-
-  it("copies URL to clipboard after successful API call", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ code: "abc123", url: "/s/abc123" }),
-    } as Response)
-
-    const writeText = vi.fn().mockResolvedValue(undefined)
-    Object.assign(navigator, { clipboard: { writeText } })
-
+  it("copies read-only hash URL when read-only button clicked", async () => {
     renderShareDialog()
     fireEvent.click(screen.getByTestId("shareReadonlyButton"))
 
     await waitFor(() => {
       expect(writeText).toHaveBeenCalledWith(
-        expect.stringContaining("/s/abc123")
+        expect.stringContaining("#/test-workspace-123?access=readonly")
       )
     })
   })
 
-  it("shows error toast when API returns non-ok response", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: false,
-      status: 500,
-    } as Response)
-
-    const writeText = vi.fn()
-    Object.assign(navigator, { clipboard: { writeText } })
-
+  it("copies edit hash URL when edit button clicked", async () => {
     renderShareDialog()
-    fireEvent.click(screen.getByTestId("shareReadonlyButton"))
+    fireEvent.click(screen.getByTestId("shareEditButton"))
 
     await waitFor(() => {
-      expect(writeText).not.toHaveBeenCalled()
+      expect(writeText).toHaveBeenCalledWith(
+        expect.stringContaining("#/test-workspace-123")
+      )
+      expect(writeText).toHaveBeenCalledWith(
+        expect.not.stringContaining("access=readonly")
+      )
     })
   })
 

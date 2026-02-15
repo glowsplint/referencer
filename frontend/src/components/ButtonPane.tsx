@@ -118,7 +118,7 @@ export function ButtonPane() {
   ];
 
   return (
-    <div className="flex flex-col items-center gap-1 h-full p-1">
+    <div className="flex flex-col items-center gap-1 h-full p-1" data-testid="buttonPane">
       {/* Meta group */}
       <Tooltip placement="right">
         <TooltipTrigger asChild>
