@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Link, Eye } from "lucide-react"
 import { toast } from "sonner"
 import {
@@ -16,38 +15,25 @@ interface ShareDialogProps {
   workspaceId: string
 }
 
+const BASE_URL = import.meta.env.BASE_URL
+
 export function ShareDialog({
   open,
   onOpenChange,
   workspaceId,
 }: ShareDialogProps) {
-  const [loading, setLoading] = useState<"edit" | "readonly" | null>(null)
-
-  async function createLink(access: "edit" | "readonly") {
-    setLoading(access)
+  async function copyLink(access: "edit" | "readonly") {
+    const hash =
+      access === "readonly"
+        ? `#/${workspaceId}?access=readonly`
+        : `#/${workspaceId}`
+    const url = `${window.location.origin}${BASE_URL}${hash}`
     try {
-      const res = await fetch("/api/share", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId, access }),
-      })
-      if (!res.ok) {
-        toast.error("Failed to create share link")
-        return
-      }
-      const data = await res.json()
-      if (data.error) {
-        toast.error(data.error)
-        return
-      }
-      const fullUrl = `${window.location.origin}${data.url}`
-      await navigator.clipboard.writeText(fullUrl)
+      await navigator.clipboard.writeText(url)
       toast.success("Link copied to clipboard")
       onOpenChange(false)
     } catch {
-      toast.error("Failed to create share link")
-    } finally {
-      setLoading(null)
+      toast.error("Failed to copy link")
     }
   }
 
@@ -61,14 +47,13 @@ export function ShareDialog({
         <DialogHeader>
           <DialogTitle>Share workspace</DialogTitle>
           <DialogDescription>
-            Generate a short link to share this workspace.
+            Copy a link to share this workspace.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
           <Button
             variant="outline"
-            onClick={() => createLink("readonly")}
-            disabled={loading !== null}
+            onClick={() => copyLink("readonly")}
             data-testid="shareReadonlyButton"
           >
             <Eye />
@@ -76,8 +61,7 @@ export function ShareDialog({
           </Button>
           <Button
             variant="outline"
-            onClick={() => createLink("edit")}
-            disabled={loading !== null}
+            onClick={() => copyLink("edit")}
             data-testid="shareEditButton"
           >
             <Link />

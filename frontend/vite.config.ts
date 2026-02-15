@@ -8,16 +8,6 @@ import { defineConfig } from "vite"
 export default defineConfig({
   base: "/referencer/",
   plugins: [react(), tailwindcss()],
-  server: {
-    proxy: {
-      "/api": "http://127.0.0.1:5000",
-      "/s/": "http://127.0.0.1:5000",
-      "/ws": {
-        target: "ws://127.0.0.1:5000",
-        ws: true,
-      },
-    },
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

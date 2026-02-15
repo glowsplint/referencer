@@ -34,19 +34,16 @@ import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
 
 function getWorkspaceId(): string {
-  const base = import.meta.env.BASE_URL;
-  const path = window.location.pathname;
-  const prefix = `${base}space/`;
-  if (path.startsWith(prefix)) return path.slice(prefix.length);
-
-  const id = crypto.randomUUID();
-  window.history.replaceState(null, "", `${prefix}${id}`);
-  return id;
+  const hash = window.location.hash; // e.g. "#/{uuid}?access=readonly"
+  const hashPath = hash.replace(/^#\/?/, "").split("?")[0];
+  if (hashPath) return hashPath;
+  return crypto.randomUUID();
 }
 
 function getReadOnly(): boolean {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("access") === "readonly";
+  const hash = window.location.hash;
+  const qs = hash.includes("?") ? hash.slice(hash.indexOf("?")) : "";
+  return new URLSearchParams(qs).get("access") === "readonly";
 }
 
 export function App() {
