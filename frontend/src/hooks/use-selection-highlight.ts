@@ -1,3 +1,6 @@
+// Renders the current word selection as a ProseMirror inline decoration.
+// Shows a background highlight for most tools, or an underline preview
+// when the underline tool is active. Uses the active layer's color.
 import { useEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { ActiveTool, WordSelection } from "@/types/editor"

@@ -1,3 +1,7 @@
+// Side panel that renders annotation cards alongside the editor, connected by
+// SVG lines to their corresponding highlights. Resolves vertical overlaps so
+// cards don't stack on top of each other, and draws connector lines from each
+// highlight's right edge to its card using blended colors.
 import { useMemo } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, EditingAnnotation } from "@/types/editor"
@@ -41,6 +45,8 @@ export function AnnotationPanel({
     )
   }, [positions])
 
+  // Precompute fast lookups from highlight ID -> color, layerId, annotation text.
+  // Only includes annotations from visible layers so hidden layers don't render.
   const highlightLookup = useMemo(() => {
     const color = new Map<string, string>()
     const layerId = new Map<string, string>()

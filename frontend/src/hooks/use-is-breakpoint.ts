@@ -1,3 +1,4 @@
+// Reactive CSS media-query breakpoint detection using matchMedia.
 import { useEffect, useState } from "react"
 
 type BreakpointMode = "min" | "max"

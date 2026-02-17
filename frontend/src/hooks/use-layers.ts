@@ -1,3 +1,6 @@
+// Core layer state management. Stores all layers with their highlights,
+// arrows, and underlines. Provides CRUD operations for each annotation type.
+// Auto-assigns colors from a predefined palette and warns when exhausted.
 import { useRef, useState, useCallback } from "react"
 import { toast } from "sonner"
 import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
@@ -31,7 +34,8 @@ export function useLayers() {
     const id = opts?.id ?? crypto.randomUUID()
     const name = opts?.name ?? `Layer ${nextNumber}`
     const newLayer: Layer = { id, name, color, visible: true, highlights: [], arrows: [], underlines: [] }
-    // Eagerly update ref so rapid calls within the same batch see the new layer
+    // Eagerly update ref so rapid addLayer calls within the same React batch
+    // can see previously added layers (setState is async/batched)
     layersRef.current = [...layersRef.current, newLayer]
     setLayers((prev) => [...prev, newLayer])
     setActiveLayerId(id)
@@ -46,6 +50,8 @@ export function useLayers() {
   const setActiveLayer = useCallback((id: string) => {
     setActiveLayerId((prevId) => {
       if (prevId && prevId !== id) {
+        // Clean up empty comments on the previously active layer when switching,
+        // since they were placeholders awaiting annotation input
         setLayers((layers) =>
           layers.map((l) =>
             l.id === prevId

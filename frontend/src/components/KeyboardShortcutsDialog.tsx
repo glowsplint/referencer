@@ -1,3 +1,6 @@
+// Modal dialog listing all keyboard shortcuts in a two-column layout.
+// Covers workspace tools, text formatting, headings, lists, and alignment.
+// Auto-detects macOS to show the correct modifier key symbol.
 import {
   Dialog,
   DialogContent,

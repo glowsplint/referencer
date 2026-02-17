@@ -1,3 +1,6 @@
+// ProseMirror decoration plugin for rendering layer-based text highlights.
+// Stores a DecorationSet in plugin state that is driven externally via
+// transaction metadata from the useUnifiedDecorations hook.
 import { Extension } from "@tiptap/core"
 import { Plugin, PluginKey } from "@tiptap/pm/state"
 import { DecorationSet } from "@tiptap/pm/view"

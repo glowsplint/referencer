@@ -1,3 +1,6 @@
+// Dialog for sharing the workspace via URL. Generates either a read-only or
+// edit link using hash-based routing (e.g., #/<workspaceId>?access=readonly)
+// and copies it to the clipboard.
 import { Link, Eye } from "lucide-react"
 import { toast } from "sonner"
 import {

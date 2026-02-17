@@ -1,3 +1,6 @@
+// Binds Cmd+Z / Cmd+Shift+Z to the action history undo/redo,
+// but only when focus is not in an editable element (to avoid
+// conflicting with native text undo in editors/textareas).
 import { useEffect } from "react"
 import { isEditableElement } from "@/lib/dom"
 import type { useActionHistory } from "./use-action-history"

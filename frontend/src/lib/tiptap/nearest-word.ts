@@ -1,3 +1,9 @@
+// Spatial word-finding utilities for visual navigation.
+// Maps ProseMirror document positions to pixel coordinates via
+// coordsAtPos/nodeDOM, then uses distance-based algorithms to find
+// the nearest word in a given direction (same line, adjacent line,
+// or nearest by weighted score). Also provides coordinate transforms
+// relative to different wrapper elements for arrow rendering.
 import type { Editor } from "@tiptap/react"
 import type { EditorView } from "@tiptap/pm/view"
 import type { CollectedWord } from "./word-collection"

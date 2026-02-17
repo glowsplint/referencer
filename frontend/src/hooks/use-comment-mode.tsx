@@ -1,3 +1,7 @@
+// Handles the "comments" annotation tool mode. Shows status prompts on entry,
+// and on Enter creates a comment highlight at the current word selection
+// (or toggles it off if one already exists at that range).
+// Refs are used extensively to keep the confirmComment callback stable.
 import { useEffect, useRef, useCallback } from "react"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"

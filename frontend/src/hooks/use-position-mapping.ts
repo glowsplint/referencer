@@ -1,3 +1,6 @@
+// Keeps annotation positions (highlights, arrows, underlines) in sync when
+// editor content changes. Listens to ProseMirror transactions and remaps
+// stored from/to positions through the transaction's mapping.
 import { useEffect, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer } from "@/types/editor"

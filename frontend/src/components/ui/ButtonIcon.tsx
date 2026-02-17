@@ -1,3 +1,5 @@
+// Simple icon button wrapper used in the management panel and toolbar.
+// Renders an icon inside a styled button with hover and disabled states.
 import type { ReactNode } from "react";
 import type { ButtonProps } from "../../types";
 

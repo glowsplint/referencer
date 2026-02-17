@@ -1,3 +1,6 @@
+// Dev-facing action console that logs workspace mutations (add/remove layers,
+// highlights, arrows, etc.) in a terminal-style panel at the bottom of the screen.
+// Toggled with the backtick key. Useful for debugging annotation state changes.
 import { useRef, useEffect, useCallback } from "react"
 import type { ActionEntry, ActionDetail } from "@/types/editor"
 
@@ -87,6 +90,8 @@ export function ActionConsole({ log, isOpen, onClose, height, onHeightChange }: 
     }
   }, [log])
 
+  // Drag-to-resize: tracks mouse delta from the top edge drag handle,
+  // clamped between 80px and 600px. Disables text selection during drag.
   const handleDragStart = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()

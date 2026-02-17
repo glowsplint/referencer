@@ -1,3 +1,7 @@
+// Color utilities for alpha compositing and theme-aware blending.
+// Used to render overlapping annotation highlights as opaque RGB colors
+// that look correct on both light and dark backgrounds.
+
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
   return {
     r: parseInt(hex.slice(1, 3), 16),

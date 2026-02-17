@@ -1,3 +1,7 @@
+// Builds and applies blended highlight decorations for all visible layers.
+// When multiple highlights overlap, their colors are alpha-blended together.
+// Segments overlapping ranges at breakpoints so each sub-range gets a single
+// blended color. Arrow endpoints receive a higher opacity than plain highlights.
 import { useEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer } from "@/types/editor"
@@ -58,6 +62,8 @@ function collectRanges(layers: Layer[], editorIndex: number): ColoredRange[] {
   return ranges
 }
 
+// Splits overlapping ranges into non-overlapping segments at each unique
+// boundary point, then blends contributing colors for each segment.
 function segmentAndBlend(ranges: ColoredRange[], isDarkMode: boolean): Decoration[] {
   if (ranges.length === 0) return []
 

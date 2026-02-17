@@ -1,3 +1,7 @@
+// ProseMirror plugin that renders annotation arrows as an SVG overlay
+// inside each editor's scroll wrapper. Draws styled paths (solid, dashed,
+// dotted, double) between word centers with directional arrowhead markers.
+// Interaction (hover, click-to-delete) is handled separately by ArrowOverlay.
 import { Extension } from "@tiptap/core"
 import { Plugin, PluginKey, type EditorState } from "@tiptap/pm/state"
 import type { EditorView } from "@tiptap/pm/view"

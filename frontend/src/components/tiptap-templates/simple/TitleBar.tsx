@@ -1,3 +1,5 @@
+// Title bar with inline-editable document title, share dialog trigger,
+// and PDF export button. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Share2, Download } from "lucide-react"
 

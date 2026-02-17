@@ -1,3 +1,6 @@
+// Syncs underline decorations from layer data into the ProseMirror
+// layer-underlines plugin. Rebuilds the decoration set whenever layers
+// change and clears decorations when the editor is unlocked.
 import { useEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer } from "@/types/editor"

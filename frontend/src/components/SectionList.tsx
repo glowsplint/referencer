@@ -1,3 +1,6 @@
+// Passage list in the management pane. Each passage row has an inline-editable
+// name and visibility toggle. Supports drag-and-drop reordering between passages
+// (builds a permutation array on drop and calls onReorder).
 import { Eye, EyeOff, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DRAG_TYPE_SECTION } from "@/constants/drag-types";

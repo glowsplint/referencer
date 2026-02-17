@@ -1,3 +1,6 @@
+// Manages the multi-pane editor layout: add/remove passages (up to 3),
+// track split positions, section visibility/names, and active editor focus.
+// Handles divider resize with minimum pane width constraints.
 import { useRef, useState, useCallback, useMemo } from "react"
 import type { Editor } from "@tiptap/react"
 

@@ -1,3 +1,6 @@
+// Renders a glowing blue outline around the currently selected word when the
+// editor is locked. Computes a bounding box from DOM range rects relative to the
+// editor wrapper, and recomputes on resize via ResizeObserver.
 import { useLayoutEffect, useState } from "react"
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"

@@ -1,3 +1,6 @@
+// Registers global keyboard shortcuts for toggling UI settings:
+// D = dark mode, R = row/column layout, K = lock/unlock, M = management pane.
+// Lock toggle (K) works even inside editable elements (e.g. Tiptap editor).
 import { useEffect, useRef } from "react"
 import { isEditableElement } from "@/lib/dom"
 

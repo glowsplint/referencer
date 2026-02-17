@@ -1,3 +1,5 @@
+// Arrow visual style definitions and SVG path computation for annotation arrows.
+// Supports solid, dashed, dotted, and double-line styles.
 import type { ArrowStyle } from "@/types/editor"
 
 export const ARROW_STYLES: { value: ArrowStyle; label: string }[] = [

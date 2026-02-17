@@ -1,3 +1,6 @@
+// Shows a subtle background highlight on the word under the mouse cursor
+// in locked mode. Skips words that are already selected or already have
+// a visible layer highlight to avoid visual clutter.
 import { useEffect, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, WordSelection } from "@/types/editor"

@@ -1,3 +1,6 @@
+// Handles the "underline" annotation tool mode. Shows status prompts on entry,
+// and on Enter creates an underline at the current word selection (or toggles
+// it off if an identical range already exists).
 import { useEffect, useRef, useCallback } from "react"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection, LayerUnderline } from "@/types/editor"

@@ -1,3 +1,5 @@
+// ProseMirror node manipulation helpers: focusing the next node,
+// finding nodes by position or identity, and batch-updating node attributes.
 import type { Node as PMNode } from "@tiptap/pm/model"
 import type { Transaction } from "@tiptap/pm/state"
 import { Selection, TextSelection } from "@tiptap/pm/state"

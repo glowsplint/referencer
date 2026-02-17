@@ -1,3 +1,6 @@
+// Syncs arrow annotation data from layers into the ProseMirror arrow-lines
+// plugin for a single editor. Updates the plugin whenever layers, dark mode,
+// visibility, or the selected arrow changes.
 import { useEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer } from "@/types/editor"

@@ -1,3 +1,4 @@
+// Application entry point. Mounts the React app into the DOM root element.
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 

@@ -1,3 +1,6 @@
+// Tracks the visual viewport dimensions (width, height, offset, scale)
+// using the Visual Viewport API. Particularly important for mobile where
+// virtual keyboards change the visible area.
 "use client"
 
 import { useEffect, useState } from "react"

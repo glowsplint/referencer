@@ -1,3 +1,6 @@
+// Individual annotation card shown in the AnnotationPanel beside the editor.
+// Displays a colored top border matching its layer color, with a textarea for
+// editing or a static text view. Positioned absolutely by the parent panel.
 import { useRef, useEffect, useCallback } from "react"
 
 interface AnnotationCardProps {
@@ -25,6 +28,7 @@ export function AnnotationCard({
 }: AnnotationCardProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  // Auto-expand textarea height to fit content (avoids scrollbar inside card)
   const autoResize = useCallback(() => {
     const textarea = textareaRef.current
     if (textarea) {
@@ -62,7 +66,8 @@ export function AnnotationCard({
         e.preventDefault()
         textareaRef.current?.blur()
       }
-      // Stop propagation so arrow keys don't trigger word navigation
+      // Stop propagation so arrow keys/Enter/Escape don't trigger
+      // workspace-level word navigation or tool shortcuts
       e.stopPropagation()
     },
     [handleBlur]

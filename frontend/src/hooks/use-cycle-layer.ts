@@ -1,3 +1,5 @@
+// Cycles through layers with Tab/Shift+Tab keyboard shortcuts.
+// Wraps around at boundaries so the user can continuously cycle.
 import { useEffect, useRef } from "react";
 import type { Layer } from "@/types/editor";
 import { isEditableElement } from "@/lib/dom";

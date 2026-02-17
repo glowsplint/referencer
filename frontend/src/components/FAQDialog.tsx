@@ -1,3 +1,5 @@
+// Modal dialog displaying frequently asked questions about the app, covering
+// what Referencer is, how layers/annotations/arrows/sharing work, etc.
 import {
   Dialog,
   DialogContent,

@@ -1,3 +1,5 @@
+// Tracks whether a target element (or the window) is currently scrolling.
+// Uses the scrollend event when available, with a debounce timeout fallback.
 import type { RefObject } from "react"
 import { useEffect, useRef, useState } from "react"
 

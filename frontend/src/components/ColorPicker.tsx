@@ -1,3 +1,5 @@
+// Grid of color swatches for choosing a layer color. Uses the Tailwind 300-shade
+// palette defined in editor types. Shown inline below the layer row swatch button.
 import { TAILWIND_300_COLORS } from "@/types/editor";
 
 interface ColorPickerProps {

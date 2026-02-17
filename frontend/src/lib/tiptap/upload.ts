@@ -1,3 +1,5 @@
+// Image upload handler with progress tracking and abort support.
+// Currently uses a simulated upload for demo purposes.
 export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
 /**

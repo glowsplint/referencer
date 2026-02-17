@@ -1,3 +1,5 @@
+// Toggle switch component built on Radix UI Switch primitive.
+// Used for boolean settings in the management panel (e.g. toast visibility).
 import * as React from "react"
 import { Switch as SwitchPrimitive } from "radix-ui"
 

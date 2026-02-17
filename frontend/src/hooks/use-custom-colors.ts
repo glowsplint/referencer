@@ -1,3 +1,5 @@
+// Manages user-defined custom colors persisted in localStorage.
+// Provides add/remove operations that sync to both React state and storage.
 import { useState, useCallback } from "react"
 
 const STORAGE_KEY = "referencer-custom-colors"

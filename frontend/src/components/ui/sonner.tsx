@@ -1,3 +1,5 @@
+// Pre-configured Sonner toast container with custom icons and theme-aware
+// styling. Positioned at top-center of the viewport.
 import {
   CircleCheckIcon,
   InfoIcon,

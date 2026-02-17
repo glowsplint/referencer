@@ -1,3 +1,7 @@
+// WebSocket protocol type definitions for client-server communication.
+// Defines the payload shapes for workspace state sync (layers, editors,
+// highlights, arrows) and the envelope types for requests/responses.
+
 export interface ArrowEndpointPayload {
   editorIndex: number
   from: number

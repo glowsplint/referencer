@@ -1,3 +1,6 @@
+// Dialog component built on Radix UI primitives. Provides overlay, content,
+// header, footer, title, and description sub-components with consistent
+// animation and styling. Used for share dialogs, mobile info, and settings.
 import * as React from "react"
 import { XIcon } from "lucide-react"
 import { Dialog as DialogPrimitive } from "radix-ui"

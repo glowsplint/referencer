@@ -1,3 +1,8 @@
+// Renders all arrow connectors between annotations as SVG overlays. Handles two
+// rendering modes: container-level SVG for the gap between editors, and per-wrapper
+// SVGs injected into each editor's scroll container so arrows rubber-band with
+// content during scroll. Also renders the interactive hit areas, selection rings,
+// hover highlights, delete icons, and the live preview while drawing a new arrow.
 import { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, DrawingState, ActiveTool, Arrow, ArrowStyle } from "@/types/editor"

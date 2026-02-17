@@ -1,3 +1,6 @@
+// Registers keyboard shortcuts for switching annotation tools when locked:
+// S = selection, A = arrow, C = comments, H = highlight, U = underline, E = eraser.
+// Only active when the editor is in locked (annotation) mode.
 import { useEffect, useRef } from "react"
 import { isEditableElement } from "@/lib/dom"
 import type { ActiveTool } from "@/types/editor"

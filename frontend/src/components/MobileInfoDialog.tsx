@@ -1,3 +1,5 @@
+// Informational dialog shown on mobile devices, advising that the app is
+// designed for desktop. Users can dismiss it and continue in read-only mode.
 import { Monitor } from "lucide-react";
 import {
   Dialog,

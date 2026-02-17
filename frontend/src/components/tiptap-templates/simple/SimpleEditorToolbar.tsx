@@ -1,3 +1,7 @@
+// Rich text formatting toolbar (from tiptap template). Renders headings,
+// lists, marks, text alignment, image upload, and link controls. Hidden
+// when the editor is in locked (annotation) mode. Switches between a
+// desktop layout and a mobile-friendly view with a link sub-screen.
 "use client"
 
 import { useEffect, useRef, useState } from "react"

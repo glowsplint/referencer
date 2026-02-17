@@ -1,3 +1,5 @@
+// Provides a status message bar with optional auto-dismiss timer.
+// Used by annotation tools to show contextual instructions and confirmations.
 import { useState, useCallback, useRef, type ReactNode } from "react"
 
 export interface StatusMessage {

@@ -1,3 +1,7 @@
+// Configures all Tiptap extensions for each editor pane. Combines the
+// StarterKit (paragraphs, headings, lists, etc.) with custom decoration
+// plugins (layer highlights, underlines, word selection, arrows, hover)
+// and standard extensions (image upload, typography, text alignment).
 import { StarterKit } from "@tiptap/starter-kit"
 import { Image } from "@tiptap/extension-image"
 import { TaskItem, TaskList } from "@tiptap/extension-list"

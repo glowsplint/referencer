@@ -1,3 +1,7 @@
+// Single row in the management pane's layer list. Shows the layer color swatch
+// (click to open ColorPicker), inline-editable name, visibility toggle, and an
+// expandable section listing all highlights, arrows, and underlines in that layer.
+// Supports drag-and-drop reordering (drag to trash bin to delete).
 import { Eye, EyeOff, ChevronRight, ChevronDown, MessageSquareText, Highlighter, ArrowRight, Underline, X } from "lucide-react";
 import { ColorPicker } from "./ColorPicker";
 import { useState } from "react";

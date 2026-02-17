@@ -1,3 +1,7 @@
+// Manages the two-step arrow drawing workflow: first select an anchor word
+// and press Enter, then select a target word and press Enter to create the arrow.
+// Tracks drawing phase (idle -> selecting-anchor -> anchor-confirmed -> idle),
+// provides a live preview via drawingState, and auto-creates a layer if needed.
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { Arrow, ArrowEndpoint, ArrowStyle, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"

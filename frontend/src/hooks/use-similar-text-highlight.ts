@@ -1,3 +1,6 @@
+// Highlights all occurrences of the currently selected text across the editor,
+// excluding the primary selection itself. Uses a subtler opacity than the
+// main selection highlight to provide visual context without distraction.
 import { useEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"

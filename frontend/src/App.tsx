@@ -1,3 +1,7 @@
+// Root application component. Composes the multi-pane editor workspace:
+// toolbar, management panel, editor panes with dividers, annotation panel,
+// arrow overlay, and action console. Wires together all annotation tools
+// (highlight, comment, underline, arrow, eraser) and keyboard navigation.
 import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
@@ -64,8 +68,10 @@ function PassageHeader({ name, index, onUpdateName }: {
   );
 }
 
+// Extract workspace ID from hash-based route (e.g. "#/{uuid}?access=readonly").
+// Falls back to generating a new random UUID for fresh sessions.
 function getWorkspaceId(): string {
-  const hash = window.location.hash; // e.g. "#/{uuid}?access=readonly"
+  const hash = window.location.hash;
   const hashPath = hash.replace(/^#\/?/, "").split("?")[0];
   if (hashPath) return hashPath;
   return crypto.randomUUID();

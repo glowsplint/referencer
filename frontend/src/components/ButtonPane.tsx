@@ -1,3 +1,7 @@
+// Vertical toolbar on the left edge of the workspace. Contains meta actions
+// (management pane toggle, keyboard shortcuts, FAQ, settings), annotation tools
+// (selection, arrow, highlight, comments, underline, eraser), and layout/lock
+// toggles. Tool buttons are disabled when the editor is unlocked or read-only.
 import { useState, useCallback, useEffect } from "react";
 import {
   Columns2,

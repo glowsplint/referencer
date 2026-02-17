@@ -1,3 +1,6 @@
+// ProseMirror decoration plugin for rendering layer-based text underlines.
+// Same pattern as layer-highlights: DecorationSet driven externally via
+// transaction metadata from the useLayerUnderlineDecorations hook.
 import { Extension } from "@tiptap/core"
 import { Plugin, PluginKey } from "@tiptap/pm/state"
 import { DecorationSet } from "@tiptap/pm/view"

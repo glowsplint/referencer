@@ -1,3 +1,7 @@
+// Individual editor pane component. Wraps a Tiptap editor instance with
+// all decoration hooks (highlights, underlines, word hover, selection,
+// arrows) and forwards mouse events for word-level click/drag selection
+// in locked mode. Each pane represents one text passage in the workspace.
 "use client"
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"

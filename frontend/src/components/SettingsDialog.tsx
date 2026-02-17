@@ -1,3 +1,5 @@
+// Workspace settings dialog with toggle switches for dark mode, notification
+// preferences (drawing/comments/highlight toasts), and overscroll behavior.
 import {
   Dialog,
   DialogContent,

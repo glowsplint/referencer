@@ -1,3 +1,7 @@
+// Implements word-level mouse drag selection in locked/annotation mode.
+// On mousedown, selects the word under the cursor; on mousemove, extends
+// the selection to cover the range from the anchor word to the current word;
+// on mouseup, finalizes the range selection for use by annotation tools.
 import { useCallback, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"

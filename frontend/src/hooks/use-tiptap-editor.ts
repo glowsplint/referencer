@@ -1,3 +1,5 @@
+// Resolves a Tiptap editor instance, either from a direct prop or the
+// EditorProvider context. Subscribes to editor state changes reactively.
 import type { Editor } from "@tiptap/react"
 import { useCurrentEditor, useEditorState } from "@tiptap/react"
 import { useMemo } from "react"

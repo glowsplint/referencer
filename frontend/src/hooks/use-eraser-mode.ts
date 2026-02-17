@@ -1,3 +1,5 @@
+// Handles the "eraser" annotation tool mode. When active, clicking on a word
+// removes any overlapping highlights or underlines from visible layers.
 import { useCallback, useEffect } from "react"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
 import type { StatusMessage } from "./use-status-message"

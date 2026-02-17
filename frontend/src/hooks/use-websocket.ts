@@ -1,3 +1,7 @@
+// WebSocket integration for real-time collaborative editing.
+// Connects to the workspace server, hydrates initial state on connect,
+// and applies remote actions (layer/editor mutations) as they arrive.
+// Includes payload validation to guard against malformed messages.
 import { useEffect, useRef, useState, useCallback } from "react"
 import { WorkspaceWSClient } from "@/lib/ws-client"
 import type { ServerMessage, WorkspaceStatePayload } from "@/lib/ws-protocol"

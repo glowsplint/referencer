@@ -1,3 +1,7 @@
+// Resolves vertical positioning of annotation cards in the side panel
+// so they don't overlap. Uses a greedy top-down algorithm that pushes
+// each card down just enough to avoid colliding with the one above it.
+
 export interface AnnotationPosition {
   id: string
   desiredTop: number
