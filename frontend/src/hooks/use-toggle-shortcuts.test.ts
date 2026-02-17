@@ -88,7 +88,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleMultipleRowsLayout).not.toHaveBeenCalled()
   })
 
-  it("ignores keys when target is editable element", () => {
+  it("ignores non-lock keys when target is editable element", () => {
     const callbacks = makeCallbacks()
     renderHook(() => useToggleShortcuts(callbacks))
 
@@ -96,6 +96,69 @@ describe("useToggleShortcuts", () => {
     document.body.appendChild(textarea)
     textarea.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyD", bubbles: true }))
     document.body.removeChild(textarea)
+
+    expect(callbacks.toggleDarkMode).not.toHaveBeenCalled()
+  })
+
+  it("K toggles lock even when target is contentEditable element", () => {
+    const callbacks = makeCallbacks()
+    renderHook(() => useToggleShortcuts(callbacks))
+
+    const editableDiv = document.createElement("div")
+    editableDiv.contentEditable = "true"
+    document.body.appendChild(editableDiv)
+    editableDiv.focus()
+
+    editableDiv.dispatchEvent(
+      new KeyboardEvent("keydown", { code: "KeyK", bubbles: true })
+    )
+
+    expect(callbacks.toggleLocked).toHaveBeenCalledOnce()
+    document.body.removeChild(editableDiv)
+  })
+
+  it("K blurs active element before toggling lock", () => {
+    const callbacks = makeCallbacks()
+    // Track the order: blur must happen before toggleLocked
+    const callOrder: string[] = []
+    callbacks.toggleLocked = vi.fn(() => callOrder.push("lock"))
+
+    renderHook(() => useToggleShortcuts(callbacks))
+
+    const editableDiv = document.createElement("div")
+    editableDiv.contentEditable = "true"
+    document.body.appendChild(editableDiv)
+    editableDiv.focus()
+
+    // Spy on blur of whatever is activeElement
+    const originalBlur = HTMLElement.prototype.blur
+    HTMLElement.prototype.blur = vi.fn(function (this: HTMLElement) {
+      callOrder.push("blur")
+      return originalBlur.call(this)
+    })
+
+    editableDiv.dispatchEvent(
+      new KeyboardEvent("keydown", { code: "KeyK", bubbles: true })
+    )
+
+    expect(callOrder).toContain("blur")
+    expect(callOrder).toContain("lock")
+    expect(callOrder.indexOf("blur")).toBeLessThan(callOrder.indexOf("lock"))
+
+    HTMLElement.prototype.blur = originalBlur
+    document.body.removeChild(editableDiv)
+  })
+
+  it("D does not toggle dark mode from inside input element", () => {
+    const callbacks = makeCallbacks()
+    renderHook(() => useToggleShortcuts(callbacks))
+
+    const input = document.createElement("input")
+    document.body.appendChild(input)
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { code: "KeyD", bubbles: true })
+    )
+    document.body.removeChild(input)
 
     expect(callbacks.toggleDarkMode).not.toHaveBeenCalled()
   })
