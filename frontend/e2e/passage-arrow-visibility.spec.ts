@@ -326,7 +326,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
 
     // Switch to Layer 2, draw E2→E3
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
@@ -368,7 +368,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await drawArrowBetweenEditors(page, 0, 2, 60);
 
     // Draw E2→E3 on Layer 2
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
@@ -398,7 +398,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await drawArrowBetweenEditors(page, 0, 2, 60);
 
     // Draw E2→E3 on Layer 2
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
@@ -424,7 +424,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await drawArrowBetweenEditors(page, 0, 2, 60);
 
     // Draw E2→E3 on Layer 2
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
@@ -491,7 +491,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     // Draw E1→E2 on Layer 1, E2→E3 on Layer 2
     await drawArrowBetweenEditors(page, 0, 1);
 
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await drawArrowBetweenEditors(page, 1, 2, 60);
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,

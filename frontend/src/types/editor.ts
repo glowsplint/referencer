@@ -9,7 +9,7 @@ export interface EditorSettings {
   overscrollEnabled: boolean
 }
 
-export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline"
+export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline" | "eraser"
 
 export type DrawingPhase = "idle" | "selecting-anchor" | "anchor-confirmed"
 

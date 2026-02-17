@@ -32,10 +32,12 @@ export function useToggleShortcuts({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return
       if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
-      if (isEditableElement(e.target)) return
 
       const action = KEY_MAP[e.code]
       if (!action) return
+
+      // Allow lock toggle (K) even when in editable elements (e.g. Tiptap editor)
+      if (action !== "lock" && isEditableElement(e.target)) return
 
       e.preventDefault()
       const { toggleDarkMode, toggleMultipleRowsLayout, toggleLocked, toggleManagementPane } = callbacksRef.current
@@ -47,6 +49,7 @@ export function useToggleShortcuts({
           toggleMultipleRowsLayout()
           break
         case "lock":
+          (document.activeElement as HTMLElement)?.blur?.()
           toggleLocked()
           break
         case "menu":

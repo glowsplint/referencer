@@ -210,7 +210,7 @@ test.describe("multiple layers (2 editors)", () => {
     });
 
     // Cycle to Layer 2
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await expect(page.getByTestId("layerActiveTag-1")).toBeVisible();
 
     // Draw arrow on Layer 2 in E2
@@ -230,7 +230,7 @@ test.describe("multiple layers (2 editors)", () => {
     });
 
     // Cycle to Layer 2 and draw arrow in E2
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await drawArrowInEditor(page, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,
@@ -256,13 +256,13 @@ test.describe("multiple layers (2 editors)", () => {
     });
   });
 
-  test("'l' key cycles the active layer", async ({ page }) => {
+  test("Tab key cycles the active layer", async ({ page }) => {
     await expect(page.getByTestId("layerActiveTag-0")).toBeVisible();
 
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await expect(page.getByTestId("layerActiveTag-1")).toBeVisible();
 
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await expect(page.getByTestId("layerActiveTag-0")).toBeVisible();
   });
 
@@ -291,7 +291,7 @@ test.describe("multiple layers (2 editors)", () => {
     await expect(e1Highlights).toHaveCount(1, { timeout: 2000 });
 
     // Cycle to Layer 2 and click word in E2
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await clickWordInEditor(page, 1, 60);
 
     // Confirm selection and add annotation for E2 highlight too

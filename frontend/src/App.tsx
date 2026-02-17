@@ -16,6 +16,7 @@ import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useCommentMode } from "./hooks/use-comment-mode";
 import { useHighlightMode } from "./hooks/use-highlight-mode";
 import { useUnderlineMode } from "./hooks/use-underline-mode";
+import { useEraserMode } from "./hooks/use-eraser-mode";
 import { useStatusMessage } from "./hooks/use-status-message";
 import { useToolShortcuts } from "./hooks/use-tool-shortcuts";
 import { useToggleShortcuts } from "./hooks/use-toggle-shortcuts";
@@ -24,6 +25,7 @@ import { useDragSelection } from "./hooks/use-drag-selection";
 import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/use-action-console";
 import { useIsBreakpoint } from "./hooks/use-is-breakpoint";
+import { useInlineEdit } from "./hooks/use-inline-edit";
 import { ToastKbd } from "./components/ui/ToastKbd";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
@@ -32,6 +34,35 @@ import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
+
+function PassageHeader({ name, index, onUpdateName }: {
+  name: string; index: number; onUpdateName: (name: string) => void
+}) {
+  const { isEditing, inputProps, startEditing } = useInlineEdit({
+    currentName: name,
+    onCommit: onUpdateName,
+  });
+
+  return (
+    <div className="flex items-center px-3 py-1 border-b border-border bg-muted/30 shrink-0">
+      {isEditing ? (
+        <input
+          {...inputProps}
+          className="text-xs font-medium bg-transparent border-0 ring-1 ring-border rounded px-1 py-0 outline-none w-full"
+          data-testid={`passageHeaderInput-${index}`}
+        />
+      ) : (
+        <span
+          className="text-xs font-medium text-muted-foreground hover:bg-muted/50 hover:underline decoration-muted-foreground/30 cursor-text rounded px-1"
+          onDoubleClick={() => startEditing()}
+          data-testid={`passageHeader-${index}`}
+        >
+          {name}
+        </span>
+      )}
+    </div>
+  );
+}
 
 function getWorkspaceId(): string {
   const hash = window.location.hash; // e.g. "#/{uuid}?access=readonly"
@@ -174,10 +205,21 @@ export function App() {
     clearStatus,
   });
 
+  const { confirmErase } = useEraserMode({
+    isLocked: settings.isLocked,
+    activeTool: annotations.activeTool,
+    selection,
+    layers,
+    removeHighlight,
+    removeUnderline,
+    setStatus,
+    clearStatus,
+  });
+
   // Hint to lock the editor when unlocked
   useEffect(() => {
     if (!settings.isLocked && !effectiveReadOnly) {
-      setStatus({ text: <>Press <ToastKbd>K</ToastKbd> to lock the editor once you've finalised the contents</>, type: "info" })
+      setStatus({ text: <>Press <ToastKbd>Esc</ToastKbd> <ToastKbd>K</ToastKbd> to lock the editor once you've finalised the contents</>, type: "info" })
     }
   }, [settings.isLocked, effectiveReadOnly, setStatus])
 
@@ -200,6 +242,7 @@ export function App() {
     confirmComment();
     confirmHighlight();
     confirmUnderline();
+    confirmErase();
   };
 
   useCycleLayer({
@@ -317,32 +360,40 @@ export function App() {
                       />
                     )}
                     <div
-                      className="min-w-0 min-h-0 overflow-hidden"
+                      className="min-w-0 min-h-0 overflow-hidden flex flex-col"
                       style={{
                         flex: `${width} 0 0%`,
                         display: sectionVisibility[i] === false ? "none" : undefined,
                       }}
                     >
-                      <EditorPane
-                        isLocked={settings.isLocked || effectiveReadOnly}
-                        activeTool={annotations.activeTool}
-                        content={SIMPLE_EDITOR_CONTENT}
+                      <PassageHeader
+                        name={workspace.sectionNames[i]}
                         index={i}
-                        onEditorMount={handleEditorMount}
-                        onFocus={handlePaneFocus}
-                        onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
-                        onMouseMove={settings.isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
-                        onMouseUp={settings.isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
-                        onContentUpdate={effectiveReadOnly ? undefined : updateEditorContent}
-                        layers={layers}
-                        selection={selection}
-                        selectionHidden={selectionHidden}
-                        activeLayerColor={activeLayerColor}
-                        isDarkMode={settings.isDarkMode}
-                        removeArrow={removeArrow}
-                        sectionVisibility={sectionVisibility}
-                        selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+                        onUpdateName={(name) => workspace.updateSectionName(i, name)}
                       />
+                      <div className="flex-1 min-h-0 overflow-hidden">
+                        <EditorPane
+                          isLocked={settings.isLocked || effectiveReadOnly}
+                          activeTool={annotations.activeTool}
+                          content={SIMPLE_EDITOR_CONTENT}
+                          index={i}
+                          onEditorMount={handleEditorMount}
+                          onFocus={handlePaneFocus}
+                          onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
+                          onMouseMove={settings.isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
+                          onMouseUp={settings.isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
+                          onContentUpdate={effectiveReadOnly ? undefined : updateEditorContent}
+                          layers={layers}
+                          selection={selection}
+                          selectionHidden={selectionHidden}
+                          activeLayerColor={activeLayerColor}
+                          isDarkMode={settings.isDarkMode}
+                          removeArrow={removeArrow}
+                          sectionVisibility={sectionVisibility}
+                          selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+                          setLayers={workspace.setLayers}
+                        />
+                      </div>
                     </div>
                   </Fragment>
                   )

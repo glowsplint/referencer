@@ -9,6 +9,7 @@ import {
   MessageSquareText,
   Highlighter,
   Underline,
+  Eraser,
   Keyboard,
   CircleHelp,
   Settings,
@@ -32,6 +33,7 @@ const TOOL_SHORTCUTS: Record<ActiveTool, string> = {
   comments: "C",
   highlight: "H",
   underline: "U",
+  eraser: "E",
 };
 
 function ArrowStyleIcon({ style, size = 20 }: { style: ArrowStyle; size?: number }) {
@@ -115,6 +117,7 @@ export function ButtonPane() {
     { tool: "highlight", icon: <Highlighter size={20} />, label: "Highlight tool", testId: "highlightToolButton" },
     { tool: "comments", icon: <MessageSquareText size={20} />, label: "Comments tool", testId: "commentsToolButton" },
     { tool: "underline", icon: <Underline size={20} />, label: "Underline tool", testId: "underlineToolButton" },
+    { tool: "eraser", icon: <Eraser size={20} />, label: "Eraser tool", testId: "eraserToolButton" },
   ];
 
   return (

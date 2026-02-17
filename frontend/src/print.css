@@ -1,0 +1,60 @@
+@media print {
+  /* Hide all UI chrome */
+  [data-testid="buttonPane"],
+  [data-testid="managementPane"],
+  [data-testid="status-bar"],
+  [data-testid="arrowStylePopover"] {
+    display: none !important;
+  }
+
+  /* Hide toolbar and title bar */
+  .simple-editor-toolbar,
+  [role="toolbar"] {
+    display: none !important;
+  }
+
+  /* Hide action console */
+  [data-testid="actionConsole"] {
+    display: none !important;
+  }
+
+  /* Remove fixed heights and make content flow naturally */
+  .flex.flex-col.h-screen {
+    height: auto !important;
+  }
+
+  /* Make editor content fill page */
+  .simple-editor-wrapper {
+    overflow: visible !important;
+  }
+
+  .simple-editor-content {
+    overflow: visible !important;
+  }
+
+  /* Hide arrow overlays and annotation panels in print */
+  [data-testid="arrowOverlay"],
+  [data-testid="annotationPanel"] {
+    display: none !important;
+  }
+
+  /* Hide divider handles */
+  [data-testid*="divider"] {
+    display: none !important;
+  }
+
+  /* Ensure text is black for printing */
+  .simple-editor {
+    color: black !important;
+  }
+
+  /* Remove scrollbars */
+  * {
+    overflow: visible !important;
+  }
+
+  /* Hide toaster */
+  [data-sonner-toaster] {
+    display: none !important;
+  }
+}

@@ -19,18 +19,21 @@ interface ShortcutSection {
   shortcuts: ShortcutEntry[];
 }
 
-const CMD = "\u2318";
+const isMac = typeof navigator !== "undefined" && navigator.platform?.includes("Mac");
+const CMD = isMac ? "\u2318" : "Ctrl";
 
 const LEFT_SECTIONS: ShortcutSection[] = [
   {
     title: "Workspace",
     shortcuts: [
-      { keys: ["L"], description: "Cycle to next layer" },
+      { keys: ["Tab"], description: "Cycle to next layer" },
+      { keys: ["Shift", "Tab"], description: "Cycle to previous layer" },
       { keys: ["S"], description: "Selection tool" },
       { keys: ["A"], description: "Arrow tool" },
       { keys: ["C"], description: "Comments tool" },
       { keys: ["H"], description: "Highlight tool" },
       { keys: ["U"], description: "Underline tool" },
+      { keys: ["E"], description: "Eraser tool" },
       { keys: ["Arrow keys"], description: "Navigate between words" },
       { keys: ["`"], description: "Toggle action console" },
       { keys: ["D"], description: "Toggle dark mode" },

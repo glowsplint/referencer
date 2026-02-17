@@ -187,34 +187,6 @@ export function useWordSelection({
         return
       }
 
-      // ── Tab / Shift+Tab — cycle passages ───────────────────────
-      if (e.key === "Tab") {
-        e.preventDefault()
-        setSelectionHidden(false)
-        const container = containerRef.current
-        if (!container) return
-        const containerRect = container.getBoundingClientRect()
-        const ctx = { editorsRef, containerRect, editorCount }
-        const allCandidates = collectCandidates(ctx)
-        const currentIndex = selection?.editorIndex ?? -1
-        const direction = e.shiftKey ? -1 : 1
-
-        for (let step = 1; step <= editorCount; step++) {
-          const candidate =
-            ((currentIndex + direction * step) % editorCount + editorCount) %
-            editorCount
-          const first = findFirstWordInPassage(candidate, allCandidates)
-          if (first) {
-            anchorRef.current = null
-            headRef.current = null
-            stickyXRef.current = null
-            setSelection(first)
-            return
-          }
-        }
-        return
-      }
-
       // ── Home / End (requires selection) ────────────────────────
       if (e.key === "Home" || e.key === "End") {
         if (!selection) return

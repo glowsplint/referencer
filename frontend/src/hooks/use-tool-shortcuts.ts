@@ -8,6 +8,7 @@ const KEY_MAP: Record<string, ActiveTool> = {
   KeyC: "comments",
   KeyH: "highlight",
   KeyU: "underline",
+  KeyE: "eraser",
 }
 
 interface UseToolShortcutsOptions {

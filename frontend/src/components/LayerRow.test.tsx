@@ -185,9 +185,8 @@ describe("LayerRow", () => {
     renderRow()
     const nameEl = screen.getByTestId("layerName-0")
     expect(nameEl).toHaveClass("truncate")
-    expect(nameEl).not.toHaveClass("hover:ring-border")
-    expect(nameEl).not.toHaveClass("cursor-text")
-    expect(nameEl).not.toHaveClass("flex-1")
+    expect(nameEl).toHaveClass("cursor-text")
+    expect(nameEl).toHaveClass("hover:bg-muted/50")
   })
 
   it("renders eye icon when layer is visible", () => {

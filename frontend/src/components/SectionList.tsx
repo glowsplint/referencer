@@ -140,7 +140,7 @@ export function SectionList({
               />
             ) : (
               <div
-                className="text-sm flex-1 bg-transparent border-0 rounded px-1 py-0 truncate cursor-default"
+                className="text-sm flex-1 bg-transparent border-0 rounded px-1 py-0 truncate cursor-text hover:bg-muted/50 hover:underline decoration-muted-foreground/30"
                 onDoubleClick={() => handleStartEditing(i)}
                 data-testid={`passageName-${i}`}
               >

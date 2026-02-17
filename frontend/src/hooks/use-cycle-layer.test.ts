@@ -15,14 +15,14 @@ function makeLayers(count: number): Layer[] {
   }));
 }
 
-function pressKey(code: string, options: Partial<KeyboardEvent> = {}) {
+function pressKey(key: string, options: Partial<KeyboardEvent> = {}) {
   document.dispatchEvent(
-    new KeyboardEvent("keydown", { code, bubbles: true, ...options })
+    new KeyboardEvent("keydown", { key, bubbles: true, ...options })
   );
 }
 
 describe("useCycleLayer", () => {
-  it("cycles to next layer on L key press", () => {
+  it("cycles to next layer on Tab key press", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -33,7 +33,7 @@ describe("useCycleLayer", () => {
       })
     );
 
-    pressKey("KeyL");
+    pressKey("Tab");
     expect(setActiveLayer).toHaveBeenCalledWith("layer-1");
   });
 
@@ -48,7 +48,7 @@ describe("useCycleLayer", () => {
       })
     );
 
-    pressKey("KeyL");
+    pressKey("Tab");
     expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
   });
 
@@ -63,8 +63,38 @@ describe("useCycleLayer", () => {
       })
     );
 
-    pressKey("KeyL");
+    pressKey("Tab");
     expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
+  });
+
+  it("cycles to previous layer on Shift+Tab", () => {
+    const layers = makeLayers(3);
+    const setActiveLayer = vi.fn();
+    renderHook(() =>
+      useCycleLayer({
+        layers,
+        activeLayerId: "layer-1",
+        setActiveLayer,
+      })
+    );
+
+    pressKey("Tab", { shiftKey: true });
+    expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
+  });
+
+  it("wraps around to last layer on Shift+Tab from first", () => {
+    const layers = makeLayers(3);
+    const setActiveLayer = vi.fn();
+    renderHook(() =>
+      useCycleLayer({
+        layers,
+        activeLayerId: "layer-0",
+        setActiveLayer,
+      })
+    );
+
+    pressKey("Tab", { shiftKey: true });
+    expect(setActiveLayer).toHaveBeenCalledWith("layer-2");
   });
 
   it("does nothing when there are no layers", () => {
@@ -77,7 +107,7 @@ describe("useCycleLayer", () => {
       })
     );
 
-    pressKey("KeyL");
+    pressKey("Tab");
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
@@ -92,11 +122,11 @@ describe("useCycleLayer", () => {
       })
     );
 
-    pressKey("KeyL", { repeat: true });
+    pressKey("Tab", { repeat: true });
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
-  it("ignores non-L key presses", () => {
+  it("ignores non-Tab key presses", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -107,7 +137,7 @@ describe("useCycleLayer", () => {
       })
     );
 
-    pressKey("KeyA");
+    pressKey("a");
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
@@ -115,8 +145,7 @@ describe("useCycleLayer", () => {
     { modifier: "metaKey" },
     { modifier: "ctrlKey" },
     { modifier: "altKey" },
-    { modifier: "shiftKey" },
-  ])("ignores L key when $modifier is held", ({ modifier }) => {
+  ])("ignores Tab when $modifier is held", ({ modifier }) => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -127,11 +156,11 @@ describe("useCycleLayer", () => {
       })
     );
 
-    pressKey("KeyL", { [modifier]: true });
+    pressKey("Tab", { [modifier]: true });
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
-  it("ignores L key when target is contentEditable", () => {
+  it("ignores Tab when target is contentEditable", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -146,7 +175,7 @@ describe("useCycleLayer", () => {
     editableDiv.contentEditable = "true";
     document.body.appendChild(editableDiv);
     editableDiv.dispatchEvent(
-      new KeyboardEvent("keydown", { code: "KeyL", bubbles: true })
+      new KeyboardEvent("keydown", { key: "Tab", bubbles: true })
     );
     document.body.removeChild(editableDiv);
 

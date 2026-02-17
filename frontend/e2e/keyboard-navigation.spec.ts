@@ -92,40 +92,35 @@ test.describe("keyboard navigation", () => {
   });
 });
 
-test.describe("Tab passage cycling", () => {
-  test.beforeEach(async ({ page }) => {
+test.describe("Tab layer cycling", () => {
+  test("Tab cycles the active layer", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Add second passage while unlocked
-    await page.getByTestId("addPassageButton").click();
-    await expect(page.locator(".simple-editor-wrapper")).toHaveCount(2);
+    // Add two layers
+    await page.getByTestId("addLayerButton").click();
+    await page.getByTestId("addLayerButton").click();
+    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
+    await expect(page.getByTestId("layerName-1")).toHaveText("Layer 2");
+
+    // Activate Layer 1 (Layer 2 is active by default as most recently added)
+    await page.getByTestId("layerName-0").click();
+    await expect(page.getByTestId("layerActiveTag-0")).toBeVisible();
 
     // Lock the editor
     await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
-  });
 
-  test("Tab moves selection to a different editor", async ({ page }) => {
-    await clickWordInEditor(page, 0, 30);
-
-    // Check which editor has the selection
-    const selInE0Before = await page
-      .locator(".simple-editor-wrapper")
-      .nth(0)
-      .locator(".word-selection")
-      .count();
-    expect(selInE0Before).toBeGreaterThan(0);
-
-    await page.keyboard.press("Tab");
+    // Click on a word so focus is in the locked (non-editable) editor area
+    await clickWordInEditor(page, 0, 50);
     await page.waitForTimeout(200);
 
-    // Selection should now be in editor 1
-    const selInE1 = await page
-      .locator(".simple-editor-wrapper")
-      .nth(1)
-      .locator(".word-selection")
-      .count();
-    expect(selInE1).toBeGreaterThan(0);
+    // Tab should cycle to Layer 2
+    await page.keyboard.press("Tab");
+    await expect(page.getByTestId("layerActiveTag-1")).toBeVisible();
+
+    // Tab again should cycle back to Layer 1
+    await page.keyboard.press("Tab");
+    await expect(page.getByTestId("layerActiveTag-0")).toBeVisible();
   });
 });

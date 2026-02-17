@@ -18,9 +18,6 @@ interface LayerRowProps {
   onRemoveHighlight: (layerId: string, highlightId: string) => void;
   onRemoveArrow: (layerId: string, arrowId: string) => void;
   onRemoveUnderline: (layerId: string, underlineId: string) => void;
-  customColors?: string[];
-  onAddCustomColor?: (hex: string) => void;
-  onRemoveCustomColor?: (hex: string) => void;
 }
 
 export function LayerRow({
@@ -35,9 +32,6 @@ export function LayerRow({
   onRemoveHighlight,
   onRemoveArrow,
   onRemoveUnderline,
-  customColors,
-  onAddCustomColor,
-  onRemoveCustomColor,
 }: LayerRowProps) {
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -94,7 +88,7 @@ export function LayerRow({
           />
         ) : (
           <div
-            className="text-sm w-full bg-transparent border-0 rounded px-1 py-0 truncate cursor-default"
+            className="text-sm w-full bg-transparent border-0 rounded px-1 py-0 truncate cursor-text hover:bg-muted/50 hover:underline decoration-muted-foreground/30"
             onDoubleClick={(e) => {
               e.stopPropagation();
               startEditing();
@@ -139,9 +133,6 @@ export function LayerRow({
             onUpdateColor(color);
             setColorPickerOpen(false);
           }}
-          customColors={customColors}
-          onAddCustomColor={onAddCustomColor}
-          onRemoveCustomColor={onRemoveCustomColor}
         />
       )}
       {expanded && hasItems && (
