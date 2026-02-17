@@ -211,7 +211,7 @@ export function App() {
     clearStatus,
   });
 
-  const { confirmErase } = useEraserMode({
+  const { confirmErase, eraseAtPosition } = useEraserMode({
     isLocked: settings.isLocked,
     activeTool: annotations.activeTool,
     selection,
@@ -225,7 +225,7 @@ export function App() {
   // Hint to lock the editor when unlocked
   useEffect(() => {
     if (!settings.isLocked && !effectiveReadOnly) {
-      setStatus({ text: <>Press <ToastKbd>Esc</ToastKbd> <ToastKbd>K</ToastKbd> to lock the editor once you've finalised the contents</>, type: "info" })
+      setStatus({ text: <>Press (<ToastKbd>Esc</ToastKbd>) (<ToastKbd>K</ToastKbd>) to lock the editor once you've finalised the contents</>, type: "info" })
     }
   }, [settings.isLocked, effectiveReadOnly, setStatus])
 
@@ -263,6 +263,7 @@ export function App() {
     selectWord,
     selectRange,
     clearSelection,
+    eraseAtPosition,
   });
 
   // Mutual exclusivity: selecting an arrow hides word selection
@@ -324,7 +325,7 @@ export function App() {
   return (
     <WorkspaceProvider value={workspace}>
       <Toaster />
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-screen overflow-hidden">
       <div className="flex flex-1 min-h-0">
         {!isMobile && <ButtonPane />}
         {!isMobile && isManagementPaneOpen && <ManagementPane />}

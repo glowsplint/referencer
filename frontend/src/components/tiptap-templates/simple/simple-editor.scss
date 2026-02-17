@@ -72,6 +72,10 @@ body,
   &.arrow-mode {
     cursor: crosshair;
   }
+
+  &.eraser-mode {
+    cursor: cell;
+  }
 }
 
 .simple-editor-content {

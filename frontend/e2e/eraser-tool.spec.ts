@@ -18,6 +18,22 @@ async function clickWordInEditor(
   });
 }
 
+/** Click a word in the editor without waiting for word-selection (used by eraser drag mode) */
+async function clickWordInEditorRaw(
+  page: import("@playwright/test").Page,
+  editorIndex: number,
+  xOffset = 30
+) {
+  const p = page
+    .locator(".simple-editor-wrapper")
+    .nth(editorIndex)
+    .locator("p")
+    .first();
+  const box = await p.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
+}
+
 test.describe("eraser tool", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -58,13 +74,8 @@ test.describe("eraser tool", () => {
     // Switch to eraser
     await page.keyboard.press("e");
 
-    // Click the same word to erase
-    await clickWordInEditor(page, 0, 30);
-    await page.keyboard.press("Enter");
-
-    // Clear selection again to isolate check
-    await page.keyboard.press("Escape");
-    await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
+    // Click the same word — eraser now erases on mousedown directly (no Enter needed)
+    await clickWordInEditorRaw(page, 0, 30);
 
     // Highlight should be gone
     await expect(highlights).toHaveCount(0, { timeout: 2000 });
@@ -85,9 +96,8 @@ test.describe("eraser tool", () => {
     // Switch to eraser
     await page.keyboard.press("e");
 
-    // Click the same word to erase
-    await clickWordInEditor(page, 0, 30);
-    await page.keyboard.press("Enter");
+    // Click the same word — eraser now erases on mousedown directly
+    await clickWordInEditorRaw(page, 0, 30);
 
     // Underline should be gone
     await expect(underlines).toHaveCount(0, { timeout: 2000 });
@@ -112,14 +122,9 @@ test.describe("eraser tool", () => {
     await page.getByTestId("layerVisibility-0").click();
     await expect(highlights).toHaveCount(0, { timeout: 2000 });
 
-    // Switch to eraser and try to erase at same position
+    // Switch to eraser and try to erase at same position (mousedown erases directly)
     await page.keyboard.press("e");
-    await clickWordInEditor(page, 0, 30);
-    await page.keyboard.press("Enter");
-
-    // Clear selection
-    await page.keyboard.press("Escape");
-    await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
+    await clickWordInEditorRaw(page, 0, 30);
 
     // Show Layer 1 — highlight should still be there since layer was hidden during erase
     await page.getByTestId("layerVisibility-0").click();
@@ -129,7 +134,7 @@ test.describe("eraser tool", () => {
   test("status bar shows eraser message when tool is active", async ({ page }) => {
     await page.keyboard.press("e");
     await expect(page.getByTestId("status-bar")).toContainText(
-      "Click on a highlight or underline to erase it",
+      "Click and drag to erase highlights and underlines",
       { timeout: 2000 }
     );
   });

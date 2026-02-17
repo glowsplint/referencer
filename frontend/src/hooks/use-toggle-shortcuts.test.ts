@@ -149,6 +149,43 @@ describe("useToggleShortcuts", () => {
     document.body.removeChild(editableDiv)
   })
 
+  it("Escape blurs editable element", () => {
+    const callbacks = makeCallbacks()
+    renderHook(() => useToggleShortcuts(callbacks))
+
+    const editableDiv = document.createElement("div")
+    editableDiv.contentEditable = "true"
+    editableDiv.tabIndex = 0
+    document.body.appendChild(editableDiv)
+    editableDiv.focus()
+
+    expect(document.activeElement).toBe(editableDiv)
+
+    editableDiv.dispatchEvent(
+      new KeyboardEvent("keydown", { code: "Escape", bubbles: true })
+    )
+
+    expect(document.activeElement).not.toBe(editableDiv)
+    document.body.removeChild(editableDiv)
+  })
+
+  it("Escape does not blur non-editable elements", () => {
+    const callbacks = makeCallbacks()
+    renderHook(() => useToggleShortcuts(callbacks))
+
+    const div = document.createElement("div")
+    document.body.appendChild(div)
+    div.focus()
+
+    div.dispatchEvent(
+      new KeyboardEvent("keydown", { code: "Escape", bubbles: true })
+    )
+
+    // Should not trigger any toggle
+    expect(callbacks.toggleLocked).not.toHaveBeenCalled()
+    document.body.removeChild(div)
+  })
+
   it("D does not toggle dark mode from inside input element", () => {
     const callbacks = makeCallbacks()
     renderHook(() => useToggleShortcuts(callbacks))

@@ -36,6 +36,12 @@ export function useToggleShortcuts({
       if (e.repeat) return
       if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
 
+      // Escape blurs editable elements so shortcuts like K work after
+      if (e.code === "Escape" && isEditableElement(e.target)) {
+        ;(document.activeElement as HTMLElement)?.blur?.()
+        return
+      }
+
       const action = KEY_MAP[e.code]
       if (!action) return
 

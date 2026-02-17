@@ -28,21 +28,18 @@ export function useEraserMode({
   // Show status when eraser is active
   useEffect(() => {
     if (!isLocked || activeTool !== "eraser") return
-    setStatus({ text: "Click on a highlight or underline to erase it", type: "info" })
+    setStatus({ text: "Click and drag to erase highlights and underlines", type: "info" })
     return () => clearStatus()
   }, [isLocked, activeTool, setStatus, clearStatus])
 
-  const confirmErase = useCallback(() => {
-    if (!isLocked || activeTool !== "eraser" || !selection) return
+  const eraseAtPosition = useCallback((editorIndex: number, from: number, to: number) => {
+    if (!isLocked || activeTool !== "eraser") return
 
-    const { editorIndex, from, to } = selection
     let erased = false
 
-    // Check visible layers for overlapping highlights and underlines
     for (const layer of layers) {
       if (!layer.visible) continue
 
-      // Find highlights that overlap with the selection
       for (const highlight of layer.highlights) {
         if (
           highlight.editorIndex === editorIndex &&
@@ -54,7 +51,6 @@ export function useEraserMode({
         }
       }
 
-      // Find underlines that overlap with the selection
       for (const underline of layer.underlines) {
         if (
           underline.editorIndex === editorIndex &&
@@ -70,7 +66,12 @@ export function useEraserMode({
     if (erased) {
       setStatus({ text: "Erased decoration", type: "success" })
     }
-  }, [isLocked, activeTool, selection, layers, removeHighlight, removeUnderline, setStatus])
+  }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, setStatus])
 
-  return { confirmErase }
+  const confirmErase = useCallback(() => {
+    if (!selection) return
+    eraseAtPosition(selection.editorIndex, selection.from, selection.to)
+  }, [selection, eraseAtPosition])
+
+  return { confirmErase, eraseAtPosition }
 }
