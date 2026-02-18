@@ -1,313 +1,193 @@
 // Central workspace hook that composes settings, layers, editors, action history,
-// WebSocket sync, and Yjs collaboration into a single API. Wraps every mutation
-// with read-only guards, WebSocket broadcasting, and undo/redo history recording.
-// Text content is synced via Yjs CRDT; annotations still use action-based WebSocket.
-import { useState, useCallback, useRef } from "react"
+// and Yjs CRDT collaboration into a single API. All data (text, annotations,
+// layers) is synced via Yjs shared types through the collab server.
+// The action-based WebSocket system has been replaced by Yjs observe/transact.
+import { useState, useCallback, useEffect } from "react"
 import { useSettings } from "./use-settings"
-import { useLayers } from "./use-layers"
 import { useEditors } from "./use-editors"
 import { useActionHistory } from "./use-action-history"
-import { useTrackedLayers } from "./use-tracked-layers"
 import { useTrackedEditors } from "./use-tracked-editors"
-import { useWebSocket } from "./use-websocket"
 import { useYjs } from "./use-yjs"
+import { useYjsLayers } from "./use-yjs-layers"
+import { seedDefaultLayers } from "@/lib/yjs/annotations"
+import { createDefaultLayers } from "@/data/default-workspace"
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
   const settingsHook = useSettings()
-  const rawLayersHook = useLayers()
   const rawEditorsHook = useEditors()
   const history = useActionHistory()
 
-  const trackedLayersHook = useTrackedLayers(rawLayersHook, history)
   const trackedEditorsHook = useTrackedEditors(rawEditorsHook, history)
 
-  const { connected: wsConnected, sendAction } = useWebSocket(
-    workspaceId ?? null,
-    rawLayersHook,
-    rawEditorsHook
-  )
-
-  // Yjs provider for CRDT-based text collaboration
+  // Yjs provider for all CRDT collaboration (text + annotations)
   const yjs = useYjs(workspaceId ?? "default")
 
-  // Debounce timer ref for editor content updates
-  const contentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Yjs-backed layers (replaces useLayers + useWebSocket for annotations)
+  const yjsLayers = useYjsLayers(yjs.doc)
 
-  // Wraps mutation callbacks to no-op when in read-only mode (shared workspaces)
+  // Seed default layers when Y.Doc is ready and empty
+  const [seeded, setSeeded] = useState(false)
+  useEffect(() => {
+    if (!yjs.doc || seeded) return
+    // Wait a tick for Yjs to sync initial state from server
+    const timer = setTimeout(() => {
+      seedDefaultLayers(yjs.doc!, createDefaultLayers())
+      setSeeded(true)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [yjs.doc, seeded])
+
+  // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {
     return ((...args: any[]) => readOnly ? fallback : fn(...args)) as T
   }
 
-  const guardedSendAction = useCallback(
-    (type: string, payload: Record<string, unknown>) => {
-      if (!readOnly) sendAction(type, payload)
-    },
-    [readOnly, sendAction]
-  )
-
-  // Wrap tracked layer actions to also send over WebSocket
+  // Layer mutations — all write to Y.Doc directly (no WebSocket needed)
   const addLayer = useCallback(
     guarded(
       (opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }) => {
-        const id = trackedLayersHook.addLayer(opts)
-        if (!id) return ""
-        const layer = rawLayersHook.layers.find((l) => l.id === id)
-        const name =
-          opts?.name ??
-          layer?.name ??
-          `Layer ${rawLayersHook.layers.length + 1}`
-        const color = opts?.color ?? layer?.color ?? ""
-        guardedSendAction("addLayer", { id, name, color })
-        return id
+        const result = yjsLayers.addLayer(opts)
+        return result?.id ?? ""
       },
       ""
     ),
-    [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const removeLayer = useCallback(
     guarded((id: string) => {
-      trackedLayersHook.removeLayer(id)
-      guardedSendAction("removeLayer", { id })
+      yjsLayers.removeLayer(id)
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const updateLayerName = useCallback(
     guarded((id: string, name: string) => {
-      trackedLayersHook.updateLayerName(id, name)
-      guardedSendAction("updateLayerName", { id, name })
+      yjsLayers.updateLayerName(id, name)
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const updateLayerColor = useCallback(
     guarded((id: string, color: string) => {
-      trackedLayersHook.updateLayerColor(id, color)
-      guardedSendAction("updateLayerColor", { id, color })
+      yjsLayers.updateLayerColor(id, color)
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const toggleLayerVisibility = useCallback(
     guarded((id: string) => {
-      const layer = rawLayersHook.layers.find((l) => l.id === id)
-      const wasVisible = layer?.visible ?? true
-      trackedLayersHook.toggleLayerVisibility(id)
-      guardedSendAction("toggleLayerVisibility", { id })
-      history.record({
-        type: wasVisible ? "hideLayer" : "showLayer",
-        description: `${wasVisible ? "Hid" : "Showed"} layer '${layer?.name ?? "layer"}'`,
-        details: [{ label: "visible", before: String(wasVisible), after: String(!wasVisible) }],
-        undo: () => rawLayersHook.toggleLayerVisibility(id),
-        redo: () => rawLayersHook.toggleLayerVisibility(id),
-      })
+      yjsLayers.toggleLayerVisibility(id)
     }),
-    [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction, history]
+    [readOnly, yjsLayers]
   )
 
   const addHighlight = useCallback(
     guarded(
-      (
-        layerId: string,
-        highlight: Omit<Highlight, "id">,
-        opts?: { id?: string }
-      ): string => {
-        const id = trackedLayersHook.addHighlight(layerId, highlight, opts)
-        guardedSendAction("addHighlight", {
-          layerId,
-          highlight: { ...highlight, id },
-        })
-        return id
+      (layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
+        return yjsLayers.addHighlight(layerId, highlight, opts)
       },
       ""
     ),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const removeHighlight = useCallback(
     guarded((layerId: string, highlightId: string) => {
-      trackedLayersHook.removeHighlight(layerId, highlightId)
-      guardedSendAction("removeHighlight", { layerId, highlightId })
+      yjsLayers.removeHighlight(layerId, highlightId)
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const updateHighlightAnnotation = useCallback(
     guarded((layerId: string, highlightId: string, annotation: string) => {
-      trackedLayersHook.updateHighlightAnnotation(
-        layerId,
-        highlightId,
-        annotation
-      )
-      guardedSendAction("updateHighlightAnnotation", {
-        layerId,
-        highlightId,
-        annotation,
-      })
+      yjsLayers.updateHighlightAnnotation(layerId, highlightId, annotation)
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const addArrow = useCallback(
     guarded(
-      (
-        layerId: string,
-        arrow: Omit<Arrow, "id">,
-        opts?: { id?: string }
-      ): string => {
-        const id = trackedLayersHook.addArrow(layerId, arrow, opts)
-        guardedSendAction("addArrow", {
-          layerId,
-          arrow: { ...arrow, id },
-        })
-        return id
+      (layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
+        return yjsLayers.addArrow(layerId, arrow, opts)
       },
       ""
     ),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const removeArrow = useCallback(
     guarded((layerId: string, arrowId: string) => {
-      trackedLayersHook.removeArrow(layerId, arrowId)
-      guardedSendAction("removeArrow", { layerId, arrowId })
+      yjsLayers.removeArrow(layerId, arrowId)
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const updateArrowStyle = useCallback(
     guarded((layerId: string, arrowId: string, arrowStyle: ArrowStyle) => {
-      trackedLayersHook.updateArrowStyle(layerId, arrowId, arrowStyle)
-      guardedSendAction("updateArrowStyle", { layerId, arrowId, arrowStyle })
+      yjsLayers.updateArrowStyle(layerId, arrowId, arrowStyle)
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const addUnderline = useCallback(
     guarded(
-      (
-        layerId: string,
-        underline: Omit<LayerUnderline, "id">,
-        opts?: { id?: string }
-      ): string => {
-        const id = trackedLayersHook.addUnderline(layerId, underline, opts)
-        guardedSendAction("addUnderline", {
-          layerId,
-          underline: { ...underline, id },
-        })
-        return id
+      (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
+        return yjsLayers.addUnderline(layerId, underline, opts)
       },
       ""
     ),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const removeUnderline = useCallback(
     guarded((layerId: string, underlineId: string) => {
-      trackedLayersHook.removeUnderline(layerId, underlineId)
-      guardedSendAction("removeUnderline", { layerId, underlineId })
+      yjsLayers.removeUnderline(layerId, underlineId)
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
+    [readOnly, yjsLayers]
   )
 
   const addEditor = useCallback(
     guarded(() => {
       trackedEditorsHook.addEditor()
-      const newIndex = rawEditorsHook.editorCount
-      const name =
-        rawEditorsHook.sectionNames[newIndex] ??
-        `Passage ${rawEditorsHook.editorCount + 1}`
-      guardedSendAction("addEditor", { index: newIndex, name })
     }),
-    [readOnly, trackedEditorsHook, rawEditorsHook, guardedSendAction]
+    [readOnly, trackedEditorsHook]
   )
 
   const removeEditor = useCallback(
     guarded((index: number) => {
       trackedEditorsHook.removeEditor(index)
-      guardedSendAction("removeEditor", { index })
     }),
-    [readOnly, trackedEditorsHook, guardedSendAction]
+    [readOnly, trackedEditorsHook]
   )
 
   const updateSectionName = useCallback(
     guarded((index: number, name: string) => {
       trackedEditorsHook.updateSectionName(index, name)
-      guardedSendAction("updateSectionName", { index, name })
     }),
-    [readOnly, trackedEditorsHook, guardedSendAction]
+    [readOnly, trackedEditorsHook]
   )
 
   const reorderEditors = useCallback(
     guarded((permutation: number[]) => {
-      const indexMap = new Map<number, number>()
-      for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
-        indexMap.set(permutation[newIdx], newIdx)
-      }
-
-      const inverse = new Array<number>(permutation.length)
-      for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
-        inverse[permutation[newIdx]] = newIdx
-      }
-
-      const layersBefore = rawLayersHook.layers.map(l => ({ ...l }))
-
       rawEditorsHook.reorderEditors(permutation)
-
-      rawLayersHook.setLayers(prev =>
-        prev.map(layer => ({
-          ...layer,
-          highlights: layer.highlights.map(h => ({
-            ...h,
-            editorIndex: indexMap.get(h.editorIndex) ?? h.editorIndex,
-          })),
-          arrows: layer.arrows.map(a => ({
-            ...a,
-            from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
-            to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
-          })),
-          underlines: layer.underlines.map(u => ({
-            ...u,
-            editorIndex: indexMap.get(u.editorIndex) ?? u.editorIndex,
-          })),
-        }))
-      )
-
-      guardedSendAction("reorderEditors", { permutation })
-
       history.record({
         type: "reorderEditors",
         description: "Reordered passages",
         undo: () => {
+          const inverse = new Array<number>(permutation.length)
+          for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
+            inverse[permutation[newIdx]] = newIdx
+          }
           rawEditorsHook.reorderEditors(inverse)
-          rawLayersHook.setLayers(layersBefore)
         },
         redo: () => {
           rawEditorsHook.reorderEditors(permutation)
-          rawLayersHook.setLayers(prev =>
-            prev.map(layer => ({
-              ...layer,
-              highlights: layer.highlights.map(h => ({
-                ...h,
-                editorIndex: indexMap.get(h.editorIndex) ?? h.editorIndex,
-              })),
-              arrows: layer.arrows.map(a => ({
-                ...a,
-                from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
-                to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
-              })),
-              underlines: layer.underlines.map(u => ({
-                ...u,
-                editorIndex: indexMap.get(u.editorIndex) ?? u.editorIndex,
-              })),
-            }))
-          )
         },
       })
     }),
-    [readOnly, rawEditorsHook, rawLayersHook, guardedSendAction, history]
+    [readOnly, rawEditorsHook, history]
   )
 
   const toggleSectionVisibility = useCallback(
@@ -315,7 +195,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       const wasVisible = rawEditorsHook.sectionVisibility[index] ?? true
       const name = rawEditorsHook.sectionNames[index] ?? `Passage ${index + 1}`
       rawEditorsHook.toggleSectionVisibility(index)
-      guardedSendAction("toggleSectionVisibility", { index })
       history.record({
         type: wasVisible ? "hidePassage" : "showPassage",
         description: `${wasVisible ? "Hid" : "Showed"} passage '${name}'`,
@@ -324,23 +203,13 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
         redo: () => rawEditorsHook.toggleSectionVisibility(index),
       })
     }),
-    [readOnly, rawEditorsHook, guardedSendAction, history]
+    [readOnly, rawEditorsHook, history]
   )
 
-  // Text content is now synced via Yjs CRDT — this fallback is only used
-  // when the collab server is unavailable
+  // No-op: text content is synced via Yjs Collaboration extension
   const updateEditorContent = useCallback(
-    guarded((editorIndex: number, contentJson: unknown) => {
-      if (yjs.connected) return
-      if (contentTimerRef.current) {
-        clearTimeout(contentTimerRef.current)
-      }
-      contentTimerRef.current = setTimeout(() => {
-        guardedSendAction("updateEditorContent", { editorIndex, contentJson: contentJson as Record<string, unknown> })
-        contentTimerRef.current = null
-      }, 2000)
-    }),
-    [readOnly, guardedSendAction, yjs.connected]
+    guarded((_editorIndex: number, _contentJson: unknown) => {}),
+    [readOnly]
   )
 
   const toggleLocked = useCallback(() => {
@@ -407,15 +276,16 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     setActiveTool,
     toggleDarkMode,
     toggleMultipleRowsLayout,
-    layers: trackedLayersHook.layers,
-    activeLayerId: trackedLayersHook.activeLayerId,
-    setActiveLayer: trackedLayersHook.setActiveLayer,
-    setActiveLayerId: trackedLayersHook.setActiveLayerId,
-    setLayers: trackedLayersHook.setLayers,
-    toggleAllLayerVisibility: trackedLayersHook.toggleAllLayerVisibility,
-    clearLayerHighlights: trackedLayersHook.clearLayerHighlights,
-    clearLayerArrows: trackedLayersHook.clearLayerArrows,
-    clearLayerUnderlines: trackedLayersHook.clearLayerUnderlines,
+    // Layers from Yjs CRDT
+    layers: yjsLayers.layers,
+    activeLayerId: yjsLayers.activeLayerId,
+    setActiveLayer: yjsLayers.setActiveLayer,
+    setActiveLayerId: yjsLayers.setActiveLayerId,
+    setLayers: yjsLayers.setLayers,
+    toggleAllLayerVisibility: guarded(() => yjsLayers.toggleAllLayerVisibility()),
+    clearLayerHighlights: guarded((layerId: string) => yjsLayers.clearLayerHighlights(layerId)),
+    clearLayerArrows: guarded((layerId: string) => yjsLayers.clearLayerArrows(layerId)),
+    clearLayerUnderlines: guarded((layerId: string) => yjsLayers.clearLayerUnderlines(layerId)),
     addLayer,
     removeLayer,
     updateLayerName,
@@ -429,6 +299,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     updateArrowStyle,
     addUnderline,
     removeUnderline,
+    // Editors (still local state — not yet CRDT)
     editorCount: trackedEditorsHook.editorCount,
     activeEditor: trackedEditorsHook.activeEditor,
     editorWidths: trackedEditorsHook.editorWidths,
@@ -451,7 +322,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     isManagementPaneOpen,
     toggleManagementPane,
     history,
-    wsConnected,
+    wsConnected: yjs.connected,
     // Yjs CRDT collaboration
     yjs,
   }
