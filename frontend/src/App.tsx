@@ -223,6 +223,7 @@ export function App() {
     layers,
     removeHighlight,
     removeUnderline,
+    removeArrow,
     setStatus,
     flashStatus,
     clearStatus,
@@ -344,7 +345,7 @@ export function App() {
               <div
                 ref={containerRef}
                 data-testid="editorContainer"
-                className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
+                className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}`}
               >
                 <ArrowOverlay
                   layers={layers}

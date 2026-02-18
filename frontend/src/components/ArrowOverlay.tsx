@@ -312,11 +312,12 @@ export function ArrowOverlay({
       svg.appendChild(g)
 
       if (showHoverRing) {
+        const isEraser = activeTool === "eraser"
         const hoverRing = document.createElementNS(SVG_NS, "path")
         hoverRing.setAttribute("d", arrowPath)
-        hoverRing.setAttribute("stroke", data.color)
+        hoverRing.setAttribute("stroke", isEraser ? "#ef4444" : data.color)
         hoverRing.setAttribute("stroke-width", "6")
-        hoverRing.setAttribute("stroke-opacity", "0.15")
+        hoverRing.setAttribute("stroke-opacity", isEraser ? "0.3" : "0.15")
         hoverRing.setAttribute("fill", "none")
         hoverRing.style.pointerEvents = "none"
         svg.appendChild(hoverRing)
@@ -386,7 +387,7 @@ export function ArrowOverlay({
     if (defs.children.length > 0) {
       svg.insertBefore(defs, svg.firstChild)
     }
-  }, [editorsRef, hoveredArrowId, selectedArrow, isDarkMode])
+  }, [editorsRef, hoveredArrowId, selectedArrow, isDarkMode, activeTool])
 
   // Imperatively update all path `d` attributes and X-icon positions
   const updatePositions = useCallback(() => {
@@ -721,6 +722,7 @@ export function ArrowOverlay({
         {allVisibleArrows.map((data) => {
           const isHovered = hoveredArrowId === data.arrowId
           const isSelected = selectedArrow?.arrowId === data.arrowId
+          const isEraser = activeTool === "eraser"
           const strokeColor = blendArrow(data.color)
           return (
             <g key={data.arrowId}>
@@ -732,9 +734,9 @@ export function ArrowOverlay({
                   }}
                   data-testid="arrow-hover-ring"
                   d=""
-                  stroke={data.color}
+                  stroke={isEraser ? "#ef4444" : data.color}
                   strokeWidth={6}
-                  strokeOpacity={0.15}
+                  strokeOpacity={isEraser ? 0.3 : 0.15}
                   fill="none"
                   style={{ pointerEvents: "none" }}
                 />
@@ -766,12 +768,24 @@ export function ArrowOverlay({
                 fill="none"
                 style={{
                   pointerEvents: activeTool === "arrow" ? "none" : "auto",
-                  cursor: "pointer",
+                  cursor: isEraser ? "inherit" : "pointer",
                 }}
-                onMouseEnter={() => setHoveredArrowId(data.arrowId)}
+                onMouseEnter={(e) => {
+                  setHoveredArrowId(data.arrowId)
+                  if (isEraser && e.buttons === 1) {
+                    removeArrow(data.layerId, data.arrowId)
+                    setHoveredArrowId(null)
+                  }
+                }}
                 onMouseLeave={() => setHoveredArrowId(null)}
                 onClick={() => {
-                  setSelectedArrow({ layerId: data.layerId, arrowId: data.arrowId })
+                  if (isEraser) {
+                    removeArrow(data.layerId, data.arrowId)
+                    setSelectedArrow(null)
+                    setHoveredArrowId(null)
+                  } else {
+                    setSelectedArrow({ layerId: data.layerId, arrowId: data.arrowId })
+                  }
                 }}
               />
               {isSelected && (

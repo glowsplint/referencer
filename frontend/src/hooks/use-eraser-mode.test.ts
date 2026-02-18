@@ -11,6 +11,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     layers: [] as Layer[],
     removeHighlight: vi.fn(),
     removeUnderline: vi.fn(),
+    removeArrow: vi.fn(),
     setStatus: vi.fn(),
     flashStatus: vi.fn(),
     clearStatus: vi.fn(),
@@ -43,7 +44,7 @@ describe("useEraserMode", () => {
     renderHook(() => useEraserMode(createOptions({ setStatus })))
 
     expect(setStatus).toHaveBeenCalledWith(
-      expect.objectContaining({ text: "Click and drag to erase highlights and underlines.", type: "info" })
+      expect.objectContaining({ text: "Click and drag to erase annotations.", type: "info" })
     )
   })
 
@@ -203,7 +204,7 @@ describe("useEraserMode", () => {
     act(() => { result.current.confirmErase() })
 
     expect(flashStatus).toHaveBeenCalledWith(
-      { text: "Erased decoration.", type: "success" }, 3000
+      { text: "Erased annotation.", type: "success" }, 3000
     )
   })
 

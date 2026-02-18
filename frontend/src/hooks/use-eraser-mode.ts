@@ -1,5 +1,5 @@
 // Handles the "eraser" annotation tool mode. When active, clicking on a word
-// removes any overlapping highlights or underlines from visible layers.
+// removes any overlapping highlights, underlines, or arrows from visible layers.
 import { useCallback, useEffect } from "react"
 import i18n from "@/i18n"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
@@ -12,6 +12,7 @@ interface UseEraserModeOptions {
   layers: Layer[]
   removeHighlight: (layerId: string, highlightId: string) => void
   removeUnderline: (layerId: string, underlineId: string) => void
+  removeArrow: (layerId: string, arrowId: string) => void
   setStatus: (msg: StatusMessage) => void
   flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
@@ -24,6 +25,7 @@ export function useEraserMode({
   layers,
   removeHighlight,
   removeUnderline,
+  removeArrow,
   setStatus,
   flashStatus,
   clearStatus,
@@ -64,12 +66,23 @@ export function useEraserMode({
           erased = true
         }
       }
+
+      for (const arrow of layer.arrows) {
+        const fromMatch = arrow.from.editorIndex === editorIndex &&
+          arrow.from.from < to && arrow.from.to > from
+        const toMatch = arrow.to.editorIndex === editorIndex &&
+          arrow.to.from < to && arrow.to.to > from
+        if (fromMatch || toMatch) {
+          removeArrow(layer.id, arrow.id)
+          erased = true
+        }
+      }
     }
 
     if (erased) {
-flashStatus({ text: i18n.t("tools:eraser.erased"), type: "success" }, 3000)
+      flashStatus({ text: i18n.t("tools:eraser.erased"), type: "success" }, 3000)
     }
-  }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, flashStatus])
+  }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, removeArrow, flashStatus])
 
   const confirmErase = useCallback(() => {
     if (!selection) return
