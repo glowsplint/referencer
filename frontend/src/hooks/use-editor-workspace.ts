@@ -9,6 +9,8 @@ import { useActionHistory } from "./use-action-history"
 import { useTrackedEditors } from "./use-tracked-editors"
 import { useYjs } from "./use-yjs"
 import { useYjsLayers } from "./use-yjs-layers"
+import { useYjsUndo } from "./use-yjs-undo"
+import { useYjsOffline } from "./use-yjs-offline"
 import { seedDefaultLayers } from "@/lib/yjs/annotations"
 import { createDefaultLayers } from "@/data/default-workspace"
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
@@ -25,6 +27,12 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
 
   // Yjs-backed layers (replaces useLayers + useWebSocket for annotations)
   const yjsLayers = useYjsLayers(yjs.doc)
+
+  // Yjs undo/redo (replaces command-pattern history for CRDT operations)
+  const yjsUndo = useYjsUndo(yjs.doc)
+
+  // Offline persistence via IndexedDB
+  useYjsOffline(yjs.doc, workspaceId ?? "default")
 
   // Seed default layers when Y.Doc is ready and empty
   const [seeded, setSeeded] = useState(false)
@@ -325,5 +333,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     wsConnected: yjs.connected,
     // Yjs CRDT collaboration
     yjs,
+    // Yjs undo/redo
+    yjsUndo,
   }
 }

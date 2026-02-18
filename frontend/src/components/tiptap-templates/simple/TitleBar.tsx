@@ -9,10 +9,11 @@ import {
   TooltipContent,
 } from "@/components/tiptap-ui-primitive/tooltip"
 import { ShareDialog } from "@/components/ShareDialog"
+import { CollaborationPresence } from "@/components/CollaborationPresence"
 import { useWorkspace } from "@/contexts/WorkspaceContext"
 
 export function TitleBar() {
-  const { workspaceId, readOnly } = useWorkspace()
+  const { workspaceId, readOnly, yjs } = useWorkspace()
   const [title, setTitle] = useState("Title")
   const [isEditing, setIsEditing] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
@@ -73,6 +74,10 @@ export function TitleBar() {
         </Tooltip>
       )}
       <div className="ml-auto flex items-center gap-1">
+        <CollaborationPresence
+          provider={yjs.provider?.wsProvider ?? null}
+          className="mr-2"
+        />
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
