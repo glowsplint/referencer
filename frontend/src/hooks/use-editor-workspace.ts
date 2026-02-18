@@ -1,8 +1,8 @@
 // Central workspace hook that composes settings, layers, editors, action history,
 // and Yjs CRDT collaboration into a single API. All data (text, annotations,
 // layers) is synced via Yjs shared types through the collab server.
-// The action-based WebSocket system has been replaced by Yjs observe/transact.
-import { useState, useCallback, useEffect } from "react"
+// All collaboration uses Yjs observe/transact.
+import { useState, useCallback, useEffect, useRef } from "react"
 import { useSettings } from "./use-settings"
 import { useEditors } from "./use-editors"
 import { useActionHistory } from "./use-action-history"
@@ -10,6 +10,7 @@ import { useTrackedEditors } from "./use-tracked-editors"
 import { useYjs } from "./use-yjs"
 import { useYjsLayers } from "./use-yjs-layers"
 import { useYjsUndo } from "./use-yjs-undo"
+import { useUnifiedUndo } from "./use-unified-undo"
 import { useYjsOffline } from "./use-yjs-offline"
 import { seedDefaultLayers } from "@/lib/yjs/annotations"
 import { createDefaultLayers } from "@/data/default-workspace"
@@ -25,33 +26,75 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // Yjs provider for all CRDT collaboration (text + annotations)
   const yjs = useYjs(workspaceId ?? "default")
 
-  // Yjs-backed layers (replaces useLayers + useWebSocket for annotations)
+  // Yjs-backed layers for annotations
   const yjsLayers = useYjsLayers(yjs.doc)
 
   // Yjs undo/redo (replaces command-pattern history for CRDT operations)
   const yjsUndo = useYjsUndo(yjs.doc)
 
+  // Unified undo/redo: Yjs first, then action history fallback
+  const unifiedUndo = useUnifiedUndo(yjsUndo, history)
+
   // Offline persistence via IndexedDB
   useYjsOffline(yjs.doc, workspaceId ?? "default")
 
-  // Seed default layers when Y.Doc is ready and empty
-  const [seeded, setSeeded] = useState(false)
+  // Seed default layers when Y.Doc is ready and empty.
+  // Wait for the Yjs provider to sync before seeding so we don't
+  // overwrite layers already stored on the server.
+  const seededRef = useRef(false)
   useEffect(() => {
-    if (!yjs.doc || seeded) return
-    // Wait a tick for Yjs to sync initial state from server
-    const timer = setTimeout(() => {
-      seedDefaultLayers(yjs.doc!, createDefaultLayers())
-      setSeeded(true)
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [yjs.doc, seeded])
+    if (!yjs.doc || seededRef.current) return
+
+    const trySeed = () => {
+      if (seededRef.current) return
+      seededRef.current = true
+      try {
+        seedDefaultLayers(yjs.doc!, createDefaultLayers())
+      } catch (err) {
+        console.error("Failed to seed default layers:", err)
+      }
+    }
+
+    const ws = yjs.wsProvider
+    if (!ws) {
+      // Offline mode — no provider available, seed after a short delay
+      const timer = setTimeout(trySeed, 100)
+      return () => clearTimeout(timer)
+    }
+
+    // If already synced (e.g. reconnect), seed immediately
+    if (ws.synced) {
+      trySeed()
+      return
+    }
+
+    // Wait for initial sync from server
+    const onSync = (synced: boolean) => {
+      if (synced) {
+        ws.off("sync", onSync)
+        trySeed()
+      }
+    }
+    ws.on("sync", onSync)
+
+    // Fallback timeout in case sync never fires (server unreachable)
+    const fallbackTimer = setTimeout(() => {
+      ws.off("sync", onSync)
+      trySeed()
+    }, 3000)
+
+    return () => {
+      ws.off("sync", onSync)
+      clearTimeout(fallbackTimer)
+    }
+  }, [yjs.doc, yjs.wsProvider])
 
   // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {
     return ((...args: any[]) => readOnly ? fallback : fn(...args)) as T
   }
 
-  // Layer mutations — all write to Y.Doc directly (no WebSocket needed)
+  // Layer mutations — all write to Y.Doc directly
   const addLayer = useCallback(
     guarded(
       (opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }) => {
@@ -333,7 +376,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     wsConnected: yjs.connected,
     // Yjs CRDT collaboration
     yjs,
-    // Yjs undo/redo
-    yjsUndo,
+    // Unified undo/redo (Yjs + action history)
+    unifiedUndo,
   }
 }

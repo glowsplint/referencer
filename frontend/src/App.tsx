@@ -114,6 +114,7 @@ export function App() {
     annotations,
     setActiveTool,
     history,
+    unifiedUndo,
     updateEditorContent,
   } = workspace;
 
@@ -131,7 +132,7 @@ export function App() {
     toggleLocked: workspace.toggleLocked,
     toggleManagementPane: workspace.toggleManagementPane,
   });
-  useUndoRedoKeyboard(history);
+  useUndoRedoKeyboard(unifiedUndo);
   const actionConsole = useActionConsole();
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
@@ -409,6 +410,7 @@ export function App() {
                           sectionVisibility={sectionVisibility}
                           selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
                           setLayers={workspace.setLayers}
+                          yjsSynced={workspace.yjs.synced}
                         />
                       </div>
                     </div>

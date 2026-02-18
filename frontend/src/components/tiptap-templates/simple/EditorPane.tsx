@@ -5,7 +5,7 @@
 // When a Yjs fragment is provided, enables real-time collaborative editing.
 "use client"
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { EditorContent, useEditor } from "@tiptap/react"
 import type { Editor } from "@tiptap/react"
 import type * as Y from "yjs"
@@ -55,6 +55,7 @@ export function EditorPane({
   sectionVisibility,
   selectedArrowId,
   setLayers,
+  yjsSynced,
 }: {
   isLocked: boolean
   activeTool?: ActiveTool
@@ -76,6 +77,7 @@ export function EditorPane({
   sectionVisibility: boolean[]
   selectedArrowId: string | null
   setLayers?: React.Dispatch<React.SetStateAction<Layer[]>>
+  yjsSynced?: boolean
 }) {
   const extensions = useMemo(
     () => createSimpleEditorExtensions({ fragment: fragment ?? undefined }),
@@ -91,7 +93,7 @@ export function EditorPane({
   indexRef.current = index
 
   // Track whether initial content has been seeded into the Yjs fragment
-  const [contentSeeded, setContentSeeded] = useState(!fragment)
+  const contentSeededRef = useRef(!fragment)
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -114,15 +116,16 @@ export function EditorPane({
         },
   }, [extensions])
 
-  // Seed default content into an empty Yjs fragment
+  // Seed default content into an empty Yjs fragment after sync
   useEffect(() => {
-    if (!fragment || !editor || contentSeeded) return
-    // If the fragment is empty and we have default content, seed it
+    if (!fragment || !editor || contentSeededRef.current) return
+    // Wait for Yjs sync before checking emptiness to avoid overwriting server content
+    if (yjsSynced === false) return
+    contentSeededRef.current = true
     if (fragment.length === 0 && content) {
       editor.commands.setContent(content)
     }
-    setContentSeeded(true)
-  }, [fragment, editor, content, contentSeeded])
+  }, [fragment, editor, content, yjsSynced])
 
   useEffect(() => {
     if (editor) {

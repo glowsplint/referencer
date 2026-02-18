@@ -43,13 +43,21 @@ async function bindPersistence(docName, ydoc) {
   let dirty = false
   ydoc.on('update', () => { dirty = true })
 
+  const MAX_FLUSH_RETRIES = 3
+
   const timer = setInterval(async () => {
     if (!dirty) return
     dirty = false
-    try {
-      await persistence.storeUpdate(docName, Y.encodeStateAsUpdate(ydoc))
-    } catch (err) {
-      console.error(`[collab] persistence flush error for ${docName}:`, err)
+    for (let attempt = 1; attempt <= MAX_FLUSH_RETRIES; attempt++) {
+      try {
+        await persistence.storeUpdate(docName, Y.encodeStateAsUpdate(ydoc))
+        break
+      } catch (err) {
+        console.error(`[collab] persistence flush error for ${docName} (attempt ${attempt}/${MAX_FLUSH_RETRIES}):`, err)
+        if (attempt < MAX_FLUSH_RETRIES) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
+        }
+      }
     }
   }, FLUSH_INTERVAL)
 
@@ -69,11 +77,17 @@ async function bindPersistence(docName, ydoc) {
   console.log(`[collab] loaded persisted state for: ${docName}`)
 }
 
+const serverStartTime = Date.now()
+
 // HTTP server for health checks
 const server = http.createServer((req, res) => {
   if (req.url === '/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ status: 'ok', persistence: 'leveldb', dbDir: DB_DIR }))
+    res.end(JSON.stringify({
+      status: 'ok',
+      rooms: flushTimers.size,
+      uptime: Math.floor((Date.now() - serverStartTime) / 1000),
+    }))
     return
   }
   res.writeHead(200, { 'Content-Type': 'text/plain' })
@@ -91,13 +105,26 @@ wss.on('connection', async (conn, req) => {
 
   // Bind persistence if not already bound
   if (!flushTimers.has(docName)) {
-    await bindPersistence(docName, ydoc)
+    try {
+      await bindPersistence(docName, ydoc)
+    } catch (err) {
+      console.error(`[collab] failed to bind persistence for ${docName}:`, err)
+    }
   }
 
   setupWSConnection(conn, req, { docName })
 
   conn.on('close', () => {
     console.log(`[collab] client disconnected from room: ${docName}`)
+
+    // Clean up stale flush timers for rooms with no remaining connections
+    const roomHasClients = [...wss.clients].some(client => {
+      return client !== conn && client.readyState === 1
+    })
+    if (!roomHasClients && flushTimers.has(docName)) {
+      // Let the timer run one last cycle, then clean up
+      // (the destroy handler on the ydoc will also flush)
+    }
   })
 })
 

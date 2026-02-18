@@ -22,17 +22,26 @@ export function useYjsUndo(doc: Y.Doc | null) {
 
     // Track all XmlFragments (editor text content)
     // We observe doc structure to catch dynamically created fragments
-    for (let i = 0; i < 10; i++) {
+    // Max editors is capped at 10 to bound the loop; the app currently supports
+    // up to 10 side-by-side editor panes (editor-0 through editor-9).
+    const MAX_EDITORS = 10
+    for (let i = 0; i < MAX_EDITORS; i++) {
       const fragment = doc.getXmlFragment(`editor-${i}`)
       if (fragment.length > 0 || i < 3) {
         trackedTypes.push(fragment)
       }
     }
 
-    const undoManager = new Y.UndoManager(trackedTypes, {
-      // Capture consecutive changes within 500ms as a single undo step
-      captureTimeout: 500,
-    })
+    let undoManager: Y.UndoManager
+    try {
+      undoManager = new Y.UndoManager(trackedTypes, {
+        // Capture consecutive changes within 500ms as a single undo step
+        captureTimeout: 500,
+      })
+    } catch (err) {
+      console.error("[yjs-undo] failed to create UndoManager:", err)
+      return
+    }
 
     undoManagerRef.current = undoManager
 

@@ -1,6 +1,7 @@
 // Displays connected collaborators as colored avatars.
 // Shows each user's name/color from the Yjs awareness protocol.
-import { useEffect, useState } from "react"
+// The local user's avatar is shown with a click-to-edit name feature.
+import { useEffect, useRef, useState } from "react"
 import type { WebsocketProvider } from "y-websocket"
 
 interface UserPresence {
@@ -8,6 +9,8 @@ interface UserPresence {
   name: string
   color: string
 }
+
+const LOCALSTORAGE_NAME_KEY = "referencer-user-name"
 
 // Predefined colors for collaborators
 const PRESENCE_COLORS = [
@@ -28,6 +31,12 @@ function getInitials(name: string): string {
     .slice(0, 2)
 }
 
+function getLocalUserName(clientId: number): string {
+  const saved = localStorage.getItem(LOCALSTORAGE_NAME_KEY)
+  if (saved && saved.trim()) return saved
+  return `User ${clientId % 100}`
+}
+
 export function CollaborationPresence({
   provider,
   className = "",
@@ -36,16 +45,26 @@ export function CollaborationPresence({
   className?: string
 }) {
   const [users, setUsers] = useState<UserPresence[]>([])
+  const [localUser, setLocalUser] = useState<UserPresence | null>(null)
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [editValue, setEditValue] = useState("")
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!provider) return
 
     const awareness = provider.awareness
-
-    // Set local user info
+    const localName = getLocalUserName(awareness.clientID)
     const localColor = getPresenceColor(awareness.clientID)
+
     awareness.setLocalStateField("user", {
-      name: `User ${awareness.clientID % 100}`,
+      name: localName,
+      color: localColor,
+    })
+
+    setLocalUser({
+      clientId: awareness.clientID,
+      name: localName,
       color: localColor,
     })
 
@@ -74,13 +93,48 @@ export function CollaborationPresence({
     }
   }, [provider])
 
-  if (users.length === 0) return null
+  useEffect(() => {
+    if (isEditingName && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [isEditingName])
+
+  const startEditingName = () => {
+    if (!localUser) return
+    setEditValue(localUser.name)
+    setIsEditingName(true)
+  }
+
+  const commitName = () => {
+    if (!provider) return
+    const trimmed = editValue.trim()
+    if (!trimmed) {
+      setIsEditingName(false)
+      return
+    }
+
+    localStorage.setItem(LOCALSTORAGE_NAME_KEY, trimmed)
+    provider.awareness.setLocalStateField("user", {
+      name: trimmed,
+      color: localUser?.color ?? getPresenceColor(provider.awareness.clientID),
+    })
+    setLocalUser((prev) =>
+      prev ? { ...prev, name: trimmed } : prev
+    )
+    setIsEditingName(false)
+  }
+
+  const totalCount = users.length + (localUser ? 1 : 0)
+  if (totalCount === 0) return null
 
   return (
     <div className={`flex items-center gap-1 ${className}`}>
-      <span className="text-xs text-muted-foreground mr-1">
-        {users.length} online
-      </span>
+      {totalCount > 1 && (
+        <span className="text-xs text-muted-foreground mr-1">
+          {totalCount} online
+        </span>
+      )}
       {users.map((user) => (
         <div
           key={user.clientId}
@@ -91,6 +145,41 @@ export function CollaborationPresence({
           {getInitials(user.name)}
         </div>
       ))}
+      {localUser && (
+        <div className="relative">
+          <div
+            className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white shrink-0 cursor-pointer ring-1 ring-white/30"
+            style={{ backgroundColor: localUser.color }}
+            title="You"
+            onClick={startEditingName}
+          >
+            {getInitials(localUser.name)}
+          </div>
+          {isEditingName && (
+            <div className="absolute top-full right-0 mt-1 z-50">
+              <input
+                ref={inputRef}
+                className="text-xs px-2 py-1 rounded border border-border bg-popover text-popover-foreground shadow-md w-32 outline-none focus:ring-1 focus:ring-ring"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onBlur={commitName}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    commitName()
+                  }
+                  if (e.key === "Escape") {
+                    e.preventDefault()
+                    setIsEditingName(false)
+                  }
+                }}
+                placeholder="Your name"
+                spellCheck={false}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

@@ -147,15 +147,23 @@ function readHighlights(doc: Y.Doc, yLayer: Y.Map<unknown>): Highlight[] {
   const highlights: Highlight[] = []
   for (let i = 0; i < yHighlights.length; i++) {
     const yH = yHighlights.get(i)
+    const id = yH.get("id") as string
     const editorIndex = yH.get("editorIndex") as number
-    const fromRel = yH.get("fromRel") as Uint8Array
-    const toRel = yH.get("toRel") as Uint8Array
+    const fromRel = yH.get("fromRel")
+    const toRel = yH.get("toRel")
+    if (!(fromRel instanceof Uint8Array) || !(toRel instanceof Uint8Array)) {
+      console.error("[yjs] highlight has invalid position data:", id)
+      continue
+    }
     const from = decodeRelativePosition(doc, fromRel)
     const to = decodeRelativePosition(doc, toRel)
-    if (from === null || to === null) continue // Position no longer valid
+    if (from === null || to === null) {
+      console.warn("[yjs] highlight position lost:", id)
+      continue
+    }
 
     highlights.push({
-      id: yH.get("id") as string,
+      id,
       editorIndex,
       from,
       to,
@@ -175,14 +183,29 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>): Arrow[] {
   const arrows: Arrow[] = []
   for (let i = 0; i < yArrows.length; i++) {
     const yA = yArrows.get(i)
-    const fromFrom = decodeRelativePosition(doc, yA.get("fromRel") as Uint8Array)
-    const fromTo = decodeRelativePosition(doc, yA.get("fromToRel") as Uint8Array)
-    const toFrom = decodeRelativePosition(doc, yA.get("toRel") as Uint8Array)
-    const toTo = decodeRelativePosition(doc, yA.get("toToRel") as Uint8Array)
-    if (fromFrom === null || fromTo === null || toFrom === null || toTo === null) continue
+    const id = yA.get("id") as string
+    const fromRel = yA.get("fromRel")
+    const fromToRel = yA.get("fromToRel")
+    const toRel = yA.get("toRel")
+    const toToRel = yA.get("toToRel")
+    if (
+      !(fromRel instanceof Uint8Array) || !(fromToRel instanceof Uint8Array) ||
+      !(toRel instanceof Uint8Array) || !(toToRel instanceof Uint8Array)
+    ) {
+      console.error("[yjs] arrow has invalid position data:", id)
+      continue
+    }
+    const fromFrom = decodeRelativePosition(doc, fromRel)
+    const fromTo = decodeRelativePosition(doc, fromToRel)
+    const toFrom = decodeRelativePosition(doc, toRel)
+    const toTo = decodeRelativePosition(doc, toToRel)
+    if (fromFrom === null || fromTo === null || toFrom === null || toTo === null) {
+      console.warn("[yjs] arrow position lost:", id)
+      continue
+    }
 
     arrows.push({
-      id: yA.get("id") as string,
+      id,
       from: {
         editorIndex: yA.get("fromEditorIndex") as number,
         from: fromFrom,
@@ -209,12 +232,22 @@ function readUnderlines(doc: Y.Doc, yLayer: Y.Map<unknown>): LayerUnderline[] {
   const underlines: LayerUnderline[] = []
   for (let i = 0; i < yUnderlines.length; i++) {
     const yU = yUnderlines.get(i)
-    const from = decodeRelativePosition(doc, yU.get("fromRel") as Uint8Array)
-    const to = decodeRelativePosition(doc, yU.get("toRel") as Uint8Array)
-    if (from === null || to === null) continue
+    const id = yU.get("id") as string
+    const fromRel = yU.get("fromRel")
+    const toRel = yU.get("toRel")
+    if (!(fromRel instanceof Uint8Array) || !(toRel instanceof Uint8Array)) {
+      console.error("[yjs] underline has invalid position data:", id)
+      continue
+    }
+    const from = decodeRelativePosition(doc, fromRel)
+    const to = decodeRelativePosition(doc, toRel)
+    if (from === null || to === null) {
+      console.warn("[yjs] underline position lost:", id)
+      continue
+    }
 
     underlines.push({
-      id: yU.get("id") as string,
+      id,
       editorIndex: yU.get("editorIndex") as number,
       from,
       to,

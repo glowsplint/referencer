@@ -19,6 +19,10 @@ export function useYjsOffline(doc: Y.Doc | null, workspaceId: string) {
       console.log(`[yjs-offline] IndexedDB synced for workspace: ${workspaceId}`)
     })
 
+    persistence.on("error", (err: unknown) => {
+      console.error(`[yjs-offline] IndexedDB error for workspace ${workspaceId}:`, err)
+    })
+
     return () => {
       persistence.destroy()
       persistenceRef.current = null

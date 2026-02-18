@@ -89,7 +89,7 @@ export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}
       getFragment: () => null,
       awareness: null,
     },
-    yjsUndo: {
+    unifiedUndo: {
       undo: vi.fn(),
       redo: vi.fn(),
       canUndo: false,

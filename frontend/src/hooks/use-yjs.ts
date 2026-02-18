@@ -7,6 +7,7 @@ import { createWorkspaceProvider, type WorkspaceProvider } from "@/lib/yjs/provi
 export function useYjs(workspaceId: string) {
   const providerRef = useRef<WorkspaceProvider | null>(null)
   const [connected, setConnected] = useState(false)
+  const [synced, setSynced] = useState(false)
 
   // Create provider once per workspace ID
   useEffect(() => {
@@ -16,13 +17,19 @@ export function useYjs(workspaceId: string) {
     const onStatus = ({ status }: { status: string }) => {
       setConnected(status === "connected")
     }
+    const onSync = (isSynced: boolean) => {
+      setSynced(isSynced)
+    }
     provider.wsProvider.on("status", onStatus)
+    provider.wsProvider.on("sync", onSync)
 
     return () => {
       provider.wsProvider.off("status", onStatus)
+      provider.wsProvider.off("sync", onSync)
       provider.destroy()
       providerRef.current = null
       setConnected(false)
+      setSynced(false)
     }
   }, [workspaceId])
 
@@ -33,8 +40,10 @@ export function useYjs(workspaceId: string) {
 
   return {
     provider: providerRef.current,
+    wsProvider: providerRef.current?.wsProvider ?? null,
     doc: providerRef.current?.doc ?? null,
     connected,
+    synced,
     getFragment,
     awareness: providerRef.current?.awareness ?? null,
   }

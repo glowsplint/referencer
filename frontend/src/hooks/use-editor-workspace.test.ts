@@ -781,18 +781,17 @@ describe("useEditorWorkspace", () => {
   })
 
   // --- Undo/redo naming stability ---
-  // Note: Layer undo/redo now goes through Yjs UndoManager (yjsUndo),
-  // not the command-pattern action history. Detailed undo/redo behavior
-  // for layers should be tested in use-yjs-undo.test.ts.
+  // Note: Layer undo/redo now goes through the unified undo controller,
+  // which delegates to Yjs UndoManager first, then falls back to action history.
 
-  it("yjsUndo is exposed from the workspace", () => {
+  it("unifiedUndo is exposed from the workspace", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
-    expect(result.current.yjsUndo).toBeDefined()
-    expect(typeof result.current.yjsUndo.undo).toBe("function")
-    expect(typeof result.current.yjsUndo.redo).toBe("function")
-    expect(typeof result.current.yjsUndo.canUndo).toBe("boolean")
-    expect(typeof result.current.yjsUndo.canRedo).toBe("boolean")
+    expect(result.current.unifiedUndo).toBeDefined()
+    expect(typeof result.current.unifiedUndo.undo).toBe("function")
+    expect(typeof result.current.unifiedUndo.redo).toBe("function")
+    expect(typeof result.current.unifiedUndo.canUndo).toBe("boolean")
+    expect(typeof result.current.unifiedUndo.canRedo).toBe("boolean")
   })
 
   it("undo/redo addEditor preserves the original passage name", () => {

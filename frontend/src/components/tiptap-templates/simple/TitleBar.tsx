@@ -73,10 +73,25 @@ export function TitleBar() {
           <TooltipContent>Rename</TooltipContent>
         </Tooltip>
       )}
-      <div className="ml-auto flex items-center gap-1">
+      <div className="ml-auto flex items-center gap-2">
+        <Tooltip placement="bottom" delay={300}>
+          <TooltipTrigger asChild>
+            <span
+              className={`w-2 h-2 rounded-full shrink-0 ${
+                yjs.connected
+                  ? "bg-green-500 animate-[pulse_3s_ease-in-out_infinite]"
+                  : "bg-gray-400"
+              }`}
+              data-testid="connectionStatusDot"
+            />
+          </TooltipTrigger>
+          <TooltipContent>
+            {yjs.connected ? "Connected" : "Offline"}
+          </TooltipContent>
+        </Tooltip>
         <CollaborationPresence
           provider={yjs.provider?.wsProvider ?? null}
-          className="mr-2"
+          className="mr-1"
         />
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
