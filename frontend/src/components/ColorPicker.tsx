@@ -125,7 +125,7 @@ export function ColorPicker({
               </div>
               <div className="flex gap-1">
                 {(["r", "g", "b"] as const).map((ch) => (
-                  <label key={ch} className="flex flex-col items-center gap-0.5 text-[10px] text-muted-foreground uppercase">
+                  <label key={ch} className="flex-1 flex flex-col items-center gap-0.5 text-[10px] text-muted-foreground uppercase">
                     {ch}
                     <input
                       type="number"
@@ -133,7 +133,7 @@ export function ColorPicker({
                       max={255}
                       value={rgb[ch]}
                       onChange={(e) => handleRgbChange(ch, Number(e.target.value))}
-                      className="w-16 bg-transparent border border-border rounded px-1 py-0.5 text-xs text-foreground text-center font-mono"
+                      className="w-full bg-transparent border border-border rounded px-1 py-0.5 text-xs text-foreground text-center font-mono"
                       data-testid={`rgbInput-${ch}-${index}`}
                     />
                   </label>
