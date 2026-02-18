@@ -324,7 +324,7 @@ export function App() {
 
   const hasAnyAnnotations = useMemo(
     () => layers.some((l) => l.visible && l.highlights.some(
-      (h) => sectionVisibility[h.editorIndex] !== false
+      (h) => h.type === "comment" && sectionVisibility[h.editorIndex] !== false
     )),
     [layers, sectionVisibility]
   );
