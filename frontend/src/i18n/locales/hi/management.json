@@ -31,7 +31,8 @@
   "annotations": {
     "placeholder": "टिप्पणी जोड़ें...",
     "removeCustomColour": "कस्टम रंग हटाएं",
-    "addCustomColour": "कस्टम रंग जोड़ें"
+    "addCustomColour": "कस्टम रंग जोड़ें",
+    "addToCustomColours": "कस्टम रंगों में जोड़ें"
   },
   "actionConsole": {
     "title": "एक्शन कंसोल",

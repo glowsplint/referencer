@@ -31,7 +31,8 @@
   "annotations": {
     "placeholder": "টীকা যোগ করুন...",
     "removeCustomColour": "কাস্টম রং সরান",
-    "addCustomColour": "কাস্টম রং যোগ করুন"
+    "addCustomColour": "কাস্টম রং যোগ করুন",
+    "addToCustomColours": "কাস্টম রংগুলিতে যোগ করুন"
   },
   "actionConsole": {
     "title": "অ্যাকশন কনসোল",

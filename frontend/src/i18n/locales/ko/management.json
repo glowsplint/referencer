@@ -31,7 +31,8 @@
   "annotations": {
     "placeholder": "주석 추가...",
     "removeCustomColour": "사용자 지정 색상 삭제",
-    "addCustomColour": "사용자 지정 색상 추가"
+    "addCustomColour": "사용자 지정 색상 추가",
+    "addToCustomColours": "사용자 지정 색상에 추가"
   },
   "actionConsole": {
     "title": "액션 콘솔",

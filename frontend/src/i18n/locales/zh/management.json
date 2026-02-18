@@ -31,7 +31,8 @@
   "annotations": {
     "placeholder": "添加标注...",
     "removeCustomColour": "移除自定义颜色",
-    "addCustomColour": "添加自定义颜色"
+    "addCustomColour": "添加自定义颜色",
+    "addToCustomColours": "添加到自定义颜色"
   },
   "actionConsole": {
     "title": "操作控制台",

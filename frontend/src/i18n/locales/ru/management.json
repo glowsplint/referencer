@@ -31,7 +31,8 @@
   "annotations": {
     "placeholder": "Добавить аннотацию...",
     "removeCustomColour": "Удалить пользовательский цвет",
-    "addCustomColour": "Добавить пользовательский цвет"
+    "addCustomColour": "Добавить пользовательский цвет",
+    "addToCustomColours": "Добавить в пользовательские цвета"
   },
   "actionConsole": {
     "title": "Консоль действий",

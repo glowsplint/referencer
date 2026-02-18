@@ -3,6 +3,30 @@ import { describe, it, expect, vi } from "vitest"
 import { ColorPicker } from "./ColorPicker"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
+// Mock react-colorful: HexColorPicker is canvas-based (no DOM in jsdom),
+// and HexColorInput needs to behave as a controlled input with onChange.
+let capturedPickerOnChange: ((color: string) => void) | undefined
+vi.mock("react-colorful", () => ({
+  HexColorPicker: ({ color, onChange }: { color: string; onChange: (c: string) => void }) => {
+    capturedPickerOnChange = onChange
+    return <div data-testid="mock-hex-color-picker" data-color={color} />
+  },
+  HexColorInput: (props: Record<string, unknown>) => {
+    const { color, onChange, ...rest } = props as {
+      color: string
+      onChange: (c: string) => void
+      [key: string]: unknown
+    }
+    return (
+      <input
+        {...rest}
+        value={color}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+      />
+    )
+  },
+}))
+
 describe("ColorPicker", () => {
   it("renders all preset colour options", () => {
     render(
@@ -72,16 +96,24 @@ describe("ColorPicker", () => {
       expect(screen.queryByTestId("addCustomColor-0")).not.toBeInTheDocument()
     })
 
-    it("calls onAddCustomColor and onSelectColor when a color is picked", () => {
+    it("calls onAddCustomColor via the advanced picker confirm flow", () => {
       const onAddCustomColor = vi.fn()
       const onSelectColor = vi.fn()
       render(
         <ColorPicker index={0} onSelectColor={onSelectColor} onAddCustomColor={onAddCustomColor} />
       )
-      const input = screen.getByTestId("colorInput-0")
-      fireEvent.change(input, { target: { value: "#abcdef" } })
-      expect(onAddCustomColor).toHaveBeenCalledWith("#abcdef")
+      // Open the advanced picker
+      fireEvent.click(screen.getByTestId("addCustomColor-0"))
+      expect(screen.getByTestId("advancedPicker-0")).toBeInTheDocument()
+
+      // Type a hex color into the hex input
+      const hexInput = screen.getByTestId("hexInput-0")
+      fireEvent.change(hexInput, { target: { value: "#abcdef" } })
       expect(onSelectColor).toHaveBeenCalledWith("#abcdef")
+
+      // Click the confirm button
+      fireEvent.click(screen.getByTestId("confirmColor-0"))
+      expect(onAddCustomColor).toHaveBeenCalledWith("#abcdef")
     })
 
     it("renders remove button on custom color swatch", () => {
@@ -123,6 +155,74 @@ describe("ColorPicker", () => {
         <ColorPicker index={0} onSelectColor={vi.fn()} customColors={customColors} />
       )
       expect(screen.getByTestId("customColorSeparator-0")).toBeInTheDocument()
+    })
+  })
+
+  describe("advanced picker", () => {
+    it("toggles advanced picker open and closed", () => {
+      render(
+        <ColorPicker index={0} onSelectColor={vi.fn()} onAddCustomColor={vi.fn()} />
+      )
+      // Initially closed
+      expect(screen.queryByTestId("advancedPicker-0")).not.toBeInTheDocument()
+
+      // Click to open
+      fireEvent.click(screen.getByTestId("addCustomColor-0"))
+      expect(screen.getByTestId("advancedPicker-0")).toBeInTheDocument()
+
+      // Click again to close
+      fireEvent.click(screen.getByTestId("addCustomColor-0"))
+      expect(screen.queryByTestId("advancedPicker-0")).not.toBeInTheDocument()
+    })
+
+    it("updates color via hex input", () => {
+      const onSelectColor = vi.fn()
+      render(
+        <ColorPicker index={0} onSelectColor={onSelectColor} onAddCustomColor={vi.fn()} />
+      )
+      // Open picker
+      fireEvent.click(screen.getByTestId("addCustomColor-0"))
+
+      // Change hex input
+      const hexInput = screen.getByTestId("hexInput-0")
+      fireEvent.change(hexInput, { target: { value: "#ff5733" } })
+      expect(onSelectColor).toHaveBeenCalledWith("#ff5733")
+    })
+
+    it("updates color via RGB inputs", () => {
+      const onSelectColor = vi.fn()
+      render(
+        <ColorPicker index={0} onSelectColor={onSelectColor} onAddCustomColor={vi.fn()} />
+      )
+      // Open picker
+      fireEvent.click(screen.getByTestId("addCustomColor-0"))
+
+      // Change the R input (default pickerColor is #000000 so r=0, g=0, b=0)
+      fireEvent.change(screen.getByTestId("rgbInput-r-0"), { target: { value: "128" } })
+      expect(onSelectColor).toHaveBeenCalledWith("#800000")
+
+      // Change the G input
+      fireEvent.change(screen.getByTestId("rgbInput-g-0"), { target: { value: "64" } })
+      expect(onSelectColor).toHaveBeenCalledWith("#804000")
+
+      // Change the B input
+      fireEvent.change(screen.getByTestId("rgbInput-b-0"), { target: { value: "255" } })
+      expect(onSelectColor).toHaveBeenCalledWith("#8040ff")
+    })
+
+    it("confirm button calls onAddCustomColor and closes picker", () => {
+      const onAddCustomColor = vi.fn()
+      render(
+        <ColorPicker index={0} onSelectColor={vi.fn()} onAddCustomColor={onAddCustomColor} />
+      )
+      // Open picker
+      fireEvent.click(screen.getByTestId("addCustomColor-0"))
+      expect(screen.getByTestId("advancedPicker-0")).toBeInTheDocument()
+
+      // Click confirm
+      fireEvent.click(screen.getByTestId("confirmColor-0"))
+      expect(onAddCustomColor).toHaveBeenCalledWith("#000000")
+      expect(screen.queryByTestId("advancedPicker-0")).not.toBeInTheDocument()
     })
   })
 })

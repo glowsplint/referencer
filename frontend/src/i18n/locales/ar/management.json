@@ -31,7 +31,8 @@
   "annotations": {
     "placeholder": "إضافة تعليق...",
     "removeCustomColour": "إزالة اللون المخصص",
-    "addCustomColour": "إضافة لون مخصص"
+    "addCustomColour": "إضافة لون مخصص",
+    "addToCustomColours": "إضافة إلى الألوان المخصصة"
   },
   "actionConsole": {
     "title": "وحدة التحكم",

@@ -31,7 +31,8 @@
   "annotations": {
     "placeholder": "注釈を追加...",
     "removeCustomColour": "カスタムカラーを削除",
-    "addCustomColour": "カスタムカラーを追加"
+    "addCustomColour": "カスタムカラーを追加",
+    "addToCustomColours": "カスタムカラーに追加"
   },
   "actionConsole": {
     "title": "アクションコンソール",

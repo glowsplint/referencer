@@ -31,7 +31,8 @@
   "annotations": {
     "placeholder": "Ajouter une annotation...",
     "removeCustomColour": "Supprimer la couleur personnalisée",
-    "addCustomColour": "Ajouter une couleur personnalisée"
+    "addCustomColour": "Ajouter une couleur personnalisée",
+    "addToCustomColours": "Ajouter aux couleurs personnalisées"
   },
   "actionConsole": {
     "title": "Console d'actions",
