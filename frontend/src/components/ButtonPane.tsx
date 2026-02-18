@@ -6,7 +6,9 @@ import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Columns2,
+  Columns3,
   Rows2,
+  Rows3,
   MousePointer2,
   Lock,
   LockOpen,
@@ -84,6 +86,7 @@ export function ButtonPane() {
     isManagementPaneOpen,
     toggleManagementPane,
     toggleDarkMode,
+    editorCount,
     toggleMultipleRowsLayout,
     setActiveTool,
     toggleLocked,
@@ -220,8 +223,8 @@ export function ButtonPane() {
       <Tooltip placement="right">
         <TooltipTrigger asChild>
           <SwitchingButtonIcon
-            iconTwo={<Columns2 size={20} />}
-            iconOne={<Rows2 size={20} />}
+            iconTwo={editorCount >= 3 ? <Columns3 size={20} /> : <Columns2 size={20} />}
+            iconOne={editorCount >= 3 ? <Rows3 size={20} /> : <Rows2 size={20} />}
             bool={settings.isMultipleRowsLayout}
             callback={toggleMultipleRowsLayout}
             buttonProps={{ "data-testid": "editorLayoutButton" }}
