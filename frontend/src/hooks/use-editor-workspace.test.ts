@@ -1,9 +1,32 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
+import * as Y from "yjs"
+
+// Ref accessible in hoisted vi.mock factories
+const { testDocRef } = vi.hoisted(() => ({
+  testDocRef: { current: null as any },
+}))
 
 vi.mock("@/data/default-workspace", () => ({
   createDefaultLayers: () => [],
   DEFAULT_SECTION_NAMES: ["Passage 1"],
+}))
+
+// Mock Yjs provider — return a real Y.Doc without WebSocket
+vi.mock("./use-yjs", () => ({
+  useYjs: () => ({
+    provider: null,
+    doc: testDocRef.current,
+    connected: false,
+    getFragment: (index: number) =>
+      testDocRef.current?.getXmlFragment(`editor-${index}`) ?? null,
+    awareness: null,
+  }),
+}))
+
+// Mock offline persistence (needs IndexedDB which isn't in test env)
+vi.mock("./use-yjs-offline", () => ({
+  useYjsOffline: () => {},
 }))
 
 import { useEditorWorkspace } from "./use-editor-workspace"
@@ -13,6 +36,16 @@ beforeEach(() => {
   vi.clearAllMocks()
   document.documentElement.classList.remove("dark")
   localStorage.clear()
+
+  // Fresh Y.Doc with pre-populated XmlFragments for position resolution
+  const doc = new Y.Doc()
+  for (let i = 0; i < 3; i++) {
+    const frag = doc.getXmlFragment(`editor-${i}`)
+    for (let j = 0; j < 20; j++) {
+      frag.insert(j, [new Y.XmlText("x")])
+    }
+  }
+  testDocRef.current = doc
 })
 
 describe("useEditorWorkspace", () => {
@@ -523,7 +556,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeLayerId).toBe(secondId)
   })
 
-  it("removeLayer clears activeLayerId when the active layer is removed", () => {
+  it("removeLayer auto-selects another layer when the active layer is removed", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
     act(() => {
@@ -532,6 +565,7 @@ describe("useEditorWorkspace", () => {
     })
 
     const firstId = result.current.layers[0].id
+    const secondId = result.current.layers[1].id
 
     act(() => {
       result.current.setActiveLayer(firstId)
@@ -541,7 +575,8 @@ describe("useEditorWorkspace", () => {
     act(() => {
       result.current.removeLayer(firstId)
     })
-    expect(result.current.activeLayerId).toBeNull()
+    // With Yjs layers, auto-select kicks in when a layer exists
+    expect(result.current.activeLayerId).toBe(secondId)
   })
 
   it("removeLayer keeps activeLayerId when a different layer is removed", () => {
@@ -746,44 +781,18 @@ describe("useEditorWorkspace", () => {
   })
 
   // --- Undo/redo naming stability ---
+  // Note: Layer undo/redo now goes through Yjs UndoManager (yjsUndo),
+  // not the command-pattern action history. Detailed undo/redo behavior
+  // for layers should be tested in use-yjs-undo.test.ts.
 
-  it("undo/redo addLayer preserves the original layer name", () => {
+  it("yjsUndo is exposed from the workspace", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
-    act(() => { result.current.addLayer() })
-    expect(result.current.layers[0].name).toBe("Layer 1")
-
-    act(() => { result.current.history.undo() })
-    expect(result.current.layers).toHaveLength(0)
-
-    act(() => { result.current.history.redo() })
-    expect(result.current.layers[0].name).toBe("Layer 1")
-  })
-
-  it("repeated undo/redo of addLayer does not increment layer name", () => {
-    const { result } = renderHook(() => useEditorWorkspace())
-
-    act(() => { result.current.addLayer() })
-    expect(result.current.layers[0].name).toBe("Layer 1")
-
-    for (let i = 0; i < 5; i++) {
-      act(() => { result.current.history.undo() })
-      act(() => { result.current.history.redo() })
-    }
-
-    expect(result.current.layers[0].name).toBe("Layer 1")
-  })
-
-  it("undo/redo addLayer does not waste counter values for subsequent layers", () => {
-    const { result } = renderHook(() => useEditorWorkspace())
-
-    act(() => { result.current.addLayer() })
-    act(() => { result.current.history.undo() })
-    act(() => { result.current.history.redo() })
-    act(() => { result.current.addLayer() })
-
-    expect(result.current.layers[0].name).toBe("Layer 1")
-    expect(result.current.layers[1].name).toBe("Layer 2")
+    expect(result.current.yjsUndo).toBeDefined()
+    expect(typeof result.current.yjsUndo.undo).toBe("function")
+    expect(typeof result.current.yjsUndo.redo).toBe("function")
+    expect(typeof result.current.yjsUndo.canUndo).toBe("boolean")
+    expect(typeof result.current.yjsUndo.canRedo).toBe("boolean")
   })
 
   it("undo/redo addEditor preserves the original passage name", () => {
@@ -814,23 +823,8 @@ describe("useEditorWorkspace", () => {
 
   // --- Toggle actions are undoable (logOnly → record) ---
 
-  it("toggleLayerVisibility is undoable", () => {
-    const { result } = renderHook(() => useEditorWorkspace())
-
-    act(() => { result.current.addLayer() })
-    const layerId = result.current.layers[0].id
-    expect(result.current.layers[0].visible).toBe(true)
-
-    act(() => { result.current.toggleLayerVisibility(layerId) })
-    expect(result.current.layers[0].visible).toBe(false)
-    expect(result.current.history.canUndo).toBe(true)
-
-    act(() => { result.current.history.undo() })
-    expect(result.current.layers[0].visible).toBe(true)
-
-    act(() => { result.current.history.redo() })
-    expect(result.current.layers[0].visible).toBe(false)
-  })
+  // toggleLayerVisibility is now handled via Yjs UndoManager, not action history.
+  // The toggle behavior is tested in "toggleLayerVisibility toggles a layer's visibility" above.
 
   it("toggleSectionVisibility is undoable", () => {
     const { result } = renderHook(() => useEditorWorkspace())
@@ -939,31 +933,28 @@ describe("useEditorWorkspace", () => {
   it("toggle actions use record() not logOnly()", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
+    // addLayer and toggleLayerVisibility now go through Yjs, not action history
     act(() => { result.current.addLayer() })
-    const layerId = result.current.layers[0].id
 
     act(() => {
       result.current.toggleLocked()
       result.current.toggleDarkMode()
       result.current.toggleMultipleRowsLayout()
-      result.current.toggleLayerVisibility(layerId)
       result.current.toggleSectionVisibility(0)
       result.current.setActiveTool("arrow")
     })
 
-    // All should be on the undo stack (addLayer + 6 toggles = 7)
+    // 5 non-layer toggle actions should be on the undo stack
+    // (addLayer and toggleLayerVisibility are now Yjs-managed, not in action history)
     const logEntries = result.current.history.log
-    expect(logEntries.length).toBe(7)
+    expect(logEntries.length).toBe(5)
 
-    // Undo all 6 toggle actions
-    for (let i = 0; i < 6; i++) {
+    // Undo all 5 toggle actions
+    for (let i = 0; i < 5; i++) {
       expect(result.current.history.canUndo).toBe(true)
       act(() => { result.current.history.undo() })
     }
 
-    // Only addLayer should remain on the undo stack
-    expect(result.current.history.canUndo).toBe(true)
-    act(() => { result.current.history.undo() })
     expect(result.current.history.canUndo).toBe(false)
   })
 })
