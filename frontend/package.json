@@ -11,7 +11,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:e2e": "node node_modules/.bin/playwright test -x",
-    "test:e2e:ui": "node node_modules/.bin/playwright test --ui"
+    "test:e2e:ui": "node node_modules/.bin/playwright test --ui",
+    "test:integration": "node node_modules/.bin/playwright test --config=e2e/integration/playwright.integration.config.ts"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.17",

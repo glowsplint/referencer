@@ -13,6 +13,20 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      "/ws": {
+        target: "http://localhost:5000",
+        ws: true,
+      },
+      "/api": {
+        target: "http://localhost:5000",
+      },
+      "/s": {
+        target: "http://localhost:5000",
+      },
+    },
+  },
   test: {
     globals: true,
     environment: "jsdom",
