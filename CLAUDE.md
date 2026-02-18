@@ -14,6 +14,29 @@ Components under `tiptap-*` directories (`tiptap-ui`, `tiptap-ui-primitive`, `ti
 
 Use linear history. Always rebase instead of merge (`git rebase`, not `git merge`). Do not create merge commits.
 
+## Agent Teams
+
+Use agent teams for any non-trivial task. Prefer parallelizing work across teammates whenever possible. Examples:
+
+- **Feature implementation**: Spawn a team with teammates for implementation, testing, and visual verification working in parallel.
+- **Bug investigation**: Spawn an Explore agent to research the issue while another agent prepares a fix once the root cause is identified.
+- **Refactoring**: Split work across multiple agents by file or module, with a dedicated test-runner agent validating changes.
+- **Code review / research**: Use multiple Explore agents in parallel to investigate different parts of the codebase simultaneously.
+
+When creating teams:
+- Use `general-purpose` agents for any work that requires writing/editing files or running commands.
+- Use `Explore` agents for read-only research, codebase search, and investigation.
+- Use `Plan` agents when you need architectural analysis before implementation.
+- Spawn a dedicated **Test agent** (`general-purpose` subagent) for every team. Its responsibilities:
+  - **Unit tests**: Write and run Vitest + React Testing Library tests (`bun run test:run` from `frontend/`).
+  - **E2E tests**: Write and run Playwright tests (`bun run test:e2e` from `frontend/`). Tests live in `frontend/e2e/`.
+  - **Integration tests**: Where components interact with APIs, state management, or backend services, write integration-level tests that verify these boundaries (e.g., MSW-based API mocking, WebSocket message handling, multi-component flows).
+  - The Test agent should run **all three test types** after implementation is complete and report results back to the team lead.
+  - If any tests fail, the Test agent coordinates with the implementation agent to fix the issue before the task is considered done.
+- Keep team sizes reasonable (2-4 agents for most tasks).
+- Always assign clear, scoped tasks to each teammate via TaskCreate.
+- Shut down teammates gracefully when their work is complete.
+
 ## Testing
 
 Add or update tests for every code change. Use **Vitest** with **React Testing Library**. Before considering any code change complete, run both unit tests (`bun run test:run`) and e2e tests (`bun run test:e2e`) from the `frontend/` directory and ensure all tests pass.
