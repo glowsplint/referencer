@@ -1,3 +1,8 @@
+// Manages word-level keyboard navigation and selection in locked mode.
+// Supports arrow keys (with Shift for range extension, Cmd for line/passage
+// boundaries), Home/End, Escape to clear, Enter to confirm, and Cmd+A for
+// select-all within a passage. Maintains a sticky X coordinate for vertical
+// movement consistency.
 import { useState, useCallback, useEffect, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"
@@ -47,6 +52,7 @@ export function useWordSelection({
 }: UseWordSelectionOptions) {
   const [selection, setSelection] = useState<WordSelection | null>(null)
   const [selectionHidden, setSelectionHidden] = useState(false)
+  // Preserves horizontal position during vertical arrow-key navigation
   const stickyXRef = useRef<number | null>(null)
   const anchorRef = useRef<WordSelection | null>(null)
   const headRef = useRef<WordSelection | null>(null)
@@ -183,34 +189,6 @@ export function useWordSelection({
           anchorRef.current = null
           headRef.current = null
           setSelection(selectAll)
-        }
-        return
-      }
-
-      // ── Tab / Shift+Tab — cycle passages ───────────────────────
-      if (e.key === "Tab") {
-        e.preventDefault()
-        setSelectionHidden(false)
-        const container = containerRef.current
-        if (!container) return
-        const containerRect = container.getBoundingClientRect()
-        const ctx = { editorsRef, containerRect, editorCount }
-        const allCandidates = collectCandidates(ctx)
-        const currentIndex = selection?.editorIndex ?? -1
-        const direction = e.shiftKey ? -1 : 1
-
-        for (let step = 1; step <= editorCount; step++) {
-          const candidate =
-            ((currentIndex + direction * step) % editorCount + editorCount) %
-            editorCount
-          const first = findFirstWordInPassage(candidate, allCandidates)
-          if (first) {
-            anchorRef.current = null
-            headRef.current = null
-            stickyXRef.current = null
-            setSelection(first)
-            return
-          }
         }
         return
       }

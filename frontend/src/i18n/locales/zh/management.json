@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "图层",
+    "addLayer": "添加图层",
+    "hideAll": "隐藏所有图层",
+    "showAll": "显示所有图层",
+    "hideLayer": "隐藏图层",
+    "showLayer": "显示图层",
+    "changeColour": "更改颜色",
+    "removeAnnotation": "移除标注",
+    "removeArrow": "移除箭头",
+    "removeUnderline": "移除下划线",
+    "allColorsInUse": "所有颜色都已被使用——请先移除一个图层。"
+  },
+  "passages": {
+    "title": "段落",
+    "addPassage": "添加段落",
+    "hideAll": "隐藏所有段落",
+    "showAll": "显示所有段落",
+    "hidePassage": "隐藏段落",
+    "showPassage": "显示段落"
+  },
+  "tooltips": {
+    "toggleManagementPane": "切换管理面板",
+    "keyboardShortcuts": "键盘快捷键",
+    "helpFaq": "帮助与常见问题",
+    "settings": "设置",
+    "toggleEditorLayout": "切换编辑器布局",
+    "toggleEditorLock": "切换编辑器锁定"
+  },
+  "annotations": {
+    "placeholder": "添加标注...",
+    "removeCustomColour": "移除自定义颜色",
+    "addCustomColour": "添加自定义颜色",
+    "addToCustomColours": "添加到自定义颜色"
+  },
+  "actionConsole": {
+    "title": "操作控制台",
+    "close": "关闭",
+    "empty": "尚未记录任何操作。"
+  }
+}

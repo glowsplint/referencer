@@ -1,3 +1,7 @@
+// Workspace settings dialog with toggle switches for dark mode, notification
+// preferences (drawing/comments/highlight toasts), and overscroll behavior.
+import { useTranslation } from "react-i18next";
+import i18n, { LANGUAGE_OPTIONS } from "@/i18n";
 import {
   Dialog,
   DialogContent,
@@ -66,39 +70,42 @@ export function SettingsDialog({
   overscrollEnabled,
   toggleOverscrollEnabled,
 }: SettingsDialogProps) {
+  const { t } = useTranslation("dialogs");
+  const { t: tc } = useTranslation("common");
+
   const rows: SettingsRow[] = [
     {
       id: "dark-mode",
-      label: "Dark mode",
-      description: "Switch between light and dark themes",
+      label: t("settings.darkMode.label"),
+      description: t("settings.darkMode.description"),
       checked: isDarkMode,
       onCheckedChange: toggleDarkMode,
     },
     {
       id: "drawing-notifications",
-      label: "Drawing notifications",
-      description: "Show toasts when using the arrow tool",
+      label: t("settings.drawingNotifications.label"),
+      description: t("settings.drawingNotifications.description"),
       checked: showDrawingToasts,
       onCheckedChange: toggleShowDrawingToasts,
     },
     {
       id: "comments-notifications",
-      label: "Comments notifications",
-      description: "Show toasts when using the comments tool",
+      label: t("settings.commentsNotifications.label"),
+      description: t("settings.commentsNotifications.description"),
       checked: showCommentsToasts,
       onCheckedChange: toggleShowCommentsToasts,
     },
     {
       id: "highlight-notifications",
-      label: "Highlight notifications",
-      description: "Show toasts when using the highlight tool",
+      label: t("settings.highlightNotifications.label"),
+      description: t("settings.highlightNotifications.description"),
       checked: showHighlightToasts,
       onCheckedChange: toggleShowHighlightToasts,
     },
     {
       id: "overscroll",
-      label: "Overscroll",
-      description: "Allow elastic bounce when scrolling past edges",
+      label: t("settings.overscroll.label"),
+      description: t("settings.overscroll.description"),
       checked: overscrollEnabled,
       onCheckedChange: toggleOverscrollEnabled,
     },
@@ -112,20 +119,41 @@ export function SettingsDialog({
         data-testid="settingsDialog"
       >
         <DialogHeader className="p-6 pb-4">
-          <DialogTitle>Settings</DialogTitle>
+          <DialogTitle>{t("settings.title")}</DialogTitle>
           <DialogDescription>
-            Customize your workspace preferences.
+            {t("settings.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="px-6 pb-4 space-y-4">
           {rows.map((row) => (
             <SettingRow key={row.id} row={row} />
           ))}
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <label htmlFor="language" className="text-sm font-medium cursor-pointer">
+                {t("settings.language.label")}
+              </label>
+              <p className="text-xs text-muted-foreground">{t("settings.language.description")}</p>
+            </div>
+            <select
+              id="language"
+              value={i18n.language}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              className="rounded-md border border-input bg-background px-2 py-1 text-sm"
+              data-testid="language-select"
+            >
+              {LANGUAGE_OPTIONS.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <DialogFooter className="sticky bottom-0 border-t bg-background p-4">
           <DialogClose asChild>
             <Button variant="outline" data-testid="settingsCloseButton">
-              Close
+              {tc("close")}
             </Button>
           </DialogClose>
         </DialogFooter>

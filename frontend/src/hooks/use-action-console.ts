@@ -1,3 +1,4 @@
+// Manages the action console panel (toggle with backtick key, resize height).
 import { useState, useEffect } from "react"
 import { isEditableElement } from "@/lib/dom"
 

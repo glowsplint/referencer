@@ -1,3 +1,6 @@
+// URL validation and sanitization for user-supplied links in the editor.
+// Checks URIs against an allowlist of protocols to prevent javascript: and
+// other dangerous schemes, and resolves relative URLs against a base.
 type ProtocolOptions = {
   /**
    * The protocol scheme to be registered.

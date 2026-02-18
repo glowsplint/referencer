@@ -1,9 +1,13 @@
+// Renders the current word selection as a ProseMirror inline decoration.
+// Shows a background highlight for most tools, or an underline preview
+// when the underline tool is active. Uses the active layer's color.
 import { useEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { ActiveTool, WordSelection } from "@/types/editor"
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import { wordSelectionPluginKey } from "@/lib/tiptap/extensions/word-selection"
 import { blendWithBackground } from "@/lib/color"
+import { DEFAULT_LAYER_COLOR } from "@/constants/colors"
 
 /**
  * Renders the current word selection as an inline highlight decoration
@@ -35,8 +39,8 @@ export function useSelectionHighlight(
     const isUnderlinePreview = activeTool === "underline"
     const bgColor = activeLayerColor
       ? blendWithBackground(activeLayerColor, 0.3, isDarkMode)
-      : blendWithBackground("#3b82f6", 0.25, isDarkMode)
-    const underlineColor = activeLayerColor ?? "#3b82f6"
+      : blendWithBackground(DEFAULT_LAYER_COLOR, 0.25, isDarkMode)
+    const underlineColor = activeLayerColor ?? DEFAULT_LAYER_COLOR
 
     try {
       const style = isUnderlinePreview

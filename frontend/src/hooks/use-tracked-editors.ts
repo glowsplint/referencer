@@ -1,3 +1,5 @@
+// Wraps the raw useEditors hook to record every editor mutation (add, remove,
+// rename, toggle visibility) in the action history for undo/redo support.
 import { useCallback } from "react"
 import type { useEditors } from "./use-editors"
 import type { useActionHistory } from "./use-action-history"

@@ -1,3 +1,6 @@
+// React context that provides the workspace state (layers, editors, settings,
+// actions) to all descendant components. Typed from the useEditorWorkspace hook
+// return value so consumers get full type safety without prop-drilling.
 import { createContext, useContext } from "react"
 import type { useEditorWorkspace } from "@/hooks/use-editor-workspace"
 

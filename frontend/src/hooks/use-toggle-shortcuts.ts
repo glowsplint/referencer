@@ -1,3 +1,6 @@
+// Registers global keyboard shortcuts for toggling UI settings:
+// D = dark mode, R = row/column layout, K = lock/unlock, M = management pane.
+// Lock toggle (K) works even inside editable elements (e.g. Tiptap editor).
 import { useEffect, useRef } from "react"
 import { isEditableElement } from "@/lib/dom"
 
@@ -32,10 +35,18 @@ export function useToggleShortcuts({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return
       if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
-      if (isEditableElement(e.target)) return
+
+      // Escape blurs editable elements so shortcuts like K work after
+      if (e.code === "Escape" && isEditableElement(e.target)) {
+        ;(document.activeElement as HTMLElement)?.blur?.()
+        return
+      }
 
       const action = KEY_MAP[e.code]
       if (!action) return
+
+      // Allow lock toggle (K) even when in editable elements (e.g. Tiptap editor)
+      if (action !== "lock" && isEditableElement(e.target)) return
 
       e.preventDefault()
       const { toggleDarkMode, toggleMultipleRowsLayout, toggleLocked, toggleManagementPane } = callbacksRef.current
@@ -47,6 +58,7 @@ export function useToggleShortcuts({
           toggleMultipleRowsLayout()
           break
         case "lock":
+          (document.activeElement as HTMLElement)?.blur?.()
           toggleLocked()
           break
         case "menu":

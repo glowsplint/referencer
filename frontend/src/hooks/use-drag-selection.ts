@@ -1,3 +1,7 @@
+// Implements word-level mouse drag selection in locked/annotation mode.
+// On mousedown, selects the word under the cursor; on mousemove, extends
+// the selection to cover the range from the anchor word to the current word;
+// on mouseup, finalizes the range selection for use by annotation tools.
 import { useCallback, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
@@ -16,6 +20,7 @@ interface UseDragSelectionOptions {
   selectWord: (editorIndex: number, from: number, to: number, text: string) => void
   selectRange: (anchor: WordSelection, head: WordSelection, merged: WordSelection) => void
   clearSelection: () => void
+  eraseAtPosition?: (editorIndex: number, from: number, to: number) => void
 }
 
 export function useDragSelection({
@@ -24,6 +29,7 @@ export function useDragSelection({
   selectWord,
   selectRange,
   clearSelection,
+  eraseAtPosition,
 }: UseDragSelectionOptions) {
   const dragRef = useRef<{
     anchor: DragRange
@@ -54,10 +60,16 @@ export function useDragSelection({
         return
       }
 
+      if (activeTool === "eraser" && eraseAtPosition) {
+        dragRef.current = { anchor: word, current: word, dragging: false }
+        eraseAtPosition(editorIndex, word.from, word.to)
+        return
+      }
+
       dragRef.current = { anchor: word, current: word, dragging: false }
       selectWord(editorIndex, word.from, word.to, word.text)
     },
-    [isLocked, getWordAtEvent, clearSelection, selectWord]
+    [isLocked, activeTool, getWordAtEvent, clearSelection, selectWord, eraseAtPosition]
   )
 
   const handleMouseMove = useCallback(
@@ -70,13 +82,18 @@ export function useDragSelection({
       dragRef.current.current = word
       dragRef.current.dragging = true
 
+      if (activeTool === "eraser" && eraseAtPosition) {
+        eraseAtPosition(editorIndex, word.from, word.to)
+        return
+      }
+
       // Live preview of the selection range during drag
       const from = Math.min(dragRef.current.anchor.from, word.from)
       const to = Math.max(dragRef.current.anchor.to, word.to)
       const text = editor.state.doc.textBetween(from, to, " ")
       selectWord(editorIndex, from, to, text)
     },
-    [isLocked, getWordAtEvent, selectWord]
+    [isLocked, activeTool, getWordAtEvent, selectWord, eraseAtPosition]
   )
 
   const handleMouseUp = useCallback(
@@ -84,6 +101,11 @@ export function useDragSelection({
       if (!isLocked || !editor || !dragRef.current) return
       // Don't interfere with annotation textareas
       if ((e.target as HTMLElement).tagName === "TEXTAREA") return
+
+      if (activeTool === "eraser") {
+        dragRef.current = null
+        return
+      }
 
       const { anchor, current, dragging } = dragRef.current
       dragRef.current = null

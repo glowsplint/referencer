@@ -1,3 +1,5 @@
+// Provides inline text editing state (start, commit, cancel) and input props
+// for renaming items like layer names or section names in-place.
 import { useEffect, useRef, useState } from "react"
 
 interface UseInlineEditOptions {

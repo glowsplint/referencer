@@ -1,3 +1,6 @@
+// Tiptap extension that adds a backgroundColor attribute to block-level nodes
+// (paragraphs, headings, lists, etc.) and provides set/unset/toggle commands.
+// Renders as inline styles or data attributes depending on configuration.
 import type { NodeWithPos } from "@tiptap/core"
 import { Extension } from "@tiptap/core"
 import type { EditorState, Transaction } from "@tiptap/pm/state"

@@ -1,3 +1,8 @@
+// Word-level keyboard navigation engine for locked (annotation) mode.
+// Handles arrow key movement, shift-selection, Ctrl+A select-all,
+// and Home/End line jumps across multiple editor panes. Uses visual
+// (pixel) coordinates to find the nearest word in each direction,
+// with a "sticky X" to maintain column alignment during vertical movement.
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"
 import type { CollectedWord } from "@/lib/tiptap/word-collection"

@@ -1,10 +1,15 @@
+// Shows a subtle underline on the word under the mouse cursor in locked
+// mode. Uses underline instead of background to avoid conflicting with
+// existing layer highlights. Skips words that are already selected or
+// already have a visible layer highlight to avoid visual clutter.
 import { useEffect, useRef } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, WordSelection } from "@/types/editor"
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import { wordHoverPluginKey } from "@/lib/tiptap/extensions/word-hover"
 import { getWordBoundaries } from "@/lib/tiptap/word-boundaries"
-import { blendWithBackground } from "@/lib/color"
+import { parseHexToRgba } from "@/lib/color"
+import { DEFAULT_LAYER_COLOR } from "@/constants/colors"
 
 export function useWordHover(
   editor: Editor | null,
@@ -26,25 +31,25 @@ export function useWordHover(
     const dom = editor.view?.dom
     if (!dom) return
 
+    const clearHover = () => {
+      if (lastWordRef.current) {
+        lastWordRef.current = null
+        const tr = editor.state.tr.setMeta(wordHoverPluginKey, DecorationSet.empty)
+        editor.view.dispatch(tr)
+      }
+    }
+
     const onMouseMove = (e: MouseEvent) => {
       const coords = { left: e.clientX, top: e.clientY }
       const posInfo = editor.view.posAtCoords(coords)
       if (!posInfo) {
-        if (lastWordRef.current) {
-          lastWordRef.current = null
-          const tr = editor.state.tr.setMeta(wordHoverPluginKey, DecorationSet.empty)
-          editor.view.dispatch(tr)
-        }
+        clearHover()
         return
       }
 
       const word = getWordBoundaries(editor.state.doc, posInfo.pos)
       if (!word) {
-        if (lastWordRef.current) {
-          lastWordRef.current = null
-          const tr = editor.state.tr.setMeta(wordHoverPluginKey, DecorationSet.empty)
-          editor.view.dispatch(tr)
-        }
+        clearHover()
         return
       }
 
@@ -55,11 +60,7 @@ export function useWordHover(
 
       // Skip if hovered word matches current selection
       if (selection && selection.editorIndex === editorIndex && selection.from === word.from && selection.to === word.to) {
-        if (lastWordRef.current) {
-          lastWordRef.current = null
-          const tr = editor.state.tr.setMeta(wordHoverPluginKey, DecorationSet.empty)
-          editor.view.dispatch(tr)
-        }
+        clearHover()
         return
       }
 
@@ -72,19 +73,16 @@ export function useWordHover(
           )
       )
       if (overlapsLayerHighlight) {
-        if (lastWordRef.current) {
-          lastWordRef.current = null
-          const tr = editor.state.tr.setMeta(wordHoverPluginKey, DecorationSet.empty)
-          editor.view.dispatch(tr)
-        }
+        clearHover()
         return
       }
 
       lastWordRef.current = { from: word.from, to: word.to }
-      const bgColor = blendWithBackground(activeLayerColor ?? "#3b82f6", 0.08, isDarkMode)
+      // Underline (not background) to avoid obscuring existing layer highlights
+      const underlineColor = parseHexToRgba(activeLayerColor ?? DEFAULT_LAYER_COLOR, 0.4)
       try {
         const decoration = Decoration.inline(word.from, word.to, {
-          style: `background-color: ${bgColor}; border-radius: 2px`,
+          style: `text-decoration: underline; text-decoration-color: ${underlineColor}; text-decoration-thickness: 1.5px; text-underline-offset: 2px`,
           class: "word-hover",
         })
         const decorationSet = DecorationSet.create(editor.state.doc, [decoration])
@@ -96,11 +94,7 @@ export function useWordHover(
     }
 
     const onMouseLeave = () => {
-      if (lastWordRef.current) {
-        lastWordRef.current = null
-        const tr = editor.state.tr.setMeta(wordHoverPluginKey, DecorationSet.empty)
-        editor.view.dispatch(tr)
-      }
+      clearHover()
     }
 
     dom.addEventListener("mousemove", onMouseMove)

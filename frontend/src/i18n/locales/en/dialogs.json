@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "title": "Settings",
+    "description": "Customize your workspace preferences.",
+    "darkMode": {
+      "label": "Dark mode",
+      "description": "Switch between light and dark themes"
+    },
+    "drawingNotifications": {
+      "label": "Drawing notifications",
+      "description": "Show toasts when using the arrow tool"
+    },
+    "commentsNotifications": {
+      "label": "Comments notifications",
+      "description": "Show toasts when using the comments tool"
+    },
+    "highlightNotifications": {
+      "label": "Highlight notifications",
+      "description": "Show toasts when using the highlight tool"
+    },
+    "overscroll": {
+      "label": "Overscroll",
+      "description": "Allow elastic bounce when scrolling past edges"
+    },
+    "language": {
+      "label": "Language",
+      "description": "Choose your preferred language"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "description": "Learn about Referencer and how to use it.",
+    "items": {
+      "whatIsApp": {
+        "question": "What is this app?",
+        "answer": "Referencer is a collaborative tool for inductive Bible study. It gives study groups a shared workspace where they can read, annotate, and discuss Scripture together in real time."
+      },
+      "inductiveStudy": {
+        "question": "What is inductive Bible study?",
+        "answer": "Inductive Bible study is a method of reading Scripture that moves from observation (what does the text say?) to interpretation (what does it mean?) to application (how does it apply?). Rather than starting with outside commentary, you let the text speak for itself by carefully examining its words, structure, and context."
+      },
+      "collaboration": {
+        "question": "How does collaboration work?",
+        "answer": "Each workspace can be shared with others via a link. All participants see the same text and can add their own annotations. Changes sync in real time so everyone stays on the same page."
+      },
+      "layers": {
+        "question": "What are layers?",
+        "answer": "Layers let you organize annotations into separate groups — for example, one layer for observations and another for interpretations. You can cycle between layers with the L key to focus on one set of annotations at a time."
+      },
+      "annotations": {
+        "question": "How do annotations work?",
+        "answer": "Lock the editor with the lock button (or press K), then select text to highlight it. You can choose colors, add comments, and draw arrows between annotations to show connections. Click an existing annotation to remove it."
+      },
+      "arrows": {
+        "question": "What are arrows for?",
+        "answer": "Arrows connect two annotations to show a relationship between passages — for example, linking a repeated word to its first occurrence, or connecting a prophecy to its fulfillment. Select the arrow tool (or press A), then click two annotations to draw a connector."
+      },
+      "sharing": {
+        "question": "How do I share a workspace?",
+        "answer": "Open the management pane (press M or click the menu icon) and use the share options to generate a link. Anyone with the link can join the workspace and collaborate."
+      },
+      "mobile": {
+        "question": "Can I use this on mobile?",
+        "answer": "The app works in mobile browsers, but the full annotation and arrow tools are best experienced on a device with a keyboard and mouse."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "description": "Available keyboard shortcuts for the workspace.",
+    "workspace": "Workspace",
+    "cycleNextLayer": "Cycle to next layer",
+    "cyclePrevLayer": "Cycle to previous layer",
+    "selectionTool": "Selection tool",
+    "arrowTool": "Arrow tool",
+    "commentsTool": "Comments tool",
+    "highlightTool": "Highlight tool",
+    "underlineTool": "Underline tool",
+    "eraserTool": "Eraser tool",
+    "navigateWords": "Navigate between words",
+    "toggleConsole": "Toggle action console",
+    "toggleDarkMode": "Toggle dark mode",
+    "toggleLayout": "Toggle editor layout",
+    "toggleLock": "Toggle editor lock",
+    "toggleManagement": "Toggle management pane",
+    "textFormatting": "Text Formatting",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strikethrough": "Strikethrough",
+    "inlineCode": "Inline code",
+    "superscript": "Superscript",
+    "subscript": "Subscript",
+    "colorHighlight": "Color highlight",
+    "general": "General",
+    "undo": "Undo (workspace when locked)",
+    "redo": "Redo (workspace when locked)",
+    "headings": "Headings",
+    "heading": "Heading {{level}}",
+    "listsAndBlocks": "Lists & Blocks",
+    "bulletList": "Bullet list",
+    "orderedList": "Ordered list",
+    "taskList": "Task list",
+    "blockquote": "Blockquote",
+    "codeBlock": "Code block",
+    "textAlignment": "Text Alignment",
+    "alignLeft": "Align left",
+    "alignCenter": "Align center",
+    "alignRight": "Align right",
+    "alignJustify": "Align justify"
+  },
+  "share": {
+    "title": "Share workspace",
+    "description": "Copy a link to share this workspace.",
+    "readonlyLink": "Read-only link",
+    "editLink": "Edit link",
+    "linkCopied": "Link copied to clipboard.",
+    "copyFailed": "Failed to copy link."
+  },
+  "mobile": {
+    "title": "Best on Desktop",
+    "description": "Referencer is designed for desktop use with a keyboard and mouse. You can still read the content here, but editing and annotation tools are not available on mobile.",
+    "continueReading": "Continue Reading"
+  }
+}

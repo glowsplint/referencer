@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "বোল্ড",
+    "italic": "ইটালিক",
+    "underline": "আন্ডারলাইন",
+    "strike": "স্ট্রাইকথ্রু",
+    "code": "কোড",
+    "superscript": "সুপারস্ক্রিপ্ট",
+    "subscript": "সাবস্ক্রিপ্ট"
+  },
+  "heading": {
+    "label": "শিরোনাম {{level}}"
+  },
+  "list": {
+    "bulletList": "বুলেট তালিকা",
+    "orderedList": "ক্রমিক তালিকা",
+    "taskList": "কার্য তালিকা",
+    "label": "তালিকা"
+  },
+  "blockquote": {
+    "label": "উদ্ধৃতি ব্লক"
+  },
+  "codeBlock": {
+    "label": "কোড ব্লক"
+  },
+  "link": {
+    "label": "লিঙ্ক",
+    "placeholder": "URL দিন",
+    "openLink": "লিঙ্ক খুলুন",
+    "copyLink": "লিঙ্ক কপি করুন",
+    "removeLink": "লিঙ্ক সরান"
+  },
+  "image": {
+    "label": "ছবি যোগ করুন"
+  },
+  "textAlign": {
+    "left": "বামে সারিবদ্ধ",
+    "center": "মাঝখানে সারিবদ্ধ",
+    "right": "ডানে সারিবদ্ধ",
+    "justify": "সমানভাবে সারিবদ্ধ"
+  },
+  "history": {
+    "undo": "পূর্বাবস্থায় ফেরান",
+    "redo": "পুনরায় করুন"
+  },
+  "colorHighlight": {
+    "label": "রং হাইলাইট",
+    "highlightText": "টেক্সট হাইলাইট করুন",
+    "highlightColors": "হাইলাইট রং",
+    "removeHighlight": "হাইলাইট সরান",
+    "listOptions": "তালিকা অপশন",
+    "formatHeading": "টেক্সট শিরোনাম হিসেবে ফরম্যাট করুন",
+    "colors": {
+      "default": "ডিফল্ট ব্যাকগ্রাউন্ড",
+      "gray": "ধূসর ব্যাকগ্রাউন্ড",
+      "brown": "বাদামি ব্যাকগ্রাউন্ড",
+      "orange": "কমলা ব্যাকগ্রাউন্ড",
+      "yellow": "হলুদ ব্যাকগ্রাউন্ড",
+      "green": "সবুজ ব্যাকগ্রাউন্ড",
+      "blue": "নীল ব্যাকগ্রাউন্ড",
+      "purple": "বেগুনি ব্যাকগ্রাউন্ড",
+      "pink": "গোলাপি ব্যাকগ্রাউন্ড",
+      "red": "লাল ব্যাকগ্রাউন্ড"
+    },
+    "toggleHighlight": "হাইলাইট টগল করুন ({{color}})"
+  }
+}

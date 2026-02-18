@@ -51,4 +51,33 @@ describe("resolveAnnotationOverlaps", () => {
     expect(result[0].id).toBe("a")
     expect(result[1].id).toBe("b")
   })
+
+  it("uses measured heights when provided", () => {
+    const heights = new Map([["a", 120]]) // card "a" is taller than default 72px
+    const result = resolveAnnotationOverlaps(
+      [
+        { id: "a", desiredTop: 0 },
+        { id: "b", desiredTop: 50 },
+      ],
+      heights
+    )
+    expect(result[0].top).toBe(0)
+    // 120 (measured height) + 8 (gap) = 128
+    expect(result[1].top).toBe(128)
+  })
+
+  it("falls back to default height for unmeasured cards", () => {
+    const heights = new Map([["a", 100]])
+    const result = resolveAnnotationOverlaps(
+      [
+        { id: "a", desiredTop: 0 },
+        { id: "b", desiredTop: 10 },
+        { id: "c", desiredTop: 20 },
+      ],
+      heights
+    )
+    expect(result[0].top).toBe(0)
+    expect(result[1].top).toBe(108) // 0 + 100 (measured) + 8
+    expect(result[2].top).toBe(188) // 108 + 72 (default, "b" unmeasured) + 8
+  })
 })

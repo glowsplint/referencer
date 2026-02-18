@@ -1,0 +1,83 @@
+{
+  "settings": {
+    "title": "设置",
+    "description": "自定义您的工作区偏好设置。",
+    "darkMode": { "label": "深色模式", "description": "在浅色和深色主题之间切换" },
+    "drawingNotifications": { "label": "绘图通知", "description": "使用箭头工具时显示提示" },
+    "commentsNotifications": { "label": "评论通知", "description": "使用评论工具时显示提示" },
+    "highlightNotifications": { "label": "高亮通知", "description": "使用高亮工具时显示提示" },
+    "overscroll": { "label": "过度滚动", "description": "允许滚动到边缘时的弹性回弹" },
+    "language": { "label": "语言", "description": "选择您的首选语言" }
+  },
+  "faq": {
+    "title": "常见问题",
+    "description": "了解 Referencer 以及如何使用它。",
+    "items": {
+      "whatIsApp": { "question": "这个应用是什么？", "answer": "Referencer 是一个用于归纳式圣经学习的协作工具。它为学习小组提供了一个共享工作区，可以一起实时阅读、标注和讨论经文。" },
+      "inductiveStudy": { "question": "什么是归纳式圣经学习？", "answer": "归纳式圣经学习是一种从观察（经文说了什么？）到解释（它是什么意思？）再到应用（如何应用？）的阅读方法。它不从外部注释开始，而是通过仔细研究经文的词语、结构和上下文，让经文自己说话。" },
+      "collaboration": { "question": "协作是如何工作的？", "answer": "每个工作区都可以通过链接与他人共享。所有参与者看到相同的文本，并可以添加自己的标注。更改会实时同步，确保每个人都在同一页面上。" },
+      "layers": { "question": "什么是图层？", "answer": "图层允许您将标注组织到不同的组中——例如，一个图层用于观察，另一个用于解释。您可以使用 L 键在图层之间切换，以便一次专注于一组标注。" },
+      "annotations": { "question": "标注是如何工作的？", "answer": "使用锁定按钮（或按 K 键）锁定编辑器，然后选择文本进行高亮。您可以选择颜色、添加评论，并在标注之间绘制箭头以显示关联。点击现有标注可以将其移除。" },
+      "arrows": { "question": "箭头有什么用？", "answer": "箭头连接两个标注以显示段落之间的关系——例如，将重复出现的词语链接到首次出现的位置，或将预言与其应验连接起来。选择箭头工具（或按 A 键），然后点击两个标注来绘制连接线。" },
+      "sharing": { "question": "如何共享工作区？", "answer": "打开管理面板（按 M 键或点击菜单图标），使用共享选项生成链接。任何拥有该链接的人都可以加入工作区并进行协作。" },
+      "mobile": { "question": "可以在手机上使用吗？", "answer": "该应用可以在移动浏览器中使用，但完整的标注和箭头工具在有键盘和鼠标的设备上体验最佳。" }
+    }
+  },
+  "shortcuts": {
+    "title": "键盘快捷键",
+    "description": "工作区可用的键盘快捷键。",
+    "workspace": "工作区",
+    "cycleNextLayer": "切换到下一个图层",
+    "cyclePrevLayer": "切换到上一个图层",
+    "selectionTool": "选择工具",
+    "arrowTool": "箭头工具",
+    "commentsTool": "评论工具",
+    "highlightTool": "高亮工具",
+    "underlineTool": "下划线工具",
+    "eraserTool": "橡皮擦工具",
+    "navigateWords": "在词语之间导航",
+    "toggleConsole": "切换操作控制台",
+    "toggleDarkMode": "切换深色模式",
+    "toggleLayout": "切换编辑器布局",
+    "toggleLock": "切换编辑器锁定",
+    "toggleManagement": "切换管理面板",
+    "textFormatting": "文本格式",
+    "bold": "粗体",
+    "italic": "斜体",
+    "underline": "下划线",
+    "strikethrough": "删除线",
+    "inlineCode": "行内代码",
+    "superscript": "上标",
+    "subscript": "下标",
+    "colorHighlight": "颜色高亮",
+    "general": "常规",
+    "undo": "撤销（锁定时为工作区操作）",
+    "redo": "重做（锁定时为工作区操作）",
+    "headings": "标题",
+    "heading": "标题 {{level}}",
+    "listsAndBlocks": "列表和块",
+    "bulletList": "无序列表",
+    "orderedList": "有序列表",
+    "taskList": "任务列表",
+    "blockquote": "引用块",
+    "codeBlock": "代码块",
+    "textAlignment": "文本对齐",
+    "alignLeft": "左对齐",
+    "alignCenter": "居中对齐",
+    "alignRight": "右对齐",
+    "alignJustify": "两端对齐"
+  },
+  "share": {
+    "title": "共享工作区",
+    "description": "复制链接以共享此工作区。",
+    "readonlyLink": "只读链接",
+    "editLink": "编辑链接",
+    "linkCopied": "链接已复制到剪贴板。",
+    "copyFailed": "复制链接失败。"
+  },
+  "mobile": {
+    "title": "桌面端体验最佳",
+    "description": "Referencer 专为桌面端设计，需要键盘和鼠标操作。您仍然可以在此阅读内容，但编辑和标注工具在移动端不可用。",
+    "continueReading": "继续阅读"
+  }
+}

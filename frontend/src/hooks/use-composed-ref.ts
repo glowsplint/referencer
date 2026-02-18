@@ -1,3 +1,5 @@
+// Composes a library-internal ref and a user-provided ref into a single
+// callback ref, so both receive the same DOM element instance.
 "use client"
 
 import { useCallback, useRef } from "react"

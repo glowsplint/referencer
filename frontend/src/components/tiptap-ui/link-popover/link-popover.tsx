@@ -2,6 +2,7 @@
 
 import { forwardRef, useCallback, useEffect, useState } from "react"
 import type { Editor } from "@tiptap/react"
+import { useTranslation } from "react-i18next"
 
 // --- Hooks ---
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
@@ -110,6 +111,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
   openLink,
   isActive,
 }) => {
+  const { t } = useTranslation("editor")
   const isMobile = useIsBreakpoint()
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -134,7 +136,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
           <InputGroup>
             <Input
               type="url"
-              placeholder="Paste a link..."
+              placeholder={t("link.placeholder")}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -149,7 +151,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
             <Button
               type="button"
               onClick={setLink}
-              title="Apply link"
+              title={t("link.label")}
               disabled={!url && !isActive}
               data-style="ghost"
             >
@@ -163,7 +165,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
             <Button
               type="button"
               onClick={openLink}
-              title="Open in new window"
+              title={t("link.openLink")}
               disabled={!url && !isActive}
               data-style="ghost"
             >
@@ -173,7 +175,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
             <Button
               type="button"
               onClick={removeLink}
-              title="Remove link"
+              title={t("link.removeLink")}
               disabled={!url && !isActive}
               data-style="ghost"
             >

@@ -4,10 +4,10 @@ import { ArrowOverlay } from "./ArrowOverlay"
 import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
 import type { Editor } from "@tiptap/react"
 
-// Mock getWordCenter, getWordRect, and wrapper-relative variants to return deterministic positions
+// Mock getWordCenter, getWordRect, clamped variants, and wrapper-relative variants
+// to return deterministic positions based on word offset for reproducible tests.
 vi.mock("@/lib/tiptap/nearest-word", () => ({
   getWordCenter: vi.fn((word: { editorIndex: number; from: number }) => {
-    // Return predictable positions based on from offset
     return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 }
   }),
   getWordRect: vi.fn((word: { editorIndex: number; from: number; to: number }) => {
@@ -18,8 +18,15 @@ vi.mock("@/lib/tiptap/nearest-word", () => ({
       height: 20,
     }
   }),
+  // Clamped variants return the same positions with clamped: false (no off-screen
+  // endpoints in the test environment, so arrows render at full opacity)
+  getClampedWordCenter: vi.fn((word: { editorIndex: number; from: number }) => {
+    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25, clamped: false }
+  }),
+  getClampedWordCenterRelativeToWrapper: vi.fn((word: { editorIndex: number; from: number }) => {
+    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25, clamped: false }
+  }),
   getWordCenterRelativeToWrapper: vi.fn((word: { editorIndex: number; from: number }) => {
-    // Same formula as getWordCenter for simplicity in tests
     return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 }
   }),
   getWordRectRelativeToWrapper: vi.fn((word: { editorIndex: number; from: number; to: number }) => {
@@ -65,7 +72,7 @@ function createDefaultProps(overrides: Record<string, unknown> = {}) {
     activeTool: "selection" as ActiveTool,
     sectionVisibility: [true, true, true],
     isDarkMode: false,
-    isLocked: false,
+    isLocked: true,
     ...overrides,
   }
 }
@@ -275,7 +282,9 @@ describe("ArrowOverlay", () => {
   })
 
   it("recalculates positions on scroll within container synchronously", async () => {
-    const { getWordCenter } = vi.mocked(
+    // updatePositions now uses getClampedWordCenter (not getWordCenter) for
+    // cross-editor arrows, so we check that the clamped variant gets called on scroll
+    const { getClampedWordCenter } = vi.mocked(
       await import("@/lib/tiptap/nearest-word")
     )
     const layer = createLayer({
@@ -290,7 +299,7 @@ describe("ArrowOverlay", () => {
     const props = createDefaultProps({ layers: [layer] })
     render(<ArrowOverlay {...props} />)
 
-    const callsBefore = getWordCenter.mock.calls.length
+    const callsBefore = getClampedWordCenter.mock.calls.length
 
     // flushSync makes the update synchronous — no RAF wait needed
     act(() => {
@@ -299,7 +308,7 @@ describe("ArrowOverlay", () => {
       )
     })
 
-    expect(getWordCenter.mock.calls.length).toBeGreaterThan(callsBefore)
+    expect(getClampedWordCenter.mock.calls.length).toBeGreaterThan(callsBefore)
   })
 
   it("does not render visual arrow-line for within-editor arrows (handled by plugin)", () => {

@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Gras",
+    "italic": "Italique",
+    "underline": "Souligné",
+    "strike": "Barré",
+    "code": "Code",
+    "superscript": "Exposant",
+    "subscript": "Indice"
+  },
+  "heading": {
+    "label": "Titre {{level}}"
+  },
+  "list": {
+    "bulletList": "Liste à puces",
+    "orderedList": "Liste numérotée",
+    "taskList": "Liste de tâches",
+    "label": "Liste"
+  },
+  "blockquote": {
+    "label": "Citation"
+  },
+  "codeBlock": {
+    "label": "Bloc de code"
+  },
+  "link": {
+    "label": "Lien",
+    "placeholder": "Entrez l'URL",
+    "openLink": "Ouvrir le lien",
+    "copyLink": "Copier le lien",
+    "removeLink": "Supprimer le lien"
+  },
+  "image": {
+    "label": "Ajouter une image"
+  },
+  "textAlign": {
+    "left": "Aligner à gauche",
+    "center": "Aligner au centre",
+    "right": "Aligner à droite",
+    "justify": "Justifier"
+  },
+  "history": {
+    "undo": "Annuler",
+    "redo": "Rétablir"
+  },
+  "colorHighlight": {
+    "label": "Surlignage couleur",
+    "highlightText": "Surligner le texte",
+    "highlightColors": "Couleurs de surlignage",
+    "removeHighlight": "Supprimer le surlignage",
+    "listOptions": "Options de liste",
+    "formatHeading": "Formater le texte en titre",
+    "colors": {
+      "default": "Fond par défaut",
+      "gray": "Fond gris",
+      "brown": "Fond marron",
+      "orange": "Fond orange",
+      "yellow": "Fond jaune",
+      "green": "Fond vert",
+      "blue": "Fond bleu",
+      "purple": "Fond violet",
+      "pink": "Fond rose",
+      "red": "Fond rouge"
+    },
+    "toggleHighlight": "Basculer le surlignage ({{color}})"
+  }
+}

@@ -1,3 +1,6 @@
+// Platform detection and keyboard shortcut formatting.
+// Converts modifier key names (ctrl, alt, shift) into platform-appropriate
+// symbols (e.g. "ctrl" -> Mac "^" or Windows "Ctrl").
 export const MAC_SYMBOLS: Record<string, string> = {
   mod: "⌘",
   command: "⌘",

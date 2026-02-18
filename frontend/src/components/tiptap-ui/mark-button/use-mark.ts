@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import type { Editor } from "@tiptap/react"
+import i18n from "@/i18n"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -205,7 +206,7 @@ export function useMark(config: UseMarkConfig) {
     isActive,
     handleMark,
     canToggle,
-    label: getFormattedMarkName(type),
+    label: i18n.t(`editor:mark.${type}`, { defaultValue: getFormattedMarkName(type) }),
     shortcutKeys: MARK_SHORTCUT_KEYS[type],
     Icon: markIcons[type],
   }

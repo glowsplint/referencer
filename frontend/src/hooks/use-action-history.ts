@@ -1,3 +1,6 @@
+// Implements a command-pattern undo/redo system with an action log.
+// Each recorded command stores undo/redo callbacks; the log tracks all actions
+// for display in the action console.
 import { useRef, useState, useCallback } from "react"
 import type { ActionEntry, ActionCommand, ActionDetail } from "@/types/editor"
 

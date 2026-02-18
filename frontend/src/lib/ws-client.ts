@@ -1,3 +1,6 @@
+// WebSocket client for real-time workspace collaboration.
+// Handles connection lifecycle, exponential-backoff reconnection,
+// typed message sending, and event-based message dispatching.
 import type { ClientMessage, ServerMessage } from "./ws-protocol"
 
 type MessageHandler = (message: ServerMessage) => void
@@ -86,7 +89,8 @@ export class WorkspaceWSClient {
       }
     }
 
-    this.ws.onclose = () => {
+    this.ws.onclose = (event) => {
+      console.warn(`[ws-client] Connection closed: code=${event.code} reason=${event.reason}`)
       this.emit("_disconnected", {
         type: "state",
         payload: {},
@@ -108,6 +112,7 @@ export class WorkspaceWSClient {
     }
   }
 
+  // Exponential backoff: doubles the delay on each retry up to MAX_RECONNECT_DELAY
   private scheduleReconnect(): void {
     if (!this.shouldReconnect) return
     this.reconnectTimer = setTimeout(() => {

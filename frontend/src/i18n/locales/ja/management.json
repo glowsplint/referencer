@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "レイヤー",
+    "addLayer": "レイヤーを追加",
+    "hideAll": "すべてのレイヤーを非表示",
+    "showAll": "すべてのレイヤーを表示",
+    "hideLayer": "レイヤーを非表示",
+    "showLayer": "レイヤーを表示",
+    "changeColour": "色を変更",
+    "removeAnnotation": "注釈を削除",
+    "removeArrow": "矢印を削除",
+    "removeUnderline": "下線を削除",
+    "allColorsInUse": "すべての色が使用中です。先にレイヤーを削除してください。"
+  },
+  "passages": {
+    "title": "パッセージ",
+    "addPassage": "パッセージを追加",
+    "hideAll": "すべてのパッセージを非表示",
+    "showAll": "すべてのパッセージを表示",
+    "hidePassage": "パッセージを非表示",
+    "showPassage": "パッセージを表示"
+  },
+  "tooltips": {
+    "toggleManagementPane": "管理パネルの切り替え",
+    "keyboardShortcuts": "キーボードショートカット",
+    "helpFaq": "ヘルプとFAQ",
+    "settings": "設定",
+    "toggleEditorLayout": "エディターレイアウトの切り替え",
+    "toggleEditorLock": "エディターロックの切り替え"
+  },
+  "annotations": {
+    "placeholder": "注釈を追加...",
+    "removeCustomColour": "カスタムカラーを削除",
+    "addCustomColour": "カスタムカラーを追加",
+    "addToCustomColours": "カスタムカラーに追加"
+  },
+  "actionConsole": {
+    "title": "アクションコンソール",
+    "close": "閉じる",
+    "empty": "まだアクションが記録されていません。"
+  }
+}

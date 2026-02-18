@@ -96,4 +96,37 @@ describe("KeyboardShortcutsDialog", () => {
     fireEvent.click(screen.getByTestId("shortcutsCloseButton"));
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
+
+  it("shows Tab and Shift+Tab for layer cycling", () => {
+    renderDialog();
+    expect(screen.getByText("Cycle to next layer")).toBeInTheDocument();
+    expect(screen.getByText("Cycle to previous layer")).toBeInTheDocument();
+  });
+
+  it("shows eraser tool shortcut", () => {
+    renderDialog();
+    expect(screen.getByText("Eraser tool")).toBeInTheDocument();
+  });
+
+  it("uses OS-appropriate modifier key label for formatting shortcuts", () => {
+    renderDialog();
+    const isMac = navigator.platform?.includes("Mac");
+    const expected = isMac ? "\u2318" : "Ctrl";
+
+    // Find the Bold shortcut row and check modifier key
+    const boldRow = screen.getByText("Bold").closest("div");
+    expect(boldRow).toBeInTheDocument();
+    const kbdElements = boldRow!.querySelectorAll("kbd");
+    const kbdTexts = Array.from(kbdElements).map((el) => el.textContent);
+    expect(kbdTexts).toContain(expected);
+  });
+
+  it("renders heading shortcuts with literal Ctrl regardless of platform", () => {
+    renderDialog();
+    // Heading shortcuts always use "Ctrl" (Tiptap uses Ctrl-Alt-NUMBER directly)
+    const heading1Row = screen.getByText("Heading 1").closest("div");
+    const kbdElements = heading1Row!.querySelectorAll("kbd");
+    const kbdTexts = Array.from(kbdElements).map((el) => el.textContent);
+    expect(kbdTexts).toContain("Ctrl");
+  });
 });

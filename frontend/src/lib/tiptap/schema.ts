@@ -1,3 +1,5 @@
+// Schema introspection helpers for checking whether specific marks,
+// nodes, or extensions are available in a Tiptap editor instance.
 import type { Editor } from "@tiptap/react"
 
 /**

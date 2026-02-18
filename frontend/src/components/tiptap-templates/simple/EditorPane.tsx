@@ -1,3 +1,7 @@
+// Individual editor pane component. Wraps a Tiptap editor instance with
+// all decoration hooks (highlights, underlines, word hover, selection,
+// arrows) and forwards mouse events for word-level click/drag selection
+// in locked mode. Each pane represents one text passage in the workspace.
 "use client"
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
@@ -12,6 +16,7 @@ import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight"
 import { useSelectionScroll } from "@/hooks/use-selection-decoration"
 import { useWordHover } from "@/hooks/use-word-hover"
 import { useEditorArrows } from "@/hooks/use-editor-arrows"
+import { usePositionMapping } from "@/hooks/use-position-mapping"
 import { SelectionRingOverlay } from "@/components/SelectionRingOverlay"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
 
@@ -46,6 +51,7 @@ export function EditorPane({
   removeArrow,
   sectionVisibility,
   selectedArrowId,
+  setLayers,
 }: {
   isLocked: boolean
   activeTool?: ActiveTool
@@ -65,6 +71,7 @@ export function EditorPane({
   removeArrow: (layerId: string, arrowId: string) => void
   sectionVisibility: boolean[]
   selectedArrowId: string | null
+  setLayers?: React.Dispatch<React.SetStateAction<Layer[]>>
 }) {
   const [extensions] = useState(() => createSimpleEditorExtensions())
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -116,6 +123,7 @@ export function EditorPane({
   useWordHover(editor, index, isLocked, isDarkMode, visibleSelection, activeLayerColor, layers)
   useEditorArrows(editor, layers, index, isLocked, isDarkMode, sectionVisibility, removeArrow, selectedArrowId)
   useSelectionScroll(editor, visibleSelection, index, wrapperRef)
+  usePositionMapping({ editor, editorIndex: index, layers, setLayers })
 
   const handleFocus = useCallback(() => {
     onFocus(index)
@@ -148,7 +156,7 @@ export function EditorPane({
   return (
     <div
       ref={wrapperRef}
-      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}${isLocked && activeTool === "arrow" ? " arrow-mode" : ""}`}
+      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}${isLocked && activeTool === "arrow" ? " arrow-mode" : ""}${isLocked && activeTool === "eraser" ? " eraser-mode" : ""}${isLocked && activeTool === "highlight" ? " highlight-mode" : ""}${isLocked && activeTool === "comments" ? " comment-mode" : ""}`}
       onFocusCapture={handleFocus}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}

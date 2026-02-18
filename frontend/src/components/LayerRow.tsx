@@ -1,4 +1,9 @@
+// Single row in the management pane's layer list. Shows the layer color swatch
+// (click to open ColorPicker), inline-editable name, visibility toggle, and an
+// expandable section listing all highlights, arrows, and underlines in that layer.
+// Supports drag-and-drop reordering (drag to trash bin to delete).
 import { Eye, EyeOff, ChevronRight, ChevronDown, MessageSquareText, Highlighter, ArrowRight, Underline, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { ColorPicker } from "./ColorPicker";
 import { useState } from "react";
 import { DRAG_TYPE_LAYER } from "@/constants/drag-types";
@@ -39,6 +44,9 @@ export function LayerRow({
   onAddCustomColor,
   onRemoveCustomColor,
 }: LayerRowProps) {
+  const { t } = useTranslation("management");
+  const { t: tc } = useTranslation("common");
+
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const { isEditing, inputProps, startEditing } = useInlineEdit({
@@ -83,7 +91,7 @@ export function LayerRow({
             e.stopPropagation();
             setColorPickerOpen(!colorPickerOpen);
           }}
-          title="Change colour"
+          title={t("layers.changeColour")}
           data-testid={`layerSwatch-${index}`}
         />
         {isEditing ? (
@@ -94,7 +102,7 @@ export function LayerRow({
           />
         ) : (
           <div
-            className="text-sm w-full bg-transparent border-0 rounded px-1 py-0 truncate cursor-default"
+            className="text-sm w-full bg-transparent border-0 rounded px-1 py-0 truncate cursor-text hover:bg-muted/50 hover:underline decoration-muted-foreground/30"
             onDoubleClick={(e) => {
               e.stopPropagation();
               startEditing();
@@ -109,7 +117,7 @@ export function LayerRow({
             className="text-[10px] font-medium text-muted-foreground shrink-0"
             data-testid={`layerActiveTag-${index}`}
           >
-            Active
+            {tc("active")}
           </span>
         )}
         {hasItems && !expanded && (
@@ -126,7 +134,7 @@ export function LayerRow({
             e.stopPropagation();
             onToggleVisibility();
           }}
-          title={layer.visible ? "Hide layer" : "Show layer"}
+          title={layer.visible ? t("layers.hideLayer") : t("layers.showLayer")}
           data-testid={`layerVisibility-${index}`}
         >
           {layer.visible ? <Eye size={14} /> : <EyeOff size={14} />}
@@ -147,7 +155,7 @@ export function LayerRow({
       {expanded && hasItems && (
         <div className="ml-[14px] pl-2 border-l border-border" data-testid={`layerItems-${index}`}>
           {layer.highlights.map((h) => {
-            const passageName = sectionNames[h.editorIndex] ?? `Passage ${h.editorIndex + 1}`;
+            const passageName = sectionNames[h.editorIndex] ?? tc("passage", { number: h.editorIndex + 1 });
             const label = h.annotation || h.text;
             const fullTitle = `${label} (${passageName})`;
             return (
@@ -161,7 +169,7 @@ export function LayerRow({
                 <button
                   className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
                   onClick={() => onRemoveHighlight(layer.id, h.id)}
-                  title="Remove annotation"
+                  title={t("layers.removeAnnotation")}
                   data-testid={`removeHighlight-${h.id}`}
                 >
                   <X size={12} />
@@ -170,8 +178,8 @@ export function LayerRow({
             );
           })}
           {layer.arrows.map((a) => {
-            const fromName = sectionNames[a.from.editorIndex] ?? `Passage ${a.from.editorIndex + 1}`;
-            const toName = sectionNames[a.to.editorIndex] ?? `Passage ${a.to.editorIndex + 1}`;
+            const fromName = sectionNames[a.from.editorIndex] ?? tc("passage", { number: a.from.editorIndex + 1 });
+            const toName = sectionNames[a.to.editorIndex] ?? tc("passage", { number: a.to.editorIndex + 1 });
             const fromWords = a.from.text.split(/\s+/).filter(Boolean);
             const toWords = a.to.text.split(/\s+/).filter(Boolean);
             const label = `${fromWords[0] ?? ""} (${fromWords.length}) \u2192 ${toWords[0] ?? ""} (${toWords.length})`;
@@ -187,7 +195,7 @@ export function LayerRow({
                 <button
                   className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
                   onClick={() => onRemoveArrow(layer.id, a.id)}
-                  title="Remove arrow"
+                  title={t("layers.removeArrow")}
                   data-testid={`removeArrow-${a.id}`}
                 >
                   <X size={12} />
@@ -196,7 +204,7 @@ export function LayerRow({
             );
           })}
           {layer.underlines.map((u) => {
-            const passageName = sectionNames[u.editorIndex] ?? `Passage ${u.editorIndex + 1}`;
+            const passageName = sectionNames[u.editorIndex] ?? tc("passage", { number: u.editorIndex + 1 });
             const fullTitle = `${u.text} (${passageName})`;
             return (
               <div
@@ -209,7 +217,7 @@ export function LayerRow({
                 <button
                   className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
                   onClick={() => onRemoveUnderline(layer.id, u.id)}
-                  title="Remove underline"
+                  title={t("layers.removeUnderline")}
                   data-testid={`removeUnderline-${u.id}`}
                 >
                   <X size={12} />

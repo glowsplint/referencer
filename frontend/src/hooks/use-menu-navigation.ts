@@ -1,3 +1,5 @@
+// Keyboard navigation for dropdown menus and command palettes.
+// Handles arrow keys, Tab, Home/End, Enter for selection, and Escape to close.
 import type { Editor } from "@tiptap/react"
 import { useEffect, useState } from "react"
 

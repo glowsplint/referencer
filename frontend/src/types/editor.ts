@@ -1,3 +1,8 @@
+// Core domain types for the annotation workspace: layers, highlights,
+// arrows, underlines, word selections, editor settings, and undo/redo
+// action commands. Also exports the Tailwind 300-shade color palette
+// used for layer colors.
+
 export interface EditorSettings {
   isDarkMode: boolean
   isLayersOn: boolean
@@ -9,7 +14,7 @@ export interface EditorSettings {
   overscrollEnabled: boolean
 }
 
-export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline"
+export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline" | "eraser"
 
 export type DrawingPhase = "idle" | "selecting-anchor" | "anchor-confirmed"
 

@@ -1,7 +1,14 @@
+// Manages the two-step arrow drawing workflow: first select an anchor word
+// and press Enter, then select a target word and press Enter to create the arrow.
+// Tracks drawing phase (idle -> selecting-anchor -> anchor-confirmed -> idle),
+// provides a live preview via drawingState, and auto-creates a layer if needed.
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
+import { Trans } from "react-i18next"
+import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { Arrow, ArrowEndpoint, ArrowStyle, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
-import type { StatusMessage } from "@/hooks/use-status-message"
+import { FLASH_DURATION_MS, type StatusMessage } from "@/hooks/use-status-message"
+import { useLatestRef } from "@/hooks/use-latest-ref"
 
 function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
   return {
@@ -29,8 +36,8 @@ interface UseDrawingModeOptions {
   addLayer: () => string
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
   showDrawingToasts: boolean
-  setActiveTool: (tool: ActiveTool) => void
-  setStatus: (msg: StatusMessage, duration?: number) => void
+  setStatus: (msg: StatusMessage) => void
+  flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
 }
 
@@ -43,41 +50,32 @@ export function useDrawingMode({
   addLayer,
   addArrow,
   showDrawingToasts,
-  setActiveTool,
   setStatus,
+  flashStatus,
   clearStatus,
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
   const anchorRef = useRef<ArrowEndpoint | null>(null)
   const phaseRef = useRef<DrawingPhase>("idle")
 
+  // activeLayerIdRef uses useEffect sync (not useLatestRef) because confirmSelection
+  // writes to it locally after auto-creating a layer — the local value must persist
+  // until the parent passes down a new activeLayerId prop
   const activeLayerIdRef = useRef(activeLayerId)
-  const addLayerRef = useRef(addLayer)
-  const addArrowRef = useRef(addArrow)
-  const activeArrowStyleRef = useRef(activeArrowStyle)
-  useEffect(() => {
-    activeLayerIdRef.current = activeLayerId
-    addLayerRef.current = addLayer
-    addArrowRef.current = addArrow
-    activeArrowStyleRef.current = activeArrowStyle
-  }, [activeLayerId, addLayer, addArrow, activeArrowStyle])
+  useEffect(() => { activeLayerIdRef.current = activeLayerId }, [activeLayerId])
+  const addLayerRef = useLatestRef(addLayer)
+  const addArrowRef = useLatestRef(addArrow)
+  const activeArrowStyleRef = useLatestRef(activeArrowStyle)
 
-  const showDrawingToastsRef = useRef(showDrawingToasts)
-  showDrawingToastsRef.current = showDrawingToasts
+  const showDrawingToastsRef = useLatestRef(showDrawingToasts)
 
-  const setActiveToolRef = useRef(setActiveTool)
-  setActiveToolRef.current = setActiveTool
+  const setStatusRef = useLatestRef(setStatus)
+  const flashStatusRef = useLatestRef(flashStatus)
+  const clearStatusRef = useLatestRef(clearStatus)
 
-  const setStatusRef = useRef(setStatus)
-  setStatusRef.current = setStatus
-  const clearStatusRef = useRef(clearStatus)
-  clearStatusRef.current = clearStatus
+  const activeToolRef = useLatestRef(activeTool)
 
-  const activeToolRef = useRef(activeTool)
-  activeToolRef.current = activeTool
-
-  const isLockedRef = useRef(isLocked)
-  isLockedRef.current = isLocked
+  const isLockedRef = useLatestRef(isLocked)
 
   const isArrowTool = activeTool === "arrow" && isLocked
 
@@ -91,7 +89,7 @@ export function useDrawingMode({
   useEffect(() => {
     if (isArrowTool) {
       phaseRef.current = "selecting-anchor"
-      showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>)
+      showInfo(<Trans ns="tools" i18nKey="arrow.selectAnchor" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
     } else {
       const wasActive = phaseRef.current !== "idle"
       phaseRef.current = "idle"
@@ -112,8 +110,7 @@ export function useDrawingMode({
     }
   }, [selection])
 
-  const selectionRef = useRef(selection)
-  selectionRef.current = selection
+  const selectionRef = useLatestRef(selection)
 
   // Called when Enter is pressed with a valid selection
   const confirmSelection = useCallback(() => {
@@ -134,7 +131,7 @@ export function useDrawingMode({
       anchorRef.current = endpoint
       phaseRef.current = "anchor-confirmed"
       setDrawingState({ anchor: endpoint, cursor: endpoint })
-      showInfo(<>Now select the target and press <ToastKbd>Enter</ToastKbd></>)
+      showInfo(<Trans ns="tools" i18nKey="arrow.selectTarget" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
       return
     }
 
@@ -146,11 +143,11 @@ export function useDrawingMode({
         anchorRef.current = null
         phaseRef.current = "selecting-anchor"
         setDrawingState(null)
-        showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>)
+        showInfo(<Trans ns="tools" i18nKey="arrow.selectAnchor" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
         return
       }
 
-      // Different selection — create arrow
+      // Different selection — create arrow, then reset to selecting-anchor
       if (activeLayerIdRef.current) {
         addArrowRef.current(activeLayerIdRef.current, {
           from: currentAnchor,
@@ -159,12 +156,12 @@ export function useDrawingMode({
         })
       }
       anchorRef.current = null
-      phaseRef.current = "idle"
+      phaseRef.current = "selecting-anchor"
       setDrawingState(null)
       if (showDrawingToastsRef.current) {
-        setStatusRef.current({ text: "Arrow created", type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:arrow.created"), type: "success" }, FLASH_DURATION_MS)
       }
-      setActiveToolRef.current("selection")
+      showInfo(<Trans ns="tools" i18nKey="arrow.selectAnchor" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
       return
     }
   }, [])

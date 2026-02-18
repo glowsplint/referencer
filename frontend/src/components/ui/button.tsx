@@ -1,3 +1,5 @@
+// Polymorphic button component with variant and size props powered by
+// class-variance-authority. Supports asChild rendering via Radix Slot.
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"

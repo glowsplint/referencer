@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "选择工具",
+    "defaultStatus": "点击一个词或使用方向键进行导航。"
+  },
+  "arrow": {
+    "label": "箭头工具",
+    "selectAnchor": "选择锚点词语，然后按 <kbd>Enter</kbd>。",
+    "selectTarget": "现在选择目标并按 <kbd>Enter</kbd>。",
+    "created": "箭头已创建。"
+  },
+  "highlight": {
+    "label": "高亮工具",
+    "selectWords": "选择要高亮的词语，然后按 <kbd>Enter</kbd>。",
+    "added": "高亮已添加。",
+    "removed": "高亮已移除。"
+  },
+  "comments": {
+    "label": "评论工具",
+    "selectWords": "选择要评论的词语，然后按 <kbd>Enter</kbd>。",
+    "added": "评论已添加。"
+  },
+  "underline": {
+    "label": "下划线工具",
+    "selectWords": "选择要添加下划线的词语，然后按 <kbd>Enter</kbd>。",
+    "added": "下划线已添加。"
+  },
+  "eraser": {
+    "label": "橡皮擦工具",
+    "status": "点击并拖动以擦除注释。",
+    "erased": "已擦除注释。"
+  },
+  "lockHint": "内容编辑完成后，按 <kbd>Esc</kbd> <kbd>K</kbd> 锁定编辑器。"
+}

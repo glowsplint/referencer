@@ -1,0 +1,40 @@
+{
+  "mark": {
+    "bold": "粗体",
+    "italic": "斜体",
+    "underline": "下划线",
+    "strike": "删除线",
+    "code": "代码",
+    "superscript": "上标",
+    "subscript": "下标"
+  },
+  "heading": { "label": "标题 {{level}}" },
+  "list": { "bulletList": "无序列表", "orderedList": "有序列表", "taskList": "任务列表", "label": "列表" },
+  "blockquote": { "label": "引用块" },
+  "codeBlock": { "label": "代码块" },
+  "link": { "label": "链接", "placeholder": "输入网址", "openLink": "打开链接", "copyLink": "复制链接", "removeLink": "移除链接" },
+  "image": { "label": "添加图片" },
+  "textAlign": { "left": "左对齐", "center": "居中对齐", "right": "右对齐", "justify": "两端对齐" },
+  "history": { "undo": "撤销", "redo": "重做" },
+  "colorHighlight": {
+    "label": "颜色高亮",
+    "highlightText": "高亮文本",
+    "highlightColors": "高亮颜色",
+    "removeHighlight": "移除高亮",
+    "listOptions": "列表选项",
+    "formatHeading": "将文本格式化为标题",
+    "colors": {
+      "default": "默认背景",
+      "gray": "灰色背景",
+      "brown": "棕色背景",
+      "orange": "橙色背景",
+      "yellow": "黄色背景",
+      "green": "绿色背景",
+      "blue": "蓝色背景",
+      "purple": "紫色背景",
+      "pink": "粉色背景",
+      "red": "红色背景"
+    },
+    "toggleHighlight": "切换高亮（{{color}}）"
+  }
+}

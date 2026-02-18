@@ -88,7 +88,7 @@ test.describe("annotation visibility with layers", () => {
     await addAnnotation(page, "L1 annotation");
 
     // Switch to Layer 2
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await expect(page.getByTestId("layerActiveTag-1")).toBeVisible();
 
     // Create annotation on Layer 2 at different position
@@ -330,7 +330,7 @@ test.describe("combined layer + passage annotation visibility", () => {
     await addAnnotation(page, "L1P2");
 
     // Switch to Layer 2
-    await page.keyboard.press("l");
+    await page.keyboard.press("Tab");
     await expect(page.getByTestId("layerActiveTag-1")).toBeVisible();
 
     // Layer 2, Passage 1

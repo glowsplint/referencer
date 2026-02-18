@@ -1,3 +1,5 @@
+// Tracks an element's bounding rectangle, updating on scroll, resize, and
+// ResizeObserver changes. Accepts an Element, ref, or CSS selector string.
 import { useCallback, useEffect, useState } from "react"
 import { useThrottledCallback } from "@/hooks/use-throttled-callback"
 

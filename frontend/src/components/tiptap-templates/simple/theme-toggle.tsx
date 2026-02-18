@@ -1,3 +1,7 @@
+// Standalone dark/light mode toggle button (from tiptap template).
+// Detects the system preference on mount and toggles the "dark" class
+// on the document root. Not currently used in the main app (which manages
+// theme via workspace settings), but available for standalone editor use.
 import { Button } from "@/components/tiptap-ui-primitive/button"
 
 // --- Icons ---

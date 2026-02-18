@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Capas",
+    "addLayer": "Añadir capa",
+    "hideAll": "Ocultar todas las capas",
+    "showAll": "Mostrar todas las capas",
+    "hideLayer": "Ocultar capa",
+    "showLayer": "Mostrar capa",
+    "changeColour": "Cambiar color",
+    "removeAnnotation": "Eliminar anotación",
+    "removeArrow": "Eliminar flecha",
+    "removeUnderline": "Eliminar subrayado",
+    "allColorsInUse": "Todos los colores están en uso — elimina una capa primero."
+  },
+  "passages": {
+    "title": "Pasajes",
+    "addPassage": "Añadir pasaje",
+    "hideAll": "Ocultar todos los pasajes",
+    "showAll": "Mostrar todos los pasajes",
+    "hidePassage": "Ocultar pasaje",
+    "showPassage": "Mostrar pasaje"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Alternar panel de gestión",
+    "keyboardShortcuts": "Atajos de teclado",
+    "helpFaq": "Ayuda y preguntas frecuentes",
+    "settings": "Configuración",
+    "toggleEditorLayout": "Alternar diseño del editor",
+    "toggleEditorLock": "Alternar bloqueo del editor"
+  },
+  "annotations": {
+    "placeholder": "Añadir anotación...",
+    "removeCustomColour": "Eliminar color personalizado",
+    "addCustomColour": "Añadir color personalizado",
+    "addToCustomColours": "Añadir a colores personalizados"
+  },
+  "actionConsole": {
+    "title": "Consola de acciones",
+    "close": "cerrar",
+    "empty": "Aún no se han registrado acciones."
+  }
+}

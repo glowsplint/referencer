@@ -1,3 +1,7 @@
+// Modal dialog listing all keyboard shortcuts in a two-column layout.
+// Covers workspace tools, text formatting, headings, lists, and alignment.
+// Auto-detects macOS to show the correct modifier key symbol.
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -19,80 +23,8 @@ interface ShortcutSection {
   shortcuts: ShortcutEntry[];
 }
 
-const CMD = "\u2318";
-
-const LEFT_SECTIONS: ShortcutSection[] = [
-  {
-    title: "Workspace",
-    shortcuts: [
-      { keys: ["L"], description: "Cycle to next layer" },
-      { keys: ["S"], description: "Selection tool" },
-      { keys: ["A"], description: "Arrow tool" },
-      { keys: ["C"], description: "Comments tool" },
-      { keys: ["H"], description: "Highlight tool" },
-      { keys: ["U"], description: "Underline tool" },
-      { keys: ["Arrow keys"], description: "Navigate between words" },
-      { keys: ["`"], description: "Toggle action console" },
-      { keys: ["D"], description: "Toggle dark mode" },
-      { keys: ["R"], description: "Toggle editor layout" },
-      { keys: ["K"], description: "Toggle editor lock" },
-      { keys: ["M"], description: "Toggle management pane" },
-    ],
-  },
-  {
-    title: "Text Formatting",
-    shortcuts: [
-      { keys: [CMD, "B"], description: "Bold" },
-      { keys: [CMD, "I"], description: "Italic" },
-      { keys: [CMD, "U"], description: "Underline" },
-      { keys: [CMD, "Shift", "S"], description: "Strikethrough" },
-      { keys: [CMD, "E"], description: "Inline code" },
-      { keys: [CMD, "."], description: "Superscript" },
-      { keys: [CMD, ","], description: "Subscript" },
-      { keys: [CMD, "Shift", "H"], description: "Color highlight" },
-    ],
-  },
-  {
-    title: "General",
-    shortcuts: [
-      { keys: [CMD, "Z"], description: "Undo (workspace when locked)" },
-      { keys: [CMD, "Shift", "Z"], description: "Redo (workspace when locked)" },
-    ],
-  },
-];
-
-const RIGHT_SECTIONS: ShortcutSection[] = [
-  {
-    title: "Headings",
-    shortcuts: [
-      { keys: ["Ctrl", "Alt", "1"], description: "Heading 1" },
-      { keys: ["Ctrl", "Alt", "2"], description: "Heading 2" },
-      { keys: ["Ctrl", "Alt", "3"], description: "Heading 3" },
-      { keys: ["Ctrl", "Alt", "4"], description: "Heading 4" },
-      { keys: ["Ctrl", "Alt", "5"], description: "Heading 5" },
-      { keys: ["Ctrl", "Alt", "6"], description: "Heading 6" },
-    ],
-  },
-  {
-    title: "Lists & Blocks",
-    shortcuts: [
-      { keys: [CMD, "Shift", "8"], description: "Bullet list" },
-      { keys: [CMD, "Shift", "7"], description: "Ordered list" },
-      { keys: [CMD, "Shift", "9"], description: "Task list" },
-      { keys: [CMD, "Shift", "B"], description: "Blockquote" },
-      { keys: [CMD, "Alt", "C"], description: "Code block" },
-    ],
-  },
-  {
-    title: "Text Alignment",
-    shortcuts: [
-      { keys: [CMD, "Shift", "L"], description: "Align left" },
-      { keys: [CMD, "Shift", "E"], description: "Align center" },
-      { keys: [CMD, "Shift", "R"], description: "Align right" },
-      { keys: [CMD, "Shift", "J"], description: "Align justify" },
-    ],
-  },
-];
+const isMac = typeof navigator !== "undefined" && navigator.platform?.includes("Mac");
+const CMD = isMac ? "\u2318" : "Ctrl";
 
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
@@ -150,6 +82,84 @@ export function KeyboardShortcutsDialog({
   open,
   onOpenChange,
 }: KeyboardShortcutsDialogProps) {
+  const { t } = useTranslation("dialogs");
+  const { t: tc } = useTranslation("common");
+
+  const LEFT_SECTIONS: ShortcutSection[] = [
+    {
+      title: t("shortcuts.workspace"),
+      shortcuts: [
+        { keys: ["Tab"], description: t("shortcuts.cycleNextLayer") },
+        { keys: ["Shift", "Tab"], description: t("shortcuts.cyclePrevLayer") },
+        { keys: ["S"], description: t("shortcuts.selectionTool") },
+        { keys: ["A"], description: t("shortcuts.arrowTool") },
+        { keys: ["C"], description: t("shortcuts.commentsTool") },
+        { keys: ["H"], description: t("shortcuts.highlightTool") },
+        { keys: ["U"], description: t("shortcuts.underlineTool") },
+        { keys: ["E"], description: t("shortcuts.eraserTool") },
+        { keys: ["Arrow keys"], description: t("shortcuts.navigateWords") },
+        { keys: ["`"], description: t("shortcuts.toggleConsole") },
+        { keys: ["D"], description: t("shortcuts.toggleDarkMode") },
+        { keys: ["R"], description: t("shortcuts.toggleLayout") },
+        { keys: ["K"], description: t("shortcuts.toggleLock") },
+        { keys: ["M"], description: t("shortcuts.toggleManagement") },
+      ],
+    },
+    {
+      title: t("shortcuts.textFormatting"),
+      shortcuts: [
+        { keys: [CMD, "B"], description: t("shortcuts.bold") },
+        { keys: [CMD, "I"], description: t("shortcuts.italic") },
+        { keys: [CMD, "U"], description: t("shortcuts.underline") },
+        { keys: [CMD, "Shift", "S"], description: t("shortcuts.strikethrough") },
+        { keys: [CMD, "E"], description: t("shortcuts.inlineCode") },
+        { keys: [CMD, "."], description: t("shortcuts.superscript") },
+        { keys: [CMD, ","], description: t("shortcuts.subscript") },
+        { keys: [CMD, "Shift", "H"], description: t("shortcuts.colorHighlight") },
+      ],
+    },
+    {
+      title: t("shortcuts.general"),
+      shortcuts: [
+        { keys: [CMD, "Z"], description: t("shortcuts.undo") },
+        { keys: [CMD, "Shift", "Z"], description: t("shortcuts.redo") },
+      ],
+    },
+  ];
+
+  const RIGHT_SECTIONS: ShortcutSection[] = [
+    {
+      title: t("shortcuts.headings"),
+      shortcuts: [
+        { keys: ["Ctrl", "Alt", "1"], description: t("shortcuts.heading", { level: 1 }) },
+        { keys: ["Ctrl", "Alt", "2"], description: t("shortcuts.heading", { level: 2 }) },
+        { keys: ["Ctrl", "Alt", "3"], description: t("shortcuts.heading", { level: 3 }) },
+        { keys: ["Ctrl", "Alt", "4"], description: t("shortcuts.heading", { level: 4 }) },
+        { keys: ["Ctrl", "Alt", "5"], description: t("shortcuts.heading", { level: 5 }) },
+        { keys: ["Ctrl", "Alt", "6"], description: t("shortcuts.heading", { level: 6 }) },
+      ],
+    },
+    {
+      title: t("shortcuts.listsAndBlocks"),
+      shortcuts: [
+        { keys: [CMD, "Shift", "8"], description: t("shortcuts.bulletList") },
+        { keys: [CMD, "Shift", "7"], description: t("shortcuts.orderedList") },
+        { keys: [CMD, "Shift", "9"], description: t("shortcuts.taskList") },
+        { keys: [CMD, "Shift", "B"], description: t("shortcuts.blockquote") },
+        { keys: [CMD, "Alt", "C"], description: t("shortcuts.codeBlock") },
+      ],
+    },
+    {
+      title: t("shortcuts.textAlignment"),
+      shortcuts: [
+        { keys: [CMD, "Shift", "L"], description: t("shortcuts.alignLeft") },
+        { keys: [CMD, "Shift", "E"], description: t("shortcuts.alignCenter") },
+        { keys: [CMD, "Shift", "R"], description: t("shortcuts.alignRight") },
+        { keys: [CMD, "Shift", "J"], description: t("shortcuts.alignJustify") },
+      ],
+    },
+  ];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -158,9 +168,9 @@ export function KeyboardShortcutsDialog({
         data-testid="keyboardShortcutsDialog"
       >
         <DialogHeader className="p-6 pb-4">
-          <DialogTitle>Keyboard Shortcuts</DialogTitle>
+          <DialogTitle>{t("shortcuts.title")}</DialogTitle>
           <DialogDescription>
-            Available keyboard shortcuts for the workspace.
+            {t("shortcuts.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[60vh]">
@@ -177,7 +187,7 @@ export function KeyboardShortcutsDialog({
         <DialogFooter className="sticky bottom-0 border-t bg-background p-4">
           <DialogClose asChild>
             <Button variant="outline" data-testid="shortcutsCloseButton">
-              Close
+              {tc("close")}
             </Button>
           </DialogClose>
         </DialogFooter>

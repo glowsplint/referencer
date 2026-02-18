@@ -1,6 +1,10 @@
+// Renders a glowing blue outline around the currently selected word when the
+// editor is locked. Computes a bounding box from DOM range rects relative to the
+// editor wrapper, and recomputes on resize via ResizeObserver.
 import { useLayoutEffect, useState } from "react"
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"
+import { DEFAULT_LAYER_COLOR, DEFAULT_LAYER_COLOR_DARK } from "@/constants/colors"
 
 interface OverlayRect {
   top: number
@@ -111,8 +115,8 @@ export function SelectionRingOverlay({
 
   if (rects.length === 0) return null
 
-  const ringColor = isDarkMode ? "#60a5fa" : "#3b82f6"
-  const glowColor = isDarkMode ? "#60a5fa30" : "#3b82f630"
+  const ringColor = isDarkMode ? DEFAULT_LAYER_COLOR_DARK : DEFAULT_LAYER_COLOR
+  const glowColor = isDarkMode ? `${DEFAULT_LAYER_COLOR_DARK}30` : `${DEFAULT_LAYER_COLOR}30`
 
   return (
     <>

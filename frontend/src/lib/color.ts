@@ -1,9 +1,18 @@
-function hexToRgb(hex: string): { r: number; g: number; b: number } {
+// Color utilities for alpha compositing and theme-aware blending.
+// Used to render overlapping annotation highlights as opaque RGB colors
+// that look correct on both light and dark backgrounds.
+
+export function hexToRgb(hex: string): { r: number; g: number; b: number } {
   return {
     r: parseInt(hex.slice(1, 3), 16),
     g: parseInt(hex.slice(3, 5), 16),
     b: parseInt(hex.slice(5, 7), 16),
   }
+}
+
+export function rgbToHex(r: number, g: number, b: number): string {
+  const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)))
+  return `#${[clamp(r), clamp(g), clamp(b)].map((v) => v.toString(16).padStart(2, "0")).join("")}`
 }
 
 export function parseHexToRgba(hex: string, alpha: number): string {

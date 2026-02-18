@@ -1,3 +1,7 @@
+// Collects all selectable words from a ProseMirror editor document.
+// Traverses textblocks using a regex to extract words containing at least
+// one alphanumeric character. Also handles image nodes (using alt text).
+// The collected words are used for word-level navigation and selection.
 import type { Editor } from "@tiptap/react"
 
 export interface CollectedWord {

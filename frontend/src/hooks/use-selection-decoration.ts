@@ -1,3 +1,6 @@
+// Auto-scrolls the editor wrapper to keep the current word selection visible.
+// Uses DOM Range measurements to find the selection's position, then adjusts
+// scroll offsets with padding to prevent the selection from being clipped.
 import { useLayoutEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { WordSelection } from "@/types/editor"

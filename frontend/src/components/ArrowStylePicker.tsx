@@ -1,3 +1,5 @@
+// Dropdown picker for arrow line styles (solid, dashed, dotted, double).
+// Shown as a popover next to the arrow tool button in the ButtonPane.
 import type { ArrowStyle } from "@/types/editor";
 import { ARROW_STYLES } from "@/lib/arrow-styles";
 

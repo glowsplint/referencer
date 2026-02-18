@@ -1,3 +1,5 @@
+// Icon button that toggles between two icons based on a boolean state.
+// Used for toolbar toggles like dark mode, layout direction, and lock.
 import { forwardRef, type ReactNode } from "react";
 import type { ButtonProps } from "../../types";
 

@@ -1,3 +1,6 @@
+// Central workspace hook that composes settings, layers, editors, action history,
+// and WebSocket sync into a single API. Wraps every mutation with read-only guards,
+// WebSocket broadcasting, and undo/redo history recording.
 import { useState, useCallback, useRef } from "react"
 import { useSettings } from "./use-settings"
 import { useLayers } from "./use-layers"
@@ -26,7 +29,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // Debounce timer ref for editor content updates
   const contentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Helper to wrap callbacks with a readOnly guard, returning a fallback value when read-only
+  // Wraps mutation callbacks to no-op when in read-only mode (shared workspaces)
   function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {
     return ((...args: any[]) => readOnly ? fallback : fn(...args)) as T
   }
@@ -233,6 +236,8 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, trackedEditorsHook, guardedSendAction]
   )
 
+  // Reorder editors according to a permutation array where permutation[newIndex] = oldIndex.
+  // All annotation editorIndex values must be remapped to match the new ordering.
   const reorderEditors = useCallback(
     guarded((permutation: number[]) => {
       // Build index map: oldIndex → newIndex
@@ -325,11 +330,13 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, rawEditorsHook, guardedSendAction, history]
   )
 
+  // Debounce content updates to avoid flooding the WebSocket on every keystroke
   const updateEditorContent = useCallback(
     guarded((editorIndex: number, contentJson: unknown) => {
       if (contentTimerRef.current) {
         clearTimeout(contentTimerRef.current)
       }
+      // 2s debounce balances responsiveness with minimizing WebSocket traffic
       contentTimerRef.current = setTimeout(() => {
         guardedSendAction("updateEditorContent", { editorIndex, contentJson: contentJson as Record<string, unknown> })
         contentTimerRef.current = null

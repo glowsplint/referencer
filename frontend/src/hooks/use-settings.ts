@@ -1,3 +1,6 @@
+// Manages all UI settings (dark mode, layout, lock state, toast preferences)
+// persisted to localStorage. Also tracks transient annotation state like
+// the active tool, arrow style picker, and selected arrow.
 import { useEffect, useState, useCallback } from "react"
 import type { EditorSettings, AnnotationSettings, ActiveTool, ArrowStyle } from "@/types/editor"
 

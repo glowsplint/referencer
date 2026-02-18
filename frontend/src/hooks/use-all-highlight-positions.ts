@@ -1,3 +1,6 @@
+// Computes viewport-relative positions for all comment highlights across editors.
+// Used to position the comment sidebar markers. Recomputes on scroll, resize,
+// and layer changes using DOM Range measurements for accuracy.
 import { useLayoutEffect, useState } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer } from "@/types/editor"

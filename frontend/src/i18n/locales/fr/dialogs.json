@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "title": "Paramètres",
+    "description": "Personnalisez les préférences de votre espace de travail.",
+    "darkMode": {
+      "label": "Mode sombre",
+      "description": "Basculer entre les thèmes clair et sombre"
+    },
+    "drawingNotifications": {
+      "label": "Notifications de dessin",
+      "description": "Afficher les notifications lors de l'utilisation de l'outil flèche"
+    },
+    "commentsNotifications": {
+      "label": "Notifications de commentaires",
+      "description": "Afficher les notifications lors de l'utilisation de l'outil de commentaires"
+    },
+    "highlightNotifications": {
+      "label": "Notifications de surlignage",
+      "description": "Afficher les notifications lors de l'utilisation de l'outil de surlignage"
+    },
+    "overscroll": {
+      "label": "Défilement élastique",
+      "description": "Permettre le rebond élastique au-delà des bords"
+    },
+    "language": {
+      "label": "Langue",
+      "description": "Choisissez votre langue préférée"
+    }
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "description": "Découvrez Referencer et comment l'utiliser.",
+    "items": {
+      "whatIsApp": {
+        "question": "Qu'est-ce que cette application ?",
+        "answer": "Referencer est un outil collaboratif pour l'étude inductive de la Bible. Il offre aux groupes d'étude un espace de travail partagé où ils peuvent lire, annoter et discuter des Écritures ensemble en temps réel."
+      },
+      "inductiveStudy": {
+        "question": "Qu'est-ce que l'étude inductive de la Bible ?",
+        "answer": "L'étude inductive de la Bible est une méthode de lecture des Écritures qui va de l'observation (que dit le texte ?) à l'interprétation (que signifie-t-il ?) puis à l'application (comment s'applique-t-il ?). Au lieu de commencer par des commentaires extérieurs, on laisse le texte parler de lui-même en examinant soigneusement ses mots, sa structure et son contexte."
+      },
+      "collaboration": {
+        "question": "Comment fonctionne la collaboration ?",
+        "answer": "Chaque espace de travail peut être partagé avec d'autres via un lien. Tous les participants voient le même texte et peuvent ajouter leurs propres annotations. Les modifications sont synchronisées en temps réel pour que tout le monde reste sur la même page."
+      },
+      "layers": {
+        "question": "Que sont les calques ?",
+        "answer": "Les calques permettent d'organiser les annotations en groupes séparés — par exemple, un calque pour les observations et un autre pour les interprétations. Vous pouvez passer d'un calque à l'autre avec la touche L pour vous concentrer sur un ensemble d'annotations à la fois."
+      },
+      "annotations": {
+        "question": "Comment fonctionnent les annotations ?",
+        "answer": "Verrouillez l'éditeur avec le bouton de verrouillage (ou appuyez sur K), puis sélectionnez du texte pour le surligner. Vous pouvez choisir des couleurs, ajouter des commentaires et dessiner des flèches entre les annotations pour montrer les connexions. Cliquez sur une annotation existante pour la supprimer."
+      },
+      "arrows": {
+        "question": "À quoi servent les flèches ?",
+        "answer": "Les flèches relient deux annotations pour montrer une relation entre des passages — par exemple, lier un mot répété à sa première occurrence, ou connecter une prophétie à son accomplissement. Sélectionnez l'outil flèche (ou appuyez sur A), puis cliquez sur deux annotations pour tracer un connecteur."
+      },
+      "sharing": {
+        "question": "Comment partager un espace de travail ?",
+        "answer": "Ouvrez le panneau de gestion (appuyez sur M ou cliquez sur l'icône du menu) et utilisez les options de partage pour générer un lien. Toute personne disposant du lien peut rejoindre l'espace de travail et collaborer."
+      },
+      "mobile": {
+        "question": "Puis-je l'utiliser sur mobile ?",
+        "answer": "L'application fonctionne dans les navigateurs mobiles, mais les outils complets d'annotation et de flèches sont mieux adaptés à un appareil avec clavier et souris."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Raccourcis Clavier",
+    "description": "Raccourcis clavier disponibles pour l'espace de travail.",
+    "workspace": "Espace de travail",
+    "cycleNextLayer": "Passer au calque suivant",
+    "cyclePrevLayer": "Passer au calque précédent",
+    "selectionTool": "Outil de sélection",
+    "arrowTool": "Outil flèche",
+    "commentsTool": "Outil de commentaires",
+    "highlightTool": "Outil de surlignage",
+    "underlineTool": "Outil de soulignement",
+    "eraserTool": "Outil gomme",
+    "navigateWords": "Naviguer entre les mots",
+    "toggleConsole": "Basculer la console d'actions",
+    "toggleDarkMode": "Basculer le mode sombre",
+    "toggleLayout": "Basculer la disposition de l'éditeur",
+    "toggleLock": "Basculer le verrouillage de l'éditeur",
+    "toggleManagement": "Basculer le panneau de gestion",
+    "textFormatting": "Mise en forme du texte",
+    "bold": "Gras",
+    "italic": "Italique",
+    "underline": "Souligné",
+    "strikethrough": "Barré",
+    "inlineCode": "Code en ligne",
+    "superscript": "Exposant",
+    "subscript": "Indice",
+    "colorHighlight": "Surlignage couleur",
+    "general": "Général",
+    "undo": "Annuler (espace de travail quand verrouillé)",
+    "redo": "Rétablir (espace de travail quand verrouillé)",
+    "headings": "Titres",
+    "heading": "Titre {{level}}",
+    "listsAndBlocks": "Listes et blocs",
+    "bulletList": "Liste à puces",
+    "orderedList": "Liste numérotée",
+    "taskList": "Liste de tâches",
+    "blockquote": "Citation",
+    "codeBlock": "Bloc de code",
+    "textAlignment": "Alignement du texte",
+    "alignLeft": "Aligner à gauche",
+    "alignCenter": "Aligner au centre",
+    "alignRight": "Aligner à droite",
+    "alignJustify": "Justifier"
+  },
+  "share": {
+    "title": "Partager l'espace de travail",
+    "description": "Copiez un lien pour partager cet espace de travail.",
+    "readonlyLink": "Lien en lecture seule",
+    "editLink": "Lien d'édition",
+    "linkCopied": "Lien copié dans le presse-papiers.",
+    "copyFailed": "Échec de la copie du lien."
+  },
+  "mobile": {
+    "title": "Meilleur sur ordinateur",
+    "description": "Referencer est conçu pour une utilisation sur ordinateur avec clavier et souris. Vous pouvez lire le contenu ici, mais les outils d'édition et d'annotation ne sont pas disponibles sur mobile.",
+    "continueReading": "Continuer la lecture"
+  }
+}

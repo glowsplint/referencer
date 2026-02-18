@@ -1,3 +1,6 @@
+// Selection inspection utilities for ProseMirror/Tiptap editors.
+// Provides helpers to check node types within selections, select block content,
+// and collect selected nodes of specific types (including table cells).
 import type { Node as PMNode } from "@tiptap/pm/model"
 import {
   AllSelection,

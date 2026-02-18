@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Selection tool",
+    "defaultStatus": "Click a word or use arrow keys to navigate."
+  },
+  "arrow": {
+    "label": "Arrow tool",
+    "selectAnchor": "Select words for the anchor, then press <kbd>Enter</kbd>.",
+    "selectTarget": "Now select the target and press <kbd>Enter</kbd>.",
+    "created": "Arrow created."
+  },
+  "highlight": {
+    "label": "Highlight tool",
+    "selectWords": "Select words to highlight, then press <kbd>Enter</kbd>.",
+    "added": "Highlight added.",
+    "removed": "Highlight removed."
+  },
+  "comments": {
+    "label": "Comments tool",
+    "selectWords": "Select words to comment on, then press <kbd>Enter</kbd>.",
+    "added": "Comment added."
+  },
+  "underline": {
+    "label": "Underline tool",
+    "selectWords": "Select words to underline, then press <kbd>Enter</kbd>.",
+    "added": "Underline added."
+  },
+  "eraser": {
+    "label": "Eraser tool",
+    "status": "Click and drag to erase annotations.",
+    "erased": "Erased annotation."
+  },
+  "lockHint": "Press <kbd>Esc</kbd> <kbd>K</kbd> to lock the editor once you've finalised the contents."
+}

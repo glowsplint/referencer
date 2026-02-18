@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react"
 import { type Editor } from "@tiptap/react"
+import { useTranslation } from "react-i18next"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -56,6 +57,7 @@ export function ListDropdownMenu({
   portal = false,
   ...props
 }: ListDropdownMenuProps) {
+  const { t } = useTranslation("editor")
   const { editor } = useTiptapEditor(providedEditor)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -89,7 +91,7 @@ export function ListDropdownMenu({
           tabIndex={-1}
           disabled={!canToggle}
           data-disabled={!canToggle}
-          aria-label="List options"
+          aria-label={t("colorHighlight.listOptions")}
           tooltip="List"
           {...props}
         >

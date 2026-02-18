@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "title": "Configurações",
+    "description": "Personalize as preferências do seu espaço de trabalho.",
+    "darkMode": {
+      "label": "Modo escuro",
+      "description": "Alternar entre temas claro e escuro"
+    },
+    "drawingNotifications": {
+      "label": "Notificações de desenho",
+      "description": "Mostrar avisos ao usar a ferramenta de seta"
+    },
+    "commentsNotifications": {
+      "label": "Notificações de comentários",
+      "description": "Mostrar avisos ao usar a ferramenta de comentários"
+    },
+    "highlightNotifications": {
+      "label": "Notificações de destaque",
+      "description": "Mostrar avisos ao usar a ferramenta de destaque"
+    },
+    "overscroll": {
+      "label": "Rolagem elástica",
+      "description": "Permitir efeito elástico ao rolar além das bordas"
+    },
+    "language": {
+      "label": "Idioma",
+      "description": "Escolha seu idioma preferido"
+    }
+  },
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "description": "Saiba mais sobre o Referencer e como usá-lo.",
+    "items": {
+      "whatIsApp": {
+        "question": "O que é este aplicativo?",
+        "answer": "O Referencer é uma ferramenta colaborativa para estudo indutivo da Bíblia. Ele oferece aos grupos de estudo um espaço de trabalho compartilhado onde podem ler, anotar e discutir as Escrituras juntos em tempo real."
+      },
+      "inductiveStudy": {
+        "question": "O que é estudo indutivo da Bíblia?",
+        "answer": "O estudo indutivo da Bíblia é um método de leitura das Escrituras que vai da observação (o que o texto diz?) à interpretação (o que significa?) e à aplicação (como se aplica?). Em vez de começar com comentários externos, você deixa o texto falar por si mesmo, examinando cuidadosamente suas palavras, estrutura e contexto."
+      },
+      "collaboration": {
+        "question": "Como funciona a colaboração?",
+        "answer": "Cada espaço de trabalho pode ser compartilhado com outros por meio de um link. Todos os participantes veem o mesmo texto e podem adicionar suas próprias anotações. As alterações são sincronizadas em tempo real para que todos fiquem na mesma página."
+      },
+      "layers": {
+        "question": "O que são camadas?",
+        "answer": "As camadas permitem organizar anotações em grupos separados — por exemplo, uma camada para observações e outra para interpretações. Você pode alternar entre camadas com a tecla L para focar em um conjunto de anotações por vez."
+      },
+      "annotations": {
+        "question": "Como funcionam as anotações?",
+        "answer": "Bloqueie o editor com o botão de bloqueio (ou pressione K) e selecione texto para destacá-lo. Você pode escolher cores, adicionar comentários e desenhar setas entre anotações para mostrar conexões. Clique em uma anotação existente para removê-la."
+      },
+      "arrows": {
+        "question": "Para que servem as setas?",
+        "answer": "As setas conectam duas anotações para mostrar uma relação entre passagens — por exemplo, vincular uma palavra repetida à sua primeira ocorrência ou conectar uma profecia ao seu cumprimento. Selecione a ferramenta de seta (ou pressione A) e clique em duas anotações para desenhar um conector."
+      },
+      "sharing": {
+        "question": "Como compartilho um espaço de trabalho?",
+        "answer": "Abra o painel de gerenciamento (pressione M ou clique no ícone do menu) e use as opções de compartilhamento para gerar um link. Qualquer pessoa com o link pode entrar no espaço de trabalho e colaborar."
+      },
+      "mobile": {
+        "question": "Posso usar no celular?",
+        "answer": "O aplicativo funciona em navegadores móveis, mas as ferramentas completas de anotação e setas são melhor aproveitadas em um dispositivo com teclado e mouse."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Atalhos de Teclado",
+    "description": "Atalhos de teclado disponíveis para o espaço de trabalho.",
+    "workspace": "Espaço de trabalho",
+    "cycleNextLayer": "Ir para a próxima camada",
+    "cyclePrevLayer": "Ir para a camada anterior",
+    "selectionTool": "Ferramenta de seleção",
+    "arrowTool": "Ferramenta de seta",
+    "commentsTool": "Ferramenta de comentários",
+    "highlightTool": "Ferramenta de destaque",
+    "underlineTool": "Ferramenta de sublinhado",
+    "eraserTool": "Ferramenta de borracha",
+    "navigateWords": "Navegar entre palavras",
+    "toggleConsole": "Alternar console de ações",
+    "toggleDarkMode": "Alternar modo escuro",
+    "toggleLayout": "Alternar layout do editor",
+    "toggleLock": "Alternar bloqueio do editor",
+    "toggleManagement": "Alternar painel de gerenciamento",
+    "textFormatting": "Formatação de texto",
+    "bold": "Negrito",
+    "italic": "Itálico",
+    "underline": "Sublinhado",
+    "strikethrough": "Tachado",
+    "inlineCode": "Código em linha",
+    "superscript": "Sobrescrito",
+    "subscript": "Subscrito",
+    "colorHighlight": "Destaque de cor",
+    "general": "Geral",
+    "undo": "Desfazer (espaço de trabalho quando bloqueado)",
+    "redo": "Refazer (espaço de trabalho quando bloqueado)",
+    "headings": "Títulos",
+    "heading": "Título {{level}}",
+    "listsAndBlocks": "Listas e blocos",
+    "bulletList": "Lista com marcadores",
+    "orderedList": "Lista numerada",
+    "taskList": "Lista de tarefas",
+    "blockquote": "Citação",
+    "codeBlock": "Bloco de código",
+    "textAlignment": "Alinhamento de texto",
+    "alignLeft": "Alinhar à esquerda",
+    "alignCenter": "Alinhar ao centro",
+    "alignRight": "Alinhar à direita",
+    "alignJustify": "Justificar"
+  },
+  "share": {
+    "title": "Compartilhar espaço de trabalho",
+    "description": "Copie um link para compartilhar este espaço de trabalho.",
+    "readonlyLink": "Link somente leitura",
+    "editLink": "Link de edição",
+    "linkCopied": "Link copiado para a área de transferência.",
+    "copyFailed": "Falha ao copiar o link."
+  },
+  "mobile": {
+    "title": "Melhor no desktop",
+    "description": "O Referencer foi projetado para uso em desktop com teclado e mouse. Você pode ler o conteúdo aqui, mas as ferramentas de edição e anotação não estão disponíveis no celular.",
+    "continueReading": "Continuar lendo"
+  }
+}

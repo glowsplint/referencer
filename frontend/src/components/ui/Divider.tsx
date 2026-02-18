@@ -1,3 +1,6 @@
+// Draggable divider for resizing adjacent editor panes. Supports both
+// horizontal (column) and vertical (row) orientations. Reports the drag
+// position as a percentage of the container, clamped to 20%-80%.
 import { useCallback, type RefObject } from "react";
 import { GripVertical, GripHorizontal } from "lucide-react";
 
@@ -21,6 +24,7 @@ export function Divider({
         const container = containerRef.current;
         if (!container) return;
         const rect = container.getBoundingClientRect();
+        // Convert mouse position to percentage of container, clamped to [20%, 80%]
         const pct =
           direction === "horizontal"
             ? ((e.clientX - rect.left) / rect.width) * 100

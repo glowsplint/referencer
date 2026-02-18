@@ -1,7 +1,13 @@
+// Handles the "highlight" annotation tool mode. Shows status prompts on entry,
+// and on Enter creates a highlight at the current word selection (or toggles
+// it off if an identical range already exists with no annotation).
 import { useEffect, useRef, useCallback } from "react"
+import { Trans } from "react-i18next"
+import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
-import type { StatusMessage } from "@/hooks/use-status-message"
+import { FLASH_DURATION_MS, type StatusMessage } from "@/hooks/use-status-message"
+import { useLatestRef } from "@/hooks/use-latest-ref"
 
 interface UseHighlightModeOptions {
   isLocked: boolean
@@ -16,7 +22,8 @@ interface UseHighlightModeOptions {
   ) => string
   removeHighlight: (layerId: string, highlightId: string) => void
   showHighlightToasts: boolean
-  setStatus: (msg: StatusMessage, duration?: number) => void
+  setStatus: (msg: StatusMessage) => void
+  flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
 }
 
@@ -31,38 +38,28 @@ export function useHighlightMode({
   removeHighlight,
   showHighlightToasts,
   setStatus,
+  flashStatus,
   clearStatus,
 }: UseHighlightModeOptions) {
+  // activeLayerIdRef uses useEffect sync (not useLatestRef) because confirmHighlight
+  // writes to it locally after auto-creating a layer — the local value must persist
+  // until the parent passes down a new activeLayerId prop
   const activeLayerIdRef = useRef(activeLayerId)
-  const addLayerRef = useRef(addLayer)
-  const addHighlightRef = useRef(addHighlight)
-  const removeHighlightRef = useRef(removeHighlight)
-  const layersRef = useRef(layers)
-  const selectionRef = useRef(selection)
+  useEffect(() => { activeLayerIdRef.current = activeLayerId }, [activeLayerId])
+  const addLayerRef = useLatestRef(addLayer)
+  const addHighlightRef = useLatestRef(addHighlight)
+  const removeHighlightRef = useLatestRef(removeHighlight)
+  const layersRef = useLatestRef(layers)
+  const selectionRef = useLatestRef(selection)
 
-  useEffect(() => {
-    activeLayerIdRef.current = activeLayerId
-    addLayerRef.current = addLayer
-    addHighlightRef.current = addHighlight
-    removeHighlightRef.current = removeHighlight
-    layersRef.current = layers
-  }, [activeLayerId, addLayer, addHighlight, removeHighlight, layers])
+  const activeToolRef = useLatestRef(activeTool)
+  const isLockedRef = useLatestRef(isLocked)
 
-  selectionRef.current = selection
+  const showHighlightToastsRef = useLatestRef(showHighlightToasts)
 
-  const activeToolRef = useRef(activeTool)
-  activeToolRef.current = activeTool
-
-  const isLockedRef = useRef(isLocked)
-  isLockedRef.current = isLocked
-
-  const showHighlightToastsRef = useRef(showHighlightToasts)
-  showHighlightToastsRef.current = showHighlightToasts
-
-  const setStatusRef = useRef(setStatus)
-  setStatusRef.current = setStatus
-  const clearStatusRef = useRef(clearStatus)
-  clearStatusRef.current = clearStatus
+  const setStatusRef = useLatestRef(setStatus)
+  const flashStatusRef = useLatestRef(flashStatus)
+  const clearStatusRef = useLatestRef(clearStatus)
 
   const isHighlightTool = activeTool === "highlight" && isLocked
 
@@ -70,7 +67,7 @@ export function useHighlightMode({
   useEffect(() => {
     if (isHighlightTool) {
       if (showHighlightToastsRef.current) {
-        setStatusRef.current({ text: <>Select words to highlight, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
+        setStatusRef.current({ text: <Trans ns="tools" i18nKey="highlight.selectWords" components={{ kbd: <ToastKbd>_</ToastKbd> }} />, type: "info" })
       }
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
@@ -105,7 +102,7 @@ export function useHighlightMode({
     if (existing) {
       removeHighlightRef.current(layerId, existing.id)
       if (showHighlightToastsRef.current) {
-        setStatusRef.current({ text: "Highlight removed", type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success" }, FLASH_DURATION_MS)
       }
       return
     }
@@ -120,7 +117,7 @@ export function useHighlightMode({
       type: "highlight",
     })
     if (showHighlightToastsRef.current) {
-      setStatusRef.current({ text: "Highlight added", type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:highlight.added"), type: "success" }, FLASH_DURATION_MS)
     }
     // Stay in highlight mode — do NOT switch to selection tool
   }, [])

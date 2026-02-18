@@ -1,7 +1,14 @@
+// Handles the "comments" annotation tool mode. Shows status prompts on entry,
+// and on Enter creates a comment highlight at the current word selection
+// (or toggles it off if one already exists at that range).
+// Refs are used extensively to keep the confirmComment callback stable.
 import { useEffect, useRef, useCallback } from "react"
+import { Trans } from "react-i18next"
+import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
-import type { StatusMessage } from "@/hooks/use-status-message"
+import { FLASH_DURATION_MS, type StatusMessage } from "@/hooks/use-status-message"
+import { useLatestRef } from "@/hooks/use-latest-ref"
 
 interface UseCommentModeOptions {
   isLocked: boolean
@@ -17,7 +24,8 @@ interface UseCommentModeOptions {
   removeHighlight: (layerId: string, highlightId: string) => void
   onHighlightAdded?: (layerId: string, highlightId: string) => void
   showCommentToasts: boolean
-  setStatus: (msg: StatusMessage, duration?: number) => void
+  setStatus: (msg: StatusMessage) => void
+  flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
 }
 
@@ -33,40 +41,29 @@ export function useCommentMode({
   onHighlightAdded,
   showCommentToasts,
   setStatus,
+  flashStatus,
   clearStatus,
 }: UseCommentModeOptions) {
+  // activeLayerIdRef uses useEffect sync (not useLatestRef) because confirmComment
+  // writes to it locally after auto-creating a layer — the local value must persist
+  // until the parent passes down a new activeLayerId prop
   const activeLayerIdRef = useRef(activeLayerId)
-  const addLayerRef = useRef(addLayer)
-  const addHighlightRef = useRef(addHighlight)
-  const removeHighlightRef = useRef(removeHighlight)
-  const layersRef = useRef(layers)
-  const onHighlightAddedRef = useRef(onHighlightAdded)
-  const selectionRef = useRef(selection)
+  useEffect(() => { activeLayerIdRef.current = activeLayerId }, [activeLayerId])
+  const addLayerRef = useLatestRef(addLayer)
+  const addHighlightRef = useLatestRef(addHighlight)
+  const removeHighlightRef = useLatestRef(removeHighlight)
+  const layersRef = useLatestRef(layers)
+  const onHighlightAddedRef = useLatestRef(onHighlightAdded)
+  const selectionRef = useLatestRef(selection)
 
-  useEffect(() => {
-    activeLayerIdRef.current = activeLayerId
-    addLayerRef.current = addLayer
-    addHighlightRef.current = addHighlight
-    removeHighlightRef.current = removeHighlight
-    layersRef.current = layers
-    onHighlightAddedRef.current = onHighlightAdded
-  }, [activeLayerId, addLayer, addHighlight, removeHighlight, layers, onHighlightAdded])
+  const activeToolRef = useLatestRef(activeTool)
+  const isLockedRef = useLatestRef(isLocked)
 
-  selectionRef.current = selection
+  const showCommentToastsRef = useLatestRef(showCommentToasts)
 
-  const activeToolRef = useRef(activeTool)
-  activeToolRef.current = activeTool
-
-  const isLockedRef = useRef(isLocked)
-  isLockedRef.current = isLocked
-
-  const showCommentToastsRef = useRef(showCommentToasts)
-  showCommentToastsRef.current = showCommentToasts
-
-  const setStatusRef = useRef(setStatus)
-  setStatusRef.current = setStatus
-  const clearStatusRef = useRef(clearStatus)
-  clearStatusRef.current = clearStatus
+  const setStatusRef = useLatestRef(setStatus)
+  const flashStatusRef = useLatestRef(flashStatus)
+  const clearStatusRef = useLatestRef(clearStatus)
 
   const isCommentTool = activeTool === "comments" && isLocked
 
@@ -74,7 +71,7 @@ export function useCommentMode({
   useEffect(() => {
     if (isCommentTool) {
       if (showCommentToastsRef.current) {
-        setStatusRef.current({ text: <>Select words to comment on, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
+        setStatusRef.current({ text: <Trans ns="tools" i18nKey="comments.selectWords" components={{ kbd: <ToastKbd>_</ToastKbd> }} />, type: "info" })
       }
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
@@ -126,7 +123,7 @@ export function useCommentMode({
       type: "comment",
     })
     if (showCommentToastsRef.current) {
-      setStatusRef.current({ text: "Comment added", type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:comments.added"), type: "success" }, FLASH_DURATION_MS)
     }
     onHighlightAddedRef.current?.(layerId, highlightId)
     // Keep selection so user can continue keyboard navigation after Escape

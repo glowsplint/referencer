@@ -1,3 +1,6 @@
+// Modal dialog displaying frequently asked questions about the app, covering
+// what Referencer is, how layers/annotations/arrows/sharing work, etc.
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -14,49 +17,6 @@ interface FAQItem {
   answer: string;
 }
 
-const FAQ_ITEMS: FAQItem[] = [
-  {
-    question: "What is this app?",
-    answer:
-      "Referencer is a collaborative tool for inductive Bible study. It gives study groups a shared workspace where they can read, annotate, and discuss Scripture together in real time.",
-  },
-  {
-    question: "What is inductive Bible study?",
-    answer:
-      "Inductive Bible study is a method of reading Scripture that moves from observation (what does the text say?) to interpretation (what does it mean?) to application (how does it apply?). Rather than starting with outside commentary, you let the text speak for itself by carefully examining its words, structure, and context.",
-  },
-  {
-    question: "How does collaboration work?",
-    answer:
-      "Each workspace can be shared with others via a link. All participants see the same text and can add their own annotations. Changes sync in real time so everyone stays on the same page.",
-  },
-  {
-    question: "What are layers?",
-    answer:
-      "Layers let you organize annotations into separate groups — for example, one layer for observations and another for interpretations. You can cycle between layers with the L key to focus on one set of annotations at a time.",
-  },
-  {
-    question: "How do annotations work?",
-    answer:
-      "Lock the editor with the lock button (or press K), then select text to highlight it. You can choose colors, add comments, and draw arrows between annotations to show connections. Click an existing annotation to remove it.",
-  },
-  {
-    question: "What are arrows for?",
-    answer:
-      "Arrows connect two annotations to show a relationship between passages — for example, linking a repeated word to its first occurrence, or connecting a prophecy to its fulfillment. Select the arrow tool (or press A), then click two annotations to draw a connector.",
-  },
-  {
-    question: "How do I share a workspace?",
-    answer:
-      "Open the management pane (press M or click the menu icon) and use the share options to generate a link. Anyone with the link can join the workspace and collaborate.",
-  },
-  {
-    question: "Can I use this on mobile?",
-    answer:
-      "The app works in mobile browsers, but the full annotation and arrow tools are best experienced on a device with a keyboard and mouse.",
-  },
-];
-
 function FAQEntry({ item }: { item: FAQItem }) {
   return (
     <div>
@@ -72,6 +32,44 @@ interface FAQDialogProps {
 }
 
 export function FAQDialog({ open, onOpenChange }: FAQDialogProps) {
+  const { t } = useTranslation("dialogs");
+  const { t: tc } = useTranslation("common");
+
+  const FAQ_ITEMS: FAQItem[] = [
+    {
+      question: t("faq.items.whatIsApp.question"),
+      answer: t("faq.items.whatIsApp.answer"),
+    },
+    {
+      question: t("faq.items.inductiveStudy.question"),
+      answer: t("faq.items.inductiveStudy.answer"),
+    },
+    {
+      question: t("faq.items.collaboration.question"),
+      answer: t("faq.items.collaboration.answer"),
+    },
+    {
+      question: t("faq.items.layers.question"),
+      answer: t("faq.items.layers.answer"),
+    },
+    {
+      question: t("faq.items.annotations.question"),
+      answer: t("faq.items.annotations.answer"),
+    },
+    {
+      question: t("faq.items.arrows.question"),
+      answer: t("faq.items.arrows.answer"),
+    },
+    {
+      question: t("faq.items.sharing.question"),
+      answer: t("faq.items.sharing.answer"),
+    },
+    {
+      question: t("faq.items.mobile.question"),
+      answer: t("faq.items.mobile.answer"),
+    },
+  ];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -80,9 +78,9 @@ export function FAQDialog({ open, onOpenChange }: FAQDialogProps) {
         data-testid="faqDialog"
       >
         <DialogHeader className="p-6 pb-4">
-          <DialogTitle>Frequently Asked Questions</DialogTitle>
+          <DialogTitle>{t("faq.title")}</DialogTitle>
           <DialogDescription>
-            Learn about Referencer and how to use it.
+            {t("faq.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[60vh]">
@@ -95,7 +93,7 @@ export function FAQDialog({ open, onOpenChange }: FAQDialogProps) {
         <DialogFooter className="sticky bottom-0 border-t bg-background p-4">
           <DialogClose asChild>
             <Button variant="outline" data-testid="faqCloseButton">
-              Close
+              {tc("close")}
             </Button>
           </DialogClose>
         </DialogFooter>

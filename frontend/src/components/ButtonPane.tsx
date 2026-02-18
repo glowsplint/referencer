@@ -1,7 +1,14 @@
+// Vertical toolbar on the left edge of the workspace. Contains meta actions
+// (management pane toggle, keyboard shortcuts, FAQ, settings), annotation tools
+// (selection, arrow, highlight, comments, underline, eraser), and layout/lock
+// toggles. Tool buttons are disabled when the editor is unlocked or read-only.
 import { useState, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Columns2,
+  Columns3,
   Rows2,
+  Rows3,
   MousePointer2,
   Lock,
   LockOpen,
@@ -9,6 +16,7 @@ import {
   MessageSquareText,
   Highlighter,
   Underline,
+  Eraser,
   Keyboard,
   CircleHelp,
   Settings,
@@ -32,6 +40,7 @@ const TOOL_SHORTCUTS: Record<ActiveTool, string> = {
   comments: "C",
   highlight: "H",
   underline: "U",
+  eraser: "E",
 };
 
 function ArrowStyleIcon({ style, size = 20 }: { style: ArrowStyle; size?: number }) {
@@ -61,6 +70,9 @@ function ArrowStyleIcon({ style, size = 20 }: { style: ArrowStyle; size?: number
 }
 
 export function ButtonPane() {
+  const { t: tm } = useTranslation("management");
+  const { t: tt } = useTranslation("tools");
+
   const {
     settings,
     annotations,
@@ -74,6 +86,7 @@ export function ButtonPane() {
     isManagementPaneOpen,
     toggleManagementPane,
     toggleDarkMode,
+    editorCount,
     toggleMultipleRowsLayout,
     setActiveTool,
     toggleLocked,
@@ -110,11 +123,12 @@ export function ButtonPane() {
   );
 
   const toolButtons: { tool: ActiveTool; icon: React.ReactNode; label: string; testId: string }[] = [
-    { tool: "selection", icon: <MousePointer2 size={20} />, label: "Selection tool", testId: "selectionToolButton" },
-    { tool: "arrow", icon: <ArrowStyleIcon style={activeArrowStyle} />, label: "Arrow tool", testId: "arrowToolButton" },
-    { tool: "highlight", icon: <Highlighter size={20} />, label: "Highlight tool", testId: "highlightToolButton" },
-    { tool: "comments", icon: <MessageSquareText size={20} />, label: "Comments tool", testId: "commentsToolButton" },
-    { tool: "underline", icon: <Underline size={20} />, label: "Underline tool", testId: "underlineToolButton" },
+    { tool: "selection", icon: <MousePointer2 size={20} />, label: tt("selection.label"), testId: "selectionToolButton" },
+    { tool: "arrow", icon: <ArrowStyleIcon style={activeArrowStyle} />, label: tt("arrow.label"), testId: "arrowToolButton" },
+    { tool: "highlight", icon: <Highlighter size={20} />, label: tt("highlight.label"), testId: "highlightToolButton" },
+    { tool: "comments", icon: <MessageSquareText size={20} />, label: tt("comments.label"), testId: "commentsToolButton" },
+    { tool: "underline", icon: <Underline size={20} />, label: tt("underline.label"), testId: "underlineToolButton" },
+    { tool: "eraser", icon: <Eraser size={20} />, label: tt("eraser.label"), testId: "eraserToolButton" },
   ];
 
   return (
@@ -130,7 +144,7 @@ export function ButtonPane() {
             buttonProps={{ "data-testid": "menuButton" }}
           />
         </TooltipTrigger>
-        <TooltipContent>Toggle management pane <kbd>M</kbd></TooltipContent>
+        <TooltipContent>{tm("tooltips.toggleManagementPane")} <kbd>M</kbd></TooltipContent>
       </Tooltip>
       <Tooltip placement="right">
         <TooltipTrigger asChild>
@@ -142,7 +156,7 @@ export function ButtonPane() {
             <Keyboard size={20} />
           </button>
         </TooltipTrigger>
-        <TooltipContent>Keyboard shortcuts</TooltipContent>
+        <TooltipContent>{tm("tooltips.keyboardShortcuts")}</TooltipContent>
       </Tooltip>
       <Tooltip placement="right">
         <TooltipTrigger asChild>
@@ -154,7 +168,7 @@ export function ButtonPane() {
             <CircleHelp size={20} />
           </button>
         </TooltipTrigger>
-        <TooltipContent>Help & FAQ</TooltipContent>
+        <TooltipContent>{tm("tooltips.helpFaq")}</TooltipContent>
       </Tooltip>
       <Tooltip placement="right">
         <TooltipTrigger asChild>
@@ -166,7 +180,7 @@ export function ButtonPane() {
             <Settings size={20} />
           </button>
         </TooltipTrigger>
-        <TooltipContent>Settings</TooltipContent>
+        <TooltipContent>{tm("tooltips.settings")}</TooltipContent>
       </Tooltip>
       <div className="w-6 border-t border-border" role="separator" />
       {/* Tools group */}
@@ -209,14 +223,14 @@ export function ButtonPane() {
       <Tooltip placement="right">
         <TooltipTrigger asChild>
           <SwitchingButtonIcon
-            iconTwo={<Columns2 size={20} />}
-            iconOne={<Rows2 size={20} />}
+            iconTwo={editorCount >= 3 ? <Columns3 size={20} /> : <Columns2 size={20} />}
+            iconOne={editorCount >= 3 ? <Rows3 size={20} /> : <Rows2 size={20} />}
             bool={settings.isMultipleRowsLayout}
             callback={toggleMultipleRowsLayout}
             buttonProps={{ "data-testid": "editorLayoutButton" }}
           />
         </TooltipTrigger>
-        <TooltipContent>Toggle editor layout <kbd>R</kbd></TooltipContent>
+        <TooltipContent>{tm("tooltips.toggleEditorLayout")} <kbd>R</kbd></TooltipContent>
       </Tooltip>
       <Tooltip placement="right">
         <TooltipTrigger asChild>
@@ -228,7 +242,7 @@ export function ButtonPane() {
             buttonProps={{ "data-testid": "lockButton", disabled: readOnly }}
           />
         </TooltipTrigger>
-        <TooltipContent>Toggle editor lock <kbd>K</kbd></TooltipContent>
+        <TooltipContent>{tm("tooltips.toggleEditorLock")} <kbd>K</kbd></TooltipContent>
       </Tooltip>
       <KeyboardShortcutsDialog
         open={shortcutsOpen}

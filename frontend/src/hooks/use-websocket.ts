@@ -1,3 +1,7 @@
+// WebSocket integration for real-time collaborative editing.
+// Connects to the workspace server, hydrates initial state on connect,
+// and applies remote actions (layer/editor mutations) as they arrive.
+// Includes payload validation to guard against malformed messages.
 import { useEffect, useRef, useState, useCallback } from "react"
 import { WorkspaceWSClient } from "@/lib/ws-client"
 import type { ServerMessage, WorkspaceStatePayload } from "@/lib/ws-protocol"
@@ -187,7 +191,7 @@ export function useWebSocket(
         }
         hydrateState(msg.payload, rawLayersRef.current, rawEditorsRef.current)
       } catch (err) {
-        console.error("[ws] Unexpected error hydrating state", err)
+        console.error("[ws] Unexpected error hydrating state", err, msg.payload)
       }
     })
 
@@ -200,7 +204,7 @@ export function useWebSocket(
         }
         applyRemoteAction(payload, rawLayersRef.current, rawEditorsRef.current)
       } catch (err) {
-        console.error("[ws] Unexpected error applying remote action", err)
+        console.error("[ws] Unexpected error applying remote action", err, payload)
       }
     })
 
@@ -233,7 +237,7 @@ function hydrateState(
       to: h.to,
       text: h.text,
       annotation: h.annotation,
-      type: (h.type as "highlight" | "comment") || "comment",
+      type: (h.type as "highlight" | "comment") ?? "comment",
     })),
     arrows: l.arrows.map((a) => ({
       id: a.id,

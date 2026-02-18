@@ -1,3 +1,6 @@
+// Resolves the word boundaries (from/to) at a given ProseMirror document position.
+// Walks backward and forward through the textblock content using a word-character
+// regex to find the start and end of the word under the cursor.
 import type { Node as PMNode } from "@tiptap/pm/model"
 
 export function getWordBoundaries(doc: PMNode, pos: number): { from: number; to: number; text: string } | null {

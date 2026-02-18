@@ -1,8 +1,8 @@
+// Cycles through layers with Tab/Shift+Tab keyboard shortcuts.
+// Wraps around at boundaries so the user can continuously cycle.
 import { useEffect, useRef } from "react";
 import type { Layer } from "@/types/editor";
 import { isEditableElement } from "@/lib/dom";
-
-const CYCLE_LAYER_KEY = "KeyL";
 
 interface UseCycleLayerOptions {
   layers: Layer[];
@@ -27,8 +27,8 @@ export function useCycleLayer({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== CYCLE_LAYER_KEY || e.repeat) return;
-      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+      if (e.key !== "Tab" || e.repeat) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (isEditableElement(e.target)) return;
 
       const currentLayers = layersRef.current;
@@ -38,7 +38,11 @@ export function useCycleLayer({
 
       const currentId = activeLayerIdRef.current;
       const currentIndex = currentLayers.findIndex((l) => l.id === currentId);
-      const nextIndex = (currentIndex + 1) % currentLayers.length;
+      const direction = e.shiftKey ? -1 : 1;
+      const nextIndex =
+        ((currentIndex + direction) % currentLayers.length +
+          currentLayers.length) %
+        currentLayers.length;
       setActiveLayerRef.current(currentLayers[nextIndex].id);
     };
 

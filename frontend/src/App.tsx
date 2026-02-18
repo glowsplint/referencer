@@ -1,4 +1,10 @@
+// Root application component. Composes the multi-pane editor workspace:
+// toolbar, management panel, editor panes with dividers, annotation panel,
+// arrow overlay, and action console. Wires together all annotation tools
+// (highlight, comment, underline, arrow, eraser) and keyboard navigation.
 import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
+import { Trans } from "react-i18next";
+import i18n from "@/i18n";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -16,6 +22,7 @@ import { useDrawingMode } from "./hooks/use-drawing-mode";
 import { useCommentMode } from "./hooks/use-comment-mode";
 import { useHighlightMode } from "./hooks/use-highlight-mode";
 import { useUnderlineMode } from "./hooks/use-underline-mode";
+import { useEraserMode } from "./hooks/use-eraser-mode";
 import { useStatusMessage } from "./hooks/use-status-message";
 import { useToolShortcuts } from "./hooks/use-tool-shortcuts";
 import { useToggleShortcuts } from "./hooks/use-toggle-shortcuts";
@@ -24,6 +31,7 @@ import { useDragSelection } from "./hooks/use-drag-selection";
 import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/use-action-console";
 import { useIsBreakpoint } from "./hooks/use-is-breakpoint";
+import { useInlineEdit } from "./hooks/use-inline-edit";
 import { ToastKbd } from "./components/ui/ToastKbd";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
@@ -33,8 +41,39 @@ import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
 
+function PassageHeader({ name, index, onUpdateName }: {
+  name: string; index: number; onUpdateName: (name: string) => void
+}) {
+  const { isEditing, inputProps, startEditing } = useInlineEdit({
+    currentName: name,
+    onCommit: onUpdateName,
+  });
+
+  return (
+    <div className="flex items-center px-3 py-1 border-b border-border bg-muted/30 shrink-0">
+      {isEditing ? (
+        <input
+          {...inputProps}
+          className="text-xs font-medium bg-transparent border-0 ring-1 ring-border rounded px-1 py-0 outline-none w-full"
+          data-testid={`passageHeaderInput-${index}`}
+        />
+      ) : (
+        <span
+          className="text-xs font-medium text-muted-foreground hover:bg-muted/50 hover:underline decoration-muted-foreground/30 cursor-text rounded px-1"
+          onDoubleClick={() => startEditing()}
+          data-testid={`passageHeader-${index}`}
+        >
+          {name}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// Extract workspace ID from hash-based route (e.g. "#/{uuid}?access=readonly").
+// Falls back to generating a new random UUID for fresh sessions.
 function getWorkspaceId(): string {
-  const hash = window.location.hash; // e.g. "#/{uuid}?access=readonly"
+  const hash = window.location.hash;
   const hashPath = hash.replace(/^#\/?/, "").split("?")[0];
   if (hashPath) return hashPath;
   return crypto.randomUUID();
@@ -95,7 +134,7 @@ export function App() {
   });
   useUndoRedoKeyboard(history);
   const actionConsole = useActionConsole();
-  const { message: statusMessage, setStatus, clearStatus } = useStatusMessage();
+  const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
@@ -123,8 +162,8 @@ export function App() {
     addLayer,
     addArrow,
     showDrawingToasts: settings.showDrawingToasts,
-    setActiveTool,
     setStatus,
+    flashStatus,
     clearStatus,
   });
 
@@ -143,6 +182,7 @@ export function App() {
     }, []),
     showCommentToasts: settings.showCommentsToasts,
     setStatus,
+    flashStatus,
     clearStatus,
   });
 
@@ -157,6 +197,7 @@ export function App() {
     removeHighlight,
     showHighlightToasts: settings.showHighlightToasts,
     setStatus,
+    flashStatus,
     clearStatus,
   });
 
@@ -171,20 +212,34 @@ export function App() {
     removeUnderline,
     showUnderlineToasts: settings.showHighlightToasts,
     setStatus,
+    flashStatus,
+    clearStatus,
+  });
+
+  const { confirmErase, eraseAtPosition } = useEraserMode({
+    isLocked: settings.isLocked,
+    activeTool: annotations.activeTool,
+    selection,
+    layers,
+    removeHighlight,
+    removeUnderline,
+    removeArrow,
+    setStatus,
+    flashStatus,
     clearStatus,
   });
 
   // Hint to lock the editor when unlocked
   useEffect(() => {
     if (!settings.isLocked && !effectiveReadOnly) {
-      setStatus({ text: <>Press <ToastKbd>K</ToastKbd> to lock the editor once you've finalised the contents</>, type: "info" })
+      setStatus({ text: <Trans ns="tools" i18nKey="lockHint" components={{ kbd: <ToastKbd>_</ToastKbd> }} />, type: "info" })
     }
   }, [settings.isLocked, effectiveReadOnly, setStatus])
 
   // Default status message when locked with selection tool and no visible selection
   useEffect(() => {
     if (settings.isLocked && annotations.activeTool === "selection" && (!selection || selectionHidden)) {
-      setStatus({ text: "Click a word or use arrow keys to navigate", type: "info" })
+      setStatus({ text: i18n.t("tools:selection.defaultStatus"), type: "info" })
     }
   }, [settings.isLocked, annotations.activeTool, selection, selectionHidden, setStatus])
 
@@ -200,6 +255,7 @@ export function App() {
     confirmComment();
     confirmHighlight();
     confirmUnderline();
+    confirmErase();
   };
 
   useCycleLayer({
@@ -214,6 +270,7 @@ export function App() {
     selectWord,
     selectRange,
     clearSelection,
+    eraseAtPosition,
   });
 
   // Mutual exclusivity: selecting an arrow hides word selection
@@ -267,7 +324,7 @@ export function App() {
 
   const hasAnyAnnotations = useMemo(
     () => layers.some((l) => l.visible && l.highlights.some(
-      (h) => sectionVisibility[h.editorIndex] !== false
+      (h) => h.type === "comment" && sectionVisibility[h.editorIndex] !== false
     )),
     [layers, sectionVisibility]
   );
@@ -275,7 +332,7 @@ export function App() {
   return (
     <WorkspaceProvider value={workspace}>
       <Toaster />
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-screen overflow-hidden">
       <div className="flex flex-1 min-h-0">
         {!isMobile && <ButtonPane />}
         {!isMobile && isManagementPaneOpen && <ManagementPane />}
@@ -288,7 +345,7 @@ export function App() {
               <div
                 ref={containerRef}
                 data-testid="editorContainer"
-                className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}`}
+                className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${settings.isLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${settings.isLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
               >
                 <ArrowOverlay
                   layers={layers}
@@ -306,6 +363,8 @@ export function App() {
                 />
                 {editorWidths.map((width, i) => {
                   const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]
+                  // "direction" is the resize drag axis, not the visual line orientation
+                  // (e.g. "horizontal" means drag left/right to resize side-by-side panes)
                   const dividerDirection = settings.isMultipleRowsLayout ? "vertical" as const : "horizontal" as const
                   return (
                   <Fragment key={editorKeys[i]}>
@@ -317,32 +376,40 @@ export function App() {
                       />
                     )}
                     <div
-                      className="min-w-0 min-h-0 overflow-hidden"
+                      className="min-w-0 min-h-0 overflow-hidden flex flex-col"
                       style={{
                         flex: `${width} 0 0%`,
                         display: sectionVisibility[i] === false ? "none" : undefined,
                       }}
                     >
-                      <EditorPane
-                        isLocked={settings.isLocked || effectiveReadOnly}
-                        activeTool={annotations.activeTool}
-                        content={SIMPLE_EDITOR_CONTENT}
+                      <PassageHeader
+                        name={workspace.sectionNames[i]}
                         index={i}
-                        onEditorMount={handleEditorMount}
-                        onFocus={handlePaneFocus}
-                        onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
-                        onMouseMove={settings.isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
-                        onMouseUp={settings.isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
-                        onContentUpdate={effectiveReadOnly ? undefined : updateEditorContent}
-                        layers={layers}
-                        selection={selection}
-                        selectionHidden={selectionHidden}
-                        activeLayerColor={activeLayerColor}
-                        isDarkMode={settings.isDarkMode}
-                        removeArrow={removeArrow}
-                        sectionVisibility={sectionVisibility}
-                        selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+                        onUpdateName={(name) => workspace.updateSectionName(i, name)}
                       />
+                      <div className="flex-1 min-h-0 overflow-hidden">
+                        <EditorPane
+                          isLocked={settings.isLocked || effectiveReadOnly}
+                          activeTool={annotations.activeTool}
+                          content={SIMPLE_EDITOR_CONTENT}
+                          index={i}
+                          onEditorMount={handleEditorMount}
+                          onFocus={handlePaneFocus}
+                          onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
+                          onMouseMove={settings.isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
+                          onMouseUp={settings.isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
+                          onContentUpdate={effectiveReadOnly ? undefined : updateEditorContent}
+                          layers={layers}
+                          selection={selection}
+                          selectionHidden={selectionHidden}
+                          activeLayerColor={activeLayerColor}
+                          isDarkMode={settings.isDarkMode}
+                          removeArrow={removeArrow}
+                          sectionVisibility={sectionVisibility}
+                          selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+                          setLayers={workspace.setLayers}
+                        />
+                      </div>
                     </div>
                   </Fragment>
                   )

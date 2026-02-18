@@ -15,6 +15,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     removeUnderline: vi.fn(),
     showUnderlineToasts: true,
     setStatus: vi.fn(),
+    flashStatus: vi.fn(),
     clearStatus: vi.fn(),
     ...overrides,
   }
@@ -121,29 +122,26 @@ describe("useUnderlineMode", () => {
   })
 
   it("shows success status when underline is created", () => {
-    const setStatus = vi.fn()
-    const opts = createOptions({ selection: word1, setStatus })
+    const flashStatus = vi.fn()
+    const opts = createOptions({ selection: word1, flashStatus })
     const { result } = renderHook(() => useUnderlineMode(opts))
 
     act(() => { result.current.confirmUnderline() })
 
-    expect(setStatus).toHaveBeenCalledWith(
-      { text: "Underline added", type: "success" }, 1500
+    expect(flashStatus).toHaveBeenCalledWith(
+      { text: "Underline added.", type: "success" }, 3000
     )
   })
 
   it("does not show success status when showUnderlineToasts is false", () => {
-    const setStatus = vi.fn()
-    const opts = createOptions({ selection: word1, showUnderlineToasts: false, setStatus })
+    const flashStatus = vi.fn()
+    const opts = createOptions({ selection: word1, showUnderlineToasts: false, flashStatus })
     const { result } = renderHook(() => useUnderlineMode(opts))
 
     act(() => { result.current.confirmUnderline() })
 
     expect(opts.addUnderline).toHaveBeenCalled()
-    const successCalls = setStatus.mock.calls.filter(
-      (c: unknown[]) => (c[0] as { type: string })?.type === "success"
-    )
-    expect(successCalls).toHaveLength(0)
+    expect(flashStatus).not.toHaveBeenCalled()
   })
 
   it("auto-creates a layer when no active layer", () => {

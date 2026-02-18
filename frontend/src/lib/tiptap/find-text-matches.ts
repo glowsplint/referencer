@@ -1,3 +1,6 @@
+// Finds all exact, case-sensitive occurrences of a search string within
+// a ProseMirror document. Returns document-absolute positions suitable
+// for creating decorations (e.g. similar-text highlights).
 import type { Node as PMNode } from "@tiptap/pm/model"
 
 export interface TextMatch {

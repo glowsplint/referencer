@@ -1,3 +1,6 @@
+// Wraps the raw useLayers hook to record every layer mutation (add/remove layers,
+// highlights, arrows, underlines; color/name changes) in the action history
+// for undo/redo support. Snapshots previous state before each mutation.
 import { useCallback } from "react"
 import type { useLayers } from "./use-layers"
 import type { useActionHistory } from "./use-action-history"

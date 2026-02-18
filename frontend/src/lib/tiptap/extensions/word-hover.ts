@@ -1,3 +1,6 @@
+// ProseMirror decoration plugin that applies a visual hover effect to the
+// word under the mouse cursor in locked mode. Driven externally via
+// transaction metadata from the useWordHover hook.
 import { Extension } from "@tiptap/core"
 import { Plugin, PluginKey } from "@tiptap/pm/state"
 import { DecorationSet } from "@tiptap/pm/view"

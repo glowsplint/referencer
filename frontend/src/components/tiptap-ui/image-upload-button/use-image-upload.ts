@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useHotkeys } from "react-hotkeys-hook"
 import { type Editor } from "@tiptap/react"
+import i18n from "@/i18n"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -185,7 +186,7 @@ export function useImageUpload(config?: UseImageUploadConfig) {
     isActive,
     handleImage,
     canInsert,
-    label: "Add image",
+    label: i18n.t("editor:image.label"),
     shortcutKeys: IMAGE_UPLOAD_SHORTCUT_KEY,
     Icon: ImagePlusIcon,
   }

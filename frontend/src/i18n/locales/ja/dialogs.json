@@ -1,0 +1,83 @@
+{
+  "settings": {
+    "title": "設定",
+    "description": "ワークスペースの設定をカスタマイズします。",
+    "darkMode": { "label": "ダークモード", "description": "ライトテーマとダークテーマを切り替えます" },
+    "drawingNotifications": { "label": "描画通知", "description": "矢印ツール使用時にトーストを表示します" },
+    "commentsNotifications": { "label": "コメント通知", "description": "コメントツール使用時にトーストを表示します" },
+    "highlightNotifications": { "label": "ハイライト通知", "description": "ハイライトツール使用時にトーストを表示します" },
+    "overscroll": { "label": "オーバースクロール", "description": "端を超えてスクロールした時にバウンス効果を許可します" },
+    "language": { "label": "言語", "description": "お好みの言語を選択してください" }
+  },
+  "faq": {
+    "title": "よくある質問",
+    "description": "Referencerの使い方について学びます。",
+    "items": {
+      "whatIsApp": { "question": "このアプリは何ですか？", "answer": "Referencerは帰納的聖書研究のための共同作業ツールです。研究グループが共有ワークスペースで聖書を読み、注釈を付け、リアルタイムで議論できる環境を提供します。" },
+      "inductiveStudy": { "question": "帰納的聖書研究とは何ですか？", "answer": "帰納的聖書研究とは、観察（本文は何を言っているか？）から解釈（それはどういう意味か？）、そして適用（それはどう当てはまるか？）へと進む聖書の読み方です。外部の注解書から始めるのではなく、言葉、構造、文脈を丁寧に調べることで、本文自体に語らせます。" },
+      "collaboration": { "question": "共同作業はどのように機能しますか？", "answer": "各ワークスペースはリンクを通じて他の人と共有できます。すべての参加者が同じテキストを見ることができ、独自の注釈を追加できます。変更はリアルタイムで同期されるため、全員が常に同じページにいられます。" },
+      "layers": { "question": "レイヤーとは何ですか？", "answer": "レイヤーを使うと、注釈を別々のグループに整理できます。例えば、観察用のレイヤーと解釈用のレイヤーを分けることができます。Lキーでレイヤーを切り替えて、一度に一つの注釈セットに集中できます。" },
+      "annotations": { "question": "注釈はどのように機能しますか？", "answer": "ロックボタン（またはKキー）でエディターをロックしてからテキストを選択してハイライトします。色を選んだり、コメントを追加したり、注釈間に矢印を描いてつながりを示すことができます。既存の注釈をクリックすると削除できます。" },
+      "arrows": { "question": "矢印は何のためにありますか？", "answer": "矢印は二つの注釈を結び、パッセージ間の関係を示します。例えば、繰り返される言葉を最初の出現箇所にリンクしたり、預言をその成就に結びつけたりします。矢印ツールを選択（またはAキー）して、二つの注釈をクリックしてコネクターを描きます。" },
+      "sharing": { "question": "ワークスペースを共有するにはどうすればいいですか？", "answer": "管理パネル（Mキーまたはメニューアイコンをクリック）を開き、共有オプションを使ってリンクを生成します。リンクを持つ誰でもワークスペースに参加して共同作業できます。" },
+      "mobile": { "question": "モバイルで使えますか？", "answer": "このアプリはモバイルブラウザでも動作しますが、注釈や矢印ツールの全機能はキーボードとマウスのあるデバイスで最適に使えます。" }
+    }
+  },
+  "shortcuts": {
+    "title": "キーボードショートカット",
+    "description": "ワークスペースで使用できるキーボードショートカット。",
+    "workspace": "ワークスペース",
+    "cycleNextLayer": "次のレイヤーに切り替え",
+    "cyclePrevLayer": "前のレイヤーに切り替え",
+    "selectionTool": "選択ツール",
+    "arrowTool": "矢印ツール",
+    "commentsTool": "コメントツール",
+    "highlightTool": "ハイライトツール",
+    "underlineTool": "下線ツール",
+    "eraserTool": "消しゴムツール",
+    "navigateWords": "単語間を移動",
+    "toggleConsole": "アクションコンソールの切り替え",
+    "toggleDarkMode": "ダークモードの切り替え",
+    "toggleLayout": "エディターレイアウトの切り替え",
+    "toggleLock": "エディターロックの切り替え",
+    "toggleManagement": "管理パネルの切り替え",
+    "textFormatting": "テキスト書式",
+    "bold": "太字",
+    "italic": "斜体",
+    "underline": "下線",
+    "strikethrough": "取り消し線",
+    "inlineCode": "インラインコード",
+    "superscript": "上付き文字",
+    "subscript": "下付き文字",
+    "colorHighlight": "カラーハイライト",
+    "general": "一般",
+    "undo": "元に戻す（ロック時はワークスペース）",
+    "redo": "やり直す（ロック時はワークスペース）",
+    "headings": "見出し",
+    "heading": "見出し {{level}}",
+    "listsAndBlocks": "リストとブロック",
+    "bulletList": "箇条書きリスト",
+    "orderedList": "番号付きリスト",
+    "taskList": "タスクリスト",
+    "blockquote": "引用",
+    "codeBlock": "コードブロック",
+    "textAlignment": "テキスト配置",
+    "alignLeft": "左揃え",
+    "alignCenter": "中央揃え",
+    "alignRight": "右揃え",
+    "alignJustify": "両端揃え"
+  },
+  "share": {
+    "title": "ワークスペースを共有",
+    "description": "このワークスペースを共有するためのリンクをコピーします。",
+    "readonlyLink": "読み取り専用リンク",
+    "editLink": "編集リンク",
+    "linkCopied": "リンクをクリップボードにコピーしました。",
+    "copyFailed": "リンクのコピーに失敗しました。"
+  },
+  "mobile": {
+    "title": "デスクトップ推奨",
+    "description": "Referencerはキーボードとマウスを使うデスクトップ向けに設計されています。ここでもコンテンツを読むことはできますが、編集や注釈ツールはモバイルでは利用できません。",
+    "continueReading": "読み続ける"
+  }
+}

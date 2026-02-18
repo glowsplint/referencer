@@ -1,4 +1,8 @@
+// Individual annotation card shown in the AnnotationPanel beside the editor.
+// Displays a colored top border matching its layer color, with a textarea for
+// editing or a static text view. Positioned absolutely by the parent panel.
 import { useRef, useEffect, useCallback } from "react"
+import { useTranslation } from "react-i18next"
 
 interface AnnotationCardProps {
   layerId: string
@@ -10,6 +14,7 @@ interface AnnotationCardProps {
   onChange: (layerId: string, highlightId: string, annotation: string) => void
   onBlur: (layerId: string, highlightId: string, annotation: string) => void
   onClick: (layerId: string, highlightId: string) => void
+  cardRef?: (el: HTMLDivElement | null) => void
 }
 
 export function AnnotationCard({
@@ -22,9 +27,12 @@ export function AnnotationCard({
   onChange,
   onBlur,
   onClick,
+  cardRef,
 }: AnnotationCardProps) {
+  const { t } = useTranslation("management")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  // Auto-expand textarea height to fit content (avoids scrollbar inside card)
   const autoResize = useCallback(() => {
     const textarea = textareaRef.current
     if (textarea) {
@@ -62,7 +70,8 @@ export function AnnotationCard({
         e.preventDefault()
         textareaRef.current?.blur()
       }
-      // Stop propagation so arrow keys don't trigger word navigation
+      // Stop propagation so arrow keys/Enter/Escape don't trigger
+      // workspace-level word navigation or tool shortcuts
       e.stopPropagation()
     },
     [handleBlur]
@@ -80,6 +89,8 @@ export function AnnotationCard({
 
   return (
     <div
+      ref={cardRef}
+      data-highlight-id={highlightId}
       className="absolute w-48 rounded border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
       style={{ top }}
       onClick={handleClick}
@@ -96,11 +107,11 @@ export function AnnotationCard({
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          placeholder="Add annotation..."
+          placeholder={t("annotations.placeholder")}
         />
       ) : (
         <div className="cursor-pointer p-2 text-xs text-zinc-600 dark:text-zinc-300 min-h-[2rem]">
-          {annotation || <span className="text-zinc-400 italic">Add annotation...</span>}
+          {annotation || <span className="text-zinc-400 italic">{t("annotations.placeholder")}</span>}
         </div>
       )}
     </div>

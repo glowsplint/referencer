@@ -1,3 +1,6 @@
+// ProseMirror decoration plugin that renders the active word selection
+// highlight in locked mode. Driven externally via transaction metadata
+// from the useSelectionHighlight hook.
 import { Extension } from "@tiptap/core"
 import { Plugin, PluginKey } from "@tiptap/pm/state"
 import { DecorationSet } from "@tiptap/pm/view"

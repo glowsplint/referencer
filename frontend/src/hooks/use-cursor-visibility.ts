@@ -1,3 +1,5 @@
+// Ensures the text cursor stays visible when typing in a Tiptap editor.
+// Smoothly scrolls the window when the cursor would be obscured by a toolbar overlay.
 import type { Editor } from "@tiptap/react"
 import { useWindowSize } from "@/hooks/use-window-size"
 import { useBodyRect } from "@/hooks/use-element-rect"

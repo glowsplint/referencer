@@ -1,4 +1,11 @@
+// Two-layer status message system: a persistent "base" message (set by the active
+// tool's current phase) and a transient "flash" message that temporarily overrides
+// the base and auto-reverts. This ensures the status bar always reflects the
+// current tool state, even after transient success toasts expire.
 import { useState, useCallback, useRef, type ReactNode } from "react"
+
+/** Duration (ms) for transient success/info flashes in the status bar. */
+export const FLASH_DURATION_MS = 3000
 
 export interface StatusMessage {
   text: ReactNode
@@ -6,33 +13,37 @@ export interface StatusMessage {
 }
 
 export function useStatusMessage() {
-  const [message, setMessage] = useState<StatusMessage | null>(null)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [baseMessage, setBaseMessage] = useState<StatusMessage | null>(null)
+  const [flashMsg, setFlashMsg] = useState<StatusMessage | null>(null)
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clearStatus = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
+    if (flashTimerRef.current) {
+      clearTimeout(flashTimerRef.current)
+      flashTimerRef.current = null
     }
-    setMessage(null)
+    setBaseMessage(null)
+    setFlashMsg(null)
   }, [])
 
-  const setStatus = useCallback(
-    (msg: StatusMessage, duration?: number) => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current)
-        timerRef.current = null
-      }
-      setMessage(msg)
-      if (duration) {
-        timerRef.current = setTimeout(() => {
-          setMessage(null)
-          timerRef.current = null
-        }, duration)
-      }
-    },
-    []
-  )
+  // Set the persistent base message (no auto-dismiss).
+  const setStatus = useCallback((msg: StatusMessage) => {
+    setBaseMessage(msg)
+  }, [])
 
-  return { message, setStatus, clearStatus }
+  // Show a transient message that auto-reverts to the base after `duration` ms.
+  const flashStatus = useCallback((msg: StatusMessage, duration: number) => {
+    if (flashTimerRef.current) {
+      clearTimeout(flashTimerRef.current)
+    }
+    setFlashMsg(msg)
+    flashTimerRef.current = setTimeout(() => {
+      setFlashMsg(null)
+      flashTimerRef.current = null
+    }, duration)
+  }, [])
+
+  const message = flashMsg ?? baseMessage
+
+  return { message, setStatus, flashStatus, clearStatus }
 }

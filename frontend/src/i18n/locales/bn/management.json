@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "স্তর",
+    "addLayer": "স্তর যোগ করুন",
+    "hideAll": "সমস্ত স্তর লুকান",
+    "showAll": "সমস্ত স্তর দেখান",
+    "hideLayer": "স্তর লুকান",
+    "showLayer": "স্তর দেখান",
+    "changeColour": "রং পরিবর্তন করুন",
+    "removeAnnotation": "টীকা সরান",
+    "removeArrow": "তীর সরান",
+    "removeUnderline": "আন্ডারলাইন সরান",
+    "allColorsInUse": "সমস্ত রং ব্যবহৃত হচ্ছে — আগে একটি স্তর সরান।"
+  },
+  "passages": {
+    "title": "অনুচ্ছেদ",
+    "addPassage": "অনুচ্ছেদ যোগ করুন",
+    "hideAll": "সমস্ত অনুচ্ছেদ লুকান",
+    "showAll": "সমস্ত অনুচ্ছেদ দেখান",
+    "hidePassage": "অনুচ্ছেদ লুকান",
+    "showPassage": "অনুচ্ছেদ দেখান"
+  },
+  "tooltips": {
+    "toggleManagementPane": "ব্যবস্থাপনা প্যানেল টগল করুন",
+    "keyboardShortcuts": "কীবোর্ড শর্টকাট",
+    "helpFaq": "সাহায্য ও প্রায়শই জিজ্ঞাসিত প্রশ্ন",
+    "settings": "সেটিংস",
+    "toggleEditorLayout": "সম্পাদক লেআউট টগল করুন",
+    "toggleEditorLock": "সম্পাদক লক টগল করুন"
+  },
+  "annotations": {
+    "placeholder": "টীকা যোগ করুন...",
+    "removeCustomColour": "কাস্টম রং সরান",
+    "addCustomColour": "কাস্টম রং যোগ করুন",
+    "addToCustomColours": "কাস্টম রংগুলিতে যোগ করুন"
+  },
+  "actionConsole": {
+    "title": "অ্যাকশন কনসোল",
+    "close": "বন্ধ করুন",
+    "empty": "এখনও কোনো কার্যক্রম রেকর্ড হয়নি।"
+  }
+}

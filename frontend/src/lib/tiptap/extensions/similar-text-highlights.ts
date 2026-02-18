@@ -1,3 +1,6 @@
+// ProseMirror decoration plugin that highlights all occurrences of the
+// currently selected word's text throughout the document. Driven externally
+// via transaction metadata from the useSimilarTextHighlight hook.
 import { Extension } from "@tiptap/core"
 import { Plugin, PluginKey } from "@tiptap/pm/state"
 import { DecorationSet } from "@tiptap/pm/view"

@@ -1,3 +1,5 @@
+// Runs a cleanup callback on component unmount. Uses a ref to always call
+// the latest callback version without re-registering the effect.
 import { useRef, useEffect } from "react"
 
 /**

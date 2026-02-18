@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import type { Editor } from "@tiptap/react"
+import i18n from "@/i18n"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -50,17 +51,17 @@ export interface ListOption {
 
 export const listOptions: ListOption[] = [
   {
-    label: "Bullet List",
+    label: i18n.t("editor:list.bulletList"),
     type: "bulletList",
     icon: ListIcon,
   },
   {
-    label: "Ordered List",
+    label: i18n.t("editor:list.orderedList"),
     type: "orderedList",
     icon: ListOrderedIcon,
   },
   {
-    label: "Task List",
+    label: i18n.t("editor:list.taskList"),
     type: "taskList",
     icon: ListTodoIcon,
   },
@@ -210,7 +211,7 @@ export function useListDropdownMenu(config?: UseListDropdownMenuConfig) {
     canToggle: canToggleAny,
     types,
     filteredLists,
-    label: "List",
+    label: i18n.t("editor:list.label"),
     Icon: activeList ? listIcons[activeList.type] : ListIcon,
   }
 }

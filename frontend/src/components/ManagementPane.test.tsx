@@ -286,25 +286,9 @@ describe("ManagementPane", () => {
     expect(span).toHaveAttribute("title", "my note (Intro)")
   })
 
-  // --- Custom colors ---
-
-  it("renders add custom color button in color picker", () => {
-    renderPane({ layers: [layerA] })
-    fireEvent.click(screen.getByTestId("layerSwatch-0"))
-    expect(screen.getByTestId("addCustomColorButton")).toBeInTheDocument()
-  })
-
-  it("renders custom color swatches from localStorage", () => {
-    storageMock._store["referencer-custom-colors"] = JSON.stringify(["#ff0000"])
-    renderPane({ layers: [layerA] })
-    fireEvent.click(screen.getByTestId("layerSwatch-0"))
-    expect(screen.getByTestId("customColorOption-#ff0000")).toBeInTheDocument()
-  })
-
-  it("calls addLayer with extraColors when add layer button is clicked", () => {
-    storageMock._store["referencer-custom-colors"] = JSON.stringify(["#ff0000"])
+  it("calls addLayer when add layer button is clicked", () => {
     const { workspace } = renderPane()
     fireEvent.click(screen.getByTestId("addLayerButton"))
-    expect(workspace.addLayer).toHaveBeenCalledWith({ extraColors: ["#ff0000"] })
+    expect(workspace.addLayer).toHaveBeenCalled()
   })
 })

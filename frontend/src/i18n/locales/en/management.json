@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Layers",
+    "addLayer": "Add layer",
+    "hideAll": "Hide all layers",
+    "showAll": "Show all layers",
+    "hideLayer": "Hide layer",
+    "showLayer": "Show layer",
+    "changeColour": "Change colour",
+    "removeAnnotation": "Remove annotation",
+    "removeArrow": "Remove arrow",
+    "removeUnderline": "Remove underline",
+    "allColorsInUse": "All colors are in use — remove a layer first."
+  },
+  "passages": {
+    "title": "Passages",
+    "addPassage": "Add passage",
+    "hideAll": "Hide all passages",
+    "showAll": "Show all passages",
+    "hidePassage": "Hide passage",
+    "showPassage": "Show passage"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Toggle management pane",
+    "keyboardShortcuts": "Keyboard shortcuts",
+    "helpFaq": "Help & FAQ",
+    "settings": "Settings",
+    "toggleEditorLayout": "Toggle editor layout",
+    "toggleEditorLock": "Toggle editor lock"
+  },
+  "annotations": {
+    "placeholder": "Add annotation...",
+    "removeCustomColour": "Remove custom colour",
+    "addCustomColour": "Add custom colour",
+    "addToCustomColours": "Add to custom colours"
+  },
+  "actionConsole": {
+    "title": "Action Console",
+    "close": "close",
+    "empty": "No actions recorded yet."
+  }
+}

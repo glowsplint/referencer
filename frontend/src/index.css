@@ -139,3 +139,24 @@
 [data-sonner-toaster] *::after {
   transition: transform 0.4s ease !important;
 }
+
+/* react-colorful overrides */
+.react-colorful {
+  width: 100% !important;
+  height: 120px !important;
+  border-radius: var(--radius) !important;
+}
+
+.react-colorful__saturation {
+  border-radius: var(--radius) var(--radius) 0 0 !important;
+}
+
+.react-colorful__hue {
+  height: 10px !important;
+  border-radius: 0 0 var(--radius) var(--radius) !important;
+}
+
+.react-colorful__pointer {
+  width: 16px !important;
+  height: 16px !important;
+}

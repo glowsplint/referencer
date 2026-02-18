@@ -1,5 +1,7 @@
+// Title bar with inline-editable document title, share dialog trigger,
+// and PDF export button. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Share2 } from "lucide-react"
+import { Share2, Download } from "lucide-react"
 
 import {
   Tooltip,
@@ -70,7 +72,19 @@ export function TitleBar() {
           <TooltipContent>Rename</TooltipContent>
         </Tooltip>
       )}
-      <div className="ml-auto">
+      <div className="ml-auto flex items-center gap-1">
+        <Tooltip placement="bottom" delay={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => window.print()}
+              className="p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+              data-testid="exportPdfButton"
+            >
+              <Download size={16} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Export as PDF</TooltipContent>
+        </Tooltip>
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
