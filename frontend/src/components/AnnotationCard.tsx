@@ -14,6 +14,7 @@ interface AnnotationCardProps {
   onChange: (layerId: string, highlightId: string, annotation: string) => void
   onBlur: (layerId: string, highlightId: string, annotation: string) => void
   onClick: (layerId: string, highlightId: string) => void
+  cardRef?: (el: HTMLDivElement | null) => void
 }
 
 export function AnnotationCard({
@@ -26,6 +27,7 @@ export function AnnotationCard({
   onChange,
   onBlur,
   onClick,
+  cardRef,
 }: AnnotationCardProps) {
   const { t } = useTranslation("management")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -87,6 +89,8 @@ export function AnnotationCard({
 
   return (
     <div
+      ref={cardRef}
+      data-highlight-id={highlightId}
       className="absolute w-48 rounded border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
       style={{ top }}
       onClick={handleClick}

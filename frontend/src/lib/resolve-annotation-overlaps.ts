@@ -17,10 +17,12 @@ const CARD_GAP = 8 // Minimum vertical spacing between adjacent cards (px)
 
 /**
  * Greedy top-down algorithm: sort by desired top, then push each card down
- * if it would overlap the previous one.
+ * if it would overlap the previous one. Uses measured card heights when
+ * available, falling back to CARD_HEIGHT for cards not yet measured.
  */
 export function resolveAnnotationOverlaps(
-  positions: AnnotationPosition[]
+  positions: AnnotationPosition[],
+  heights?: ReadonlyMap<string, number>
 ): ResolvedPosition[] {
   if (positions.length === 0) return []
 
@@ -29,7 +31,8 @@ export function resolveAnnotationOverlaps(
 
   for (const pos of sorted) {
     const prev = resolved[resolved.length - 1]
-    const minTop = prev ? prev.top + CARD_HEIGHT + CARD_GAP : -Infinity
+    const prevHeight = prev ? (heights?.get(prev.id) ?? CARD_HEIGHT) : 0
+    const minTop = prev ? prev.top + prevHeight + CARD_GAP : -Infinity
     resolved.push({
       id: pos.id,
       top: Math.max(pos.desiredTop, minTop),

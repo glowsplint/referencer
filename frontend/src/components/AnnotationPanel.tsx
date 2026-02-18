@@ -2,7 +2,7 @@
 // SVG lines to their corresponding highlights. Resolves vertical overlaps so
 // cards don't stack on top of each other, and draws connector lines from each
 // highlight's right edge to its card using blended colors.
-import { useMemo } from "react"
+import { useMemo, useState, useRef, useCallback, useEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, EditingAnnotation } from "@/types/editor"
 import { useAllHighlightPositions } from "@/hooks/use-all-highlight-positions"
@@ -41,11 +41,41 @@ export function AnnotationPanel({
 }: AnnotationPanelProps) {
   const positions = useAllHighlightPositions(editorsRef, layers, containerRef, sectionVisibility)
 
+  // Track actual rendered card heights via ResizeObserver so the overlap
+  // resolver uses real sizes instead of the fixed 72px fallback.
+  const [cardHeights, setCardHeights] = useState<Map<string, number>>(() => new Map())
+  const observerRef = useRef<ResizeObserver | null>(null)
+
+  useEffect(() => () => { observerRef.current?.disconnect() }, [])
+
+  const observeCard = useCallback((el: HTMLDivElement | null) => {
+    if (!el) return
+    if (!observerRef.current) {
+      observerRef.current = new ResizeObserver((entries) => {
+        setCardHeights((prev) => {
+          let next: Map<string, number> | null = null
+          for (const entry of entries) {
+            const id = (entry.target as HTMLElement).dataset.highlightId
+            if (!id) continue
+            const h = (entry.target as HTMLElement).offsetHeight
+            if (prev.get(id) !== h) {
+              if (!next) next = new Map(prev)
+              next.set(id, h)
+            }
+          }
+          return next ?? prev
+        })
+      })
+    }
+    observerRef.current.observe(el)
+  }, [])
+
   const resolvedPositions = useMemo(() => {
     return resolveAnnotationOverlaps(
-      positions.map((p) => ({ id: p.highlightId, desiredTop: p.top }))
+      positions.map((p) => ({ id: p.highlightId, desiredTop: p.top })),
+      cardHeights
     )
-  }, [positions])
+  }, [positions, cardHeights])
 
   // Precompute fast lookups from highlight ID -> color, layerId, annotation text.
   // Only includes annotations from visible layers so hidden layers don't render.
@@ -139,6 +169,7 @@ export function AnnotationPanel({
                   onChange={onAnnotationChange}
                   onBlur={onAnnotationBlur}
                   onClick={onAnnotationClick}
+                  cardRef={observeCard}
                 />
               )
             })}
