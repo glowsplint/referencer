@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -177,59 +175,6 @@ func TestHandleResolveShare(t *testing.T) {
 		// We just verify it doesn't return a redirect.
 		if resp.StatusCode == http.StatusFound {
 			t.Error("should not redirect for non-existent share code")
-		}
-	})
-}
-
-func TestHandleBibleAPI_DevMode(t *testing.T) {
-	// Set up a temporary data directory with a test file.
-	tmpDir := t.TempDir()
-	dataDir := filepath.Join(tmpDir, "data")
-	os.MkdirAll(dataDir, 0o755)
-
-	testData := `{"passages":["In the beginning..."]}`
-	os.WriteFile(filepath.Join(dataDir, "genesis 1.json"), []byte(testData), 0o644)
-
-	// Change to tmpDir so the handler can find ./data/*.json.
-	origDir, _ := os.Getwd()
-	os.Chdir(tmpDir)
-	t.Cleanup(func() { os.Chdir(origDir) })
-
-	os.Setenv("DEVELOPMENT_MODE", "1")
-	t.Cleanup(func() { os.Unsetenv("DEVELOPMENT_MODE") })
-
-	handler := HandleBibleAPI()
-
-	r := chi.NewRouter()
-	r.Get("/api/{query}", handler)
-
-	t.Run("found passage", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "/api/genesis%201", nil)
-		w := httptest.NewRecorder()
-
-		r.ServeHTTP(w, req)
-
-		resp := w.Result()
-		if resp.StatusCode != http.StatusOK {
-			t.Fatalf("status = %d, want %d", resp.StatusCode, http.StatusOK)
-		}
-		var raw map[string]interface{}
-		json.NewDecoder(resp.Body).Decode(&raw)
-		passages, ok := raw["passages"].([]interface{})
-		if !ok || len(passages) == 0 {
-			t.Error("expected passages in response")
-		}
-	})
-
-	t.Run("not found passage", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "/api/nonexistent", nil)
-		w := httptest.NewRecorder()
-
-		r.ServeHTTP(w, req)
-
-		resp := w.Result()
-		if resp.StatusCode != http.StatusNotFound {
-			t.Errorf("status = %d, want %d", resp.StatusCode, http.StatusNotFound)
 		}
 	})
 }

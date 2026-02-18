@@ -3,11 +3,8 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 
@@ -69,59 +66,6 @@ func HandleResolveShare(database *db.DB) http.HandlerFunc {
 			http.Redirect(w, r, fmt.Sprintf("/space/%s", workspaceID), http.StatusFound)
 		}
 	}
-}
-
-// HandleBibleAPI returns an HTTP handler for the Bible API proxy.
-func HandleBibleAPI() http.HandlerFunc {
-	devMode := os.Getenv("DEVELOPMENT_MODE") != ""
-	apiKey := os.Getenv("API_KEY")
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		query := chi.URLParam(r, "query")
-
-		if devMode {
-			handleDevPassages(w, query)
-			return
-		}
-
-		handleProdPassages(w, query, apiKey)
-	}
-}
-
-func handleDevPassages(w http.ResponseWriter, query string) {
-	filename := strings.ToLower(query) + ".json"
-	path := filepath.Join(".", "data", filename)
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("passage not found: %s", query), http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(data)
-}
-
-func handleProdPassages(w http.ResponseWriter, query, apiKey string) {
-	url := fmt.Sprintf("https://api.esv.org/v3/passage/text/?q=%s&include-short-copyright=false", query)
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		http.Error(w, "failed to create request", http.StatusInternalServerError)
-		return
-	}
-	req.Header.Set("Authorization", "Token "+apiKey)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		http.Error(w, "failed to fetch passage", http.StatusBadGateway)
-		return
-	}
-	defer resp.Body.Close()
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(resp.StatusCode)
-	io.Copy(w, resp.Body)
 }
 
 func staticDir() string {

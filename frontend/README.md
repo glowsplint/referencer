@@ -15,15 +15,15 @@ Open [http://localhost:5173](http://localhost:5173).
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `bun run dev` | Start Vite dev server with hot reload |
-| `bun run build` | Type-check and build for production |
-| `bun run preview` | Preview the production build |
-| `bun run lint` | Run ESLint |
-| `bun run test` | Run Vitest in watch mode |
-| `bun run test:run` | Run Vitest once |
-| `bun run test:e2e` | Run Playwright end-to-end tests |
+| Script                | Description                              |
+| --------------------- | ---------------------------------------- |
+| `bun run dev`         | Start Vite dev server with hot reload    |
+| `bun run build`       | Type-check and build for production      |
+| `bun run preview`     | Preview the production build             |
+| `bun run lint`        | Run ESLint                               |
+| `bun run test`        | Run Vitest in watch mode                 |
+| `bun run test:run`    | Run Vitest once                          |
+| `bun run test:e2e`    | Run Playwright end-to-end tests          |
 | `bun run test:e2e:ui` | Run Playwright tests with interactive UI |
 
 ## Project Layout
