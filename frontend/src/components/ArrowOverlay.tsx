@@ -293,6 +293,7 @@ export function ArrowOverlay({
           const markerPath = document.createElementNS(SVG_NS, "path")
           markerPath.setAttribute("d", arrowPath)
           markerPath.setAttribute("stroke", "none")
+          markerPath.setAttribute("stroke-width", "2")
           markerPath.setAttribute("fill", "none")
           markerPath.setAttribute("marker-mid", `url(#wrapper-arrowhead-${data.arrowId})`)
           g.appendChild(markerPath)
