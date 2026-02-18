@@ -27,29 +27,24 @@ export function ColorPicker({
   const showCustomSection =
     (customColors && customColors.length > 0) || onAddCustomColor;
 
-  const handleColorChange = useCallback(
-    (hex: string) => {
-      setPickerColor(hex);
-      onSelectColor(hex);
-    },
-    [onSelectColor],
-  );
+  const handleColorChange = useCallback((hex: string) => {
+    setPickerColor(hex);
+  }, []);
 
   const handleRgbChange = useCallback(
     (channel: "r" | "g" | "b", value: number) => {
       const current = hexToRgb(pickerColor);
       current[channel] = value;
-      const hex = rgbToHex(current.r, current.g, current.b);
-      setPickerColor(hex);
-      onSelectColor(hex);
+      setPickerColor(rgbToHex(current.r, current.g, current.b));
     },
-    [pickerColor, onSelectColor],
+    [pickerColor],
   );
 
   const handleConfirm = useCallback(() => {
+    onSelectColor(pickerColor);
     onAddCustomColor?.(pickerColor);
     setShowAdvancedPicker(false);
-  }, [onAddCustomColor, pickerColor]);
+  }, [onSelectColor, onAddCustomColor, pickerColor]);
 
   const rgb = hexToRgb(pickerColor);
 

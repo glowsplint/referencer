@@ -109,10 +109,10 @@ describe("ColorPicker", () => {
       // Type a hex color into the hex input
       const hexInput = screen.getByTestId("hexInput-0")
       fireEvent.change(hexInput, { target: { value: "#abcdef" } })
-      expect(onSelectColor).toHaveBeenCalledWith("#abcdef")
 
-      // Click the confirm button
+      // Click the confirm button — this is when onSelectColor and onAddCustomColor fire
       fireEvent.click(screen.getByTestId("confirmColor-0"))
+      expect(onSelectColor).toHaveBeenCalledWith("#abcdef")
       expect(onAddCustomColor).toHaveBeenCalledWith("#abcdef")
     })
 
@@ -175,39 +175,35 @@ describe("ColorPicker", () => {
       expect(screen.queryByTestId("advancedPicker-0")).not.toBeInTheDocument()
     })
 
-    it("updates color via hex input", () => {
+    it("updates color preview via hex input without calling onSelectColor", () => {
       const onSelectColor = vi.fn()
       render(
         <ColorPicker index={0} onSelectColor={onSelectColor} onAddCustomColor={vi.fn()} />
       )
-      // Open picker
       fireEvent.click(screen.getByTestId("addCustomColor-0"))
 
-      // Change hex input
       const hexInput = screen.getByTestId("hexInput-0")
       fireEvent.change(hexInput, { target: { value: "#ff5733" } })
-      expect(onSelectColor).toHaveBeenCalledWith("#ff5733")
+
+      // onSelectColor should NOT be called until confirm
+      expect(onSelectColor).not.toHaveBeenCalled()
+      // Preview swatch should reflect the new color
+      expect(screen.getByTestId("pickerPreview-0")).toHaveStyle({ backgroundColor: "#ff5733" })
     })
 
-    it("updates color via RGB inputs", () => {
+    it("updates color preview via RGB inputs without calling onSelectColor", () => {
       const onSelectColor = vi.fn()
       render(
         <ColorPicker index={0} onSelectColor={onSelectColor} onAddCustomColor={vi.fn()} />
       )
-      // Open picker
       fireEvent.click(screen.getByTestId("addCustomColor-0"))
 
-      // Change the R input (default pickerColor is #000000 so r=0, g=0, b=0)
       fireEvent.change(screen.getByTestId("rgbInput-r-0"), { target: { value: "128" } })
-      expect(onSelectColor).toHaveBeenCalledWith("#800000")
 
-      // Change the G input
-      fireEvent.change(screen.getByTestId("rgbInput-g-0"), { target: { value: "64" } })
-      expect(onSelectColor).toHaveBeenCalledWith("#804000")
-
-      // Change the B input
-      fireEvent.change(screen.getByTestId("rgbInput-b-0"), { target: { value: "255" } })
-      expect(onSelectColor).toHaveBeenCalledWith("#8040ff")
+      // onSelectColor should NOT be called until confirm
+      expect(onSelectColor).not.toHaveBeenCalled()
+      // Preview should reflect the change
+      expect(screen.getByTestId("pickerPreview-0")).toHaveStyle({ backgroundColor: "#800000" })
     })
 
     it("confirm button calls onAddCustomColor and closes picker", () => {
