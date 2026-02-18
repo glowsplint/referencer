@@ -128,7 +128,7 @@ describe("useUnderlineMode", () => {
     act(() => { result.current.confirmUnderline() })
 
     expect(setStatus).toHaveBeenCalledWith(
-      { text: "Underline added", type: "success" }, 1500
+      { text: "Underline added.", type: "success" }, 1500
     )
   })
 

@@ -24,7 +24,7 @@ export function useLayers() {
       : TAILWIND_300_COLORS
     const color = opts?.color ?? allColors.find((c) => !usedColors.has(c))
     if (!color) {
-      toast.warning("All colors are in use — remove a layer first")
+      toast.warning("All colors are in use — remove a layer first.")
       return null
     }
     if (!opts?.name) {

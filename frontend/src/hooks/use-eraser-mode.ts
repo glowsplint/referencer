@@ -28,7 +28,7 @@ export function useEraserMode({
   // Show status when eraser is active
   useEffect(() => {
     if (!isLocked || activeTool !== "eraser") return
-    setStatus({ text: "Click and drag to erase highlights and underlines", type: "info" })
+    setStatus({ text: "Click and drag to erase highlights and underlines.", type: "info" })
     return () => clearStatus()
   }, [isLocked, activeTool, setStatus, clearStatus])
 
@@ -64,7 +64,7 @@ export function useEraserMode({
     }
 
     if (erased) {
-      setStatus({ text: "Erased decoration", type: "success" })
+      setStatus({ text: "Erased decoration.", type: "success" })
     }
   }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, setStatus])
 

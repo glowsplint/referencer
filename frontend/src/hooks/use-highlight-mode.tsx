@@ -73,7 +73,7 @@ export function useHighlightMode({
   useEffect(() => {
     if (isHighlightTool) {
       if (showHighlightToastsRef.current) {
-        setStatusRef.current({ text: <>Select words to highlight, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
+        setStatusRef.current({ text: <>Select words to highlight, then press <ToastKbd>Enter</ToastKbd>.</>, type: "info" })
       }
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
@@ -108,7 +108,7 @@ export function useHighlightMode({
     if (existing) {
       removeHighlightRef.current(layerId, existing.id)
       if (showHighlightToastsRef.current) {
-        setStatusRef.current({ text: "Highlight removed", type: "success" }, 1500)
+        setStatusRef.current({ text: "Highlight removed.", type: "success" }, 1500)
       }
       return
     }
@@ -123,7 +123,7 @@ export function useHighlightMode({
       type: "highlight",
     })
     if (showHighlightToastsRef.current) {
-      setStatusRef.current({ text: "Highlight added", type: "success" }, 1500)
+      setStatusRef.current({ text: "Highlight added.", type: "success" }, 1500)
     }
     // Stay in highlight mode — do NOT switch to selection tool
   }, [])

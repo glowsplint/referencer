@@ -225,14 +225,14 @@ export function App() {
   // Hint to lock the editor when unlocked
   useEffect(() => {
     if (!settings.isLocked && !effectiveReadOnly) {
-      setStatus({ text: <>Press (<ToastKbd>Esc</ToastKbd>) (<ToastKbd>K</ToastKbd>) to lock the editor once you've finalised the contents</>, type: "info" })
+      setStatus({ text: <>Press <ToastKbd>Esc</ToastKbd> <ToastKbd>K</ToastKbd> to lock the editor once you've finalised the contents.</>, type: "info" })
     }
   }, [settings.isLocked, effectiveReadOnly, setStatus])
 
   // Default status message when locked with selection tool and no visible selection
   useEffect(() => {
     if (settings.isLocked && annotations.activeTool === "selection" && (!selection || selectionHidden)) {
-      setStatus({ text: "Click a word or use arrow keys to navigate", type: "info" })
+      setStatus({ text: "Click a word or use arrow keys to navigate.", type: "info" })
     }
   }, [settings.isLocked, annotations.activeTool, selection, selectionHidden, setStatus])
 

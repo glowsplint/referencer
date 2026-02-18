@@ -95,7 +95,7 @@ export function useDrawingMode({
   useEffect(() => {
     if (isArrowTool) {
       phaseRef.current = "selecting-anchor"
-      showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>)
+      showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd>.</>)
     } else {
       const wasActive = phaseRef.current !== "idle"
       phaseRef.current = "idle"
@@ -138,7 +138,7 @@ export function useDrawingMode({
       anchorRef.current = endpoint
       phaseRef.current = "anchor-confirmed"
       setDrawingState({ anchor: endpoint, cursor: endpoint })
-      showInfo(<>Now select the target and press <ToastKbd>Enter</ToastKbd></>)
+      showInfo(<>Now select the target and press <ToastKbd>Enter</ToastKbd>.</>)
       return
     }
 
@@ -150,7 +150,7 @@ export function useDrawingMode({
         anchorRef.current = null
         phaseRef.current = "selecting-anchor"
         setDrawingState(null)
-        showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd></>)
+        showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd>.</>)
         return
       }
 
@@ -166,7 +166,7 @@ export function useDrawingMode({
       phaseRef.current = "idle"
       setDrawingState(null)
       if (showDrawingToastsRef.current) {
-        setStatusRef.current({ text: "Arrow created", type: "success" }, 1500)
+        setStatusRef.current({ text: "Arrow created.", type: "success" }, 1500)
       }
       setActiveToolRef.current("selection")
       return

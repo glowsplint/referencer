@@ -73,7 +73,7 @@ export function useUnderlineMode({
   useEffect(() => {
     if (isUnderlineTool) {
       if (showUnderlineToastsRef.current) {
-        setStatusRef.current({ text: <>Select words to underline, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
+        setStatusRef.current({ text: <>Select words to underline, then press <ToastKbd>Enter</ToastKbd>.</>, type: "info" })
       }
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
@@ -114,7 +114,7 @@ export function useUnderlineMode({
       text: sel.text,
     })
     if (showUnderlineToastsRef.current) {
-      setStatusRef.current({ text: "Underline added", type: "success" }, 1500)
+      setStatusRef.current({ text: "Underline added.", type: "success" }, 1500)
     }
   }, [])
 

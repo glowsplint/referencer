@@ -33,10 +33,10 @@ export function ShareDialog({
     const url = `${window.location.origin}${BASE_URL}${hash}`
     try {
       await navigator.clipboard.writeText(url)
-      toast.success("Link copied to clipboard")
+      toast.success("Link copied to clipboard.")
       onOpenChange(false)
     } catch {
-      toast.error("Failed to copy link")
+      toast.error("Failed to copy link.")
     }
   }
 

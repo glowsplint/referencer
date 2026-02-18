@@ -118,7 +118,7 @@ describe("useDrawingMode", () => {
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
     expect(setStatus).toHaveBeenCalledWith(
-      { text: "Arrow created", type: "success" }, 1500
+      { text: "Arrow created.", type: "success" }, 1500
     )
   })
 

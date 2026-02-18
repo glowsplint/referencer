@@ -203,7 +203,7 @@ describe("useCommentMode", () => {
 
     expect(opts.addHighlight).toHaveBeenCalled()
     expect(setStatus).toHaveBeenCalledWith(
-      { text: "Comment added", type: "success" }, 1500
+      { text: "Comment added.", type: "success" }, 1500
     )
   })
 

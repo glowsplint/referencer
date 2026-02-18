@@ -42,7 +42,7 @@ describe("useEraserMode", () => {
     renderHook(() => useEraserMode(createOptions({ setStatus })))
 
     expect(setStatus).toHaveBeenCalledWith(
-      expect.objectContaining({ text: "Click and drag to erase highlights and underlines", type: "info" })
+      expect.objectContaining({ text: "Click and drag to erase highlights and underlines.", type: "info" })
     )
   })
 
@@ -202,7 +202,7 @@ describe("useEraserMode", () => {
     act(() => { result.current.confirmErase() })
 
     expect(setStatus).toHaveBeenCalledWith(
-      expect.objectContaining({ text: "Erased decoration", type: "success" })
+      expect.objectContaining({ text: "Erased decoration.", type: "success" })
     )
   })
 

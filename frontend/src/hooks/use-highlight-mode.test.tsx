@@ -185,7 +185,7 @@ describe("useHighlightMode", () => {
 
     expect(opts.addHighlight).toHaveBeenCalled()
     expect(setStatus).toHaveBeenCalledWith(
-      { text: "Highlight added", type: "success" }, 1500
+      { text: "Highlight added.", type: "success" }, 1500
     )
   })
 
@@ -228,7 +228,7 @@ describe("useHighlightMode", () => {
     act(() => { result.current.confirmHighlight() })
 
     expect(setStatus).toHaveBeenCalledWith(
-      { text: "Highlight removed", type: "success" }, 1500
+      { text: "Highlight removed.", type: "success" }, 1500
     )
   })
 })

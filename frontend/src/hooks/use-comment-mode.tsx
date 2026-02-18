@@ -78,7 +78,7 @@ export function useCommentMode({
   useEffect(() => {
     if (isCommentTool) {
       if (showCommentToastsRef.current) {
-        setStatusRef.current({ text: <>Select words to comment on, then press <ToastKbd>Enter</ToastKbd></>, type: "info" })
+        setStatusRef.current({ text: <>Select words to comment on, then press <ToastKbd>Enter</ToastKbd>.</>, type: "info" })
       }
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
@@ -130,7 +130,7 @@ export function useCommentMode({
       type: "comment",
     })
     if (showCommentToastsRef.current) {
-      setStatusRef.current({ text: "Comment added", type: "success" }, 1500)
+      setStatusRef.current({ text: "Comment added.", type: "success" }, 1500)
     }
     onHighlightAddedRef.current?.(layerId, highlightId)
     // Keep selection so user can continue keyboard navigation after Escape
