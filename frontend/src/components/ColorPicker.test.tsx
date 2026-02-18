@@ -5,10 +5,8 @@ import { TAILWIND_300_COLORS } from "@/types/editor"
 
 // Mock react-colorful: HexColorPicker is canvas-based (no DOM in jsdom),
 // and HexColorInput needs to behave as a controlled input with onChange.
-let capturedPickerOnChange: ((color: string) => void) | undefined
 vi.mock("react-colorful", () => ({
-  HexColorPicker: ({ color, onChange }: { color: string; onChange: (c: string) => void }) => {
-    capturedPickerOnChange = onChange
+  HexColorPicker: ({ color }: { color: string; onChange: (c: string) => void }) => {
     return <div data-testid="mock-hex-color-picker" data-color={color} />
   },
   HexColorInput: (props: Record<string, unknown>) => {

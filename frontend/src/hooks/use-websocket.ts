@@ -204,7 +204,7 @@ export function useWebSocket(
         }
         applyRemoteAction(payload, rawLayersRef.current, rawEditorsRef.current)
       } catch (err) {
-        console.error("[ws] Unexpected error applying remote action", err, payload)
+        console.error("[ws] Unexpected error applying remote action", err, msg.payload)
       }
     })
 
