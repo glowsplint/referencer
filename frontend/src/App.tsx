@@ -363,6 +363,8 @@ export function App() {
                 />
                 {editorWidths.map((width, i) => {
                   const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]
+                  // "direction" is the resize drag axis, not the visual line orientation
+                  // (e.g. "horizontal" means drag left/right to resize side-by-side panes)
                   const dividerDirection = settings.isMultipleRowsLayout ? "vertical" as const : "horizontal" as const
                   return (
                   <Fragment key={editorKeys[i]}>

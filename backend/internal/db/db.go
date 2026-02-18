@@ -18,31 +18,35 @@ type DB struct {
 }
 
 const schema = `
+-- A workspace is the top-level container; its ID comes from the URL path.
 CREATE TABLE IF NOT EXISTS workspace (
     id TEXT PRIMARY KEY,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- Layers group annotations (highlights, arrows, underlines) with shared color/visibility.
 CREATE TABLE IF NOT EXISTS layer (
-    id TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY,                -- client-generated UUID
     workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
-    color TEXT NOT NULL,
+    color TEXT NOT NULL,                -- hex color, e.g. "#ff0000"
     visible INTEGER NOT NULL DEFAULT 1,
-    position INTEGER NOT NULL DEFAULT 0
+    position INTEGER NOT NULL DEFAULT 0 -- controls display order in the layer panel
 );
 
+-- A highlighted text range within an editor.
 CREATE TABLE IF NOT EXISTS highlight (
     id TEXT PRIMARY KEY,
     layer_id TEXT NOT NULL REFERENCES layer(id) ON DELETE CASCADE,
-    editor_index INTEGER NOT NULL,
-    "from" INTEGER NOT NULL,
-    "to" INTEGER NOT NULL,
-    text TEXT NOT NULL DEFAULT '',
-    annotation TEXT NOT NULL DEFAULT '',
-    type TEXT NOT NULL DEFAULT 'highlight'
+    editor_index INTEGER NOT NULL,      -- which editor pane (0-based)
+    "from" INTEGER NOT NULL,            -- ProseMirror document position (start)
+    "to" INTEGER NOT NULL,              -- ProseMirror document position (end)
+    text TEXT NOT NULL DEFAULT '',       -- snapshotted selected text
+    annotation TEXT NOT NULL DEFAULT '', -- user-written note
+    type TEXT NOT NULL DEFAULT 'highlight' -- reserved for future annotation subtypes
 );
 
+-- An arrow connecting two text ranges, possibly across different editors.
 CREATE TABLE IF NOT EXISTS arrow (
     id TEXT PRIMARY KEY,
     layer_id TEXT NOT NULL REFERENCES layer(id) ON DELETE CASCADE,
@@ -54,9 +58,10 @@ CREATE TABLE IF NOT EXISTS arrow (
     to_start INTEGER NOT NULL,
     to_end INTEGER NOT NULL,
     to_text TEXT NOT NULL DEFAULT '',
-    arrow_style TEXT NOT NULL DEFAULT 'solid'
+    arrow_style TEXT NOT NULL DEFAULT 'solid' -- visual style: 'solid', 'dashed', etc.
 );
 
+-- An underlined text range within an editor (similar to highlight but rendered differently).
 CREATE TABLE IF NOT EXISTS underline (
     id TEXT PRIMARY KEY,
     layer_id TEXT NOT NULL REFERENCES layer(id) ON DELETE CASCADE,
@@ -66,17 +71,21 @@ CREATE TABLE IF NOT EXISTS underline (
     text TEXT NOT NULL DEFAULT ''
 );
 
+-- Editor panes containing rich text. Uses AUTOINCREMENT (unlike other tables with
+-- client-generated TEXT UUIDs) because editors are server-managed and need stable
+-- sequential IDs for re-indexing on delete.
 CREATE TABLE IF NOT EXISTS editor (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
-    index_pos INTEGER NOT NULL,
+    index_pos INTEGER NOT NULL,         -- display order, re-indexed on editor removal
     name TEXT NOT NULL DEFAULT 'Passage',
     visible INTEGER NOT NULL DEFAULT 1,
-    content_json TEXT
+    content_json TEXT                   -- ProseMirror JSON document, NULL until first edit
 );
 
+-- Share links for read-only or edit access to a workspace.
 CREATE TABLE IF NOT EXISTS share_link (
-    code TEXT PRIMARY KEY,
+    code TEXT PRIMARY KEY,              -- short alphanumeric code (see generateCode)
     workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
     access TEXT NOT NULL CHECK (access IN ('edit', 'readonly')),
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -603,6 +612,7 @@ func (d *DB) UpdateEditorContent(workspaceID string, editorIndex int, contentJSO
 
 func (d *DB) CreateShareLink(workspaceID, access string) (string, error) {
 	const maxRetries = 5
+	// 62^6 ≈ 56 billion possible codes; 5 retries makes collision virtually impossible.
 	for i := 0; i < maxRetries; i++ {
 		code := generateCode(6)
 		_, err := d.conn.Exec(

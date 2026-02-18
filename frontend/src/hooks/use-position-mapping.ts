@@ -39,6 +39,7 @@ export function usePositionMapping({
 
           const highlights = layer.highlights.map((h) => {
             if (h.editorIndex !== editorIndex) return h
+            // mapping.map(pos, bias): bias 1 grows with insertions at boundary, -1 shrinks
             const newFrom = mapping.map(h.from, 1)
             const newTo = mapping.map(h.to, -1)
             if (newFrom === h.from && newTo === h.to) return h

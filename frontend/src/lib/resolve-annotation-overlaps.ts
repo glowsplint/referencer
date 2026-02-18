@@ -12,8 +12,8 @@ export interface ResolvedPosition {
   top: number
 }
 
-const CARD_HEIGHT = 72
-const CARD_GAP = 8
+const CARD_HEIGHT = 72 // Rendered height of an annotation card in the side panel (px)
+const CARD_GAP = 8 // Minimum vertical spacing between adjacent cards (px)
 
 /**
  * Greedy top-down algorithm: sort by desired top, then push each card down

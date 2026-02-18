@@ -15,6 +15,7 @@ import (
 	"referencer/backend/internal/models"
 )
 
+// CheckOrigin allows all origins — permissive for local development.
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
@@ -79,10 +80,10 @@ func (cm *ConnectionManager) Broadcast(workspaceID string, msg interface{}, excl
 	cm.mu.RLock()
 	clients := cm.connections[workspaceID]
 	// Copy conn references while holding the lock.
-	targets := make(map[string]*websocket.Conn, len(clients))
+	recipients := make(map[string]*websocket.Conn, len(clients))
 	for id, conn := range clients {
 		if id != excludeClient {
-			targets[id] = conn
+			recipients[id] = conn
 		}
 	}
 	cm.mu.RUnlock()
@@ -92,7 +93,7 @@ func (cm *ConnectionManager) Broadcast(workspaceID string, msg interface{}, excl
 		log.Printf("broadcast marshal error: %v", err)
 		return
 	}
-	for cid, conn := range targets {
+	for cid, conn := range recipients {
 		if err := conn.WriteMessage(websocket.TextMessage, data); err != nil {
 			log.Printf("failed to send to client %s: %v", cid, err)
 		}
@@ -152,6 +153,10 @@ func HandleWebSocket(database *db.DB, connMgr *ConnectionManager) http.HandlerFu
 			return
 		}
 
+		// GetWorkspaceState uses a three-pass loading strategy:
+		// 1. Layers (ordered by position)
+		// 2. Annotations (highlights, arrows, underlines indexed by layer)
+		// 3. Editors (ordered by index_pos)
 		state, err := database.GetWorkspaceState(workspaceID)
 		if err != nil {
 			log.Printf("get workspace state error: %v", err)
@@ -249,135 +254,296 @@ func structToMap(v interface{}) (map[string]interface{}, error) {
 // --- Action handlers ---
 
 func handleAddLayer(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.AddLayer(
-		workspaceID,
-		payload["id"].(string),
-		payload["name"].(string),
-		payload["color"].(string),
-	)
+	id, err := assertString(payload, "id")
+	if err != nil {
+		return err
+	}
+	name, err := assertString(payload, "name")
+	if err != nil {
+		return err
+	}
+	color, err := assertString(payload, "color")
+	if err != nil {
+		return err
+	}
+	return database.AddLayer(workspaceID, id, name, color)
 }
 
 func handleRemoveLayer(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.RemoveLayer(workspaceID, payload["id"].(string))
+	id, err := assertString(payload, "id")
+	if err != nil {
+		return err
+	}
+	return database.RemoveLayer(workspaceID, id)
 }
 
 func handleUpdateLayerName(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.UpdateLayerName(workspaceID, payload["id"].(string), payload["name"].(string))
+	id, err := assertString(payload, "id")
+	if err != nil {
+		return err
+	}
+	name, err := assertString(payload, "name")
+	if err != nil {
+		return err
+	}
+	return database.UpdateLayerName(workspaceID, id, name)
 }
 
 func handleUpdateLayerColor(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.UpdateLayerColor(workspaceID, payload["id"].(string), payload["color"].(string))
+	id, err := assertString(payload, "id")
+	if err != nil {
+		return err
+	}
+	color, err := assertString(payload, "color")
+	if err != nil {
+		return err
+	}
+	return database.UpdateLayerColor(workspaceID, id, color)
 }
 
 func handleToggleLayerVisibility(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.ToggleLayerVisibility(workspaceID, payload["id"].(string))
+	id, err := assertString(payload, "id")
+	if err != nil {
+		return err
+	}
+	return database.ToggleLayerVisibility(workspaceID, id)
 }
 
 func handleReorderLayers(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	raw := payload["layerIds"].([]interface{})
+	raw, err := assertSlice(payload, "layerIds")
+	if err != nil {
+		return err
+	}
 	ids := make([]string, len(raw))
 	for i, v := range raw {
-		ids[i] = v.(string)
+		s, ok := v.(string)
+		if !ok {
+			return fmt.Errorf("layerIds[%d]: expected string, got %T", i, v)
+		}
+		ids[i] = s
 	}
 	return database.ReorderLayers(workspaceID, ids)
 }
 
 func handleAddHighlight(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	layerID := payload["layerId"].(string)
-	h := payload["highlight"].(map[string]interface{})
+	layerID, err := assertString(payload, "layerId")
+	if err != nil {
+		return err
+	}
+	h, err := assertMap(payload, "highlight")
+	if err != nil {
+		return err
+	}
+	id, err := assertString(h, "id")
+	if err != nil {
+		return err
+	}
+	editorIndex, err := assertFloat64(h, "editorIndex")
+	if err != nil {
+		return err
+	}
+	from, err := assertFloat64(h, "from")
+	if err != nil {
+		return err
+	}
+	to, err := assertFloat64(h, "to")
+	if err != nil {
+		return err
+	}
 	return database.AddHighlight(
-		layerID,
-		h["id"].(string),
-		int(h["editorIndex"].(float64)),
-		int(h["from"].(float64)),
-		int(h["to"].(float64)),
+		layerID, id,
+		int(editorIndex), int(from), int(to),
 		stringOrDefault(h, "text", ""),
 		stringOrDefault(h, "annotation", ""),
 	)
 }
 
 func handleRemoveHighlight(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.RemoveHighlight(payload["layerId"].(string), payload["highlightId"].(string))
+	layerID, err := assertString(payload, "layerId")
+	if err != nil {
+		return err
+	}
+	highlightID, err := assertString(payload, "highlightId")
+	if err != nil {
+		return err
+	}
+	return database.RemoveHighlight(layerID, highlightID)
 }
 
 func handleUpdateHighlightAnnotation(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.UpdateHighlightAnnotation(
-		payload["layerId"].(string),
-		payload["highlightId"].(string),
-		payload["annotation"].(string),
-	)
+	layerID, err := assertString(payload, "layerId")
+	if err != nil {
+		return err
+	}
+	highlightID, err := assertString(payload, "highlightId")
+	if err != nil {
+		return err
+	}
+	annotation, err := assertString(payload, "annotation")
+	if err != nil {
+		return err
+	}
+	return database.UpdateHighlightAnnotation(layerID, highlightID, annotation)
 }
 
 func handleAddArrow(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	arrow := payload["arrow"].(map[string]interface{})
-	return database.AddArrow(
-		payload["layerId"].(string),
-		arrow["id"].(string),
-		arrow["from"].(map[string]interface{}),
-		arrow["to"].(map[string]interface{}),
-	)
+	layerID, err := assertString(payload, "layerId")
+	if err != nil {
+		return err
+	}
+	arrow, err := assertMap(payload, "arrow")
+	if err != nil {
+		return err
+	}
+	id, err := assertString(arrow, "id")
+	if err != nil {
+		return err
+	}
+	fromEndpoint, err := assertMap(arrow, "from")
+	if err != nil {
+		return err
+	}
+	toEndpoint, err := assertMap(arrow, "to")
+	if err != nil {
+		return err
+	}
+	return database.AddArrow(layerID, id, fromEndpoint, toEndpoint)
 }
 
 func handleRemoveArrow(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.RemoveArrow(payload["layerId"].(string), payload["arrowId"].(string))
+	layerID, err := assertString(payload, "layerId")
+	if err != nil {
+		return err
+	}
+	arrowID, err := assertString(payload, "arrowId")
+	if err != nil {
+		return err
+	}
+	return database.RemoveArrow(layerID, arrowID)
 }
 
 func handleUpdateArrowStyle(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.UpdateArrowStyle(
-		payload["layerId"].(string),
-		payload["arrowId"].(string),
-		payload["arrowStyle"].(string),
-	)
+	layerID, err := assertString(payload, "layerId")
+	if err != nil {
+		return err
+	}
+	arrowID, err := assertString(payload, "arrowId")
+	if err != nil {
+		return err
+	}
+	arrowStyle, err := assertString(payload, "arrowStyle")
+	if err != nil {
+		return err
+	}
+	return database.UpdateArrowStyle(layerID, arrowID, arrowStyle)
 }
 
 func handleAddUnderline(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	layerID := payload["layerId"].(string)
-	u := payload["underline"].(map[string]interface{})
+	layerID, err := assertString(payload, "layerId")
+	if err != nil {
+		return err
+	}
+	u, err := assertMap(payload, "underline")
+	if err != nil {
+		return err
+	}
+	id, err := assertString(u, "id")
+	if err != nil {
+		return err
+	}
+	editorIndex, err := assertFloat64(u, "editorIndex")
+	if err != nil {
+		return err
+	}
+	from, err := assertFloat64(u, "from")
+	if err != nil {
+		return err
+	}
+	to, err := assertFloat64(u, "to")
+	if err != nil {
+		return err
+	}
 	return database.AddUnderline(
-		layerID,
-		u["id"].(string),
-		int(u["editorIndex"].(float64)),
-		int(u["from"].(float64)),
-		int(u["to"].(float64)),
+		layerID, id,
+		int(editorIndex), int(from), int(to),
 		stringOrDefault(u, "text", ""),
 	)
 }
 
 func handleRemoveUnderline(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.RemoveUnderline(payload["layerId"].(string), payload["underlineId"].(string))
+	layerID, err := assertString(payload, "layerId")
+	if err != nil {
+		return err
+	}
+	underlineID, err := assertString(payload, "underlineId")
+	if err != nil {
+		return err
+	}
+	return database.RemoveUnderline(layerID, underlineID)
 }
 
 func handleAddEditor(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.AddEditor(workspaceID, int(payload["index"].(float64)), payload["name"].(string))
+	index, err := assertFloat64(payload, "index")
+	if err != nil {
+		return err
+	}
+	name, err := assertString(payload, "name")
+	if err != nil {
+		return err
+	}
+	return database.AddEditor(workspaceID, int(index), name)
 }
 
 func handleRemoveEditor(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.RemoveEditor(workspaceID, int(payload["index"].(float64)))
+	index, err := assertFloat64(payload, "index")
+	if err != nil {
+		return err
+	}
+	return database.RemoveEditor(workspaceID, int(index))
 }
 
 func handleUpdateSectionName(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.UpdateSectionName(workspaceID, int(payload["index"].(float64)), payload["name"].(string))
+	index, err := assertFloat64(payload, "index")
+	if err != nil {
+		return err
+	}
+	name, err := assertString(payload, "name")
+	if err != nil {
+		return err
+	}
+	return database.UpdateSectionName(workspaceID, int(index), name)
 }
 
 func handleToggleSectionVisibility(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.ToggleSectionVisibility(workspaceID, int(payload["index"].(float64)))
+	index, err := assertFloat64(payload, "index")
+	if err != nil {
+		return err
+	}
+	return database.ToggleSectionVisibility(workspaceID, int(index))
 }
 
 func handleReorderEditors(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	raw := payload["permutation"].([]interface{})
+	raw, err := assertSlice(payload, "permutation")
+	if err != nil {
+		return err
+	}
 	indices := make([]int, len(raw))
 	for i, v := range raw {
-		indices[i] = int(v.(float64))
+		f, ok := v.(float64)
+		if !ok {
+			return fmt.Errorf("permutation[%d]: expected float64, got %T", i, v)
+		}
+		indices[i] = int(f)
 	}
 	return database.ReorderEditors(workspaceID, indices)
 }
 
 func handleUpdateEditorContent(database *db.DB, workspaceID string, payload map[string]interface{}) error {
-	return database.UpdateEditorContent(
-		workspaceID,
-		int(payload["editorIndex"].(float64)),
-		payload["contentJson"],
-	)
+	editorIndex, err := assertFloat64(payload, "editorIndex")
+	if err != nil {
+		return err
+	}
+	return database.UpdateEditorContent(workspaceID, int(editorIndex), payload["contentJson"])
 }
 
 func stringOrDefault(m map[string]interface{}, key, def string) string {

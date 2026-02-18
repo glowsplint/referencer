@@ -236,6 +236,8 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, trackedEditorsHook, guardedSendAction]
   )
 
+  // Reorder editors according to a permutation array where permutation[newIndex] = oldIndex.
+  // All annotation editorIndex values must be remapped to match the new ordering.
   const reorderEditors = useCallback(
     guarded((permutation: number[]) => {
       // Build index map: oldIndex → newIndex
@@ -334,6 +336,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       if (contentTimerRef.current) {
         clearTimeout(contentTimerRef.current)
       }
+      // 2s debounce balances responsiveness with minimizing WebSocket traffic
       contentTimerRef.current = setTimeout(() => {
         guardedSendAction("updateEditorContent", { editorIndex, contentJson: contentJson as Record<string, unknown> })
         contentTimerRef.current = null

@@ -7,6 +7,7 @@ import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
+import { useLatestRef } from "@/hooks/use-latest-ref"
 
 interface UseHighlightModeOptions {
   isLocked: boolean
@@ -40,38 +41,25 @@ export function useHighlightMode({
   flashStatus,
   clearStatus,
 }: UseHighlightModeOptions) {
+  // activeLayerIdRef uses useEffect sync (not useLatestRef) because confirmHighlight
+  // writes to it locally after auto-creating a layer — the local value must persist
+  // until the parent passes down a new activeLayerId prop
   const activeLayerIdRef = useRef(activeLayerId)
-  const addLayerRef = useRef(addLayer)
-  const addHighlightRef = useRef(addHighlight)
-  const removeHighlightRef = useRef(removeHighlight)
-  const layersRef = useRef(layers)
-  const selectionRef = useRef(selection)
+  useEffect(() => { activeLayerIdRef.current = activeLayerId }, [activeLayerId])
+  const addLayerRef = useLatestRef(addLayer)
+  const addHighlightRef = useLatestRef(addHighlight)
+  const removeHighlightRef = useLatestRef(removeHighlight)
+  const layersRef = useLatestRef(layers)
+  const selectionRef = useLatestRef(selection)
 
-  useEffect(() => {
-    activeLayerIdRef.current = activeLayerId
-    addLayerRef.current = addLayer
-    addHighlightRef.current = addHighlight
-    removeHighlightRef.current = removeHighlight
-    layersRef.current = layers
-  }, [activeLayerId, addLayer, addHighlight, removeHighlight, layers])
+  const activeToolRef = useLatestRef(activeTool)
+  const isLockedRef = useLatestRef(isLocked)
 
-  selectionRef.current = selection
+  const showHighlightToastsRef = useLatestRef(showHighlightToasts)
 
-  const activeToolRef = useRef(activeTool)
-  activeToolRef.current = activeTool
-
-  const isLockedRef = useRef(isLocked)
-  isLockedRef.current = isLocked
-
-  const showHighlightToastsRef = useRef(showHighlightToasts)
-  showHighlightToastsRef.current = showHighlightToasts
-
-  const setStatusRef = useRef(setStatus)
-  setStatusRef.current = setStatus
-  const flashStatusRef = useRef(flashStatus)
-  flashStatusRef.current = flashStatus
-  const clearStatusRef = useRef(clearStatus)
-  clearStatusRef.current = clearStatus
+  const setStatusRef = useLatestRef(setStatus)
+  const flashStatusRef = useLatestRef(flashStatus)
+  const clearStatusRef = useLatestRef(clearStatus)
 
   const isHighlightTool = activeTool === "highlight" && isLocked
 

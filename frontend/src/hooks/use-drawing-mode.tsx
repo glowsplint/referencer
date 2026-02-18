@@ -8,6 +8,7 @@ import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { Arrow, ArrowEndpoint, ArrowStyle, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
+import { useLatestRef } from "@/hooks/use-latest-ref"
 
 function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
   return {
@@ -57,32 +58,24 @@ export function useDrawingMode({
   const anchorRef = useRef<ArrowEndpoint | null>(null)
   const phaseRef = useRef<DrawingPhase>("idle")
 
+  // activeLayerIdRef uses useEffect sync (not useLatestRef) because confirmSelection
+  // writes to it locally after auto-creating a layer — the local value must persist
+  // until the parent passes down a new activeLayerId prop
   const activeLayerIdRef = useRef(activeLayerId)
-  const addLayerRef = useRef(addLayer)
-  const addArrowRef = useRef(addArrow)
-  const activeArrowStyleRef = useRef(activeArrowStyle)
-  useEffect(() => {
-    activeLayerIdRef.current = activeLayerId
-    addLayerRef.current = addLayer
-    addArrowRef.current = addArrow
-    activeArrowStyleRef.current = activeArrowStyle
-  }, [activeLayerId, addLayer, addArrow, activeArrowStyle])
+  useEffect(() => { activeLayerIdRef.current = activeLayerId }, [activeLayerId])
+  const addLayerRef = useLatestRef(addLayer)
+  const addArrowRef = useLatestRef(addArrow)
+  const activeArrowStyleRef = useLatestRef(activeArrowStyle)
 
-  const showDrawingToastsRef = useRef(showDrawingToasts)
-  showDrawingToastsRef.current = showDrawingToasts
+  const showDrawingToastsRef = useLatestRef(showDrawingToasts)
 
-  const setStatusRef = useRef(setStatus)
-  setStatusRef.current = setStatus
-  const flashStatusRef = useRef(flashStatus)
-  flashStatusRef.current = flashStatus
-  const clearStatusRef = useRef(clearStatus)
-  clearStatusRef.current = clearStatus
+  const setStatusRef = useLatestRef(setStatus)
+  const flashStatusRef = useLatestRef(flashStatus)
+  const clearStatusRef = useLatestRef(clearStatus)
 
-  const activeToolRef = useRef(activeTool)
-  activeToolRef.current = activeTool
+  const activeToolRef = useLatestRef(activeTool)
 
-  const isLockedRef = useRef(isLocked)
-  isLockedRef.current = isLocked
+  const isLockedRef = useLatestRef(isLocked)
 
   const isArrowTool = activeTool === "arrow" && isLocked
 
@@ -117,8 +110,7 @@ export function useDrawingMode({
     }
   }, [selection])
 
-  const selectionRef = useRef(selection)
-  selectionRef.current = selection
+  const selectionRef = useLatestRef(selection)
 
   // Called when Enter is pressed with a valid selection
   const confirmSelection = useCallback(() => {
