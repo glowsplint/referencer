@@ -20,7 +20,6 @@ Referencer is a web-based online Bible study annotation tool that makes it easy 
 | Rich text       | TipTap 3 (ProseMirror) with custom extensions |
 | Backend         | Go, Chi router, SQLite                       |
 | Real-time       | WebSocket (Gorilla + custom client)           |
-| Bible API       | ESV API v3                                    |
 | Testing         | Vitest + React Testing Library, Playwright    |
 | Package manager | Bun                                           |
 
@@ -94,11 +93,10 @@ referencer/
 
 ## Backend
 
-Go server (Chi router) with three roles:
+Go server (Chi router) with two roles:
 
-1. **Bible API proxy** -- fetches passages from the ESV API (with offline dev mode using local JSON)
-2. **WebSocket collaboration** -- manages per-workspace connections, broadcasts actions (highlights, arrows, layers, editor content) to connected clients
-3. **Share links** -- creates and resolves short share codes with read-only or edit access
+1. **WebSocket collaboration** -- manages per-workspace connections, broadcasts actions (highlights, arrows, layers, editor content) to connected clients
+2. **Share links** -- creates and resolves short share codes with read-only or edit access
 
 Uses SQLite with WAL mode for persistence.
 
@@ -179,8 +177,6 @@ bun run test
 | Backend   | Go (chi router)                                       |
 | Database  | SQLite with WAL mode                                  |
 | Real-time | WebSocket for multi-client collaboration              |
-| Bible API | ESV API proxy for passage lookup                      |
-
 ## Architecture Diagram
 
 ```
@@ -391,7 +387,6 @@ All data is stored in SQLite with WAL mode enabled and foreign keys enforced. Th
 | ------ | -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `POST` | `/api/share`   | Create a share link. Body: `{"workspaceId": "...", "access": "edit\|readonly"}`. Returns: `{"code": "...", "url": "/s/..."}` |
 | `GET`  | `/s/{code}`    | Resolve a share link. Redirects to the workspace (with `?access=readonly` if applicable)                                     |
-| `GET`  | `/api/{query}` | Bible passage proxy. Forwards to the ESV API and returns passage JSON                                                        |
 
 ### Static files
 
@@ -444,7 +439,7 @@ bun run test:e2e
 | `PORT`             | `5000`                                        | Server listen port                                        |
 | `DATABASE_PATH`    | `./data/referencer.db`                        | SQLite database file path                                 |
 | `CORS_ORIGINS`     | `http://127.0.0.1:5000,http://localhost:5173` | Allowed CORS origins (comma-separated)                    |
-| `DEVELOPMENT_MODE` | (unset)                                       | When set, uses local JSON fixtures instead of the ESV API |
+| `DEVELOPMENT_MODE` | (unset)                                       | When set, enables development mode                        |
 
 ## Project Structure
 
