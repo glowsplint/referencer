@@ -6,13 +6,16 @@
 import { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer, DrawingState, ActiveTool, Arrow, ArrowStyle } from "@/types/editor"
-import { getWordCenter, getWordRect, getWordCenterRelativeToWrapper, getWordRectRelativeToWrapper } from "@/lib/tiptap/nearest-word"
+import { getWordCenter, getWordRect, getWordCenterRelativeToWrapper, getWordRectRelativeToWrapper, getClampedWordCenter, getClampedWordCenterRelativeToWrapper } from "@/lib/tiptap/nearest-word"
 import { blendWithBackground } from "@/lib/color"
 import { getArrowStyleAttrs, computeDoubleLinePaths } from "@/lib/arrow-styles"
 import { getArrowLinesView } from "@/lib/tiptap/extensions/arrow-lines-plugin"
 import { ARROWHEAD } from "@/constants/arrow"
 
 const ARROW_OPACITY = 0.6
+// When an arrow endpoint is scrolled out of its editor's visible viewport,
+// the arrow is faded to signal it connects to off-screen content
+const ARROW_OPACITY_OFFSCREEN = 0.15
 const SVG_NS = "http://www.w3.org/2000/svg"
 
 interface ArrowOverlayProps {
@@ -38,17 +41,25 @@ interface CrossEditorArrow {
   arrow: Arrow
 }
 
-function computePath(
+// Compute SVG path for a cross-editor arrow with endpoints clamped to each editor's
+// visible viewport. In rows layout, scrolled-out words would place arrow endpoints
+// in the gap between editors ("phantom" area); clamping pins them to the editor edge.
+function computeClampedPath(
   arrow: Arrow,
   editorsRef: React.RefObject<Map<number, Editor>>,
   containerRect: DOMRect
-): string | null {
-  const fromCenter = getWordCenter(arrow.from, editorsRef, containerRect)
-  const toCenter = getWordCenter(arrow.to, editorsRef, containerRect)
-  if (!fromCenter || !toCenter) return null
-  const mx = (fromCenter.cx + toCenter.cx) / 2
-  const my = (fromCenter.cy + toCenter.cy) / 2
-  return `M ${fromCenter.cx} ${fromCenter.cy} L ${mx} ${my} L ${toCenter.cx} ${toCenter.cy}`
+): { d: string; anyClamped: boolean; fromCenter: { cx: number; cy: number }; toCenter: { cx: number; cy: number } } | null {
+  const from = getClampedWordCenter(arrow.from, editorsRef, containerRect)
+  const to = getClampedWordCenter(arrow.to, editorsRef, containerRect)
+  if (!from || !to) return null
+  const mx = (from.cx + to.cx) / 2
+  const my = (from.cy + to.cy) / 2
+  return {
+    d: `M ${from.cx} ${from.cy} L ${mx} ${my} L ${to.cx} ${to.cy}`,
+    anyClamped: from.clamped || to.clamped,
+    fromCenter: from,
+    toCenter: to,
+  }
 }
 
 export function ArrowOverlay({
@@ -86,6 +97,7 @@ export function ArrowOverlay({
   const xIconRefs = useRef<Map<string, SVGGElement>>(new Map())
   const selectionPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
   const hoverPathRefs = useRef<Map<string, SVGPathElement>>(new Map())
+  const arrowGroupRefs = useRef<Map<string, SVGGElement>>(new Map())
 
   // Ref for the container-level visual SVG and its gap clip path
   const containerVisualSvgRef = useRef<SVGSVGElement | null>(null)
@@ -248,15 +260,18 @@ export function ArrowOverlay({
     const defs = document.createElementNS(SVG_NS, "defs")
 
     for (const data of arrows) {
-      const fromCenter = getWordCenterRelativeToWrapper(data.arrow.from, editorsRef, wrapper)
-      const toCenter = getWordCenterRelativeToWrapper(data.arrow.to, editorsRef, wrapper)
-      if (!fromCenter || !toCenter) continue
+      const fromResult = getClampedWordCenterRelativeToWrapper(data.arrow.from, editorsRef, wrapper)
+      const toResult = getClampedWordCenterRelativeToWrapper(data.arrow.to, editorsRef, wrapper)
+      if (!fromResult || !toResult) continue
 
-      const { cx: x1, cy: y1 } = fromCenter
-      const { cx: x2, cy: y2 } = toCenter
+      const { cx: x1, cy: y1 } = fromResult
+      const { cx: x2, cy: y2 } = toResult
       const mx = (x1 + x2) / 2
       const my = (y1 + y2) / 2
       const arrowPath = `M ${x1} ${y1} L ${mx} ${my} L ${x2} ${y2}`
+      // Fade arrows with off-screen endpoints so they don't draw attention
+      // to connections the user can't fully see in the current scroll position
+      const arrowOpacity = (fromResult.clamped || toResult.clamped) ? ARROW_OPACITY_OFFSCREEN : ARROW_OPACITY
       const isHovered = hoveredArrowId === data.arrowId
       const isSelected = selectedArrow?.arrowId === data.arrowId
       const hideMarker = isHovered || isSelected
@@ -276,7 +291,7 @@ export function ArrowOverlay({
       defs.appendChild(marker)
 
       const g = document.createElementNS(SVG_NS, "g")
-      g.setAttribute("opacity", String(ARROW_OPACITY))
+      g.setAttribute("opacity", String(arrowOpacity))
       const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
 
       if (styleAttrs.isDouble) {
@@ -403,27 +418,28 @@ export function ArrowOverlay({
     // from rapid hoveredEditorIndex changes as the mouse moves between editors
     const activeEditorIndex = drawingState ? null : hoveredEditorIndex
 
-    // Always update container visual paths with real geometry
-    // (needed so elements retain clickable area for interaction/testing)
+    // Update container visual paths — endpoints are clamped to each editor's visible
+    // viewport so arrows don't extend into the gap between editors in rows layout.
+    // Opacity is reduced when either endpoint is off-screen.
     for (const data of crossEditorArrows) {
-      const d = computePath(data.arrow, editorsRef, containerRect)
-      if (!d) continue
+      const result = computeClampedPath(data.arrow, editorsRef, containerRect)
+      if (!result) continue
+
+      const opacity = result.anyClamped ? ARROW_OPACITY_OFFSCREEN : ARROW_OPACITY
+      arrowGroupRefs.current.get(data.arrowId)?.setAttribute("opacity", String(opacity))
 
       const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
       if (styleAttrs.isDouble) {
-        const fromCenter = getWordCenter(data.arrow.from, editorsRef, containerRect)
-        const toCenter = getWordCenter(data.arrow.to, editorsRef, containerRect)
-        if (fromCenter && toCenter) {
-          const mx = (fromCenter.cx + toCenter.cx) / 2
-          const my = (fromCenter.cy + toCenter.cy) / 2
-          const [pathA, pathB] = computeDoubleLinePaths(
-            fromCenter.cx, fromCenter.cy, mx, my, toCenter.cx, toCenter.cy
-          )
-          visualPathRefs.current.get(data.arrowId)?.setAttribute("d", pathA)
-          visualPathRefs2.current.get(data.arrowId)?.setAttribute("d", pathB)
-        }
+        const { fromCenter, toCenter } = result
+        const mx = (fromCenter.cx + toCenter.cx) / 2
+        const my = (fromCenter.cy + toCenter.cy) / 2
+        const [pathA, pathB] = computeDoubleLinePaths(
+          fromCenter.cx, fromCenter.cy, mx, my, toCenter.cx, toCenter.cy
+        )
+        visualPathRefs.current.get(data.arrowId)?.setAttribute("d", pathA)
+        visualPathRefs2.current.get(data.arrowId)?.setAttribute("d", pathB)
       } else {
-        visualPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
+        visualPathRefs.current.get(data.arrowId)?.setAttribute("d", result.d)
       }
     }
 
@@ -469,24 +485,21 @@ export function ArrowOverlay({
       }
     }
 
-    // Update hit areas, selection rings, and X icons (all arrows) — always at container level
+    // Update hit areas, selection rings, and X icons — clamped so they match the
+    // visual arrow position (prevents clickable areas floating in phantom space)
     for (const data of allVisibleArrows) {
-      const d = computePath(data.arrow, editorsRef, containerRect)
-      if (!d) continue
-      hitPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
-      selectionPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
-      hoverPathRefs.current.get(data.arrowId)?.setAttribute("d", d)
+      const result = computeClampedPath(data.arrow, editorsRef, containerRect)
+      if (!result) continue
+      hitPathRefs.current.get(data.arrowId)?.setAttribute("d", result.d)
+      selectionPathRefs.current.get(data.arrowId)?.setAttribute("d", result.d)
+      hoverPathRefs.current.get(data.arrowId)?.setAttribute("d", result.d)
 
-      // Update X icon position if hovered
       const xIcon = xIconRefs.current.get(data.arrowId)
       if (xIcon) {
-        const fromCenter = getWordCenter(data.arrow.from, editorsRef, containerRect)
-        const toCenter = getWordCenter(data.arrow.to, editorsRef, containerRect)
-        if (fromCenter && toCenter) {
-          const mx = (fromCenter.cx + toCenter.cx) / 2
-          const my = (fromCenter.cy + toCenter.cy) / 2
-          xIcon.setAttribute("transform", `translate(${mx}, ${my})`)
-        }
+        const { fromCenter, toCenter } = result
+        const mx = (fromCenter.cx + toCenter.cx) / 2
+        const my = (fromCenter.cy + toCenter.cy) / 2
+        xIcon.setAttribute("transform", `translate(${mx}, ${my})`)
       }
     }
   }, [crossEditorArrows, allVisibleArrows, editorsRef, containerRef, drawingState, drawingColor, hoveredEditorIndex, drawIntoWrapperSvg])
@@ -636,7 +649,10 @@ export function ArrowOverlay({
           const hideMarker = isSelected
           if (styleAttrs.isDouble) {
             return (
-              <g key={data.arrowId} opacity={ARROW_OPACITY}>
+              <g key={data.arrowId} opacity={ARROW_OPACITY} ref={(el) => {
+                if (el) arrowGroupRefs.current.set(data.arrowId, el)
+                else arrowGroupRefs.current.delete(data.arrowId)
+              }}>
                 <path
                   ref={(el) => {
                     if (el) visualPathRefs.current.set(data.arrowId, el)
@@ -671,7 +687,10 @@ export function ArrowOverlay({
             )
           }
           return (
-            <g key={data.arrowId} opacity={ARROW_OPACITY}>
+            <g key={data.arrowId} opacity={ARROW_OPACITY} ref={(el) => {
+              if (el) arrowGroupRefs.current.set(data.arrowId, el)
+              else arrowGroupRefs.current.delete(data.arrowId)
+            }}>
               <path
                 ref={(el) => {
                   if (el) visualPathRefs.current.set(data.arrowId, el)

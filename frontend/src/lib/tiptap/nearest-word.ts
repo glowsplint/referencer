@@ -396,3 +396,100 @@ export function getWordCenterContentRelative(
     return null
   }
 }
+
+/**
+ * Get raw viewport coordinates for a word's bounding box.
+ * Used by the clamped variants below to compare against the editor wrapper's
+ * visible rect before converting to a target coordinate space.
+ */
+function getWordViewportCoords(
+  word: CollectedWord,
+  editor: Editor
+): { left: number; right: number; top: number; bottom: number } | null {
+  try {
+    const nodeAt = editor.state.doc.nodeAt(word.from)
+    if (nodeAt?.type.name === "image") {
+      const dom = editor.view.nodeDOM(word.from)
+      if (!(dom instanceof HTMLElement)) return null
+      const r = dom.getBoundingClientRect()
+      return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }
+    }
+    const s = editor.view.coordsAtPos(word.from)
+    const e = editor.view.coordsAtPos(word.to)
+    return { left: s.left, right: e.right, top: s.top, bottom: s.bottom }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Get the center of a word clamped to its editor's visible viewport bounds,
+ * in container-relative coordinates. In rows layout, a word scrolled out of
+ * its editor would appear in the gap between editors ("phantom" area). Clamping
+ * pins the coordinate to the editor's visible edge instead, and signals via
+ * `clamped: true` that the endpoint is off-screen (used to reduce arrow opacity).
+ */
+export function getClampedWordCenter(
+  word: CollectedWord,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  containerRect: DOMRect
+): { cx: number; cy: number; clamped: boolean } | null {
+  const editor = editorsRef.current.get(word.editorIndex)
+  if (!editor) return null
+
+  const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
+  if (!wrapper) return null
+
+  const coords = getWordViewportCoords(word, editor)
+  if (!coords) return null
+
+  let vcx = (coords.left + coords.right) / 2
+  let vcy = (coords.top + coords.bottom) / 2
+  let clamped = false
+
+  const wr = wrapper.getBoundingClientRect()
+  if (vcy < wr.top) { vcy = wr.top; clamped = true }
+  if (vcy > wr.bottom) { vcy = wr.bottom; clamped = true }
+  if (vcx < wr.left) { vcx = wr.left; clamped = true }
+  if (vcx > wr.right) { vcx = wr.right; clamped = true }
+
+  return { cx: vcx - containerRect.left, cy: vcy - containerRect.top, clamped }
+}
+
+/**
+ * Get the center of a word clamped to its own editor's visible viewport bounds,
+ * converted to target wrapper-relative coordinates. Same clamping logic as
+ * getClampedWordCenter but for wrapper SVGs that render inside an editor's
+ * scroll container (used when the mouse hovers over an editor).
+ */
+export function getClampedWordCenterRelativeToWrapper(
+  word: CollectedWord,
+  editorsRef: React.RefObject<Map<number, Editor>>,
+  targetWrapper: HTMLElement
+): { cx: number; cy: number; clamped: boolean } | null {
+  const editor = editorsRef.current.get(word.editorIndex)
+  if (!editor) return null
+
+  const ownWrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
+  if (!ownWrapper) return null
+
+  const coords = getWordViewportCoords(word, editor)
+  if (!coords) return null
+
+  let vcx = (coords.left + coords.right) / 2
+  let vcy = (coords.top + coords.bottom) / 2
+  let clamped = false
+
+  const wr = ownWrapper.getBoundingClientRect()
+  if (vcy < wr.top) { vcy = wr.top; clamped = true }
+  if (vcy > wr.bottom) { vcy = wr.bottom; clamped = true }
+  if (vcx < wr.left) { vcx = wr.left; clamped = true }
+  if (vcx > wr.right) { vcx = wr.right; clamped = true }
+
+  const twRect = targetWrapper.getBoundingClientRect()
+  return {
+    cx: vcx - twRect.left + targetWrapper.scrollLeft,
+    cy: vcy - twRect.top + targetWrapper.scrollTop,
+    clamped,
+  }
+}
