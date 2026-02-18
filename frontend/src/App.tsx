@@ -3,6 +3,8 @@
 // arrow overlay, and action console. Wires together all annotation tools
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
 import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
+import { Trans } from "react-i18next";
+import i18n from "@/i18n";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -225,14 +227,14 @@ export function App() {
   // Hint to lock the editor when unlocked
   useEffect(() => {
     if (!settings.isLocked && !effectiveReadOnly) {
-      setStatus({ text: <>Press <ToastKbd>Esc</ToastKbd> <ToastKbd>K</ToastKbd> to lock the editor once you've finalised the contents.</>, type: "info" })
+      setStatus({ text: <Trans ns="tools" i18nKey="lockHint" components={{ kbd: <ToastKbd>_</ToastKbd> }} />, type: "info" })
     }
   }, [settings.isLocked, effectiveReadOnly, setStatus])
 
   // Default status message when locked with selection tool and no visible selection
   useEffect(() => {
     if (settings.isLocked && annotations.activeTool === "selection" && (!selection || selectionHidden)) {
-      setStatus({ text: "Click a word or use arrow keys to navigate.", type: "info" })
+      setStatus({ text: i18n.t("tools:selection.defaultStatus"), type: "info" })
     }
   }, [settings.isLocked, annotations.activeTool, selection, selectionHidden, setStatus])
 

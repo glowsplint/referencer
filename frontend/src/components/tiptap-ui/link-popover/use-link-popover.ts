@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import type { Editor } from "@tiptap/react"
+import i18n from "@/i18n"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -277,7 +278,7 @@ export function useLinkPopover(config?: UseLinkPopoverConfig) {
     isVisible,
     canSet,
     isActive,
-    label: "Link",
+    label: i18n.t("editor:link.label"),
     Icon: LinkIcon,
     ...linkHandler,
   }

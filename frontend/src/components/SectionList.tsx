@@ -3,6 +3,7 @@
 // (builds a permutation array on drop and calls onReorder).
 import { Eye, EyeOff, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useInlineEdit } from "@/hooks/use-inline-edit";
 
@@ -27,6 +28,7 @@ export function SectionList({
   toggleSectionVisibility,
   toggleAllSectionVisibility,
 }: SectionListProps) {
+  const { t } = useTranslation("management");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [dragFromIndex, setDragFromIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
@@ -62,13 +64,13 @@ export function SectionList({
     <div>
       <div className="flex items-center justify-between mb-2 px-1">
         <h3 className="text-xs font-medium text-muted-foreground">
-          Passages
+          {t("passages.title")}
         </h3>
         <div className="flex items-center gap-1">
           <button
             className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
             onClick={addEditor}
-            title="Add passage"
+            title={t("passages.addPassage")}
             data-testid="addPassageButton"
           >
             <Plus size={14} />
@@ -76,7 +78,7 @@ export function SectionList({
           <button
             className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
             onClick={toggleAllSectionVisibility}
-            title={sectionVisibility.some(Boolean) ? "Hide all passages" : "Show all passages"}
+            title={sectionVisibility.some(Boolean) ? t("passages.hideAll") : t("passages.showAll")}
             data-testid="toggleAllSectionVisibility"
           >
             {sectionVisibility.some(Boolean) ? (
@@ -153,7 +155,7 @@ export function SectionList({
             <button
               className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
               onClick={() => toggleSectionVisibility(i)}
-              title={sectionVisibility[i] ? "Hide passage" : "Show passage"}
+              title={sectionVisibility[i] ? t("passages.hidePassage") : t("passages.showPassage")}
               data-testid={`sectionVisibility-${i}`}
             >
               {sectionVisibility[i] ? (

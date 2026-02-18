@@ -3,6 +3,8 @@
 // Tracks drawing phase (idle -> selecting-anchor -> anchor-confirmed -> idle),
 // provides a live preview via drawingState, and auto-creates a layer if needed.
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
+import { Trans } from "react-i18next"
+import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { Arrow, ArrowEndpoint, ArrowStyle, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
@@ -95,7 +97,7 @@ export function useDrawingMode({
   useEffect(() => {
     if (isArrowTool) {
       phaseRef.current = "selecting-anchor"
-      showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd>.</>)
+      showInfo(<Trans ns="tools" i18nKey="arrow.selectAnchor" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
     } else {
       const wasActive = phaseRef.current !== "idle"
       phaseRef.current = "idle"
@@ -138,7 +140,7 @@ export function useDrawingMode({
       anchorRef.current = endpoint
       phaseRef.current = "anchor-confirmed"
       setDrawingState({ anchor: endpoint, cursor: endpoint })
-      showInfo(<>Now select the target and press <ToastKbd>Enter</ToastKbd>.</>)
+      showInfo(<Trans ns="tools" i18nKey="arrow.selectTarget" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
       return
     }
 
@@ -150,7 +152,7 @@ export function useDrawingMode({
         anchorRef.current = null
         phaseRef.current = "selecting-anchor"
         setDrawingState(null)
-        showInfo(<>Select words for the anchor, then press <ToastKbd>Enter</ToastKbd>.</>)
+        showInfo(<Trans ns="tools" i18nKey="arrow.selectAnchor" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
         return
       }
 
@@ -166,7 +168,7 @@ export function useDrawingMode({
       phaseRef.current = "idle"
       setDrawingState(null)
       if (showDrawingToastsRef.current) {
-        setStatusRef.current({ text: "Arrow created.", type: "success" }, 1500)
+        setStatusRef.current({ text: i18n.t("tools:arrow.created"), type: "success" }, 1500)
       }
       setActiveToolRef.current("selection")
       return

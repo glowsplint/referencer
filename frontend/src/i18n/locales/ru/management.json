@@ -1,0 +1,41 @@
+{
+  "layers": {
+    "title": "Слои",
+    "addLayer": "Добавить слой",
+    "hideAll": "Скрыть все слои",
+    "showAll": "Показать все слои",
+    "hideLayer": "Скрыть слой",
+    "showLayer": "Показать слой",
+    "changeColour": "Изменить цвет",
+    "removeAnnotation": "Удалить аннотацию",
+    "removeArrow": "Удалить стрелку",
+    "removeUnderline": "Удалить подчёркивание",
+    "allColorsInUse": "Все цвета используются — сначала удалите слой."
+  },
+  "passages": {
+    "title": "Отрывки",
+    "addPassage": "Добавить отрывок",
+    "hideAll": "Скрыть все отрывки",
+    "showAll": "Показать все отрывки",
+    "hidePassage": "Скрыть отрывок",
+    "showPassage": "Показать отрывок"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Переключить панель управления",
+    "keyboardShortcuts": "Сочетания клавиш",
+    "helpFaq": "Помощь и FAQ",
+    "settings": "Настройки",
+    "toggleEditorLayout": "Переключить макет редактора",
+    "toggleEditorLock": "Переключить блокировку редактора"
+  },
+  "annotations": {
+    "placeholder": "Добавить аннотацию...",
+    "removeCustomColour": "Удалить пользовательский цвет",
+    "addCustomColour": "Добавить пользовательский цвет"
+  },
+  "actionConsole": {
+    "title": "Консоль действий",
+    "close": "закрыть",
+    "empty": "Действия ещё не записаны."
+  }
+}

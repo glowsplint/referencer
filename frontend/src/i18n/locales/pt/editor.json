@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Negrito",
+    "italic": "Itálico",
+    "underline": "Sublinhado",
+    "strike": "Tachado",
+    "code": "Código",
+    "superscript": "Sobrescrito",
+    "subscript": "Subscrito"
+  },
+  "heading": {
+    "label": "Título {{level}}"
+  },
+  "list": {
+    "bulletList": "Lista com marcadores",
+    "orderedList": "Lista numerada",
+    "taskList": "Lista de tarefas",
+    "label": "Lista"
+  },
+  "blockquote": {
+    "label": "Citação"
+  },
+  "codeBlock": {
+    "label": "Bloco de código"
+  },
+  "link": {
+    "label": "Link",
+    "placeholder": "Insira a URL",
+    "openLink": "Abrir link",
+    "copyLink": "Copiar link",
+    "removeLink": "Remover link"
+  },
+  "image": {
+    "label": "Adicionar imagem"
+  },
+  "textAlign": {
+    "left": "Alinhar à esquerda",
+    "center": "Alinhar ao centro",
+    "right": "Alinhar à direita",
+    "justify": "Justificar"
+  },
+  "history": {
+    "undo": "Desfazer",
+    "redo": "Refazer"
+  },
+  "colorHighlight": {
+    "label": "Destaque de cor",
+    "highlightText": "Destacar texto",
+    "highlightColors": "Cores de destaque",
+    "removeHighlight": "Remover destaque",
+    "listOptions": "Opções de lista",
+    "formatHeading": "Formatar texto como título",
+    "colors": {
+      "default": "Fundo padrão",
+      "gray": "Fundo cinza",
+      "brown": "Fundo marrom",
+      "orange": "Fundo laranja",
+      "yellow": "Fundo amarelo",
+      "green": "Fundo verde",
+      "blue": "Fundo azul",
+      "purple": "Fundo roxo",
+      "pink": "Fundo rosa",
+      "red": "Fundo vermelho"
+    },
+    "toggleHighlight": "Alternar destaque ({{color}})"
+  }
+}

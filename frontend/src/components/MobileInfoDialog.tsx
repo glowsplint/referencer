@@ -1,5 +1,6 @@
 // Informational dialog shown on mobile devices, advising that the app is
 // designed for desktop. Users can dismiss it and continue in read-only mode.
+import { useTranslation } from "react-i18next";
 import { Monitor } from "lucide-react";
 import {
   Dialog,
@@ -18,6 +19,8 @@ interface MobileInfoDialogProps {
 }
 
 export function MobileInfoDialog({ open, onOpenChange }: MobileInfoDialogProps) {
+  const { t } = useTranslation("dialogs");
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -27,11 +30,9 @@ export function MobileInfoDialog({ open, onOpenChange }: MobileInfoDialogProps) 
       >
         <DialogHeader className="p-6 pb-4 items-center text-center">
           <Monitor className="size-10 text-muted-foreground mb-2" />
-          <DialogTitle>Best on Desktop</DialogTitle>
+          <DialogTitle>{t("mobile.title")}</DialogTitle>
           <DialogDescription>
-            Referencer is designed for desktop use with a keyboard and mouse.
-            You can still read the content here, but editing and annotation
-            tools are not available on mobile.
+            {t("mobile.description")}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="border-t bg-background p-4">
@@ -41,7 +42,7 @@ export function MobileInfoDialog({ open, onOpenChange }: MobileInfoDialogProps) 
               className="w-full"
               data-testid="mobileInfoDismissButton"
             >
-              Continue Reading
+              {t("mobile.continueReading")}
             </Button>
           </DialogClose>
         </DialogFooter>

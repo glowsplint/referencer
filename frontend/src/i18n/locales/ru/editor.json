@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Жирный",
+    "italic": "Курсив",
+    "underline": "Подчёркнутый",
+    "strike": "Зачёркнутый",
+    "code": "Код",
+    "superscript": "Надстрочный",
+    "subscript": "Подстрочный"
+  },
+  "heading": {
+    "label": "Заголовок {{level}}"
+  },
+  "list": {
+    "bulletList": "Маркированный список",
+    "orderedList": "Нумерованный список",
+    "taskList": "Список задач",
+    "label": "Список"
+  },
+  "blockquote": {
+    "label": "Цитата"
+  },
+  "codeBlock": {
+    "label": "Блок кода"
+  },
+  "link": {
+    "label": "Ссылка",
+    "placeholder": "Введите URL",
+    "openLink": "Открыть ссылку",
+    "copyLink": "Копировать ссылку",
+    "removeLink": "Удалить ссылку"
+  },
+  "image": {
+    "label": "Добавить изображение"
+  },
+  "textAlign": {
+    "left": "По левому краю",
+    "center": "По центру",
+    "right": "По правому краю",
+    "justify": "По ширине"
+  },
+  "history": {
+    "undo": "Отменить",
+    "redo": "Повторить"
+  },
+  "colorHighlight": {
+    "label": "Цветное выделение",
+    "highlightText": "Выделить текст",
+    "highlightColors": "Цвета выделения",
+    "removeHighlight": "Удалить выделение",
+    "listOptions": "Параметры списка",
+    "formatHeading": "Форматировать текст как заголовок",
+    "colors": {
+      "default": "Фон по умолчанию",
+      "gray": "Серый фон",
+      "brown": "Коричневый фон",
+      "orange": "Оранжевый фон",
+      "yellow": "Жёлтый фон",
+      "green": "Зелёный фон",
+      "blue": "Синий фон",
+      "purple": "Фиолетовый фон",
+      "pink": "Розовый фон",
+      "red": "Красный фон"
+    },
+    "toggleHighlight": "Переключить выделение ({{color}})"
+  }
+}

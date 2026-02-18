@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { type Editor } from "@tiptap/react"
 import { useHotkeys } from "react-hotkeys-hook"
+import i18n from "@/i18n"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -21,52 +22,52 @@ import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
 export const COLOR_HIGHLIGHT_SHORTCUT_KEY = "mod+shift+h"
 export const HIGHLIGHT_COLORS = [
   {
-    label: "Default background",
+    label: i18n.t("editor:colorHighlight.colors.default"),
     value: "var(--tt-bg-color)",
     border: "var(--tt-bg-color-contrast)",
   },
   {
-    label: "Gray background",
+    label: i18n.t("editor:colorHighlight.colors.gray"),
     value: "var(--tt-color-highlight-gray)",
     border: "var(--tt-color-highlight-gray-contrast)",
   },
   {
-    label: "Brown background",
+    label: i18n.t("editor:colorHighlight.colors.brown"),
     value: "var(--tt-color-highlight-brown)",
     border: "var(--tt-color-highlight-brown-contrast)",
   },
   {
-    label: "Orange background",
+    label: i18n.t("editor:colorHighlight.colors.orange"),
     value: "var(--tt-color-highlight-orange)",
     border: "var(--tt-color-highlight-orange-contrast)",
   },
   {
-    label: "Yellow background",
+    label: i18n.t("editor:colorHighlight.colors.yellow"),
     value: "var(--tt-color-highlight-yellow)",
     border: "var(--tt-color-highlight-yellow-contrast)",
   },
   {
-    label: "Green background",
+    label: i18n.t("editor:colorHighlight.colors.green"),
     value: "var(--tt-color-highlight-green)",
     border: "var(--tt-color-highlight-green-contrast)",
   },
   {
-    label: "Blue background",
+    label: i18n.t("editor:colorHighlight.colors.blue"),
     value: "var(--tt-color-highlight-blue)",
     border: "var(--tt-color-highlight-blue-contrast)",
   },
   {
-    label: "Purple background",
+    label: i18n.t("editor:colorHighlight.colors.purple"),
     value: "var(--tt-color-highlight-purple)",
     border: "var(--tt-color-highlight-purple-contrast)",
   },
   {
-    label: "Pink background",
+    label: i18n.t("editor:colorHighlight.colors.pink"),
     value: "var(--tt-color-highlight-pink)",
     border: "var(--tt-color-highlight-pink-contrast)",
   },
   {
-    label: "Red background",
+    label: i18n.t("editor:colorHighlight.colors.red"),
     value: "var(--tt-color-highlight-red)",
     border: "var(--tt-color-highlight-red-contrast)",
   },
@@ -307,7 +308,7 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
   const handleRemoveHighlight = useCallback(() => {
     const success = removeHighlight(editor, mode)
     if (success) {
-      onApplied?.({ color: "", label: "Remove highlight", mode })
+      onApplied?.({ color: "", label: i18n.t("editor:colorHighlight.removeHighlight"), mode })
     }
     return success
   }, [editor, onApplied, mode])
@@ -331,7 +332,7 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
     handleColorHighlight,
     handleRemoveHighlight,
     canColorHighlight: canColorHighlightState,
-    label: label || `Highlight`,
+    label: label || i18n.t("editor:colorHighlight.label"),
     shortcutKeys: COLOR_HIGHLIGHT_SHORTCUT_KEY,
     Icon: HighlighterIcon,
     mode,

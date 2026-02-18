@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Herramienta de selección",
+    "defaultStatus": "Haz clic en una palabra o usa las teclas de flecha para navegar."
+  },
+  "arrow": {
+    "label": "Herramienta de flecha",
+    "selectAnchor": "Selecciona las palabras del ancla y luego presiona <kbd>Enter</kbd>.",
+    "selectTarget": "Ahora selecciona el destino y presiona <kbd>Enter</kbd>.",
+    "created": "Flecha creada."
+  },
+  "highlight": {
+    "label": "Herramienta de resaltado",
+    "selectWords": "Selecciona las palabras a resaltar y luego presiona <kbd>Enter</kbd>.",
+    "added": "Resaltado añadido.",
+    "removed": "Resaltado eliminado."
+  },
+  "comments": {
+    "label": "Herramienta de comentarios",
+    "selectWords": "Selecciona las palabras a comentar y luego presiona <kbd>Enter</kbd>.",
+    "added": "Comentario añadido."
+  },
+  "underline": {
+    "label": "Herramienta de subrayado",
+    "selectWords": "Selecciona las palabras a subrayar y luego presiona <kbd>Enter</kbd>.",
+    "added": "Subrayado añadido."
+  },
+  "eraser": {
+    "label": "Herramienta de borrador",
+    "status": "Haz clic y arrastra para borrar resaltados y subrayados.",
+    "erased": "Decoración borrada."
+  },
+  "lockHint": "Presiona <kbd>Esc</kbd> <kbd>K</kbd> para bloquear el editor una vez que hayas finalizado el contenido."
+}

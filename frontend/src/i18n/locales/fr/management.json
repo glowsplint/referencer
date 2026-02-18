@@ -1,0 +1,41 @@
+{
+  "layers": {
+    "title": "Calques",
+    "addLayer": "Ajouter un calque",
+    "hideAll": "Masquer tous les calques",
+    "showAll": "Afficher tous les calques",
+    "hideLayer": "Masquer le calque",
+    "showLayer": "Afficher le calque",
+    "changeColour": "Changer la couleur",
+    "removeAnnotation": "Supprimer l'annotation",
+    "removeArrow": "Supprimer la flèche",
+    "removeUnderline": "Supprimer le soulignement",
+    "allColorsInUse": "Toutes les couleurs sont utilisées — supprimez d'abord un calque."
+  },
+  "passages": {
+    "title": "Passages",
+    "addPassage": "Ajouter un passage",
+    "hideAll": "Masquer tous les passages",
+    "showAll": "Afficher tous les passages",
+    "hidePassage": "Masquer le passage",
+    "showPassage": "Afficher le passage"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Basculer le panneau de gestion",
+    "keyboardShortcuts": "Raccourcis clavier",
+    "helpFaq": "Aide et FAQ",
+    "settings": "Paramètres",
+    "toggleEditorLayout": "Basculer la disposition de l'éditeur",
+    "toggleEditorLock": "Basculer le verrouillage de l'éditeur"
+  },
+  "annotations": {
+    "placeholder": "Ajouter une annotation...",
+    "removeCustomColour": "Supprimer la couleur personnalisée",
+    "addCustomColour": "Ajouter une couleur personnalisée"
+  },
+  "actionConsole": {
+    "title": "Console d'actions",
+    "close": "fermer",
+    "empty": "Aucune action enregistrée pour le moment."
+  }
+}

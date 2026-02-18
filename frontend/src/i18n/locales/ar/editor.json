@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "عريض",
+    "italic": "مائل",
+    "underline": "تسطير",
+    "strike": "يتوسطه خط",
+    "code": "كود",
+    "superscript": "أعلى السطر",
+    "subscript": "أسفل السطر"
+  },
+  "heading": {
+    "label": "عنوان {{level}}"
+  },
+  "list": {
+    "bulletList": "قائمة نقطية",
+    "orderedList": "قائمة مرقمة",
+    "taskList": "قائمة مهام",
+    "label": "قائمة"
+  },
+  "blockquote": {
+    "label": "اقتباس"
+  },
+  "codeBlock": {
+    "label": "كتلة كود"
+  },
+  "link": {
+    "label": "رابط",
+    "placeholder": "أدخل الرابط",
+    "openLink": "فتح الرابط",
+    "copyLink": "نسخ الرابط",
+    "removeLink": "إزالة الرابط"
+  },
+  "image": {
+    "label": "إضافة صورة"
+  },
+  "textAlign": {
+    "left": "محاذاة لليسار",
+    "center": "محاذاة للوسط",
+    "right": "محاذاة لليمين",
+    "justify": "محاذاة متساوية"
+  },
+  "history": {
+    "undo": "تراجع",
+    "redo": "إعادة"
+  },
+  "colorHighlight": {
+    "label": "تمييز ملون",
+    "highlightText": "تمييز النص",
+    "highlightColors": "ألوان التمييز",
+    "removeHighlight": "إزالة التمييز",
+    "listOptions": "خيارات القائمة",
+    "formatHeading": "تنسيق النص كعنوان",
+    "colors": {
+      "default": "خلفية افتراضية",
+      "gray": "خلفية رمادية",
+      "brown": "خلفية بنية",
+      "orange": "خلفية برتقالية",
+      "yellow": "خلفية صفراء",
+      "green": "خلفية خضراء",
+      "blue": "خلفية زرقاء",
+      "purple": "خلفية بنفسجية",
+      "pink": "خلفية وردية",
+      "red": "خلفية حمراء"
+    },
+    "toggleHighlight": "تبديل التمييز ({{color}})"
+  }
+}

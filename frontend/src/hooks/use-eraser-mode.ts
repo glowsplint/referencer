@@ -1,6 +1,7 @@
 // Handles the "eraser" annotation tool mode. When active, clicking on a word
 // removes any overlapping highlights or underlines from visible layers.
 import { useCallback, useEffect } from "react"
+import i18n from "@/i18n"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
 import type { StatusMessage } from "./use-status-message"
 
@@ -28,7 +29,7 @@ export function useEraserMode({
   // Show status when eraser is active
   useEffect(() => {
     if (!isLocked || activeTool !== "eraser") return
-    setStatus({ text: "Click and drag to erase highlights and underlines.", type: "info" })
+    setStatus({ text: i18n.t("tools:eraser.status"), type: "info" })
     return () => clearStatus()
   }, [isLocked, activeTool, setStatus, clearStatus])
 
@@ -64,7 +65,7 @@ export function useEraserMode({
     }
 
     if (erased) {
-      setStatus({ text: "Erased decoration.", type: "success" })
+      setStatus({ text: i18n.t("tools:eraser.erased"), type: "success" })
     }
   }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, setStatus])
 

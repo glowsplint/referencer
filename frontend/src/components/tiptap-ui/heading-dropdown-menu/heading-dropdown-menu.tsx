@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 // --- Icons ---
 import { ChevronDownIcon } from "@/components/tiptap-icons/chevron-down-icon"
@@ -56,6 +57,7 @@ export const HeadingDropdownMenu = forwardRef<
     },
     ref
   ) => {
+    const { t } = useTranslation("editor")
     const { editor } = useTiptapEditor(providedEditor)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const { isVisible, isActive, canToggle, Icon } = useHeadingDropdownMenu({
@@ -88,7 +90,7 @@ export const HeadingDropdownMenu = forwardRef<
             tabIndex={-1}
             disabled={!canToggle}
             data-disabled={!canToggle}
-            aria-label="Format text as heading"
+            aria-label={t("colorHighlight.formatHeading")}
             aria-pressed={isActive}
             tooltip="Heading"
             {...buttonProps}
@@ -108,7 +110,7 @@ export const HeadingDropdownMenu = forwardRef<
                     <HeadingButton
                       editor={editor}
                       level={level}
-                      text={`Heading ${level}`}
+                      text={t("heading.label", { level })}
                       showTooltip={false}
                     />
                   </DropdownMenuItem>

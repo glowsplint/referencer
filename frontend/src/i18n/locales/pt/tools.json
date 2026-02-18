@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Ferramenta de seleção",
+    "defaultStatus": "Clique em uma palavra ou use as teclas de seta para navegar."
+  },
+  "arrow": {
+    "label": "Ferramenta de seta",
+    "selectAnchor": "Selecione as palavras para a âncora e pressione <kbd>Enter</kbd>.",
+    "selectTarget": "Agora selecione o alvo e pressione <kbd>Enter</kbd>.",
+    "created": "Seta criada."
+  },
+  "highlight": {
+    "label": "Ferramenta de destaque",
+    "selectWords": "Selecione as palavras para destacar e pressione <kbd>Enter</kbd>.",
+    "added": "Destaque adicionado.",
+    "removed": "Destaque removido."
+  },
+  "comments": {
+    "label": "Ferramenta de comentários",
+    "selectWords": "Selecione as palavras para comentar e pressione <kbd>Enter</kbd>.",
+    "added": "Comentário adicionado."
+  },
+  "underline": {
+    "label": "Ferramenta de sublinhado",
+    "selectWords": "Selecione as palavras para sublinhar e pressione <kbd>Enter</kbd>.",
+    "added": "Sublinhado adicionado."
+  },
+  "eraser": {
+    "label": "Ferramenta de borracha",
+    "status": "Clique e arraste para apagar destaques e sublinhados.",
+    "erased": "Decoração apagada."
+  },
+  "lockHint": "Pressione <kbd>Esc</kbd> <kbd>K</kbd> para bloquear o editor após finalizar o conteúdo."
+}

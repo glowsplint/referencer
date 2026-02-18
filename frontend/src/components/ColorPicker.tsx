@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Plus } from "lucide-react";
 import { TAILWIND_300_COLORS } from "@/types/editor";
 
@@ -17,6 +18,7 @@ export function ColorPicker({
   onAddCustomColor,
   onRemoveCustomColor,
 }: ColorPickerProps) {
+  const { t } = useTranslation("management");
   const colorInputRef = useRef<HTMLInputElement>(null);
 
   const showCustomSection =
@@ -59,7 +61,7 @@ export function ColorPicker({
                       e.stopPropagation();
                       onRemoveCustomColor(color);
                     }}
-                    title="Remove custom colour"
+                    title={t("annotations.removeCustomColour")}
                     data-testid={`removeCustomColor-${color}`}
                   >
                     <X size={8} />
@@ -72,7 +74,7 @@ export function ColorPicker({
                 <button
                   className="w-5 h-5 rounded-full border-2 border-dashed border-muted-foreground/40 hover:border-muted-foreground flex items-center justify-center transition-colors cursor-pointer"
                   onClick={() => colorInputRef.current?.click()}
-                  title="Add custom colour"
+                  title={t("annotations.addCustomColour")}
                   data-testid={`addCustomColor-${index}`}
                 >
                   <Plus size={10} className="text-muted-foreground" />

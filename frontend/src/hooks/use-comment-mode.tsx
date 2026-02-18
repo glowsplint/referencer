@@ -3,6 +3,8 @@
 // (or toggles it off if one already exists at that range).
 // Refs are used extensively to keep the confirmComment callback stable.
 import { useEffect, useRef, useCallback } from "react"
+import { Trans } from "react-i18next"
+import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
@@ -78,7 +80,7 @@ export function useCommentMode({
   useEffect(() => {
     if (isCommentTool) {
       if (showCommentToastsRef.current) {
-        setStatusRef.current({ text: <>Select words to comment on, then press <ToastKbd>Enter</ToastKbd>.</>, type: "info" })
+        setStatusRef.current({ text: <Trans ns="tools" i18nKey="comments.selectWords" components={{ kbd: <ToastKbd>_</ToastKbd> }} />, type: "info" })
       }
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
@@ -130,7 +132,7 @@ export function useCommentMode({
       type: "comment",
     })
     if (showCommentToastsRef.current) {
-      setStatusRef.current({ text: "Comment added.", type: "success" }, 1500)
+      setStatusRef.current({ text: i18n.t("tools:comments.added"), type: "success" }, 1500)
     }
     onHighlightAddedRef.current?.(layerId, highlightId)
     // Keep selection so user can continue keyboard navigation after Escape

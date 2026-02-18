@@ -1,6 +1,7 @@
 // Dialog for sharing the workspace via URL. Generates either a read-only or
 // edit link using hash-based routing (e.g., #/<workspaceId>?access=readonly)
 // and copies it to the clipboard.
+import { useTranslation } from "react-i18next"
 import { Link, Eye } from "lucide-react"
 import { toast } from "sonner"
 import {
@@ -25,6 +26,8 @@ export function ShareDialog({
   onOpenChange,
   workspaceId,
 }: ShareDialogProps) {
+  const { t } = useTranslation("dialogs")
+
   async function copyLink(access: "edit" | "readonly") {
     const hash =
       access === "readonly"
@@ -33,10 +36,10 @@ export function ShareDialog({
     const url = `${window.location.origin}${BASE_URL}${hash}`
     try {
       await navigator.clipboard.writeText(url)
-      toast.success("Link copied to clipboard.")
+      toast.success(t("share.linkCopied"))
       onOpenChange(false)
     } catch {
-      toast.error("Failed to copy link.")
+      toast.error(t("share.copyFailed"))
     }
   }
 
@@ -48,9 +51,9 @@ export function ShareDialog({
         data-testid="shareDialog"
       >
         <DialogHeader>
-          <DialogTitle>Share workspace</DialogTitle>
+          <DialogTitle>{t("share.title")}</DialogTitle>
           <DialogDescription>
-            Copy a link to share this workspace.
+            {t("share.description")}
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
@@ -60,7 +63,7 @@ export function ShareDialog({
             data-testid="shareReadonlyButton"
           >
             <Eye />
-            Read-only link
+            {t("share.readonlyLink")}
           </Button>
           <Button
             variant="outline"
@@ -68,7 +71,7 @@ export function ShareDialog({
             data-testid="shareEditButton"
           >
             <Link />
-            Edit link
+            {t("share.editLink")}
           </Button>
         </div>
       </DialogContent>

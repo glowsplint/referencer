@@ -1,0 +1,41 @@
+{
+  "layers": {
+    "title": "الطبقات",
+    "addLayer": "إضافة طبقة",
+    "hideAll": "إخفاء جميع الطبقات",
+    "showAll": "إظهار جميع الطبقات",
+    "hideLayer": "إخفاء الطبقة",
+    "showLayer": "إظهار الطبقة",
+    "changeColour": "تغيير اللون",
+    "removeAnnotation": "إزالة التعليق",
+    "removeArrow": "إزالة السهم",
+    "removeUnderline": "إزالة التسطير",
+    "allColorsInUse": "جميع الألوان مستخدمة — أزل طبقة أولاً."
+  },
+  "passages": {
+    "title": "الفقرات",
+    "addPassage": "إضافة فقرة",
+    "hideAll": "إخفاء جميع الفقرات",
+    "showAll": "إظهار جميع الفقرات",
+    "hidePassage": "إخفاء الفقرة",
+    "showPassage": "إظهار الفقرة"
+  },
+  "tooltips": {
+    "toggleManagementPane": "تبديل لوحة الإدارة",
+    "keyboardShortcuts": "اختصارات لوحة المفاتيح",
+    "helpFaq": "المساعدة والأسئلة الشائعة",
+    "settings": "الإعدادات",
+    "toggleEditorLayout": "تبديل تخطيط المحرر",
+    "toggleEditorLock": "تبديل قفل المحرر"
+  },
+  "annotations": {
+    "placeholder": "إضافة تعليق...",
+    "removeCustomColour": "إزالة اللون المخصص",
+    "addCustomColour": "إضافة لون مخصص"
+  },
+  "actionConsole": {
+    "title": "وحدة التحكم",
+    "close": "إغلاق",
+    "empty": "لم يتم تسجيل أي إجراءات بعد."
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "layers": {
+    "title": "परतें",
+    "addLayer": "परत जोड़ें",
+    "hideAll": "सभी परतें छिपाएं",
+    "showAll": "सभी परतें दिखाएं",
+    "hideLayer": "परत छिपाएं",
+    "showLayer": "परत दिखाएं",
+    "changeColour": "रंग बदलें",
+    "removeAnnotation": "टिप्पणी हटाएं",
+    "removeArrow": "तीर हटाएं",
+    "removeUnderline": "रेखांकन हटाएं",
+    "allColorsInUse": "सभी रंग उपयोग में हैं — पहले एक परत हटाएं।"
+  },
+  "passages": {
+    "title": "अनुच्छेद",
+    "addPassage": "अनुच्छेद जोड़ें",
+    "hideAll": "सभी अनुच्छेद छिपाएं",
+    "showAll": "सभी अनुच्छेद दिखाएं",
+    "hidePassage": "अनुच्छेद छिपाएं",
+    "showPassage": "अनुच्छेद दिखाएं"
+  },
+  "tooltips": {
+    "toggleManagementPane": "प्रबंधन पैनल टॉगल करें",
+    "keyboardShortcuts": "कीबोर्ड शॉर्टकट",
+    "helpFaq": "सहायता और अक्सर पूछे जाने वाले प्रश्न",
+    "settings": "सेटिंग्स",
+    "toggleEditorLayout": "संपादक लेआउट टॉगल करें",
+    "toggleEditorLock": "संपादक लॉक टॉगल करें"
+  },
+  "annotations": {
+    "placeholder": "टिप्पणी जोड़ें...",
+    "removeCustomColour": "कस्टम रंग हटाएं",
+    "addCustomColour": "कस्टम रंग जोड़ें"
+  },
+  "actionConsole": {
+    "title": "एक्शन कंसोल",
+    "close": "बंद करें",
+    "empty": "अभी तक कोई कार्य रिकॉर्ड नहीं किया गया।"
+  }
+}

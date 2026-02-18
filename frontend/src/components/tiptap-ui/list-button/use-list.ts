@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { type Editor } from "@tiptap/react"
 import { NodeSelection, TextSelection } from "@tiptap/pm/state"
+import i18n from "@/i18n"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -339,7 +340,7 @@ export function useList(config: UseListConfig) {
     isActive,
     handleToggle,
     canToggle,
-    label: listLabels[type],
+    label: i18n.t(`editor:list.${type}`, { defaultValue: listLabels[type] }),
     shortcutKeys: LIST_SHORTCUT_KEYS[type],
     Icon: listIcons[type],
   }

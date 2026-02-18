@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { type Editor } from "@tiptap/react"
+import i18n from "@/i18n"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -175,7 +176,7 @@ export function useUndoRedo(config: UseUndoRedoConfig) {
     isVisible,
     handleAction,
     canExecute,
-    label: historyActionLabels[action],
+    label: i18n.t(`editor:history.${action}`, { defaultValue: historyActionLabels[action] }),
     shortcutKeys: UNDO_REDO_SHORTCUT_KEYS[action],
     Icon: historyIcons[action],
   }

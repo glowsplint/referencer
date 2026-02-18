@@ -2,6 +2,8 @@
 // and on Enter creates a highlight at the current word selection (or toggles
 // it off if an identical range already exists with no annotation).
 import { useEffect, useRef, useCallback } from "react"
+import { Trans } from "react-i18next"
+import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
@@ -73,7 +75,7 @@ export function useHighlightMode({
   useEffect(() => {
     if (isHighlightTool) {
       if (showHighlightToastsRef.current) {
-        setStatusRef.current({ text: <>Select words to highlight, then press <ToastKbd>Enter</ToastKbd>.</>, type: "info" })
+        setStatusRef.current({ text: <Trans ns="tools" i18nKey="highlight.selectWords" components={{ kbd: <ToastKbd>_</ToastKbd> }} />, type: "info" })
       }
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
@@ -108,7 +110,7 @@ export function useHighlightMode({
     if (existing) {
       removeHighlightRef.current(layerId, existing.id)
       if (showHighlightToastsRef.current) {
-        setStatusRef.current({ text: "Highlight removed.", type: "success" }, 1500)
+        setStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success" }, 1500)
       }
       return
     }
@@ -123,7 +125,7 @@ export function useHighlightMode({
       type: "highlight",
     })
     if (showHighlightToastsRef.current) {
-      setStatusRef.current({ text: "Highlight added.", type: "success" }, 1500)
+      setStatusRef.current({ text: i18n.t("tools:highlight.added"), type: "success" }, 1500)
     }
     // Stay in highlight mode — do NOT switch to selection tool
   }, [])

@@ -2,6 +2,7 @@
 // Displays a colored top border matching its layer color, with a textarea for
 // editing or a static text view. Positioned absolutely by the parent panel.
 import { useRef, useEffect, useCallback } from "react"
+import { useTranslation } from "react-i18next"
 
 interface AnnotationCardProps {
   layerId: string
@@ -26,6 +27,7 @@ export function AnnotationCard({
   onBlur,
   onClick,
 }: AnnotationCardProps) {
+  const { t } = useTranslation("management")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Auto-expand textarea height to fit content (avoids scrollbar inside card)
@@ -101,11 +103,11 @@ export function AnnotationCard({
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          placeholder="Add annotation..."
+          placeholder={t("annotations.placeholder")}
         />
       ) : (
         <div className="cursor-pointer p-2 text-xs text-zinc-600 dark:text-zinc-300 min-h-[2rem]">
-          {annotation || <span className="text-zinc-400 italic">Add annotation...</span>}
+          {annotation || <span className="text-zinc-400 italic">{t("annotations.placeholder")}</span>}
         </div>
       )}
     </div>

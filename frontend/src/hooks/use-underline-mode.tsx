@@ -2,6 +2,8 @@
 // and on Enter creates an underline at the current word selection (or toggles
 // it off if an identical range already exists).
 import { useEffect, useRef, useCallback } from "react"
+import { Trans } from "react-i18next"
+import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection, LayerUnderline } from "@/types/editor"
 import type { StatusMessage } from "@/hooks/use-status-message"
@@ -73,7 +75,7 @@ export function useUnderlineMode({
   useEffect(() => {
     if (isUnderlineTool) {
       if (showUnderlineToastsRef.current) {
-        setStatusRef.current({ text: <>Select words to underline, then press <ToastKbd>Enter</ToastKbd>.</>, type: "info" })
+        setStatusRef.current({ text: <Trans ns="tools" i18nKey="underline.selectWords" components={{ kbd: <ToastKbd>_</ToastKbd> }} />, type: "info" })
       }
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current()
@@ -114,7 +116,7 @@ export function useUnderlineMode({
       text: sel.text,
     })
     if (showUnderlineToastsRef.current) {
-      setStatusRef.current({ text: "Underline added.", type: "success" }, 1500)
+      setStatusRef.current({ text: i18n.t("tools:underline.added"), type: "success" }, 1500)
     }
   }, [])
 

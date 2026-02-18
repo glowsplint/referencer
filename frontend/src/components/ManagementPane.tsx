@@ -3,6 +3,7 @@
 // visibility, and a drag-to-trash delete zone. Consumes WorkspaceContext for
 // all state mutations.
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
 import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
@@ -11,6 +12,8 @@ import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { useCustomColors } from "@/hooks/use-custom-colors";
 
 export function ManagementPane() {
+  const { t } = useTranslation("management");
+
   const {
     layers,
     activeLayerId,
@@ -57,13 +60,13 @@ export function ManagementPane() {
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2 px-1">
           <h3 className="text-xs font-medium text-muted-foreground">
-            Layers
+            {t("layers.title")}
           </h3>
           <div className="flex items-center gap-1">
             <button
               className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
               onClick={() => addLayer({ extraColors: customColors })}
-              title="Add layer"
+              title={t("layers.addLayer")}
               data-testid="addLayerButton"
             >
               <Plus size={14} />
@@ -71,7 +74,7 @@ export function ManagementPane() {
             <button
               className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
               onClick={toggleAllLayerVisibility}
-              title={hasVisibleLayers ? "Hide all layers" : "Show all layers"}
+              title={hasVisibleLayers ? t("layers.hideAll") : t("layers.showAll")}
               data-testid="toggleAllLayerVisibility"
             >
               {hasVisibleLayers ? <Eye size={14} /> : <EyeOff size={14} />}

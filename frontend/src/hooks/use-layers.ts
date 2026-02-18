@@ -3,6 +3,7 @@
 // Auto-assigns colors from a predefined palette and warns when exhausted.
 import { useRef, useState, useCallback } from "react"
 import { toast } from "sonner"
+import i18n from "@/i18n"
 import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
@@ -24,7 +25,7 @@ export function useLayers() {
       : TAILWIND_300_COLORS
     const color = opts?.color ?? allColors.find((c) => !usedColors.has(c))
     if (!color) {
-      toast.warning("All colors are in use — remove a layer first.")
+      toast.warning(i18n.t("management:layers.allColorsInUse"))
       return null
     }
     if (!opts?.name) {

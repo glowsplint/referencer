@@ -1,0 +1,41 @@
+{
+  "layers": {
+    "title": "레이어",
+    "addLayer": "레이어 추가",
+    "hideAll": "모든 레이어 숨기기",
+    "showAll": "모든 레이어 표시",
+    "hideLayer": "레이어 숨기기",
+    "showLayer": "레이어 표시",
+    "changeColour": "색상 변경",
+    "removeAnnotation": "주석 삭제",
+    "removeArrow": "화살표 삭제",
+    "removeUnderline": "밑줄 삭제",
+    "allColorsInUse": "모든 색상이 사용 중입니다. 먼저 레이어를 삭제하세요."
+  },
+  "passages": {
+    "title": "구절",
+    "addPassage": "구절 추가",
+    "hideAll": "모든 구절 숨기기",
+    "showAll": "모든 구절 표시",
+    "hidePassage": "구절 숨기기",
+    "showPassage": "구절 표시"
+  },
+  "tooltips": {
+    "toggleManagementPane": "관리 패널 전환",
+    "keyboardShortcuts": "키보드 단축키",
+    "helpFaq": "도움말 및 FAQ",
+    "settings": "설정",
+    "toggleEditorLayout": "편집기 레이아웃 전환",
+    "toggleEditorLock": "편집기 잠금 전환"
+  },
+  "annotations": {
+    "placeholder": "주석 추가...",
+    "removeCustomColour": "사용자 지정 색상 삭제",
+    "addCustomColour": "사용자 지정 색상 추가"
+  },
+  "actionConsole": {
+    "title": "액션 콘솔",
+    "close": "닫기",
+    "empty": "아직 기록된 작업이 없습니다."
+  }
+}

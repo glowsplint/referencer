@@ -2,6 +2,7 @@
 // highlights, arrows, etc.) in a terminal-style panel at the bottom of the screen.
 // Toggled with the backtick key. Useful for debugging annotation state changes.
 import { useRef, useEffect, useCallback } from "react"
+import { useTranslation } from "react-i18next"
 import type { ActionEntry, ActionDetail } from "@/types/editor"
 
 const TYPE_COLORS: Record<string, string> = {
@@ -82,6 +83,7 @@ interface ActionConsoleProps {
 }
 
 export function ActionConsole({ log, isOpen, onClose, height, onHeightChange }: ActionConsoleProps) {
+  const { t } = useTranslation("management")
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -131,18 +133,18 @@ export function ActionConsole({ log, isOpen, onClose, height, onHeightChange }: 
         className="h-1.5 cursor-row-resize hover:bg-zinc-600 transition-colors shrink-0"
       />
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-700">
-        <span className="text-zinc-400 text-xs font-medium">Action Console</span>
+        <span className="text-zinc-400 text-xs font-medium">{t("actionConsole.title")}</span>
         <button
           data-testid="actionConsoleClose"
           onClick={onClose}
           className="text-zinc-500 hover:text-zinc-300 text-xs px-1"
         >
-          close
+          {t("actionConsole.close")}
         </button>
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-1">
         {log.length === 0 && (
-          <div className="text-zinc-600 py-2">No actions recorded yet.</div>
+          <div className="text-zinc-600 py-2">{t("actionConsole.empty")}</div>
         )}
         {log.map((entry) => (
           <div key={entry.id} className={entry.undone ? "opacity-40 line-through" : ""}>

@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Outil de sélection",
+    "defaultStatus": "Cliquez sur un mot ou utilisez les touches fléchées pour naviguer."
+  },
+  "arrow": {
+    "label": "Outil flèche",
+    "selectAnchor": "Sélectionnez les mots pour l'ancre, puis appuyez sur <kbd>Entrée</kbd>.",
+    "selectTarget": "Sélectionnez maintenant la cible et appuyez sur <kbd>Entrée</kbd>.",
+    "created": "Flèche créée."
+  },
+  "highlight": {
+    "label": "Outil de surlignage",
+    "selectWords": "Sélectionnez les mots à surligner, puis appuyez sur <kbd>Entrée</kbd>.",
+    "added": "Surlignage ajouté.",
+    "removed": "Surlignage supprimé."
+  },
+  "comments": {
+    "label": "Outil de commentaires",
+    "selectWords": "Sélectionnez les mots à commenter, puis appuyez sur <kbd>Entrée</kbd>.",
+    "added": "Commentaire ajouté."
+  },
+  "underline": {
+    "label": "Outil de soulignement",
+    "selectWords": "Sélectionnez les mots à souligner, puis appuyez sur <kbd>Entrée</kbd>.",
+    "added": "Soulignement ajouté."
+  },
+  "eraser": {
+    "label": "Outil gomme",
+    "status": "Cliquez et faites glisser pour effacer les surlignages et soulignements.",
+    "erased": "Décoration effacée."
+  },
+  "lockHint": "Appuyez sur <kbd>Esc</kbd> <kbd>K</kbd> pour verrouiller l'éditeur une fois le contenu finalisé."
+}

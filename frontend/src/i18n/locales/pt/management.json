@@ -1,0 +1,41 @@
+{
+  "layers": {
+    "title": "Camadas",
+    "addLayer": "Adicionar camada",
+    "hideAll": "Ocultar todas as camadas",
+    "showAll": "Mostrar todas as camadas",
+    "hideLayer": "Ocultar camada",
+    "showLayer": "Mostrar camada",
+    "changeColour": "Mudar cor",
+    "removeAnnotation": "Remover anotação",
+    "removeArrow": "Remover seta",
+    "removeUnderline": "Remover sublinhado",
+    "allColorsInUse": "Todas as cores estão em uso — remova uma camada primeiro."
+  },
+  "passages": {
+    "title": "Passagens",
+    "addPassage": "Adicionar passagem",
+    "hideAll": "Ocultar todas as passagens",
+    "showAll": "Mostrar todas as passagens",
+    "hidePassage": "Ocultar passagem",
+    "showPassage": "Mostrar passagem"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Alternar painel de gerenciamento",
+    "keyboardShortcuts": "Atalhos de teclado",
+    "helpFaq": "Ajuda e perguntas frequentes",
+    "settings": "Configurações",
+    "toggleEditorLayout": "Alternar layout do editor",
+    "toggleEditorLock": "Alternar bloqueio do editor"
+  },
+  "annotations": {
+    "placeholder": "Adicionar anotação...",
+    "removeCustomColour": "Remover cor personalizada",
+    "addCustomColour": "Adicionar cor personalizada"
+  },
+  "actionConsole": {
+    "title": "Console de ações",
+    "close": "fechar",
+    "empty": "Nenhuma ação registrada ainda."
+  }
+}

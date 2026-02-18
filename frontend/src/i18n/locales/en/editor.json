@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strike": "Strikethrough",
+    "code": "Code",
+    "superscript": "Superscript",
+    "subscript": "Subscript"
+  },
+  "heading": {
+    "label": "Heading {{level}}"
+  },
+  "list": {
+    "bulletList": "Bullet List",
+    "orderedList": "Ordered List",
+    "taskList": "Task List",
+    "label": "List"
+  },
+  "blockquote": {
+    "label": "Blockquote"
+  },
+  "codeBlock": {
+    "label": "Code Block"
+  },
+  "link": {
+    "label": "Link",
+    "placeholder": "Enter URL",
+    "openLink": "Open link",
+    "copyLink": "Copy link",
+    "removeLink": "Remove link"
+  },
+  "image": {
+    "label": "Add image"
+  },
+  "textAlign": {
+    "left": "Align Left",
+    "center": "Align Center",
+    "right": "Align Right",
+    "justify": "Align Justify"
+  },
+  "history": {
+    "undo": "Undo",
+    "redo": "Redo"
+  },
+  "colorHighlight": {
+    "label": "Color highlight",
+    "highlightText": "Highlight text",
+    "highlightColors": "Highlight colors",
+    "removeHighlight": "Remove highlight",
+    "listOptions": "List options",
+    "formatHeading": "Format text as heading",
+    "colors": {
+      "default": "Default background",
+      "gray": "Gray background",
+      "brown": "Brown background",
+      "orange": "Orange background",
+      "yellow": "Yellow background",
+      "green": "Green background",
+      "blue": "Blue background",
+      "purple": "Purple background",
+      "pink": "Pink background",
+      "red": "Red background"
+    },
+    "toggleHighlight": "Toggle highlight ({{color}})"
+  }
+}

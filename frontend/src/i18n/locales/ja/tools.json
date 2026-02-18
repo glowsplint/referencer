@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "選択ツール",
+    "defaultStatus": "単語をクリックするか、矢印キーで移動してください。"
+  },
+  "arrow": {
+    "label": "矢印ツール",
+    "selectAnchor": "アンカーとなる単語を選択し、<kbd>Enter</kbd> を押してください。",
+    "selectTarget": "次にターゲットを選択し、<kbd>Enter</kbd> を押してください。",
+    "created": "矢印を作成しました。"
+  },
+  "highlight": {
+    "label": "ハイライトツール",
+    "selectWords": "ハイライトする単語を選択し、<kbd>Enter</kbd> を押してください。",
+    "added": "ハイライトを追加しました。",
+    "removed": "ハイライトを削除しました。"
+  },
+  "comments": {
+    "label": "コメントツール",
+    "selectWords": "コメントする単語を選択し、<kbd>Enter</kbd> を押してください。",
+    "added": "コメントを追加しました。"
+  },
+  "underline": {
+    "label": "下線ツール",
+    "selectWords": "下線を引く単語を選択し、<kbd>Enter</kbd> を押してください。",
+    "added": "下線を追加しました。"
+  },
+  "eraser": {
+    "label": "消しゴムツール",
+    "status": "クリック＆ドラッグでハイライトと下線を消去します。",
+    "erased": "装飾を消去しました。"
+  },
+  "lockHint": "内容を確定したら、<kbd>Esc</kbd> <kbd>K</kbd> でエディターをロックしてください。"
+}
