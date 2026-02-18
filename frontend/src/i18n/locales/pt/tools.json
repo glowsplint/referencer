@@ -27,8 +27,8 @@
   },
   "eraser": {
     "label": "Ferramenta de borracha",
-    "status": "Clique e arraste para apagar destaques e sublinhados.",
-    "erased": "Decoração apagada."
+    "status": "Clique e arraste para apagar anotações.",
+    "erased": "Anotação apagada."
   },
   "lockHint": "Pressione <kbd>Esc</kbd> <kbd>K</kbd> para bloquear o editor após finalizar o conteúdo."
 }

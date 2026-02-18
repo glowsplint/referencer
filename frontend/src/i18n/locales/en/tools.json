@@ -27,8 +27,8 @@
   },
   "eraser": {
     "label": "Eraser tool",
-    "status": "Click and drag to erase highlights and underlines.",
-    "erased": "Erased decoration."
+    "status": "Click and drag to erase annotations.",
+    "erased": "Erased annotation."
   },
   "lockHint": "Press <kbd>Esc</kbd> <kbd>K</kbd> to lock the editor once you've finalised the contents."
 }

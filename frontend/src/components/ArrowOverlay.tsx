@@ -62,6 +62,7 @@ export function ArrowOverlay({
   activeTool,
   sectionVisibility,
   isDarkMode,
+  isLocked,
 }: ArrowOverlayProps) {
   const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null)
   // Structural tick — only for structural changes (layers, visibility, preview), NOT scroll
@@ -95,6 +96,7 @@ export function ArrowOverlay({
 
   // Cross-editor arrows only (for visual rendering — within-editor visuals are in the plugin)
   const crossEditorArrows = useMemo(() => {
+    if (!isLocked) return []
     const result: CrossEditorArrow[] = []
     for (const layer of layers) {
       if (!layer.visible) continue
@@ -112,10 +114,11 @@ export function ArrowOverlay({
       }
     }
     return result
-  }, [layers, sectionVisibility])
+  }, [layers, sectionVisibility, isLocked])
 
   // All visible arrows (for interaction layer — handles hit areas for ALL arrows)
   const allVisibleArrows = useMemo(() => {
+    if (!isLocked) return []
     const result: CrossEditorArrow[] = []
     for (const layer of layers) {
       if (!layer.visible) continue
@@ -132,7 +135,7 @@ export function ArrowOverlay({
       }
     }
     return result
-  }, [layers, sectionVisibility])
+  }, [layers, sectionVisibility, isLocked])
 
   // Track which editor is hovered via mouseenter/mouseleave on editor wrappers
   useEffect(() => {

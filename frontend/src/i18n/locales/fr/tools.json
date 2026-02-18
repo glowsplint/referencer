@@ -27,8 +27,8 @@
   },
   "eraser": {
     "label": "Outil gomme",
-    "status": "Cliquez et faites glisser pour effacer les surlignages et soulignements.",
-    "erased": "Décoration effacée."
+    "status": "Cliquez et faites glisser pour effacer les annotations.",
+    "erased": "Annotation effacée."
   },
   "lockHint": "Appuyez sur <kbd>Esc</kbd> <kbd>K</kbd> pour verrouiller l'éditeur une fois le contenu finalisé."
 }

@@ -27,7 +27,7 @@
   },
   "eraser": {
     "label": "Herramienta de borrador",
-    "status": "Haz clic y arrastra para borrar resaltados y subrayados.",
+    "status": "Haz clic y arrastra para borrar anotaciones.",
     "erased": "Decoración borrada."
   },
   "lockHint": "Presiona <kbd>Esc</kbd> <kbd>K</kbd> para bloquear el editor una vez que hayas finalizado el contenido."

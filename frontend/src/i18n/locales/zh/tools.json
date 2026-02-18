@@ -27,8 +27,8 @@
   },
   "eraser": {
     "label": "橡皮擦工具",
-    "status": "点击并拖动以擦除高亮和下划线。",
-    "erased": "已擦除装饰。"
+    "status": "点击并拖动以擦除注释。",
+    "erased": "已擦除注释。"
   },
   "lockHint": "内容编辑完成后，按 <kbd>Esc</kbd> <kbd>K</kbd> 锁定编辑器。"
 }

@@ -29,6 +29,11 @@ export function useEditorArrows(
     const view = getArrowLinesView(editor.view)
     if (!view) return
 
+    if (!isLocked) {
+      view.setArrows([])
+      return
+    }
+
     const arrowData: ArrowData[] = []
 
     for (const layer of layers) {

@@ -65,7 +65,7 @@ function createDefaultProps(overrides: Record<string, unknown> = {}) {
     activeTool: "selection" as ActiveTool,
     sectionVisibility: [true, true, true],
     isDarkMode: false,
-    isLocked: false,
+    isLocked: true,
     ...overrides,
   }
 }
