@@ -203,7 +203,7 @@ describe("useEraserMode", () => {
     act(() => { result.current.confirmErase() })
 
     expect(flashStatus).toHaveBeenCalledWith(
-      { text: "Erased decoration.", type: "success" }, 1500
+      { text: "Erased decoration.", type: "success" }, 3000
     )
   })
 

@@ -114,7 +114,7 @@ export function useHighlightMode({
     if (existing) {
       removeHighlightRef.current(layerId, existing.id)
       if (showHighlightToastsRef.current) {
-        flashStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success" }, 3000)
       }
       return
     }
@@ -129,7 +129,7 @@ export function useHighlightMode({
       type: "highlight",
     })
     if (showHighlightToastsRef.current) {
-      flashStatusRef.current({ text: i18n.t("tools:highlight.added"), type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:highlight.added"), type: "success" }, 3000)
     }
     // Stay in highlight mode — do NOT switch to selection tool
   }, [])

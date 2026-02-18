@@ -136,7 +136,7 @@ export function useCommentMode({
       type: "comment",
     })
     if (showCommentToastsRef.current) {
-      flashStatusRef.current({ text: i18n.t("tools:comments.added"), type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:comments.added"), type: "success" }, 3000)
     }
     onHighlightAddedRef.current?.(layerId, highlightId)
     // Keep selection so user can continue keyboard navigation after Escape

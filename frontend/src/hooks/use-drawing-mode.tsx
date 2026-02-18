@@ -167,7 +167,7 @@ export function useDrawingMode({
       phaseRef.current = "selecting-anchor"
       setDrawingState(null)
       if (showDrawingToastsRef.current) {
-        flashStatusRef.current({ text: i18n.t("tools:arrow.created"), type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:arrow.created"), type: "success" }, 3000)
       }
       showInfo(<Trans ns="tools" i18nKey="arrow.selectAnchor" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
       return

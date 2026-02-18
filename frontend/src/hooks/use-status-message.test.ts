@@ -46,7 +46,7 @@ describe("useStatusMessage", () => {
       result.current.setStatus({ text: "Base", type: "info" })
     })
     act(() => {
-      result.current.flashStatus({ text: "Flash!", type: "success" }, 1500)
+      result.current.flashStatus({ text: "Flash!", type: "success" }, 3000)
     })
 
     // Flash message should be displayed
@@ -54,7 +54,7 @@ describe("useStatusMessage", () => {
 
     // After duration, flash expires and base shows through
     act(() => {
-      vi.advanceTimersByTime(1500)
+      vi.advanceTimersByTime(3000)
     })
 
     expect(result.current.message).toEqual({ text: "Base", type: "info" })
@@ -64,13 +64,13 @@ describe("useStatusMessage", () => {
     const { result } = renderHook(() => useStatusMessage())
 
     act(() => {
-      result.current.flashStatus({ text: "Temporary", type: "success" }, 1500)
+      result.current.flashStatus({ text: "Temporary", type: "success" }, 3000)
     })
 
     expect(result.current.message).not.toBeNull()
 
     act(() => {
-      vi.advanceTimersByTime(1500)
+      vi.advanceTimersByTime(3000)
     })
 
     expect(result.current.message).toBeNull()
@@ -105,7 +105,7 @@ describe("useStatusMessage", () => {
     const { result } = renderHook(() => useStatusMessage())
 
     act(() => {
-      result.current.flashStatus({ text: "Flash!", type: "success" }, 1500)
+      result.current.flashStatus({ text: "Flash!", type: "success" }, 3000)
     })
     act(() => {
       result.current.setStatus({ text: "New base", type: "info" })
@@ -116,7 +116,7 @@ describe("useStatusMessage", () => {
 
     // After flash expires, new base shows
     act(() => {
-      vi.advanceTimersByTime(1500)
+      vi.advanceTimersByTime(3000)
     })
 
     expect(result.current.message).toEqual({ text: "New base", type: "info" })

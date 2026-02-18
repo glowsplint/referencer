@@ -120,7 +120,7 @@ export function useUnderlineMode({
       text: sel.text,
     })
     if (showUnderlineToastsRef.current) {
-      flashStatusRef.current({ text: i18n.t("tools:underline.added"), type: "success" }, 1500)
+flashStatusRef.current({ text: i18n.t("tools:underline.added"), type: "success" }, 3000)
     }
   }, [])
 

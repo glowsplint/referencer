@@ -67,7 +67,7 @@ export function useEraserMode({
     }
 
     if (erased) {
-      flashStatus({ text: i18n.t("tools:eraser.erased"), type: "success" }, 1500)
+flashStatus({ text: i18n.t("tools:eraser.erased"), type: "success" }, 3000)
     }
   }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, flashStatus])
 
