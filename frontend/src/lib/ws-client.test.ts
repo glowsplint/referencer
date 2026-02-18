@@ -12,7 +12,7 @@ class MockWebSocket {
   url: string
   readyState = MockWebSocket.CONNECTING
   onopen: (() => void) | null = null
-  onclose: (() => void) | null = null
+  onclose: ((event: CloseEvent) => void) | null = null
   onmessage: ((event: { data: string }) => void) | null = null
   onerror: (() => void) | null = null
   sentMessages: string[] = []
