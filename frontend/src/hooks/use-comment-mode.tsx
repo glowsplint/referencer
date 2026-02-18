@@ -23,7 +23,8 @@ interface UseCommentModeOptions {
   removeHighlight: (layerId: string, highlightId: string) => void
   onHighlightAdded?: (layerId: string, highlightId: string) => void
   showCommentToasts: boolean
-  setStatus: (msg: StatusMessage, duration?: number) => void
+  setStatus: (msg: StatusMessage) => void
+  flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
 }
 
@@ -39,6 +40,7 @@ export function useCommentMode({
   onHighlightAdded,
   showCommentToasts,
   setStatus,
+  flashStatus,
   clearStatus,
 }: UseCommentModeOptions) {
   const activeLayerIdRef = useRef(activeLayerId)
@@ -71,6 +73,8 @@ export function useCommentMode({
 
   const setStatusRef = useRef(setStatus)
   setStatusRef.current = setStatus
+  const flashStatusRef = useRef(flashStatus)
+  flashStatusRef.current = flashStatus
   const clearStatusRef = useRef(clearStatus)
   clearStatusRef.current = clearStatus
 
@@ -132,7 +136,7 @@ export function useCommentMode({
       type: "comment",
     })
     if (showCommentToastsRef.current) {
-      setStatusRef.current({ text: i18n.t("tools:comments.added"), type: "success" }, 1500)
+      flashStatusRef.current({ text: i18n.t("tools:comments.added"), type: "success" }, 1500)
     }
     onHighlightAddedRef.current?.(layerId, highlightId)
     // Keep selection so user can continue keyboard navigation after Escape

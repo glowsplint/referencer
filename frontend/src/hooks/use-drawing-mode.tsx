@@ -35,8 +35,8 @@ interface UseDrawingModeOptions {
   addLayer: () => string
   addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void
   showDrawingToasts: boolean
-  setActiveTool: (tool: ActiveTool) => void
-  setStatus: (msg: StatusMessage, duration?: number) => void
+  setStatus: (msg: StatusMessage) => void
+  flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
 }
 
@@ -49,8 +49,8 @@ export function useDrawingMode({
   addLayer,
   addArrow,
   showDrawingToasts,
-  setActiveTool,
   setStatus,
+  flashStatus,
   clearStatus,
 }: UseDrawingModeOptions) {
   const [drawingState, setDrawingState] = useState<DrawingState | null>(null)
@@ -71,11 +71,10 @@ export function useDrawingMode({
   const showDrawingToastsRef = useRef(showDrawingToasts)
   showDrawingToastsRef.current = showDrawingToasts
 
-  const setActiveToolRef = useRef(setActiveTool)
-  setActiveToolRef.current = setActiveTool
-
   const setStatusRef = useRef(setStatus)
   setStatusRef.current = setStatus
+  const flashStatusRef = useRef(flashStatus)
+  flashStatusRef.current = flashStatus
   const clearStatusRef = useRef(clearStatus)
   clearStatusRef.current = clearStatus
 
@@ -156,7 +155,7 @@ export function useDrawingMode({
         return
       }
 
-      // Different selection — create arrow
+      // Different selection — create arrow, then reset to selecting-anchor
       if (activeLayerIdRef.current) {
         addArrowRef.current(activeLayerIdRef.current, {
           from: currentAnchor,
@@ -165,12 +164,12 @@ export function useDrawingMode({
         })
       }
       anchorRef.current = null
-      phaseRef.current = "idle"
+      phaseRef.current = "selecting-anchor"
       setDrawingState(null)
       if (showDrawingToastsRef.current) {
-        setStatusRef.current({ text: i18n.t("tools:arrow.created"), type: "success" }, 1500)
+        flashStatusRef.current({ text: i18n.t("tools:arrow.created"), type: "success" }, 1500)
       }
-      setActiveToolRef.current("selection")
+      showInfo(<Trans ns="tools" i18nKey="arrow.selectAnchor" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
       return
     }
   }, [])

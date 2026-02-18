@@ -21,7 +21,8 @@ interface UseUnderlineModeOptions {
   ) => string
   removeUnderline: (layerId: string, underlineId: string) => void
   showUnderlineToasts: boolean
-  setStatus: (msg: StatusMessage, duration?: number) => void
+  setStatus: (msg: StatusMessage) => void
+  flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
 }
 
@@ -36,6 +37,7 @@ export function useUnderlineMode({
   removeUnderline,
   showUnderlineToasts,
   setStatus,
+  flashStatus,
   clearStatus,
 }: UseUnderlineModeOptions) {
   const activeLayerIdRef = useRef(activeLayerId)
@@ -66,6 +68,8 @@ export function useUnderlineMode({
 
   const setStatusRef = useRef(setStatus)
   setStatusRef.current = setStatus
+  const flashStatusRef = useRef(flashStatus)
+  flashStatusRef.current = flashStatus
   const clearStatusRef = useRef(clearStatus)
   clearStatusRef.current = clearStatus
 
@@ -116,7 +120,7 @@ export function useUnderlineMode({
       text: sel.text,
     })
     if (showUnderlineToastsRef.current) {
-      setStatusRef.current({ text: i18n.t("tools:underline.added"), type: "success" }, 1500)
+      flashStatusRef.current({ text: i18n.t("tools:underline.added"), type: "success" }, 1500)
     }
   }, [])
 

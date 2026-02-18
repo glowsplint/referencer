@@ -15,6 +15,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     removeHighlight: vi.fn(),
     showHighlightToasts: true,
     setStatus: vi.fn(),
+    flashStatus: vi.fn(),
     clearStatus: vi.fn(),
     ...overrides,
   }
@@ -177,30 +178,27 @@ describe("useHighlightMode", () => {
   })
 
   it("shows success status when highlight is created and showHighlightToasts is true", () => {
-    const setStatus = vi.fn()
-    const opts = createOptions({ selection: word1, showHighlightToasts: true, setStatus })
+    const flashStatus = vi.fn()
+    const opts = createOptions({ selection: word1, showHighlightToasts: true, flashStatus })
     const { result } = renderHook(() => useHighlightMode(opts))
 
     act(() => { result.current.confirmHighlight() })
 
     expect(opts.addHighlight).toHaveBeenCalled()
-    expect(setStatus).toHaveBeenCalledWith(
+    expect(flashStatus).toHaveBeenCalledWith(
       { text: "Highlight added.", type: "success" }, 1500
     )
   })
 
   it("does not show success status when showHighlightToasts is false", () => {
-    const setStatus = vi.fn()
-    const opts = createOptions({ selection: word1, showHighlightToasts: false, setStatus })
+    const flashStatus = vi.fn()
+    const opts = createOptions({ selection: word1, showHighlightToasts: false, flashStatus })
     const { result } = renderHook(() => useHighlightMode(opts))
 
     act(() => { result.current.confirmHighlight() })
 
     expect(opts.addHighlight).toHaveBeenCalled()
-    const successCalls = setStatus.mock.calls.filter(
-      (c: unknown[]) => (c[0] as { type: string })?.type === "success"
-    )
-    expect(successCalls).toHaveLength(0)
+    expect(flashStatus).not.toHaveBeenCalled()
   })
 
   it("suppresses entry status when showHighlightToasts is false", () => {
@@ -211,11 +209,11 @@ describe("useHighlightMode", () => {
   })
 
   it("shows removed status when toggling off highlight", () => {
-    const setStatus = vi.fn()
+    const flashStatus = vi.fn()
     const opts = createOptions({
       selection: word1,
       showHighlightToasts: true,
-      setStatus,
+      flashStatus,
       layers: [{
         id: "layer-1",
         highlights: [
@@ -227,7 +225,7 @@ describe("useHighlightMode", () => {
 
     act(() => { result.current.confirmHighlight() })
 
-    expect(setStatus).toHaveBeenCalledWith(
+    expect(flashStatus).toHaveBeenCalledWith(
       { text: "Highlight removed.", type: "success" }, 1500
     )
   })

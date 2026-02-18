@@ -12,6 +12,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     removeHighlight: vi.fn(),
     removeUnderline: vi.fn(),
     setStatus: vi.fn(),
+    flashStatus: vi.fn(),
     clearStatus: vi.fn(),
     ...overrides,
   }
@@ -190,19 +191,19 @@ describe("useEraserMode", () => {
   })
 
   it("shows success status when something was erased", () => {
-    const setStatus = vi.fn()
+    const flashStatus = vi.fn()
     const layer = makeLayer({
       highlights: [
         { id: "h-1", editorIndex: 0, from: 5, to: 10, text: "hello", annotation: "", type: "highlight" },
       ],
     })
-    const opts = createOptions({ selection: word1, layers: [layer], setStatus })
+    const opts = createOptions({ selection: word1, layers: [layer], flashStatus })
     const { result } = renderHook(() => useEraserMode(opts))
 
     act(() => { result.current.confirmErase() })
 
-    expect(setStatus).toHaveBeenCalledWith(
-      expect.objectContaining({ text: "Erased decoration.", type: "success" })
+    expect(flashStatus).toHaveBeenCalledWith(
+      { text: "Erased decoration.", type: "success" }, 1500
     )
   })
 

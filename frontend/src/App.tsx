@@ -134,7 +134,7 @@ export function App() {
   });
   useUndoRedoKeyboard(history);
   const actionConsole = useActionConsole();
-  const { message: statusMessage, setStatus, clearStatus } = useStatusMessage();
+  const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
@@ -162,8 +162,8 @@ export function App() {
     addLayer,
     addArrow,
     showDrawingToasts: settings.showDrawingToasts,
-    setActiveTool,
     setStatus,
+    flashStatus,
     clearStatus,
   });
 
@@ -182,6 +182,7 @@ export function App() {
     }, []),
     showCommentToasts: settings.showCommentsToasts,
     setStatus,
+    flashStatus,
     clearStatus,
   });
 
@@ -196,6 +197,7 @@ export function App() {
     removeHighlight,
     showHighlightToasts: settings.showHighlightToasts,
     setStatus,
+    flashStatus,
     clearStatus,
   });
 
@@ -210,6 +212,7 @@ export function App() {
     removeUnderline,
     showUnderlineToasts: settings.showHighlightToasts,
     setStatus,
+    flashStatus,
     clearStatus,
   });
 
@@ -221,6 +224,7 @@ export function App() {
     removeHighlight,
     removeUnderline,
     setStatus,
+    flashStatus,
     clearStatus,
   });
 

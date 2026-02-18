@@ -21,7 +21,8 @@ interface UseHighlightModeOptions {
   ) => string
   removeHighlight: (layerId: string, highlightId: string) => void
   showHighlightToasts: boolean
-  setStatus: (msg: StatusMessage, duration?: number) => void
+  setStatus: (msg: StatusMessage) => void
+  flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
 }
 
@@ -36,6 +37,7 @@ export function useHighlightMode({
   removeHighlight,
   showHighlightToasts,
   setStatus,
+  flashStatus,
   clearStatus,
 }: UseHighlightModeOptions) {
   const activeLayerIdRef = useRef(activeLayerId)
@@ -66,6 +68,8 @@ export function useHighlightMode({
 
   const setStatusRef = useRef(setStatus)
   setStatusRef.current = setStatus
+  const flashStatusRef = useRef(flashStatus)
+  flashStatusRef.current = flashStatus
   const clearStatusRef = useRef(clearStatus)
   clearStatusRef.current = clearStatus
 
@@ -110,7 +114,7 @@ export function useHighlightMode({
     if (existing) {
       removeHighlightRef.current(layerId, existing.id)
       if (showHighlightToastsRef.current) {
-        setStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success" }, 1500)
+        flashStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success" }, 1500)
       }
       return
     }
@@ -125,7 +129,7 @@ export function useHighlightMode({
       type: "highlight",
     })
     if (showHighlightToastsRef.current) {
-      setStatusRef.current({ text: i18n.t("tools:highlight.added"), type: "success" }, 1500)
+      flashStatusRef.current({ text: i18n.t("tools:highlight.added"), type: "success" }, 1500)
     }
     // Stay in highlight mode — do NOT switch to selection tool
   }, [])

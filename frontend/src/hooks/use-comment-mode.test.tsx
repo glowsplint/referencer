@@ -16,6 +16,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     onHighlightAdded: vi.fn(),
     showCommentToasts: true,
     setStatus: vi.fn(),
+    flashStatus: vi.fn(),
     clearStatus: vi.fn(),
     ...overrides,
   }
@@ -195,31 +196,27 @@ describe("useCommentMode", () => {
   })
 
   it("shows success status when highlight is created and showCommentToasts is true", () => {
-    const setStatus = vi.fn()
-    const opts = createOptions({ selection: word1, showCommentToasts: true, setStatus })
+    const flashStatus = vi.fn()
+    const opts = createOptions({ selection: word1, showCommentToasts: true, flashStatus })
     const { result } = renderHook(() => useCommentMode(opts))
 
     act(() => { result.current.confirmComment() })
 
     expect(opts.addHighlight).toHaveBeenCalled()
-    expect(setStatus).toHaveBeenCalledWith(
+    expect(flashStatus).toHaveBeenCalledWith(
       { text: "Comment added.", type: "success" }, 1500
     )
   })
 
   it("does not show success status when showCommentToasts is false", () => {
-    const setStatus = vi.fn()
-    const opts = createOptions({ selection: word1, showCommentToasts: false, setStatus })
+    const flashStatus = vi.fn()
+    const opts = createOptions({ selection: word1, showCommentToasts: false, flashStatus })
     const { result } = renderHook(() => useCommentMode(opts))
 
     act(() => { result.current.confirmComment() })
 
     expect(opts.addHighlight).toHaveBeenCalled()
-    // Only clearStatus called (on cleanup), not setStatus for success
-    const successCalls = setStatus.mock.calls.filter(
-      (c: unknown[]) => (c[0] as { type: string })?.type === "success"
-    )
-    expect(successCalls).toHaveLength(0)
+    expect(flashStatus).not.toHaveBeenCalled()
   })
 
   it("suppresses entry status when showCommentToasts is false", () => {

@@ -13,6 +13,7 @@ interface UseEraserModeOptions {
   removeHighlight: (layerId: string, highlightId: string) => void
   removeUnderline: (layerId: string, underlineId: string) => void
   setStatus: (msg: StatusMessage) => void
+  flashStatus: (msg: StatusMessage, duration: number) => void
   clearStatus: () => void
 }
 
@@ -24,6 +25,7 @@ export function useEraserMode({
   removeHighlight,
   removeUnderline,
   setStatus,
+  flashStatus,
   clearStatus,
 }: UseEraserModeOptions) {
   // Show status when eraser is active
@@ -65,9 +67,9 @@ export function useEraserMode({
     }
 
     if (erased) {
-      setStatus({ text: i18n.t("tools:eraser.erased"), type: "success" })
+      flashStatus({ text: i18n.t("tools:eraser.erased"), type: "success" }, 1500)
     }
-  }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, setStatus])
+  }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, flashStatus])
 
   const confirmErase = useCallback(() => {
     if (!selection) return

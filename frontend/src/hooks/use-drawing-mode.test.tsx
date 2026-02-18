@@ -13,8 +13,8 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     addLayer: vi.fn(() => "auto-layer-1"),
     addArrow: vi.fn(),
     showDrawingToasts: true,
-    setActiveTool: vi.fn(),
     setStatus: vi.fn(),
+    flashStatus: vi.fn(),
     clearStatus: vi.fn(),
     ...overrides,
   }
@@ -93,11 +93,11 @@ describe("useDrawingMode", () => {
 
   it("creates arrow on second confirm with different word", () => {
     const addArrow = vi.fn()
-    const setActiveTool = vi.fn()
     const setStatus = vi.fn()
+    const flashStatus = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ selection: props.selection, addArrow, setActiveTool, setStatus })),
+        useDrawingMode(createOptions({ selection: props.selection, addArrow, setStatus, flashStatus })),
       { initialProps: { selection: null as WordSelection | null } }
     )
 
@@ -117,16 +117,16 @@ describe("useDrawingMode", () => {
     })
     expect(result.current.drawingState).toBeNull()
     expect(result.current.isDrawing).toBe(false)
-    expect(setStatus).toHaveBeenCalledWith(
+    expect(flashStatus).toHaveBeenCalledWith(
       { text: "Arrow created.", type: "success" }, 1500
     )
   })
 
-  it("calls setActiveTool('selection') after arrow created", () => {
-    const setActiveTool = vi.fn()
+  it("stays in arrow mode after arrow created (resets to selecting-anchor)", () => {
+    const setStatus = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ selection: props.selection, setActiveTool })),
+        useDrawingMode(createOptions({ selection: props.selection, setStatus })),
       { initialProps: { selection: null as WordSelection | null } }
     )
 
@@ -135,7 +135,12 @@ describe("useDrawingMode", () => {
     rerender({ selection: word2 })
     act(() => { result.current.confirmSelection() })
 
-    expect(setActiveTool).toHaveBeenCalledWith("selection")
+    // Entry + target + reset to selecting-anchor = 3 base status calls
+    expect(setStatus).toHaveBeenCalledTimes(3)
+    // The last base status call should be the selecting-anchor prompt
+    expect(setStatus).toHaveBeenLastCalledWith(
+      expect.objectContaining({ type: "info" })
+    )
   })
 
   it("same selection as anchor reverts to selecting-anchor phase", () => {
@@ -307,9 +312,10 @@ describe("useDrawingMode", () => {
   it("suppresses success status when showDrawingToasts is false", () => {
     const addArrow = vi.fn()
     const setStatus = vi.fn()
+    const flashStatus = vi.fn()
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
-        useDrawingMode(createOptions({ showDrawingToasts: false, addArrow, selection: props.selection, setStatus })),
+        useDrawingMode(createOptions({ showDrawingToasts: false, addArrow, selection: props.selection, setStatus, flashStatus })),
       { initialProps: { selection: null as WordSelection | null } }
     )
 
@@ -320,6 +326,7 @@ describe("useDrawingMode", () => {
 
     expect(addArrow).toHaveBeenCalled()
     expect(setStatus).not.toHaveBeenCalled()
+    expect(flashStatus).not.toHaveBeenCalled()
   })
 
   it("auto-creates layer even when showDrawingToasts is false", () => {
