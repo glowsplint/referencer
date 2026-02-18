@@ -47,13 +47,8 @@ test.describe("annotation scroll visibility", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Create a layer
+    // Editor starts locked with 4 default layers — add a fresh layer for tests
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
-
-    // Lock editor
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
     // Switch to comments tool
     await page.keyboard.press("c");

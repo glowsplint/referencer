@@ -6,10 +6,15 @@ import { toast } from "sonner"
 import i18n from "@/i18n"
 import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 import { TAILWIND_300_COLORS } from "@/types/editor"
+import { createDefaultLayers } from "@/data/default-workspace"
+
+const initialDefaultLayers = createDefaultLayers()
 
 export function useLayers() {
-  const [layers, setLayers] = useState<Layer[]>([])
-  const [activeLayerId, setActiveLayerId] = useState<string | null>(null)
+  const [layers, setLayers] = useState<Layer[]>(initialDefaultLayers)
+  const [activeLayerId, setActiveLayerId] = useState<string | null>(
+    initialDefaultLayers[0]?.id ?? null
+  )
   const layerCounterRef = useRef(0)
   const layersRef = useRef(layers)
   layersRef.current = layers

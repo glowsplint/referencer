@@ -9,7 +9,8 @@ test.describe("passage header", () => {
   test("passage header shows passage name above editor", async ({ page }) => {
     const header = page.getByTestId("passageHeader-0");
     await expect(header).toBeVisible();
-    await expect(header).toHaveText("Passage 1");
+    // Default name is the Bible passage reference
+    await expect(header).toHaveText("1 Corinthians 1:18\u201331");
   });
 
   test("double-clicking passage header enters edit mode", async ({ page }) => {
@@ -18,7 +19,7 @@ test.describe("passage header", () => {
 
     const input = page.getByTestId("passageHeaderInput-0");
     await expect(input).toBeVisible({ timeout: 2000 });
-    await expect(input).toHaveValue("Passage 1");
+    await expect(input).toHaveValue("1 Corinthians 1:18\u201331");
   });
 
   test("renaming passage header updates the name", async ({ page }) => {
@@ -50,11 +51,16 @@ test.describe("passage header", () => {
   });
 
   test("second passage has its own header", async ({ page }) => {
-    await page.getByTestId("addPassageButton").click();
-    await expect(page.locator(".simple-editor-wrapper")).toHaveCount(2);
+    // Already 2 passages by default
+    await expect(page.getByTestId("passageHeader-0")).toHaveText("1 Corinthians 1:18\u201331");
+    await expect(page.getByTestId("passageHeader-1")).toHaveText("1 Corinthians 2:6\u201316");
+  });
 
-    await expect(page.getByTestId("passageHeader-0")).toHaveText("Passage 1");
-    await expect(page.getByTestId("passageHeader-1")).toHaveText("Passage 2");
+  test("third passage added via button gets default name", async ({ page }) => {
+    await page.getByTestId("addPassageButton").click();
+    await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
+
+    await expect(page.getByTestId("passageHeader-2")).toHaveText("Passage 3");
   });
 
   test("escape key cancels passage header rename", async ({ page }) => {
@@ -66,6 +72,6 @@ test.describe("passage header", () => {
     await input.press("Escape");
 
     // Name should revert to original
-    await expect(page.getByTestId("passageHeader-0")).toHaveText("Passage 1");
+    await expect(page.getByTestId("passageHeader-0")).toHaveText("1 Corinthians 1:18\u201331");
   });
 });

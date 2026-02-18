@@ -16,7 +16,7 @@ describe("useSettings", () => {
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: false,
+      isLocked: true,
       showDrawingToasts: true,
       showCommentsToasts: true,
       showHighlightToasts: true,
@@ -59,7 +59,7 @@ describe("useSettings", () => {
     const { result } = renderHook(() => useSettings())
 
     act(() => { result.current.toggleLocked() })
-    expect(result.current.settings.isLocked).toBe(true)
+    expect(result.current.settings.isLocked).toBe(false)
   })
 
   it("setActiveTool changes the active tool", () => {
@@ -106,7 +106,7 @@ describe("useSettings", () => {
 
     expect(result.current.settings.isLayersOn).toBe(false)
     expect(result.current.settings.isMultipleRowsLayout).toBe(false)
-    expect(result.current.settings.isLocked).toBe(false)
+    expect(result.current.settings.isLocked).toBe(true)
     expect(result.current.settings.showDrawingToasts).toBe(true)
     expect(result.current.settings.showCommentsToasts).toBe(true)
     expect(result.current.settings.showHighlightToasts).toBe(true)
@@ -177,7 +177,7 @@ describe("useSettings", () => {
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: false,
+      isLocked: true,
       showDrawingToasts: true,
       showCommentsToasts: true,
       showHighlightToasts: true,

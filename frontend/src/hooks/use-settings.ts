@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS: EditorSettings = {
   isDarkMode: false,
   isLayersOn: false,
   isMultipleRowsLayout: false,
-  isLocked: false,
+  isLocked: true,
   showDrawingToasts: true,
   showCommentsToasts: true,
   showHighlightToasts: true,

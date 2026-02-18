@@ -14,8 +14,8 @@ import {
   TitleBar,
   SimpleEditorToolbar,
   EditorPane,
-  SIMPLE_EDITOR_CONTENT,
 } from "./components/tiptap-templates/simple";
+import { DEFAULT_PASSAGE_CONTENTS, PLACEHOLDER_CONTENT } from "./data/default-workspace";
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
@@ -391,7 +391,7 @@ export function App() {
                         <EditorPane
                           isLocked={settings.isLocked || effectiveReadOnly}
                           activeTool={annotations.activeTool}
-                          content={SIMPLE_EDITOR_CONTENT}
+                          content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
                           index={i}
                           onEditorMount={handleEditorMount}
                           onFocus={handlePaneFocus}
