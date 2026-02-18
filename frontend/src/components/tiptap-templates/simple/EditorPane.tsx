@@ -2,11 +2,13 @@
 // all decoration hooks (highlights, underlines, word hover, selection,
 // arrows) and forwards mouse events for word-level click/drag selection
 // in locked mode. Each pane represents one text passage in the workspace.
+// When a Yjs fragment is provided, enables real-time collaborative editing.
 "use client"
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { EditorContent, useEditor } from "@tiptap/react"
 import type { Editor } from "@tiptap/react"
+import type * as Y from "yjs"
 
 import { createSimpleEditorExtensions } from "./extensions"
 import { useUnifiedDecorations } from "@/hooks/use-unified-decorations"
@@ -37,6 +39,7 @@ export function EditorPane({
   activeTool,
   content,
   index,
+  fragment,
   onEditorMount,
   onFocus,
   onMouseDown,
@@ -57,6 +60,7 @@ export function EditorPane({
   activeTool?: ActiveTool
   content?: Record<string, unknown>
   index: number
+  fragment?: Y.XmlFragment | null
   onEditorMount: (index: number, editor: Editor) => void
   onFocus: (index: number) => void
   onMouseDown?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void
@@ -73,13 +77,21 @@ export function EditorPane({
   selectedArrowId: string | null
   setLayers?: React.Dispatch<React.SetStateAction<Layer[]>>
 }) {
-  const [extensions] = useState(() => createSimpleEditorExtensions())
+  const extensions = useMemo(
+    () => createSimpleEditorExtensions({ fragment: fragment ?? undefined }),
+    // Fragment identity is stable per editor pane lifecycle
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fragment]
+  )
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   const onContentUpdateRef = useRef(onContentUpdate)
   onContentUpdateRef.current = onContentUpdate
   const indexRef = useRef(index)
   indexRef.current = index
+
+  // Track whether initial content has been seeded into the Yjs fragment
+  const [contentSeeded, setContentSeeded] = useState(!fragment)
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -93,11 +105,24 @@ export function EditorPane({
       },
     },
     extensions,
-    content,
-    onUpdate: ({ editor }) => {
-      onContentUpdateRef.current?.(indexRef.current, editor.getJSON() as Record<string, unknown>)
-    },
-  })
+    // Only provide content when NOT using Yjs (Yjs manages content via fragment)
+    content: fragment ? undefined : content,
+    onUpdate: fragment
+      ? undefined
+      : ({ editor }) => {
+          onContentUpdateRef.current?.(indexRef.current, editor.getJSON() as Record<string, unknown>)
+        },
+  }, [extensions])
+
+  // Seed default content into an empty Yjs fragment
+  useEffect(() => {
+    if (!fragment || !editor || contentSeeded) return
+    // If the fragment is empty and we have default content, seed it
+    if (fragment.length === 0 && content) {
+      editor.commands.setContent(content)
+    }
+    setContentSeeded(true)
+  }, [fragment, editor, content, contentSeeded])
 
   useEffect(() => {
     if (editor) {

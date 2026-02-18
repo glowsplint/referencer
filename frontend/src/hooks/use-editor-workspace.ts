@@ -1,6 +1,7 @@
 // Central workspace hook that composes settings, layers, editors, action history,
-// and WebSocket sync into a single API. Wraps every mutation with read-only guards,
-// WebSocket broadcasting, and undo/redo history recording.
+// WebSocket sync, and Yjs collaboration into a single API. Wraps every mutation
+// with read-only guards, WebSocket broadcasting, and undo/redo history recording.
+// Text content is synced via Yjs CRDT; annotations still use action-based WebSocket.
 import { useState, useCallback, useRef } from "react"
 import { useSettings } from "./use-settings"
 import { useLayers } from "./use-layers"
@@ -9,6 +10,7 @@ import { useActionHistory } from "./use-action-history"
 import { useTrackedLayers } from "./use-tracked-layers"
 import { useTrackedEditors } from "./use-tracked-editors"
 import { useWebSocket } from "./use-websocket"
+import { useYjs } from "./use-yjs"
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
@@ -25,6 +27,9 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     rawLayersHook,
     rawEditorsHook
   )
+
+  // Yjs provider for CRDT-based text collaboration
+  const yjs = useYjs(workspaceId ?? "default")
 
   // Debounce timer ref for editor content updates
   const contentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -48,7 +53,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
         const id = trackedLayersHook.addLayer(opts)
         if (!id) return ""
         const layer = rawLayersHook.layers.find((l) => l.id === id)
-        // The layer may not be in state yet (setState is async), so derive from opts
         const name =
           opts?.name ??
           layer?.name ??
@@ -236,29 +240,22 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, trackedEditorsHook, guardedSendAction]
   )
 
-  // Reorder editors according to a permutation array where permutation[newIndex] = oldIndex.
-  // All annotation editorIndex values must be remapped to match the new ordering.
   const reorderEditors = useCallback(
     guarded((permutation: number[]) => {
-      // Build index map: oldIndex → newIndex
       const indexMap = new Map<number, number>()
       for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
         indexMap.set(permutation[newIdx], newIdx)
       }
 
-      // Compute inverse permutation for undo
       const inverse = new Array<number>(permutation.length)
       for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
         inverse[permutation[newIdx]] = newIdx
       }
 
-      // Snapshot layers before for undo
       const layersBefore = rawLayersHook.layers.map(l => ({ ...l }))
 
-      // Apply editor reorder
       rawEditorsHook.reorderEditors(permutation)
 
-      // Remap editorIndex in all highlights, arrows, and underlines
       rawLayersHook.setLayers(prev =>
         prev.map(layer => ({
           ...layer,
@@ -330,19 +327,20 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, rawEditorsHook, guardedSendAction, history]
   )
 
-  // Debounce content updates to avoid flooding the WebSocket on every keystroke
+  // Text content is now synced via Yjs CRDT — this fallback is only used
+  // when the collab server is unavailable
   const updateEditorContent = useCallback(
     guarded((editorIndex: number, contentJson: unknown) => {
+      if (yjs.connected) return
       if (contentTimerRef.current) {
         clearTimeout(contentTimerRef.current)
       }
-      // 2s debounce balances responsiveness with minimizing WebSocket traffic
       contentTimerRef.current = setTimeout(() => {
         guardedSendAction("updateEditorContent", { editorIndex, contentJson: contentJson as Record<string, unknown> })
         contentTimerRef.current = null
       }, 2000)
     }),
-    [readOnly, guardedSendAction]
+    [readOnly, guardedSendAction, yjs.connected]
   )
 
   const toggleLocked = useCallback(() => {
@@ -409,7 +407,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     setActiveTool,
     toggleDarkMode,
     toggleMultipleRowsLayout,
-    // Spread remaining properties from tracked hooks (layers state, activeLayerId, etc.)
     layers: trackedLayersHook.layers,
     activeLayerId: trackedLayersHook.activeLayerId,
     setActiveLayer: trackedLayersHook.setActiveLayer,
@@ -419,7 +416,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     clearLayerHighlights: trackedLayersHook.clearLayerHighlights,
     clearLayerArrows: trackedLayersHook.clearLayerArrows,
     clearLayerUnderlines: trackedLayersHook.clearLayerUnderlines,
-    // WS-wrapped layer actions
     addLayer,
     removeLayer,
     updateLayerName,
@@ -433,7 +429,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     updateArrowStyle,
     addUnderline,
     removeUnderline,
-    // Editor state from tracked hook
     editorCount: trackedEditorsHook.editorCount,
     activeEditor: trackedEditorsHook.activeEditor,
     editorWidths: trackedEditorsHook.editorWidths,
@@ -445,19 +440,19 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     handleEditorMount: trackedEditorsHook.handleEditorMount,
     handlePaneFocus: trackedEditorsHook.handlePaneFocus,
     toggleAllSectionVisibility: trackedEditorsHook.toggleAllSectionVisibility,
-    // WS-wrapped editor actions
     addEditor,
     removeEditor,
     reorderEditors,
     updateSectionName,
     toggleSectionVisibility,
     updateEditorContent,
-    // Other
     workspaceId: workspaceId ?? null,
     readOnly,
     isManagementPaneOpen,
     toggleManagementPane,
     history,
     wsConnected,
+    // Yjs CRDT collaboration
+    yjs,
   }
 }

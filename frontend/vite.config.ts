@@ -15,15 +15,21 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
       "/ws": {
-        target: "http://localhost:5000",
+        target: "http://localhost:8080",
         ws: true,
       },
-      "/api": {
-        target: "http://localhost:5000",
-      },
       "/s": {
-        target: "http://localhost:5000",
+        target: "http://localhost:8080",
+      },
+      "/yjs": {
+        target: "ws://localhost:4444",
+        ws: true,
+        rewrite: (path) => path.replace(/^\/yjs/, ""),
       },
       "/auth": {
         target: "http://localhost:5000",

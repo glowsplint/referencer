@@ -393,6 +393,7 @@ export function App() {
                           activeTool={annotations.activeTool}
                           content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
                           index={i}
+                          fragment={workspace.yjs.getFragment(i)}
                           onEditorMount={handleEditorMount}
                           onFocus={handlePaneFocus}
                           onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}

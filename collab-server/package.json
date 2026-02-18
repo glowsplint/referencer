@@ -1,0 +1,15 @@
+{
+  "name": "referencer-collab-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.18.0",
+    "y-websocket": "^3.0.0",
+    "yjs": "^13.6.29",
+    "y-leveldb": "^0.1.2"
+  }
+}
