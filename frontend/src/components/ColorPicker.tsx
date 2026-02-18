@@ -133,7 +133,7 @@ export function ColorPicker({
                       max={255}
                       value={rgb[ch]}
                       onChange={(e) => handleRgbChange(ch, Number(e.target.value))}
-                      className="w-12 bg-transparent border border-border rounded px-1 py-0.5 text-xs text-foreground text-center font-mono"
+                      className="w-16 bg-transparent border border-border rounded px-1 py-0.5 text-xs text-foreground text-center font-mono"
                       data-testid={`rgbInput-${ch}-${index}`}
                     />
                   </label>
