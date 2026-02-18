@@ -4,6 +4,7 @@
 import { useRef, useState, useCallback, useMemo } from "react"
 import type { Editor } from "@tiptap/react"
 
+// Minimum pane width (%) — prevents panes from collapsing entirely during resize
 const MIN_EDITOR_PCT = 10
 
 function computeEvenSplitPositions(count: number): number[] {
@@ -111,6 +112,7 @@ export function useEditors() {
     setSectionNames(prev => permutation.map(old => prev[old]))
     setSectionVisibility(prev => permutation.map(old => prev[old]))
     setEditorKeys(prev => permutation.map(old => prev[old]))
+    // Reset to even splits — preserving custom positions across arbitrary permutations is not worth the complexity
     setSplitPositions(computeEvenSplitPositions(permutation.length))
     // Re-key editorsRef according to permutation
     const oldMap = editorsRef.current

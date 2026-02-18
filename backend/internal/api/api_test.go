@@ -86,6 +86,9 @@ func TestHandleShare(t *testing.T) {
 		handler(w, req)
 
 		resp := w.Result()
+		if resp.StatusCode != http.StatusBadRequest {
+			t.Errorf("status = %d, want %d", resp.StatusCode, http.StatusBadRequest)
+		}
 		var raw map[string]string
 		json.NewDecoder(resp.Body).Decode(&raw)
 		if raw["error"] == "" {

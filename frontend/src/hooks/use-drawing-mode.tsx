@@ -7,7 +7,7 @@ import { Trans } from "react-i18next"
 import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { Arrow, ArrowEndpoint, ArrowStyle, DrawingState, DrawingPhase, WordSelection, ActiveTool } from "@/types/editor"
-import type { StatusMessage } from "@/hooks/use-status-message"
+import { FLASH_DURATION_MS, type StatusMessage } from "@/hooks/use-status-message"
 import { useLatestRef } from "@/hooks/use-latest-ref"
 
 function endpointFromSelection(sel: WordSelection): ArrowEndpoint {
@@ -159,7 +159,7 @@ export function useDrawingMode({
       phaseRef.current = "selecting-anchor"
       setDrawingState(null)
       if (showDrawingToastsRef.current) {
-flashStatusRef.current({ text: i18n.t("tools:arrow.created"), type: "success" }, 3000)
+flashStatusRef.current({ text: i18n.t("tools:arrow.created"), type: "success" }, FLASH_DURATION_MS)
       }
       showInfo(<Trans ns="tools" i18nKey="arrow.selectAnchor" components={{ kbd: <ToastKbd>_</ToastKbd> }} />)
       return

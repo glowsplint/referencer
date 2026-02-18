@@ -101,6 +101,7 @@ func (cm *ConnectionManager) Broadcast(workspaceID string, msg interface{}, excl
 }
 
 // actionHandler processes a client action by persisting it to the database.
+// workspaceID is passed to all handlers for consistency; some operate by layerID alone and don't use it.
 type actionHandler func(database *db.DB, workspaceID string, payload map[string]interface{}) error
 
 var actionHandlers = map[string]actionHandler{
@@ -239,6 +240,7 @@ func HandleWebSocket(database *db.DB, connMgr *ConnectionManager) http.HandlerFu
 	}
 }
 
+// structToMap converts v to a map via JSON round-trip, ensuring keys match json struct tags that clients expect.
 func structToMap(v interface{}) (map[string]interface{}, error) {
 	data, err := json.Marshal(v)
 	if err != nil {
@@ -407,7 +409,35 @@ func handleAddArrow(database *db.DB, workspaceID string, payload map[string]inte
 	if err != nil {
 		return err
 	}
-	return database.AddArrow(layerID, id, fromEndpoint, toEndpoint)
+	fromEditorIndex, err := assertFloat64(fromEndpoint, "editorIndex")
+	if err != nil {
+		return err
+	}
+	fromStart, err := assertFloat64(fromEndpoint, "from")
+	if err != nil {
+		return err
+	}
+	fromEnd, err := assertFloat64(fromEndpoint, "to")
+	if err != nil {
+		return err
+	}
+	toEditorIndex, err := assertFloat64(toEndpoint, "editorIndex")
+	if err != nil {
+		return err
+	}
+	toStart, err := assertFloat64(toEndpoint, "from")
+	if err != nil {
+		return err
+	}
+	toEnd, err := assertFloat64(toEndpoint, "to")
+	if err != nil {
+		return err
+	}
+	return database.AddArrow(
+		layerID, id,
+		int(fromEditorIndex), int(fromStart), int(fromEnd), stringOrDefault(fromEndpoint, "text", ""),
+		int(toEditorIndex), int(toStart), int(toEnd), stringOrDefault(toEndpoint, "text", ""),
+	)
 }
 
 func handleRemoveArrow(database *db.DB, workspaceID string, payload map[string]interface{}) error {
@@ -542,6 +572,9 @@ func handleUpdateEditorContent(database *db.DB, workspaceID string, payload map[
 	editorIndex, err := assertFloat64(payload, "editorIndex")
 	if err != nil {
 		return err
+	}
+	if payload["contentJson"] == nil {
+		return fmt.Errorf("key %q: missing", "contentJson")
 	}
 	return database.UpdateEditorContent(workspaceID, int(editorIndex), payload["contentJson"])
 }

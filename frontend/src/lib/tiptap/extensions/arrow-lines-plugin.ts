@@ -8,6 +8,7 @@ import type { EditorView } from "@tiptap/pm/view"
 import type { ArrowEndpoint, ArrowStyle } from "@/types/editor"
 import { getWordCenterContentRelative } from "@/lib/tiptap/nearest-word"
 import { getArrowStyleAttrs, computeDoubleLinePaths } from "@/lib/arrow-styles"
+import { ARROWHEAD } from "@/constants/arrow"
 
 const ARROW_OPACITY = 0.6
 const SVG_NS = "http://www.w3.org/2000/svg"
@@ -143,13 +144,13 @@ export class ArrowLinesView {
       // Marker (arrowhead)
       const marker = document.createElementNS(SVG_NS, "marker")
       marker.setAttribute("id", `arrowhead-${arrow.arrowId}`)
-      marker.setAttribute("markerWidth", "8")
-      marker.setAttribute("markerHeight", "6")
-      marker.setAttribute("refX", "4")
-      marker.setAttribute("refY", "3")
+      marker.setAttribute("markerWidth", String(ARROWHEAD.WIDTH))
+      marker.setAttribute("markerHeight", String(ARROWHEAD.HEIGHT))
+      marker.setAttribute("refX", String(ARROWHEAD.REF_X))
+      marker.setAttribute("refY", String(ARROWHEAD.REF_Y))
       marker.setAttribute("orient", "auto")
       const polygon = document.createElementNS(SVG_NS, "polygon")
-      polygon.setAttribute("points", "0 0, 8 3, 0 6")
+      polygon.setAttribute("points", ARROWHEAD.POINTS)
       polygon.setAttribute("fill", arrow.color)
       marker.appendChild(polygon)
       defs.appendChild(marker)

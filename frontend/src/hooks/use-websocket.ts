@@ -191,7 +191,7 @@ export function useWebSocket(
         }
         hydrateState(msg.payload, rawLayersRef.current, rawEditorsRef.current)
       } catch (err) {
-        console.error("[ws] Unexpected error hydrating state", err)
+        console.error("[ws] Unexpected error hydrating state", err, msg.payload)
       }
     })
 
@@ -204,7 +204,7 @@ export function useWebSocket(
         }
         applyRemoteAction(payload, rawLayersRef.current, rawEditorsRef.current)
       } catch (err) {
-        console.error("[ws] Unexpected error applying remote action", err)
+        console.error("[ws] Unexpected error applying remote action", err, payload)
       }
     })
 
@@ -237,7 +237,7 @@ function hydrateState(
       to: h.to,
       text: h.text,
       annotation: h.annotation,
-      type: (h.type as "highlight" | "comment") || "comment",
+      type: (h.type as "highlight" | "comment") ?? "comment",
     })),
     arrows: l.arrows.map((a) => ({
       id: a.id,

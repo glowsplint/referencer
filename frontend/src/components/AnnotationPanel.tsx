@@ -23,7 +23,9 @@ interface AnnotationPanelProps {
 }
 
 const PANEL_WIDTH = 224 // w-56
-const CONNECTOR_GAP = 8
+const CONNECTOR_GAP = 8      // px between highlight right edge and connector line start
+const CONNECTOR_Y_OFFSET = 10 // vertically center connector on text line (~half line height)
+const PANEL_LEFT_PAD = 16     // left-4 (Tailwind) — connector endpoint inside panel
 const CONNECTOR_OPACITY = 0.4
 
 export function AnnotationPanel({
@@ -97,9 +99,9 @@ export function AnnotationPanel({
               // x1 is relative to the panel - the rightEdge is relative to the container,
               // so we need to negate it from the panel's perspective (panel is to the right of container)
               const x1 = original.rightEdge - containerWidth - CONNECTOR_GAP
-              const y1 = original.top + 10
-              const x2 = 16 // left padding inside panel
-              const y2 = resolved.top + 10
+              const y1 = original.top + CONNECTOR_Y_OFFSET
+              const x2 = PANEL_LEFT_PAD
+              const y2 = resolved.top + CONNECTOR_Y_OFFSET
 
               return (
                 <line

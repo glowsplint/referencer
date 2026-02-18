@@ -6,7 +6,7 @@ import { Trans } from "react-i18next"
 import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection, LayerUnderline } from "@/types/editor"
-import type { StatusMessage } from "@/hooks/use-status-message"
+import { FLASH_DURATION_MS, type StatusMessage } from "@/hooks/use-status-message"
 import { useLatestRef } from "@/hooks/use-latest-ref"
 
 interface UseUnderlineModeOptions {
@@ -108,7 +108,7 @@ export function useUnderlineMode({
       text: sel.text,
     })
     if (showUnderlineToastsRef.current) {
-flashStatusRef.current({ text: i18n.t("tools:underline.added"), type: "success" }, 3000)
+flashStatusRef.current({ text: i18n.t("tools:underline.added"), type: "success" }, FLASH_DURATION_MS)
     }
   }, [])
 

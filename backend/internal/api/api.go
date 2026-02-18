@@ -23,7 +23,8 @@ func HandleShare(database *db.DB) http.HandlerFunc {
 
 		if req.Access != "edit" && req.Access != "readonly" {
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(map[string]string{
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]string{
 				"error": "access must be 'edit' or 'readonly'",
 			})
 			return

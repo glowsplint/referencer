@@ -4,6 +4,9 @@
 // current tool state, even after transient success toasts expire.
 import { useState, useCallback, useRef, type ReactNode } from "react"
 
+/** Duration (ms) for transient success/info flashes in the status bar. */
+export const FLASH_DURATION_MS = 3000
+
 export interface StatusMessage {
   text: ReactNode
   type: "info" | "success"

@@ -119,13 +119,7 @@ func TestGetWorkspaceState(t *testing.T) {
 		if err := d.AddHighlight("layer1", "hl1", 0, 10, 20, "hello", "note"); err != nil {
 			t.Fatal(err)
 		}
-		fromEndpoint := map[string]interface{}{
-			"editorIndex": float64(0), "from": float64(5), "to": float64(10), "text": "src",
-		}
-		toEndpoint := map[string]interface{}{
-			"editorIndex": float64(0), "from": float64(30), "to": float64(35), "text": "dst",
-		}
-		if err := d.AddArrow("layer1", "arr1", fromEndpoint, toEndpoint); err != nil {
+		if err := d.AddArrow("layer1", "arr1", 0, 5, 10, "src", 0, 30, 35, "dst"); err != nil {
 			t.Fatal(err)
 		}
 		if err := d.AddUnderline("layer1", "ul1", 0, 15, 25, "underlined"); err != nil {
@@ -226,9 +220,7 @@ func TestRemoveLayer(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Add an arrow to verify cascade delete.
-	from := map[string]interface{}{"editorIndex": float64(0), "from": float64(0), "to": float64(5), "text": ""}
-	to := map[string]interface{}{"editorIndex": float64(0), "from": float64(10), "to": float64(15), "text": ""}
-	if err := d.AddArrow("l1", "arr1", from, to); err != nil {
+	if err := d.AddArrow("l1", "arr1", 0, 0, 5, "", 0, 10, 15, ""); err != nil {
 		t.Fatal(err)
 	}
 
@@ -444,13 +436,7 @@ func TestAddArrow(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	from := map[string]interface{}{
-		"editorIndex": float64(0), "from": float64(5), "to": float64(10), "text": "source",
-	}
-	to := map[string]interface{}{
-		"editorIndex": float64(1), "from": float64(20), "to": float64(25), "text": "target",
-	}
-	if err := d.AddArrow("l1", "arr1", from, to); err != nil {
+	if err := d.AddArrow("l1", "arr1", 0, 5, 10, "source", 1, 20, 25, "target"); err != nil {
 		t.Fatalf("AddArrow: %v", err)
 	}
 
@@ -479,9 +465,7 @@ func TestRemoveArrow(t *testing.T) {
 	if err := d.AddLayer("ws1", "l1", "Layer", "#ff0000"); err != nil {
 		t.Fatal(err)
 	}
-	from := map[string]interface{}{"editorIndex": float64(0), "from": float64(0), "to": float64(5), "text": ""}
-	to := map[string]interface{}{"editorIndex": float64(0), "from": float64(10), "to": float64(15), "text": ""}
-	if err := d.AddArrow("l1", "arr1", from, to); err != nil {
+	if err := d.AddArrow("l1", "arr1", 0, 0, 5, "", 0, 10, 15, ""); err != nil {
 		t.Fatal(err)
 	}
 
@@ -504,9 +488,7 @@ func TestUpdateArrowStyle(t *testing.T) {
 	if err := d.AddLayer("ws1", "l1", "Layer", "#ff0000"); err != nil {
 		t.Fatal(err)
 	}
-	from := map[string]interface{}{"editorIndex": float64(0), "from": float64(0), "to": float64(5), "text": ""}
-	to := map[string]interface{}{"editorIndex": float64(0), "from": float64(10), "to": float64(15), "text": ""}
-	if err := d.AddArrow("l1", "arr1", from, to); err != nil {
+	if err := d.AddArrow("l1", "arr1", 0, 0, 5, "", 0, 10, 15, ""); err != nil {
 		t.Fatal(err)
 	}
 

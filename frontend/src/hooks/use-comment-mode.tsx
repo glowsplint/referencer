@@ -7,7 +7,7 @@ import { Trans } from "react-i18next"
 import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
-import type { StatusMessage } from "@/hooks/use-status-message"
+import { FLASH_DURATION_MS, type StatusMessage } from "@/hooks/use-status-message"
 import { useLatestRef } from "@/hooks/use-latest-ref"
 
 interface UseCommentModeOptions {
@@ -123,7 +123,7 @@ export function useCommentMode({
       type: "comment",
     })
     if (showCommentToastsRef.current) {
-flashStatusRef.current({ text: i18n.t("tools:comments.added"), type: "success" }, 3000)
+flashStatusRef.current({ text: i18n.t("tools:comments.added"), type: "success" }, FLASH_DURATION_MS)
     }
     onHighlightAddedRef.current?.(layerId, highlightId)
     // Keep selection so user can continue keyboard navigation after Escape

@@ -6,7 +6,7 @@ import { Trans } from "react-i18next"
 import i18n from "@/i18n"
 import { ToastKbd } from "@/components/ui/ToastKbd"
 import type { ActiveTool, WordSelection } from "@/types/editor"
-import type { StatusMessage } from "@/hooks/use-status-message"
+import { FLASH_DURATION_MS, type StatusMessage } from "@/hooks/use-status-message"
 import { useLatestRef } from "@/hooks/use-latest-ref"
 
 interface UseHighlightModeOptions {
@@ -102,7 +102,7 @@ export function useHighlightMode({
     if (existing) {
       removeHighlightRef.current(layerId, existing.id)
       if (showHighlightToastsRef.current) {
-flashStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success" }, 3000)
+flashStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success" }, FLASH_DURATION_MS)
       }
       return
     }
@@ -117,7 +117,7 @@ flashStatusRef.current({ text: i18n.t("tools:highlight.removed"), type: "success
       type: "highlight",
     })
     if (showHighlightToastsRef.current) {
-flashStatusRef.current({ text: i18n.t("tools:highlight.added"), type: "success" }, 3000)
+flashStatusRef.current({ text: i18n.t("tools:highlight.added"), type: "success" }, FLASH_DURATION_MS)
     }
     // Stay in highlight mode — do NOT switch to selection tool
   }, [])

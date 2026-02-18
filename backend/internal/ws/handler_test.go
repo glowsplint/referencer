@@ -389,9 +389,7 @@ func TestHandleRemoveArrow(t *testing.T) {
 	d := newTestDB(t)
 	d.EnsureWorkspace("ws1")
 	d.AddLayer("ws1", "l1", "Layer", "#ff0000")
-	from := map[string]interface{}{"editorIndex": float64(0), "from": float64(0), "to": float64(5), "text": ""}
-	to := map[string]interface{}{"editorIndex": float64(0), "from": float64(10), "to": float64(15), "text": ""}
-	d.AddArrow("l1", "arr1", from, to)
+	d.AddArrow("l1", "arr1", 0, 0, 5, "", 0, 10, 15, "")
 
 	payload := map[string]interface{}{"layerId": "l1", "arrowId": "arr1"}
 	if err := handleRemoveArrow(d, "ws1", payload); err != nil {
@@ -408,9 +406,7 @@ func TestHandleUpdateArrowStyle(t *testing.T) {
 	d := newTestDB(t)
 	d.EnsureWorkspace("ws1")
 	d.AddLayer("ws1", "l1", "Layer", "#ff0000")
-	from := map[string]interface{}{"editorIndex": float64(0), "from": float64(0), "to": float64(5), "text": ""}
-	to := map[string]interface{}{"editorIndex": float64(0), "from": float64(10), "to": float64(15), "text": ""}
-	d.AddArrow("l1", "arr1", from, to)
+	d.AddArrow("l1", "arr1", 0, 0, 5, "", 0, 10, 15, "")
 
 	payload := map[string]interface{}{"layerId": "l1", "arrowId": "arr1", "arrowStyle": "dashed"}
 	if err := handleUpdateArrowStyle(d, "ws1", payload); err != nil {

@@ -89,7 +89,8 @@ export class WorkspaceWSClient {
       }
     }
 
-    this.ws.onclose = () => {
+    this.ws.onclose = (event) => {
+      console.warn(`[ws-client] Connection closed: code=${event.code} reason=${event.reason}`)
       this.emit("_disconnected", {
         type: "state",
         payload: {},

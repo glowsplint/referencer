@@ -3,7 +3,7 @@
 import { useCallback, useEffect } from "react"
 import i18n from "@/i18n"
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor"
-import type { StatusMessage } from "./use-status-message"
+import { FLASH_DURATION_MS, type StatusMessage } from "./use-status-message"
 
 interface UseEraserModeOptions {
   isLocked: boolean
@@ -80,7 +80,7 @@ export function useEraserMode({
     }
 
     if (erased) {
-      flashStatus({ text: i18n.t("tools:eraser.erased"), type: "success" }, 3000)
+      flashStatus({ text: i18n.t("tools:eraser.erased"), type: "success" }, FLASH_DURATION_MS)
     }
   }, [isLocked, activeTool, layers, removeHighlight, removeUnderline, removeArrow, flashStatus])
 

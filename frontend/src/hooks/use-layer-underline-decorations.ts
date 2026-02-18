@@ -31,6 +31,7 @@ export function useLayerUnderlineDecorations(
   layers: Layer[],
   editorIndex: number,
   isLocked: boolean,
+  // Accepted for API symmetry with other decoration hooks; underline colors use layer.color directly
   _isDarkMode: boolean
 ) {
   useEffect(() => {

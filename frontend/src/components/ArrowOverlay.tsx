@@ -10,6 +10,7 @@ import { getWordCenter, getWordRect, getWordCenterRelativeToWrapper, getWordRect
 import { blendWithBackground } from "@/lib/color"
 import { getArrowStyleAttrs, computeDoubleLinePaths } from "@/lib/arrow-styles"
 import { getArrowLinesView } from "@/lib/tiptap/extensions/arrow-lines-plugin"
+import { ARROWHEAD } from "@/constants/arrow"
 
 const ARROW_OPACITY = 0.6
 const SVG_NS = "http://www.w3.org/2000/svg"
@@ -263,13 +264,13 @@ export function ArrowOverlay({
 
       const marker = document.createElementNS(SVG_NS, "marker")
       marker.setAttribute("id", `wrapper-arrowhead-${data.arrowId}`)
-      marker.setAttribute("markerWidth", "8")
-      marker.setAttribute("markerHeight", "6")
-      marker.setAttribute("refX", "4")
-      marker.setAttribute("refY", "3")
+      marker.setAttribute("markerWidth", String(ARROWHEAD.WIDTH))
+      marker.setAttribute("markerHeight", String(ARROWHEAD.HEIGHT))
+      marker.setAttribute("refX", String(ARROWHEAD.REF_X))
+      marker.setAttribute("refY", String(ARROWHEAD.REF_Y))
       marker.setAttribute("orient", "auto")
       const polygon = document.createElementNS(SVG_NS, "polygon")
-      polygon.setAttribute("points", "0 0, 8 3, 0 6")
+      polygon.setAttribute("points", ARROWHEAD.POINTS)
       polygon.setAttribute("fill", data.color)
       marker.appendChild(polygon)
       defs.appendChild(marker)
@@ -355,13 +356,13 @@ export function ArrowOverlay({
         if (fromCenter.cx !== toCenter.cx || fromCenter.cy !== toCenter.cy) {
           const previewMarker = document.createElementNS(SVG_NS, "marker")
           previewMarker.setAttribute("id", "wrapper-arrowhead-preview")
-          previewMarker.setAttribute("markerWidth", "8")
-          previewMarker.setAttribute("markerHeight", "6")
-          previewMarker.setAttribute("refX", "4")
-          previewMarker.setAttribute("refY", "3")
+          previewMarker.setAttribute("markerWidth", String(ARROWHEAD.WIDTH))
+          previewMarker.setAttribute("markerHeight", String(ARROWHEAD.HEIGHT))
+          previewMarker.setAttribute("refX", String(ARROWHEAD.REF_X))
+          previewMarker.setAttribute("refY", String(ARROWHEAD.REF_Y))
           previewMarker.setAttribute("orient", "auto")
           const previewPoly = document.createElementNS(SVG_NS, "polygon")
-          previewPoly.setAttribute("points", "0 0, 8 3, 0 6")
+          previewPoly.setAttribute("points", ARROWHEAD.POINTS)
           previewPoly.setAttribute("fill", blendedColor)
           previewMarker.appendChild(previewPoly)
           defs.appendChild(previewMarker)
@@ -393,7 +394,7 @@ export function ArrowOverlay({
     }
   }, [editorsRef, hoveredArrowId, selectedArrow, isDarkMode, activeTool])
 
-  // Imperatively update all path `d` attributes and X-icon positions
+  // Patch SVG attributes imperatively (not via React re-render) to avoid frame-skip latency during scroll
   const updatePositions = useCallback(() => {
     const containerRect = containerRef.current?.getBoundingClientRect()
     if (!containerRect) return
@@ -602,27 +603,27 @@ export function ArrowOverlay({
             <marker
               key={`marker-${data.arrowId}`}
               id={`arrowhead-${data.arrowId}`}
-              markerWidth="8"
-              markerHeight="6"
-              refX="4"
-              refY="3"
+              markerWidth={ARROWHEAD.WIDTH}
+              markerHeight={ARROWHEAD.HEIGHT}
+              refX={ARROWHEAD.REF_X}
+              refY={ARROWHEAD.REF_Y}
               orient="auto"
             >
-              <polygon points="0 0, 8 3, 0 6" fill={data.color} />
+              <polygon points={ARROWHEAD.POINTS} fill={data.color} />
             </marker>
           ))}
           {previewStructure && drawingColor && (
             <marker
               id="arrowhead-preview"
-              markerWidth="8"
-              markerHeight="6"
-              refX="4"
-              refY="3"
+              markerWidth={ARROWHEAD.WIDTH}
+              markerHeight={ARROWHEAD.HEIGHT}
+              refX={ARROWHEAD.REF_X}
+              refY={ARROWHEAD.REF_Y}
               orient="auto"
             >
               <polygon
                 ref={previewMarkerPolygonRef}
-                points="0 0, 8 3, 0 6"
+                points={ARROWHEAD.POINTS}
                 fill={blendArrow(drawingColor)}
               />
             </marker>

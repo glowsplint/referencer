@@ -7,6 +7,7 @@ import type { WordSelection } from "@/types/editor"
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
 import { similarTextPluginKey } from "@/lib/tiptap/extensions/similar-text-highlights"
 import { blendWithBackground } from "@/lib/color"
+import { DEFAULT_LAYER_COLOR } from "@/constants/colors"
 import { findTextMatches } from "@/lib/tiptap/find-text-matches"
 
 /**
@@ -46,7 +47,7 @@ export function useSimilarTextHighlight(
 
     const color = activeLayerColor
       ? blendWithBackground(activeLayerColor, 0.15, isDarkMode)
-      : blendWithBackground("#3b82f6", 0.15, isDarkMode)
+      : blendWithBackground(DEFAULT_LAYER_COLOR, 0.15, isDarkMode)
 
     try {
       const decorations = filtered.map((m) =>

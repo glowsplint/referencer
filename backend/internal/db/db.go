@@ -436,17 +436,9 @@ func (d *DB) UpdateHighlightAnnotation(layerID, highlightID, annotation string) 
 
 // --- Arrow operations ---
 
-func (d *DB) AddArrow(layerID, arrowID string, fromEndpoint, toEndpoint map[string]interface{}) error {
-	fromEditorIndex := int(fromEndpoint["editorIndex"].(float64))
-	fromStart := int(fromEndpoint["from"].(float64))
-	fromEnd := int(fromEndpoint["to"].(float64))
-	fromText, _ := fromEndpoint["text"].(string)
-
-	toEditorIndex := int(toEndpoint["editorIndex"].(float64))
-	toStart := int(toEndpoint["from"].(float64))
-	toEnd := int(toEndpoint["to"].(float64))
-	toText, _ := toEndpoint["text"].(string)
-
+func (d *DB) AddArrow(layerID, arrowID string,
+	fromEditorIndex, fromStart, fromEnd int, fromText string,
+	toEditorIndex, toStart, toEnd int, toText string) error {
 	_, err := d.conn.Exec(
 		`INSERT INTO arrow (id, layer_id, from_editor_index, from_start, from_end, from_text,
 		                     to_editor_index, to_start, to_end, to_text)
