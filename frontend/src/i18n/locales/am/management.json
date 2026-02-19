@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "ንብርብሮች",
+    "addLayer": "ንብርብር ጨምር",
+    "hideAll": "ሁሉንም ንብርብሮች ደብቅ",
+    "showAll": "ሁሉንም ንብርብሮች አሳይ",
+    "hideLayer": "ንብርብር ደብቅ",
+    "showLayer": "ንብርብር አሳይ",
+    "changeColour": "ቀለም ቀይር",
+    "removeAnnotation": "ማብራሪያ አስወግድ",
+    "removeArrow": "ቀስት አስወግድ",
+    "removeUnderline": "ከስር መስመር አስወግድ",
+    "allColorsInUse": "ሁሉም ቀለሞች ጥቅም ላይ ናቸው — መጀመሪያ ንብርብር ያስወግዱ።"
+  },
+  "passages": {
+    "title": "ክፍሎች",
+    "addPassage": "ክፍል ጨምር",
+    "hideAll": "ሁሉንም ክፍሎች ደብቅ",
+    "showAll": "ሁሉንም ክፍሎች አሳይ",
+    "hidePassage": "ክፍል ደብቅ",
+    "showPassage": "ክፍል አሳይ"
+  },
+  "tooltips": {
+    "toggleManagementPane": "የአስተዳደር ሰሌዳን ቀያይር",
+    "keyboardShortcuts": "የቁልፍ ሰሌዳ አቋራጮች",
+    "helpFaq": "እርዳታ እና ጥያቄዎች",
+    "settings": "ቅንብሮች",
+    "toggleEditorLayout": "የአርታዒ አቀማመጥን ቀያይር",
+    "toggleEditorLock": "የአርታዒ መቆለፊያን ቀያይር"
+  },
+  "annotations": {
+    "placeholder": "ማብራሪያ ጨምር...",
+    "removeCustomColour": "ብጁ ቀለም አስወግድ",
+    "addCustomColour": "ብጁ ቀለም ጨምር",
+    "addToCustomColours": "ወደ ብጁ ቀለሞች ጨምር"
+  },
+  "actionConsole": {
+    "title": "የድርጊት ኮንሶል",
+    "close": "ዝጋ",
+    "empty": "እስካሁን ምንም ድርጊቶች አልተመዘገቡም።"
+  }
+}

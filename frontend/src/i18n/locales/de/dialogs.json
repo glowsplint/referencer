@@ -22,6 +22,10 @@
       "label": "Überscrollung",
       "description": "Elastisches Zurückfedern beim Scrollen über den Rand hinaus erlauben"
     },
+    "hideOffscreenArrows": {
+      "label": "Pfeile außerhalb des Bildschirms ausblenden",
+      "description": "Pfeile vollständig ausblenden, wenn ein Endpunkt aus dem sichtbaren Bereich gescrollt wurde"
+    },
     "language": {
       "label": "Sprache",
       "description": "Wählen Sie Ihre bevorzugte Sprache"

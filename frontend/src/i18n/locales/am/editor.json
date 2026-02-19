@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "ወፍራም",
+    "italic": "ሰያፍ",
+    "underline": "ከስር መስመር",
+    "strike": "መሻገሪያ መስመር",
+    "code": "ኮድ",
+    "superscript": "ከፍ ያለ ጽሑፍ",
+    "subscript": "ዝቅ ያለ ጽሑፍ"
+  },
+  "heading": {
+    "label": "ርዕስ {{level}}"
+  },
+  "list": {
+    "bulletList": "ነጥብ ዝርዝር",
+    "orderedList": "ቁጥር ዝርዝር",
+    "taskList": "ተግባር ዝርዝር",
+    "label": "ዝርዝር"
+  },
+  "blockquote": {
+    "label": "ጥቅስ"
+  },
+  "codeBlock": {
+    "label": "የኮድ ብሎክ"
+  },
+  "link": {
+    "label": "አገናኝ",
+    "placeholder": "URL ያስገቡ",
+    "openLink": "አገናኝ ክፈት",
+    "copyLink": "አገናኝ ቅዳ",
+    "removeLink": "አገናኝ አስወግድ"
+  },
+  "image": {
+    "label": "ምስል ጨምር"
+  },
+  "textAlign": {
+    "left": "ወደ ግራ አሰልፍ",
+    "center": "ወደ መሃል አሰልፍ",
+    "right": "ወደ ቀኝ አሰልፍ",
+    "justify": "እኩል አሰልፍ"
+  },
+  "history": {
+    "undo": "ቀልብስ",
+    "redo": "ድገም"
+  },
+  "colorHighlight": {
+    "label": "የቀለም ማድመቂያ",
+    "highlightText": "ጽሑፍ አድምቅ",
+    "highlightColors": "የማድመቂያ ቀለሞች",
+    "removeHighlight": "ማድመቂያ አስወግድ",
+    "listOptions": "የዝርዝር ምርጫዎች",
+    "formatHeading": "ጽሑፍን እንደ ርዕስ ቅረጽ",
+    "colors": {
+      "default": "ነባሪ ዳራ",
+      "gray": "ግራጫ ዳራ",
+      "brown": "ቡናማ ዳራ",
+      "orange": "ብርቱካናማ ዳራ",
+      "yellow": "ቢጫ ዳራ",
+      "green": "አረንጓዴ ዳራ",
+      "blue": "ሰማያዊ ዳራ",
+      "purple": "ሐምራዊ ዳራ",
+      "pink": "ሮዝ ዳራ",
+      "red": "ቀይ ዳራ"
+    },
+    "toggleHighlight": "ማድመቂያ ቀያይር ({{color}})"
+  }
+}

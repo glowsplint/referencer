@@ -22,6 +22,10 @@
       "label": "Nadmierne przewijanie",
       "description": "Pozwol na efekt sprezystosci przy przewijaniu poza krawedzie"
     },
+    "hideOffscreenArrows": {
+      "label": "Ukryj strzalki poza ekranem",
+      "description": "Calkowicie ukryj strzalki, gdy jeden z punktow koncowych jest przewiniety poza widoczny obszar"
+    },
     "language": {
       "label": "Jezyk",
       "description": "Wybierz preferowany jezyk"

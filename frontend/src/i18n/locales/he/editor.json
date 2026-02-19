@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "מודגש",
+    "italic": "נטוי",
+    "underline": "קו תחתון",
+    "strike": "קו חוצה",
+    "code": "קוד",
+    "superscript": "כתב עילי",
+    "subscript": "כתב תחתי"
+  },
+  "heading": {
+    "label": "כותרת {{level}}"
+  },
+  "list": {
+    "bulletList": "רשימת תבליטים",
+    "orderedList": "רשימה ממוספרת",
+    "taskList": "רשימת משימות",
+    "label": "רשימה"
+  },
+  "blockquote": {
+    "label": "ציטוט"
+  },
+  "codeBlock": {
+    "label": "בלוק קוד"
+  },
+  "link": {
+    "label": "קישור",
+    "placeholder": "הזינו כתובת URL",
+    "openLink": "פתיחת קישור",
+    "copyLink": "העתקת קישור",
+    "removeLink": "הסרת קישור"
+  },
+  "image": {
+    "label": "הוספת תמונה"
+  },
+  "textAlign": {
+    "left": "יישור לשמאל",
+    "center": "יישור למרכז",
+    "right": "יישור לימין",
+    "justify": "יישור לשני הצדדים"
+  },
+  "history": {
+    "undo": "ביטול",
+    "redo": "ביצוע מחדש"
+  },
+  "colorHighlight": {
+    "label": "הדגשת צבע",
+    "highlightText": "הדגשת טקסט",
+    "highlightColors": "צבעי הדגשה",
+    "removeHighlight": "הסרת הדגשה",
+    "listOptions": "אפשרויות רשימה",
+    "formatHeading": "עיצוב טקסט ככותרת",
+    "colors": {
+      "default": "רקע ברירת מחדל",
+      "gray": "רקע אפור",
+      "brown": "רקע חום",
+      "orange": "רקע כתום",
+      "yellow": "רקע צהוב",
+      "green": "רקע ירוק",
+      "blue": "רקע כחול",
+      "purple": "רקע סגול",
+      "pink": "רקע ורוד",
+      "red": "רקע אדום"
+    },
+    "toggleHighlight": "הפעלת/כיבוי הדגשה ({{color}})"
+  }
+}

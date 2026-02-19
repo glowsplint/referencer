@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Kasangkapang pampili",
+    "defaultStatus": "Mag-click sa isang salita o gamitin ang arrow keys upang mag-navigate."
+  },
+  "arrow": {
+    "label": "Kasangkapang palaso",
+    "selectAnchor": "Pumili ng mga salita para sa anchor, pagkatapos ay pindutin ang <kbd>Enter</kbd>.",
+    "selectTarget": "Ngayon ay pumili ng target at pindutin ang <kbd>Enter</kbd>.",
+    "created": "Nalikha ang palaso."
+  },
+  "highlight": {
+    "label": "Kasangkapang pang-highlight",
+    "selectWords": "Pumili ng mga salitang i-highlight, pagkatapos ay pindutin ang <kbd>Enter</kbd>.",
+    "added": "Naidagdag ang highlight.",
+    "removed": "Naalis ang highlight."
+  },
+  "comments": {
+    "label": "Kasangkapang pang-komento",
+    "selectWords": "Pumili ng mga salitang kokomentuhan, pagkatapos ay pindutin ang <kbd>Enter</kbd>.",
+    "added": "Naidagdag ang komento."
+  },
+  "underline": {
+    "label": "Kasangkapang pang-salungguhit",
+    "selectWords": "Pumili ng mga salitang sasalungguhitan, pagkatapos ay pindutin ang <kbd>Enter</kbd>.",
+    "added": "Naidagdag ang salungguhit."
+  },
+  "eraser": {
+    "label": "Pambura",
+    "status": "Mag-click at mag-drag upang burahin ang mga anotasyon.",
+    "erased": "Nabura ang anotasyon."
+  },
+  "lockHint": "Pindutin ang <kbd>Esc</kbd> <kbd>K</kbd> upang i-lock ang editor kapag natapos mo na ang nilalaman."
+}

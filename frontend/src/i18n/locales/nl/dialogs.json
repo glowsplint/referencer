@@ -22,6 +22,10 @@
       "label": "Overscrolling",
       "description": "Sta elastisch terugveren toe bij het scrollen voorbij de randen"
     },
+    "hideOffscreenArrows": {
+      "label": "Pijlen buiten beeld verbergen",
+      "description": "Pijlen volledig verbergen wanneer een eindpunt buiten het zichtbare gebied is gescrold"
+    },
     "language": {
       "label": "Taal",
       "description": "Kies uw voorkeurstaal"

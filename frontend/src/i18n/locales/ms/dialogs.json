@@ -22,6 +22,10 @@
       "label": "Tatal lampau",
       "description": "Benarkan lantunan elastik apabila menatal melepasi tepi"
     },
+    "hideOffscreenArrows": {
+      "label": "Sembunyikan anak panah luar skrin",
+      "description": "Sembunyikan anak panah sepenuhnya apabila salah satu titik hujung ditatal keluar dari pandangan"
+    },
     "language": {
       "label": "Bahasa",
       "description": "Pilih bahasa pilihan anda"

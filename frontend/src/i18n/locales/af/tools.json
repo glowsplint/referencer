@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Seleksie-instrument",
+    "defaultStatus": "Klik op 'n woord of gebruik die pyltjie-sleutels om te navigeer."
+  },
+  "arrow": {
+    "label": "Pyltjie-instrument",
+    "selectAnchor": "Kies woorde vir die anker en druk dan <kbd>Enter</kbd>.",
+    "selectTarget": "Kies nou die teiken en druk <kbd>Enter</kbd>.",
+    "created": "Pyltjie geskep."
+  },
+  "highlight": {
+    "label": "Uitlig-instrument",
+    "selectWords": "Kies woorde om uit te lig en druk dan <kbd>Enter</kbd>.",
+    "added": "Uitligting bygevoeg.",
+    "removed": "Uitligting verwyder."
+  },
+  "comments": {
+    "label": "Kommentaar-instrument",
+    "selectWords": "Kies woorde om op kommentaar te lewer en druk dan <kbd>Enter</kbd>.",
+    "added": "Kommentaar bygevoeg."
+  },
+  "underline": {
+    "label": "Onderstreep-instrument",
+    "selectWords": "Kies woorde om te onderstreep en druk dan <kbd>Enter</kbd>.",
+    "added": "Onderstreping bygevoeg."
+  },
+  "eraser": {
+    "label": "Uitveër-instrument",
+    "status": "Klik en sleep om aantekeninge uit te vee.",
+    "erased": "Aantekening uitgevee."
+  },
+  "lockHint": "Druk <kbd>Esc</kbd> <kbd>K</kbd> om die redigeerder te sluit nadat jy die inhoud voltooi het."
+}

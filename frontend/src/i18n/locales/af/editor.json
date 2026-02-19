@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Vetdruk",
+    "italic": "Kursief",
+    "underline": "Onderstreep",
+    "strike": "Deurstreep",
+    "code": "Kode",
+    "superscript": "Superskrif",
+    "subscript": "Subskrif"
+  },
+  "heading": {
+    "label": "Opskrif {{level}}"
+  },
+  "list": {
+    "bulletList": "Kollys",
+    "orderedList": "Genommerde lys",
+    "taskList": "Taaklys",
+    "label": "Lys"
+  },
+  "blockquote": {
+    "label": "Blokaanhaling"
+  },
+  "codeBlock": {
+    "label": "Kodeblok"
+  },
+  "link": {
+    "label": "Skakel",
+    "placeholder": "Voer URL in",
+    "openLink": "Maak skakel oop",
+    "copyLink": "Kopieer skakel",
+    "removeLink": "Verwyder skakel"
+  },
+  "image": {
+    "label": "Voeg prent by"
+  },
+  "textAlign": {
+    "left": "Belyn links",
+    "center": "Belyn sentraal",
+    "right": "Belyn regs",
+    "justify": "Belyn geregverdig"
+  },
+  "history": {
+    "undo": "Ontdoen",
+    "redo": "Herdoen"
+  },
+  "colorHighlight": {
+    "label": "Kleuruitligting",
+    "highlightText": "Lig teks uit",
+    "highlightColors": "Uitligkleure",
+    "removeHighlight": "Verwyder uitligting",
+    "listOptions": "Lysopsies",
+    "formatHeading": "Formateer teks as opskrif",
+    "colors": {
+      "default": "Verstek agtergrond",
+      "gray": "Grys agtergrond",
+      "brown": "Bruin agtergrond",
+      "orange": "Oranje agtergrond",
+      "yellow": "Geel agtergrond",
+      "green": "Groen agtergrond",
+      "blue": "Blou agtergrond",
+      "purple": "Pers agtergrond",
+      "pink": "Pienk agtergrond",
+      "red": "Rooi agtergrond"
+    },
+    "toggleHighlight": "Wissel uitligting ({{color}})"
+  }
+}

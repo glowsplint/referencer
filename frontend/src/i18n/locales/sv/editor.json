@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Fetstil",
+    "italic": "Kursiv",
+    "underline": "Understrykning",
+    "strike": "Genomstrykning",
+    "code": "Kod",
+    "superscript": "Upphöjd",
+    "subscript": "Nedsänkt"
+  },
+  "heading": {
+    "label": "Rubrik {{level}}"
+  },
+  "list": {
+    "bulletList": "Punktlista",
+    "orderedList": "Numrerad lista",
+    "taskList": "Uppgiftslista",
+    "label": "Lista"
+  },
+  "blockquote": {
+    "label": "Blockcitat"
+  },
+  "codeBlock": {
+    "label": "Kodblock"
+  },
+  "link": {
+    "label": "Länk",
+    "placeholder": "Ange URL",
+    "openLink": "Öppna länk",
+    "copyLink": "Kopiera länk",
+    "removeLink": "Ta bort länk"
+  },
+  "image": {
+    "label": "Lägg till bild"
+  },
+  "textAlign": {
+    "left": "Vänsterjustera",
+    "center": "Centrera",
+    "right": "Högerjustera",
+    "justify": "Marginaljustera"
+  },
+  "history": {
+    "undo": "Ångra",
+    "redo": "Gör om"
+  },
+  "colorHighlight": {
+    "label": "Färgmarkering",
+    "highlightText": "Markera text",
+    "highlightColors": "Markeringsfärger",
+    "removeHighlight": "Ta bort markering",
+    "listOptions": "Listalternativ",
+    "formatHeading": "Formatera text som rubrik",
+    "colors": {
+      "default": "Standardbakgrund",
+      "gray": "Grå bakgrund",
+      "brown": "Brun bakgrund",
+      "orange": "Orange bakgrund",
+      "yellow": "Gul bakgrund",
+      "green": "Grön bakgrund",
+      "blue": "Blå bakgrund",
+      "purple": "Lila bakgrund",
+      "pink": "Rosa bakgrund",
+      "red": "Röd bakgrund"
+    },
+    "toggleHighlight": "Växla markering ({{color}})"
+  }
+}

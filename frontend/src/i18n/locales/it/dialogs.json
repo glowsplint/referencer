@@ -22,6 +22,10 @@
       "label": "Scorrimento elastico",
       "description": "Consenti il rimbalzo elastico quando si scorre oltre i bordi"
     },
+    "hideOffscreenArrows": {
+      "label": "Nascondi frecce fuori schermo",
+      "description": "Nascondere completamente le frecce quando uno dei punti di connessione è fuori dalla vista"
+    },
     "language": {
       "label": "Lingua",
       "description": "Scegli la tua lingua preferita"

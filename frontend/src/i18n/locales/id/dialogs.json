@@ -22,6 +22,10 @@
       "label": "Gulir berlebih",
       "description": "Izinkan efek pantulan saat menggulir melewati tepi"
     },
+    "hideOffscreenArrows": {
+      "label": "Sembunyikan panah di luar layar",
+      "description": "Sembunyikan panah sepenuhnya ketika salah satu titik ujung digulir keluar dari tampilan"
+    },
     "language": {
       "label": "Bahasa",
       "description": "Pilih bahasa yang Anda inginkan"

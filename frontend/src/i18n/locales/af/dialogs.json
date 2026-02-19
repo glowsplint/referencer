@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Instellings",
+    "description": "Pas jou werkspasie-voorkeure aan.",
+    "darkMode": {
+      "label": "Donker modus",
+      "description": "Wissel tussen lig en donker temas"
+    },
+    "drawingNotifications": {
+      "label": "Tekenkennisgewings",
+      "description": "Wys kennisgewings wanneer die pyltjie-instrument gebruik word"
+    },
+    "commentsNotifications": {
+      "label": "Kommentaarkennisgewings",
+      "description": "Wys kennisgewings wanneer die kommentaar-instrument gebruik word"
+    },
+    "highlightNotifications": {
+      "label": "Uitligkennisgewings",
+      "description": "Wys kennisgewings wanneer die uitlig-instrument gebruik word"
+    },
+    "overscroll": {
+      "label": "Oorrolling",
+      "description": "Laat elastiese weerkaatsing toe wanneer verby rande gerol word"
+    },
+    "hideOffscreenArrows": {
+      "label": "Versteek pyltjies buite die skerm",
+      "description": "Versteek pyltjies heeltemal wanneer enige eindpunt buite sig gerol is"
+    },
+    "language": {
+      "label": "Taal",
+      "description": "Kies jou voorkeur taal"
+    }
+  },
+  "faq": {
+    "title": "Gereelde Vrae",
+    "description": "Leer meer oor Referencer en hoe om dit te gebruik.",
+    "items": {
+      "whatIsApp": {
+        "question": "Wat is hierdie toep?",
+        "answer": "Referencer is 'n samewerkingsinstrument vir induktiewe Bybelstudie. Dit bied studiegroepe 'n gedeelde werkspasie waar hulle die Skrif saam intyds kan lees, annoteer en bespreek."
+      },
+      "inductiveStudy": {
+        "question": "Wat is induktiewe Bybelstudie?",
+        "answer": "Induktiewe Bybelstudie is 'n metode om die Skrif te lees wat beweeg van waarneming (wat sê die teks?) na interpretasie (wat beteken dit?) na toepassing (hoe is dit van toepassing?). In plaas daarvan om met eksterne kommentaar te begin, laat jy die teks vir homself praat deur die woorde, struktuur en konteks noukeurig te ondersoek."
+      },
+      "collaboration": {
+        "question": "Hoe werk samewerking?",
+        "answer": "Elke werkspasie kan via 'n skakel met ander gedeel word. Alle deelnemers sien dieselfde teks en kan hul eie aantekeninge byvoeg. Veranderinge sinkroniseer intyds sodat almal op dieselfde bladsy bly."
+      },
+      "layers": {
+        "question": "Wat is lae?",
+        "answer": "Lae laat jou toe om aantekeninge in aparte groepe te organiseer — byvoorbeeld een laag vir waarnemings en 'n ander vir interpretasies. Jy kan tussen lae wissel met die L-sleutel om op een stel aantekeninge op 'n slag te fokus."
+      },
+      "annotations": {
+        "question": "Hoe werk aantekeninge?",
+        "answer": "Sluit die redigeerder met die sluitknoppie (of druk K), kies dan teks om dit uit te lig. Jy kan kleure kies, kommentaar byvoeg en pyltjies tussen aantekeninge teken om verbande te wys. Klik op 'n bestaande aantekening om dit te verwyder."
+      },
+      "arrows": {
+        "question": "Waarvoor is pyltjies?",
+        "answer": "Pyltjies verbind twee aantekeninge om 'n verhouding tussen gedeeltes te wys — byvoorbeeld om 'n herhaalde woord aan sy eerste voorkoms te koppel, of 'n profesie aan sy vervulling te verbind. Kies die pyltjie-instrument (of druk A), klik dan op twee aantekeninge om 'n verbinding te teken."
+      },
+      "sharing": {
+        "question": "Hoe deel ek 'n werkspasie?",
+        "answer": "Maak die bestuurspaneel oop (druk M of klik op die kieslys-ikoon) en gebruik die deelopsies om 'n skakel te genereer. Enigiemand met die skakel kan by die werkspasie aansluit en saamwerk."
+      },
+      "mobile": {
+        "question": "Kan ek dit op 'n selfoon gebruik?",
+        "answer": "Die toep werk in selfoonblaaiers, maar die volledige aantekening- en pyltjie-instrumente word die beste ervaar op 'n toestel met 'n sleutelbord en muis."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Sleutelbordkortpaaie",
+    "description": "Beskikbare sleutelbordkortpaaie vir die werkspasie.",
+    "workspace": "Werkspasie",
+    "cycleNextLayer": "Wissel na volgende laag",
+    "cyclePrevLayer": "Wissel na vorige laag",
+    "selectionTool": "Seleksie-instrument",
+    "arrowTool": "Pyltjie-instrument",
+    "commentsTool": "Kommentaar-instrument",
+    "highlightTool": "Uitlig-instrument",
+    "underlineTool": "Onderstreep-instrument",
+    "eraserTool": "Uitveër-instrument",
+    "navigateWords": "Navigeer tussen woorde",
+    "toggleConsole": "Wissel aksiekonsole",
+    "toggleDarkMode": "Wissel donker modus",
+    "toggleLayout": "Wissel redigeerder-uitleg",
+    "toggleLock": "Wissel redigeerder-slot",
+    "toggleManagement": "Wissel bestuurspaneel",
+    "textFormatting": "Teksformatering",
+    "bold": "Vetdruk",
+    "italic": "Kursief",
+    "underline": "Onderstreep",
+    "strikethrough": "Deurstreep",
+    "inlineCode": "Inlynkode",
+    "superscript": "Superskrif",
+    "subscript": "Subskrif",
+    "colorHighlight": "Kleuruitligting",
+    "general": "Algemeen",
+    "undo": "Ontdoen (werkspasie wanneer gesluit)",
+    "redo": "Herdoen (werkspasie wanneer gesluit)",
+    "headings": "Opskrifte",
+    "heading": "Opskrif {{level}}",
+    "listsAndBlocks": "Lyste & blokke",
+    "bulletList": "Kollys",
+    "orderedList": "Genommerde lys",
+    "taskList": "Taaklys",
+    "blockquote": "Blokaanhaling",
+    "codeBlock": "Kodeblok",
+    "textAlignment": "Teksbelyning",
+    "alignLeft": "Belyn links",
+    "alignCenter": "Belyn sentraal",
+    "alignRight": "Belyn regs",
+    "alignJustify": "Belyn geregverdig"
+  },
+  "share": {
+    "title": "Deel werkspasie",
+    "description": "Kopieer 'n skakel om hierdie werkspasie te deel.",
+    "readonlyLink": "Leesalleen-skakel",
+    "editLink": "Redigeerskakel",
+    "linkCopied": "Skakel na knipbord gekopieer.",
+    "copyFailed": "Kon nie skakel kopieer nie."
+  },
+  "mobile": {
+    "title": "Beste op rekenaar",
+    "description": "Referencer is ontwerp vir rekenaargebruik met 'n sleutelbord en muis. Jy kan steeds die inhoud hier lees, maar redigeer- en aanteekeninstrumente is nie op selfone beskikbaar nie.",
+    "continueReading": "Lees verder"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Ohun èlò yíyan",
+    "defaultStatus": "Tẹ ọ̀rọ̀ kan tàbí lo bọ́tìnì ọfà láti lọ kiri."
+  },
+  "arrow": {
+    "label": "Ohun èlò ọfà",
+    "selectAnchor": "Yan àwọn ọ̀rọ̀ fún ìdákọ́ rẹ̀, lẹ́yìn náà tẹ <kbd>Enter</kbd>.",
+    "selectTarget": "Báyìí, yan ibi tí o ń lọ, kí o sì tẹ <kbd>Enter</kbd>.",
+    "created": "A ti dá ọfà."
+  },
+  "highlight": {
+    "label": "Ohun èlò àmì ìtànṣán",
+    "selectWords": "Yan àwọn ọ̀rọ̀ láti fi àmì ìtànṣán sí, lẹ́yìn náà tẹ <kbd>Enter</kbd>.",
+    "added": "A ti fi àmì ìtànṣán kún.",
+    "removed": "A ti yọ àmì ìtànṣán kúrò."
+  },
+  "comments": {
+    "label": "Ohun èlò àlàyé",
+    "selectWords": "Yan àwọn ọ̀rọ̀ láti fi àlàyé sí, lẹ́yìn náà tẹ <kbd>Enter</kbd>.",
+    "added": "A ti fi àlàyé kún."
+  },
+  "underline": {
+    "label": "Ohun èlò ìlà-ìsàlẹ̀",
+    "selectWords": "Yan àwọn ọ̀rọ̀ láti fa ìlà sí abẹ́, lẹ́yìn náà tẹ <kbd>Enter</kbd>.",
+    "added": "A ti fi ìlà-ìsàlẹ̀ kún."
+  },
+  "eraser": {
+    "label": "Ohun èlò ìparẹ́",
+    "status": "Tẹ kí o sì fà láti pa àwọn àkọsílẹ̀ rẹ́.",
+    "erased": "A ti pa àkọsílẹ̀ rẹ́."
+  },
+  "lockHint": "Tẹ <kbd>Esc</kbd> <kbd>K</kbd> láti tìí olóòtú nígbà tí o bá ti parí àkóónú rẹ."
+}

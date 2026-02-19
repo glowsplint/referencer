@@ -22,6 +22,10 @@
       "label": "Cuộn quá giới hạn",
       "description": "Cho phép hiệu ứng nảy khi cuộn qua mép"
     },
+    "hideOffscreenArrows": {
+      "label": "Ẩn mũi tên ngoài màn hình",
+      "description": "Ẩn hoàn toàn mũi tên khi một trong hai điểm đầu cuối bị cuộn ra ngoài vùng hiển thị"
+    },
     "language": {
       "label": "Ngôn ngữ",
       "description": "Chọn ngôn ngữ ưa thích của bạn"

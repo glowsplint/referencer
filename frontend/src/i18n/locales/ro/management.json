@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Straturi",
+    "addLayer": "Adaugă strat",
+    "hideAll": "Ascunde toate straturile",
+    "showAll": "Afișează toate straturile",
+    "hideLayer": "Ascunde stratul",
+    "showLayer": "Afișează stratul",
+    "changeColour": "Schimbă culoarea",
+    "removeAnnotation": "Elimină adnotarea",
+    "removeArrow": "Elimină săgeata",
+    "removeUnderline": "Elimină sublinierea",
+    "allColorsInUse": "Toate culorile sunt utilizate — eliminați mai întâi un strat."
+  },
+  "passages": {
+    "title": "Pasaje",
+    "addPassage": "Adaugă pasaj",
+    "hideAll": "Ascunde toate pasajele",
+    "showAll": "Afișează toate pasajele",
+    "hidePassage": "Ascunde pasajul",
+    "showPassage": "Afișează pasajul"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Comutați panoul de gestionare",
+    "keyboardShortcuts": "Scurtături de tastatură",
+    "helpFaq": "Ajutor și întrebări frecvente",
+    "settings": "Setări",
+    "toggleEditorLayout": "Comutați aspectul editorului",
+    "toggleEditorLock": "Comutați blocarea editorului"
+  },
+  "annotations": {
+    "placeholder": "Adaugă adnotare...",
+    "removeCustomColour": "Elimină culoarea personalizată",
+    "addCustomColour": "Adaugă culoare personalizată",
+    "addToCustomColours": "Adaugă la culorile personalizate"
+  },
+  "actionConsole": {
+    "title": "Consola de acțiuni",
+    "close": "închide",
+    "empty": "Nu au fost înregistrate acțiuni încă."
+  }
+}

@@ -22,6 +22,10 @@
       "label": "Kusogeza kupita",
       "description": "Ruhusu kuruka unaposogeza zaidi ya kingo"
     },
+    "hideOffscreenArrows": {
+      "label": "Ficha mishale nje ya skrini",
+      "description": "Ficha mishale kabisa ncha moja inaposogezwa nje ya eneo linaloonekana"
+    },
     "language": {
       "label": "Lugha",
       "description": "Chagua lugha unayopendelea"

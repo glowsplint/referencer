@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "כלי בחירה",
+    "defaultStatus": "לחצו על מילה או השתמשו במקשי החצים לניווט."
+  },
+  "arrow": {
+    "label": "כלי חץ",
+    "selectAnchor": "בחרו מילים לנקודת העיגון ולאחר מכן לחצו <kbd>Enter</kbd>.",
+    "selectTarget": "כעת בחרו את היעד ולחצו <kbd>Enter</kbd>.",
+    "created": "החץ נוצר."
+  },
+  "highlight": {
+    "label": "כלי הדגשה",
+    "selectWords": "בחרו מילים להדגשה ולאחר מכן לחצו <kbd>Enter</kbd>.",
+    "added": "ההדגשה נוספה.",
+    "removed": "ההדגשה הוסרה."
+  },
+  "comments": {
+    "label": "כלי הערות",
+    "selectWords": "בחרו מילים להוספת הערה ולאחר מכן לחצו <kbd>Enter</kbd>.",
+    "added": "ההערה נוספה."
+  },
+  "underline": {
+    "label": "כלי קו תחתון",
+    "selectWords": "בחרו מילים להוספת קו תחתון ולאחר מכן לחצו <kbd>Enter</kbd>.",
+    "added": "הקו התחתון נוסף."
+  },
+  "eraser": {
+    "label": "כלי מחיקה",
+    "status": "לחצו וגררו כדי למחוק הערות.",
+    "erased": "ההערה נמחקה."
+  },
+  "lockHint": "לחצו <kbd>Esc</kbd> <kbd>K</kbd> כדי לנעול את העורך לאחר שסיימתם את התוכן."
+}

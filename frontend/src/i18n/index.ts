@@ -134,6 +134,60 @@ import dialogsMs from "./locales/ms/dialogs.json"
 import managementMs from "./locales/ms/management.json"
 import editorMs from "./locales/ms/editor.json"
 
+import commonTl from "./locales/tl/common.json"
+import toolsTl from "./locales/tl/tools.json"
+import dialogsTl from "./locales/tl/dialogs.json"
+import managementTl from "./locales/tl/management.json"
+import editorTl from "./locales/tl/editor.json"
+
+import commonAm from "./locales/am/common.json"
+import toolsAm from "./locales/am/tools.json"
+import dialogsAm from "./locales/am/dialogs.json"
+import managementAm from "./locales/am/management.json"
+import editorAm from "./locales/am/editor.json"
+
+import commonRo from "./locales/ro/common.json"
+import toolsRo from "./locales/ro/tools.json"
+import dialogsRo from "./locales/ro/dialogs.json"
+import managementRo from "./locales/ro/management.json"
+import editorRo from "./locales/ro/editor.json"
+
+import commonYo from "./locales/yo/common.json"
+import toolsYo from "./locales/yo/tools.json"
+import dialogsYo from "./locales/yo/dialogs.json"
+import managementYo from "./locales/yo/management.json"
+import editorYo from "./locales/yo/editor.json"
+
+import commonEl from "./locales/el/common.json"
+import toolsEl from "./locales/el/tools.json"
+import dialogsEl from "./locales/el/dialogs.json"
+import managementEl from "./locales/el/management.json"
+import editorEl from "./locales/el/editor.json"
+
+import commonHe from "./locales/he/common.json"
+import toolsHe from "./locales/he/tools.json"
+import dialogsHe from "./locales/he/dialogs.json"
+import managementHe from "./locales/he/management.json"
+import editorHe from "./locales/he/editor.json"
+
+import commonTa from "./locales/ta/common.json"
+import toolsTa from "./locales/ta/tools.json"
+import dialogsTa from "./locales/ta/dialogs.json"
+import managementTa from "./locales/ta/management.json"
+import editorTa from "./locales/ta/editor.json"
+
+import commonSv from "./locales/sv/common.json"
+import toolsSv from "./locales/sv/tools.json"
+import dialogsSv from "./locales/sv/dialogs.json"
+import managementSv from "./locales/sv/management.json"
+import editorSv from "./locales/sv/editor.json"
+
+import commonAf from "./locales/af/common.json"
+import toolsAf from "./locales/af/tools.json"
+import dialogsAf from "./locales/af/dialogs.json"
+import managementAf from "./locales/af/management.json"
+import editorAf from "./locales/af/editor.json"
+
 export const LANGUAGE_OPTIONS = [
   { code: "en", label: "English" },
   { code: "zh", label: "中文" },
@@ -157,6 +211,15 @@ export const LANGUAGE_OPTIONS = [
   { code: "nl", label: "Nederlands" },
   { code: "sw", label: "Kiswahili" },
   { code: "ms", label: "Bahasa Melayu" },
+  { code: "tl", label: "Filipino" },
+  { code: "am", label: "አማርኛ" },
+  { code: "ro", label: "Română" },
+  { code: "yo", label: "Yorùbá" },
+  { code: "el", label: "Ελληνικά" },
+  { code: "he", label: "עברית" },
+  { code: "ta", label: "தமிழ்" },
+  { code: "sv", label: "Svenska" },
+  { code: "af", label: "Afrikaans" },
 ] as const
 
 const resources = {
@@ -313,6 +376,69 @@ const resources = {
     dialogs: dialogsMs,
     management: managementMs,
     editor: editorMs,
+  },
+  tl: {
+    common: commonTl,
+    tools: toolsTl,
+    dialogs: dialogsTl,
+    management: managementTl,
+    editor: editorTl,
+  },
+  am: {
+    common: commonAm,
+    tools: toolsAm,
+    dialogs: dialogsAm,
+    management: managementAm,
+    editor: editorAm,
+  },
+  ro: {
+    common: commonRo,
+    tools: toolsRo,
+    dialogs: dialogsRo,
+    management: managementRo,
+    editor: editorRo,
+  },
+  yo: {
+    common: commonYo,
+    tools: toolsYo,
+    dialogs: dialogsYo,
+    management: managementYo,
+    editor: editorYo,
+  },
+  el: {
+    common: commonEl,
+    tools: toolsEl,
+    dialogs: dialogsEl,
+    management: managementEl,
+    editor: editorEl,
+  },
+  he: {
+    common: commonHe,
+    tools: toolsHe,
+    dialogs: dialogsHe,
+    management: managementHe,
+    editor: editorHe,
+  },
+  ta: {
+    common: commonTa,
+    tools: toolsTa,
+    dialogs: dialogsTa,
+    management: managementTa,
+    editor: editorTa,
+  },
+  sv: {
+    common: commonSv,
+    tools: toolsSv,
+    dialogs: dialogsSv,
+    management: managementSv,
+    editor: editorSv,
+  },
+  af: {
+    common: commonAf,
+    tools: toolsAf,
+    dialogs: dialogsAf,
+    management: managementAf,
+    editor: editorAf,
   },
 }
 

@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Mga Layer",
+    "addLayer": "Magdagdag ng layer",
+    "hideAll": "Itago lahat ng layer",
+    "showAll": "Ipakita lahat ng layer",
+    "hideLayer": "Itago ang layer",
+    "showLayer": "Ipakita ang layer",
+    "changeColour": "Baguhin ang kulay",
+    "removeAnnotation": "Alisin ang anotasyon",
+    "removeArrow": "Alisin ang palaso",
+    "removeUnderline": "Alisin ang salungguhit",
+    "allColorsInUse": "Lahat ng kulay ay ginagamit na — alisin muna ang isang layer."
+  },
+  "passages": {
+    "title": "Mga Sipi",
+    "addPassage": "Magdagdag ng sipi",
+    "hideAll": "Itago lahat ng sipi",
+    "showAll": "Ipakita lahat ng sipi",
+    "hidePassage": "Itago ang sipi",
+    "showPassage": "Ipakita ang sipi"
+  },
+  "tooltips": {
+    "toggleManagementPane": "I-toggle ang management pane",
+    "keyboardShortcuts": "Mga keyboard shortcut",
+    "helpFaq": "Tulong at FAQ",
+    "settings": "Mga Setting",
+    "toggleEditorLayout": "I-toggle ang layout ng editor",
+    "toggleEditorLock": "I-toggle ang lock ng editor"
+  },
+  "annotations": {
+    "placeholder": "Magdagdag ng anotasyon...",
+    "removeCustomColour": "Alisin ang custom na kulay",
+    "addCustomColour": "Magdagdag ng custom na kulay",
+    "addToCustomColours": "Idagdag sa mga custom na kulay"
+  },
+  "actionConsole": {
+    "title": "Action Console",
+    "close": "isara",
+    "empty": "Wala pang mga naitatalang aksyon."
+  }
+}

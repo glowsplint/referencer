@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Aldine",
+    "italic": "Cursive",
+    "underline": "Subliniat",
+    "strike": "Tăiat",
+    "code": "Cod",
+    "superscript": "Superscript",
+    "subscript": "Subscript"
+  },
+  "heading": {
+    "label": "Titlu {{level}}"
+  },
+  "list": {
+    "bulletList": "Listă cu marcatori",
+    "orderedList": "Listă numerotată",
+    "taskList": "Listă de sarcini",
+    "label": "Listă"
+  },
+  "blockquote": {
+    "label": "Citat"
+  },
+  "codeBlock": {
+    "label": "Bloc de cod"
+  },
+  "link": {
+    "label": "Link",
+    "placeholder": "Introduceți URL-ul",
+    "openLink": "Deschide linkul",
+    "copyLink": "Copiază linkul",
+    "removeLink": "Elimină linkul"
+  },
+  "image": {
+    "label": "Adaugă imagine"
+  },
+  "textAlign": {
+    "left": "Aliniere la stânga",
+    "center": "Aliniere la centru",
+    "right": "Aliniere la dreapta",
+    "justify": "Aliniere justificată"
+  },
+  "history": {
+    "undo": "Anulare",
+    "redo": "Refacere"
+  },
+  "colorHighlight": {
+    "label": "Evidențiere colorată",
+    "highlightText": "Evidențiază textul",
+    "highlightColors": "Culori de evidențiere",
+    "removeHighlight": "Elimină evidențierea",
+    "listOptions": "Opțiuni de listă",
+    "formatHeading": "Formatează textul ca titlu",
+    "colors": {
+      "default": "Fundal implicit",
+      "gray": "Fundal gri",
+      "brown": "Fundal maro",
+      "orange": "Fundal portocaliu",
+      "yellow": "Fundal galben",
+      "green": "Fundal verde",
+      "blue": "Fundal albastru",
+      "purple": "Fundal violet",
+      "pink": "Fundal roz",
+      "red": "Fundal roșu"
+    },
+    "toggleHighlight": "Comută evidențierea ({{color}})"
+  }
+}
