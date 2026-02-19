@@ -1,7 +1,7 @@
 // Computes viewport-relative positions for all comment highlights across editors.
 // Used to position the comment sidebar markers. Recomputes on scroll, resize,
 // and layer changes using DOM Range measurements for accuracy.
-import { useLayoutEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import type { Editor } from "@tiptap/react"
 import type { Layer } from "@/types/editor"
 
@@ -20,6 +20,25 @@ export function useAllHighlightPositions(
   sectionVisibility?: boolean[]
 ): HighlightPosition[] {
   const [positions, setPositions] = useState<HighlightPosition[]>([])
+  // Track how many editors are mounted so the main effect re-runs when editors appear
+  const [editorCount, setEditorCount] = useState(0)
+
+  // Watch for DOM mutations in the container to detect when TipTap editors mount
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    function syncEditorCount() {
+      setEditorCount(editorsRef.current.size)
+    }
+
+    syncEditorCount()
+
+    const mo = new MutationObserver(() => syncEditorCount())
+    mo.observe(container, { childList: true, subtree: true })
+
+    return () => mo.disconnect()
+  }, [containerRef, editorsRef])
 
   useLayoutEffect(() => {
     const container = containerRef.current
@@ -44,8 +63,6 @@ export function useAllHighlightPositions(
           if (!editor || editor.isDestroyed) continue
 
           try {
-            // Use domAtPos + Range for accurate viewport coordinates even when
-            // scrolled out of view (coordsAtPos clamps to the visible editor area)
             const domStart = editor.view.domAtPos(highlight.from)
             const domEnd = editor.view.domAtPos(highlight.to)
             const range = document.createRange()
@@ -53,11 +70,29 @@ export function useAllHighlightPositions(
             range.setEnd(domEnd.node, domEnd.offset)
             const rects = range.getClientRects()
             if (rects.length === 0) continue
-            const firstRect = rects[0]
-            const lastRect = rects[rects.length - 1]
 
-            const top = firstRect.top - containerRect.top + container.scrollTop
-            const rightEdge = lastRect.right - containerRect.left + container.scrollLeft
+            // Clip to the editor's scroll wrapper so highlights below the fold
+            // don't bleed into other editors' visual territory
+            const editorDom = editor.view.dom
+            const wrapper = editorDom.closest(".simple-editor-wrapper")
+            const wrapperRect = wrapper?.getBoundingClientRect()
+
+            // Find the first rect visible within the wrapper's bounds
+            let visibleRect: DOMRect | null = null
+            let lastVisibleRect: DOMRect | null = null
+            for (const rect of rects) {
+              if (wrapperRect && rect.bottom <= wrapperRect.top) continue
+              if (wrapperRect && rect.top >= wrapperRect.bottom) continue
+              if (!visibleRect) visibleRect = rect
+              lastVisibleRect = rect
+            }
+
+            // Skip highlights entirely outside the visible scroll area
+            if (!visibleRect) continue
+
+            const top = visibleRect.top - containerRect.top + container.scrollTop
+            const rightEdge =
+              (lastVisibleRect ?? visibleRect).right - containerRect.left + container.scrollLeft
 
             result.push({
               highlightId: highlight.id,
@@ -100,7 +135,7 @@ export function useAllHighlightPositions(
       }
       ro.disconnect()
     }
-  }, [editorsRef, layers, containerRef, sectionVisibility])
+  }, [editorsRef, layers, containerRef, sectionVisibility, editorCount])
 
   return positions
 }
