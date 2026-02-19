@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "title": "Mipangilio",
+    "description": "Binafsisha mapendeleo ya eneo lako la kazi.",
+    "darkMode": {
+      "label": "Hali ya giza",
+      "description": "Badilisha kati ya mandhari meupe na meusi"
+    },
+    "drawingNotifications": {
+      "label": "Arifa za kuchora",
+      "description": "Onyesha arifa unapotumia chombo cha mshale"
+    },
+    "commentsNotifications": {
+      "label": "Arifa za maoni",
+      "description": "Onyesha arifa unapotumia chombo cha maoni"
+    },
+    "highlightNotifications": {
+      "label": "Arifa za kuangazia",
+      "description": "Onyesha arifa unapotumia chombo cha kuangazia"
+    },
+    "overscroll": {
+      "label": "Kusogeza kupita",
+      "description": "Ruhusu kuruka unaposogeza zaidi ya kingo"
+    },
+    "language": {
+      "label": "Lugha",
+      "description": "Chagua lugha unayopendelea"
+    }
+  },
+  "faq": {
+    "title": "Maswali Yanayoulizwa Mara kwa Mara",
+    "description": "Jifunze kuhusu Referencer na jinsi ya kuitumia.",
+    "items": {
+      "whatIsApp": {
+        "question": "Programu hii ni nini?",
+        "answer": "Referencer ni chombo cha ushirikiano kwa ajili ya utafiti wa Biblia kwa njia ya kuchunguza. Inatoa vikundi vya utafiti eneo la kazi la pamoja ambapo wanaweza kusoma, kuweka vidokezo, na kujadili Maandiko pamoja kwa wakati halisi."
+      },
+      "inductiveStudy": {
+        "question": "Utafiti wa Biblia kwa njia ya kuchunguza ni nini?",
+        "answer": "Utafiti wa Biblia kwa njia ya kuchunguza ni mbinu ya kusoma Maandiko inayoanza na uchunguzi (maandishi yanasema nini?) hadi tafsiri (ina maana gani?) hadi matumizi (inatuhusu vipi?). Badala ya kuanza na maoni ya nje, unaacha maandishi yajieleeze yenyewe kwa kuchunguza kwa makini maneno, muundo, na muktadha wake."
+      },
+      "collaboration": {
+        "question": "Ushirikiano unafanya kazi vipi?",
+        "answer": "Kila eneo la kazi linaweza kushirikiwa na wengine kupitia kiungo. Washiriki wote wanaona maandishi yale yale na wanaweza kuongeza vidokezo vyao wenyewe. Mabadiliko yanasawazishwa kwa wakati halisi ili kila mtu awe kwenye ukurasa ule ule."
+      },
+      "layers": {
+        "question": "Tabaka ni nini?",
+        "answer": "Tabaka hukuruhusu kupanga vidokezo katika makundi tofauti — kwa mfano, tabaka moja kwa uchunguzi na lingine kwa tafsiri. Unaweza kubadilisha kati ya tabaka kwa kutumia kitufe L ili kuzingatia seti moja ya vidokezo kwa wakati mmoja."
+      },
+      "annotations": {
+        "question": "Vidokezo vinafanya kazi vipi?",
+        "answer": "Funga kihariri kwa kitufe cha kufunga (au bonyeza K), kisha chagua maandishi ili kuyaangazia. Unaweza kuchagua rangi, kuongeza maoni, na kuchora mishale kati ya vidokezo kuonyesha uhusiano. Bofya kidokezo kilichopo ili kukiondoa."
+      },
+      "arrows": {
+        "question": "Mishale ni ya nini?",
+        "answer": "Mishale inaunganisha vidokezo viwili kuonyesha uhusiano kati ya vifungu — kwa mfano, kuunganisha neno linalorudiwa na matukio yake ya kwanza, au kuunganisha unabii na utimilifu wake. Chagua chombo cha mshale (au bonyeza A), kisha bofya vidokezo viwili ili kuchora kiunganishi."
+      },
+      "sharing": {
+        "question": "Ninashirikishaje eneo la kazi?",
+        "answer": "Fungua paneli ya usimamizi (bonyeza M au bofya ikoni ya menyu) na utumie chaguo za kushiriki kuunda kiungo. Mtu yeyote mwenye kiungo anaweza kujiunga na eneo la kazi na kushirikiana."
+      },
+      "mobile": {
+        "question": "Ninaweza kutumia hii kwenye simu?",
+        "answer": "Programu inafanya kazi kwenye vivinjari vya simu, lakini zana kamili za vidokezo na mishale zinafanya kazi vizuri zaidi kwenye kifaa chenye kibodi na kipanya."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Njia za Mkato za Kibodi",
+    "description": "Njia za mkato za kibodi zinazopatikana kwa eneo la kazi.",
+    "workspace": "Eneo la Kazi",
+    "cycleNextLayer": "Sogeza hadi tabaka linalofuata",
+    "cyclePrevLayer": "Sogeza hadi tabaka lililotangulia",
+    "selectionTool": "Chombo cha kuchagua",
+    "arrowTool": "Chombo cha mshale",
+    "commentsTool": "Chombo cha maoni",
+    "highlightTool": "Chombo cha kuangazia",
+    "underlineTool": "Chombo cha kupigia mstari",
+    "eraserTool": "Chombo cha kufuta",
+    "navigateWords": "Vinjari kati ya maneno",
+    "toggleConsole": "Geuza koni ya vitendo",
+    "toggleDarkMode": "Geuza hali ya giza",
+    "toggleLayout": "Geuza mpangilio wa kihariri",
+    "toggleLock": "Geuza kufuli ya kihariri",
+    "toggleManagement": "Geuza paneli ya usimamizi",
+    "textFormatting": "Uumbizaji wa Maandishi",
+    "bold": "Herufi nzito",
+    "italic": "Herufi za mlazo",
+    "underline": "Pigia mstari",
+    "strikethrough": "Piga mstari katikati",
+    "inlineCode": "Msimbo ndani ya mstari",
+    "superscript": "Herufi za juu",
+    "subscript": "Herufi za chini",
+    "colorHighlight": "Angazia kwa rangi",
+    "general": "Jumla",
+    "undo": "Tendua (eneo la kazi linapofungwa)",
+    "redo": "Rudia (eneo la kazi linapofungwa)",
+    "headings": "Vichwa",
+    "heading": "Kichwa {{level}}",
+    "listsAndBlocks": "Orodha na Vizuizi",
+    "bulletList": "Orodha ya vitone",
+    "orderedList": "Orodha yenye nambari",
+    "taskList": "Orodha ya kazi",
+    "blockquote": "Nukuu",
+    "codeBlock": "Kizuizi cha msimbo",
+    "textAlignment": "Upangaji wa Maandishi",
+    "alignLeft": "Pangilia kushoto",
+    "alignCenter": "Pangilia katikati",
+    "alignRight": "Pangilia kulia",
+    "alignJustify": "Pangilia sawa"
+  },
+  "share": {
+    "title": "Shiriki eneo la kazi",
+    "description": "Nakili kiungo ili kushiriki eneo hili la kazi.",
+    "readonlyLink": "Kiungo cha kusoma tu",
+    "editLink": "Kiungo cha kuhariri",
+    "linkCopied": "Kiungo kimenakiliwa kwenye ubao wa kunakili.",
+    "copyFailed": "Imeshindwa kunakili kiungo."
+  },
+  "mobile": {
+    "title": "Bora zaidi kwenye Kompyuta",
+    "description": "Referencer imeundwa kwa matumizi ya kompyuta yenye kibodi na kipanya. Bado unaweza kusoma maudhui hapa, lakini zana za kuhariri na vidokezo hazipatikani kwenye simu.",
+    "continueReading": "Endelea Kusoma"
+  }
+}

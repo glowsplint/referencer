@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Lớp",
+    "addLayer": "Thêm lớp",
+    "hideAll": "Ẩn tất cả lớp",
+    "showAll": "Hiện tất cả lớp",
+    "hideLayer": "Ẩn lớp",
+    "showLayer": "Hiện lớp",
+    "changeColour": "Đổi màu",
+    "removeAnnotation": "Xóa chú thích",
+    "removeArrow": "Xóa mũi tên",
+    "removeUnderline": "Xóa gạch chân",
+    "allColorsInUse": "Tất cả các màu đã được sử dụng — hãy xóa một lớp trước."
+  },
+  "passages": {
+    "title": "Đoạn văn",
+    "addPassage": "Thêm đoạn văn",
+    "hideAll": "Ẩn tất cả đoạn văn",
+    "showAll": "Hiện tất cả đoạn văn",
+    "hidePassage": "Ẩn đoạn văn",
+    "showPassage": "Hiện đoạn văn"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Bật/tắt bảng quản lý",
+    "keyboardShortcuts": "Phím tắt",
+    "helpFaq": "Trợ giúp & Câu hỏi thường gặp",
+    "settings": "Cài đặt",
+    "toggleEditorLayout": "Bật/tắt bố cục trình soạn thảo",
+    "toggleEditorLock": "Bật/tắt khóa trình soạn thảo"
+  },
+  "annotations": {
+    "placeholder": "Thêm chú thích...",
+    "removeCustomColour": "Xóa màu tùy chỉnh",
+    "addCustomColour": "Thêm màu tùy chỉnh",
+    "addToCustomColours": "Thêm vào màu tùy chỉnh"
+  },
+  "actionConsole": {
+    "title": "Bảng điều khiển hành động",
+    "close": "đóng",
+    "empty": "Chưa có hành động nào được ghi nhận."
+  }
+}

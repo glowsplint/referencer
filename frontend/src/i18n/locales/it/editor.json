@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Grassetto",
+    "italic": "Corsivo",
+    "underline": "Sottolineato",
+    "strike": "Barrato",
+    "code": "Codice",
+    "superscript": "Apice",
+    "subscript": "Pedice"
+  },
+  "heading": {
+    "label": "Intestazione {{level}}"
+  },
+  "list": {
+    "bulletList": "Elenco puntato",
+    "orderedList": "Elenco numerato",
+    "taskList": "Elenco attivita",
+    "label": "Elenco"
+  },
+  "blockquote": {
+    "label": "Citazione"
+  },
+  "codeBlock": {
+    "label": "Blocco di codice"
+  },
+  "link": {
+    "label": "Link",
+    "placeholder": "Inserisci URL",
+    "openLink": "Apri link",
+    "copyLink": "Copia link",
+    "removeLink": "Rimuovi link"
+  },
+  "image": {
+    "label": "Aggiungi immagine"
+  },
+  "textAlign": {
+    "left": "Allinea a sinistra",
+    "center": "Allinea al centro",
+    "right": "Allinea a destra",
+    "justify": "Giustifica"
+  },
+  "history": {
+    "undo": "Annulla",
+    "redo": "Ripristina"
+  },
+  "colorHighlight": {
+    "label": "Evidenziazione colore",
+    "highlightText": "Evidenzia testo",
+    "highlightColors": "Colori di evidenziazione",
+    "removeHighlight": "Rimuovi evidenziazione",
+    "listOptions": "Opzioni elenco",
+    "formatHeading": "Formatta testo come intestazione",
+    "colors": {
+      "default": "Sfondo predefinito",
+      "gray": "Sfondo grigio",
+      "brown": "Sfondo marrone",
+      "orange": "Sfondo arancione",
+      "yellow": "Sfondo giallo",
+      "green": "Sfondo verde",
+      "blue": "Sfondo blu",
+      "purple": "Sfondo viola",
+      "pink": "Sfondo rosa",
+      "red": "Sfondo rosso"
+    },
+    "toggleHighlight": "Attiva/disattiva evidenziazione ({{color}})"
+  }
+}

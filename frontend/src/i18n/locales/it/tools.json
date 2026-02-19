@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Strumento di selezione",
+    "defaultStatus": "Clicca su una parola o usa i tasti freccia per navigare."
+  },
+  "arrow": {
+    "label": "Strumento freccia",
+    "selectAnchor": "Seleziona le parole per l'ancora, poi premi <kbd>Enter</kbd>.",
+    "selectTarget": "Ora seleziona il bersaglio e premi <kbd>Enter</kbd>.",
+    "created": "Freccia creata."
+  },
+  "highlight": {
+    "label": "Strumento evidenziazione",
+    "selectWords": "Seleziona le parole da evidenziare, poi premi <kbd>Enter</kbd>.",
+    "added": "Evidenziazione aggiunta.",
+    "removed": "Evidenziazione rimossa."
+  },
+  "comments": {
+    "label": "Strumento commenti",
+    "selectWords": "Seleziona le parole da commentare, poi premi <kbd>Enter</kbd>.",
+    "added": "Commento aggiunto."
+  },
+  "underline": {
+    "label": "Strumento sottolineatura",
+    "selectWords": "Seleziona le parole da sottolineare, poi premi <kbd>Enter</kbd>.",
+    "added": "Sottolineatura aggiunta."
+  },
+  "eraser": {
+    "label": "Strumento gomma",
+    "status": "Clicca e trascina per cancellare le annotazioni.",
+    "erased": "Annotazione cancellata."
+  },
+  "lockHint": "Premi <kbd>Esc</kbd> <kbd>K</kbd> per bloccare l'editor dopo aver finalizzato i contenuti."
+}

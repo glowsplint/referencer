@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Alat pemilihan",
+    "defaultStatus": "Klik perkataan atau gunakan kekunci anak panah untuk menavigasi."
+  },
+  "arrow": {
+    "label": "Alat anak panah",
+    "selectAnchor": "Pilih perkataan untuk sauh, kemudian tekan <kbd>Enter</kbd>.",
+    "selectTarget": "Sekarang pilih sasaran dan tekan <kbd>Enter</kbd>.",
+    "created": "Anak panah dicipta."
+  },
+  "highlight": {
+    "label": "Alat sorotan",
+    "selectWords": "Pilih perkataan untuk disorot, kemudian tekan <kbd>Enter</kbd>.",
+    "added": "Sorotan ditambah.",
+    "removed": "Sorotan dibuang."
+  },
+  "comments": {
+    "label": "Alat komen",
+    "selectWords": "Pilih perkataan untuk diulas, kemudian tekan <kbd>Enter</kbd>.",
+    "added": "Komen ditambah."
+  },
+  "underline": {
+    "label": "Alat garis bawah",
+    "selectWords": "Pilih perkataan untuk digaris bawah, kemudian tekan <kbd>Enter</kbd>.",
+    "added": "Garis bawah ditambah."
+  },
+  "eraser": {
+    "label": "Alat pemadam",
+    "status": "Klik dan seret untuk memadam anotasi.",
+    "erased": "Anotasi dipadam."
+  },
+  "lockHint": "Tekan <kbd>Esc</kbd> <kbd>K</kbd> untuk mengunci editor setelah anda selesai memuktamadkan kandungan."
+}

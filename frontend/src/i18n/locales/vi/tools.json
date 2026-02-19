@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Công cụ chọn",
+    "defaultStatus": "Nhấp vào một từ hoặc dùng phím mũi tên để điều hướng."
+  },
+  "arrow": {
+    "label": "Công cụ mũi tên",
+    "selectAnchor": "Chọn các từ làm điểm neo, sau đó nhấn <kbd>Enter</kbd>.",
+    "selectTarget": "Bây giờ chọn đích đến và nhấn <kbd>Enter</kbd>.",
+    "created": "Đã tạo mũi tên."
+  },
+  "highlight": {
+    "label": "Công cụ đánh dấu",
+    "selectWords": "Chọn các từ cần đánh dấu, sau đó nhấn <kbd>Enter</kbd>.",
+    "added": "Đã thêm đánh dấu.",
+    "removed": "Đã xóa đánh dấu."
+  },
+  "comments": {
+    "label": "Công cụ bình luận",
+    "selectWords": "Chọn các từ cần bình luận, sau đó nhấn <kbd>Enter</kbd>.",
+    "added": "Đã thêm bình luận."
+  },
+  "underline": {
+    "label": "Công cụ gạch chân",
+    "selectWords": "Chọn các từ cần gạch chân, sau đó nhấn <kbd>Enter</kbd>.",
+    "added": "Đã thêm gạch chân."
+  },
+  "eraser": {
+    "label": "Công cụ tẩy",
+    "status": "Nhấp và kéo để xóa chú thích.",
+    "erased": "Đã xóa chú thích."
+  },
+  "lockHint": "Nhấn <kbd>Esc</kbd> <kbd>K</kbd> để khóa trình soạn thảo sau khi bạn đã hoàn tất nội dung."
+}

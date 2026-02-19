@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "เลเยอร์",
+    "addLayer": "เพิ่มเลเยอร์",
+    "hideAll": "ซ่อนเลเยอร์ทั้งหมด",
+    "showAll": "แสดงเลเยอร์ทั้งหมด",
+    "hideLayer": "ซ่อนเลเยอร์",
+    "showLayer": "แสดงเลเยอร์",
+    "changeColour": "เปลี่ยนสี",
+    "removeAnnotation": "ลบคำอธิบายประกอบ",
+    "removeArrow": "ลบลูกศร",
+    "removeUnderline": "ลบขีดเส้นใต้",
+    "allColorsInUse": "สีทั้งหมดถูกใช้งานแล้ว — กรุณาลบเลเยอร์ก่อน"
+  },
+  "passages": {
+    "title": "ข้อความ",
+    "addPassage": "เพิ่มข้อความ",
+    "hideAll": "ซ่อนข้อความทั้งหมด",
+    "showAll": "แสดงข้อความทั้งหมด",
+    "hidePassage": "ซ่อนข้อความ",
+    "showPassage": "แสดงข้อความ"
+  },
+  "tooltips": {
+    "toggleManagementPane": "สลับแผงจัดการ",
+    "keyboardShortcuts": "ปุ่มลัด",
+    "helpFaq": "ช่วยเหลือและคำถามที่พบบ่อย",
+    "settings": "การตั้งค่า",
+    "toggleEditorLayout": "สลับรูปแบบตัวแก้ไข",
+    "toggleEditorLock": "สลับการล็อกตัวแก้ไข"
+  },
+  "annotations": {
+    "placeholder": "เพิ่มคำอธิบายประกอบ...",
+    "removeCustomColour": "ลบสีที่กำหนดเอง",
+    "addCustomColour": "เพิ่มสีที่กำหนดเอง",
+    "addToCustomColours": "เพิ่มไปยังสีที่กำหนดเอง"
+  },
+  "actionConsole": {
+    "title": "คอนโซลการทำงาน",
+    "close": "ปิด",
+    "empty": "ยังไม่มีการบันทึกการทำงาน"
+  }
+}

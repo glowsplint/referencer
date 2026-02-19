@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Lapisan",
+    "addLayer": "Tambah lapisan",
+    "hideAll": "Sembunyikan semua lapisan",
+    "showAll": "Tampilkan semua lapisan",
+    "hideLayer": "Sembunyikan lapisan",
+    "showLayer": "Tampilkan lapisan",
+    "changeColour": "Ubah warna",
+    "removeAnnotation": "Hapus anotasi",
+    "removeArrow": "Hapus panah",
+    "removeUnderline": "Hapus garis bawah",
+    "allColorsInUse": "Semua warna sudah digunakan — hapus lapisan terlebih dahulu."
+  },
+  "passages": {
+    "title": "Bagian",
+    "addPassage": "Tambah bagian",
+    "hideAll": "Sembunyikan semua bagian",
+    "showAll": "Tampilkan semua bagian",
+    "hidePassage": "Sembunyikan bagian",
+    "showPassage": "Tampilkan bagian"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Alihkan panel manajemen",
+    "keyboardShortcuts": "Pintasan keyboard",
+    "helpFaq": "Bantuan & FAQ",
+    "settings": "Pengaturan",
+    "toggleEditorLayout": "Alihkan tata letak editor",
+    "toggleEditorLock": "Alihkan kunci editor"
+  },
+  "annotations": {
+    "placeholder": "Tambah anotasi...",
+    "removeCustomColour": "Hapus warna kustom",
+    "addCustomColour": "Tambah warna kustom",
+    "addToCustomColours": "Tambah ke warna kustom"
+  },
+  "actionConsole": {
+    "title": "Konsol Tindakan",
+    "close": "tutup",
+    "empty": "Belum ada tindakan yang tercatat."
+  }
+}

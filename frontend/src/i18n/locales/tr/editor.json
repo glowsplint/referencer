@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Kalin",
+    "italic": "Italik",
+    "underline": "Alti cizili",
+    "strike": "Ustu cizili",
+    "code": "Kod",
+    "superscript": "Ust simge",
+    "subscript": "Alt simge"
+  },
+  "heading": {
+    "label": "Baslik {{level}}"
+  },
+  "list": {
+    "bulletList": "Madde Isareti Listesi",
+    "orderedList": "Numarali Liste",
+    "taskList": "Gorev Listesi",
+    "label": "Liste"
+  },
+  "blockquote": {
+    "label": "Alinti Blogu"
+  },
+  "codeBlock": {
+    "label": "Kod Blogu"
+  },
+  "link": {
+    "label": "Baglanti",
+    "placeholder": "URL girin",
+    "openLink": "Baglantiyi ac",
+    "copyLink": "Baglantiyi kopyala",
+    "removeLink": "Baglantiyi kaldir"
+  },
+  "image": {
+    "label": "Resim ekle"
+  },
+  "textAlign": {
+    "left": "Sola Hizala",
+    "center": "Ortaya Hizala",
+    "right": "Saga Hizala",
+    "justify": "Iki Yana Yasla"
+  },
+  "history": {
+    "undo": "Geri Al",
+    "redo": "Yinele"
+  },
+  "colorHighlight": {
+    "label": "Renkli vurgulama",
+    "highlightText": "Metni vurgula",
+    "highlightColors": "Vurgulama renkleri",
+    "removeHighlight": "Vurgulamayi kaldir",
+    "listOptions": "Liste secenekleri",
+    "formatHeading": "Metni baslik olarak bicimlendir",
+    "colors": {
+      "default": "Varsayilan arka plan",
+      "gray": "Gri arka plan",
+      "brown": "Kahverengi arka plan",
+      "orange": "Turuncu arka plan",
+      "yellow": "Sari arka plan",
+      "green": "Yesil arka plan",
+      "blue": "Mavi arka plan",
+      "purple": "Mor arka plan",
+      "pink": "Pembe arka plan",
+      "red": "Kirmizi arka plan"
+    },
+    "toggleHighlight": "Vurgulamayi ac/kapat ({{color}})"
+  }
+}

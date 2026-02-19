@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "title": "Pengaturan",
+    "description": "Sesuaikan preferensi ruang kerja Anda.",
+    "darkMode": {
+      "label": "Mode gelap",
+      "description": "Beralih antara tema terang dan gelap"
+    },
+    "drawingNotifications": {
+      "label": "Notifikasi gambar",
+      "description": "Tampilkan notifikasi saat menggunakan alat panah"
+    },
+    "commentsNotifications": {
+      "label": "Notifikasi komentar",
+      "description": "Tampilkan notifikasi saat menggunakan alat komentar"
+    },
+    "highlightNotifications": {
+      "label": "Notifikasi sorotan",
+      "description": "Tampilkan notifikasi saat menggunakan alat sorotan"
+    },
+    "overscroll": {
+      "label": "Gulir berlebih",
+      "description": "Izinkan efek pantulan saat menggulir melewati tepi"
+    },
+    "language": {
+      "label": "Bahasa",
+      "description": "Pilih bahasa yang Anda inginkan"
+    }
+  },
+  "faq": {
+    "title": "Pertanyaan yang Sering Diajukan",
+    "description": "Pelajari tentang Referencer dan cara menggunakannya.",
+    "items": {
+      "whatIsApp": {
+        "question": "Apa itu aplikasi ini?",
+        "answer": "Referencer adalah alat kolaborasi untuk studi Alkitab induktif. Aplikasi ini menyediakan ruang kerja bersama bagi kelompok studi untuk membaca, memberi anotasi, dan mendiskusikan Kitab Suci bersama secara real-time."
+      },
+      "inductiveStudy": {
+        "question": "Apa itu studi Alkitab induktif?",
+        "answer": "Studi Alkitab induktif adalah metode membaca Kitab Suci yang bergerak dari pengamatan (apa yang dikatakan teks?) ke penafsiran (apa artinya?) hingga penerapan (bagaimana menerapkannya?). Alih-alih memulai dengan komentar dari luar, Anda membiarkan teks berbicara sendiri dengan memeriksa kata-kata, struktur, dan konteksnya secara cermat."
+      },
+      "collaboration": {
+        "question": "Bagaimana cara kerja kolaborasi?",
+        "answer": "Setiap ruang kerja dapat dibagikan dengan orang lain melalui tautan. Semua peserta melihat teks yang sama dan dapat menambahkan anotasi mereka sendiri. Perubahan disinkronkan secara real-time sehingga semua orang tetap berada di halaman yang sama."
+      },
+      "layers": {
+        "question": "Apa itu lapisan?",
+        "answer": "Lapisan memungkinkan Anda mengorganisir anotasi ke dalam kelompok terpisah — misalnya, satu lapisan untuk pengamatan dan lapisan lain untuk penafsiran. Anda dapat beralih antar lapisan dengan tombol L untuk fokus pada satu set anotasi pada satu waktu."
+      },
+      "annotations": {
+        "question": "Bagaimana cara kerja anotasi?",
+        "answer": "Kunci editor dengan tombol kunci (atau tekan K), lalu pilih teks untuk menyorotnya. Anda dapat memilih warna, menambahkan komentar, dan menggambar panah antar anotasi untuk menunjukkan hubungan. Klik anotasi yang sudah ada untuk menghapusnya."
+      },
+      "arrows": {
+        "question": "Untuk apa panah?",
+        "answer": "Panah menghubungkan dua anotasi untuk menunjukkan hubungan antar bagian — misalnya, menghubungkan kata yang berulang dengan kemunculan pertamanya, atau menghubungkan nubuat dengan penggenapannya. Pilih alat panah (atau tekan A), lalu klik dua anotasi untuk menggambar penghubung."
+      },
+      "sharing": {
+        "question": "Bagaimana cara membagikan ruang kerja?",
+        "answer": "Buka panel manajemen (tekan M atau klik ikon menu) dan gunakan opsi berbagi untuk membuat tautan. Siapa pun yang memiliki tautan dapat bergabung ke ruang kerja dan berkolaborasi."
+      },
+      "mobile": {
+        "question": "Bisakah saya menggunakan ini di perangkat seluler?",
+        "answer": "Aplikasi ini berfungsi di browser seluler, tetapi alat anotasi dan panah lengkap paling baik digunakan pada perangkat dengan keyboard dan mouse."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Pintasan Keyboard",
+    "description": "Pintasan keyboard yang tersedia untuk ruang kerja.",
+    "workspace": "Ruang Kerja",
+    "cycleNextLayer": "Beralih ke lapisan berikutnya",
+    "cyclePrevLayer": "Beralih ke lapisan sebelumnya",
+    "selectionTool": "Alat seleksi",
+    "arrowTool": "Alat panah",
+    "commentsTool": "Alat komentar",
+    "highlightTool": "Alat sorotan",
+    "underlineTool": "Alat garis bawah",
+    "eraserTool": "Alat penghapus",
+    "navigateWords": "Navigasi antar kata",
+    "toggleConsole": "Alihkan konsol tindakan",
+    "toggleDarkMode": "Alihkan mode gelap",
+    "toggleLayout": "Alihkan tata letak editor",
+    "toggleLock": "Alihkan kunci editor",
+    "toggleManagement": "Alihkan panel manajemen",
+    "textFormatting": "Pemformatan Teks",
+    "bold": "Tebal",
+    "italic": "Miring",
+    "underline": "Garis bawah",
+    "strikethrough": "Coret",
+    "inlineCode": "Kode sebaris",
+    "superscript": "Superskrip",
+    "subscript": "Subskrip",
+    "colorHighlight": "Sorotan warna",
+    "general": "Umum",
+    "undo": "Urungkan (ruang kerja saat terkunci)",
+    "redo": "Ulangi (ruang kerja saat terkunci)",
+    "headings": "Judul",
+    "heading": "Judul {{level}}",
+    "listsAndBlocks": "Daftar & Blok",
+    "bulletList": "Daftar berpoin",
+    "orderedList": "Daftar bernomor",
+    "taskList": "Daftar tugas",
+    "blockquote": "Kutipan blok",
+    "codeBlock": "Blok kode",
+    "textAlignment": "Perataan Teks",
+    "alignLeft": "Rata kiri",
+    "alignCenter": "Rata tengah",
+    "alignRight": "Rata kanan",
+    "alignJustify": "Rata kiri-kanan"
+  },
+  "share": {
+    "title": "Bagikan ruang kerja",
+    "description": "Salin tautan untuk membagikan ruang kerja ini.",
+    "readonlyLink": "Tautan baca-saja",
+    "editLink": "Tautan edit",
+    "linkCopied": "Tautan disalin ke papan klip.",
+    "copyFailed": "Gagal menyalin tautan."
+  },
+  "mobile": {
+    "title": "Terbaik di Desktop",
+    "description": "Referencer dirancang untuk penggunaan desktop dengan keyboard dan mouse. Anda masih dapat membaca konten di sini, tetapi alat pengeditan dan anotasi tidak tersedia di perangkat seluler.",
+    "continueReading": "Lanjutkan Membaca"
+  }
+}

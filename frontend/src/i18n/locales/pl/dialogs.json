@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "title": "Ustawienia",
+    "description": "Dostosuj preferencje przestrzeni roboczej.",
+    "darkMode": {
+      "label": "Tryb ciemny",
+      "description": "Przelaczaj miedzy jasnym a ciemnym motywem"
+    },
+    "drawingNotifications": {
+      "label": "Powiadomienia o rysowaniu",
+      "description": "Pokazuj powiadomienia podczas korzystania z narzedzia strzalek"
+    },
+    "commentsNotifications": {
+      "label": "Powiadomienia o komentarzach",
+      "description": "Pokazuj powiadomienia podczas korzystania z narzedzia komentarzy"
+    },
+    "highlightNotifications": {
+      "label": "Powiadomienia o podswietleniu",
+      "description": "Pokazuj powiadomienia podczas korzystania z narzedzia podswietlania"
+    },
+    "overscroll": {
+      "label": "Nadmierne przewijanie",
+      "description": "Pozwol na efekt sprezystosci przy przewijaniu poza krawedzie"
+    },
+    "language": {
+      "label": "Jezyk",
+      "description": "Wybierz preferowany jezyk"
+    }
+  },
+  "faq": {
+    "title": "Czesto zadawane pytania",
+    "description": "Dowiedz sie o Referencer i jak go uzywac.",
+    "items": {
+      "whatIsApp": {
+        "question": "Co to za aplikacja?",
+        "answer": "Referencer to narzedzie do wspolpracy przy indukcyjnym studium Biblii. Zapewnia grupom studyjnym wspolna przestrzen robocza, w ktorej moga razem czytac, adnotowac i omawiac Pismo Swiete w czasie rzeczywistym."
+      },
+      "inductiveStudy": {
+        "question": "Czym jest indukcyjne studium Biblii?",
+        "answer": "Indukcyjne studium Biblii to metoda czytania Pisma Swietego, ktora przechodzi od obserwacji (co mowi tekst?) przez interpretacje (co to znaczy?) do zastosowania (jak to zastosowac?). Zamiast zaczynac od zewnetrznych komentarzy, pozwalasz tekstowi mowic samemu za siebie, uwaznie badajac jego slowa, strukture i kontekst."
+      },
+      "collaboration": {
+        "question": "Jak dziala wspolpraca?",
+        "answer": "Kazda przestrzen robocza moze byc udostepniona innym za pomoca linku. Wszyscy uczestnicy widza ten sam tekst i moga dodawac wlasne adnotacje. Zmiany sa synchronizowane w czasie rzeczywistym, dzieki czemu wszyscy sa na biezaco."
+      },
+      "layers": {
+        "question": "Czym sa warstwy?",
+        "answer": "Warstwy pozwalaja organizowac adnotacje w oddzielne grupy — na przyklad jedna warstwa na obserwacje, a druga na interpretacje. Mozesz przelaczac miedzy warstwami klawiszem L, aby skupic sie na jednym zestawie adnotacji."
+      },
+      "annotations": {
+        "question": "Jak dzialaja adnotacje?",
+        "answer": "Zablokuj edytor przyciskiem blokady (lub nacisnij K), a nastepnie zaznacz tekst, aby go podswietlic. Mozesz wybierac kolory, dodawac komentarze i rysowac strzalki miedzy adnotacjami, aby pokazac powiazania. Kliknij istniejaca adnotacje, aby ja usunac."
+      },
+      "arrows": {
+        "question": "Do czego sluza strzalki?",
+        "answer": "Strzalki lacza dwie adnotacje, aby pokazac zwiazek miedzy fragmentami — na przyklad laczac powtarzajace sie slowo z jego pierwszym wystapieniem lub laczac proroctwo z jego spelnieniem. Wybierz narzedzie strzalek (lub nacisnij A), a nastepnie kliknij dwie adnotacje, aby narysowac lacznik."
+      },
+      "sharing": {
+        "question": "Jak udostepnic przestrzen robocza?",
+        "answer": "Otworz panel zarzadzania (nacisnij M lub kliknij ikone menu) i uzyj opcji udostepniania, aby wygenerowac link. Kazdy, kto ma link, moze dolaczyc do przestrzeni roboczej i wspolpracowac."
+      },
+      "mobile": {
+        "question": "Czy moge tego uzywac na telefonie?",
+        "answer": "Aplikacja dziala w przegladarkach mobilnych, ale pelne narzedzia adnotacji i strzalek sa najlepiej dostepne na urzadzeniu z klawiatura i mysza."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Skroty klawiszowe",
+    "description": "Dostepne skroty klawiszowe dla przestrzeni roboczej.",
+    "workspace": "Przestrzen robocza",
+    "cycleNextLayer": "Przejdz do nastepnej warstwy",
+    "cyclePrevLayer": "Przejdz do poprzedniej warstwy",
+    "selectionTool": "Narzedzie zaznaczania",
+    "arrowTool": "Narzedzie strzalek",
+    "commentsTool": "Narzedzie komentarzy",
+    "highlightTool": "Narzedzie podswietlania",
+    "underlineTool": "Narzedzie podkreslenia",
+    "eraserTool": "Gumka",
+    "navigateWords": "Nawiguj miedzy slowami",
+    "toggleConsole": "Przelacz konsole akcji",
+    "toggleDarkMode": "Przelacz tryb ciemny",
+    "toggleLayout": "Przelacz uklad edytora",
+    "toggleLock": "Przelacz blokade edytora",
+    "toggleManagement": "Przelacz panel zarzadzania",
+    "textFormatting": "Formatowanie tekstu",
+    "bold": "Pogrubienie",
+    "italic": "Kursywa",
+    "underline": "Podkreslenie",
+    "strikethrough": "Przekreslenie",
+    "inlineCode": "Kod w linii",
+    "superscript": "Indeks gorny",
+    "subscript": "Indeks dolny",
+    "colorHighlight": "Kolorowe podswietlenie",
+    "general": "Ogolne",
+    "undo": "Cofnij (przestrzen robocza po zablokowaniu)",
+    "redo": "Ponow (przestrzen robocza po zablokowaniu)",
+    "headings": "Naglowki",
+    "heading": "Naglowek {{level}}",
+    "listsAndBlocks": "Listy i bloki",
+    "bulletList": "Lista punktowana",
+    "orderedList": "Lista numerowana",
+    "taskList": "Lista zadan",
+    "blockquote": "Cytat blokowy",
+    "codeBlock": "Blok kodu",
+    "textAlignment": "Wyrownanie tekstu",
+    "alignLeft": "Wyrownaj do lewej",
+    "alignCenter": "Wyrownaj do srodka",
+    "alignRight": "Wyrownaj do prawej",
+    "alignJustify": "Wyjustuj"
+  },
+  "share": {
+    "title": "Udostepnij przestrzen robocza",
+    "description": "Skopiuj link, aby udostepnic te przestrzen robocza.",
+    "readonlyLink": "Link tylko do odczytu",
+    "editLink": "Link do edycji",
+    "linkCopied": "Link skopiowany do schowka.",
+    "copyFailed": "Nie udalo sie skopiowac linku."
+  },
+  "mobile": {
+    "title": "Najlepiej na komputerze",
+    "description": "Referencer jest zaprojektowany do uzytku na komputerze z klawiatura i mysza. Mozesz tu czytac tresc, ale narzedzia edycji i adnotacji nie sa dostepne na urzadzeniach mobilnych.",
+    "continueReading": "Kontynuuj czytanie"
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "title": "Einstellungen",
+    "description": "Passen Sie Ihre Arbeitsbereich-Einstellungen an.",
+    "darkMode": {
+      "label": "Dunkelmodus",
+      "description": "Zwischen hellem und dunklem Design wechseln"
+    },
+    "drawingNotifications": {
+      "label": "Zeichnungsbenachrichtigungen",
+      "description": "Benachrichtigungen beim Verwenden des Pfeilwerkzeugs anzeigen"
+    },
+    "commentsNotifications": {
+      "label": "Kommentarbenachrichtigungen",
+      "description": "Benachrichtigungen beim Verwenden des Kommentarwerkzeugs anzeigen"
+    },
+    "highlightNotifications": {
+      "label": "Hervorhebungsbenachrichtigungen",
+      "description": "Benachrichtigungen beim Verwenden des Hervorhebungswerkzeugs anzeigen"
+    },
+    "overscroll": {
+      "label": "Überscrollung",
+      "description": "Elastisches Zurückfedern beim Scrollen über den Rand hinaus erlauben"
+    },
+    "language": {
+      "label": "Sprache",
+      "description": "Wählen Sie Ihre bevorzugte Sprache"
+    }
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "description": "Erfahren Sie mehr über Referencer und wie Sie es verwenden.",
+    "items": {
+      "whatIsApp": {
+        "question": "Was ist diese App?",
+        "answer": "Referencer ist ein kollaboratives Werkzeug für induktives Bibelstudium. Es bietet Studiengruppen einen gemeinsamen Arbeitsbereich, in dem sie Schrifttexte gemeinsam lesen, annotieren und in Echtzeit diskutieren können."
+      },
+      "inductiveStudy": {
+        "question": "Was ist induktives Bibelstudium?",
+        "answer": "Induktives Bibelstudium ist eine Methode des Schriftlesens, die von der Beobachtung (Was sagt der Text?) über die Auslegung (Was bedeutet er?) zur Anwendung (Wie wende ich ihn an?) fortschreitet. Anstatt mit externen Kommentaren zu beginnen, lassen Sie den Text für sich selbst sprechen, indem Sie seine Wörter, Struktur und seinen Kontext sorgfältig untersuchen."
+      },
+      "collaboration": {
+        "question": "Wie funktioniert die Zusammenarbeit?",
+        "answer": "Jeder Arbeitsbereich kann über einen Link mit anderen geteilt werden. Alle Teilnehmer sehen denselben Text und können eigene Anmerkungen hinzufügen. Änderungen werden in Echtzeit synchronisiert, sodass alle auf dem gleichen Stand bleiben."
+      },
+      "layers": {
+        "question": "Was sind Ebenen?",
+        "answer": "Mit Ebenen können Sie Anmerkungen in separate Gruppen organisieren — zum Beispiel eine Ebene für Beobachtungen und eine weitere für Auslegungen. Sie können mit der L-Taste zwischen den Ebenen wechseln, um sich auf jeweils eine Gruppe von Anmerkungen zu konzentrieren."
+      },
+      "annotations": {
+        "question": "Wie funktionieren Anmerkungen?",
+        "answer": "Sperren Sie den Editor mit der Sperrtaste (oder drücken Sie K) und wählen Sie dann Text zum Hervorheben aus. Sie können Farben auswählen, Kommentare hinzufügen und Pfeile zwischen Anmerkungen zeichnen, um Zusammenhänge darzustellen. Klicken Sie auf eine vorhandene Anmerkung, um sie zu entfernen."
+      },
+      "arrows": {
+        "question": "Wozu dienen Pfeile?",
+        "answer": "Pfeile verbinden zwei Anmerkungen, um eine Beziehung zwischen Textpassagen zu zeigen — zum Beispiel, um ein wiederholtes Wort mit seinem ersten Vorkommen zu verknüpfen oder eine Prophezeiung mit ihrer Erfüllung zu verbinden. Wählen Sie das Pfeilwerkzeug (oder drücken Sie A) und klicken Sie dann auf zwei Anmerkungen, um eine Verbindung zu zeichnen."
+      },
+      "sharing": {
+        "question": "Wie teile ich einen Arbeitsbereich?",
+        "answer": "Öffnen Sie das Verwaltungspanel (drücken Sie M oder klicken Sie auf das Menüsymbol) und verwenden Sie die Freigabeoptionen, um einen Link zu erstellen. Jeder mit dem Link kann dem Arbeitsbereich beitreten und zusammenarbeiten."
+      },
+      "mobile": {
+        "question": "Kann ich das auf dem Handy verwenden?",
+        "answer": "Die App funktioniert in mobilen Browsern, aber die vollständigen Anmerkungs- und Pfeilwerkzeuge sind am besten auf einem Gerät mit Tastatur und Maus zu bedienen."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Tastenkürzel",
+    "description": "Verfügbare Tastenkürzel für den Arbeitsbereich.",
+    "workspace": "Arbeitsbereich",
+    "cycleNextLayer": "Zur nächsten Ebene wechseln",
+    "cyclePrevLayer": "Zur vorherigen Ebene wechseln",
+    "selectionTool": "Auswahlwerkzeug",
+    "arrowTool": "Pfeilwerkzeug",
+    "commentsTool": "Kommentarwerkzeug",
+    "highlightTool": "Hervorhebungswerkzeug",
+    "underlineTool": "Unterstreichungswerkzeug",
+    "eraserTool": "Radierwerkzeug",
+    "navigateWords": "Zwischen Wörtern navigieren",
+    "toggleConsole": "Aktionskonsole ein-/ausblenden",
+    "toggleDarkMode": "Dunkelmodus ein-/ausschalten",
+    "toggleLayout": "Editorlayout umschalten",
+    "toggleLock": "Editorsperre umschalten",
+    "toggleManagement": "Verwaltungspanel ein-/ausblenden",
+    "textFormatting": "Textformatierung",
+    "bold": "Fett",
+    "italic": "Kursiv",
+    "underline": "Unterstrichen",
+    "strikethrough": "Durchgestrichen",
+    "inlineCode": "Inline-Code",
+    "superscript": "Hochgestellt",
+    "subscript": "Tiefgestellt",
+    "colorHighlight": "Farbhervorhebung",
+    "general": "Allgemein",
+    "undo": "Rückgängig (Arbeitsbereich bei Sperre)",
+    "redo": "Wiederholen (Arbeitsbereich bei Sperre)",
+    "headings": "Überschriften",
+    "heading": "Überschrift {{level}}",
+    "listsAndBlocks": "Listen & Blöcke",
+    "bulletList": "Aufzählung",
+    "orderedList": "Nummerierte Liste",
+    "taskList": "Aufgabenliste",
+    "blockquote": "Zitat",
+    "codeBlock": "Codeblock",
+    "textAlignment": "Textausrichtung",
+    "alignLeft": "Linksbündig",
+    "alignCenter": "Zentriert",
+    "alignRight": "Rechtsbündig",
+    "alignJustify": "Blocksatz"
+  },
+  "share": {
+    "title": "Arbeitsbereich teilen",
+    "description": "Kopieren Sie einen Link, um diesen Arbeitsbereich zu teilen.",
+    "readonlyLink": "Nur-Lese-Link",
+    "editLink": "Bearbeitungslink",
+    "linkCopied": "Link in die Zwischenablage kopiert.",
+    "copyFailed": "Link konnte nicht kopiert werden."
+  },
+  "mobile": {
+    "title": "Am besten auf dem Desktop",
+    "description": "Referencer ist für die Verwendung auf dem Desktop mit Tastatur und Maus konzipiert. Sie können den Inhalt hier trotzdem lesen, aber Bearbeitungs- und Anmerkungswerkzeuge sind auf Mobilgeräten nicht verfügbar.",
+    "continueReading": "Weiterlesen"
+  }
+}

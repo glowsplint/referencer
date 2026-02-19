@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Katmanlar",
+    "addLayer": "Katman ekle",
+    "hideAll": "Tum katmanlari gizle",
+    "showAll": "Tum katmanlari goster",
+    "hideLayer": "Katmani gizle",
+    "showLayer": "Katmani goster",
+    "changeColour": "Rengi degistir",
+    "removeAnnotation": "Aciklamayi kaldir",
+    "removeArrow": "Oku kaldir",
+    "removeUnderline": "Alti cizgiyi kaldir",
+    "allColorsInUse": "Tum renkler kullaniliyor — once bir katmani kaldirin."
+  },
+  "passages": {
+    "title": "Pasajlar",
+    "addPassage": "Pasaj ekle",
+    "hideAll": "Tum pasajlari gizle",
+    "showAll": "Tum pasajlari goster",
+    "hidePassage": "Pasaji gizle",
+    "showPassage": "Pasaji goster"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Yonetim panelini ac/kapat",
+    "keyboardShortcuts": "Klavye kisayollari",
+    "helpFaq": "Yardim ve SSS",
+    "settings": "Ayarlar",
+    "toggleEditorLayout": "Duzenleyici yerlesimini degistir",
+    "toggleEditorLock": "Duzenleyici kilidini ac/kapat"
+  },
+  "annotations": {
+    "placeholder": "Aciklama ekle...",
+    "removeCustomColour": "Ozel rengi kaldir",
+    "addCustomColour": "Ozel renk ekle",
+    "addToCustomColours": "Ozel renklere ekle"
+  },
+  "actionConsole": {
+    "title": "Eylem Konsolu",
+    "close": "kapat",
+    "empty": "Henuz kaydedilmis eylem yok."
+  }
+}

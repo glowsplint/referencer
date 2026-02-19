@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "ตัวหนา",
+    "italic": "ตัวเอียง",
+    "underline": "ขีดเส้นใต้",
+    "strike": "ขีดฆ่า",
+    "code": "โค้ด",
+    "superscript": "ตัวยก",
+    "subscript": "ตัวห้อย"
+  },
+  "heading": {
+    "label": "หัวข้อ {{level}}"
+  },
+  "list": {
+    "bulletList": "รายการหัวข้อย่อย",
+    "orderedList": "รายการลำดับ",
+    "taskList": "รายการงาน",
+    "label": "รายการ"
+  },
+  "blockquote": {
+    "label": "บล็อกอ้างอิง"
+  },
+  "codeBlock": {
+    "label": "บล็อกโค้ด"
+  },
+  "link": {
+    "label": "ลิงก์",
+    "placeholder": "ป้อน URL",
+    "openLink": "เปิดลิงก์",
+    "copyLink": "คัดลอกลิงก์",
+    "removeLink": "ลบลิงก์"
+  },
+  "image": {
+    "label": "เพิ่มรูปภาพ"
+  },
+  "textAlign": {
+    "left": "จัดชิดซ้าย",
+    "center": "จัดกึ่งกลาง",
+    "right": "จัดชิดขวา",
+    "justify": "จัดเต็มบรรทัด"
+  },
+  "history": {
+    "undo": "เลิกทำ",
+    "redo": "ทำซ้ำ"
+  },
+  "colorHighlight": {
+    "label": "ไฮไลต์สี",
+    "highlightText": "ไฮไลต์ข้อความ",
+    "highlightColors": "สีไฮไลต์",
+    "removeHighlight": "ลบไฮไลต์",
+    "listOptions": "ตัวเลือกรายการ",
+    "formatHeading": "จัดรูปแบบข้อความเป็นหัวข้อ",
+    "colors": {
+      "default": "พื้นหลังเริ่มต้น",
+      "gray": "พื้นหลังเทา",
+      "brown": "พื้นหลังน้ำตาล",
+      "orange": "พื้นหลังส้ม",
+      "yellow": "พื้นหลังเหลือง",
+      "green": "พื้นหลังเขียว",
+      "blue": "พื้นหลังน้ำเงิน",
+      "purple": "พื้นหลังม่วง",
+      "pink": "พื้นหลังชมพู",
+      "red": "พื้นหลังแดง"
+    },
+    "toggleHighlight": "สลับไฮไลต์ ({{color}})"
+  }
+}

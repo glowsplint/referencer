@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Pogrubienie",
+    "italic": "Kursywa",
+    "underline": "Podkreslenie",
+    "strike": "Przekreslenie",
+    "code": "Kod",
+    "superscript": "Indeks gorny",
+    "subscript": "Indeks dolny"
+  },
+  "heading": {
+    "label": "Naglowek {{level}}"
+  },
+  "list": {
+    "bulletList": "Lista punktowana",
+    "orderedList": "Lista numerowana",
+    "taskList": "Lista zadan",
+    "label": "Lista"
+  },
+  "blockquote": {
+    "label": "Cytat blokowy"
+  },
+  "codeBlock": {
+    "label": "Blok kodu"
+  },
+  "link": {
+    "label": "Link",
+    "placeholder": "Wprowadz adres URL",
+    "openLink": "Otworz link",
+    "copyLink": "Kopiuj link",
+    "removeLink": "Usun link"
+  },
+  "image": {
+    "label": "Dodaj obraz"
+  },
+  "textAlign": {
+    "left": "Wyrownaj do lewej",
+    "center": "Wyrownaj do srodka",
+    "right": "Wyrownaj do prawej",
+    "justify": "Wyjustuj"
+  },
+  "history": {
+    "undo": "Cofnij",
+    "redo": "Ponow"
+  },
+  "colorHighlight": {
+    "label": "Kolorowe podswietlenie",
+    "highlightText": "Podswietl tekst",
+    "highlightColors": "Kolory podswietlenia",
+    "removeHighlight": "Usun podswietlenie",
+    "listOptions": "Opcje listy",
+    "formatHeading": "Sformatuj tekst jako naglowek",
+    "colors": {
+      "default": "Domyslne tlo",
+      "gray": "Szare tlo",
+      "brown": "Brazowe tlo",
+      "orange": "Pomaranczowe tlo",
+      "yellow": "Zolte tlo",
+      "green": "Zielone tlo",
+      "blue": "Niebieskie tlo",
+      "purple": "Fioletowe tlo",
+      "pink": "Rozowe tlo",
+      "red": "Czerwone tlo"
+    },
+    "toggleHighlight": "Przelacz podswietlenie ({{color}})"
+  }
+}

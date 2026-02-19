@@ -4,7 +4,6 @@
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
 import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
 import { Trans } from "react-i18next";
-import i18n from "@/i18n";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -239,7 +238,7 @@ export function App() {
   // Default status message when locked with selection tool and no visible selection
   useEffect(() => {
     if (settings.isLocked && annotations.activeTool === "selection" && (!selection || selectionHidden)) {
-      setStatus({ text: i18n.t("tools:selection.defaultStatus"), type: "info" })
+      setStatus({ text: <Trans ns="tools" i18nKey="selection.defaultStatus" />, type: "info" })
     }
   }, [settings.isLocked, annotations.activeTool, selection, selectionHidden, setStatus])
 

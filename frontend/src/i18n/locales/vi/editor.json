@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "In đậm",
+    "italic": "In nghiêng",
+    "underline": "Gạch chân",
+    "strike": "Gạch ngang",
+    "code": "Mã",
+    "superscript": "Chỉ số trên",
+    "subscript": "Chỉ số dưới"
+  },
+  "heading": {
+    "label": "Tiêu đề {{level}}"
+  },
+  "list": {
+    "bulletList": "Danh sách đầu dòng",
+    "orderedList": "Danh sách đánh số",
+    "taskList": "Danh sách công việc",
+    "label": "Danh sách"
+  },
+  "blockquote": {
+    "label": "Trích dẫn"
+  },
+  "codeBlock": {
+    "label": "Khối mã"
+  },
+  "link": {
+    "label": "Liên kết",
+    "placeholder": "Nhập URL",
+    "openLink": "Mở liên kết",
+    "copyLink": "Sao chép liên kết",
+    "removeLink": "Xóa liên kết"
+  },
+  "image": {
+    "label": "Thêm hình ảnh"
+  },
+  "textAlign": {
+    "left": "Căn trái",
+    "center": "Căn giữa",
+    "right": "Căn phải",
+    "justify": "Căn đều"
+  },
+  "history": {
+    "undo": "Hoàn tác",
+    "redo": "Làm lại"
+  },
+  "colorHighlight": {
+    "label": "Đánh dấu màu",
+    "highlightText": "Đánh dấu văn bản",
+    "highlightColors": "Màu đánh dấu",
+    "removeHighlight": "Xóa đánh dấu",
+    "listOptions": "Tùy chọn danh sách",
+    "formatHeading": "Định dạng văn bản thành tiêu đề",
+    "colors": {
+      "default": "Nền mặc định",
+      "gray": "Nền xám",
+      "brown": "Nền nâu",
+      "orange": "Nền cam",
+      "yellow": "Nền vàng",
+      "green": "Nền xanh lá",
+      "blue": "Nền xanh dương",
+      "purple": "Nền tím",
+      "pink": "Nền hồng",
+      "red": "Nền đỏ"
+    },
+    "toggleHighlight": "Bật/tắt đánh dấu ({{color}})"
+  }
+}

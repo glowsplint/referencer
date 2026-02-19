@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Chombo cha kuchagua",
+    "defaultStatus": "Bofya neno au tumia vitufe vya mishale kuvinjari."
+  },
+  "arrow": {
+    "label": "Chombo cha mshale",
+    "selectAnchor": "Chagua maneno ya nanga, kisha bonyeza <kbd>Enter</kbd>.",
+    "selectTarget": "Sasa chagua lengo na ubonyeze <kbd>Enter</kbd>.",
+    "created": "Mshale umeundwa."
+  },
+  "highlight": {
+    "label": "Chombo cha kuangazia",
+    "selectWords": "Chagua maneno ya kuangazia, kisha bonyeza <kbd>Enter</kbd>.",
+    "added": "Uangaziaji umeongezwa.",
+    "removed": "Uangaziaji umeondolewa."
+  },
+  "comments": {
+    "label": "Chombo cha maoni",
+    "selectWords": "Chagua maneno ya kutoa maoni, kisha bonyeza <kbd>Enter</kbd>.",
+    "added": "Maoni yameongezwa."
+  },
+  "underline": {
+    "label": "Chombo cha kupigia mstari",
+    "selectWords": "Chagua maneno ya kupigia mstari, kisha bonyeza <kbd>Enter</kbd>.",
+    "added": "Mstari umeongezwa."
+  },
+  "eraser": {
+    "label": "Chombo cha kufuta",
+    "status": "Bofya na uburute ili kufuta vidokezo.",
+    "erased": "Kidokezo kimefutwa."
+  },
+  "lockHint": "Bonyeza <kbd>Esc</kbd> <kbd>K</kbd> ili kufunga kihariri baada ya kukamilisha maudhui."
+}

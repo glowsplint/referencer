@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Narzedzie zaznaczania",
+    "defaultStatus": "Kliknij slowo lub uzyj klawiszy strzalek, aby nawigowac."
+  },
+  "arrow": {
+    "label": "Narzedzie strzalek",
+    "selectAnchor": "Zaznacz slowa dla punktu zaczepienia, a nastepnie nacisnij <kbd>Enter</kbd>.",
+    "selectTarget": "Teraz zaznacz cel i nacisnij <kbd>Enter</kbd>.",
+    "created": "Strzalka utworzona."
+  },
+  "highlight": {
+    "label": "Narzedzie podswietlania",
+    "selectWords": "Zaznacz slowa do podswietlenia, a nastepnie nacisnij <kbd>Enter</kbd>.",
+    "added": "Podswietlenie dodane.",
+    "removed": "Podswietlenie usuniete."
+  },
+  "comments": {
+    "label": "Narzedzie komentarzy",
+    "selectWords": "Zaznacz slowa do skomentowania, a nastepnie nacisnij <kbd>Enter</kbd>.",
+    "added": "Komentarz dodany."
+  },
+  "underline": {
+    "label": "Narzedzie podkreslenia",
+    "selectWords": "Zaznacz slowa do podkreslenia, a nastepnie nacisnij <kbd>Enter</kbd>.",
+    "added": "Podkreslenie dodane."
+  },
+  "eraser": {
+    "label": "Gumka",
+    "status": "Kliknij i przeciagnij, aby usunac adnotacje.",
+    "erased": "Adnotacja usunieta."
+  },
+  "lockHint": "Nacisnij <kbd>Esc</kbd> <kbd>K</kbd>, aby zablokowac edytor po zakonczeniu edycji tresci."
+}

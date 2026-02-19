@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Livelli",
+    "addLayer": "Aggiungi livello",
+    "hideAll": "Nascondi tutti i livelli",
+    "showAll": "Mostra tutti i livelli",
+    "hideLayer": "Nascondi livello",
+    "showLayer": "Mostra livello",
+    "changeColour": "Cambia colore",
+    "removeAnnotation": "Rimuovi annotazione",
+    "removeArrow": "Rimuovi freccia",
+    "removeUnderline": "Rimuovi sottolineatura",
+    "allColorsInUse": "Tutti i colori sono in uso — rimuovi prima un livello."
+  },
+  "passages": {
+    "title": "Brani",
+    "addPassage": "Aggiungi brano",
+    "hideAll": "Nascondi tutti i brani",
+    "showAll": "Mostra tutti i brani",
+    "hidePassage": "Nascondi brano",
+    "showPassage": "Mostra brano"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Mostra/nascondi pannello di gestione",
+    "keyboardShortcuts": "Scorciatoie da tastiera",
+    "helpFaq": "Aiuto e FAQ",
+    "settings": "Impostazioni",
+    "toggleEditorLayout": "Cambia layout editor",
+    "toggleEditorLock": "Attiva/disattiva blocco editor"
+  },
+  "annotations": {
+    "placeholder": "Aggiungi annotazione...",
+    "removeCustomColour": "Rimuovi colore personalizzato",
+    "addCustomColour": "Aggiungi colore personalizzato",
+    "addToCustomColours": "Aggiungi ai colori personalizzati"
+  },
+  "actionConsole": {
+    "title": "Console azioni",
+    "close": "Chiudi",
+    "empty": "Nessuna azione registrata."
+  }
+}

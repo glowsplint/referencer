@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Secim araci",
+    "defaultStatus": "Bir kelimeye tiklayin veya ok tuslariyla gezinin."
+  },
+  "arrow": {
+    "label": "Ok araci",
+    "selectAnchor": "Baglanti noktasi icin kelimeleri secin, ardindan <kbd>Enter</kbd> tusuna basin.",
+    "selectTarget": "Simdi hedeti secin ve <kbd>Enter</kbd> tusuna basin.",
+    "created": "Ok olusturuldu."
+  },
+  "highlight": {
+    "label": "Vurgulama araci",
+    "selectWords": "Vurgulanacak kelimeleri secin, ardindan <kbd>Enter</kbd> tusuna basin.",
+    "added": "Vurgulama eklendi.",
+    "removed": "Vurgulama kaldirildi."
+  },
+  "comments": {
+    "label": "Yorum araci",
+    "selectWords": "Yorum yapilacak kelimeleri secin, ardindan <kbd>Enter</kbd> tusuna basin.",
+    "added": "Yorum eklendi."
+  },
+  "underline": {
+    "label": "Alti cizgi araci",
+    "selectWords": "Alti cizilecek kelimeleri secin, ardindan <kbd>Enter</kbd> tusuna basin.",
+    "added": "Alti cizgi eklendi."
+  },
+  "eraser": {
+    "label": "Silgi araci",
+    "status": "Aciklamalari silmek icin tiklayin ve surukleyin.",
+    "erased": "Aciklama silindi."
+  },
+  "lockHint": "Icerik duzenlemenizi tamamladiginizda duzenleyiciyi kilitlemek icin <kbd>Esc</kbd> <kbd>K</kbd> tusuna basin."
+}

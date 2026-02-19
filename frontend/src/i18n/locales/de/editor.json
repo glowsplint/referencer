@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Fett",
+    "italic": "Kursiv",
+    "underline": "Unterstrichen",
+    "strike": "Durchgestrichen",
+    "code": "Code",
+    "superscript": "Hochgestellt",
+    "subscript": "Tiefgestellt"
+  },
+  "heading": {
+    "label": "Überschrift {{level}}"
+  },
+  "list": {
+    "bulletList": "Aufzählung",
+    "orderedList": "Nummerierte Liste",
+    "taskList": "Aufgabenliste",
+    "label": "Liste"
+  },
+  "blockquote": {
+    "label": "Zitat"
+  },
+  "codeBlock": {
+    "label": "Codeblock"
+  },
+  "link": {
+    "label": "Link",
+    "placeholder": "URL eingeben",
+    "openLink": "Link öffnen",
+    "copyLink": "Link kopieren",
+    "removeLink": "Link entfernen"
+  },
+  "image": {
+    "label": "Bild hinzufügen"
+  },
+  "textAlign": {
+    "left": "Linksbündig",
+    "center": "Zentriert",
+    "right": "Rechtsbündig",
+    "justify": "Blocksatz"
+  },
+  "history": {
+    "undo": "Rückgängig",
+    "redo": "Wiederholen"
+  },
+  "colorHighlight": {
+    "label": "Farbhervorhebung",
+    "highlightText": "Text hervorheben",
+    "highlightColors": "Hervorhebungsfarben",
+    "removeHighlight": "Hervorhebung entfernen",
+    "listOptions": "Listenoptionen",
+    "formatHeading": "Text als Überschrift formatieren",
+    "colors": {
+      "default": "Standard-Hintergrund",
+      "gray": "Grauer Hintergrund",
+      "brown": "Brauner Hintergrund",
+      "orange": "Oranger Hintergrund",
+      "yellow": "Gelber Hintergrund",
+      "green": "Grüner Hintergrund",
+      "blue": "Blauer Hintergrund",
+      "purple": "Lila Hintergrund",
+      "pink": "Rosa Hintergrund",
+      "red": "Roter Hintergrund"
+    },
+    "toggleHighlight": "Hervorhebung umschalten ({{color}})"
+  }
+}

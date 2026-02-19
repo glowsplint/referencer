@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "title": "Impostazioni",
+    "description": "Personalizza le preferenze del tuo spazio di lavoro.",
+    "darkMode": {
+      "label": "Modalita scura",
+      "description": "Passa dal tema chiaro a quello scuro"
+    },
+    "drawingNotifications": {
+      "label": "Notifiche disegno",
+      "description": "Mostra notifiche quando si usa lo strumento freccia"
+    },
+    "commentsNotifications": {
+      "label": "Notifiche commenti",
+      "description": "Mostra notifiche quando si usa lo strumento commenti"
+    },
+    "highlightNotifications": {
+      "label": "Notifiche evidenziazione",
+      "description": "Mostra notifiche quando si usa lo strumento evidenziazione"
+    },
+    "overscroll": {
+      "label": "Scorrimento elastico",
+      "description": "Consenti il rimbalzo elastico quando si scorre oltre i bordi"
+    },
+    "language": {
+      "label": "Lingua",
+      "description": "Scegli la tua lingua preferita"
+    }
+  },
+  "faq": {
+    "title": "Domande Frequenti",
+    "description": "Scopri di piu su Referencer e come utilizzarlo.",
+    "items": {
+      "whatIsApp": {
+        "question": "Cos'e questa app?",
+        "answer": "Referencer e uno strumento collaborativo per lo studio induttivo della Bibbia. Offre ai gruppi di studio uno spazio di lavoro condiviso dove possono leggere, annotare e discutere le Scritture insieme in tempo reale."
+      },
+      "inductiveStudy": {
+        "question": "Cos'e lo studio induttivo della Bibbia?",
+        "answer": "Lo studio induttivo della Bibbia e un metodo di lettura delle Scritture che procede dall'osservazione (cosa dice il testo?) all'interpretazione (cosa significa?) all'applicazione (come si applica?). Invece di partire da commenti esterni, si lascia parlare il testo da solo, esaminandone attentamente le parole, la struttura e il contesto."
+      },
+      "collaboration": {
+        "question": "Come funziona la collaborazione?",
+        "answer": "Ogni spazio di lavoro puo essere condiviso con altri tramite un link. Tutti i partecipanti vedono lo stesso testo e possono aggiungere le proprie annotazioni. Le modifiche si sincronizzano in tempo reale cosi tutti restano aggiornati."
+      },
+      "layers": {
+        "question": "Cosa sono i livelli?",
+        "answer": "I livelli permettono di organizzare le annotazioni in gruppi separati — per esempio, un livello per le osservazioni e un altro per le interpretazioni. Puoi passare da un livello all'altro con il tasto L per concentrarti su un gruppo di annotazioni alla volta."
+      },
+      "annotations": {
+        "question": "Come funzionano le annotazioni?",
+        "answer": "Blocca l'editor con il pulsante di blocco (o premi K), poi seleziona il testo per evidenziarlo. Puoi scegliere i colori, aggiungere commenti e disegnare frecce tra le annotazioni per mostrare i collegamenti. Clicca su un'annotazione esistente per rimuoverla."
+      },
+      "arrows": {
+        "question": "A cosa servono le frecce?",
+        "answer": "Le frecce collegano due annotazioni per mostrare una relazione tra i brani — per esempio, collegare una parola ripetuta alla sua prima occorrenza, o collegare una profezia al suo compimento. Seleziona lo strumento freccia (o premi A), poi clicca su due annotazioni per tracciare un connettore."
+      },
+      "sharing": {
+        "question": "Come condivido uno spazio di lavoro?",
+        "answer": "Apri il pannello di gestione (premi M o clicca sull'icona del menu) e usa le opzioni di condivisione per generare un link. Chiunque abbia il link puo unirsi allo spazio di lavoro e collaborare."
+      },
+      "mobile": {
+        "question": "Posso usarlo sul cellulare?",
+        "answer": "L'app funziona nei browser mobili, ma gli strumenti completi di annotazione e frecce sono migliori su un dispositivo con tastiera e mouse."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Scorciatoie da Tastiera",
+    "description": "Scorciatoie da tastiera disponibili per lo spazio di lavoro.",
+    "workspace": "Spazio di lavoro",
+    "cycleNextLayer": "Passa al livello successivo",
+    "cyclePrevLayer": "Passa al livello precedente",
+    "selectionTool": "Strumento di selezione",
+    "arrowTool": "Strumento freccia",
+    "commentsTool": "Strumento commenti",
+    "highlightTool": "Strumento evidenziazione",
+    "underlineTool": "Strumento sottolineatura",
+    "eraserTool": "Strumento gomma",
+    "navigateWords": "Naviga tra le parole",
+    "toggleConsole": "Mostra/nascondi console azioni",
+    "toggleDarkMode": "Attiva/disattiva modalita scura",
+    "toggleLayout": "Cambia layout editor",
+    "toggleLock": "Attiva/disattiva blocco editor",
+    "toggleManagement": "Mostra/nascondi pannello di gestione",
+    "textFormatting": "Formattazione testo",
+    "bold": "Grassetto",
+    "italic": "Corsivo",
+    "underline": "Sottolineato",
+    "strikethrough": "Barrato",
+    "inlineCode": "Codice in linea",
+    "superscript": "Apice",
+    "subscript": "Pedice",
+    "colorHighlight": "Evidenziazione colore",
+    "general": "Generale",
+    "undo": "Annulla (spazio di lavoro quando bloccato)",
+    "redo": "Ripristina (spazio di lavoro quando bloccato)",
+    "headings": "Intestazioni",
+    "heading": "Intestazione {{level}}",
+    "listsAndBlocks": "Elenchi e blocchi",
+    "bulletList": "Elenco puntato",
+    "orderedList": "Elenco numerato",
+    "taskList": "Elenco attivita",
+    "blockquote": "Citazione",
+    "codeBlock": "Blocco di codice",
+    "textAlignment": "Allineamento testo",
+    "alignLeft": "Allinea a sinistra",
+    "alignCenter": "Allinea al centro",
+    "alignRight": "Allinea a destra",
+    "alignJustify": "Giustifica"
+  },
+  "share": {
+    "title": "Condividi spazio di lavoro",
+    "description": "Copia un link per condividere questo spazio di lavoro.",
+    "readonlyLink": "Link di sola lettura",
+    "editLink": "Link di modifica",
+    "linkCopied": "Link copiato negli appunti.",
+    "copyFailed": "Impossibile copiare il link."
+  },
+  "mobile": {
+    "title": "Meglio su Desktop",
+    "description": "Referencer e progettato per l'uso desktop con tastiera e mouse. Puoi comunque leggere il contenuto qui, ma gli strumenti di modifica e annotazione non sono disponibili su dispositivi mobili.",
+    "continueReading": "Continua a leggere"
+  }
+}

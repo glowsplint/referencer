@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Tabaka",
+    "addLayer": "Ongeza tabaka",
+    "hideAll": "Ficha tabaka zote",
+    "showAll": "Onyesha tabaka zote",
+    "hideLayer": "Ficha tabaka",
+    "showLayer": "Onyesha tabaka",
+    "changeColour": "Badilisha rangi",
+    "removeAnnotation": "Ondoa kidokezo",
+    "removeArrow": "Ondoa mshale",
+    "removeUnderline": "Ondoa mstari",
+    "allColorsInUse": "Rangi zote zinatumika — ondoa tabaka kwanza."
+  },
+  "passages": {
+    "title": "Vifungu",
+    "addPassage": "Ongeza kifungu",
+    "hideAll": "Ficha vifungu vyote",
+    "showAll": "Onyesha vifungu vyote",
+    "hidePassage": "Ficha kifungu",
+    "showPassage": "Onyesha kifungu"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Geuza paneli ya usimamizi",
+    "keyboardShortcuts": "Njia za mkato za kibodi",
+    "helpFaq": "Msaada na Maswali",
+    "settings": "Mipangilio",
+    "toggleEditorLayout": "Geuza mpangilio wa kihariri",
+    "toggleEditorLock": "Geuza kufuli ya kihariri"
+  },
+  "annotations": {
+    "placeholder": "Ongeza kidokezo...",
+    "removeCustomColour": "Ondoa rangi maalum",
+    "addCustomColour": "Ongeza rangi maalum",
+    "addToCustomColours": "Ongeza kwenye rangi maalum"
+  },
+  "actionConsole": {
+    "title": "Koni ya Vitendo",
+    "close": "funga",
+    "empty": "Hakuna vitendo vilivyorekodiwa bado."
+  }
+}
