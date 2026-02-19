@@ -73,6 +73,7 @@ function createDefaultProps(overrides: Record<string, unknown> = {}) {
     sectionVisibility: [true, true, true],
     isDarkMode: false,
     isLocked: true,
+    hideOffscreenArrows: false,
     ...overrides,
   }
 }

@@ -7,6 +7,7 @@
     "commentsNotifications": { "label": "コメント通知", "description": "コメントツール使用時にトーストを表示します" },
     "highlightNotifications": { "label": "ハイライト通知", "description": "ハイライトツール使用時にトーストを表示します" },
     "overscroll": { "label": "オーバースクロール", "description": "端を超えてスクロールした時にバウンス効果を許可します" },
+    "hideOffscreenArrows": { "label": "画面外の矢印を非表示", "description": "端点が画面外にスクロールされた時に矢印を完全に非表示にします" },
     "language": { "label": "言語", "description": "お好みの言語を選択してください" }
   },
   "faq": {

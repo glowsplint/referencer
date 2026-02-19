@@ -359,6 +359,7 @@ export function App() {
                   sectionVisibility={sectionVisibility}
                   isDarkMode={settings.isDarkMode}
                   isLocked={settings.isLocked || effectiveReadOnly}
+                  hideOffscreenArrows={settings.hideOffscreenArrows}
                 />
                 {editorWidths.map((width, i) => {
                   const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]

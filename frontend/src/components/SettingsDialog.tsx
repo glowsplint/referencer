@@ -54,6 +54,8 @@ interface SettingsDialogProps {
   toggleShowHighlightToasts: () => void;
   overscrollEnabled: boolean;
   toggleOverscrollEnabled: () => void;
+  hideOffscreenArrows: boolean;
+  toggleHideOffscreenArrows: () => void;
 }
 
 export function SettingsDialog({
@@ -69,6 +71,8 @@ export function SettingsDialog({
   toggleShowHighlightToasts,
   overscrollEnabled,
   toggleOverscrollEnabled,
+  hideOffscreenArrows,
+  toggleHideOffscreenArrows,
 }: SettingsDialogProps) {
   const { t } = useTranslation("dialogs");
   const { t: tc } = useTranslation("common");
@@ -108,6 +112,13 @@ export function SettingsDialog({
       description: t("settings.overscroll.description"),
       checked: overscrollEnabled,
       onCheckedChange: toggleOverscrollEnabled,
+    },
+    {
+      id: "hide-offscreen-arrows",
+      label: t("settings.hideOffscreenArrows.label"),
+      description: t("settings.hideOffscreenArrows.description"),
+      checked: hideOffscreenArrows,
+      onCheckedChange: toggleHideOffscreenArrows,
     },
   ];
 

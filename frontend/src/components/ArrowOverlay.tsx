@@ -31,6 +31,7 @@ interface ArrowOverlayProps {
   sectionVisibility: boolean[]
   isDarkMode: boolean
   isLocked: boolean
+  hideOffscreenArrows: boolean
 }
 
 interface CrossEditorArrow {
@@ -75,6 +76,7 @@ export function ArrowOverlay({
   sectionVisibility,
   isDarkMode,
   isLocked,
+  hideOffscreenArrows,
 }: ArrowOverlayProps) {
   const [hoveredArrowId, setHoveredArrowId] = useState<string | null>(null)
   // Structural tick — only for structural changes (layers, visibility, preview), NOT scroll
@@ -269,9 +271,10 @@ export function ArrowOverlay({
       const mx = (x1 + x2) / 2
       const my = (y1 + y2) / 2
       const arrowPath = `M ${x1} ${y1} L ${mx} ${my} L ${x2} ${y2}`
-      // Fade arrows with off-screen endpoints so they don't draw attention
+      // Fade or hide arrows with off-screen endpoints so they don't draw attention
       // to connections the user can't fully see in the current scroll position
-      const arrowOpacity = (fromResult.clamped || toResult.clamped) ? ARROW_OPACITY_OFFSCREEN : ARROW_OPACITY
+      const isClamped = fromResult.clamped || toResult.clamped
+      const arrowOpacity = isClamped ? (hideOffscreenArrows ? 0 : ARROW_OPACITY_OFFSCREEN) : ARROW_OPACITY
       const isHovered = hoveredArrowId === data.arrowId
       const isSelected = selectedArrow?.arrowId === data.arrowId
       const hideMarker = isHovered || isSelected
@@ -407,7 +410,7 @@ export function ArrowOverlay({
     if (defs.children.length > 0) {
       svg.insertBefore(defs, svg.firstChild)
     }
-  }, [editorsRef, hoveredArrowId, selectedArrow, isDarkMode, activeTool])
+  }, [editorsRef, hoveredArrowId, selectedArrow, isDarkMode, activeTool, hideOffscreenArrows])
 
   // Patch SVG attributes imperatively (not via React re-render) to avoid frame-skip latency during scroll
   const updatePositions = useCallback(() => {
@@ -425,7 +428,7 @@ export function ArrowOverlay({
       const result = computeClampedPath(data.arrow, editorsRef, containerRect)
       if (!result) continue
 
-      const opacity = result.anyClamped ? ARROW_OPACITY_OFFSCREEN : ARROW_OPACITY
+      const opacity = result.anyClamped ? (hideOffscreenArrows ? 0 : ARROW_OPACITY_OFFSCREEN) : ARROW_OPACITY
       arrowGroupRefs.current.get(data.arrowId)?.setAttribute("opacity", String(opacity))
 
       const styleAttrs = getArrowStyleAttrs(data.arrowStyle)
@@ -490,7 +493,19 @@ export function ArrowOverlay({
     for (const data of allVisibleArrows) {
       const result = computeClampedPath(data.arrow, editorsRef, containerRect)
       if (!result) continue
-      hitPathRefs.current.get(data.arrowId)?.setAttribute("d", result.d)
+
+      // When hideOffscreenArrows is on and the arrow is clamped, disable interaction
+      const isHidden = hideOffscreenArrows && result.anyClamped
+      const hitPath = hitPathRefs.current.get(data.arrowId)
+      if (hitPath) {
+        hitPath.setAttribute("d", result.d)
+        if (isHidden) {
+          hitPath.style.pointerEvents = "none"
+        } else {
+          // Restore React-controlled pointer-events (arrow tool → "none", other tools → "auto")
+          hitPath.style.pointerEvents = activeTool === "arrow" ? "none" : "auto"
+        }
+      }
       selectionPathRefs.current.get(data.arrowId)?.setAttribute("d", result.d)
       hoverPathRefs.current.get(data.arrowId)?.setAttribute("d", result.d)
 
@@ -502,7 +517,7 @@ export function ArrowOverlay({
         xIcon.setAttribute("transform", `translate(${mx}, ${my})`)
       }
     }
-  }, [crossEditorArrows, allVisibleArrows, editorsRef, containerRef, drawingState, drawingColor, hoveredEditorIndex, drawIntoWrapperSvg])
+  }, [crossEditorArrows, allVisibleArrows, editorsRef, containerRef, drawingState, drawingColor, hoveredEditorIndex, drawIntoWrapperSvg, hideOffscreenArrows, activeTool])
 
   // Refs for preview elements
   const previewPathRef = useRef<SVGPathElement | null>(null)

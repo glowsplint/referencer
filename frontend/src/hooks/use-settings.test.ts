@@ -21,6 +21,7 @@ describe("useSettings", () => {
       showCommentsToasts: true,
       showHighlightToasts: true,
       overscrollEnabled: false,
+      hideOffscreenArrows: false,
     })
   })
 
@@ -111,6 +112,7 @@ describe("useSettings", () => {
     expect(result.current.settings.showCommentsToasts).toBe(true)
     expect(result.current.settings.showHighlightToasts).toBe(true)
     expect(result.current.settings.overscrollEnabled).toBe(false)
+    expect(result.current.settings.hideOffscreenArrows).toBe(false)
   })
 
   it("toggleShowHighlightToasts toggles showHighlightToasts", () => {
@@ -182,6 +184,7 @@ describe("useSettings", () => {
       showCommentsToasts: true,
       showHighlightToasts: true,
       overscrollEnabled: false,
+      hideOffscreenArrows: false,
     })
   })
 
@@ -198,6 +201,19 @@ describe("useSettings", () => {
     expect(result.current.settings.showCommentsToasts).toBe(true)
     expect(result.current.settings.showHighlightToasts).toBe(true)
     expect(result.current.settings.overscrollEnabled).toBe(false)
+    expect(result.current.settings.hideOffscreenArrows).toBe(false)
+  })
+
+  it("toggleHideOffscreenArrows toggles hideOffscreenArrows", () => {
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings.hideOffscreenArrows).toBe(false)
+
+    act(() => { result.current.toggleHideOffscreenArrows() })
+    expect(result.current.settings.hideOffscreenArrows).toBe(true)
+
+    act(() => { result.current.toggleHideOffscreenArrows() })
+    expect(result.current.settings.hideOffscreenArrows).toBe(false)
   })
 
   it("applies dark mode class on mount from persisted settings", () => {

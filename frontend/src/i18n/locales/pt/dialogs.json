@@ -22,6 +22,10 @@
       "label": "Rolagem elástica",
       "description": "Permitir efeito elástico ao rolar além das bordas"
     },
+    "hideOffscreenArrows": {
+      "label": "Ocultar setas fora da tela",
+      "description": "Ocultar completamente as setas quando alguma extremidade estiver fora da visualização"
+    },
     "language": {
       "label": "Idioma",
       "description": "Escolha seu idioma preferido"
