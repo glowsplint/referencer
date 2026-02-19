@@ -16,6 +16,8 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
     toggleShowHighlightToasts: vi.fn(),
     overscrollEnabled: false,
     toggleOverscrollEnabled: vi.fn(),
+    hideOffscreenArrows: false,
+    toggleHideOffscreenArrows: vi.fn(),
     ...overrides,
   }
   render(<SettingsDialog {...props} />)
@@ -73,6 +75,17 @@ describe("SettingsDialog", () => {
     const props = renderDialog()
     fireEvent.click(screen.getByTestId("overscroll-switch"))
     expect(props.toggleOverscrollEnabled).toHaveBeenCalledOnce()
+  })
+
+  it("renders hide off-screen arrows switch with correct checked state", () => {
+    renderDialog({ hideOffscreenArrows: true })
+    expect(screen.getByTestId("hide-offscreen-arrows-switch")).toHaveAttribute("data-state", "checked")
+  })
+
+  it("calls toggleHideOffscreenArrows when switch is clicked", () => {
+    const props = renderDialog()
+    fireEvent.click(screen.getByTestId("hide-offscreen-arrows-switch"))
+    expect(props.toggleHideOffscreenArrows).toHaveBeenCalledOnce()
   })
 
   it("does not render when open is false", () => {

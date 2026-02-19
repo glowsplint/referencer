@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "அடுக்குகள்",
+    "addLayer": "அடுக்கைச் சேர்",
+    "hideAll": "அனைத்து அடுக்குகளையும் மறை",
+    "showAll": "அனைத்து அடுக்குகளையும் காட்டு",
+    "hideLayer": "அடுக்கை மறை",
+    "showLayer": "அடுக்கைக் காட்டு",
+    "changeColour": "நிறத்தை மாற்று",
+    "removeAnnotation": "குறிப்பை நீக்கு",
+    "removeArrow": "அம்பை நீக்கு",
+    "removeUnderline": "அடிக்கோட்டை நீக்கு",
+    "allColorsInUse": "அனைத்து நிறங்களும் பயன்பாட்டில் உள்ளன — முதலில் ஒரு அடுக்கை நீக்கவும்."
+  },
+  "passages": {
+    "title": "பகுதிகள்",
+    "addPassage": "பகுதியைச் சேர்",
+    "hideAll": "அனைத்து பகுதிகளையும் மறை",
+    "showAll": "அனைத்து பகுதிகளையும் காட்டு",
+    "hidePassage": "பகுதியை மறை",
+    "showPassage": "பகுதியைக் காட்டு"
+  },
+  "tooltips": {
+    "toggleManagementPane": "மேலாண்மைப் பலகத்தை நிலைமாற்று",
+    "keyboardShortcuts": "விசைப்பலகை குறுக்குவழிகள்",
+    "helpFaq": "உதவி & கேள்விகள்",
+    "settings": "அமைப்புகள்",
+    "toggleEditorLayout": "திருத்தி அமைப்பை நிலைமாற்று",
+    "toggleEditorLock": "திருத்திப் பூட்டை நிலைமாற்று"
+  },
+  "annotations": {
+    "placeholder": "குறிப்பைச் சேர்...",
+    "removeCustomColour": "தனிப்பயன் நிறத்தை நீக்கு",
+    "addCustomColour": "தனிப்பயன் நிறத்தைச் சேர்",
+    "addToCustomColours": "தனிப்பயன் நிறங்களில் சேர்"
+  },
+  "actionConsole": {
+    "title": "செயல் கன்சோல்",
+    "close": "மூடு",
+    "empty": "இன்னும் செயல்கள் பதிவு செய்யப்படவில்லை."
+  }
+}

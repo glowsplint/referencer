@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
+
+vi.mock("@/data/default-workspace", () => ({
+  createDefaultLayers: () => [],
+}))
+
 import { useLayers } from "./use-layers"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 

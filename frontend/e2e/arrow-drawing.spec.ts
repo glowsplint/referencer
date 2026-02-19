@@ -1,17 +1,21 @@
 import { test, expect } from "@playwright/test";
 
+let initialArrowCount = 0;
+
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-  // Create a layer
-  await expect(page.getByTestId("managementPane")).toBeVisible();
-  await page.getByTestId("addLayerButton").click();
-  await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
+  // Hide default layers so their arrows/highlights don't interfere with tests
+  for (let i = 0; i < 4; i++) {
+    await page.getByTestId(`layerVisibility-${i}`).click();
+  }
 
-  // Lock the editor
-  await page.getByTestId("lockButton").click();
-  await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+  // Editor starts locked with 4 default layers (some have arrows). Add a fresh layer.
+  await page.getByTestId("addLayerButton").click();
+
+  // Record initial arrow count from default layers
+  initialArrowCount = await page.getByTestId("arrow-line").count();
 
   // Switch to arrow tool
   await page.keyboard.press("a");
@@ -38,8 +42,8 @@ test("selecting two different words and pressing Enter draws an arrow", async ({
   // Press Enter to confirm target and create arrow
   await page.keyboard.press("Enter");
 
-  // Solid arrow line should appear
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+  // One additional arrow should appear
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
   // Preview should disappear
   await expect(page.getByTestId("preview-arrow")).toHaveCount(0, { timeout: 2000 });
 });
@@ -63,7 +67,8 @@ test("no arrow created when confirming same word twice", async ({ page }) => {
   // Press Enter — same word as anchor, should cancel
   await page.keyboard.press("Enter");
 
-  await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
+  // Arrow count should not change
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount, { timeout: 2000 });
 });
 
 test("click on arrow line selects it and activates arrow tool", async ({ page }) => {
@@ -79,10 +84,13 @@ test("click on arrow line selects it and activates arrow tool", async ({ page })
   await page.mouse.click(box!.x + 120, y);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
 
-  // Click the arrow line to select it (hit area has transparent stroke, use force)
-  await page.getByTestId("arrow-hit-area").click({ force: true });
+  // Switch to selection tool so arrow hit areas accept pointer events
+  await page.keyboard.press("s");
+
+  // Click the arrow hit area to select it — use .last() since our new arrow is the most recent
+  await page.getByTestId("arrow-hit-area").last().click({ force: true });
   await expect(page.getByTestId("arrow-selection-ring")).toHaveCount(1, { timeout: 2000 });
 
   // Arrow tool should be active (selecting an arrow activates arrow tool)
@@ -102,16 +110,17 @@ test("clicking selected arrow X icon deletes it, hover alone does not show X", a
   await page.mouse.click(box!.x + 120, y);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
 
-  // Tool auto-switched to selection; arrow is selected after creation
+  // Switch to selection tool so arrow hit areas accept pointer events
+  await page.keyboard.press("s");
 
   // Deselect by clicking empty area
   await page.mouse.click(0, 0);
   const interactionLayer = page.locator('[data-testid="arrow-interaction-layer"]');
 
   // Hover the arrow hit area — X icon should NOT appear (hover alone), but hover ring should
-  const hitArea = page.getByTestId("arrow-hit-area");
+  const hitArea = page.getByTestId("arrow-hit-area").last();
   await hitArea.evaluate((el) => {
     el.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, cancelable: true }));
     el.dispatchEvent(new MouseEvent("mouseover", { bubbles: true, cancelable: true }));
@@ -127,7 +136,7 @@ test("clicking selected arrow X icon deletes it, hover alone does not show X", a
   // Click the X icon to delete
   const deleteIcon = page.getByTestId("arrow-delete-icon");
   await deleteIcon.click({ force: true });
-  await expect(page.getByTestId("arrow-line")).toHaveCount(0, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount, { timeout: 2000 });
 });
 
 test("arrow key navigation works after confirming anchor", async ({ page }) => {
@@ -152,7 +161,7 @@ test("arrow key navigation works after confirming anchor", async ({ page }) => {
 
   // Press Enter to confirm target and create arrow
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
 });
 
 test("selection is preserved when activating arrow tool, allowing arrow key navigation", async ({ page }) => {
@@ -188,7 +197,7 @@ test("selection is preserved when activating arrow tool, allowing arrow key navi
 
   // Confirm target
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
 });
 
 test("arrow tool button shows depressed state when active", async ({ page }) => {

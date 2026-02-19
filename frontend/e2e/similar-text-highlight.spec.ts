@@ -3,9 +3,7 @@ import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".simple-editor p").first()).toBeVisible();
-  // Lock the editor
-  await page.getByTestId("lockButton").click();
-  await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+  // Editor starts locked — no need to click lockButton
 });
 
 test("clicking a word shows similar-text-highlight decorations for matching words", async ({ page }) => {

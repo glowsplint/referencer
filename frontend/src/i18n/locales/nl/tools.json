@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Selectiegereedschap",
+    "defaultStatus": "Klik op een woord of gebruik de pijltoetsen om te navigeren."
+  },
+  "arrow": {
+    "label": "Pijlgereedschap",
+    "selectAnchor": "Selecteer woorden voor het anker en druk vervolgens op <kbd>Enter</kbd>.",
+    "selectTarget": "Selecteer nu het doel en druk op <kbd>Enter</kbd>.",
+    "created": "Pijl aangemaakt."
+  },
+  "highlight": {
+    "label": "Markeringsgereedschap",
+    "selectWords": "Selecteer woorden om te markeren en druk vervolgens op <kbd>Enter</kbd>.",
+    "added": "Markering toegevoegd.",
+    "removed": "Markering verwijderd."
+  },
+  "comments": {
+    "label": "Opmerkingsgereedschap",
+    "selectWords": "Selecteer woorden om op te reageren en druk vervolgens op <kbd>Enter</kbd>.",
+    "added": "Opmerking toegevoegd."
+  },
+  "underline": {
+    "label": "Onderstrepingsgereedschap",
+    "selectWords": "Selecteer woorden om te onderstrepen en druk vervolgens op <kbd>Enter</kbd>.",
+    "added": "Onderstreping toegevoegd."
+  },
+  "eraser": {
+    "label": "Gumgereedschap",
+    "status": "Klik en sleep om annotaties te wissen.",
+    "erased": "Annotatie gewist."
+  },
+  "lockHint": "Druk op <kbd>Esc</kbd> <kbd>K</kbd> om de editor te vergrendelen zodra u de inhoud heeft afgerond."
+}

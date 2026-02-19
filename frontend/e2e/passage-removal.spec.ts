@@ -6,8 +6,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("removing first passage twice does not crash toolbar", async ({ page }) => {
-  // Start with 1 passage, add 2 more for a total of 3
-  await page.getByTestId("addPassageButton").click();
+  // Start with 2 default passages, add 1 more for a total of 3
   await page.getByTestId("addPassageButton").click();
   await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
 
@@ -25,6 +24,8 @@ test("removing first passage twice does not crash toolbar", async ({ page }) => 
   await page.getByTestId("passageRow-0").dragTo(page.getByTestId("trashBin"));
   await expect(page.locator(".simple-editor-wrapper")).toHaveCount(2);
 
-  // Verify the toolbar is still functional (no error boundary triggered)
+  // Verify the toolbar is still functional (no error boundary triggered).
+  // Editor starts locked, so unlock to see toolbar.
+  await page.getByTestId("lockButton").click();
   await expect(page.getByTestId("editorToolbar")).toBeVisible();
 });

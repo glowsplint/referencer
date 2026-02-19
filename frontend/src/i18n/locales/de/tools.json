@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Auswahlwerkzeug",
+    "defaultStatus": "Klicken Sie auf ein Wort oder verwenden Sie die Pfeiltasten zur Navigation."
+  },
+  "arrow": {
+    "label": "Pfeilwerkzeug",
+    "selectAnchor": "Wählen Sie Wörter für den Anker aus und drücken Sie dann <kbd>Enter</kbd>.",
+    "selectTarget": "Wählen Sie nun das Ziel aus und drücken Sie <kbd>Enter</kbd>.",
+    "created": "Pfeil erstellt."
+  },
+  "highlight": {
+    "label": "Hervorhebungswerkzeug",
+    "selectWords": "Wählen Sie Wörter zum Hervorheben aus und drücken Sie dann <kbd>Enter</kbd>.",
+    "added": "Hervorhebung hinzugefügt.",
+    "removed": "Hervorhebung entfernt."
+  },
+  "comments": {
+    "label": "Kommentarwerkzeug",
+    "selectWords": "Wählen Sie Wörter zum Kommentieren aus und drücken Sie dann <kbd>Enter</kbd>.",
+    "added": "Kommentar hinzugefügt."
+  },
+  "underline": {
+    "label": "Unterstreichungswerkzeug",
+    "selectWords": "Wählen Sie Wörter zum Unterstreichen aus und drücken Sie dann <kbd>Enter</kbd>.",
+    "added": "Unterstreichung hinzugefügt."
+  },
+  "eraser": {
+    "label": "Radierwerkzeug",
+    "status": "Klicken und ziehen, um Anmerkungen zu löschen.",
+    "erased": "Anmerkung gelöscht."
+  },
+  "lockHint": "Drücken Sie <kbd>Esc</kbd> <kbd>K</kbd>, um den Editor zu sperren, sobald Sie den Inhalt fertiggestellt haben."
+}

@@ -1,11 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
+
+vi.mock("@/data/default-workspace", () => ({
+  createDefaultLayers: () => [],
+  DEFAULT_SECTION_NAMES: ["Passage 1"],
+}))
+
 import { useEditorWorkspace } from "./use-editor-workspace"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 
 beforeEach(() => {
   vi.clearAllMocks()
   document.documentElement.classList.remove("dark")
+  localStorage.clear()
 })
 
 describe("useEditorWorkspace", () => {
@@ -16,11 +23,12 @@ describe("useEditorWorkspace", () => {
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: false,
+      isLocked: true,
       showDrawingToasts: true,
       showCommentsToasts: true,
       showHighlightToasts: true,
       overscrollEnabled: false,
+      hideOffscreenArrows: false,
     })
     expect(result.current.annotations).toEqual({ activeTool: "selection" })
     expect(result.current.layers).toEqual([])
@@ -55,7 +63,7 @@ describe("useEditorWorkspace", () => {
       result.current.toggleLocked()
     })
 
-    expect(result.current.settings.isLocked).toBe(true)
+    expect(result.current.settings.isLocked).toBe(false)
   })
 
   it("setActiveTool changes the active tool", () => {
@@ -843,17 +851,17 @@ describe("useEditorWorkspace", () => {
   it("toggleLocked is undoable", () => {
     const { result } = renderHook(() => useEditorWorkspace())
 
-    expect(result.current.settings.isLocked).toBe(false)
+    expect(result.current.settings.isLocked).toBe(true)
 
     act(() => { result.current.toggleLocked() })
-    expect(result.current.settings.isLocked).toBe(true)
+    expect(result.current.settings.isLocked).toBe(false)
     expect(result.current.history.canUndo).toBe(true)
 
     act(() => { result.current.history.undo() })
-    expect(result.current.settings.isLocked).toBe(false)
+    expect(result.current.settings.isLocked).toBe(true)
 
     act(() => { result.current.history.redo() })
-    expect(result.current.settings.isLocked).toBe(true)
+    expect(result.current.settings.isLocked).toBe(false)
   })
 
   it("toggleDarkMode is undoable", () => {

@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Tebal",
+    "italic": "Italik",
+    "underline": "Garis Bawah",
+    "strike": "Garis Lorek",
+    "code": "Kod",
+    "superscript": "Superskrip",
+    "subscript": "Subskrip"
+  },
+  "heading": {
+    "label": "Tajuk {{level}}"
+  },
+  "list": {
+    "bulletList": "Senarai Bulet",
+    "orderedList": "Senarai Bernombor",
+    "taskList": "Senarai Tugasan",
+    "label": "Senarai"
+  },
+  "blockquote": {
+    "label": "Petikan Blok"
+  },
+  "codeBlock": {
+    "label": "Blok Kod"
+  },
+  "link": {
+    "label": "Pautan",
+    "placeholder": "Masukkan URL",
+    "openLink": "Buka pautan",
+    "copyLink": "Salin pautan",
+    "removeLink": "Buang pautan"
+  },
+  "image": {
+    "label": "Tambah imej"
+  },
+  "textAlign": {
+    "left": "Jajar Kiri",
+    "center": "Jajar Tengah",
+    "right": "Jajar Kanan",
+    "justify": "Jajar Penuh"
+  },
+  "history": {
+    "undo": "Buat Asal",
+    "redo": "Buat Semula"
+  },
+  "colorHighlight": {
+    "label": "Sorotan warna",
+    "highlightText": "Sorot teks",
+    "highlightColors": "Warna sorotan",
+    "removeHighlight": "Buang sorotan",
+    "listOptions": "Pilihan senarai",
+    "formatHeading": "Format teks sebagai tajuk",
+    "colors": {
+      "default": "Latar belakang lalai",
+      "gray": "Latar belakang kelabu",
+      "brown": "Latar belakang coklat",
+      "orange": "Latar belakang oren",
+      "yellow": "Latar belakang kuning",
+      "green": "Latar belakang hijau",
+      "blue": "Latar belakang biru",
+      "purple": "Latar belakang ungu",
+      "pink": "Latar belakang merah jambu",
+      "red": "Latar belakang merah"
+    },
+    "toggleHighlight": "Togol sorotan ({{color}})"
+  }
+}

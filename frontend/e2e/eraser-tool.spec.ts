@@ -38,14 +38,13 @@ test.describe("eraser tool", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
+    // Hide default layers so their arrows/highlights don't interfere with tests
+    for (let i = 0; i < 4; i++) {
+      await page.getByTestId(`layerVisibility-${i}`).click();
+    }
 
-    // Create a layer
+    // Editor starts locked with 4 default layers. Add a fresh layer for tests.
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
-
-    // Lock the editor
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
   });
 
   test("E key activates eraser tool", async ({ page }) => {
@@ -56,6 +55,12 @@ test.describe("eraser tool", () => {
   });
 
   test("eraser removes a highlight when clicking on it", async ({ page }) => {
+    // Record initial highlight count from default layers
+    const highlights = page.locator(
+      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]'
+    );
+    const initialHighlightCount = await highlights.count();
+
     // First create a highlight
     await page.keyboard.press("h");
     await clickWordInEditor(page, 0, 30);
@@ -65,11 +70,9 @@ test.describe("eraser tool", () => {
     await page.keyboard.press("Escape");
     await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 
-    // Verify highlight was created
-    const highlights = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]'
-    );
-    await expect(highlights).toHaveCount(1, { timeout: 2000 });
+    // Verify highlight was created (at least one more than before)
+    const afterCreate = await highlights.count();
+    expect(afterCreate).toBeGreaterThanOrEqual(initialHighlightCount + 1);
 
     // Switch to eraser
     await page.keyboard.press("e");
@@ -77,21 +80,25 @@ test.describe("eraser tool", () => {
     // Click the same word — eraser now erases on mousedown directly (no Enter needed)
     await clickWordInEditorRaw(page, 0, 30);
 
-    // Highlight should be gone
-    await expect(highlights).toHaveCount(0, { timeout: 2000 });
+    // Highlight count should decrease back
+    await expect(highlights).toHaveCount(afterCreate - 1, { timeout: 2000 });
   });
 
   test("eraser removes an underline when clicking on it", async ({ page }) => {
+    // Record initial underline count from default layers
+    const underlines = page.locator(
+      '.simple-editor-wrapper .ProseMirror span[style*="text-decoration"]'
+    );
+    const initialUnderlineCount = await underlines.count();
+
     // First create an underline
     await page.keyboard.press("u");
     await clickWordInEditor(page, 0, 30);
     await page.keyboard.press("Enter");
 
-    // Verify underline was created
-    const underlines = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="text-decoration"]'
-    );
-    await expect(underlines).toHaveCount(1, { timeout: 2000 });
+    // Verify underline was created (at least one more than before)
+    const afterCreate = await underlines.count();
+    expect(afterCreate).toBeGreaterThanOrEqual(initialUnderlineCount + 1);
 
     // Switch to eraser
     await page.keyboard.press("e");
@@ -99,12 +106,18 @@ test.describe("eraser tool", () => {
     // Click the same word — eraser now erases on mousedown directly
     await clickWordInEditorRaw(page, 0, 30);
 
-    // Underline should be gone
-    await expect(underlines).toHaveCount(0, { timeout: 2000 });
+    // Underline count should decrease back
+    await expect(underlines).toHaveCount(afterCreate - 1, { timeout: 2000 });
   });
 
   test("eraser does not affect decorations on hidden layers", async ({ page }) => {
-    // Create highlight on Layer 1
+    // Record initial highlight count from default layers
+    const highlights = page.locator(
+      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]'
+    );
+    const initialHighlightCount = await highlights.count();
+
+    // Create highlight on the test layer (index 4)
     await page.keyboard.press("h");
     await clickWordInEditor(page, 0, 30);
     await page.keyboard.press("Enter");
@@ -113,28 +126,28 @@ test.describe("eraser tool", () => {
     await page.keyboard.press("Escape");
     await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 
-    const highlights = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]'
-    );
-    await expect(highlights).toHaveCount(1, { timeout: 2000 });
+    const afterCreate = await highlights.count();
+    expect(afterCreate).toBeGreaterThanOrEqual(initialHighlightCount + 1);
 
-    // Hide Layer 1
-    await page.getByTestId("layerVisibility-0").click();
-    await expect(highlights).toHaveCount(0, { timeout: 2000 });
+    // Hide the test layer (index 4) — its highlight should disappear
+    await page.getByTestId("layerVisibility-4").click();
+    const afterHide = await highlights.count();
+    expect(afterHide).toBe(afterCreate - 1);
 
     // Switch to eraser and try to erase at same position (mousedown erases directly)
     await page.keyboard.press("e");
     await clickWordInEditorRaw(page, 0, 30);
 
-    // Show Layer 1 — highlight should still be there since layer was hidden during erase
-    await page.getByTestId("layerVisibility-0").click();
-    await expect(highlights).toHaveCount(1, { timeout: 2000 });
+    // Show the test layer — highlight should still be there since layer was hidden during erase
+    await page.getByTestId("layerVisibility-4").click();
+    const afterShow = await highlights.count();
+    expect(afterShow).toBe(afterCreate);
   });
 
   test("status bar shows eraser message when tool is active", async ({ page }) => {
     await page.keyboard.press("e");
     await expect(page.getByTestId("status-bar")).toContainText(
-      "Click and drag to erase highlights and underlines",
+      "Click and drag to erase annotations.",
       { timeout: 2000 }
     );
   });

@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "שכבות",
+    "addLayer": "הוספת שכבה",
+    "hideAll": "הסתרת כל השכבות",
+    "showAll": "הצגת כל השכבות",
+    "hideLayer": "הסתרת שכבה",
+    "showLayer": "הצגת שכבה",
+    "changeColour": "שינוי צבע",
+    "removeAnnotation": "הסרת הערה",
+    "removeArrow": "הסרת חץ",
+    "removeUnderline": "הסרת קו תחתון",
+    "allColorsInUse": "כל הצבעים בשימוש — הסירו שכבה תחילה."
+  },
+  "passages": {
+    "title": "קטעים",
+    "addPassage": "הוספת קטע",
+    "hideAll": "הסתרת כל הקטעים",
+    "showAll": "הצגת כל הקטעים",
+    "hidePassage": "הסתרת קטע",
+    "showPassage": "הצגת קטע"
+  },
+  "tooltips": {
+    "toggleManagementPane": "הצג/הסתר חלונית ניהול",
+    "keyboardShortcuts": "קיצורי מקלדת",
+    "helpFaq": "עזרה ושאלות נפוצות",
+    "settings": "הגדרות",
+    "toggleEditorLayout": "הצג/הסתר פריסת עורך",
+    "toggleEditorLock": "הצג/הסתר נעילת עורך"
+  },
+  "annotations": {
+    "placeholder": "הוספת הערה...",
+    "removeCustomColour": "הסרת צבע מותאם",
+    "addCustomColour": "הוספת צבע מותאם",
+    "addToCustomColours": "הוספה לצבעים מותאמים"
+  },
+  "actionConsole": {
+    "title": "מסוף פעולות",
+    "close": "סגור",
+    "empty": "לא נרשמו פעולות עדיין."
+  }
+}

@@ -3,6 +3,7 @@
 // Handles divider resize with minimum pane width constraints.
 import { useRef, useState, useCallback, useMemo } from "react"
 import type { Editor } from "@tiptap/react"
+import { DEFAULT_SECTION_NAMES } from "@/data/default-workspace"
 
 // Minimum pane width (%) — prevents panes from collapsing entirely during resize
 const MIN_EDITOR_PCT = 10
@@ -11,17 +12,27 @@ function computeEvenSplitPositions(count: number): number[] {
   return Array.from({ length: count - 1 }, (_, i) => ((i + 1) / count) * 100)
 }
 
+const DEFAULT_EDITOR_COUNT = DEFAULT_SECTION_NAMES.length
+
 export function useEditors() {
-  const [editorCount, setEditorCount] = useState(1)
-  const [splitPositions, setSplitPositions] = useState<number[]>([])
-  const [sectionVisibility, setSectionVisibility] = useState<boolean[]>([true])
-  const [sectionNames, setSectionNames] = useState<string[]>(["Passage 1"])
-  const [editorKeys, setEditorKeys] = useState<number[]>([0])
+  const [editorCount, setEditorCount] = useState(DEFAULT_EDITOR_COUNT)
+  const [splitPositions, setSplitPositions] = useState<number[]>(
+    () => computeEvenSplitPositions(DEFAULT_EDITOR_COUNT)
+  )
+  const [sectionVisibility, setSectionVisibility] = useState<boolean[]>(
+    () => Array.from({ length: DEFAULT_EDITOR_COUNT }, () => true)
+  )
+  const [sectionNames, setSectionNames] = useState<string[]>(
+    () => [...DEFAULT_SECTION_NAMES]
+  )
+  const [editorKeys, setEditorKeys] = useState<number[]>(
+    () => Array.from({ length: DEFAULT_EDITOR_COUNT }, (_, i) => i)
+  )
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null)
   const editorsRef = useRef<Map<number, Editor>>(new Map())
-  const passageCounterRef = useRef(1)
-  const editorCountRef = useRef(1)
-  const editorKeyCounterRef = useRef(1)
+  const passageCounterRef = useRef(DEFAULT_EDITOR_COUNT)
+  const editorCountRef = useRef(DEFAULT_EDITOR_COUNT)
+  const editorKeyCounterRef = useRef(DEFAULT_EDITOR_COUNT)
 
   const addEditor = useCallback((opts?: { name?: string }): string => {
     if (editorCountRef.current >= 3) {

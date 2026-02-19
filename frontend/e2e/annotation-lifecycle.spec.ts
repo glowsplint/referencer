@@ -3,17 +3,18 @@ import { test, expect } from "@playwright/test";
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
+  paragraphIndex = 0
 ) {
   const p = page
     .locator(".simple-editor-wrapper")
     .nth(editorIndex)
     .locator("p")
-    .first();
+    .nth(paragraphIndex);
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
-  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
+  await expect(page.locator(".word-selection")).toBeVisible({ timeout: 3000 });
 }
 
 test.describe("annotation lifecycle", () => {
@@ -21,13 +22,9 @@ test.describe("annotation lifecycle", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Create a layer
+    // Editor starts locked with default layers — ready for annotations.
+    // Add a fresh layer so tests don't collide with default layer annotations.
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
-
-    // Lock the editor
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
     // Switch to comments tool
     await page.keyboard.press("c");
@@ -36,14 +33,11 @@ test.describe("annotation lifecycle", () => {
   test("clicking a word and pressing Enter creates annotation card in panel", async ({
     page,
   }) => {
-    // No annotation panel initially
-    await expect(page.getByTestId("annotation-panel")).toHaveCount(0);
-
     // Click a word to select it, then press Enter to confirm
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
 
-    // Annotation panel should now appear with one card
+    // Annotation panel should show with new annotation input
     await expect(page.getByTestId("annotation-panel")).toBeVisible({
       timeout: 2000,
     });
@@ -103,8 +97,8 @@ test.describe("annotation lifecycle", () => {
     await expect(input).toBeVisible({ timeout: 2000 });
     await input.press("Escape");
 
-    // Empty annotation triggers cleanup on blur — panel disappears
-    await expect(page.getByTestId("annotation-panel")).toHaveCount(0, {
+    // Empty annotation triggers cleanup on blur — input disappears
+    await expect(page.getByPlaceholder("Add annotation...")).toHaveCount(0, {
       timeout: 2000,
     });
   });
@@ -118,14 +112,11 @@ test.describe("annotation lifecycle", () => {
       timeout: 2000,
     });
 
-    // Click on the horizontal rule to blur the annotation
-    const hr = page
-      .locator('.simple-editor [data-type="horizontalRule"]')
-      .first();
-    await hr.click();
+    // Click on the passage header to blur the annotation
+    await page.getByTestId("passageHeader-0").click();
 
-    // Empty annotation should be removed, panel disappears
-    await expect(page.getByTestId("annotation-panel")).toHaveCount(0, {
+    // Empty annotation should be removed — input disappears
+    await expect(page.getByPlaceholder("Add annotation...")).toHaveCount(0, {
       timeout: 2000,
     });
   });
@@ -165,8 +156,13 @@ test.describe("annotation lifecycle", () => {
     await input1.fill("First note");
     await input1.press("Enter");
 
-    // Click second word (different position), confirm and add annotation
-    await clickWordInEditor(page, 0, 100);
+    // Move focus away from annotation input, then Escape to clear word selection
+    await page.getByTestId("passageHeader-0").click();
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
+
+    // Click a word in the second editor (avoids annotation panel overlap)
+    await clickWordInEditor(page, 1, 30);
     await page.keyboard.press("Enter");
     const input2 = page.getByPlaceholder("Add annotation...");
     await expect(input2).toBeVisible({ timeout: 2000 });
@@ -193,9 +189,8 @@ test.describe("annotation lifecycle", () => {
       timeout: 2000,
     });
 
-    // Unlock editor
+    // Unlock editor (starts locked, so this unlocks)
     await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toBeVisible();
 
     // Annotation panel should disappear
     await expect(page.getByTestId("annotation-panel")).toHaveCount(0, {

@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Instellingen",
+    "description": "Pas uw werkruimtevoorkeuren aan.",
+    "darkMode": {
+      "label": "Donkere modus",
+      "description": "Schakel tussen licht en donker thema"
+    },
+    "drawingNotifications": {
+      "label": "Tekenmeldingen",
+      "description": "Toon meldingen bij gebruik van het pijlgereedschap"
+    },
+    "commentsNotifications": {
+      "label": "Opmerkingsmeldingen",
+      "description": "Toon meldingen bij gebruik van het opmerkingsgereedschap"
+    },
+    "highlightNotifications": {
+      "label": "Markeringsmeldingen",
+      "description": "Toon meldingen bij gebruik van het markeringsgereedschap"
+    },
+    "overscroll": {
+      "label": "Overscrolling",
+      "description": "Sta elastisch terugveren toe bij het scrollen voorbij de randen"
+    },
+    "hideOffscreenArrows": {
+      "label": "Pijlen buiten beeld verbergen",
+      "description": "Pijlen volledig verbergen wanneer een eindpunt buiten het zichtbare gebied is gescrold"
+    },
+    "language": {
+      "label": "Taal",
+      "description": "Kies uw voorkeurstaal"
+    }
+  },
+  "faq": {
+    "title": "Veelgestelde Vragen",
+    "description": "Leer meer over Referencer en hoe u het kunt gebruiken.",
+    "items": {
+      "whatIsApp": {
+        "question": "Wat is deze app?",
+        "answer": "Referencer is een samenwerkingstool voor inductieve Bijbelstudie. Het biedt studiegroepen een gedeelde werkruimte waar ze samen Bijbelteksten kunnen lezen, annoteren en in realtime bespreken."
+      },
+      "inductiveStudy": {
+        "question": "Wat is inductieve Bijbelstudie?",
+        "answer": "Inductieve Bijbelstudie is een methode van Schriftlezing die verloopt van observatie (wat zegt de tekst?) naar interpretatie (wat betekent het?) naar toepassing (hoe pas ik het toe?). In plaats van te beginnen met extern commentaar, laat u de tekst voor zichzelf spreken door de woorden, structuur en context zorgvuldig te onderzoeken."
+      },
+      "collaboration": {
+        "question": "Hoe werkt samenwerking?",
+        "answer": "Elke werkruimte kan via een link met anderen worden gedeeld. Alle deelnemers zien dezelfde tekst en kunnen hun eigen annotaties toevoegen. Wijzigingen worden in realtime gesynchroniseerd zodat iedereen op dezelfde pagina blijft."
+      },
+      "layers": {
+        "question": "Wat zijn lagen?",
+        "answer": "Met lagen kunt u annotaties in aparte groepen organiseren — bijvoorbeeld een laag voor observaties en een andere voor interpretaties. U kunt met de L-toets tussen lagen wisselen om u op een groep annotaties tegelijk te richten."
+      },
+      "annotations": {
+        "question": "Hoe werken annotaties?",
+        "answer": "Vergrendel de editor met de vergrendelknop (of druk op K) en selecteer vervolgens tekst om deze te markeren. U kunt kleuren kiezen, opmerkingen toevoegen en pijlen tekenen tussen annotaties om verbanden te tonen. Klik op een bestaande annotatie om deze te verwijderen."
+      },
+      "arrows": {
+        "question": "Waar zijn pijlen voor?",
+        "answer": "Pijlen verbinden twee annotaties om een verband tussen passages te tonen — bijvoorbeeld om een herhaald woord te koppelen aan het eerste voorkomen, of een profetie te verbinden met de vervulling ervan. Selecteer het pijlgereedschap (of druk op A) en klik vervolgens op twee annotaties om een verbinding te tekenen."
+      },
+      "sharing": {
+        "question": "Hoe deel ik een werkruimte?",
+        "answer": "Open het beheerpaneel (druk op M of klik op het menupictogram) en gebruik de deelopties om een link te genereren. Iedereen met de link kan deelnemen aan de werkruimte en samenwerken."
+      },
+      "mobile": {
+        "question": "Kan ik dit op mijn telefoon gebruiken?",
+        "answer": "De app werkt in mobiele browsers, maar de volledige annotatie- en pijlgereedschappen zijn het best te gebruiken op een apparaat met toetsenbord en muis."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Sneltoetsen",
+    "description": "Beschikbare sneltoetsen voor de werkruimte.",
+    "workspace": "Werkruimte",
+    "cycleNextLayer": "Naar volgende laag wisselen",
+    "cyclePrevLayer": "Naar vorige laag wisselen",
+    "selectionTool": "Selectiegereedschap",
+    "arrowTool": "Pijlgereedschap",
+    "commentsTool": "Opmerkingsgereedschap",
+    "highlightTool": "Markeringsgereedschap",
+    "underlineTool": "Onderstrepingsgereedschap",
+    "eraserTool": "Gumgereedschap",
+    "navigateWords": "Tussen woorden navigeren",
+    "toggleConsole": "Actieconsole in-/uitschakelen",
+    "toggleDarkMode": "Donkere modus in-/uitschakelen",
+    "toggleLayout": "Editorindeling wisselen",
+    "toggleLock": "Editorvergrendeling in-/uitschakelen",
+    "toggleManagement": "Beheerpaneel in-/uitschakelen",
+    "textFormatting": "Tekstopmaak",
+    "bold": "Vet",
+    "italic": "Cursief",
+    "underline": "Onderstreept",
+    "strikethrough": "Doorgehaald",
+    "inlineCode": "Inline code",
+    "superscript": "Superscript",
+    "subscript": "Subscript",
+    "colorHighlight": "Kleurmarkering",
+    "general": "Algemeen",
+    "undo": "Ongedaan maken (werkruimte indien vergrendeld)",
+    "redo": "Opnieuw uitvoeren (werkruimte indien vergrendeld)",
+    "headings": "Koppen",
+    "heading": "Kop {{level}}",
+    "listsAndBlocks": "Lijsten en blokken",
+    "bulletList": "Opsommingslijst",
+    "orderedList": "Genummerde lijst",
+    "taskList": "Takenlijst",
+    "blockquote": "Citaat",
+    "codeBlock": "Codeblok",
+    "textAlignment": "Tekstuitlijning",
+    "alignLeft": "Links uitlijnen",
+    "alignCenter": "Centreren",
+    "alignRight": "Rechts uitlijnen",
+    "alignJustify": "Uitvullen"
+  },
+  "share": {
+    "title": "Werkruimte delen",
+    "description": "Kopieer een link om deze werkruimte te delen.",
+    "readonlyLink": "Alleen-lezen link",
+    "editLink": "Bewerkingslink",
+    "linkCopied": "Link gekopieerd naar klembord.",
+    "copyFailed": "Kan link niet kopieren."
+  },
+  "mobile": {
+    "title": "Het beste op desktop",
+    "description": "Referencer is ontworpen voor desktopgebruik met toetsenbord en muis. U kunt de inhoud hier wel lezen, maar bewerkings- en annotatiegereedschappen zijn niet beschikbaar op mobiele apparaten.",
+    "continueReading": "Verder lezen"
+  }
+}

@@ -68,8 +68,8 @@ async function drawArrowBetweenEditors(
   await page.mouse.click(tgtBox!.x + targetXOffset, tgtBox!.y + FIRST_LINE_Y_OFFSET);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
-  // Wait for tool to switch back to selection before returning
-  await expect(page.getByTestId("arrowToolButton")).not.toHaveClass(/(^|\s)bg-accent(\s|$)/, { timeout: 2000 });
+  // Wait for status bar flash confirming arrow was created
+  await page.waitForTimeout(300);
 }
 
 function parseArrowCoords(d: string): number[] {
@@ -81,17 +81,16 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    await page.getByTestId("addPassageButton").click();
-    await expect(page.locator(".simple-editor-wrapper")).toHaveCount(2);
+    // Hide default layers so their arrows/highlights don't interfere with tests
+    for (let i = 0; i < 4; i++) {
+      await page.getByTestId(`layerVisibility-${i}`).click();
+    }
 
+    // Editor starts locked with 2 passages and 4 default layers. Add a fresh layer.
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
 
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
-
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
   });
 
   test("hiding source passage hides same-editor arrow, re-showing restores it", async ({
@@ -191,8 +190,8 @@ test.describe("passage visibility with arrows (2 editors)", () => {
 
     await page.getByTestId("menuButton").click();
 
-    // Hide layer
-    await page.getByTestId("layerVisibility-0").click();
+    // Hide layer (index 4)
+    await page.getByTestId("layerVisibility-4").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -201,7 +200,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await page.getByTestId("sectionVisibility-0").click();
 
     // Show layer (section still hidden) — arrow should not appear
-    await page.getByTestId("layerVisibility-0").click();
+    await page.getByTestId("layerVisibility-4").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -290,24 +289,35 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    await page.getByTestId("addPassageButton").click();
+    // Hide default layers so their arrows/highlights don't interfere with tests
+    for (let i = 0; i < 4; i++) {
+      await page.getByTestId(`layerVisibility-${i}`).click();
+    }
+
+    // Editor starts locked with 2 passages and 4 default layers.
+    // Add one more passage for 3 total.
     await page.getByTestId("addPassageButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
 
-    await page.getByTestId("addLayerButton").click();
-    await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
-    await expect(page.getByTestId("layerName-1")).toHaveText("Layer 2");
+    // Unlock to type content in the empty 3rd editor, then re-lock
+    await page.getByTestId("lockButton").click();
+    const thirdEditor = page.locator(".simple-editor-wrapper").nth(2).locator(".ProseMirror");
+    await thirdEditor.click();
+    await page.keyboard.type("Alpha Beta Gamma Delta Epsilon Zeta Eta Theta");
+    await page.getByTestId("lockButton").click();
 
-    // Activate Layer 1
-    await page.getByTestId("layerName-0").click();
-    await expect(page.getByTestId("layerActiveTag-0")).toBeVisible();
+    // Add two fresh layers at indices 4 and 5.
+    await page.getByTestId("addLayerButton").click();
+    await page.getByTestId("addLayerButton").click();
+    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
+    await expect(page.getByTestId("layerName-5")).toHaveText("Layer 2");
+
+    // Activate Layer 1 (index 4)
+    await page.getByTestId("layerName-4").click();
+    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
 
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
-
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
   });
 
   test("hiding middle editor removes arrows to/from it, keeps E1-E3 arrow", async ({
@@ -499,8 +509,8 @@ test.describe("passage visibility with arrows (3 editors)", () => {
 
     await page.getByTestId("menuButton").click();
 
-    // Hide Layer 1 — only E2→E3 (Layer 2) remains
-    await page.getByTestId("layerVisibility-0").click();
+    // Hide Layer 1 (index 4) — only E2→E3 (Layer 2) remains
+    await page.getByTestId("layerVisibility-4").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -512,7 +522,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
 
     // Show Layer 1 (E2 still hidden) — E1→E2 can't show because E2 hidden
-    await page.getByTestId("layerVisibility-0").click();
+    await page.getByTestId("layerVisibility-4").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });

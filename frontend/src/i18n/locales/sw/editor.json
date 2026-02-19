@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Herufi nzito",
+    "italic": "Herufi za mlazo",
+    "underline": "Pigia mstari",
+    "strike": "Piga mstari katikati",
+    "code": "Msimbo",
+    "superscript": "Herufi za juu",
+    "subscript": "Herufi za chini"
+  },
+  "heading": {
+    "label": "Kichwa {{level}}"
+  },
+  "list": {
+    "bulletList": "Orodha ya Vitone",
+    "orderedList": "Orodha yenye Nambari",
+    "taskList": "Orodha ya Kazi",
+    "label": "Orodha"
+  },
+  "blockquote": {
+    "label": "Nukuu"
+  },
+  "codeBlock": {
+    "label": "Kizuizi cha Msimbo"
+  },
+  "link": {
+    "label": "Kiungo",
+    "placeholder": "Ingiza URL",
+    "openLink": "Fungua kiungo",
+    "copyLink": "Nakili kiungo",
+    "removeLink": "Ondoa kiungo"
+  },
+  "image": {
+    "label": "Ongeza picha"
+  },
+  "textAlign": {
+    "left": "Pangilia Kushoto",
+    "center": "Pangilia Katikati",
+    "right": "Pangilia Kulia",
+    "justify": "Pangilia Sawa"
+  },
+  "history": {
+    "undo": "Tendua",
+    "redo": "Rudia"
+  },
+  "colorHighlight": {
+    "label": "Angazia kwa rangi",
+    "highlightText": "Angazia maandishi",
+    "highlightColors": "Rangi za kuangazia",
+    "removeHighlight": "Ondoa uangaziaji",
+    "listOptions": "Chaguo za orodha",
+    "formatHeading": "Umbiza maandishi kama kichwa",
+    "colors": {
+      "default": "Mandhari asili",
+      "gray": "Mandhari ya kijivu",
+      "brown": "Mandhari ya kahawia",
+      "orange": "Mandhari ya chungwa",
+      "yellow": "Mandhari ya njano",
+      "green": "Mandhari ya kijani",
+      "blue": "Mandhari ya buluu",
+      "purple": "Mandhari ya zambarau",
+      "pink": "Mandhari ya waridi",
+      "red": "Mandhari ya nyekundu"
+    },
+    "toggleHighlight": "Geuza uangaziaji ({{color}})"
+  }
+}

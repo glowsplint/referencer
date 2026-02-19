@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Ayarlar",
+    "description": "Calisma alani tercihlerinizi ozellestirin.",
+    "darkMode": {
+      "label": "Karanlik mod",
+      "description": "Acik ve karanlik temalar arasinda gecis yapin"
+    },
+    "drawingNotifications": {
+      "label": "Cizim bildirimleri",
+      "description": "Ok araci kullanilirken bildirim goster"
+    },
+    "commentsNotifications": {
+      "label": "Yorum bildirimleri",
+      "description": "Yorum araci kullanilirken bildirim goster"
+    },
+    "highlightNotifications": {
+      "label": "Vurgulama bildirimleri",
+      "description": "Vurgulama araci kullanilirken bildirim goster"
+    },
+    "overscroll": {
+      "label": "Asiri kayma",
+      "description": "Kenarlari gectiginde esnek sekme efektine izin ver"
+    },
+    "hideOffscreenArrows": {
+      "label": "Ekran disi oklari gizle",
+      "description": "Bir uc noktasi gorunur alandan disari kaydirildiginda oklari tamamen gizle"
+    },
+    "language": {
+      "label": "Dil",
+      "description": "Tercih ettiginiz dili secin"
+    }
+  },
+  "faq": {
+    "title": "Sikca Sorulan Sorular",
+    "description": "Referencer hakkinda bilgi edinin ve nasil kullanilacagini ogrenin.",
+    "items": {
+      "whatIsApp": {
+        "question": "Bu uygulama nedir?",
+        "answer": "Referencer, tumevarimsal Kutsal Kitap calismasi icin isbirlikci bir aractir. Calisma gruplarina Kutsal Yazilar'i birlikte okuyabilecekleri, aciklama ekleyebilecekleri ve tartisabilecekleri ortak bir calisma alani sunar."
+      },
+      "inductiveStudy": {
+        "question": "Tumevarimsal Kutsal Kitap calismasi nedir?",
+        "answer": "Tumevarimsal Kutsal Kitap calismasi, gozlemden (metin ne diyor?) yoruma (ne anlama geliyor?) ve uygulamaya (nasil uygulanir?) ilerleyen bir Kutsal Yazi okuma yontemidir. Dis kaynaklardan baslamak yerine, kelimeleri, yapisi ve baglamini dikkatlice inceleyerek metnin kendisinin konusmasina izin verilir."
+      },
+      "collaboration": {
+        "question": "Isbirligi nasil calisir?",
+        "answer": "Her calisma alani bir baglanti araciligiyla baskalariyla paylasilabilir. Tum katilimcilar ayni metni gorur ve kendi aciklamalarini ekleyebilir. Degisiklikler anlik olarak senkronize edilir, boylece herkes ayni sayfada kalir."
+      },
+      "layers": {
+        "question": "Katmanlar nedir?",
+        "answer": "Katmanlar, aciklamalari ayri gruplara duzenlemenizi saglar — ornegin gozlemler icin bir katman, yorumlar icin baska bir katman. Bir seferde tek bir aciklama grubuna odaklanmak icin L tusuyla katmanlar arasinda gecis yapabilirsiniz."
+      },
+      "annotations": {
+        "question": "Aciklamalar nasil calisir?",
+        "answer": "Duzenleyiciyi kilit dugmesiyle (veya K tusuna basarak) kilitleyin, ardindan vurgulamak icin metin secin. Renkler secebilir, yorum ekleyebilir ve baglantilar gostermek icin aciklamalar arasinda oklar cizebilirsiniz. Mevcut bir aciklamayi kaldirmak icin uzerine tiklayin."
+      },
+      "arrows": {
+        "question": "Oklar ne icin kullanilir?",
+        "answer": "Oklar, pasajlar arasindaki iliskiyi gostermek icin iki aciklamayi birbirine baglar — ornegin tekrarlanan bir kelimeyi ilk gecisine baglamak veya bir kehanetle gerceklesmesini iliskilendirmek icin. Ok aracini secin (veya A tusuna basin), ardindan bir baglayici cizmek icin iki aciklamaya tiklayin."
+      },
+      "sharing": {
+        "question": "Calisma alanini nasil paylasabilirim?",
+        "answer": "Yonetim panelini acin (M tusuna basin veya menu simgesine tiklayin) ve bir baglanti olusturmak icin paylasim seceneklerini kullanin. Baglantiya sahip olan herkes calisma alanina katilabilir ve isbirligi yapabilir."
+      },
+      "mobile": {
+        "question": "Bunu mobil cihazda kullanabilir miyim?",
+        "answer": "Uygulama mobil tarayicilarda calisir, ancak tam aciklama ve ok araclari en iyi klavye ve fareye sahip bir cihazda deneyimlenir."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Klavye Kisayollari",
+    "description": "Calisma alani icin mevcut klavye kisayollari.",
+    "workspace": "Calisma Alani",
+    "cycleNextLayer": "Sonraki katmana gec",
+    "cyclePrevLayer": "Onceki katmana gec",
+    "selectionTool": "Secim araci",
+    "arrowTool": "Ok araci",
+    "commentsTool": "Yorum araci",
+    "highlightTool": "Vurgulama araci",
+    "underlineTool": "Alti cizgi araci",
+    "eraserTool": "Silgi araci",
+    "navigateWords": "Kelimeler arasinda gezin",
+    "toggleConsole": "Eylem konsolunu ac/kapat",
+    "toggleDarkMode": "Karanlik modu ac/kapat",
+    "toggleLayout": "Duzenleyici yerlesimini degistir",
+    "toggleLock": "Duzenleyici kilidini ac/kapat",
+    "toggleManagement": "Yonetim panelini ac/kapat",
+    "textFormatting": "Metin Bicimlendirme",
+    "bold": "Kalin",
+    "italic": "Italik",
+    "underline": "Alti cizili",
+    "strikethrough": "Ustu cizili",
+    "inlineCode": "Satir ici kod",
+    "superscript": "Ust simge",
+    "subscript": "Alt simge",
+    "colorHighlight": "Renkli vurgulama",
+    "general": "Genel",
+    "undo": "Geri al (kilitliyken calisma alani)",
+    "redo": "Yinele (kilitliyken calisma alani)",
+    "headings": "Basliklar",
+    "heading": "Baslik {{level}}",
+    "listsAndBlocks": "Listeler ve Bloklar",
+    "bulletList": "Madde isareti listesi",
+    "orderedList": "Numarali liste",
+    "taskList": "Gorev listesi",
+    "blockquote": "Alinti blogu",
+    "codeBlock": "Kod blogu",
+    "textAlignment": "Metin Hizalama",
+    "alignLeft": "Sola hizala",
+    "alignCenter": "Ortaya hizala",
+    "alignRight": "Saga hizala",
+    "alignJustify": "Iki yana yasla"
+  },
+  "share": {
+    "title": "Calisma alanini paylas",
+    "description": "Bu calisma alanini paylasmak icin bir baglanti kopyalayin.",
+    "readonlyLink": "Salt okunur baglanti",
+    "editLink": "Duzenleme baglantisi",
+    "linkCopied": "Baglanti panoya kopyalandi.",
+    "copyFailed": "Baglanti kopyalanamadi."
+  },
+  "mobile": {
+    "title": "Masaustunde En Iyi",
+    "description": "Referencer, klavye ve fare ile masaustu kullanimi icin tasarlanmistir. Icerigi burada okuyabilirsiniz, ancak duzenleme ve aciklama araclari mobil cihazlarda kullanilamaz.",
+    "continueReading": "Okumaya Devam Et"
+  }
+}

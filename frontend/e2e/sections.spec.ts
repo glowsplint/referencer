@@ -5,14 +5,15 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByTestId("managementPane")).toBeVisible();
 });
 
-test("shows one passage by default", async ({ page }) => {
-  await expect(page.getByTestId("passageName-0")).toHaveText("Passage 1");
+test("shows two passages by default", async ({ page }) => {
+  await expect(page.getByTestId("passageName-0")).toHaveText("1 Corinthians 1:18\u201331");
+  await expect(page.getByTestId("passageName-1")).toHaveText("1 Corinthians 2:6\u201316");
 });
 
-test("add passage creates a second passage", async ({ page }) => {
+test("add passage creates a third passage", async ({ page }) => {
   await page.getByTestId("addPassageButton").click();
-  await expect(page.getByTestId("passageName-1")).toBeVisible();
-  await expect(page.getByTestId("passageName-1")).toHaveText("Passage 2");
+  await expect(page.getByTestId("passageName-2")).toBeVisible();
+  await expect(page.getByTestId("passageName-2")).toHaveText("Passage 3");
 });
 
 test("double-click passage name enters edit mode and rename", async ({ page }) => {
@@ -35,7 +36,7 @@ test("section visibility toggle changes title", async ({ page }) => {
   await expect(toggle).toHaveAttribute("title", "Show passage");
 });
 
-test("adding a passage creates a second editor pane", async ({ page }) => {
+test("adding a passage creates an additional editor pane", async ({ page }) => {
   const editorsBefore = await page.locator(".simple-editor-wrapper").count();
   await page.getByTestId("addPassageButton").click();
   const editorsAfter = await page.locator(".simple-editor-wrapper").count();

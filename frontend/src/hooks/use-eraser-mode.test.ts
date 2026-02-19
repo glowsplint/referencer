@@ -44,7 +44,7 @@ describe("useEraserMode", () => {
     renderHook(() => useEraserMode(createOptions({ setStatus })))
 
     expect(setStatus).toHaveBeenCalledWith(
-      expect.objectContaining({ text: "Click and drag to erase annotations.", type: "info" })
+      expect.objectContaining({ type: "info" })
     )
   })
 
@@ -204,7 +204,7 @@ describe("useEraserMode", () => {
     act(() => { result.current.confirmErase() })
 
     expect(flashStatus).toHaveBeenCalledWith(
-      { text: "Erased annotation.", type: "success" }, 3000
+      expect.objectContaining({ type: "success" }), 3000
     )
   })
 

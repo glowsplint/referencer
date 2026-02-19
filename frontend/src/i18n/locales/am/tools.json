@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "የመምረጫ መሣሪያ",
+    "defaultStatus": "ቃል ጠቅ ያድርጉ ወይም የቀስት ቁልፎችን ተጠቅመው ይዳስሱ።"
+  },
+  "arrow": {
+    "label": "የቀስት መሣሪያ",
+    "selectAnchor": "ለመነሻ ቃላት ይምረጡ፣ ከዚያ <kbd>Enter</kbd> ይጫኑ።",
+    "selectTarget": "አሁን ዒላማውን ይምረጡ እና <kbd>Enter</kbd> ይጫኑ።",
+    "created": "ቀስት ተፈጠረ።"
+  },
+  "highlight": {
+    "label": "የማድመቂያ መሣሪያ",
+    "selectWords": "የሚያድምቋቸውን ቃላት ይምረጡ፣ ከዚያ <kbd>Enter</kbd> ይጫኑ።",
+    "added": "ማድመቂያ ተጨመረ።",
+    "removed": "ማድመቂያ ተወገደ።"
+  },
+  "comments": {
+    "label": "የአስተያየት መሣሪያ",
+    "selectWords": "አስተያየት የሚሰጡባቸውን ቃላት ይምረጡ፣ ከዚያ <kbd>Enter</kbd> ይጫኑ።",
+    "added": "አስተያየት ተጨመረ።"
+  },
+  "underline": {
+    "label": "የመስመር መሣሪያ",
+    "selectWords": "ከስር የሚያስመሩባቸውን ቃላት ይምረጡ፣ ከዚያ <kbd>Enter</kbd> ይጫኑ።",
+    "added": "ከስር መስመር ተጨመረ።"
+  },
+  "eraser": {
+    "label": "ማጥፊያ",
+    "status": "ማብራሪያዎችን ለማጥፋት ጠቅ ያድርጉ እና ይጎትቱ።",
+    "erased": "ማብራሪያ ተጠፋ።"
+  },
+  "lockHint": "ይዘቱን ከጨረሱ በኋላ አርታዒውን ለመቆለፍ <kbd>Esc</kbd> <kbd>K</kbd> ይጫኑ።"
+}

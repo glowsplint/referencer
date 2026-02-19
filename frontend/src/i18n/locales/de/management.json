@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Ebenen",
+    "addLayer": "Ebene hinzufügen",
+    "hideAll": "Alle Ebenen ausblenden",
+    "showAll": "Alle Ebenen anzeigen",
+    "hideLayer": "Ebene ausblenden",
+    "showLayer": "Ebene anzeigen",
+    "changeColour": "Farbe ändern",
+    "removeAnnotation": "Anmerkung entfernen",
+    "removeArrow": "Pfeil entfernen",
+    "removeUnderline": "Unterstreichung entfernen",
+    "allColorsInUse": "Alle Farben sind vergeben — entfernen Sie zuerst eine Ebene."
+  },
+  "passages": {
+    "title": "Abschnitte",
+    "addPassage": "Abschnitt hinzufügen",
+    "hideAll": "Alle Abschnitte ausblenden",
+    "showAll": "Alle Abschnitte anzeigen",
+    "hidePassage": "Abschnitt ausblenden",
+    "showPassage": "Abschnitt anzeigen"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Verwaltungspanel ein-/ausblenden",
+    "keyboardShortcuts": "Tastenkürzel",
+    "helpFaq": "Hilfe & FAQ",
+    "settings": "Einstellungen",
+    "toggleEditorLayout": "Editorlayout umschalten",
+    "toggleEditorLock": "Editorsperre umschalten"
+  },
+  "annotations": {
+    "placeholder": "Anmerkung hinzufügen...",
+    "removeCustomColour": "Benutzerdefinierte Farbe entfernen",
+    "addCustomColour": "Benutzerdefinierte Farbe hinzufügen",
+    "addToCustomColours": "Zu benutzerdefinierten Farben hinzufügen"
+  },
+  "actionConsole": {
+    "title": "Aktionskonsole",
+    "close": "Schließen",
+    "empty": "Noch keine Aktionen aufgezeichnet."
+  }
+}

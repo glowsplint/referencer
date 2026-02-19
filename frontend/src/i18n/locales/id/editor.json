@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Tebal",
+    "italic": "Miring",
+    "underline": "Garis bawah",
+    "strike": "Coret",
+    "code": "Kode",
+    "superscript": "Superskrip",
+    "subscript": "Subskrip"
+  },
+  "heading": {
+    "label": "Judul {{level}}"
+  },
+  "list": {
+    "bulletList": "Daftar Berpoin",
+    "orderedList": "Daftar Bernomor",
+    "taskList": "Daftar Tugas",
+    "label": "Daftar"
+  },
+  "blockquote": {
+    "label": "Kutipan Blok"
+  },
+  "codeBlock": {
+    "label": "Blok Kode"
+  },
+  "link": {
+    "label": "Tautan",
+    "placeholder": "Masukkan URL",
+    "openLink": "Buka tautan",
+    "copyLink": "Salin tautan",
+    "removeLink": "Hapus tautan"
+  },
+  "image": {
+    "label": "Tambah gambar"
+  },
+  "textAlign": {
+    "left": "Rata Kiri",
+    "center": "Rata Tengah",
+    "right": "Rata Kanan",
+    "justify": "Rata Kiri-Kanan"
+  },
+  "history": {
+    "undo": "Urungkan",
+    "redo": "Ulangi"
+  },
+  "colorHighlight": {
+    "label": "Sorotan warna",
+    "highlightText": "Sorot teks",
+    "highlightColors": "Warna sorotan",
+    "removeHighlight": "Hapus sorotan",
+    "listOptions": "Opsi daftar",
+    "formatHeading": "Format teks sebagai judul",
+    "colors": {
+      "default": "Latar belakang default",
+      "gray": "Latar belakang abu-abu",
+      "brown": "Latar belakang cokelat",
+      "orange": "Latar belakang oranye",
+      "yellow": "Latar belakang kuning",
+      "green": "Latar belakang hijau",
+      "blue": "Latar belakang biru",
+      "purple": "Latar belakang ungu",
+      "pink": "Latar belakang merah muda",
+      "red": "Latar belakang merah"
+    },
+    "toggleHighlight": "Alihkan sorotan ({{color}})"
+  }
+}

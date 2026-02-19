@@ -16,11 +16,12 @@ describe("useSettings", () => {
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: false,
+      isLocked: true,
       showDrawingToasts: true,
       showCommentsToasts: true,
       showHighlightToasts: true,
       overscrollEnabled: false,
+      hideOffscreenArrows: false,
     })
   })
 
@@ -59,7 +60,7 @@ describe("useSettings", () => {
     const { result } = renderHook(() => useSettings())
 
     act(() => { result.current.toggleLocked() })
-    expect(result.current.settings.isLocked).toBe(true)
+    expect(result.current.settings.isLocked).toBe(false)
   })
 
   it("setActiveTool changes the active tool", () => {
@@ -106,11 +107,12 @@ describe("useSettings", () => {
 
     expect(result.current.settings.isLayersOn).toBe(false)
     expect(result.current.settings.isMultipleRowsLayout).toBe(false)
-    expect(result.current.settings.isLocked).toBe(false)
+    expect(result.current.settings.isLocked).toBe(true)
     expect(result.current.settings.showDrawingToasts).toBe(true)
     expect(result.current.settings.showCommentsToasts).toBe(true)
     expect(result.current.settings.showHighlightToasts).toBe(true)
     expect(result.current.settings.overscrollEnabled).toBe(false)
+    expect(result.current.settings.hideOffscreenArrows).toBe(false)
   })
 
   it("toggleShowHighlightToasts toggles showHighlightToasts", () => {
@@ -177,11 +179,12 @@ describe("useSettings", () => {
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: false,
+      isLocked: true,
       showDrawingToasts: true,
       showCommentsToasts: true,
       showHighlightToasts: true,
       overscrollEnabled: false,
+      hideOffscreenArrows: false,
     })
   })
 
@@ -198,6 +201,19 @@ describe("useSettings", () => {
     expect(result.current.settings.showCommentsToasts).toBe(true)
     expect(result.current.settings.showHighlightToasts).toBe(true)
     expect(result.current.settings.overscrollEnabled).toBe(false)
+    expect(result.current.settings.hideOffscreenArrows).toBe(false)
+  })
+
+  it("toggleHideOffscreenArrows toggles hideOffscreenArrows", () => {
+    const { result } = renderHook(() => useSettings())
+
+    expect(result.current.settings.hideOffscreenArrows).toBe(false)
+
+    act(() => { result.current.toggleHideOffscreenArrows() })
+    expect(result.current.settings.hideOffscreenArrows).toBe(true)
+
+    act(() => { result.current.toggleHideOffscreenArrows() })
+    expect(result.current.settings.hideOffscreenArrows).toBe(false)
   })
 
   it("applies dark mode class on mount from persisted settings", () => {

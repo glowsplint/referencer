@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Markeringsverktyg",
+    "defaultStatus": "Klicka på ett ord eller använd piltangenterna för att navigera."
+  },
+  "arrow": {
+    "label": "Pilverktyg",
+    "selectAnchor": "Markera ord för ankaret och tryck sedan på <kbd>Enter</kbd>.",
+    "selectTarget": "Markera nu målet och tryck på <kbd>Enter</kbd>.",
+    "created": "Pil skapad."
+  },
+  "highlight": {
+    "label": "Markeringsverktyg",
+    "selectWords": "Markera ord att färgmarkera och tryck sedan på <kbd>Enter</kbd>.",
+    "added": "Markering tillagd.",
+    "removed": "Markering borttagen."
+  },
+  "comments": {
+    "label": "Kommentarverktyg",
+    "selectWords": "Markera ord att kommentera och tryck sedan på <kbd>Enter</kbd>.",
+    "added": "Kommentar tillagd."
+  },
+  "underline": {
+    "label": "Understrykningsverktyg",
+    "selectWords": "Markera ord att stryka under och tryck sedan på <kbd>Enter</kbd>.",
+    "added": "Understrykning tillagd."
+  },
+  "eraser": {
+    "label": "Suddverktyg",
+    "status": "Klicka och dra för att radera anteckningar.",
+    "erased": "Anteckning raderad."
+  },
+  "lockHint": "Tryck på <kbd>Esc</kbd> <kbd>K</kbd> för att låsa redigeraren när du är klar med innehållet."
+}

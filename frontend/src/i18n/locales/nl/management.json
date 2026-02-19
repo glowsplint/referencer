@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Lagen",
+    "addLayer": "Laag toevoegen",
+    "hideAll": "Alle lagen verbergen",
+    "showAll": "Alle lagen tonen",
+    "hideLayer": "Laag verbergen",
+    "showLayer": "Laag tonen",
+    "changeColour": "Kleur wijzigen",
+    "removeAnnotation": "Annotatie verwijderen",
+    "removeArrow": "Pijl verwijderen",
+    "removeUnderline": "Onderstreping verwijderen",
+    "allColorsInUse": "Alle kleuren zijn in gebruik — verwijder eerst een laag."
+  },
+  "passages": {
+    "title": "Passages",
+    "addPassage": "Passage toevoegen",
+    "hideAll": "Alle passages verbergen",
+    "showAll": "Alle passages tonen",
+    "hidePassage": "Passage verbergen",
+    "showPassage": "Passage tonen"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Beheerpaneel in-/uitschakelen",
+    "keyboardShortcuts": "Sneltoetsen",
+    "helpFaq": "Help en FAQ",
+    "settings": "Instellingen",
+    "toggleEditorLayout": "Editorindeling wisselen",
+    "toggleEditorLock": "Editorvergrendeling in-/uitschakelen"
+  },
+  "annotations": {
+    "placeholder": "Annotatie toevoegen...",
+    "removeCustomColour": "Aangepaste kleur verwijderen",
+    "addCustomColour": "Aangepaste kleur toevoegen",
+    "addToCustomColours": "Aan aangepaste kleuren toevoegen"
+  },
+  "actionConsole": {
+    "title": "Actieconsole",
+    "close": "Sluiten",
+    "empty": "Nog geen acties vastgelegd."
+  }
+}

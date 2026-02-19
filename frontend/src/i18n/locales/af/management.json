@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Lae",
+    "addLayer": "Voeg laag by",
+    "hideAll": "Versteek alle lae",
+    "showAll": "Wys alle lae",
+    "hideLayer": "Versteek laag",
+    "showLayer": "Wys laag",
+    "changeColour": "Verander kleur",
+    "removeAnnotation": "Verwyder aantekening",
+    "removeArrow": "Verwyder pyltjie",
+    "removeUnderline": "Verwyder onderstreping",
+    "allColorsInUse": "Alle kleure is in gebruik — verwyder eers 'n laag."
+  },
+  "passages": {
+    "title": "Gedeeltes",
+    "addPassage": "Voeg gedeelte by",
+    "hideAll": "Versteek alle gedeeltes",
+    "showAll": "Wys alle gedeeltes",
+    "hidePassage": "Versteek gedeelte",
+    "showPassage": "Wys gedeelte"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Wissel bestuurspaneel",
+    "keyboardShortcuts": "Sleutelbordkortpaaie",
+    "helpFaq": "Hulp & Gereelde Vrae",
+    "settings": "Instellings",
+    "toggleEditorLayout": "Wissel redigeerder-uitleg",
+    "toggleEditorLock": "Wissel redigeerder-slot"
+  },
+  "annotations": {
+    "placeholder": "Voeg aantekening by...",
+    "removeCustomColour": "Verwyder pasgemaakte kleur",
+    "addCustomColour": "Voeg pasgemaakte kleur by",
+    "addToCustomColours": "Voeg by pasgemaakte kleure"
+  },
+  "actionConsole": {
+    "title": "Aksiekonsole",
+    "close": "sluit",
+    "empty": "Nog geen aksies aangeteken nie."
+  }
+}

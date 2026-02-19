@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Inställningar",
+    "description": "Anpassa dina arbetsyteinställningar.",
+    "darkMode": {
+      "label": "Mörkt läge",
+      "description": "Växla mellan ljust och mörkt tema"
+    },
+    "drawingNotifications": {
+      "label": "Ritaviseringar",
+      "description": "Visa aviseringar när pilverktyget används"
+    },
+    "commentsNotifications": {
+      "label": "Kommentaraviseringar",
+      "description": "Visa aviseringar när kommentarverktyget används"
+    },
+    "highlightNotifications": {
+      "label": "Markeringsaviseringar",
+      "description": "Visa aviseringar när markeringsverktyget används"
+    },
+    "overscroll": {
+      "label": "Överrullning",
+      "description": "Tillåt elastisk studs vid rullning förbi kanterna"
+    },
+    "hideOffscreenArrows": {
+      "label": "Dölj pilar utanför skärmen",
+      "description": "Dölj pilar helt när någon ändpunkt har rullats utanför synfältet"
+    },
+    "language": {
+      "label": "Språk",
+      "description": "Välj ditt föredragna språk"
+    }
+  },
+  "faq": {
+    "title": "Vanliga frågor",
+    "description": "Lär dig om Referencer och hur du använder det.",
+    "items": {
+      "whatIsApp": {
+        "question": "Vad är den här appen?",
+        "answer": "Referencer är ett samarbetsverktyg för induktivt bibelstudium. Det ger studiegrupper en delad arbetsyta där de kan läsa, anteckna och diskutera Skriften tillsammans i realtid."
+      },
+      "inductiveStudy": {
+        "question": "Vad är induktivt bibelstudium?",
+        "answer": "Induktivt bibelstudium är en metod för att läsa Skriften som går från observation (vad säger texten?) till tolkning (vad betyder det?) till tillämpning (hur tillämpas det?). Istället för att börja med extern kommentar låter du texten tala för sig själv genom att noggrant undersöka dess ord, struktur och sammanhang."
+      },
+      "collaboration": {
+        "question": "Hur fungerar samarbete?",
+        "answer": "Varje arbetsyta kan delas med andra via en länk. Alla deltagare ser samma text och kan lägga till sina egna anteckningar. Ändringar synkroniseras i realtid så att alla hålls uppdaterade."
+      },
+      "layers": {
+        "question": "Vad är lager?",
+        "answer": "Lager låter dig organisera anteckningar i separata grupper — till exempel ett lager för observationer och ett annat för tolkningar. Du kan växla mellan lager med L-tangenten för att fokusera på en uppsättning anteckningar i taget."
+      },
+      "annotations": {
+        "question": "Hur fungerar anteckningar?",
+        "answer": "Lås redigeraren med låsknappen (eller tryck K), markera sedan text för att färgmarkera den. Du kan välja färger, lägga till kommentarer och rita pilar mellan anteckningar för att visa samband. Klicka på en befintlig anteckning för att ta bort den."
+      },
+      "arrows": {
+        "question": "Vad används pilar till?",
+        "answer": "Pilar kopplar samman två anteckningar för att visa ett samband mellan avsnitt — till exempel att länka ett upprepat ord till dess första förekomst, eller koppla en profetia till dess uppfyllelse. Välj pilverktyget (eller tryck A) och klicka sedan på två anteckningar för att rita en koppling."
+      },
+      "sharing": {
+        "question": "Hur delar jag en arbetsyta?",
+        "answer": "Öppna hanteringspanelen (tryck M eller klicka på menyikonen) och använd delningsalternativen för att skapa en länk. Alla med länken kan gå med i arbetsytan och samarbeta."
+      },
+      "mobile": {
+        "question": "Kan jag använda detta på mobilen?",
+        "answer": "Appen fungerar i mobilwebbläsare, men de fullständiga antecknings- och pilverktygen upplevs bäst på en enhet med tangentbord och mus."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Tangentbordsgenvägar",
+    "description": "Tillgängliga tangentbordsgenvägar för arbetsytan.",
+    "workspace": "Arbetsyta",
+    "cycleNextLayer": "Växla till nästa lager",
+    "cyclePrevLayer": "Växla till föregående lager",
+    "selectionTool": "Markeringsverktyg",
+    "arrowTool": "Pilverktyg",
+    "commentsTool": "Kommentarverktyg",
+    "highlightTool": "Markeringsverktyg",
+    "underlineTool": "Understrykningsverktyg",
+    "eraserTool": "Suddverktyg",
+    "navigateWords": "Navigera mellan ord",
+    "toggleConsole": "Växla åtgärdskonsol",
+    "toggleDarkMode": "Växla mörkt läge",
+    "toggleLayout": "Växla redigeringslayout",
+    "toggleLock": "Växla redigeringslås",
+    "toggleManagement": "Växla hanteringspanel",
+    "textFormatting": "Textformatering",
+    "bold": "Fetstil",
+    "italic": "Kursiv",
+    "underline": "Understrykning",
+    "strikethrough": "Genomstrykning",
+    "inlineCode": "Inline-kod",
+    "superscript": "Upphöjd",
+    "subscript": "Nedsänkt",
+    "colorHighlight": "Färgmarkering",
+    "general": "Allmänt",
+    "undo": "Ångra (arbetsyta när låst)",
+    "redo": "Gör om (arbetsyta när låst)",
+    "headings": "Rubriker",
+    "heading": "Rubrik {{level}}",
+    "listsAndBlocks": "Listor & block",
+    "bulletList": "Punktlista",
+    "orderedList": "Numrerad lista",
+    "taskList": "Uppgiftslista",
+    "blockquote": "Blockcitat",
+    "codeBlock": "Kodblock",
+    "textAlignment": "Textjustering",
+    "alignLeft": "Vänsterjustera",
+    "alignCenter": "Centrera",
+    "alignRight": "Högerjustera",
+    "alignJustify": "Marginaljustera"
+  },
+  "share": {
+    "title": "Dela arbetsyta",
+    "description": "Kopiera en länk för att dela denna arbetsyta.",
+    "readonlyLink": "Skrivskyddad länk",
+    "editLink": "Redigeringslänk",
+    "linkCopied": "Länk kopierad till urklipp.",
+    "copyFailed": "Kunde inte kopiera länken."
+  },
+  "mobile": {
+    "title": "Bäst på dator",
+    "description": "Referencer är utformad för datoranvändning med tangentbord och mus. Du kan fortfarande läsa innehållet här, men redigerings- och anteckningsverktygen är inte tillgängliga på mobilen.",
+    "continueReading": "Fortsätt läsa"
+  }
+}

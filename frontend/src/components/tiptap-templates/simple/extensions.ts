@@ -11,6 +11,7 @@ import { Highlight } from "@tiptap/extension-highlight"
 import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
 import { Selection } from "@tiptap/extensions"
+import Placeholder from "@tiptap/extension-placeholder"
 
 import { LayerHighlightsExtension } from "@/lib/tiptap/extensions/layer-highlights"
 import { LayerUnderlineExtension } from "@/lib/tiptap/extensions/layer-underlines"
@@ -49,6 +50,9 @@ export function createSimpleEditorExtensions() {
     SimilarTextHighlightsExtension,
     WordHoverExtension,
     ArrowLinesExtension,
+    Placeholder.configure({
+      placeholder: "Paste or type your passage here\u2026",
+    }),
     ImageUploadNode.configure({
       accept: "image/*",
       maxSize: MAX_FILE_SIZE,

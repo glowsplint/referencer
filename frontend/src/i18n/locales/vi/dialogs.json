@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Cài đặt",
+    "description": "Tùy chỉnh các thiết lập không gian làm việc của bạn.",
+    "darkMode": {
+      "label": "Chế độ tối",
+      "description": "Chuyển đổi giữa giao diện sáng và tối"
+    },
+    "drawingNotifications": {
+      "label": "Thông báo vẽ",
+      "description": "Hiển thị thông báo khi sử dụng công cụ mũi tên"
+    },
+    "commentsNotifications": {
+      "label": "Thông báo bình luận",
+      "description": "Hiển thị thông báo khi sử dụng công cụ bình luận"
+    },
+    "highlightNotifications": {
+      "label": "Thông báo đánh dấu",
+      "description": "Hiển thị thông báo khi sử dụng công cụ đánh dấu"
+    },
+    "overscroll": {
+      "label": "Cuộn quá giới hạn",
+      "description": "Cho phép hiệu ứng nảy khi cuộn qua mép"
+    },
+    "hideOffscreenArrows": {
+      "label": "Ẩn mũi tên ngoài màn hình",
+      "description": "Ẩn hoàn toàn mũi tên khi một trong hai điểm đầu cuối bị cuộn ra ngoài vùng hiển thị"
+    },
+    "language": {
+      "label": "Ngôn ngữ",
+      "description": "Chọn ngôn ngữ ưa thích của bạn"
+    }
+  },
+  "faq": {
+    "title": "Câu hỏi thường gặp",
+    "description": "Tìm hiểu về Referencer và cách sử dụng.",
+    "items": {
+      "whatIsApp": {
+        "question": "Ứng dụng này là gì?",
+        "answer": "Referencer là một công cụ cộng tác để nghiên cứu Kinh Thánh theo phương pháp quy nạp. Nó cung cấp cho các nhóm học một không gian làm việc chung để đọc, chú thích và thảo luận Kinh Thánh cùng nhau trong thời gian thực."
+      },
+      "inductiveStudy": {
+        "question": "Nghiên cứu Kinh Thánh quy nạp là gì?",
+        "answer": "Nghiên cứu Kinh Thánh quy nạp là phương pháp đọc Kinh Thánh đi từ quan sát (bản văn nói gì?) đến giải nghĩa (nó có nghĩa gì?) đến ứng dụng (áp dụng như thế nào?). Thay vì bắt đầu với các bình giải bên ngoài, bạn để bản văn tự nói lên ý nghĩa bằng cách xem xét kỹ từ ngữ, cấu trúc và ngữ cảnh."
+      },
+      "collaboration": {
+        "question": "Cộng tác hoạt động như thế nào?",
+        "answer": "Mỗi không gian làm việc có thể được chia sẻ với người khác qua liên kết. Tất cả người tham gia đều thấy cùng một văn bản và có thể thêm chú thích của riêng mình. Các thay đổi được đồng bộ trong thời gian thực để mọi người luôn cập nhật."
+      },
+      "layers": {
+        "question": "Lớp là gì?",
+        "answer": "Lớp cho phép bạn sắp xếp các chú thích thành các nhóm riêng biệt — ví dụ, một lớp cho quan sát và lớp khác cho giải nghĩa. Bạn có thể chuyển đổi giữa các lớp bằng phím L để tập trung vào một nhóm chú thích tại một thời điểm."
+      },
+      "annotations": {
+        "question": "Chú thích hoạt động như thế nào?",
+        "answer": "Khóa trình soạn thảo bằng nút khóa (hoặc nhấn K), sau đó chọn văn bản để đánh dấu. Bạn có thể chọn màu, thêm bình luận và vẽ mũi tên giữa các chú thích để thể hiện mối liên hệ. Nhấp vào chú thích hiện có để xóa nó."
+      },
+      "arrows": {
+        "question": "Mũi tên dùng để làm gì?",
+        "answer": "Mũi tên kết nối hai chú thích để thể hiện mối quan hệ giữa các đoạn văn — ví dụ, liên kết một từ lặp lại với lần xuất hiện đầu tiên, hoặc kết nối một lời tiên tri với sự ứng nghiệm. Chọn công cụ mũi tên (hoặc nhấn A), sau đó nhấp vào hai chú thích để vẽ đường nối."
+      },
+      "sharing": {
+        "question": "Làm thế nào để chia sẻ không gian làm việc?",
+        "answer": "Mở bảng quản lý (nhấn M hoặc nhấp vào biểu tượng menu) và sử dụng tùy chọn chia sẻ để tạo liên kết. Bất kỳ ai có liên kết đều có thể tham gia không gian làm việc và cộng tác."
+      },
+      "mobile": {
+        "question": "Tôi có thể sử dụng trên điện thoại không?",
+        "answer": "Ứng dụng hoạt động trên trình duyệt di động, nhưng các công cụ chú thích và mũi tên đầy đủ hoạt động tốt nhất trên thiết bị có bàn phím và chuột."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Phím tắt",
+    "description": "Các phím tắt có sẵn trong không gian làm việc.",
+    "workspace": "Không gian làm việc",
+    "cycleNextLayer": "Chuyển sang lớp tiếp theo",
+    "cyclePrevLayer": "Chuyển sang lớp trước",
+    "selectionTool": "Công cụ chọn",
+    "arrowTool": "Công cụ mũi tên",
+    "commentsTool": "Công cụ bình luận",
+    "highlightTool": "Công cụ đánh dấu",
+    "underlineTool": "Công cụ gạch chân",
+    "eraserTool": "Công cụ tẩy",
+    "navigateWords": "Di chuyển giữa các từ",
+    "toggleConsole": "Bật/tắt bảng điều khiển hành động",
+    "toggleDarkMode": "Bật/tắt chế độ tối",
+    "toggleLayout": "Bật/tắt bố cục trình soạn thảo",
+    "toggleLock": "Bật/tắt khóa trình soạn thảo",
+    "toggleManagement": "Bật/tắt bảng quản lý",
+    "textFormatting": "Định dạng văn bản",
+    "bold": "In đậm",
+    "italic": "In nghiêng",
+    "underline": "Gạch chân",
+    "strikethrough": "Gạch ngang",
+    "inlineCode": "Mã nội dòng",
+    "superscript": "Chỉ số trên",
+    "subscript": "Chỉ số dưới",
+    "colorHighlight": "Đánh dấu màu",
+    "general": "Chung",
+    "undo": "Hoàn tác (không gian làm việc khi khóa)",
+    "redo": "Làm lại (không gian làm việc khi khóa)",
+    "headings": "Tiêu đề",
+    "heading": "Tiêu đề {{level}}",
+    "listsAndBlocks": "Danh sách & Khối",
+    "bulletList": "Danh sách đầu dòng",
+    "orderedList": "Danh sách đánh số",
+    "taskList": "Danh sách công việc",
+    "blockquote": "Trích dẫn",
+    "codeBlock": "Khối mã",
+    "textAlignment": "Căn chỉnh văn bản",
+    "alignLeft": "Căn trái",
+    "alignCenter": "Căn giữa",
+    "alignRight": "Căn phải",
+    "alignJustify": "Căn đều"
+  },
+  "share": {
+    "title": "Chia sẻ không gian làm việc",
+    "description": "Sao chép liên kết để chia sẻ không gian làm việc này.",
+    "readonlyLink": "Liên kết chỉ đọc",
+    "editLink": "Liên kết chỉnh sửa",
+    "linkCopied": "Đã sao chép liên kết vào bộ nhớ tạm.",
+    "copyFailed": "Không thể sao chép liên kết."
+  },
+  "mobile": {
+    "title": "Tốt nhất trên máy tính",
+    "description": "Referencer được thiết kế để sử dụng trên máy tính với bàn phím và chuột. Bạn vẫn có thể đọc nội dung ở đây, nhưng các công cụ chỉnh sửa và chú thích không khả dụng trên thiết bị di động.",
+    "continueReading": "Tiếp tục đọc"
+  }
+}

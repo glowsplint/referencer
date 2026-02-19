@@ -22,14 +22,10 @@ test.describe("multi-word selection with Shift+Arrow", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
-
-    // Create a layer
-    await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
-
-    // Lock editor
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+    // Hide default layers so their arrows/highlights don't interfere with tests
+    for (let i = 0; i < 4; i++) {
+      await page.getByTestId(`layerVisibility-${i}`).click();
+    }
   });
 
   test("Shift+ArrowRight expands selection to include next word", async ({
@@ -102,12 +98,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
   test("Shift+Arrow does not extend across editor boundaries", async ({
     page,
   }) => {
-    // Add second passage
-    await page.getByTestId("lockButton").click();
-    await page.getByTestId("addPassageButton").click();
-    await expect(page.locator(".simple-editor-wrapper")).toHaveCount(2);
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+    // Already have 2 passages by default
 
     // Click word in editor 1
     await clickWordInEditor(page, 0, 30);
@@ -162,13 +153,8 @@ test.describe("drag-to-select multiple words", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Create a layer
+    // Editor starts locked with 4 default layers. Add a fresh layer for tests.
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
-
-    // Lock editor
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
     // Switch to comments tool for annotation creation
     await page.keyboard.press("c");
@@ -256,10 +242,7 @@ test.describe("drag-to-select multiple words", () => {
     await input.press("Enter");
 
     // Clear selection to see only the decoration highlights
-    const hr = page
-      .locator('.simple-editor [data-type="horizontalRule"]')
-      .first();
-    await hr.click();
+    await page.keyboard.press("Escape");
     await expect(page.locator(".word-selection")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -276,17 +259,13 @@ test.describe("selection clears on state changes", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
-
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+    // Hide default layers so their arrows/highlights don't interfere with tests
+    for (let i = 0; i < 4; i++) {
+      await page.getByTestId(`layerVisibility-${i}`).click();
+    }
   });
 
   test("unlocking editor clears multi-word selection", async ({ page }) => {
-    // Create a layer for the Shift+Arrow selection
-    await page.getByTestId("lockButton").click();
-    await page.getByTestId("addLayerButton").click();
-    await page.getByTestId("lockButton").click();
-    await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
     await clickWordInEditor(page, 0, 30);
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());

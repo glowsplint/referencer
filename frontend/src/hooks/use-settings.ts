@@ -10,11 +10,12 @@ const DEFAULT_SETTINGS: EditorSettings = {
   isDarkMode: false,
   isLayersOn: false,
   isMultipleRowsLayout: false,
-  isLocked: false,
+  isLocked: true,
   showDrawingToasts: true,
   showCommentsToasts: true,
   showHighlightToasts: true,
   overscrollEnabled: false,
+  hideOffscreenArrows: false,
 }
 
 function loadSettings(): EditorSettings {
@@ -67,6 +68,7 @@ export function useSettings() {
   const toggleShowCommentsToasts = useToggle(setSettings, "showCommentsToasts")
   const toggleShowHighlightToasts = useToggle(setSettings, "showHighlightToasts")
   const toggleOverscrollEnabled = useToggle(setSettings, "overscrollEnabled")
+  const toggleHideOffscreenArrows = useToggle(setSettings, "hideOffscreenArrows")
   const setActiveTool = useCallback(
     (tool: ActiveTool) => setAnnotations({ activeTool: tool }),
     []
@@ -89,6 +91,7 @@ export function useSettings() {
     toggleShowCommentsToasts,
     toggleShowHighlightToasts,
     toggleOverscrollEnabled,
+    toggleHideOffscreenArrows,
     setActiveTool,
   }
 }

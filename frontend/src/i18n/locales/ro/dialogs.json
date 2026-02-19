@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Setări",
+    "description": "Personalizați preferințele spațiului de lucru.",
+    "darkMode": {
+      "label": "Mod întunecat",
+      "description": "Comutați între temele luminoasă și întunecată"
+    },
+    "drawingNotifications": {
+      "label": "Notificări de desen",
+      "description": "Afișați notificări când folosiți instrumentul săgeată"
+    },
+    "commentsNotifications": {
+      "label": "Notificări de comentarii",
+      "description": "Afișați notificări când folosiți instrumentul de comentarii"
+    },
+    "highlightNotifications": {
+      "label": "Notificări de evidențiere",
+      "description": "Afișați notificări când folosiți instrumentul de evidențiere"
+    },
+    "overscroll": {
+      "label": "Derulare elastică",
+      "description": "Permiteți efectul elastic la derularea dincolo de margini"
+    },
+    "hideOffscreenArrows": {
+      "label": "Ascunde săgețile din afara ecranului",
+      "description": "Ascundeți complet săgețile când oricare capăt este derulat în afara vizualizării"
+    },
+    "language": {
+      "label": "Limbă",
+      "description": "Alegeți limba preferată"
+    }
+  },
+  "faq": {
+    "title": "Întrebări frecvente",
+    "description": "Aflați despre Referencer și cum să îl utilizați.",
+    "items": {
+      "whatIsApp": {
+        "question": "Ce este această aplicație?",
+        "answer": "Referencer este un instrument colaborativ pentru studiul inductiv al Bibliei. Oferă grupurilor de studiu un spațiu de lucru partajat unde pot citi, adnota și discuta Scriptura împreună în timp real."
+      },
+      "inductiveStudy": {
+        "question": "Ce este studiul inductiv al Bibliei?",
+        "answer": "Studiul inductiv al Bibliei este o metodă de citire a Scripturii care trece de la observație (ce spune textul?) la interpretare (ce înseamnă?) la aplicare (cum se aplică?). În loc să începeți cu comentarii externe, lăsați textul să vorbească de la sine examinând cu atenție cuvintele, structura și contextul său."
+      },
+      "collaboration": {
+        "question": "Cum funcționează colaborarea?",
+        "answer": "Fiecare spațiu de lucru poate fi partajat cu alții printr-un link. Toți participanții văd același text și pot adăuga propriile adnotări. Modificările se sincronizează în timp real, astfel încât toată lumea este la curent."
+      },
+      "layers": {
+        "question": "Ce sunt straturile?",
+        "answer": "Straturile vă permit să organizați adnotările în grupuri separate — de exemplu, un strat pentru observații și altul pentru interpretări. Puteți comuta între straturi cu tasta L pentru a vă concentra pe un set de adnotări la un moment dat."
+      },
+      "annotations": {
+        "question": "Cum funcționează adnotările?",
+        "answer": "Blocați editorul cu butonul de blocare (sau apăsați K), apoi selectați text pentru a-l evidenția. Puteți alege culori, adăuga comentarii și desena săgeți între adnotări pentru a arăta conexiunile. Faceți clic pe o adnotare existentă pentru a o elimina."
+      },
+      "arrows": {
+        "question": "La ce servesc săgețile?",
+        "answer": "Săgețile conectează două adnotări pentru a arăta o relație între pasaje — de exemplu, legarea unui cuvânt repetat de prima sa apariție, sau conectarea unei profeții de împlinirea sa. Selectați instrumentul săgeată (sau apăsați A), apoi faceți clic pe două adnotări pentru a desena un conector."
+      },
+      "sharing": {
+        "question": "Cum partajez un spațiu de lucru?",
+        "answer": "Deschideți panoul de gestionare (apăsați M sau faceți clic pe pictograma meniului) și folosiți opțiunile de partajare pentru a genera un link. Oricine are linkul poate să se alăture spațiului de lucru și să colaboreze."
+      },
+      "mobile": {
+        "question": "Pot folosi aplicația pe mobil?",
+        "answer": "Aplicația funcționează în browserele mobile, dar instrumentele complete de adnotare și săgeți sunt cel mai bine utilizate pe un dispozitiv cu tastatură și mouse."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Scurtături de tastatură",
+    "description": "Scurtături de tastatură disponibile pentru spațiul de lucru.",
+    "workspace": "Spațiu de lucru",
+    "cycleNextLayer": "Comută la stratul următor",
+    "cyclePrevLayer": "Comută la stratul anterior",
+    "selectionTool": "Instrumentul de selectare",
+    "arrowTool": "Instrumentul săgeată",
+    "commentsTool": "Instrumentul de comentarii",
+    "highlightTool": "Instrumentul de evidențiere",
+    "underlineTool": "Instrumentul de subliniere",
+    "eraserTool": "Radiera",
+    "navigateWords": "Navigați între cuvinte",
+    "toggleConsole": "Comutați consola de acțiuni",
+    "toggleDarkMode": "Comutați modul întunecat",
+    "toggleLayout": "Comutați aspectul editorului",
+    "toggleLock": "Comutați blocarea editorului",
+    "toggleManagement": "Comutați panoul de gestionare",
+    "textFormatting": "Formatarea textului",
+    "bold": "Aldine",
+    "italic": "Cursive",
+    "underline": "Subliniat",
+    "strikethrough": "Tăiat",
+    "inlineCode": "Cod inline",
+    "superscript": "Superscript",
+    "subscript": "Subscript",
+    "colorHighlight": "Evidențiere colorată",
+    "general": "General",
+    "undo": "Anulare (spațiu de lucru când este blocat)",
+    "redo": "Refacere (spațiu de lucru când este blocat)",
+    "headings": "Titluri",
+    "heading": "Titlu {{level}}",
+    "listsAndBlocks": "Liste și blocuri",
+    "bulletList": "Listă cu marcatori",
+    "orderedList": "Listă numerotată",
+    "taskList": "Listă de sarcini",
+    "blockquote": "Citat",
+    "codeBlock": "Bloc de cod",
+    "textAlignment": "Alinierea textului",
+    "alignLeft": "Aliniere la stânga",
+    "alignCenter": "Aliniere la centru",
+    "alignRight": "Aliniere la dreapta",
+    "alignJustify": "Aliniere justificată"
+  },
+  "share": {
+    "title": "Partajează spațiul de lucru",
+    "description": "Copiați un link pentru a partaja acest spațiu de lucru.",
+    "readonlyLink": "Link doar pentru citire",
+    "editLink": "Link de editare",
+    "linkCopied": "Linkul a fost copiat în clipboard.",
+    "copyFailed": "Copierea linkului a eșuat."
+  },
+  "mobile": {
+    "title": "Cel mai bine pe desktop",
+    "description": "Referencer este conceput pentru utilizare pe desktop cu tastatură și mouse. Puteți citi conținutul aici, dar instrumentele de editare și adnotare nu sunt disponibile pe mobil.",
+    "continueReading": "Continuați lectura"
+  }
+}

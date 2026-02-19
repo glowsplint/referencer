@@ -3,8 +3,7 @@ import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("managementPane")).toBeVisible();
-  // Lock so backtick doesn't go to an editor
-  await page.getByTestId("lockButton").click();
+  // Editor starts locked by default — no need to click lockButton
 });
 
 test("backtick toggles action console", async ({ page }) => {
@@ -19,9 +18,9 @@ test("backtick toggles action console", async ({ page }) => {
 });
 
 test("action console shows log entries with details after actions", async ({ page }) => {
-  // Add a layer
+  // Add a layer (appended after 3 default layers)
   await page.getByTestId("addLayerButton").click();
-  await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
+  await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
 
   // Open console
   await page.keyboard.press("`");

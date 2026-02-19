@@ -22,6 +22,10 @@
       "label": "Overscroll",
       "description": "Allow elastic bounce when scrolling past edges"
     },
+    "hideOffscreenArrows": {
+      "label": "Hide off-screen arrows",
+      "description": "Completely hide arrows when either endpoint is scrolled out of view"
+    },
     "language": {
       "label": "Language",
       "description": "Choose your preferred language"

@@ -4,7 +4,6 @@
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
 import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
 import { Trans } from "react-i18next";
-import i18n from "@/i18n";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -14,8 +13,8 @@ import {
   TitleBar,
   SimpleEditorToolbar,
   EditorPane,
-  SIMPLE_EDITOR_CONTENT,
 } from "./components/tiptap-templates/simple";
+import { DEFAULT_PASSAGE_CONTENTS, PLACEHOLDER_CONTENT } from "./data/default-workspace";
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
 import { useDrawingMode } from "./hooks/use-drawing-mode";
@@ -239,7 +238,7 @@ export function App() {
   // Default status message when locked with selection tool and no visible selection
   useEffect(() => {
     if (settings.isLocked && annotations.activeTool === "selection" && (!selection || selectionHidden)) {
-      setStatus({ text: i18n.t("tools:selection.defaultStatus"), type: "info" })
+      setStatus({ text: <Trans ns="tools" i18nKey="selection.defaultStatus" />, type: "info" })
     }
   }, [settings.isLocked, annotations.activeTool, selection, selectionHidden, setStatus])
 
@@ -360,6 +359,7 @@ export function App() {
                   sectionVisibility={sectionVisibility}
                   isDarkMode={settings.isDarkMode}
                   isLocked={settings.isLocked || effectiveReadOnly}
+                  hideOffscreenArrows={settings.hideOffscreenArrows}
                 />
                 {editorWidths.map((width, i) => {
                   const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]
@@ -391,7 +391,7 @@ export function App() {
                         <EditorPane
                           isLocked={settings.isLocked || effectiveReadOnly}
                           activeTool={annotations.activeTool}
-                          content={SIMPLE_EDITOR_CONTENT}
+                          content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
                           index={i}
                           onEditorMount={handleEditorMount}
                           onFocus={handlePaneFocus}

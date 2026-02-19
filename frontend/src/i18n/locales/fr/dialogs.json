@@ -22,6 +22,10 @@
       "label": "Défilement élastique",
       "description": "Permettre le rebond élastique au-delà des bords"
     },
+    "hideOffscreenArrows": {
+      "label": "Masquer les flèches hors écran",
+      "description": "Masquer complètement les flèches lorsqu'une extrémité est hors de la vue"
+    },
     "language": {
       "label": "Langue",
       "description": "Choisissez votre langue préférée"

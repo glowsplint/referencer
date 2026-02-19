@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Lẹ́tà dúdú",
+    "italic": "Lẹ́tà ìtẹ̀",
+    "underline": "Ìlà-ìsàlẹ̀",
+    "strike": "Ìlà-àárín",
+    "code": "Kóòdù",
+    "superscript": "Lẹ́tà òkè",
+    "subscript": "Lẹ́tà ìsàlẹ̀"
+  },
+  "heading": {
+    "label": "Àkọlé {{level}}"
+  },
+  "list": {
+    "bulletList": "Àkójọ Àmì",
+    "orderedList": "Àkójọ Oníléṣẹ̀ẹ̀ṣẹ̀",
+    "taskList": "Àkójọ Iṣẹ́",
+    "label": "Àkójọ"
+  },
+  "blockquote": {
+    "label": "Àgbasọ Búlọ́ọ̀kì"
+  },
+  "codeBlock": {
+    "label": "Búlọ́ọ̀kì Kóòdù"
+  },
+  "link": {
+    "label": "Ìjápọ̀",
+    "placeholder": "Tẹ URL sílẹ̀",
+    "openLink": "Ṣí ìjápọ̀",
+    "copyLink": "Dà ìjápọ̀",
+    "removeLink": "Yọ ìjápọ̀ kúrò"
+  },
+  "image": {
+    "label": "Fi àwòrán kún"
+  },
+  "textAlign": {
+    "left": "Tọ́ Sí Apá Òsì",
+    "center": "Tọ́ Sí Àárín",
+    "right": "Tọ́ Sí Apá Ọ̀tún",
+    "justify": "Tọ́ Dọ́gba"
+  },
+  "history": {
+    "undo": "Mú padà",
+    "redo": "Tún ṣe"
+  },
+  "colorHighlight": {
+    "label": "Àmì ìtànṣán àwọ̀",
+    "highlightText": "Ṣàmì ìtànṣán ọ̀rọ̀",
+    "highlightColors": "Àwọn àwọ̀ àmì ìtànṣán",
+    "removeHighlight": "Yọ àmì ìtànṣán kúrò",
+    "listOptions": "Àwọn àṣàyàn àkójọ",
+    "formatHeading": "Ṣètò ọ̀rọ̀ gẹ́gẹ́ bí àkọlé",
+    "colors": {
+      "default": "Ìpìlẹ̀ àìní àwọ̀",
+      "gray": "Ìpìlẹ̀ aṣọ",
+      "brown": "Ìpìlẹ̀ àwọ̀ olówú",
+      "orange": "Ìpìlẹ̀ àwọ̀ ọsàn",
+      "yellow": "Ìpìlẹ̀ àwọ̀ iyèyè",
+      "green": "Ìpìlẹ̀ àwọ̀ ewé",
+      "blue": "Ìpìlẹ̀ àwọ̀ búlúù",
+      "purple": "Ìpìlẹ̀ àwọ̀ àlùkò",
+      "pink": "Ìpìlẹ̀ àwọ̀ pínkì",
+      "red": "Ìpìlẹ̀ àwọ̀ pupa"
+    },
+    "toggleHighlight": "Yí àmì ìtànṣán padà ({{color}})"
+  }
+}

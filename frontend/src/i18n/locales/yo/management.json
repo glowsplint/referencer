@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Àwọn Ìpele",
+    "addLayer": "Fi ìpele kún",
+    "hideAll": "Ìbòmọ́lẹ̀ gbogbo ìpele",
+    "showAll": "Fi gbogbo ìpele hàn",
+    "hideLayer": "Ìbòmọ́lẹ̀ ìpele",
+    "showLayer": "Fi ìpele hàn",
+    "changeColour": "Yí àwọ̀ padà",
+    "removeAnnotation": "Yọ àkọsílẹ̀ kúrò",
+    "removeArrow": "Yọ ọfà kúrò",
+    "removeUnderline": "Yọ ìlà-ìsàlẹ̀ kúrò",
+    "allColorsInUse": "Gbogbo àwọ̀ ti wà ní lílo — yọ ìpele kan kúrò ní àkọ́kọ́."
+  },
+  "passages": {
+    "title": "Àwọn Ẹsẹ",
+    "addPassage": "Fi ẹsẹ kún",
+    "hideAll": "Ìbòmọ́lẹ̀ gbogbo ẹsẹ",
+    "showAll": "Fi gbogbo ẹsẹ hàn",
+    "hidePassage": "Ìbòmọ́lẹ̀ ẹsẹ",
+    "showPassage": "Fi ẹsẹ hàn"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Yí pánẹ́ẹ̀lì ìṣàkóso padà",
+    "keyboardShortcuts": "Àwọn ọ̀nà àbájáde bọ́tìnì",
+    "helpFaq": "Ìrànlọ́wọ́ & Àwọn Ìbéèrè",
+    "settings": "Ètò",
+    "toggleEditorLayout": "Yí ètò olóòtú padà",
+    "toggleEditorLock": "Yí títìí olóòtú padà"
+  },
+  "annotations": {
+    "placeholder": "Fi àkọsílẹ̀ kún...",
+    "removeCustomColour": "Yọ àwọ̀ àdáni kúrò",
+    "addCustomColour": "Fi àwọ̀ àdáni kún",
+    "addToCustomColours": "Fi sí àwọn àwọ̀ àdáni"
+  },
+  "actionConsole": {
+    "title": "Kọ́nsólù Iṣẹ́",
+    "close": "padé",
+    "empty": "A kò tíì ṣàkọsílẹ̀ iṣẹ́ kankan."
+  }
+}

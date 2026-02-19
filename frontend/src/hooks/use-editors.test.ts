@@ -1,23 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useEditors } from "./use-editors"
+import { DEFAULT_SECTION_NAMES } from "@/data/default-workspace"
 
 beforeEach(() => {
   vi.clearAllMocks()
 })
 
 describe("useEditors", () => {
-  it("returns initial state with 1 editor at 100% width", () => {
+  it("returns initial state with 2 editors at 50% width each", () => {
     const { result } = renderHook(() => useEditors())
-    expect(result.current.editorCount).toBe(1)
-    expect(result.current.editorWidths).toEqual([100])
+    expect(result.current.editorCount).toBe(2)
+    expect(result.current.editorWidths[0]).toBeCloseTo(50, 0)
+    expect(result.current.editorWidths[1]).toBeCloseTo(50, 0)
     expect(result.current.activeEditor).toBeNull()
   })
 
   it("addEditor increments editor count up to 3", () => {
     const { result } = renderHook(() => useEditors())
 
-    act(() => { result.current.addEditor() })
+    // starts at 2
     expect(result.current.editorCount).toBe(2)
 
     act(() => { result.current.addEditor() })
@@ -27,18 +29,10 @@ describe("useEditors", () => {
     expect(result.current.editorCount).toBe(3)
   })
 
-  it("editorWidths are evenly distributed for 2 editors", () => {
-    const { result } = renderHook(() => useEditors())
-
-    act(() => { result.current.addEditor() })
-    expect(result.current.editorWidths[0]).toBeCloseTo(50, 0)
-    expect(result.current.editorWidths[1]).toBeCloseTo(50, 0)
-  })
-
   it("editorWidths are evenly distributed for 3 editors", () => {
     const { result } = renderHook(() => useEditors())
 
-    act(() => { result.current.addEditor(); result.current.addEditor() })
+    act(() => { result.current.addEditor() })
     expect(result.current.editorWidths[0]).toBeCloseTo(33.3, 0)
     expect(result.current.editorWidths[1]).toBeCloseTo(33.3, 0)
     expect(result.current.editorWidths[2]).toBeCloseTo(33.3, 0)
@@ -47,7 +41,7 @@ describe("useEditors", () => {
   it("removeEditor decrements editor count and redistributes widths", () => {
     const { result } = renderHook(() => useEditors())
 
-    act(() => { result.current.addEditor(); result.current.addEditor() })
+    act(() => { result.current.addEditor() })
     expect(result.current.editorCount).toBe(3)
 
     act(() => { result.current.removeEditor(1) })
@@ -60,6 +54,8 @@ describe("useEditors", () => {
     const { result } = renderHook(() => useEditors())
     act(() => { result.current.removeEditor(0) })
     expect(result.current.editorCount).toBe(1)
+    act(() => { result.current.removeEditor(0) })
+    expect(result.current.editorCount).toBe(1)
   })
 
   it("removeEditor sets activeEditor to first remaining editor", () => {
@@ -69,7 +65,6 @@ describe("useEditors", () => {
     const editor2 = { id: "e2" } as any
 
     act(() => {
-      result.current.addEditor()
       result.current.addEditor()
       result.current.handleEditorMount(0, editor0)
       result.current.handleEditorMount(1, editor1)
@@ -82,7 +77,6 @@ describe("useEditors", () => {
 
   it("handleDividerResize clamps within bounds for 2 editors", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor() })
 
     act(() => { result.current.handleDividerResize(0, 70) })
     expect(result.current.editorWidths[0]).toBeCloseTo(70, 0)
@@ -99,7 +93,7 @@ describe("useEditors", () => {
 
   it("handleDividerResize clamps between adjacent dividers for 3 editors", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor(); result.current.addEditor() })
+    act(() => { result.current.addEditor() })
 
     // Move first divider to 20%
     act(() => { result.current.handleDividerResize(0, 20) })
@@ -165,22 +159,20 @@ describe("useEditors", () => {
     expect(result.current.editorsRef.current).toBeInstanceOf(Map)
   })
 
-  it("sectionVisibility starts with one visible section", () => {
+  it("sectionVisibility starts with two visible sections", () => {
     const { result } = renderHook(() => useEditors())
-    expect(result.current.sectionVisibility).toEqual([true])
+    expect(result.current.sectionVisibility).toEqual([true, true])
   })
 
   it("addEditor appends true to sectionVisibility", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor() })
-    expect(result.current.sectionVisibility).toEqual([true, true])
     act(() => { result.current.addEditor() })
     expect(result.current.sectionVisibility).toEqual([true, true, true])
   })
 
   it("removeEditor removes the entry from sectionVisibility", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor(); result.current.addEditor() })
+    act(() => { result.current.addEditor() })
     act(() => { result.current.toggleSectionVisibility(1) })
     expect(result.current.sectionVisibility).toEqual([true, false, true])
     act(() => { result.current.removeEditor(1) })
@@ -189,7 +181,6 @@ describe("useEditors", () => {
 
   it("toggleAllSectionVisibility hides all sections when any are visible", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor() })
     act(() => { result.current.toggleSectionVisibility(0) })
     // One hidden, one visible
     expect(result.current.sectionVisibility).toEqual([false, true])
@@ -200,7 +191,6 @@ describe("useEditors", () => {
 
   it("toggleAllSectionVisibility shows all sections when none are visible", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor() })
     act(() => {
       result.current.toggleSectionVisibility(0)
       result.current.toggleSectionVisibility(1)
@@ -213,7 +203,6 @@ describe("useEditors", () => {
 
   it("toggleSectionVisibility toggles visibility at index", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor() })
     expect(result.current.sectionVisibility).toEqual([true, true])
 
     act(() => { result.current.toggleSectionVisibility(0) })
@@ -225,32 +214,31 @@ describe("useEditors", () => {
 
   // --- Section names ---
 
-  it("sectionNames starts with ['Passage 1']", () => {
+  it("sectionNames starts with DEFAULT_SECTION_NAMES", () => {
     const { result } = renderHook(() => useEditors())
-    expect(result.current.sectionNames).toEqual(["Passage 1"])
+    expect(result.current.sectionNames).toEqual([...DEFAULT_SECTION_NAMES])
   })
 
   it("addEditor appends correct default name", () => {
     const { result } = renderHook(() => useEditors())
     act(() => { result.current.addEditor() })
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"])
-    act(() => { result.current.addEditor() })
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2", "Passage 3"])
+    expect(result.current.sectionNames).toEqual([...DEFAULT_SECTION_NAMES, "Passage 3"])
   })
 
   it("addEditor in quick succession assigns unique names", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor(); result.current.addEditor() })
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2", "Passage 3"])
+    // Already at 2 editors, can only add 1 more
+    act(() => { result.current.addEditor() })
+    expect(result.current.sectionNames).toEqual([...DEFAULT_SECTION_NAMES, "Passage 3"])
   })
 
   it("removeEditor removes name at index", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor(); result.current.addEditor() })
+    act(() => { result.current.addEditor() })
     act(() => { result.current.updateSectionName(1, "Custom") })
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Custom", "Passage 3"])
+    expect(result.current.sectionNames).toEqual([DEFAULT_SECTION_NAMES[0], "Custom", "Passage 3"])
     act(() => { result.current.removeEditor(1) })
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 3"])
+    expect(result.current.sectionNames).toEqual([DEFAULT_SECTION_NAMES[0], "Passage 3"])
   })
 
   it("editorWidths is referentially stable when deps are unchanged", () => {
@@ -262,9 +250,8 @@ describe("useEditors", () => {
 
   it("updateSectionName updates name at index", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor() })
     act(() => { result.current.updateSectionName(0, "Intro") })
-    expect(result.current.sectionNames).toEqual(["Intro", "Passage 2"])
+    expect(result.current.sectionNames).toEqual(["Intro", DEFAULT_SECTION_NAMES[1]])
     act(() => { result.current.updateSectionName(1, "Body") })
     expect(result.current.sectionNames).toEqual(["Intro", "Body"])
   })
@@ -273,24 +260,24 @@ describe("useEditors", () => {
     const { result } = renderHook(() => useEditors())
     let name = ""
     act(() => { name = result.current.addEditor() })
-    expect(name).toBe("Passage 2")
+    expect(name).toBe("Passage 3")
   })
 
   it("addEditor with explicit name does not increment counter", () => {
     const { result } = renderHook(() => useEditors())
     act(() => { result.current.addEditor({ name: "Custom" }) })
-    act(() => { result.current.addEditor() })
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Custom", "Passage 2"])
+    expect(result.current.sectionNames).toEqual([...DEFAULT_SECTION_NAMES, "Custom"])
   })
 
   it("passage name counter never resets after removing editors", () => {
     const { result } = renderHook(() => useEditors())
-    act(() => { result.current.addEditor(); result.current.addEditor() })
-    // ["Passage 1", "Passage 2", "Passage 3"]
+    // Start at 2, add 1 more to get to 3
+    act(() => { result.current.addEditor() })
+    // Names: [DEFAULT_SECTION_NAMES[0], DEFAULT_SECTION_NAMES[1], "Passage 3"]
     act(() => { result.current.removeEditor(1) })
-    // ["Passage 1", "Passage 3"]
+    // Names: [DEFAULT_SECTION_NAMES[0], "Passage 3"]
     act(() => { result.current.addEditor() })
     // Counter was at 3, so next auto-name is "Passage 4"
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 3", "Passage 4"])
+    expect(result.current.sectionNames).toEqual([DEFAULT_SECTION_NAMES[0], "Passage 3", "Passage 4"])
   })
 })

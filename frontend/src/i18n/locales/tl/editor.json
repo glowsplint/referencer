@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Salungguhit",
+    "strike": "Strikethrough",
+    "code": "Code",
+    "superscript": "Superscript",
+    "subscript": "Subscript"
+  },
+  "heading": {
+    "label": "Heading {{level}}"
+  },
+  "list": {
+    "bulletList": "Bullet List",
+    "orderedList": "Numbered List",
+    "taskList": "Task List",
+    "label": "Listahan"
+  },
+  "blockquote": {
+    "label": "Blockquote"
+  },
+  "codeBlock": {
+    "label": "Code Block"
+  },
+  "link": {
+    "label": "Link",
+    "placeholder": "Ilagay ang URL",
+    "openLink": "Buksan ang link",
+    "copyLink": "Kopyahin ang link",
+    "removeLink": "Alisin ang link"
+  },
+  "image": {
+    "label": "Magdagdag ng larawan"
+  },
+  "textAlign": {
+    "left": "Ihanay sa Kaliwa",
+    "center": "Ihanay sa Gitna",
+    "right": "Ihanay sa Kanan",
+    "justify": "Ihanay nang Pantay"
+  },
+  "history": {
+    "undo": "I-undo",
+    "redo": "I-redo"
+  },
+  "colorHighlight": {
+    "label": "Color highlight",
+    "highlightText": "I-highlight ang teksto",
+    "highlightColors": "Mga kulay ng highlight",
+    "removeHighlight": "Alisin ang highlight",
+    "listOptions": "Mga opsyon ng listahan",
+    "formatHeading": "I-format ang teksto bilang heading",
+    "colors": {
+      "default": "Default na background",
+      "gray": "Gray na background",
+      "brown": "Brown na background",
+      "orange": "Orange na background",
+      "yellow": "Yellow na background",
+      "green": "Green na background",
+      "blue": "Blue na background",
+      "purple": "Purple na background",
+      "pink": "Pink na background",
+      "red": "Red na background"
+    },
+    "toggleHighlight": "I-toggle ang highlight ({{color}})"
+  }
+}

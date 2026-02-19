@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Tetapan",
+    "description": "Sesuaikan keutamaan ruang kerja anda.",
+    "darkMode": {
+      "label": "Mod gelap",
+      "description": "Tukar antara tema cerah dan gelap"
+    },
+    "drawingNotifications": {
+      "label": "Pemberitahuan lukisan",
+      "description": "Papar pemberitahuan semasa menggunakan alat anak panah"
+    },
+    "commentsNotifications": {
+      "label": "Pemberitahuan komen",
+      "description": "Papar pemberitahuan semasa menggunakan alat komen"
+    },
+    "highlightNotifications": {
+      "label": "Pemberitahuan sorotan",
+      "description": "Papar pemberitahuan semasa menggunakan alat sorotan"
+    },
+    "overscroll": {
+      "label": "Tatal lampau",
+      "description": "Benarkan lantunan elastik apabila menatal melepasi tepi"
+    },
+    "hideOffscreenArrows": {
+      "label": "Sembunyikan anak panah luar skrin",
+      "description": "Sembunyikan anak panah sepenuhnya apabila salah satu titik hujung ditatal keluar dari pandangan"
+    },
+    "language": {
+      "label": "Bahasa",
+      "description": "Pilih bahasa pilihan anda"
+    }
+  },
+  "faq": {
+    "title": "Soalan Lazim",
+    "description": "Ketahui tentang Referencer dan cara menggunakannya.",
+    "items": {
+      "whatIsApp": {
+        "question": "Apakah aplikasi ini?",
+        "answer": "Referencer ialah alat kolaboratif untuk kajian Alkitab secara induktif. Ia menyediakan ruang kerja dikongsi untuk kumpulan kajian membaca, menganotasi, dan membincangkan Kitab Suci bersama-sama secara masa nyata."
+      },
+      "inductiveStudy": {
+        "question": "Apakah kajian Alkitab induktif?",
+        "answer": "Kajian Alkitab induktif ialah kaedah membaca Kitab Suci yang bermula daripada pemerhatian (apa yang dikatakan teks?) kepada tafsiran (apa maksudnya?) kepada penerapan (bagaimana ia diaplikasikan?). Daripada bermula dengan ulasan luar, anda membiarkan teks bercakap sendiri dengan meneliti kata-katanya, strukturnya, dan konteksnya dengan teliti."
+      },
+      "collaboration": {
+        "question": "Bagaimanakah kolaborasi berfungsi?",
+        "answer": "Setiap ruang kerja boleh dikongsi dengan orang lain melalui pautan. Semua peserta melihat teks yang sama dan boleh menambah anotasi mereka sendiri. Perubahan disegerakkan secara masa nyata supaya semua orang sentiasa pada halaman yang sama."
+      },
+      "layers": {
+        "question": "Apakah lapisan?",
+        "answer": "Lapisan membolehkan anda menyusun anotasi ke dalam kumpulan berasingan — contohnya, satu lapisan untuk pemerhatian dan satu lagi untuk tafsiran. Anda boleh bertukar antara lapisan dengan kekunci L untuk memberi tumpuan kepada satu set anotasi pada satu masa."
+      },
+      "annotations": {
+        "question": "Bagaimanakah anotasi berfungsi?",
+        "answer": "Kunci editor dengan butang kunci (atau tekan K), kemudian pilih teks untuk menyorotnya. Anda boleh memilih warna, menambah komen, dan melukis anak panah antara anotasi untuk menunjukkan hubungan. Klik anotasi sedia ada untuk membuangnya."
+      },
+      "arrows": {
+        "question": "Untuk apa anak panah?",
+        "answer": "Anak panah menghubungkan dua anotasi untuk menunjukkan hubungan antara petikan — contohnya, menghubungkan perkataan berulang kepada kemunculan pertamanya, atau menghubungkan nubuatan kepada penggenapannya. Pilih alat anak panah (atau tekan A), kemudian klik dua anotasi untuk melukis penyambung."
+      },
+      "sharing": {
+        "question": "Bagaimana saya berkongsi ruang kerja?",
+        "answer": "Buka panel pengurusan (tekan M atau klik ikon menu) dan gunakan pilihan perkongsian untuk menjana pautan. Sesiapa sahaja yang mempunyai pautan boleh menyertai ruang kerja dan berkolaborasi."
+      },
+      "mobile": {
+        "question": "Bolehkah saya gunakan ini pada telefon bimbit?",
+        "answer": "Aplikasi ini berfungsi dalam pelayar mudah alih, tetapi alat anotasi dan anak panah penuh paling baik digunakan pada peranti dengan papan kekunci dan tetikus."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Pintasan Papan Kekunci",
+    "description": "Pintasan papan kekunci yang tersedia untuk ruang kerja.",
+    "workspace": "Ruang Kerja",
+    "cycleNextLayer": "Tukar ke lapisan seterusnya",
+    "cyclePrevLayer": "Tukar ke lapisan sebelumnya",
+    "selectionTool": "Alat pemilihan",
+    "arrowTool": "Alat anak panah",
+    "commentsTool": "Alat komen",
+    "highlightTool": "Alat sorotan",
+    "underlineTool": "Alat garis bawah",
+    "eraserTool": "Alat pemadam",
+    "navigateWords": "Navigasi antara perkataan",
+    "toggleConsole": "Togol konsol tindakan",
+    "toggleDarkMode": "Togol mod gelap",
+    "toggleLayout": "Togol susun atur editor",
+    "toggleLock": "Togol kunci editor",
+    "toggleManagement": "Togol panel pengurusan",
+    "textFormatting": "Pemformatan Teks",
+    "bold": "Tebal",
+    "italic": "Italik",
+    "underline": "Garis bawah",
+    "strikethrough": "Garis lorek",
+    "inlineCode": "Kod sebaris",
+    "superscript": "Superskrip",
+    "subscript": "Subskrip",
+    "colorHighlight": "Sorotan warna",
+    "general": "Umum",
+    "undo": "Buat asal (ruang kerja apabila dikunci)",
+    "redo": "Buat semula (ruang kerja apabila dikunci)",
+    "headings": "Tajuk",
+    "heading": "Tajuk {{level}}",
+    "listsAndBlocks": "Senarai & Blok",
+    "bulletList": "Senarai bulet",
+    "orderedList": "Senarai bernombor",
+    "taskList": "Senarai tugasan",
+    "blockquote": "Petikan blok",
+    "codeBlock": "Blok kod",
+    "textAlignment": "Penjajaran Teks",
+    "alignLeft": "Jajar kiri",
+    "alignCenter": "Jajar tengah",
+    "alignRight": "Jajar kanan",
+    "alignJustify": "Jajar penuh"
+  },
+  "share": {
+    "title": "Kongsi ruang kerja",
+    "description": "Salin pautan untuk berkongsi ruang kerja ini.",
+    "readonlyLink": "Pautan baca sahaja",
+    "editLink": "Pautan suntingan",
+    "linkCopied": "Pautan disalin ke papan keratan.",
+    "copyFailed": "Gagal menyalin pautan."
+  },
+  "mobile": {
+    "title": "Terbaik di Desktop",
+    "description": "Referencer direka untuk kegunaan desktop dengan papan kekunci dan tetikus. Anda masih boleh membaca kandungan di sini, tetapi alat penyuntingan dan anotasi tidak tersedia pada peranti mudah alih.",
+    "continueReading": "Teruskan Membaca"
+  }
+}

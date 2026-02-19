@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Ètò",
+    "description": "Ṣàtúnṣe àwọn ìfẹ́ràn ibi iṣẹ́ rẹ.",
+    "darkMode": {
+      "label": "Ọ̀nà dúdú",
+      "description": "Yí padà láàárín àwọn àwòrán ìmọ́lẹ̀ àti dúdú"
+    },
+    "drawingNotifications": {
+      "label": "Àwọn ìfitónilétí yíya",
+      "description": "Fi àwọn ìkìlọ̀ hàn nígbà tí o bá ń lo ohun èlò ọfà"
+    },
+    "commentsNotifications": {
+      "label": "Àwọn ìfitónilétí àlàyé",
+      "description": "Fi àwọn ìkìlọ̀ hàn nígbà tí o bá ń lo ohun èlò àlàyé"
+    },
+    "highlightNotifications": {
+      "label": "Àwọn ìfitónilétí àmì ìtànṣán",
+      "description": "Fi àwọn ìkìlọ̀ hàn nígbà tí o bá ń lo ohun èlò àmì ìtànṣán"
+    },
+    "overscroll": {
+      "label": "Yíyí kọjá àlà",
+      "description": "Gba àyà yíyí padà nígbà tí o bá yí kọjá àwọn ẹ̀gbẹ́"
+    },
+    "hideOffscreenArrows": {
+      "label": "Ìbòmọ́lẹ̀ àwọn ọfà tí kò hàn",
+      "description": "Ìbòmọ́lẹ̀ àwọn ọfà pátápátá nígbà tí ẹ̀gbẹ́ kan bá ti yí jáde kúrò nínú ìwòran"
+    },
+    "language": {
+      "label": "Èdè",
+      "description": "Yan èdè tí o fẹ́ràn jù lọ"
+    }
+  },
+  "faq": {
+    "title": "Àwọn Ìbéèrè Tí A Máa Ń Béèrè Jù Lọ",
+    "description": "Kọ́ nípa Referencer àti bí o ṣe lè lò ó.",
+    "items": {
+      "whatIsApp": {
+        "question": "Kíni ohun èlò yìí?",
+        "answer": "Referencer jẹ́ ohun èlò àjọṣepọ̀ fún ìkẹ́kọ̀ọ́ Bíbélì alámọ̀rán. Ó fún àwọn ẹgbẹ́ ìkẹ́kọ̀ọ́ ní ibi iṣẹ́ kan tí wọ́n pín, níbi tí wọ́n ti lè kà, ṣàkọsílẹ̀, tí wọ́n sì jíròrò Ìwé Mímọ́ papọ̀ ní àkókò gidi."
+      },
+      "inductiveStudy": {
+        "question": "Kíni ìkẹ́kọ̀ọ́ Bíbélì alámọ̀rán?",
+        "answer": "Ìkẹ́kọ̀ọ́ Bíbélì alámọ̀rán jẹ́ ọ̀nà kíkà Ìwé Mímọ́ tí ó ń lọ láti àkíyèsí (kíni ọ̀rọ̀ náà sọ?) sí ìtumọ̀ (kíni ó túmọ̀ sí?) sí ìlò (báwo ni ó ṣe kan mí?). Dípò kí o bẹ̀rẹ̀ pẹ̀lú àlàyé ìta, o jẹ́ kí ọ̀rọ̀ náà sọ fún ara rẹ̀ nípa ṣíṣàyẹ̀wò àwọn ọ̀rọ̀ rẹ̀, ètò rẹ̀, àti ìpò rẹ̀ dáadáa."
+      },
+      "collaboration": {
+        "question": "Báwo ni àjọṣepọ̀ ṣe ń ṣiṣẹ́?",
+        "answer": "A lè pín ibi iṣẹ́ kọ̀ọ̀kan pẹ̀lú àwọn ẹlòmíì nípasẹ̀ ìjápọ̀ kan. Gbogbo àwọn olùkópa rí ọ̀rọ̀ kannáà, wọ́n sì lè fi àwọn àkọsílẹ̀ tiwọn kún. Àwọn àyípadà máa ń bára mu ní àkókò gidi kí gbogbo ènìyàn lè wà lórí ojú-ìwé kannáà."
+      },
+      "layers": {
+        "question": "Kíni àwọn ìpele?",
+        "answer": "Àwọn ìpele jẹ́ kí o ṣètò àwọn àkọsílẹ̀ sí àwọn ẹgbẹ́ ọ̀tọ̀ọ̀tọ̀ — fún àpẹẹrẹ, ìpele kan fún àwọn àkíyèsí, ìpele mìíràn fún àwọn ìtumọ̀. O lè yí padà láàárín àwọn ìpele pẹ̀lú bọ́tìnì L láti dá lójú ẹgbẹ́ àkọsílẹ̀ kan ní àkókò kan."
+      },
+      "annotations": {
+        "question": "Báwo ni àwọn àkọsílẹ̀ ṣe ń ṣiṣẹ́?",
+        "answer": "Tìí olóòtú pẹ̀lú bọ́tìnì títìí (tàbí tẹ K), lẹ́yìn náà yan ọ̀rọ̀ láti fi àmì ìtànṣán sí i. O lè yan àwọn àwọ̀, fi àwọn àlàyé kún, kí o sì fa àwọn ọfà láàárín àwọn àkọsílẹ̀ láti fi ìsopọ̀ hàn. Tẹ àkọsílẹ̀ tí ó wà tẹ́lẹ̀ láti yọ ọ́ kúrò."
+      },
+      "arrows": {
+        "question": "Kíni àwọn ọfà fún?",
+        "answer": "Àwọn ọfà so àkọsílẹ̀ méjì pọ̀ láti fi ìbáṣepọ̀ hàn láàárín àwọn ẹsẹ — fún àpẹẹrẹ, ṣíṣe àsopọ̀ ọ̀rọ̀ tí a tún sọ pẹ̀lú ìhàn àkọ́kọ́ rẹ̀, tàbí ṣíṣe àsopọ̀ àsọtẹ́lẹ̀ pẹ̀lú ìmúṣẹ rẹ̀. Yan ohun èlò ọfà (tàbí tẹ A), lẹ́yìn náà tẹ àkọsílẹ̀ méjì láti fa àsopọ̀."
+      },
+      "sharing": {
+        "question": "Báwo ni mo ṣe lè pín ibi iṣẹ́?",
+        "answer": "Ṣí pánẹ́ẹ̀lì ìṣàkóso (tẹ M tàbí tẹ àmì àkójọ) kí o sì lo àwọn àṣàyàn pínpín láti ṣàgbéjáde ìjápọ̀ kan. Ẹnikẹ́ni tí ó ní ìjápọ̀ náà lè dara pọ̀ mọ́ ibi iṣẹ́ kí ó sì ṣàjọṣepọ̀."
+      },
+      "mobile": {
+        "question": "Ṣé mo lè lò ó lórí fóònù?",
+        "answer": "Ohun èlò náà ń ṣiṣẹ́ nínú àwọn ẹ̀rọ ìṣàwárí fóònù, ṣùgbọ́n àwọn ohun èlò àkọsílẹ̀ àti ọfà ní ìrírí tó dára jù lọ lórí ẹ̀rọ tí ó ní bọ́tìnì àti eku."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Àwọn Ọ̀nà Àbájáde Bọ́tìnì",
+    "description": "Àwọn ọ̀nà àbájáde bọ́tìnì tí ó wà fún ibi iṣẹ́.",
+    "workspace": "Ibi iṣẹ́",
+    "cycleNextLayer": "Yí sí ìpele tó kàn",
+    "cyclePrevLayer": "Yí sí ìpele tí ó ṣáájú",
+    "selectionTool": "Ohun èlò yíyan",
+    "arrowTool": "Ohun èlò ọfà",
+    "commentsTool": "Ohun èlò àlàyé",
+    "highlightTool": "Ohun èlò àmì ìtànṣán",
+    "underlineTool": "Ohun èlò ìlà-ìsàlẹ̀",
+    "eraserTool": "Ohun èlò ìparẹ́",
+    "navigateWords": "Lọ kiri láàárín àwọn ọ̀rọ̀",
+    "toggleConsole": "Yí kọ́nsólù iṣẹ́ padà",
+    "toggleDarkMode": "Yí ọ̀nà dúdú padà",
+    "toggleLayout": "Yí ètò olóòtú padà",
+    "toggleLock": "Yí títìí olóòtú padà",
+    "toggleManagement": "Yí pánẹ́ẹ̀lì ìṣàkóso padà",
+    "textFormatting": "Ṣíṣètò Ọ̀rọ̀",
+    "bold": "Lẹ́tà dúdú",
+    "italic": "Lẹ́tà ìtẹ̀",
+    "underline": "Ìlà-ìsàlẹ̀",
+    "strikethrough": "Ìlà-àárín",
+    "inlineCode": "Kóòdù ìlà",
+    "superscript": "Lẹ́tà òkè",
+    "subscript": "Lẹ́tà ìsàlẹ̀",
+    "colorHighlight": "Àmì ìtànṣán àwọ̀",
+    "general": "Gbogbogbò",
+    "undo": "Mú padà (ibi iṣẹ́ nígbà tí ó tìí)",
+    "redo": "Tún ṣe (ibi iṣẹ́ nígbà tí ó tìí)",
+    "headings": "Àkọlé",
+    "heading": "Àkọlé {{level}}",
+    "listsAndBlocks": "Àkójọ àti Àwọn Búlọ́ọ̀kì",
+    "bulletList": "Àkójọ àmì",
+    "orderedList": "Àkójọ onílésẹ̀ẹ̀sẹ̀",
+    "taskList": "Àkójọ iṣẹ́",
+    "blockquote": "Àgbasọ búlọ́ọ̀kì",
+    "codeBlock": "Búlọ́ọ̀kì kóòdù",
+    "textAlignment": "Ìtọ́ka Ọ̀rọ̀",
+    "alignLeft": "Tọ́ sí apá òsì",
+    "alignCenter": "Tọ́ sí àárín",
+    "alignRight": "Tọ́ sí apá ọ̀tún",
+    "alignJustify": "Tọ́ dọ́gba"
+  },
+  "share": {
+    "title": "Pín ibi iṣẹ́",
+    "description": "Dà ìjápọ̀ kan láti pín ibi iṣẹ́ yìí.",
+    "readonlyLink": "Ìjápọ̀ kíkà nìkan",
+    "editLink": "Ìjápọ̀ àtúnṣe",
+    "linkCopied": "A ti dà ìjápọ̀ sí pátákó àkọsílẹ̀.",
+    "copyFailed": "Kò ṣeéṣe láti dà ìjápọ̀."
+  },
+  "mobile": {
+    "title": "Ó Dára Jù Lórí Kọ̀mpútà",
+    "description": "A ṣe Referencer fún lílo kọ̀mpútà pẹ̀lú bọ́tìnì àti eku. O ṣì lè ka àkóónú níbí, ṣùgbọ́n àwọn ohun èlò àtúnṣe àti àkọsílẹ̀ kò sí lórí fóònù.",
+    "continueReading": "Tẹ̀síwájú Kíkà"
+  }
+}

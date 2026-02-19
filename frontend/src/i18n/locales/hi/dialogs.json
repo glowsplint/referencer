@@ -7,6 +7,7 @@
     "commentsNotifications": { "label": "टिप्पणी सूचनाएं", "description": "टिप्पणी उपकरण का उपयोग करते समय सूचनाएं दिखाएं" },
     "highlightNotifications": { "label": "हाइलाइट सूचनाएं", "description": "हाइलाइट उपकरण का उपयोग करते समय सूचनाएं दिखाएं" },
     "overscroll": { "label": "ओवरस्क्रॉल", "description": "किनारों से आगे स्क्रॉल करने पर इलास्टिक बाउंस की अनुमति दें" },
+    "hideOffscreenArrows": { "label": "ऑफ-स्क्रीन तीर छुपाएं", "description": "जब कोई भी सिरा दृश्य से बाहर स्क्रॉल हो जाए तो तीरों को पूरी तरह छुपाएं" },
     "language": { "label": "भाषा", "description": "अपनी पसंदीदा भाषा चुनें" }
   },
   "faq": {

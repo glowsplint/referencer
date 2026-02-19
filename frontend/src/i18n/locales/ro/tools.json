@@ -1,0 +1,34 @@
+{
+  "selection": {
+    "label": "Instrumentul de selectare",
+    "defaultStatus": "Faceți clic pe un cuvânt sau folosiți tastele săgeată pentru a naviga."
+  },
+  "arrow": {
+    "label": "Instrumentul săgeată",
+    "selectAnchor": "Selectați cuvintele pentru ancoră, apoi apăsați <kbd>Enter</kbd>.",
+    "selectTarget": "Acum selectați ținta și apăsați <kbd>Enter</kbd>.",
+    "created": "Săgeata a fost creată."
+  },
+  "highlight": {
+    "label": "Instrumentul de evidențiere",
+    "selectWords": "Selectați cuvintele de evidențiat, apoi apăsați <kbd>Enter</kbd>.",
+    "added": "Evidențiere adăugată.",
+    "removed": "Evidențiere eliminată."
+  },
+  "comments": {
+    "label": "Instrumentul de comentarii",
+    "selectWords": "Selectați cuvintele pe care doriți să le comentați, apoi apăsați <kbd>Enter</kbd>.",
+    "added": "Comentariu adăugat."
+  },
+  "underline": {
+    "label": "Instrumentul de subliniere",
+    "selectWords": "Selectați cuvintele de subliniat, apoi apăsați <kbd>Enter</kbd>.",
+    "added": "Subliniere adăugată."
+  },
+  "eraser": {
+    "label": "Radiera",
+    "status": "Faceți clic și trageți pentru a șterge adnotările.",
+    "erased": "Adnotare ștearsă."
+  },
+  "lockHint": "Apăsați <kbd>Esc</kbd> <kbd>K</kbd> pentru a bloca editorul după ce ați finalizat conținutul."
+}

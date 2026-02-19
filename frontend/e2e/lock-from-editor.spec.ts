@@ -4,7 +4,8 @@ test.describe("lock editor via K key from inside editor", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
-    // Editor should start unlocked with toolbar visible
+    // Editor starts locked — unlock it first so tests can verify K-key locking
+    await page.getByTestId("lockButton").click();
     await expect(page.getByTestId("editorToolbar")).toBeVisible();
   });
 

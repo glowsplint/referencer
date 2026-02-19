@@ -1,0 +1,42 @@
+{
+  "layers": {
+    "title": "Warstwy",
+    "addLayer": "Dodaj warstwe",
+    "hideAll": "Ukryj wszystkie warstwy",
+    "showAll": "Pokaz wszystkie warstwy",
+    "hideLayer": "Ukryj warstwe",
+    "showLayer": "Pokaz warstwe",
+    "changeColour": "Zmien kolor",
+    "removeAnnotation": "Usun adnotacje",
+    "removeArrow": "Usun strzalke",
+    "removeUnderline": "Usun podkreslenie",
+    "allColorsInUse": "Wszystkie kolory sa w uzyciu — najpierw usun warstwe."
+  },
+  "passages": {
+    "title": "Fragmenty",
+    "addPassage": "Dodaj fragment",
+    "hideAll": "Ukryj wszystkie fragmenty",
+    "showAll": "Pokaz wszystkie fragmenty",
+    "hidePassage": "Ukryj fragment",
+    "showPassage": "Pokaz fragment"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Przelacz panel zarzadzania",
+    "keyboardShortcuts": "Skroty klawiszowe",
+    "helpFaq": "Pomoc i FAQ",
+    "settings": "Ustawienia",
+    "toggleEditorLayout": "Przelacz uklad edytora",
+    "toggleEditorLock": "Przelacz blokade edytora"
+  },
+  "annotations": {
+    "placeholder": "Dodaj adnotacje...",
+    "removeCustomColour": "Usun niestandardowy kolor",
+    "addCustomColour": "Dodaj niestandardowy kolor",
+    "addToCustomColours": "Dodaj do niestandardowych kolorow"
+  },
+  "actionConsole": {
+    "title": "Konsola akcji",
+    "close": "zamknij",
+    "empty": "Brak zarejestrowanych akcji."
+  }
+}

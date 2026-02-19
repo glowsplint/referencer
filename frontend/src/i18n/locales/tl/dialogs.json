@@ -1,0 +1,129 @@
+{
+  "settings": {
+    "title": "Mga Setting",
+    "description": "I-customize ang iyong mga kagustuhan sa workspace.",
+    "darkMode": {
+      "label": "Dark mode",
+      "description": "Magpalipat-lipat sa pagitan ng maliwanag at madilim na tema"
+    },
+    "drawingNotifications": {
+      "label": "Mga abiso sa pagguhit",
+      "description": "Magpakita ng mga toast kapag ginagamit ang kasangkapang palaso"
+    },
+    "commentsNotifications": {
+      "label": "Mga abiso sa komento",
+      "description": "Magpakita ng mga toast kapag ginagamit ang kasangkapang pang-komento"
+    },
+    "highlightNotifications": {
+      "label": "Mga abiso sa highlight",
+      "description": "Magpakita ng mga toast kapag ginagamit ang kasangkapang pang-highlight"
+    },
+    "overscroll": {
+      "label": "Overscroll",
+      "description": "Payagan ang elastic bounce kapag nag-scroll na lampas sa mga gilid"
+    },
+    "hideOffscreenArrows": {
+      "label": "Itago ang mga palasos na wala sa screen",
+      "description": "Ganap na itago ang mga palaso kapag ang alinmang dulo ay nai-scroll na palabas ng view"
+    },
+    "language": {
+      "label": "Wika",
+      "description": "Piliin ang iyong gustong wika"
+    }
+  },
+  "faq": {
+    "title": "Mga Madalas Itanong",
+    "description": "Alamin ang tungkol sa Referencer at kung paano ito gamitin.",
+    "items": {
+      "whatIsApp": {
+        "question": "Ano ang app na ito?",
+        "answer": "Ang Referencer ay isang kasangkapang pang-kolaborasyon para sa induktibong pag-aaral ng Bibliya. Nagbibigay ito sa mga grupo ng pag-aaral ng isang shared na workspace kung saan maaari nilang basahin, i-annotate, at talakayin ang Kasulatan nang magkasama sa real time."
+      },
+      "inductiveStudy": {
+        "question": "Ano ang induktibong pag-aaral ng Bibliya?",
+        "answer": "Ang induktibong pag-aaral ng Bibliya ay isang paraan ng pagbasa ng Kasulatan na gumagalaw mula sa obserbasyon (ano ang sinasabi ng teksto?) patungo sa interpretasyon (ano ang ibig sabihin nito?) patungo sa aplikasyon (paano ito naaangkop?). Sa halip na magsimula sa labas na komentaryo, hinayaan mong magsalita ang teksto para sa sarili nito sa pamamagitan ng maingat na pagsusuri sa mga salita, istruktura, at konteksto nito."
+      },
+      "collaboration": {
+        "question": "Paano gumagana ang kolaborasyon?",
+        "answer": "Ang bawat workspace ay maaaring ibahagi sa iba sa pamamagitan ng isang link. Lahat ng kalahok ay makikita ang parehong teksto at maaaring magdagdag ng kanilang sariling mga anotasyon. Ang mga pagbabago ay nag-sync sa real time upang lahat ay magkakasabay."
+      },
+      "layers": {
+        "question": "Ano ang mga layer?",
+        "answer": "Ang mga layer ay nagbibigay-daan sa iyo na ayusin ang mga anotasyon sa magkakahiwalay na grupo — halimbawa, isang layer para sa mga obserbasyon at isa pa para sa mga interpretasyon. Maaari kang magpalipat-lipat sa pagitan ng mga layer gamit ang L key upang mag-focus sa isang set ng mga anotasyon sa isang pagkakataon."
+      },
+      "annotations": {
+        "question": "Paano gumagana ang mga anotasyon?",
+        "answer": "I-lock ang editor gamit ang lock button (o pindutin ang K), pagkatapos ay pumili ng teksto upang i-highlight ito. Maaari kang pumili ng mga kulay, magdagdag ng mga komento, at gumuhit ng mga palaso sa pagitan ng mga anotasyon upang ipakita ang mga koneksyon. Mag-click sa isang umiiral na anotasyon upang alisin ito."
+      },
+      "arrows": {
+        "question": "Para saan ang mga palaso?",
+        "answer": "Ang mga palaso ay nag-uugnay ng dalawang anotasyon upang ipakita ang relasyon sa pagitan ng mga sipi — halimbawa, pag-uugnay ng isang paulit-ulit na salita sa unang paglitaw nito, o pag-uugnay ng isang propesiya sa katuparan nito. Piliin ang kasangkapang palaso (o pindutin ang A), pagkatapos ay mag-click sa dalawang anotasyon upang gumuhit ng connector."
+      },
+      "sharing": {
+        "question": "Paano ko ibabahagi ang isang workspace?",
+        "answer": "Buksan ang management pane (pindutin ang M o i-click ang menu icon) at gamitin ang mga opsyon sa pagbabahagi upang makagawa ng link. Sinumang may link ay maaaring sumali sa workspace at mag-collaborate."
+      },
+      "mobile": {
+        "question": "Maaari ko ba itong gamitin sa mobile?",
+        "answer": "Gumagana ang app sa mga mobile browser, ngunit ang buong mga kasangkapang pang-anotasyon at palaso ay pinakamahusay na nararanasan sa isang device na may keyboard at mouse."
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Mga Keyboard Shortcut",
+    "description": "Mga available na keyboard shortcut para sa workspace.",
+    "workspace": "Workspace",
+    "cycleNextLayer": "Lumipat sa susunod na layer",
+    "cyclePrevLayer": "Lumipat sa nakaraang layer",
+    "selectionTool": "Kasangkapang pampili",
+    "arrowTool": "Kasangkapang palaso",
+    "commentsTool": "Kasangkapang pang-komento",
+    "highlightTool": "Kasangkapang pang-highlight",
+    "underlineTool": "Kasangkapang pang-salungguhit",
+    "eraserTool": "Pambura",
+    "navigateWords": "Mag-navigate sa pagitan ng mga salita",
+    "toggleConsole": "I-toggle ang action console",
+    "toggleDarkMode": "I-toggle ang dark mode",
+    "toggleLayout": "I-toggle ang layout ng editor",
+    "toggleLock": "I-toggle ang lock ng editor",
+    "toggleManagement": "I-toggle ang management pane",
+    "textFormatting": "Pag-format ng Teksto",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Salungguhit",
+    "strikethrough": "Strikethrough",
+    "inlineCode": "Inline code",
+    "superscript": "Superscript",
+    "subscript": "Subscript",
+    "colorHighlight": "Color highlight",
+    "general": "Pangkalahatan",
+    "undo": "I-undo (workspace kapag naka-lock)",
+    "redo": "I-redo (workspace kapag naka-lock)",
+    "headings": "Mga Heading",
+    "heading": "Heading {{level}}",
+    "listsAndBlocks": "Mga Listahan at Block",
+    "bulletList": "Bullet list",
+    "orderedList": "Numbered list",
+    "taskList": "Task list",
+    "blockquote": "Blockquote",
+    "codeBlock": "Code block",
+    "textAlignment": "Pagkakahanay ng Teksto",
+    "alignLeft": "Ihanay sa kaliwa",
+    "alignCenter": "Ihanay sa gitna",
+    "alignRight": "Ihanay sa kanan",
+    "alignJustify": "Ihanay nang pantay"
+  },
+  "share": {
+    "title": "Ibahagi ang workspace",
+    "description": "Kopyahin ang link upang ibahagi ang workspace na ito.",
+    "readonlyLink": "Link na pang-basa lamang",
+    "editLink": "Link na pang-edit",
+    "linkCopied": "Nakopya ang link sa clipboard.",
+    "copyFailed": "Hindi nakopya ang link."
+  },
+  "mobile": {
+    "title": "Pinakamahusay sa Desktop",
+    "description": "Ang Referencer ay dinisenyo para sa paggamit sa desktop na may keyboard at mouse. Maaari mo pa ring basahin ang nilalaman dito, ngunit ang mga kasangkapang pang-edit at pang-anotasyon ay hindi available sa mobile.",
+    "continueReading": "Magpatuloy sa Pagbabasa"
+  }
+}

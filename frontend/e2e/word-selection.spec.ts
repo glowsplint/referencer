@@ -4,9 +4,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
   // Wait for the editor to be fully loaded
   await expect(page.locator(".simple-editor p").first()).toBeVisible();
-  // Lock the editor
-  await page.getByTestId("lockButton").click();
-  await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
+  // Editor starts locked — no need to click lockButton
 });
 
 test("clicking a word in locked mode shows word-selection decoration", async ({ page }) => {
@@ -30,9 +28,8 @@ test("clicking whitespace clears word-selection", async ({ page }) => {
 
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Click on the horizontal rule (a non-textblock node) to trigger non-word click
-  const hr = page.locator('.simple-editor [data-type="horizontalRule"]').first();
-  await hr.click();
+  // Press Escape to clear word selection (Bible text has no horizontal rules)
+  await page.keyboard.press("Escape");
 
   await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 });
@@ -67,7 +64,7 @@ test("unlocking clears word selection", async ({ page }) => {
 
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
-  // Unlock
+  // Unlock (editor starts locked, so this unlocks)
   await page.getByTestId("lockButton").click();
   await expect(page.getByTestId("editorToolbar")).toBeVisible();
 

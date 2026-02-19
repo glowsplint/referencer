@@ -112,6 +112,18 @@ body,
 .simple-editor-content .tiptap.ProseMirror.simple-editor {
   flex: 1;
   padding: 1.5rem 1.5rem 3rem;
+
+  p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--tt-gray-light-400);
+    pointer-events: none;
+    height: 0;
+
+    .dark & {
+      color: var(--tt-gray-dark-400);
+    }
+  }
 }
 
 @media screen and (max-width: 480px) {

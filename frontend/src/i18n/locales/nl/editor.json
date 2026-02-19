@@ -1,0 +1,67 @@
+{
+  "mark": {
+    "bold": "Vet",
+    "italic": "Cursief",
+    "underline": "Onderstreept",
+    "strike": "Doorgehaald",
+    "code": "Code",
+    "superscript": "Superscript",
+    "subscript": "Subscript"
+  },
+  "heading": {
+    "label": "Kop {{level}}"
+  },
+  "list": {
+    "bulletList": "Opsommingslijst",
+    "orderedList": "Genummerde lijst",
+    "taskList": "Takenlijst",
+    "label": "Lijst"
+  },
+  "blockquote": {
+    "label": "Citaat"
+  },
+  "codeBlock": {
+    "label": "Codeblok"
+  },
+  "link": {
+    "label": "Link",
+    "placeholder": "Voer URL in",
+    "openLink": "Link openen",
+    "copyLink": "Link kopieren",
+    "removeLink": "Link verwijderen"
+  },
+  "image": {
+    "label": "Afbeelding toevoegen"
+  },
+  "textAlign": {
+    "left": "Links uitlijnen",
+    "center": "Centreren",
+    "right": "Rechts uitlijnen",
+    "justify": "Uitvullen"
+  },
+  "history": {
+    "undo": "Ongedaan maken",
+    "redo": "Opnieuw uitvoeren"
+  },
+  "colorHighlight": {
+    "label": "Kleurmarkering",
+    "highlightText": "Tekst markeren",
+    "highlightColors": "Markeringskleuren",
+    "removeHighlight": "Markering verwijderen",
+    "listOptions": "Lijstopties",
+    "formatHeading": "Tekst opmaken als kop",
+    "colors": {
+      "default": "Standaard achtergrond",
+      "gray": "Grijze achtergrond",
+      "brown": "Bruine achtergrond",
+      "orange": "Oranje achtergrond",
+      "yellow": "Gele achtergrond",
+      "green": "Groene achtergrond",
+      "blue": "Blauwe achtergrond",
+      "purple": "Paarse achtergrond",
+      "pink": "Roze achtergrond",
+      "red": "Rode achtergrond"
+    },
+    "toggleHighlight": "Markering in-/uitschakelen ({{color}})"
+  }
+}
