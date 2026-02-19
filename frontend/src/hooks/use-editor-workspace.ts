@@ -39,55 +39,18 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   useYjsOffline(yjs.doc, workspaceId ?? "default")
 
   // Seed default layers when Y.Doc is ready and empty.
-  // Wait for the Yjs provider to sync before seeding so we don't
-  // overwrite layers already stored on the server.
+  // Wait for the Yjs provider to report synced (or connection failure)
+  // before seeding so we don't overwrite layers already stored on the server.
   const seededRef = useRef(false)
   useEffect(() => {
-    if (!yjs.doc || seededRef.current) return
-
-    const trySeed = () => {
-      if (seededRef.current) return
-      seededRef.current = true
-      try {
-        seedDefaultLayers(yjs.doc!, createDefaultLayers())
-      } catch (err) {
-        console.error("Failed to seed default layers:", err)
-      }
+    if (!yjs.doc || seededRef.current || !yjs.synced) return
+    seededRef.current = true
+    try {
+      seedDefaultLayers(yjs.doc, createDefaultLayers())
+    } catch (err) {
+      console.error("Failed to seed default layers:", err)
     }
-
-    const ws = yjs.wsProvider
-    if (!ws) {
-      // Offline mode — no provider available, seed after a short delay
-      const timer = setTimeout(trySeed, 100)
-      return () => clearTimeout(timer)
-    }
-
-    // If already synced (e.g. reconnect), seed immediately
-    if (ws.synced) {
-      trySeed()
-      return
-    }
-
-    // Wait for initial sync from server
-    const onSync = (synced: boolean) => {
-      if (synced) {
-        ws.off("sync", onSync)
-        trySeed()
-      }
-    }
-    ws.on("sync", onSync)
-
-    // Fallback timeout in case sync never fires (server unreachable)
-    const fallbackTimer = setTimeout(() => {
-      ws.off("sync", onSync)
-      trySeed()
-    }, 3000)
-
-    return () => {
-      ws.off("sync", onSync)
-      clearTimeout(fallbackTimer)
-    }
-  }, [yjs.doc, yjs.wsProvider])
+  }, [yjs.doc, yjs.synced])
 
   // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {

@@ -23,7 +23,20 @@ export function useYjs(workspaceId: string) {
     provider.wsProvider.on("status", onStatus)
     provider.wsProvider.on("sync", onSync)
 
+    // When the WebSocket connection fails (no collab server), treat the
+    // local Y.Doc as synced so content seeding can proceed immediately.
+    let connectionAttempted = false
+    const onConnectionError = () => {
+      if (connectionAttempted) return
+      connectionAttempted = true
+      setSynced((prev) => prev || true)
+    }
+    provider.wsProvider.on("connection-error", onConnectionError)
+    provider.wsProvider.on("connection-close", onConnectionError)
+
     return () => {
+      provider.wsProvider.off("connection-error", onConnectionError)
+      provider.wsProvider.off("connection-close", onConnectionError)
       provider.wsProvider.off("status", onStatus)
       provider.wsProvider.off("sync", onSync)
       provider.destroy()

@@ -92,8 +92,9 @@ export function EditorPane({
   const indexRef = useRef(index)
   indexRef.current = index
 
-  // Track whether initial content has been seeded into the Yjs fragment
-  const contentSeededRef = useRef(!fragment)
+  // Track whether initial content has been seeded into the Yjs fragment.
+  // Starts false; the seeding effect gates on fragment being available.
+  const contentSeededRef = useRef(false)
 
   const editor = useEditor({
     immediatelyRender: false,

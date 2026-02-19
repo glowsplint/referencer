@@ -37,10 +37,9 @@ export function useCursorVisibility({
 
   useEffect(() => {
     const ensureCursorVisibility = () => {
-      if (!editor) return
+      if (!editor || editor.isDestroyed || !editor.isFocused) return
 
       const { state, view } = editor
-      if (!view.hasFocus()) return
 
       // Get current cursor position coordinates
       const { from } = state.selection
