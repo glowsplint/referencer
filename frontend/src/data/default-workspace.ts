@@ -98,26 +98,6 @@ function hl(editorIndex: number, doc: any, text: string, occurrence = 0): Highli
   }
 }
 
-function comment(
-  editorIndex: number,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  doc: any,
-  text: string,
-  annotation: string,
-  occurrence = 0
-): Highlight {
-  const pos = findInDoc(doc, text, occurrence)
-  return {
-    id: nextId(),
-    editorIndex,
-    from: pos.from,
-    to: pos.to,
-    text,
-    annotation,
-    type: "comment",
-  }
-}
-
 function arrow(
   fromEditor: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
