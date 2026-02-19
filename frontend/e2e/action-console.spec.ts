@@ -18,9 +18,9 @@ test("backtick toggles action console", async ({ page }) => {
 });
 
 test("action console shows log entries with details after actions", async ({ page }) => {
-  // Add a layer (appended after 4 default layers)
+  // Add a layer (appended after 3 default layers)
   await page.getByTestId("addLayerButton").click();
-  await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
+  await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
 
   // Open console
   await page.keyboard.press("`");

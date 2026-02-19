@@ -33,28 +33,28 @@ test.describe("annotation visibility with layers", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Editor starts locked with 4 default layers.
-    // Add two fresh layers for the test at indices 4 and 5.
+    // Editor starts locked with 3 default layers.
+    // Add two fresh layers for the test at indices 3 and 4.
     await page.getByTestId("addLayerButton").click();
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
-    await expect(page.getByTestId("layerName-5")).toHaveText("Layer 2");
+    await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
+    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 2");
 
-    // Activate Layer 1 (index 4)
-    await page.getByTestId("layerName-4").click();
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Activate Layer 1 (index 3)
+    await page.getByTestId("layerName-3").click();
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
 
     // Switch to comments tool
     await page.keyboard.press("c");
   });
 
   test("hiding layer hides its annotations", async ({ page }) => {
-    // Create annotation on Layer 1 (index 4)
+    // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Layer 1 note");
 
-    // Hide Layer 1 (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3)
+    await page.getByTestId("layerVisibility-3").click();
 
     // Annotation should disappear
     await expect(page.getByText("Layer 1 note")).toHaveCount(0, {
@@ -63,24 +63,24 @@ test.describe("annotation visibility with layers", () => {
   });
 
   test("showing layer restores its annotations", async ({ page }) => {
-    // Create annotation on Layer 1 (index 4)
+    // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Restored note");
 
-    // Hide then show Layer 1 (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide then show Layer 1 (index 3)
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByText("Restored note")).toHaveCount(0, {
       timeout: 2000,
     });
 
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByText("Restored note")).toBeVisible({
       timeout: 2000,
     });
   });
 
   test("annotations on different layers are independent", async ({ page }) => {
-    // Create annotation on Layer 1 (index 4)
+    // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1 annotation");
 
@@ -89,9 +89,9 @@ test.describe("annotation visibility with layers", () => {
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
     await page.waitForTimeout(200);
 
-    // Switch to Layer 2 (index 5) by clicking in management pane
-    await page.getByTestId("layerName-5").click();
-    await expect(page.getByTestId("layerActiveTag-5")).toBeVisible();
+    // Switch to Layer 2 (index 4) by clicking in management pane
+    await page.getByTestId("layerName-4").click();
+    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
 
     // Create annotation on Layer 2 — click on a lower line to avoid annotation panel
     const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
@@ -108,8 +108,8 @@ test.describe("annotation visibility with layers", () => {
       timeout: 2000,
     });
 
-    // Hide Layer 1 (index 4) — only L1 annotation disappears
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3) — only L1 annotation disappears
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByText("L1 annotation")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -118,8 +118,8 @@ test.describe("annotation visibility with layers", () => {
     });
 
     // Show Layer 1, hide Layer 2
+    await page.getByTestId("layerVisibility-3").click();
     await page.getByTestId("layerVisibility-4").click();
-    await page.getByTestId("layerVisibility-5").click();
     await expect(page.getByText("L1 annotation")).toBeVisible({
       timeout: 2000,
     });
@@ -131,7 +131,7 @@ test.describe("annotation visibility with layers", () => {
   test("annotation panel disappears when all layers hidden", async ({
     page,
   }) => {
-    // Create annotation on Layer 1 (index 4)
+    // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Only note");
 
@@ -139,8 +139,8 @@ test.describe("annotation visibility with layers", () => {
       timeout: 2000,
     });
 
-    // Hide ALL layers (4 default + 2 test layers)
-    for (let i = 0; i <= 5; i++) {
+    // Hide ALL layers (3 default + 2 test layers)
+    for (let i = 0; i <= 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
@@ -149,8 +149,8 @@ test.describe("annotation visibility with layers", () => {
       timeout: 2000,
     });
 
-    // Show test Layer 1 (index 4) again — panel reappears
-    await page.getByTestId("layerVisibility-4").click();
+    // Show test Layer 1 (index 3) again — panel reappears
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("annotation-panel")).toBeVisible({
       timeout: 2000,
     });
@@ -162,7 +162,7 @@ test.describe("annotation visibility with passages", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Editor starts locked with 2 passages and 4 default layers.
+    // Editor starts locked with 2 passages and 3 default layers.
     // Add a fresh layer for tests.
     await page.getByTestId("addLayerButton").click();
 
@@ -267,14 +267,14 @@ test.describe("combined layer + passage annotation visibility", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Editor starts locked with 2 passages and 4 default layers.
-    // Add two fresh layers at indices 4 and 5.
+    // Editor starts locked with 2 passages and 3 default layers.
+    // Add two fresh layers at indices 3 and 4.
     await page.getByTestId("addLayerButton").click();
     await page.getByTestId("addLayerButton").click();
 
-    // Activate Layer 1 (index 4)
-    await page.getByTestId("layerName-4").click();
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Activate Layer 1 (index 3)
+    await page.getByTestId("layerName-3").click();
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
 
     // Switch to comments tool
     await page.keyboard.press("c");
@@ -283,12 +283,12 @@ test.describe("combined layer + passage annotation visibility", () => {
   test("hiding layer then passage, restoring in reverse order", async ({
     page,
   }) => {
-    // Create annotation on Layer 1 (index 4) in passage 1
+    // Create annotation on Layer 1 (index 3) in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Combined note");
 
-    // Hide layer (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide layer (index 3)
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByText("Combined note")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -297,7 +297,7 @@ test.describe("combined layer + passage annotation visibility", () => {
     await page.getByTestId("sectionVisibility-0").click();
 
     // Show layer (passage still hidden) — annotation should NOT appear
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByText("Combined note")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -312,11 +312,11 @@ test.describe("combined layer + passage annotation visibility", () => {
   test("annotations across layers and passages all respect visibility", async ({
     page,
   }) => {
-    // Layer 1 (index 4), Passage 1
+    // Layer 1 (index 3), Passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1P1");
 
-    // Layer 1 (index 4), Passage 2
+    // Layer 1 (index 3), Passage 2
     await clickWordInEditor(page, 1, 30);
     await addAnnotation(page, "L1P2");
 
@@ -325,11 +325,11 @@ test.describe("combined layer + passage annotation visibility", () => {
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
     await page.waitForTimeout(200);
 
-    // Switch to Layer 2 (index 5) by clicking in management pane
-    await page.getByTestId("layerName-5").click();
-    await expect(page.getByTestId("layerActiveTag-5")).toBeVisible();
+    // Switch to Layer 2 (index 4) by clicking in management pane
+    await page.getByTestId("layerName-4").click();
+    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
 
-    // Layer 2 (index 5), Passage 1 — click on a lower line to avoid annotation panel
+    // Layer 2 (index 4), Passage 1 — click on a lower line to avoid annotation panel
     const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
     const pBox = await p.boundingBox();
     await page.mouse.click(pBox!.x + 30, pBox!.y + pBox!.height * 0.8);
@@ -341,14 +341,14 @@ test.describe("combined layer + passage annotation visibility", () => {
     await expect(page.getByText("L1P2")).toBeVisible({ timeout: 2000 });
     await expect(page.getByText("L2P1")).toBeVisible({ timeout: 2000 });
 
-    // Hide Layer 1 (index 4) — L1P1 and L1P2 disappear
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3) — L1P1 and L1P2 disappear
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByText("L1P1")).toHaveCount(0, { timeout: 2000 });
     await expect(page.getByText("L1P2")).toHaveCount(0, { timeout: 2000 });
     await expect(page.getByText("L2P1")).toBeVisible({ timeout: 2000 });
 
     // Show Layer 1, hide Passage 1 — L1P1 and L2P1 disappear
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await page.getByTestId("sectionVisibility-0").click();
     await expect(page.getByText("L1P1")).toHaveCount(0, { timeout: 2000 });
     await expect(page.getByText("L1P2")).toBeVisible({ timeout: 2000 });
