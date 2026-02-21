@@ -3,9 +3,18 @@
 ## Prerequisites
 
 - **[Bun](https://bun.sh/)** -- frontend package management, dev server, and backend runtime
-- **[Node.js](https://nodejs.org/)** -- required for the collab server (y-leveldb uses native Node bindings) and Playwright tests
+- **[Node.js](https://nodejs.org/) 20+** -- required for the collab server (y-leveldb uses native Node bindings) and Playwright tests
+- **[fnm](https://github.com/Schniz/fnm)** (recommended) -- manages Node.js versions; the dev script uses `fnm exec --using=22` to run the collab server with the correct Node version
 
 ## Quick Start
+
+### Install all dependencies
+
+```bash
+bun run install:all
+```
+
+This installs dependencies for the root, collab-server, backend, and frontend in one command.
 
 ### Frontend only (no collaboration)
 
@@ -19,24 +28,19 @@ Opens at [http://localhost:5173/referencer/](http://localhost:5173/referencer/).
 
 ### Full stack (with collaboration)
 
-Start all three services:
+Start all three services with a single command from the project root:
 
 ```bash
-# Terminal 1: Backend (port 5000)
-cd backend
-bun install
-bun run dev
-
-# Terminal 2: Collab server (port 4444)
-cd collab-server
-npm install
-npm start
-
-# Terminal 3: Frontend (port 5173)
-cd frontend
-bun install
 bun run dev
 ```
+
+This uses `concurrently` to launch:
+
+| Service | Port | Runner |
+|---------|------|--------|
+| Backend | 5000 | Bun |
+| Collab server | 4444 | Node (via fnm) |
+| Frontend | 5173 | Bun |
 
 The Vite dev server proxies API requests to the backend and Yjs WebSocket connections to the collab server.
 
@@ -162,4 +166,4 @@ Providers are only enabled when all their required env vars are set.
 - **Styling**: Tailwind CSS for all new styling. SCSS only exists in tiptap template components.
 - **Components under `tiptap-*` directories**: Sourced from third-party tiptap templates. Avoid structural refactoring; minor fixes like import path changes are fine.
 - **Git**: Linear history. Always rebase, never merge.
-- **Package manager**: Bun for everything except the collab server (which uses npm/Node.js).
+- **Package manager**: Bun for everything. The collab server runs under Node.js (via `fnm exec`) due to native LevelDB bindings, but uses `bun install` for dependency management.

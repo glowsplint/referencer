@@ -4,11 +4,16 @@
 // flushed back periodically and on disconnect.
 import http from 'http'
 import { WebSocketServer } from 'ws'
-import * as Y from 'yjs'
-import { LeveldbPersistence } from 'y-leveldb'
-import { setupWSConnection, getYDoc } from 'y-websocket/bin/utils'
+import { createRequire } from 'module'
 import path from 'path'
 import { fileURLToPath } from 'url'
+
+// Use createRequire for yjs and packages that depend on it via CJS require(),
+// so they all share a single yjs instance (avoids "Yjs was already imported" warning).
+const require = createRequire(import.meta.url)
+const Y = require('yjs')
+const { LeveldbPersistence } = require('y-leveldb')
+const { setupWSConnection, getYDoc } = require('y-websocket/bin/utils')
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
