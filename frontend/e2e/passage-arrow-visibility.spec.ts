@@ -82,11 +82,11 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 2 passages and 4 default layers. Add a fresh layer.
+    // Editor starts locked with 2 passages and 3 default layers. Add a fresh layer.
     await page.getByTestId("addLayerButton").click();
 
     await page.getByTestId("menuButton").click();
@@ -190,8 +190,8 @@ test.describe("passage visibility with arrows (2 editors)", () => {
 
     await page.getByTestId("menuButton").click();
 
-    // Hide layer (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide layer (index 3)
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -200,7 +200,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await page.getByTestId("sectionVisibility-0").click();
 
     // Show layer (section still hidden) — arrow should not appear
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -290,11 +290,11 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 2 passages and 4 default layers.
+    // Editor starts locked with 2 passages and 3 default layers.
     // Add one more passage for 3 total.
     await page.getByTestId("addPassageButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
@@ -306,15 +306,15 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await page.keyboard.type("Alpha Beta Gamma Delta Epsilon Zeta Eta Theta");
     await page.getByTestId("lockButton").click();
 
-    // Add two fresh layers at indices 4 and 5.
+    // Add two fresh layers at indices 3 and 4.
     await page.getByTestId("addLayerButton").click();
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
-    await expect(page.getByTestId("layerName-5")).toHaveText("Layer 2");
+    await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
+    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 2");
 
-    // Activate Layer 1 (index 4)
-    await page.getByTestId("layerName-4").click();
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Activate Layer 1 (index 3)
+    await page.getByTestId("layerName-3").click();
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
 
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
@@ -509,8 +509,8 @@ test.describe("passage visibility with arrows (3 editors)", () => {
 
     await page.getByTestId("menuButton").click();
 
-    // Hide Layer 1 (index 4) — only E2→E3 (Layer 2) remains
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3) — only E2→E3 (Layer 2) remains
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -522,7 +522,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
 
     // Show Layer 1 (E2 still hidden) — E1→E2 can't show because E2 hidden
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });

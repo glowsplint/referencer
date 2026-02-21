@@ -23,7 +23,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
   });
@@ -153,7 +153,7 @@ test.describe("drag-to-select multiple words", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Editor starts locked with 4 default layers. Add a fresh layer for tests.
+    // Editor starts locked with 3 default layers. Add a fresh layer for tests.
     await page.getByTestId("addLayerButton").click();
 
     // Switch to comments tool for annotation creation
@@ -260,7 +260,7 @@ test.describe("selection clears on state changes", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
   });

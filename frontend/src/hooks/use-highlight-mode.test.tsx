@@ -10,7 +10,7 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     selection: null as WordSelection | null,
     activeLayerId: "layer-1",
     addLayer: vi.fn(() => "auto-layer-1"),
-    layers: [] as { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string; type: "highlight" | "comment" }[] }[],
+    layers: [] as { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; text: string; annotation: string; type: "highlight" | "comment" }[] }[],
     addHighlight: vi.fn().mockReturnValue("h-1"),
     removeHighlight: vi.fn(),
     showHighlightToasts: true,
@@ -147,7 +147,7 @@ describe("useHighlightMode", () => {
       layers: [{
         id: "layer-1",
         highlights: [
-          { id: "h-existing", editorIndex: 0, from: 1, to: 5, annotation: "", type: "highlight" as const },
+          { id: "h-existing", editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "", type: "highlight" as const },
         ],
       }],
     })
@@ -165,7 +165,7 @@ describe("useHighlightMode", () => {
       layers: [{
         id: "layer-1",
         highlights: [
-          { id: "h-annotated", editorIndex: 0, from: 1, to: 5, annotation: "some note", type: "comment" as const },
+          { id: "h-annotated", editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "some note", type: "comment" as const },
         ],
       }],
     })
@@ -217,7 +217,7 @@ describe("useHighlightMode", () => {
       layers: [{
         id: "layer-1",
         highlights: [
-          { id: "h-existing", editorIndex: 0, from: 1, to: 5, annotation: "", type: "highlight" as const },
+          { id: "h-existing", editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "", type: "highlight" as const },
         ],
       }],
     })

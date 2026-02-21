@@ -39,11 +39,11 @@ test.describe("eraser tool", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 4 default layers. Add a fresh layer for tests.
+    // Editor starts locked with 3 default layers. Add a fresh layer for tests.
     await page.getByTestId("addLayerButton").click();
   });
 
@@ -117,7 +117,7 @@ test.describe("eraser tool", () => {
     );
     const initialHighlightCount = await highlights.count();
 
-    // Create highlight on the test layer (index 4)
+    // Create highlight on the test layer (index 3)
     await page.keyboard.press("h");
     await clickWordInEditor(page, 0, 30);
     await page.keyboard.press("Enter");
@@ -129,8 +129,8 @@ test.describe("eraser tool", () => {
     const afterCreate = await highlights.count();
     expect(afterCreate).toBeGreaterThanOrEqual(initialHighlightCount + 1);
 
-    // Hide the test layer (index 4) — its highlight should disappear
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide the test layer (index 3) — its highlight should disappear
+    await page.getByTestId("layerVisibility-3").click();
     const afterHide = await highlights.count();
     expect(afterHide).toBe(afterCreate - 1);
 
@@ -139,7 +139,7 @@ test.describe("eraser tool", () => {
     await clickWordInEditorRaw(page, 0, 30);
 
     // Show the test layer — highlight should still be there since layer was hidden during erase
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     const afterShow = await highlights.count();
     expect(afterShow).toBe(afterCreate);
   });

@@ -13,7 +13,7 @@ test.describe("cross-editor navigation (2 editors)", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
     // Editor starts locked with 2 passages. Close management pane for more space.
@@ -58,7 +58,7 @@ test.describe("cross-editor navigation (3 editors)", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
     // Editor starts locked with 2 passages. Add one more for 3 total.

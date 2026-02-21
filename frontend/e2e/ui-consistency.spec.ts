@@ -116,11 +116,11 @@ test.describe("no dangling highlights when layer is hidden", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 4 default layers. Add a fresh layer at index 4.
+    // Editor starts locked with 3 default layers. Add a fresh layer at index 3.
     await page.getByTestId("addLayerButton").click();
 
     // Switch to comments tool
@@ -148,8 +148,8 @@ test.describe("no dangling highlights when layer is hidden", () => {
     const countBefore = await highlights.count();
     expect(countBefore).toBeGreaterThan(0);
 
-    // Hide test layer (index 4) — all its highlights should disappear
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide test layer (index 3) — all its highlights should disappear
+    await page.getByTestId("layerVisibility-3").click();
     await expect(highlights).toHaveCount(0, { timeout: 2000 });
 
     // No annotation panel either
@@ -171,8 +171,8 @@ test.describe("no dangling highlights when layer is hidden", () => {
     const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
     await expect(endpointDecorations).toHaveCount(2, { timeout: 2000 });
 
-    // Hide test layer (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide test layer (index 3)
+    await page.getByTestId("layerVisibility-3").click();
 
     // Both arrows AND endpoint decorations should be gone
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
@@ -188,11 +188,11 @@ test.describe("no dangling elements when passage is hidden", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 2 passages and 4 default layers. Add a fresh layer.
+    // Editor starts locked with 2 passages and 3 default layers. Add a fresh layer.
     await page.getByTestId("addLayerButton").click();
 
     // Close management pane for more editor space
@@ -266,11 +266,11 @@ test.describe("no orphaned connector lines", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 4 default layers. Add a fresh layer at index 4.
+    // Editor starts locked with 3 default layers. Add a fresh layer at index 3.
     await page.getByTestId("addLayerButton").click();
 
     // Switch to comments tool
@@ -319,8 +319,8 @@ test.describe("no orphaned connector lines", () => {
       page.locator('[data-testid="annotation-panel"] svg line')
     ).toHaveCount(1, { timeout: 2000 });
 
-    // Hide test layer (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide test layer (index 3)
+    await page.getByTestId("layerVisibility-3").click();
 
     // Panel should disappear entirely (no orphaned SVG elements)
     await expect(page.getByTestId("annotation-panel")).toHaveCount(0, {
@@ -335,17 +335,17 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 2 passages and 4 default layers.
-    // Add two fresh layers at indices 4 and 5.
+    // Editor starts locked with 2 passages and 3 default layers.
+    // Add two fresh layers at indices 3 and 4.
     await page.getByTestId("addLayerButton").click();
     await page.getByTestId("addLayerButton").click();
 
-    // Activate Layer 1 (index 4)
-    await page.getByTestId("layerName-4").click();
+    // Activate Layer 1 (index 3)
+    await page.getByTestId("layerName-3").click();
 
     // Close management pane for more space
     await page.getByTestId("menuButton").click();
@@ -391,8 +391,8 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     // Reopen management pane for layer toggle
     await page.getByTestId("menuButton").click();
 
-    // Hide Layer 1 (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3)
+    await page.getByTestId("layerVisibility-3").click();
 
     // All should be gone
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
@@ -404,8 +404,8 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(highlights).toHaveCount(0, { timeout: 2000 });
     await expect(endpointDecorations).toHaveCount(0, { timeout: 2000 });
 
-    // Show Layer 1 (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Show Layer 1 (index 3)
+    await page.getByTestId("layerVisibility-3").click();
 
     // All should reappear
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -420,7 +420,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
   test("layer 2 elements unaffected when layer 1 is toggled", async ({
     page,
   }) => {
-    // Create annotation on Layer 1 (index 4)
+    // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1 note");
 
@@ -433,9 +433,9 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     // Reopen management pane to switch layers
     await page.getByTestId("menuButton").click();
 
-    // Switch to Layer 2 (index 5)
-    await page.getByTestId("layerName-5").click();
-    await expect(page.getByTestId("layerActiveTag-5")).toBeVisible();
+    // Switch to Layer 2 (index 4)
+    await page.getByTestId("layerName-4").click();
+    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
 
     // Close management pane for more editor space
     await page.getByTestId("menuButton").click();
@@ -459,8 +459,8 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     // Reopen management pane for layer toggle
     await page.getByTestId("menuButton").click();
 
-    // Hide Layer 1 (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3)
+    await page.getByTestId("layerVisibility-3").click();
 
     // Layer 1 stuff gone, Layer 2 stuff remains
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -483,9 +483,9 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     // Reopen management pane for layer toggle
     await page.getByTestId("menuButton").click();
 
-    // Rapid toggle 6 times (ends visible) — using index 4
+    // Rapid toggle 6 times (ends visible) — using index 3
     for (let i = 0; i < 6; i++) {
-      await page.getByTestId("layerVisibility-4").click();
+      await page.getByTestId("layerVisibility-3").click();
       await page.waitForTimeout(50);
     }
     await page.waitForTimeout(300);
@@ -533,11 +533,11 @@ test.describe("all elements hidden state", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 4 default layers. Add a fresh layer at index 4.
+    // Editor starts locked with 3 default layers. Add a fresh layer at index 3.
     await page.getByTestId("addLayerButton").click();
 
     // Switch to comments tool
@@ -552,8 +552,8 @@ test.describe("all elements hidden state", () => {
     await clickWordInEditor(page, 0, 200);
     await addAnnotation(page, "Will hide");
 
-    // Hide the test layer (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide the test layer (index 3)
+    await page.getByTestId("layerVisibility-3").click();
 
     // Nothing should remain
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
@@ -587,8 +587,8 @@ test.describe("all elements hidden state", () => {
       timeout: 2000,
     });
 
-    // Hide test layer (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide test layer (index 3)
+    await page.getByTestId("layerVisibility-3").click();
 
     // The SVG overlay should exist but contain no arrow path elements
     const arrowOverlay = page.getByTestId("arrow-overlay");
