@@ -85,6 +85,7 @@ export function ArrowOverlay({
   // Propagate hoveredArrowId to within-editor plugin views so they hide arrowheads
   useEffect(() => {
     for (const editor of editorsRef.current.values()) {
+      if (editor.isDestroyed) continue
       getArrowLinesView(editor.view)?.setHoveredArrowId(hoveredArrowId)
     }
   }, [hoveredArrowId, editorsRef])
@@ -158,6 +159,7 @@ export function ArrowOverlay({
     const cleanups: (() => void)[] = []
 
     for (const [index, editor] of editors) {
+      if (editor.isDestroyed) continue
       const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
       if (!wrapper) continue
 
@@ -186,6 +188,7 @@ export function ArrowOverlay({
     // Create SVGs for new editors
     for (const [index, editor] of editors) {
       if (currentSvgs.has(index)) continue
+      if (editor.isDestroyed) continue
 
       const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
       if (!wrapper) continue
@@ -459,6 +462,7 @@ export function ArrowOverlay({
       const ch = containerRect.height
       let clipD = `M 0 0 H ${cw} V ${ch} H 0 Z`
       for (const [, editor] of editorsRef.current) {
+        if (editor.isDestroyed) continue
         const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
         if (!wrapper) continue
         const wr = wrapper.getBoundingClientRect()
@@ -472,7 +476,7 @@ export function ArrowOverlay({
       // Show and draw into every wrapper SVG
       for (const [index, svg] of wrapperSvgRefs.current) {
         const editor = editorsRef.current.get(index)
-        const wrapper = editor?.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
+        const wrapper = (editor && !editor.isDestroyed) ? editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null : null
         if (!wrapper) {
           svg.style.display = "none"
           continue

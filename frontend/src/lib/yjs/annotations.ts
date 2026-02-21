@@ -2,6 +2,12 @@
 // Layers, highlights, arrows, and underlines are stored as Y.Array<Y.Map>
 // with RelativePosition anchors that survive concurrent text edits.
 import * as Y from "yjs"
+import {
+  absolutePositionToRelativePosition,
+  relativePositionToAbsolutePosition,
+  ySyncPluginKey,
+} from "@tiptap/y-tiptap"
+import type { EditorView } from "@tiptap/pm/view"
 import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 
 // ---------------------------------------------------------------------------
@@ -21,27 +27,77 @@ import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/type
 //   id, fromEditorIndex, fromRel, fromToRel, fromText,
 //       toEditorIndex, toRel, toToRel, toText, arrowStyle
 
+/** Optional map of editor index → ProseMirror EditorView for proper position mapping */
+export type EditorViewMap = Map<number, EditorView>
+
 // ---------------------------------------------------------------------------
 // RelativePosition helpers
 // ---------------------------------------------------------------------------
 
-/** Encode a ProseMirror position as a RelativePosition relative to an XmlFragment */
+/**
+ * Get the y-prosemirror sync state (type + mapping) from an EditorView.
+ * Returns null if the sync plugin is not active.
+ */
+function getSyncState(view: EditorView): { type: Y.XmlFragment; mapping: Map<any, any> } | null {
+  const syncState = ySyncPluginKey.getState(view.state)
+  if (!syncState?.binding?.mapping) return null
+  return { type: syncState.type, mapping: syncState.binding.mapping }
+}
+
+/**
+ * Encode a ProseMirror position as a Yjs RelativePosition.
+ *
+ * When an EditorView is provided, uses y-prosemirror's proper position mapping
+ * which accounts for the difference between ProseMirror positions (which include
+ * structural tokens like paragraph open/close) and Yjs XmlFragment indices.
+ * Without an EditorView, falls back to direct index encoding (only correct when
+ * the fragment has no structural nesting, e.g. during initial seeding of an
+ * empty document).
+ */
 export function encodeRelativePosition(
   doc: Y.Doc,
   editorIndex: number,
-  pos: number
+  pos: number,
+  editorViews?: EditorViewMap
 ): Uint8Array {
+  const view = editorViews?.get(editorIndex)
+  if (view) {
+    const syncState = getSyncState(view)
+    if (syncState) {
+      const relPos = absolutePositionToRelativePosition(pos, syncState.type, syncState.mapping)
+      return Y.encodeRelativePosition(relPos)
+    }
+  }
+  // Fallback: direct index encoding (only correct for flat/empty fragments)
   const fragment = doc.getXmlFragment(`editor-${editorIndex}`)
   const relPos = Y.createRelativePositionFromTypeIndex(fragment, pos)
   return Y.encodeRelativePosition(relPos)
 }
 
-/** Decode a RelativePosition back to an absolute ProseMirror position */
+/**
+ * Decode a Yjs RelativePosition back to an absolute ProseMirror position.
+ *
+ * When an EditorView is provided, uses y-prosemirror's proper position mapping
+ * which accounts for structural differences between ProseMirror and Yjs.
+ * Without an EditorView, falls back to raw Yjs index (only correct for flat
+ * fragments).
+ */
 export function decodeRelativePosition(
   doc: Y.Doc,
-  encoded: Uint8Array
+  encoded: Uint8Array,
+  editorIndex?: number,
+  editorViews?: EditorViewMap
 ): number | null {
   const relPos = Y.decodeRelativePosition(encoded)
+  const view = editorIndex !== undefined ? editorViews?.get(editorIndex) : undefined
+  if (view) {
+    const syncState = getSyncState(view)
+    if (syncState) {
+      const pos = relativePositionToAbsolutePosition(doc, syncState.type, relPos, syncState.mapping)
+      return pos ?? null
+    }
+  }
+  // Fallback: raw Yjs index (only correct for flat fragments)
   const absPos = Y.createAbsolutePositionFromRelativePosition(relPos, doc)
   return absPos?.index ?? null
 }
@@ -119,7 +175,7 @@ export function seedDefaultLayers(doc: Y.Doc, defaultLayers: Layer[]): void {
 // Read: Convert Yjs state → plain Layer[] for React rendering
 // ---------------------------------------------------------------------------
 
-export function readLayers(doc: Y.Doc): Layer[] {
+export function readLayers(doc: Y.Doc, editorViews?: EditorViewMap): Layer[] {
   const yLayers = getLayersArray(doc)
   const layers: Layer[] = []
 
@@ -130,9 +186,9 @@ export function readLayers(doc: Y.Doc): Layer[] {
       name: yLayer.get("name") as string,
       color: yLayer.get("color") as string,
       visible: yLayer.get("visible") as boolean,
-      highlights: readHighlights(doc, yLayer),
-      arrows: readArrows(doc, yLayer),
-      underlines: readUnderlines(doc, yLayer),
+      highlights: readHighlights(doc, yLayer, editorViews),
+      arrows: readArrows(doc, yLayer, editorViews),
+      underlines: readUnderlines(doc, yLayer, editorViews),
     }
     layers.push(layer)
   }
@@ -140,7 +196,7 @@ export function readLayers(doc: Y.Doc): Layer[] {
   return layers
 }
 
-function readHighlights(doc: Y.Doc, yLayer: Y.Map<unknown>): Highlight[] {
+function readHighlights(doc: Y.Doc, yLayer: Y.Map<unknown>, editorViews?: EditorViewMap): Highlight[] {
   const yHighlights = yLayer.get("highlights") as Y.Array<Y.Map<unknown>> | undefined
   if (!yHighlights) return []
 
@@ -155,20 +211,22 @@ function readHighlights(doc: Y.Doc, yLayer: Y.Map<unknown>): Highlight[] {
       console.error("[yjs] highlight has invalid position data:", id)
       continue
     }
-    const from = decodeRelativePosition(doc, fromRel)
-    const to = decodeRelativePosition(doc, toRel)
+    const from = decodeRelativePosition(doc, fromRel, editorIndex, editorViews)
+    const to = decodeRelativePosition(doc, toRel, editorIndex, editorViews)
     if (from === null || to === null) {
       console.warn("[yjs] highlight position lost:", id)
       continue
     }
 
+    const text = yH.get("text") as string
+    const annotation = (yH.get("annotation") as string) ?? ""
     highlights.push({
       id,
       editorIndex,
       from,
       to,
-      text: yH.get("text") as string,
-      annotation: (yH.get("annotation") as string) ?? "",
+      text,
+      annotation,
       type: (yH.get("type") as "highlight" | "comment") ?? "highlight",
     })
   }
@@ -176,7 +234,7 @@ function readHighlights(doc: Y.Doc, yLayer: Y.Map<unknown>): Highlight[] {
   return highlights
 }
 
-function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>): Arrow[] {
+function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>, editorViews?: EditorViewMap): Arrow[] {
   const yArrows = yLayer.get("arrows") as Y.Array<Y.Map<unknown>> | undefined
   if (!yArrows) return []
 
@@ -184,6 +242,8 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>): Arrow[] {
   for (let i = 0; i < yArrows.length; i++) {
     const yA = yArrows.get(i)
     const id = yA.get("id") as string
+    const fromEditorIndex = yA.get("fromEditorIndex") as number
+    const toEditorIndex = yA.get("toEditorIndex") as number
     const fromRel = yA.get("fromRel")
     const fromToRel = yA.get("fromToRel")
     const toRel = yA.get("toRel")
@@ -195,10 +255,10 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>): Arrow[] {
       console.error("[yjs] arrow has invalid position data:", id)
       continue
     }
-    const fromFrom = decodeRelativePosition(doc, fromRel)
-    const fromTo = decodeRelativePosition(doc, fromToRel)
-    const toFrom = decodeRelativePosition(doc, toRel)
-    const toTo = decodeRelativePosition(doc, toToRel)
+    const fromFrom = decodeRelativePosition(doc, fromRel, fromEditorIndex, editorViews)
+    const fromTo = decodeRelativePosition(doc, fromToRel, fromEditorIndex, editorViews)
+    const toFrom = decodeRelativePosition(doc, toRel, toEditorIndex, editorViews)
+    const toTo = decodeRelativePosition(doc, toToRel, toEditorIndex, editorViews)
     if (fromFrom === null || fromTo === null || toFrom === null || toTo === null) {
       console.warn("[yjs] arrow position lost:", id)
       continue
@@ -207,13 +267,13 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>): Arrow[] {
     arrows.push({
       id,
       from: {
-        editorIndex: yA.get("fromEditorIndex") as number,
+        editorIndex: fromEditorIndex,
         from: fromFrom,
         to: fromTo,
         text: yA.get("fromText") as string,
       },
       to: {
-        editorIndex: yA.get("toEditorIndex") as number,
+        editorIndex: toEditorIndex,
         from: toFrom,
         to: toTo,
         text: yA.get("toText") as string,
@@ -225,7 +285,7 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>): Arrow[] {
   return arrows
 }
 
-function readUnderlines(doc: Y.Doc, yLayer: Y.Map<unknown>): LayerUnderline[] {
+function readUnderlines(doc: Y.Doc, yLayer: Y.Map<unknown>, editorViews?: EditorViewMap): LayerUnderline[] {
   const yUnderlines = yLayer.get("underlines") as Y.Array<Y.Map<unknown>> | undefined
   if (!yUnderlines) return []
 
@@ -233,14 +293,15 @@ function readUnderlines(doc: Y.Doc, yLayer: Y.Map<unknown>): LayerUnderline[] {
   for (let i = 0; i < yUnderlines.length; i++) {
     const yU = yUnderlines.get(i)
     const id = yU.get("id") as string
+    const editorIndex = yU.get("editorIndex") as number
     const fromRel = yU.get("fromRel")
     const toRel = yU.get("toRel")
     if (!(fromRel instanceof Uint8Array) || !(toRel instanceof Uint8Array)) {
       console.error("[yjs] underline has invalid position data:", id)
       continue
     }
-    const from = decodeRelativePosition(doc, fromRel)
-    const to = decodeRelativePosition(doc, toRel)
+    const from = decodeRelativePosition(doc, fromRel, editorIndex, editorViews)
+    const to = decodeRelativePosition(doc, toRel, editorIndex, editorViews)
     if (from === null || to === null) {
       console.warn("[yjs] underline position lost:", id)
       continue
@@ -248,7 +309,7 @@ function readUnderlines(doc: Y.Doc, yLayer: Y.Map<unknown>): LayerUnderline[] {
 
     underlines.push({
       id,
-      editorIndex: yU.get("editorIndex") as number,
+      editorIndex,
       from,
       to,
       text: yU.get("text") as string,
@@ -331,7 +392,8 @@ export function addHighlightToDoc(
   doc: Y.Doc,
   layerId: string,
   highlight: Omit<Highlight, "id">,
-  id: string
+  id: string,
+  editorViews?: EditorViewMap
 ): void {
   const result = findYLayer(doc, layerId)
   if (!result) return
@@ -339,8 +401,8 @@ export function addHighlightToDoc(
   const yH = new Y.Map<unknown>()
   yH.set("id", id)
   yH.set("editorIndex", highlight.editorIndex)
-  yH.set("fromRel", encodeRelativePosition(doc, highlight.editorIndex, highlight.from))
-  yH.set("toRel", encodeRelativePosition(doc, highlight.editorIndex, highlight.to))
+  yH.set("fromRel", encodeRelativePosition(doc, highlight.editorIndex, highlight.from, editorViews))
+  yH.set("toRel", encodeRelativePosition(doc, highlight.editorIndex, highlight.to, editorViews))
   yH.set("text", highlight.text)
   yH.set("annotation", highlight.annotation)
   yH.set("type", highlight.type)
@@ -390,7 +452,8 @@ export function addArrowToDoc(
   doc: Y.Doc,
   layerId: string,
   arrow: Omit<Arrow, "id">,
-  id: string
+  id: string,
+  editorViews?: EditorViewMap
 ): void {
   const result = findYLayer(doc, layerId)
   if (!result) return
@@ -398,12 +461,12 @@ export function addArrowToDoc(
   const yA = new Y.Map<unknown>()
   yA.set("id", id)
   yA.set("fromEditorIndex", arrow.from.editorIndex)
-  yA.set("fromRel", encodeRelativePosition(doc, arrow.from.editorIndex, arrow.from.from))
-  yA.set("fromToRel", encodeRelativePosition(doc, arrow.from.editorIndex, arrow.from.to))
+  yA.set("fromRel", encodeRelativePosition(doc, arrow.from.editorIndex, arrow.from.from, editorViews))
+  yA.set("fromToRel", encodeRelativePosition(doc, arrow.from.editorIndex, arrow.from.to, editorViews))
   yA.set("fromText", arrow.from.text)
   yA.set("toEditorIndex", arrow.to.editorIndex)
-  yA.set("toRel", encodeRelativePosition(doc, arrow.to.editorIndex, arrow.to.from))
-  yA.set("toToRel", encodeRelativePosition(doc, arrow.to.editorIndex, arrow.to.to))
+  yA.set("toRel", encodeRelativePosition(doc, arrow.to.editorIndex, arrow.to.from, editorViews))
+  yA.set("toToRel", encodeRelativePosition(doc, arrow.to.editorIndex, arrow.to.to, editorViews))
   yA.set("toText", arrow.to.text)
   yA.set("arrowStyle", arrow.arrowStyle ?? "solid")
   yArrows.push([yA])
@@ -452,7 +515,8 @@ export function addUnderlineToDoc(
   doc: Y.Doc,
   layerId: string,
   underline: Omit<LayerUnderline, "id">,
-  id: string
+  id: string,
+  editorViews?: EditorViewMap
 ): void {
   const result = findYLayer(doc, layerId)
   if (!result) return
@@ -460,8 +524,8 @@ export function addUnderlineToDoc(
   const yU = new Y.Map<unknown>()
   yU.set("id", id)
   yU.set("editorIndex", underline.editorIndex)
-  yU.set("fromRel", encodeRelativePosition(doc, underline.editorIndex, underline.from))
-  yU.set("toRel", encodeRelativePosition(doc, underline.editorIndex, underline.to))
+  yU.set("fromRel", encodeRelativePosition(doc, underline.editorIndex, underline.from, editorViews))
+  yU.set("toRel", encodeRelativePosition(doc, underline.editorIndex, underline.to, editorViews))
   yU.set("text", underline.text)
   yUnderlines.push([yU])
 }

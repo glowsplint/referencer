@@ -117,7 +117,7 @@ export function getWordRect(
   containerRect: DOMRect
 ): { x: number; y: number; width: number; height: number } | null {
   const editor = editorsRef.current.get(word.editorIndex)
-  if (!editor) return null
+  if (!editor || editor.isDestroyed) return null
 
   try {
     const nodeAt = editor.state.doc.nodeAt(word.from)
@@ -154,7 +154,7 @@ export function getWordCenter(
   containerRect: DOMRect
 ): { cx: number; cy: number } | null {
   const editor = editorsRef.current.get(word.editorIndex)
-  if (!editor) return null
+  if (!editor || editor.isDestroyed) return null
 
   try {
     const nodeAt = editor.state.doc.nodeAt(word.from)
@@ -291,7 +291,7 @@ export function getWordCenterRelativeToWrapper(
   targetWrapper: HTMLElement
 ): { cx: number; cy: number } | null {
   const editor = editorsRef.current.get(word.editorIndex)
-  if (!editor) return null
+  if (!editor || editor.isDestroyed) return null
 
   try {
     const wrapperRect = targetWrapper.getBoundingClientRect()
@@ -329,7 +329,7 @@ export function getWordRectRelativeToWrapper(
   targetWrapper: HTMLElement
 ): { x: number; y: number; width: number; height: number } | null {
   const editor = editorsRef.current.get(word.editorIndex)
-  if (!editor) return null
+  if (!editor || editor.isDestroyed) return null
 
   try {
     const wrapperRect = targetWrapper.getBoundingClientRect()
@@ -435,7 +435,7 @@ export function getClampedWordCenter(
   containerRect: DOMRect
 ): { cx: number; cy: number; clamped: boolean } | null {
   const editor = editorsRef.current.get(word.editorIndex)
-  if (!editor) return null
+  if (!editor || editor.isDestroyed) return null
 
   const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
   if (!wrapper) return null
@@ -468,7 +468,7 @@ export function getClampedWordCenterRelativeToWrapper(
   targetWrapper: HTMLElement
 ): { cx: number; cy: number; clamped: boolean } | null {
   const editor = editorsRef.current.get(word.editorIndex)
-  if (!editor) return null
+  if (!editor || editor.isDestroyed) return null
 
   const ownWrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null
   if (!ownWrapper) return null

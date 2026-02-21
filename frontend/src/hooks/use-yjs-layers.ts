@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback, useRef } from "react"
 import { toast } from "sonner"
 import i18n from "@/i18n"
 import type * as Y from "yjs"
+import type { Editor } from "@tiptap/react"
 import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 import { TAILWIND_300_COLORS } from "@/types/editor"
 import {
@@ -27,9 +28,25 @@ import {
   addUnderlineToDoc,
   removeUnderlineFromDoc,
   clearLayerUnderlinesInDoc,
+  type EditorViewMap,
 } from "@/lib/yjs/annotations"
 
-export function useYjsLayers(doc: Y.Doc | null) {
+/** Build a Map<number, EditorView> from the editorsRef for y-prosemirror position mapping */
+function buildEditorViewMap(editorsRef: React.RefObject<Map<number, Editor>>): EditorViewMap {
+  const map: EditorViewMap = new Map()
+  if (!editorsRef.current) return map
+  for (const [index, editor] of editorsRef.current) {
+    if (editor && !editor.isDestroyed && editor.view) {
+      map.set(index, editor.view)
+    }
+  }
+  return map
+}
+
+export function useYjsLayers(
+  doc: Y.Doc | null,
+  editorsRef?: React.RefObject<Map<number, Editor>>
+) {
   const [layers, setLayersState] = useState<Layer[]>([])
   const [activeLayerId, setActiveLayerId] = useState<string | null>(null)
   const layerCounterRef = useRef(0)
@@ -41,7 +58,8 @@ export function useYjsLayers(doc: Y.Doc | null) {
     const yLayers = getLayersArray(doc)
 
     const refresh = () => {
-      setLayersState(readLayers(doc))
+      const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined
+      setLayersState(readLayers(doc, views))
     }
 
     // Deep observe to catch changes to nested maps/arrays
@@ -50,7 +68,8 @@ export function useYjsLayers(doc: Y.Doc | null) {
     // Also observe XmlFragments for position changes (text edits shift RelativePositions)
     // We listen to doc updates to catch text changes that affect position resolution
     const onUpdate = () => {
-      setLayersState(readLayers(doc))
+      const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined
+      setLayersState(readLayers(doc, views))
     }
     doc.on("update", onUpdate)
 
@@ -61,7 +80,7 @@ export function useYjsLayers(doc: Y.Doc | null) {
       yLayers.unobserveDeep(refresh)
       doc.off("update", onUpdate)
     }
-  }, [doc])
+  }, [doc, editorsRef])
 
   // Set active layer to first layer if none selected
   useEffect(() => {
@@ -73,7 +92,8 @@ export function useYjsLayers(doc: Y.Doc | null) {
   const addLayer = useCallback(
     (opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }): { id: string; name: string } | null => {
       if (!doc) return null
-      const currentLayers = readLayers(doc)
+      const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined
+      const currentLayers = readLayers(doc, views)
       const usedColors = new Set(currentLayers.map((l) => l.color))
       const allColors = opts?.extraColors
         ? [...TAILWIND_300_COLORS, ...opts.extraColors.filter((c) => !TAILWIND_300_COLORS.includes(c))]
@@ -141,10 +161,11 @@ export function useYjsLayers(doc: Y.Doc | null) {
     (layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
       if (!doc) return ""
       const id = opts?.id ?? crypto.randomUUID()
-      addHighlightToDoc(doc, layerId, highlight, id)
+      const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined
+      addHighlightToDoc(doc, layerId, highlight, id, views)
       return id
     },
-    [doc]
+    [doc, editorsRef]
   )
 
   const updateHighlightAnnotation = useCallback(
@@ -175,10 +196,11 @@ export function useYjsLayers(doc: Y.Doc | null) {
     (layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
       if (!doc) return ""
       const id = opts?.id ?? crypto.randomUUID()
-      addArrowToDoc(doc, layerId, arrow, id)
+      const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined
+      addArrowToDoc(doc, layerId, arrow, id, views)
       return id
     },
-    [doc]
+    [doc, editorsRef]
   )
 
   const removeArrow = useCallback(
@@ -209,10 +231,11 @@ export function useYjsLayers(doc: Y.Doc | null) {
     (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
       if (!doc) return ""
       const id = opts?.id ?? crypto.randomUUID()
-      addUnderlineToDoc(doc, layerId, underline, id)
+      const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined
+      addUnderlineToDoc(doc, layerId, underline, id, views)
       return id
     },
-    [doc]
+    [doc, editorsRef]
   )
 
   const removeUnderline = useCallback(

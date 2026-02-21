@@ -48,11 +48,39 @@ export function useActionHistory() {
   )
 
   const logOnly = useCallback(
-    (type: string, description: string) => {
-      addLogEntry(type, description)
+    (type: string, description: string, details?: ActionDetail[]) => {
+      addLogEntry(type, description, details)
     },
     [addLogEntry]
   )
+
+  // Mark the most recent non-undone log entry as undone (for Yjs undo sync)
+  const markLastUndone = useCallback(() => {
+    setLog((prev) => {
+      for (let i = prev.length - 1; i >= 0; i--) {
+        if (!prev[i].undone) {
+          const copy = [...prev]
+          copy[i] = { ...copy[i], undone: true }
+          return copy
+        }
+      }
+      return prev
+    })
+  }, [])
+
+  // Mark the most recent undone log entry as not-undone (for Yjs redo sync)
+  const markLastRedone = useCallback(() => {
+    setLog((prev) => {
+      for (let i = prev.length - 1; i >= 0; i--) {
+        if (prev[i].undone) {
+          const copy = [...prev]
+          copy[i] = { ...copy[i], undone: false }
+          return copy
+        }
+      }
+      return prev
+    })
+  }, [])
 
   const undo = useCallback(() => {
     const command = undoStackRef.current.pop()
@@ -82,5 +110,5 @@ export function useActionHistory() {
     updateFlags()
   }, [updateFlags])
 
-  return { record, logOnly, undo, redo, canUndo, canRedo, log }
+  return { record, logOnly, undo, redo, canUndo, canRedo, log, markLastUndone, markLastRedone }
 }

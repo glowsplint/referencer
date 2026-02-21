@@ -16,7 +16,7 @@ interface UseCommentModeOptions {
   selection: WordSelection | null
   activeLayerId: string | null
   addLayer: () => string
-  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; annotation: string; type: "highlight" | "comment" }[] }[]
+  layers: { id: string; highlights: { id: string; editorIndex: number; from: number; to: number; text: string; annotation: string; type: "highlight" | "comment" }[] }[]
   addHighlight: (
     layerId: string,
     highlight: { editorIndex: number; from: number; to: number; text: string; annotation: string; type: "highlight" | "comment" }
@@ -104,9 +104,17 @@ export function useCommentMode({
       }
     }
 
-    // Check for exact-match toggle (same range = remove existing highlight)
+    // Check for toggle: same word = remove existing highlight.
+    // With CRDT RelativePositions, decoded absolute positions may diverge from
+    // the original ProseMirror positions. Match by text + editorIndex as the
+    // primary comparison, falling back to exact position match.
     const existing = layer?.highlights.find(
-      (h) => h.editorIndex === sel.editorIndex && h.from === sel.from && h.to === sel.to
+      (h) =>
+        h.editorIndex === sel.editorIndex &&
+        (
+          (h.from === sel.from && h.to === sel.to) ||
+          h.text === sel.text
+        )
     )
     if (existing) {
       removeHighlightRef.current(layerId, existing.id)

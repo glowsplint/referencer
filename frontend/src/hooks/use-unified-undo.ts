@@ -12,6 +12,9 @@ export function useUnifiedUndo(yjsUndo: YjsUndo, history: History) {
   const undo = useCallback(() => {
     if (yjsUndo.canUndo) {
       yjsUndo.undo()
+      // Sync the action console log: mark the most recent entry as undone
+      // so it shows line-through styling even when Yjs handled the undo
+      history.markLastUndone()
     } else if (history.canUndo) {
       history.undo()
     }
@@ -20,6 +23,8 @@ export function useUnifiedUndo(yjsUndo: YjsUndo, history: History) {
   const redo = useCallback(() => {
     if (yjsUndo.canRedo) {
       yjsUndo.redo()
+      // Sync the action console log: restore the most recent undone entry
+      history.markLastRedone()
     } else if (history.canRedo) {
       history.redo()
     }

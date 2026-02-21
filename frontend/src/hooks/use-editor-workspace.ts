@@ -26,8 +26,8 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // Yjs provider for all CRDT collaboration (text + annotations)
   const yjs = useYjs(workspaceId ?? "default")
 
-  // Yjs-backed layers for annotations
-  const yjsLayers = useYjsLayers(yjs.doc)
+  // Yjs-backed layers for annotations (pass editorsRef for proper ProseMirror<->Yjs position mapping)
+  const yjsLayers = useYjsLayers(yjs.doc, trackedEditorsHook.editorsRef)
 
   // Yjs undo/redo (replaces command-pattern history for CRDT operations)
   const yjsUndo = useYjsUndo(yjs.doc)
@@ -62,18 +62,33 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     guarded(
       (opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }) => {
         const result = yjsLayers.addLayer(opts)
-        return result?.id ?? ""
+        if (!result) return ""
+        const { id, name } = result
+        const color = yjsLayers.layers.find((l) => l.id === id)?.color ?? opts?.color ?? ""
+        history.logOnly("addLayer", `Created layer '${name}'`, [
+          { label: "name", after: name },
+          { label: "color", after: color },
+        ])
+        return id
       },
       ""
     ),
-    [readOnly, yjsLayers]
+    [readOnly, yjsLayers, history]
   )
 
   const removeLayer = useCallback(
     guarded((id: string) => {
+      const layer = yjsLayers.layers.find((l) => l.id === id)
       yjsLayers.removeLayer(id)
+      if (layer) {
+        history.logOnly("removeLayer", `Deleted layer '${layer.name}'`, [
+          { label: "name", before: layer.name },
+          { label: "highlights", before: String(layer.highlights.length) },
+          { label: "arrows", before: String(layer.arrows.length) },
+        ])
+      }
     }),
-    [readOnly, yjsLayers]
+    [readOnly, yjsLayers, history]
   )
 
   const updateLayerName = useCallback(

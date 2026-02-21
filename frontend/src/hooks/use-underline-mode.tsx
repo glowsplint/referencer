@@ -91,9 +91,17 @@ export function useUnderlineMode({
 
     const layer = layersRef.current.find((l) => l.id === layerId)
 
-    // Check for exact-match toggle (same range = remove existing underline)
+    // Check for toggle: same word = remove existing underline.
+    // With CRDT RelativePositions, decoded absolute positions may diverge from
+    // the original ProseMirror positions. Match by text + editorIndex as the
+    // primary comparison, falling back to exact position match.
     const existing = layer?.underlines.find(
-      (u) => u.editorIndex === sel.editorIndex && u.from === sel.from && u.to === sel.to
+      (u) =>
+        u.editorIndex === sel.editorIndex &&
+        (
+          (u.from === sel.from && u.to === sel.to) ||
+          u.text === sel.text
+        )
     )
     if (existing) {
       removeUnderlineRef.current(layerId, existing.id)
