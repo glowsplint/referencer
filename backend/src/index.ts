@@ -1,16 +1,9 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { createBunWebSocket } from "hono/bun";
 import { serveStatic } from "hono/bun";
 import { join } from "path";
 
 import { openDatabase } from "./db/database";
-import { ConnectionManager } from "./ws/connection-manager";
-import {
-  handleWebSocketConnection,
-  handleWebSocketMessage,
-  handleWebSocketClose,
-} from "./ws/handler";
 import { handleShare, handleResolveShare } from "./api/share";
 import { loadAuthConfig } from "./auth/config";
 import { initProviders } from "./auth/providers";
@@ -20,11 +13,8 @@ import { cleanExpiredSessions } from "./auth/store";
 
 const dbPath = process.env.DB_PATH ?? join(import.meta.dir, "..", "data", "referencer.db");
 const db = openDatabase(dbPath);
-const connMgr = new ConnectionManager();
 const authConfig = loadAuthConfig();
 initProviders(authConfig);
-
-const { upgradeWebSocket, websocket } = createBunWebSocket();
 
 const app = new Hono();
 
@@ -50,37 +40,6 @@ app.post("/api/share", handleShare(db));
 const staticDir = join(import.meta.dir, "..", "..", "frontend", "dist");
 app.get("/s/:code", handleResolveShare(db, staticDir));
 
-// WebSocket.
-app.get(
-  "/ws/:workspaceId",
-  upgradeWebSocket((c) => {
-    const workspaceId = c.req.param("workspaceId");
-    let clientId: string | undefined;
-
-    return {
-      onOpen(_evt, ws) {
-        if (!workspaceId) {
-          ws.close(1008, "workspace ID required");
-          return;
-        }
-        const result = handleWebSocketConnection(ws, workspaceId, db, connMgr);
-        clientId = result.clientId;
-      },
-      onMessage(evt, ws) {
-        if (!workspaceId || !clientId) return;
-        const data =
-          typeof evt.data === "string" ? evt.data : evt.data.toString();
-        handleWebSocketMessage(ws, workspaceId, clientId, data, db, connMgr);
-      },
-      onClose() {
-        if (workspaceId && clientId) {
-          handleWebSocketClose(workspaceId, clientId, connMgr);
-        }
-      },
-    };
-  }),
-);
-
 // Static file serving for the frontend dist.
 app.use(
   "/referencer/*",
@@ -104,6 +63,5 @@ console.log(`Server starting on port ${port}`);
 
 export default {
   fetch: app.fetch,
-  websocket,
   port,
 };

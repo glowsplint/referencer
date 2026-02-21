@@ -11,14 +11,3 @@ export function generateCode(length: number): string {
   return result;
 }
 
-export function stringOrDefault(
-  m: Record<string, unknown>,
-  key: string,
-  def: string,
-): string {
-  const v = m[key];
-  if (typeof v === "string") {
-    return v;
-  }
-  return def;
-}
