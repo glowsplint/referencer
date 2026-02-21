@@ -1,10 +1,10 @@
 // Default workspace data for the Bible study demo.
 // Provides two passage contents (1 Cor 1:18-31, 1 Cor 2:6-16),
 // three pre-populated annotation layers, and a placeholder for new editors.
-import content1Cor1 from "./default-content-1cor1.json"
-import content1Cor2 from "./default-content-1cor2.json"
-import placeholderContent from "./placeholder-content.json"
-import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
+import content1Cor1 from "./default-content-1cor1.json";
+import content1Cor2 from "./default-content-1cor2.json";
+import placeholderContent from "./placeholder-content.json";
+import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor";
 
 // ---------------------------------------------------------------------------
 // Exports
@@ -13,23 +13,20 @@ import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/type
 export const DEFAULT_PASSAGE_CONTENTS: Record<string, unknown>[] = [
   content1Cor1 as Record<string, unknown>,
   content1Cor2 as Record<string, unknown>,
-]
+];
 
-export const DEFAULT_SECTION_NAMES = [
-  "1 Corinthians 1:18\u201331",
-  "1 Corinthians 2:6\u201316",
-]
+export const DEFAULT_SECTION_NAMES = ["1 Corinthians 1:18\u201331", "1 Corinthians 2:6\u201316"];
 
-export const PLACEHOLDER_CONTENT = placeholderContent as Record<string, unknown>
+export const PLACEHOLDER_CONTENT = placeholderContent as Record<string, unknown>;
 
 export function createDefaultLayers(): Layer[] {
-  const doc0 = content1Cor1
-  const doc1 = content1Cor2
+  const doc0 = content1Cor1;
+  const doc1 = content1Cor2;
   return [
     keyTheologicalTermsLayer(doc0, doc1),
     contrastsAndParallelsLayer(doc0, doc1),
     structuralMarkersLayer(doc0, doc1),
-  ]
+  ];
 }
 
 // ---------------------------------------------------------------------------
@@ -38,55 +35,53 @@ export function createDefaultLayers(): Layer[] {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getNodeText(node: any): string {
-  if (node.type === "text") return node.text || ""
-  if (!node.content) return ""
+  if (node.type === "text") return node.text || "";
+  if (!node.content) return "";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return node.content.map((n: any) => getNodeText(n)).join("")
+  return node.content.map((n: any) => getNodeText(n)).join("");
 }
 
 interface Pos {
-  from: number
-  to: number
+  from: number;
+  to: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function findInDoc(doc: any, search: string, occurrence = 0): Pos {
-  let pos = 0
-  let found = 0
+  let pos = 0;
+  let found = 0;
 
   for (const node of doc.content) {
-    pos += 1 // entering block node
-    const text = getNodeText(node)
-    let searchFrom = 0
-    let idx: number
+    pos += 1; // entering block node
+    const text = getNodeText(node);
+    let searchFrom = 0;
+    let idx: number;
     while ((idx = text.indexOf(search, searchFrom)) !== -1) {
       if (found === occurrence) {
-        return { from: pos + idx, to: pos + idx + search.length }
+        return { from: pos + idx, to: pos + idx + search.length };
       }
-      found++
-      searchFrom = idx + 1
+      found++;
+      searchFrom = idx + 1;
     }
-    pos += text.length
-    pos += 1 // leaving block node
+    pos += text.length;
+    pos += 1; // leaving block node
   }
 
-  throw new Error(
-    `Text not found in doc: "${search}" (occurrence ${occurrence})`
-  )
+  throw new Error(`Text not found in doc: "${search}" (occurrence ${occurrence})`);
 }
 
 // ---------------------------------------------------------------------------
 // Annotation helpers
 // ---------------------------------------------------------------------------
 
-let idCounter = 0
+let idCounter = 0;
 function nextId(): string {
-  return `default-${++idCounter}`
+  return `default-${++idCounter}`;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hl(editorIndex: number, doc: any, text: string, occurrence = 0): Highlight {
-  const pos = findInDoc(doc, text, occurrence)
+  const pos = findInDoc(doc, text, occurrence);
   return {
     id: nextId(),
     editorIndex,
@@ -95,7 +90,7 @@ function hl(editorIndex: number, doc: any, text: string, occurrence = 0): Highli
     text,
     annotation: "",
     type: "highlight",
-  }
+  };
 }
 
 function arrow(
@@ -109,10 +104,10 @@ function arrow(
   toText: string,
   style: ArrowStyle = "solid",
   fromOccurrence = 0,
-  toOccurrence = 0
+  toOccurrence = 0,
 ): Arrow {
-  const fromPos = findInDoc(fromDoc, fromText, fromOccurrence)
-  const toPos = findInDoc(toDoc, toText, toOccurrence)
+  const fromPos = findInDoc(fromDoc, fromText, fromOccurrence);
+  const toPos = findInDoc(toDoc, toText, toOccurrence);
   return {
     id: nextId(),
     from: {
@@ -128,19 +123,19 @@ function arrow(
       text: toText,
     },
     arrowStyle: style,
-  }
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ul(editorIndex: number, doc: any, text: string, occurrence = 0): LayerUnderline {
-  const pos = findInDoc(doc, text, occurrence)
+  const pos = findInDoc(doc, text, occurrence);
   return {
     id: nextId(),
     editorIndex,
     from: pos.from,
     to: pos.to,
     text,
-  }
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -175,7 +170,7 @@ function keyTheologicalTermsLayer(doc0: any, doc1: any): Layer {
     ],
     arrows: [],
     underlines: [],
-  }
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -213,7 +208,7 @@ function contrastsAndParallelsLayer(doc0: any, doc1: any): Layer {
       arrow(0, doc0, "folly", 1, doc1, "folly", "dotted", 0, 0),
     ],
     underlines: [],
-  }
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -236,5 +231,5 @@ function structuralMarkersLayer(doc0: any, doc1: any): Layer {
       ul(1, doc1, "these things God has revealed to us through the Spirit"), // v10 \u2014 key turning point
       ul(1, doc1, "But we have the mind of Christ"), // v16 \u2014 closing affirmation
     ],
-  }
+  };
 }

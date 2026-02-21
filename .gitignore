@@ -3,9 +3,14 @@
 node_modules/
 
 /output.txt
+nul
 
 # Bun
 bun.lockb
+
+# Claude Code
+.claude/worktrees/
+.claude/settings.local.json
 
 # Database
 /data/referencer.db

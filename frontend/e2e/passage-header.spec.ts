@@ -30,9 +30,7 @@ test.describe("passage header", () => {
     await input.fill("My Custom Passage");
     await input.press("Enter");
 
-    await expect(page.getByTestId("passageHeader-0")).toHaveText(
-      "My Custom Passage"
-    );
+    await expect(page.getByTestId("passageHeader-0")).toHaveText("My Custom Passage");
   });
 
   test("passage header rename syncs with management pane", async ({ page }) => {
@@ -45,9 +43,7 @@ test.describe("passage header", () => {
     await input.press("Enter");
 
     // Check management pane reflects the change
-    await expect(page.getByTestId("passageName-0")).toHaveText(
-      "Renamed Passage"
-    );
+    await expect(page.getByTestId("passageName-0")).toHaveText("Renamed Passage");
   });
 
   test("second passage has its own header", async ({ page }) => {

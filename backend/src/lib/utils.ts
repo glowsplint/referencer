@@ -1,5 +1,4 @@
-const charset =
-  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 export function generateCode(length: number): string {
   const bytes = new Uint8Array(length);
@@ -10,4 +9,3 @@ export function generateCode(length: number): string {
   }
   return result;
 }
-

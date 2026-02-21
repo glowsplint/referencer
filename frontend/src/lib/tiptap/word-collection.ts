@@ -2,28 +2,28 @@
 // Traverses textblocks using a regex to extract words containing at least
 // one alphanumeric character. Also handles image nodes (using alt text).
 // The collected words are used for word-level navigation and selection.
-import type { Editor } from "@tiptap/react"
+import type { Editor } from "@tiptap/react";
 
 export interface CollectedWord {
-  editorIndex: number
-  from: number
-  to: number
-  text: string
-  isImage?: boolean
+  editorIndex: number;
+  from: number;
+  to: number;
+  text: string;
+  isImage?: boolean;
 }
 
-const HAS_ALPHANUMERIC = /[a-zA-Z0-9]/
+const HAS_ALPHANUMERIC = /[a-zA-Z0-9]/;
 
 /** Matches words containing at least one alphanumeric, optionally surrounded by apostrophes/hyphens */
-const WORD_PATTERN = /[a-zA-Z0-9'-]*[a-zA-Z0-9][a-zA-Z0-9'-]*/g
+const WORD_PATTERN = /[a-zA-Z0-9'-]*[a-zA-Z0-9][a-zA-Z0-9'-]*/g;
 
 export function collectAllWords(editor: Editor, editorIndex: number): CollectedWord[] {
-  const words: CollectedWord[] = []
-  const doc = editor.state.doc
+  const words: CollectedWord[] = [];
+  const doc = editor.state.doc;
 
   doc.descendants((node, pos) => {
     if (node.type?.name === "image" && node.attrs?.alt) {
-      const altText = node.attrs.alt
+      const altText = node.attrs.alt;
       if (HAS_ALPHANUMERIC.test(altText)) {
         words.push({
           editorIndex,
@@ -31,28 +31,28 @@ export function collectAllWords(editor: Editor, editorIndex: number): CollectedW
           to: pos + node.nodeSize,
           text: altText,
           isImage: true,
-        })
+        });
       }
-      return false
+      return false;
     }
 
-    if (!node.isTextblock) return true
+    if (!node.isTextblock) return true;
 
-    const text = node.textContent
-    const regex = new RegExp(WORD_PATTERN.source, WORD_PATTERN.flags)
-    let match: RegExpExecArray | null
+    const text = node.textContent;
+    const regex = new RegExp(WORD_PATTERN.source, WORD_PATTERN.flags);
+    let match: RegExpExecArray | null;
     while ((match = regex.exec(text)) !== null) {
       // pos + 1 skips the textblock node's opening token in ProseMirror offsets
-      const wordStart = pos + 1 + match.index
+      const wordStart = pos + 1 + match.index;
       words.push({
         editorIndex,
         from: wordStart,
         to: wordStart + match[0].length,
         text: match[0],
-      })
+      });
     }
-    return false
-  })
+    return false;
+  });
 
-  return words
+  return words;
 }

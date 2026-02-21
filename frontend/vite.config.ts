@@ -1,8 +1,8 @@
 /// <reference types="vitest/config" />
-import path from "path"
-import tailwindcss from "@tailwindcss/vite"
-import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
+import path from "path";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -38,5 +38,28 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     css: false,
     exclude: ["e2e/**", "node_modules/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov", "json-summary"],
+      reportsDirectory: "./coverage",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/test/**",
+        "src/**/*.d.ts",
+        "src/vite-env.d.ts",
+        "src/main.tsx",
+        "src/tiptap-icons/**",
+        "src/tiptap-ui/**",
+        "src/tiptap-ui-primitive/**",
+        "src/tiptap-node/**",
+        "src/tiptap-extension/**",
+      ],
+      thresholds: {
+        statements: 50,
+        branches: 50,
+        functions: 50,
+        lines: 50,
+      },
+    },
   },
-})
+});

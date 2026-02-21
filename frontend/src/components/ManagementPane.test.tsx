@@ -1,187 +1,229 @@
-import { screen, fireEvent } from "@testing-library/react"
-import { describe, it, expect, beforeEach, vi } from "vitest"
-import { ManagementPane } from "./ManagementPane"
-import { renderWithWorkspace } from "@/test/render-with-workspace"
+import { screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { ManagementPane } from "./ManagementPane";
+import { renderWithWorkspace } from "@/test/render-with-workspace";
 
-import type { Highlight, Arrow, LayerUnderline } from "@/types/editor"
+import type { Highlight, Arrow, LayerUnderline } from "@/types/editor";
 
 function makeStorageMock() {
-  const store: Record<string, string> = {}
+  const store: Record<string, string> = {};
   return {
     getItem: vi.fn((key: string) => store[key] ?? null),
-    setItem: vi.fn((key: string, value: string) => { store[key] = value }),
-    removeItem: vi.fn((key: string) => { delete store[key] }),
-    clear: vi.fn(() => { for (const k of Object.keys(store)) delete store[k] }),
-    get length() { return Object.keys(store).length },
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      for (const k of Object.keys(store)) delete store[k];
+    }),
+    get length() {
+      return Object.keys(store).length;
+    },
     key: vi.fn((i: number) => Object.keys(store)[i] ?? null),
     _store: store,
-  }
+  };
 }
 
-let storageMock: ReturnType<typeof makeStorageMock>
+let storageMock: ReturnType<typeof makeStorageMock>;
 
-const layerA = { id: "a", name: "Layer 1", color: "#fca5a5", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[], underlines: [] as LayerUnderline[] }
-const layerB = { id: "b", name: "Layer 2", color: "#93c5fd", visible: true, highlights: [] as Highlight[], arrows: [] as Arrow[], underlines: [] as LayerUnderline[] }
+const layerA = {
+  id: "a",
+  name: "Layer 1",
+  color: "#fca5a5",
+  visible: true,
+  highlights: [] as Highlight[],
+  arrows: [] as Arrow[],
+  underlines: [] as LayerUnderline[],
+};
+const layerB = {
+  id: "b",
+  name: "Layer 2",
+  color: "#93c5fd",
+  visible: true,
+  highlights: [] as Highlight[],
+  arrows: [] as Arrow[],
+  underlines: [] as LayerUnderline[],
+};
 
-const highlight1: Highlight = { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "my note", type: "comment" }
-const arrow1: Arrow = { id: "a1", from: { editorIndex: 0, from: 0, to: 3, text: "foo" }, to: { editorIndex: 1, from: 0, to: 3, text: "bar" } }
-const layerWithItems = { ...layerA, highlights: [highlight1], arrows: [arrow1] }
+const highlight1: Highlight = {
+  id: "h1",
+  editorIndex: 0,
+  from: 0,
+  to: 5,
+  text: "hello",
+  annotation: "my note",
+  type: "comment",
+};
+const arrow1: Arrow = {
+  id: "a1",
+  from: { editorIndex: 0, from: 0, to: 3, text: "foo" },
+  to: { editorIndex: 1, from: 0, to: 3, text: "bar" },
+};
+const layerWithItems = { ...layerA, highlights: [highlight1], arrows: [arrow1] };
 
 beforeEach(() => {
-  storageMock = makeStorageMock()
-  vi.stubGlobal("localStorage", storageMock)
-})
+  storageMock = makeStorageMock();
+  vi.stubGlobal("localStorage", storageMock);
+});
 
 function renderPane(overrides = {}) {
-  return renderWithWorkspace(<ManagementPane />, overrides)
+  return renderWithWorkspace(<ManagementPane />, overrides);
 }
 
 describe("ManagementPane", () => {
   it("renders the management pane", () => {
-    renderPane()
-    expect(screen.getByTestId("managementPane")).toBeInTheDocument()
-  })
+    renderPane();
+    expect(screen.getByTestId("managementPane")).toBeInTheDocument();
+  });
 
   it("renders add layer button beside the Layers header", () => {
-    renderPane()
-    expect(screen.getByTestId("addLayerButton")).toBeInTheDocument()
-  })
+    renderPane();
+    expect(screen.getByTestId("addLayerButton")).toBeInTheDocument();
+  });
 
   it("calls addLayer when add layer button is clicked", () => {
-    const { workspace } = renderPane()
-    fireEvent.click(screen.getByTestId("addLayerButton"))
-    expect(workspace.addLayer).toHaveBeenCalled()
-  })
+    const { workspace } = renderPane();
+    fireEvent.click(screen.getByTestId("addLayerButton"));
+    expect(workspace.addLayer).toHaveBeenCalled();
+  });
 
   it("renders a LayerRow for each layer", () => {
-    renderPane({ layers: [layerA, layerB] })
-    expect(screen.getByText("Layer 1")).toBeInTheDocument()
-    expect(screen.getByText("Layer 2")).toBeInTheDocument()
-  })
+    renderPane({ layers: [layerA, layerB] });
+    expect(screen.getByText("Layer 1")).toBeInTheDocument();
+    expect(screen.getByText("Layer 2")).toBeInTheDocument();
+  });
 
   it("passes isActive=true only to the active layer", () => {
-    renderPane({ layers: [layerA, layerB], activeLayerId: "b" })
-    expect(screen.queryByTestId("layerActiveTag-0")).not.toBeInTheDocument()
-    expect(screen.getByTestId("layerActiveTag-1")).toHaveTextContent("Active")
-  })
+    renderPane({ layers: [layerA, layerB], activeLayerId: "b" });
+    expect(screen.queryByTestId("layerActiveTag-0")).not.toBeInTheDocument();
+    expect(screen.getByTestId("layerActiveTag-1")).toHaveTextContent("Active");
+  });
 
   it("calls setActiveLayer with layer id when clicking a layer row", () => {
-    const { workspace } = renderPane({ layers: [layerA] })
-    fireEvent.click(screen.getByText("Layer 1"))
-    expect(workspace.setActiveLayer).toHaveBeenCalledWith("a")
-  })
+    const { workspace } = renderPane({ layers: [layerA] });
+    fireEvent.click(screen.getByText("Layer 1"));
+    expect(workspace.setActiveLayer).toHaveBeenCalledWith("a");
+  });
 
   it("calls updateLayerColor with layer id and new colour", () => {
-    const { workspace } = renderPane({ layers: [layerA] })
-    fireEvent.click(screen.getByTestId("layerSwatch-0"))
-    fireEvent.click(screen.getByTestId("colorOption-#93c5fd"))
-    expect(workspace.updateLayerColor).toHaveBeenCalledWith("a", "#93c5fd")
-  })
+    const { workspace } = renderPane({ layers: [layerA] });
+    fireEvent.click(screen.getByTestId("layerSwatch-0"));
+    fireEvent.click(screen.getByTestId("colorOption-#93c5fd"));
+    expect(workspace.updateLayerColor).toHaveBeenCalledWith("a", "#93c5fd");
+  });
 
   it("calls updateLayerName with layer id and new name", () => {
-    const { workspace } = renderPane({ layers: [layerA] })
-    fireEvent.doubleClick(screen.getByTestId("layerName-0"))
-    fireEvent.change(screen.getByTestId("layerNameInput-0"), { target: { value: "Renamed" } })
-    fireEvent.keyDown(screen.getByTestId("layerNameInput-0"), { key: "Enter" })
-    expect(workspace.updateLayerName).toHaveBeenCalledWith("a", "Renamed")
-  })
+    const { workspace } = renderPane({ layers: [layerA] });
+    fireEvent.doubleClick(screen.getByTestId("layerName-0"));
+    fireEvent.change(screen.getByTestId("layerNameInput-0"), { target: { value: "Renamed" } });
+    fireEvent.keyDown(screen.getByTestId("layerNameInput-0"), { key: "Enter" });
+    expect(workspace.updateLayerName).toHaveBeenCalledWith("a", "Renamed");
+  });
 
   it("calls toggleLayerVisibility with layer id", () => {
-    const { workspace } = renderPane({ layers: [layerA] })
-    fireEvent.click(screen.getByTestId("layerVisibility-0"))
-    expect(workspace.toggleLayerVisibility).toHaveBeenCalledWith("a")
-  })
+    const { workspace } = renderPane({ layers: [layerA] });
+    fireEvent.click(screen.getByTestId("layerVisibility-0"));
+    expect(workspace.toggleLayerVisibility).toHaveBeenCalledWith("a");
+  });
 
   it("renders the Passages heading via SectionList", () => {
-    renderPane()
-    expect(screen.getByText("Passages")).toBeInTheDocument()
-  })
+    renderPane();
+    expect(screen.getByText("Passages")).toBeInTheDocument();
+  });
 
   it("renders passage rows matching editorCount", () => {
-    renderPane({ editorCount: 2, sectionVisibility: [true, true], sectionNames: ["Passage 1", "Passage 2"] })
-    expect(screen.getByText("Passage 1")).toBeInTheDocument()
-    expect(screen.getByText("Passage 2")).toBeInTheDocument()
-  })
+    renderPane({
+      editorCount: 2,
+      sectionVisibility: [true, true],
+      sectionNames: ["Passage 1", "Passage 2"],
+    });
+    expect(screen.getByText("Passage 1")).toBeInTheDocument();
+    expect(screen.getByText("Passage 2")).toBeInTheDocument();
+  });
 
   it("calls toggleSectionVisibility when passage eye button is clicked", () => {
-    const { workspace } = renderPane({ editorCount: 2, sectionVisibility: [true, true], sectionNames: ["Passage 1", "Passage 2"] })
-    fireEvent.click(screen.getByTestId("sectionVisibility-1"))
-    expect(workspace.toggleSectionVisibility).toHaveBeenCalledWith(1)
-  })
+    const { workspace } = renderPane({
+      editorCount: 2,
+      sectionVisibility: [true, true],
+      sectionNames: ["Passage 1", "Passage 2"],
+    });
+    fireEvent.click(screen.getByTestId("sectionVisibility-1"));
+    expect(workspace.toggleSectionVisibility).toHaveBeenCalledWith(1);
+  });
 
   // --- Master layer visibility ---
 
   it("renders master layer visibility button when layers exist", () => {
-    renderPane({ layers: [layerA] })
-    expect(screen.getByTestId("toggleAllLayerVisibility")).toBeInTheDocument()
-  })
+    renderPane({ layers: [layerA] });
+    expect(screen.getByTestId("toggleAllLayerVisibility")).toBeInTheDocument();
+  });
 
   it("renders master layer visibility button even when no layers", () => {
-    renderPane()
-    expect(screen.getByTestId("toggleAllLayerVisibility")).toBeInTheDocument()
-  })
+    renderPane();
+    expect(screen.getByTestId("toggleAllLayerVisibility")).toBeInTheDocument();
+  });
 
   it("calls toggleAllLayerVisibility when master layer visibility button is clicked", () => {
-    const { workspace } = renderPane({ layers: [layerA] })
-    fireEvent.click(screen.getByTestId("toggleAllLayerVisibility"))
-    expect(workspace.toggleAllLayerVisibility).toHaveBeenCalled()
-  })
+    const { workspace } = renderPane({ layers: [layerA] });
+    fireEvent.click(screen.getByTestId("toggleAllLayerVisibility"));
+    expect(workspace.toggleAllLayerVisibility).toHaveBeenCalled();
+  });
 
   // --- Trash bin ---
 
   it("renders trash bin when layers exist", () => {
-    renderPane({ layers: [layerA] })
-    expect(screen.getByTestId("trashBin")).toBeInTheDocument()
-  })
+    renderPane({ layers: [layerA] });
+    expect(screen.getByTestId("trashBin")).toBeInTheDocument();
+  });
 
   it("renders trash bin when multiple sections exist", () => {
-    renderPane({ editorCount: 2 })
-    expect(screen.getByTestId("trashBin")).toBeInTheDocument()
-  })
+    renderPane({ editorCount: 2 });
+    expect(screen.getByTestId("trashBin")).toBeInTheDocument();
+  });
 
   it("does not render trash bin when no layers and one section", () => {
-    renderPane()
-    expect(screen.queryByTestId("trashBin")).not.toBeInTheDocument()
-  })
+    renderPane();
+    expect(screen.queryByTestId("trashBin")).not.toBeInTheDocument();
+  });
 
   it("calls removeLayer when a layer is dropped on the trash bin", () => {
-    const { workspace } = renderPane({ layers: [layerA] })
+    const { workspace } = renderPane({ layers: [layerA] });
     fireEvent.drop(screen.getByTestId("trashBin"), {
       dataTransfer: {
-        getData: (type: string) =>
-          type === "application/x-layer-id" ? "a" : "",
+        getData: (type: string) => (type === "application/x-layer-id" ? "a" : ""),
       },
-    })
-    expect(workspace.removeLayer).toHaveBeenCalledWith("a")
-  })
+    });
+    expect(workspace.removeLayer).toHaveBeenCalledWith("a");
+  });
 
   it("calls removeEditor when a section is dropped on the trash bin", () => {
-    const { workspace } = renderPane({ editorCount: 2 })
+    const { workspace } = renderPane({ editorCount: 2 });
     fireEvent.drop(screen.getByTestId("trashBin"), {
       dataTransfer: {
-        getData: (type: string) =>
-          type === "application/x-section-index" ? "1" : "",
+        getData: (type: string) => (type === "application/x-section-index" ? "1" : ""),
       },
-    })
-    expect(workspace.removeEditor).toHaveBeenCalledWith(1)
-  })
+    });
+    expect(workspace.removeEditor).toHaveBeenCalledWith(1);
+  });
 
   it("shows destructive styling during dragover", () => {
-    renderPane({ layers: [layerA] })
-    const bin = screen.getByTestId("trashBin")
-    expect(bin).toHaveClass("border-muted-foreground/30")
-    fireEvent.dragEnter(bin)
-    expect(bin).toHaveClass("border-destructive")
-  })
+    renderPane({ layers: [layerA] });
+    const bin = screen.getByTestId("trashBin");
+    expect(bin).toHaveClass("border-muted-foreground/30");
+    fireEvent.dragEnter(bin);
+    expect(bin).toHaveClass("border-destructive");
+  });
 
   it("reverts styling after dragleave", () => {
-    renderPane({ layers: [layerA] })
-    const bin = screen.getByTestId("trashBin")
-    fireEvent.dragEnter(bin)
-    expect(bin).toHaveClass("border-destructive")
-    fireEvent.dragLeave(bin)
-    expect(bin).toHaveClass("border-muted-foreground/30")
-  })
+    renderPane({ layers: [layerA] });
+    const bin = screen.getByTestId("trashBin");
+    fireEvent.dragEnter(bin);
+    expect(bin).toHaveClass("border-destructive");
+    fireEvent.dragLeave(bin);
+    expect(bin).toHaveClass("border-muted-foreground/30");
+  });
 
   // --- Section name editing ---
 
@@ -192,103 +234,100 @@ describe("ManagementPane", () => {
       editorCount: 3,
       sectionVisibility: [true, true, true],
       sectionNames: ["A", "B", "C"],
-    })
-    const row0 = screen.getByTestId("passageRow-0")
-    const row2 = screen.getByTestId("passageRow-2")
+    });
+    const row0 = screen.getByTestId("passageRow-0");
+    const row2 = screen.getByTestId("passageRow-2");
     fireEvent.dragStart(row0, {
       dataTransfer: { setData: () => {}, types: ["application/x-section-index"] },
-    })
+    });
     fireEvent.drop(row2, {
       dataTransfer: {
-        getData: (type: string) =>
-          type === "application/x-section-index" ? "0" : "",
+        getData: (type: string) => (type === "application/x-section-index" ? "0" : ""),
         types: ["application/x-section-index"],
       },
-    })
+    });
     // Moving index 0 to position 2: [B, C, A] → permutation [1, 2, 0]
-    expect(workspace.reorderEditors).toHaveBeenCalledWith([1, 2, 0])
-  })
+    expect(workspace.reorderEditors).toHaveBeenCalledWith([1, 2, 0]);
+  });
 
   it("calls reorderEditors with correct permutation when dragging passage 2 to position 0", () => {
     const { workspace } = renderPane({
       editorCount: 3,
       sectionVisibility: [true, true, true],
       sectionNames: ["A", "B", "C"],
-    })
-    const row2 = screen.getByTestId("passageRow-2")
-    const row0 = screen.getByTestId("passageRow-0")
+    });
+    const row2 = screen.getByTestId("passageRow-2");
+    const row0 = screen.getByTestId("passageRow-0");
     fireEvent.dragStart(row2, {
       dataTransfer: { setData: () => {}, types: ["application/x-section-index"] },
-    })
+    });
     fireEvent.drop(row0, {
       dataTransfer: {
-        getData: (type: string) =>
-          type === "application/x-section-index" ? "2" : "",
+        getData: (type: string) => (type === "application/x-section-index" ? "2" : ""),
         types: ["application/x-section-index"],
       },
-    })
+    });
     // Moving index 2 to position 0: [C, A, B] → permutation [2, 0, 1]
-    expect(workspace.reorderEditors).toHaveBeenCalledWith([2, 0, 1])
-  })
+    expect(workspace.reorderEditors).toHaveBeenCalledWith([2, 0, 1]);
+  });
 
   it("does not call reorderEditors when dropping on same position", () => {
     const { workspace } = renderPane({
       editorCount: 3,
       sectionVisibility: [true, true, true],
       sectionNames: ["A", "B", "C"],
-    })
-    const row1 = screen.getByTestId("passageRow-1")
+    });
+    const row1 = screen.getByTestId("passageRow-1");
     fireEvent.drop(row1, {
       dataTransfer: {
-        getData: (type: string) =>
-          type === "application/x-section-index" ? "1" : "",
+        getData: (type: string) => (type === "application/x-section-index" ? "1" : ""),
         types: ["application/x-section-index"],
       },
-    })
-    expect(workspace.reorderEditors).not.toHaveBeenCalled()
-  })
+    });
+    expect(workspace.reorderEditors).not.toHaveBeenCalled();
+  });
 
   it("passage rows are not draggable with only 1 editor", () => {
-    renderPane({ editorCount: 1, sectionVisibility: [true], sectionNames: ["A"] })
-    const row = screen.getByTestId("passageRow-0")
-    expect(row).not.toHaveAttribute("draggable", "true")
-  })
+    renderPane({ editorCount: 1, sectionVisibility: [true], sectionNames: ["A"] });
+    const row = screen.getByTestId("passageRow-0");
+    expect(row).not.toHaveAttribute("draggable", "true");
+  });
 
   it("forwards sectionNames and updateSectionName to SectionList", () => {
-    const { workspace } = renderPane({ sectionNames: ["Custom Name"] })
-    expect(screen.getByText("Custom Name")).toBeInTheDocument()
-    fireEvent.doubleClick(screen.getByTestId("passageName-0"))
-    fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } })
-    fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" })
-    expect(workspace.updateSectionName).toHaveBeenCalledWith(0, "Renamed")
-  })
+    const { workspace } = renderPane({ sectionNames: ["Custom Name"] });
+    expect(screen.getByText("Custom Name")).toBeInTheDocument();
+    fireEvent.doubleClick(screen.getByTestId("passageName-0"));
+    fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } });
+    fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" });
+    expect(workspace.updateSectionName).toHaveBeenCalledWith(0, "Renamed");
+  });
 
   // --- Expandable layer items ---
 
   it("calls removeHighlight with layer id and highlight id when delete button is clicked", () => {
-    const { workspace } = renderPane({ layers: [layerWithItems] })
-    fireEvent.click(screen.getByTestId("layerExpand-0"))
-    fireEvent.click(screen.getByTestId("removeHighlight-h1"))
-    expect(workspace.removeHighlight).toHaveBeenCalledWith("a", "h1")
-  })
+    const { workspace } = renderPane({ layers: [layerWithItems] });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    fireEvent.click(screen.getByTestId("removeHighlight-h1"));
+    expect(workspace.removeHighlight).toHaveBeenCalledWith("a", "h1");
+  });
 
   it("calls removeArrow with layer id and arrow id when delete button is clicked", () => {
-    const { workspace } = renderPane({ layers: [layerWithItems] })
-    fireEvent.click(screen.getByTestId("layerExpand-0"))
-    fireEvent.click(screen.getByTestId("removeArrow-a1"))
-    expect(workspace.removeArrow).toHaveBeenCalledWith("a", "a1")
-  })
+    const { workspace } = renderPane({ layers: [layerWithItems] });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    fireEvent.click(screen.getByTestId("removeArrow-a1"));
+    expect(workspace.removeArrow).toHaveBeenCalledWith("a", "a1");
+  });
 
   it("passes sectionNames to LayerRow for item display", () => {
-    renderPane({ layers: [layerWithItems], sectionNames: ["Intro", "Body"] })
-    fireEvent.click(screen.getByTestId("layerExpand-0"))
-    const span = screen.getByText("my note")
-    expect(span).toHaveAttribute("title", "my note (Intro)")
-  })
+    renderPane({ layers: [layerWithItems], sectionNames: ["Intro", "Body"] });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    const span = screen.getByText("my note");
+    expect(span).toHaveAttribute("title", "my note (Intro)");
+  });
 
   it("calls addLayer when add layer button is clicked", () => {
-    const { workspace } = renderPane()
-    fireEvent.click(screen.getByTestId("addLayerButton"))
-    expect(workspace.addLayer).toHaveBeenCalled()
-  })
-})
+    const { workspace } = renderPane();
+    fireEvent.click(screen.getByTestId("addLayerButton"));
+    expect(workspace.addLayer).toHaveBeenCalled();
+  });
+});

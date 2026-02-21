@@ -10,11 +10,7 @@ interface UseCycleLayerOptions {
   setActiveLayer: (id: string) => void;
 }
 
-export function useCycleLayer({
-  layers,
-  activeLayerId,
-  setActiveLayer,
-}: UseCycleLayerOptions) {
+export function useCycleLayer({ layers, activeLayerId, setActiveLayer }: UseCycleLayerOptions) {
   const layersRef = useRef(layers);
   const activeLayerIdRef = useRef(activeLayerId);
   const setActiveLayerRef = useRef(setActiveLayer);
@@ -40,8 +36,7 @@ export function useCycleLayer({
       const currentIndex = currentLayers.findIndex((l) => l.id === currentId);
       const direction = e.shiftKey ? -1 : 1;
       const nextIndex =
-        ((currentIndex + direction) % currentLayers.length +
-          currentLayers.length) %
+        (((currentIndex + direction) % currentLayers.length) + currentLayers.length) %
         currentLayers.length;
       setActiveLayerRef.current(currentLayers[nextIndex].id);
     };

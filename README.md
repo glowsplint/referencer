@@ -15,16 +15,16 @@ Referencer is a web-based online Bible study annotation tool that makes it easy 
 
 ## Tech Stack
 
-| Layer           | Technology                                       |
-| --------------- | ------------------------------------------------ |
-| Frontend        | React 19, TypeScript, Vite 7, Tailwind CSS v4   |
-| Rich text       | TipTap 3 (ProseMirror) with custom extensions    |
-| Backend         | Bun, Hono, SQLite                                |
-| Collab server   | y-websocket, Yjs, LevelDB persistence            |
-| Real-time       | Yjs CRDT with y-websocket + y-indexeddb           |
-| Auth            | OAuth2 (Google, Apple, Facebook) via Arctic       |
-| Testing         | Vitest + React Testing Library, Playwright        |
-| Package manager | Bun                                              |
+| Layer           | Technology                                    |
+| --------------- | --------------------------------------------- |
+| Frontend        | React 19, TypeScript, Vite 7, Tailwind CSS v4 |
+| Rich text       | TipTap 3 (ProseMirror) with custom extensions |
+| Backend         | Bun, Hono, SQLite                             |
+| Collab server   | y-websocket, Yjs, LevelDB persistence         |
+| Real-time       | Yjs CRDT with y-websocket + y-indexeddb       |
+| Auth            | OAuth2 (Google, Apple, Facebook) via Arctic   |
+| Testing         | Vitest + React Testing Library, Playwright    |
+| Package manager | Bun                                           |
 
 ## Project Structure
 
@@ -165,48 +165,48 @@ bun test
 
 ### Environment variables
 
-| Variable              | Default                  | Description                           |
-| --------------------- | ------------------------ | ------------------------------------- |
-| `PORT` (backend)      | `5000`                   | Backend server listen port            |
-| `DB_PATH` (backend)   | `./data/referencer.db`   | SQLite database file path             |
-| `PORT` (collab)       | `4444`                   | Collab server listen port             |
-| `DB_DIR` (collab)     | `./data/yjs-docs`        | LevelDB directory for Yjs documents   |
-| `VITE_COLLAB_WS_URL`  | (auto-detected)          | Override WebSocket URL for Yjs        |
+| Variable             | Default                | Description                         |
+| -------------------- | ---------------------- | ----------------------------------- |
+| `PORT` (backend)     | `5000`                 | Backend server listen port          |
+| `DB_PATH` (backend)  | `./data/referencer.db` | SQLite database file path           |
+| `PORT` (collab)      | `4444`                 | Collab server listen port           |
+| `DB_DIR` (collab)    | `./data/yjs-docs`      | LevelDB directory for Yjs documents |
+| `VITE_COLLAB_WS_URL` | (auto-detected)        | Override WebSocket URL for Yjs      |
 
 ## Controls
 
 | Action              | Input                                                    |
 | ------------------- | -------------------------------------------------------- |
 | Select words        | Click or drag on text                                    |
-| Draw arrow          | Hold `Ctrl`/`Cmd` + drag between words                  |
+| Draw arrow          | Hold `Ctrl`/`Cmd` + drag between words                   |
 | Highlight selection | Select text, then click highlight tool or press `H`      |
 | Underline selection | Select text, then press `U`                              |
 | Add annotation      | Select text, then press `N`                              |
 | Erase               | Press `E` to toggle eraser, then click highlights/arrows |
 | Cycle active layer  | Press `Tab`                                              |
-| Undo / Redo         | `Ctrl+Z` / `Ctrl+Shift+Z`                               |
+| Undo / Redo         | `Ctrl+Z` / `Ctrl+Shift+Z`                                |
 
 ## API Reference
 
 ### REST
 
-| Method | Endpoint       | Description                                                                                                                  |
-| ------ | -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `POST` | `/api/share`   | Create a share link. Body: `{"workspaceId": "...", "access": "edit\|readonly"}`. Returns: `{"code": "...", "url": "/s/..."}` |
-| `GET`  | `/s/{code}`    | Resolve a share link. Redirects to the workspace (with `?access=readonly` if applicable)                                     |
+| Method | Endpoint     | Description                                                                                                                  |
+| ------ | ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/share` | Create a share link. Body: `{"workspaceId": "...", "access": "edit\|readonly"}`. Returns: `{"code": "...", "url": "/s/..."}` |
+| `GET`  | `/s/{code}`  | Resolve a share link. Redirects to the workspace (with `?access=readonly` if applicable)                                     |
 
 ### Auth
 
-| Method | Endpoint                     | Description                        |
-| ------ | ---------------------------- | ---------------------------------- |
-| `GET`  | `/auth/:provider`            | Start OAuth flow                   |
-| `GET`  | `/auth/:provider/callback`   | OAuth callback                     |
-| `POST` | `/auth/logout`               | End session                        |
-| `GET`  | `/auth/me`                   | Get current user info              |
+| Method | Endpoint                   | Description           |
+| ------ | -------------------------- | --------------------- |
+| `GET`  | `/auth/:provider`          | Start OAuth flow      |
+| `GET`  | `/auth/:provider/callback` | OAuth callback        |
+| `POST` | `/auth/logout`             | End session           |
+| `GET`  | `/auth/me`                 | Get current user info |
 
 ### Collab Server
 
-| Endpoint              | Description                        |
-| --------------------- | ---------------------------------- |
-| `ws://host:4444/{id}` | Yjs WebSocket connection per room  |
-| `GET /health`         | Health check with room count       |
+| Endpoint              | Description                       |
+| --------------------- | --------------------------------- |
+| `ws://host:4444/{id}` | Yjs WebSocket connection per room |
+| `GET /health`         | Health check with room count      |

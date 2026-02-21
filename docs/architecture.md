@@ -45,12 +45,12 @@ Referencer is composed of three independently-running services:
 
 The Vite dev server proxies requests to the other services:
 
-| Path | Target | Protocol |
-|------|--------|----------|
-| `/api/*` | `http://localhost:5000` | HTTP |
-| `/s/*` | `http://localhost:5000` | HTTP |
-| `/auth/*` | `http://localhost:5000` | HTTP |
-| `/yjs/*` | `ws://localhost:4444` | WebSocket (path stripped) |
+| Path      | Target                  | Protocol                  |
+| --------- | ----------------------- | ------------------------- |
+| `/api/*`  | `http://localhost:5000` | HTTP                      |
+| `/s/*`    | `http://localhost:5000` | HTTP                      |
+| `/auth/*` | `http://localhost:5000` | HTTP                      |
+| `/yjs/*`  | `ws://localhost:4444`   | WebSocket (path stripped) |
 
 ### Production
 
@@ -74,15 +74,15 @@ All annotation data (layers, highlights, arrows, underlines) flows through the Y
 
 ### Component Categories
 
-| Category | Components |
-|----------|------------|
-| Panels | `ButtonPane` (toolbar), `ManagementPane` (layers/sections), `AnnotationPanel` (highlight notes), `ActionConsole` (history) |
-| Overlays | `ArrowOverlay` (SVG arrows), `SelectionRingOverlay` (drag visual) |
-| Dialogs | `FAQDialog`, `KeyboardShortcutsDialog`, `SettingsDialog`, `ShareDialog`, `MobileInfoDialog` |
-| Pickers | `ColorPicker`, `ArrowStylePicker` |
-| Display | `StatusBar`, `SectionList`, `LayerRow`, `AnnotationCard` |
-| Auth | `LoginButton`, `UserMenu` |
-| Collab | `CollaborationPresence` (user avatars) |
+| Category | Components                                                                                                                 |
+| -------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Panels   | `ButtonPane` (toolbar), `ManagementPane` (layers/sections), `AnnotationPanel` (highlight notes), `ActionConsole` (history) |
+| Overlays | `ArrowOverlay` (SVG arrows), `SelectionRingOverlay` (drag visual)                                                          |
+| Dialogs  | `FAQDialog`, `KeyboardShortcutsDialog`, `SettingsDialog`, `ShareDialog`, `MobileInfoDialog`                                |
+| Pickers  | `ColorPicker`, `ArrowStylePicker`                                                                                          |
+| Display  | `StatusBar`, `SectionList`, `LayerRow`, `AnnotationCard`                                                                   |
+| Auth     | `LoginButton`, `UserMenu`                                                                                                  |
+| Collab   | `CollaborationPresence` (user avatars)                                                                                     |
 
 ### TipTap Extensions
 

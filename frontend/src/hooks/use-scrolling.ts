@@ -1,87 +1,76 @@
 // Tracks whether a target element (or the window) is currently scrolling.
 // Uses the scrollend event when available, with a debounce timeout fallback.
-import type { RefObject } from "react"
-import { useEffect, useRef, useState } from "react"
+import type { RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 
-type ScrollTarget = RefObject<HTMLElement> | Window | null | undefined
-type EventTargetWithScroll = Window | HTMLElement | Document
+type ScrollTarget = RefObject<HTMLElement> | Window | null | undefined;
+type EventTargetWithScroll = Window | HTMLElement | Document;
 
 interface UseScrollingOptions {
-  debounce?: number
-  fallbackToDocument?: boolean
+  debounce?: number;
+  fallbackToDocument?: boolean;
 }
 
-export function useScrolling(
-  target?: ScrollTarget,
-  options: UseScrollingOptions = {}
-): boolean {
-  const { debounce = 150, fallbackToDocument = true } = options
-  const [isScrolling, setIsScrolling] = useState(false)
-  const isScrollingRef = useRef(false)
+export function useScrolling(target?: ScrollTarget, options: UseScrollingOptions = {}): boolean {
+  const { debounce = 150, fallbackToDocument = true } = options;
+  const [isScrolling, setIsScrolling] = useState(false);
+  const isScrollingRef = useRef(false);
 
   useEffect(() => {
     // Resolve element or window
     const element: EventTargetWithScroll =
       target && typeof Window !== "undefined" && target instanceof Window
         ? target
-        : ((target as RefObject<HTMLElement>)?.current ?? window)
+        : ((target as RefObject<HTMLElement>)?.current ?? window);
 
     // Mobile: fallback to document when using window
     const eventTarget: EventTargetWithScroll =
-      fallbackToDocument &&
-      element === window &&
-      typeof document !== "undefined"
+      fallbackToDocument && element === window && typeof document !== "undefined"
         ? document
-        : element
+        : element;
 
-    const on = (
-      el: EventTargetWithScroll,
-      event: string,
-      handler: EventListener
-    ) => el.addEventListener(event, handler, true)
+    const on = (el: EventTargetWithScroll, event: string, handler: EventListener) =>
+      el.addEventListener(event, handler, true);
 
-    const off = (
-      el: EventTargetWithScroll,
-      event: string,
-      handler: EventListener
-    ) => el.removeEventListener(event, handler)
+    const off = (el: EventTargetWithScroll, event: string, handler: EventListener) =>
+      el.removeEventListener(event, handler);
 
-    let timeout: ReturnType<typeof setTimeout>
-    const supportsScrollEnd = element === window && "onscrollend" in window
+    let timeout: ReturnType<typeof setTimeout>;
+    const supportsScrollEnd = element === window && "onscrollend" in window;
 
     const handleScroll: EventListener = () => {
       if (!isScrollingRef.current) {
-        isScrollingRef.current = true
-        setIsScrolling(true)
+        isScrollingRef.current = true;
+        setIsScrolling(true);
       }
 
       if (!supportsScrollEnd) {
-        clearTimeout(timeout)
+        clearTimeout(timeout);
         timeout = setTimeout(() => {
-          isScrollingRef.current = false
-          setIsScrolling(false)
-        }, debounce)
+          isScrollingRef.current = false;
+          setIsScrolling(false);
+        }, debounce);
       }
-    }
+    };
 
     const handleScrollEnd: EventListener = () => {
-      isScrollingRef.current = false
-      setIsScrolling(false)
-    }
+      isScrollingRef.current = false;
+      setIsScrolling(false);
+    };
 
-    on(eventTarget, "scroll", handleScroll)
+    on(eventTarget, "scroll", handleScroll);
     if (supportsScrollEnd) {
-      on(eventTarget, "scrollend", handleScrollEnd)
+      on(eventTarget, "scrollend", handleScrollEnd);
     }
 
     return () => {
-      off(eventTarget, "scroll", handleScroll)
+      off(eventTarget, "scroll", handleScroll);
       if (supportsScrollEnd) {
-        off(eventTarget, "scrollend", handleScrollEnd)
+        off(eventTarget, "scrollend", handleScrollEnd);
       }
-      clearTimeout(timeout)
-    }
-  }, [target, debounce, fallbackToDocument])
+      clearTimeout(timeout);
+    };
+  }, [target, debounce, fallbackToDocument]);
 
-  return isScrolling
+  return isScrolling;
 }

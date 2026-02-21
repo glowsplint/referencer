@@ -3,13 +3,9 @@ import { test, expect } from "@playwright/test";
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + 12);
@@ -18,10 +14,7 @@ async function clickWordInEditor(
   });
 }
 
-async function addAnnotation(
-  page: import("@playwright/test").Page,
-  text: string
-) {
+async function addAnnotation(page: import("@playwright/test").Page, text: string) {
   await page.keyboard.press("Enter");
   const input = page.getByPlaceholder("Add annotation...");
   await expect(input).toBeVisible({ timeout: 2000 });
@@ -34,17 +27,13 @@ async function drawArrowInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
   anchorXOffset = 30,
-  targetXOffset = 120
+  targetXOffset = 120,
 ) {
   // Switch through selection tool first to clear any stale comments tool state
   await page.keyboard.press("s");
   await page.keyboard.press("a");
 
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
 
@@ -57,7 +46,9 @@ async function drawArrowInEditor(
   await page.keyboard.press("Enter");
 
   // Wait for status bar to confirm anchor was accepted
-  await expect(page.getByTestId("status-bar")).toContainText("select the target", { timeout: 2000 });
+  await expect(page.getByTestId("status-bar")).toContainText("select the target", {
+    timeout: 2000,
+  });
 
   // Select and confirm target
   await page.mouse.click(box!.x + targetXOffset, clickY);
@@ -71,17 +62,13 @@ async function drawArrowBetweenEditors(
   sourceEditor: number,
   targetEditor: number,
   anchorXOffset = 30,
-  targetXOffset = 30
+  targetXOffset = 30,
 ) {
   // Switch through selection tool first to clear any stale comments tool state
   await page.keyboard.press("s");
   await page.keyboard.press("a");
 
-  const srcP = page
-    .locator(".simple-editor-wrapper")
-    .nth(sourceEditor)
-    .locator("p")
-    .first();
+  const srcP = page.locator(".simple-editor-wrapper").nth(sourceEditor).locator("p").first();
   const srcBox = await srcP.boundingBox();
   expect(srcBox).not.toBeNull();
 
@@ -93,13 +80,11 @@ async function drawArrowBetweenEditors(
   await page.keyboard.press("Enter");
 
   // Wait for status bar to confirm anchor was accepted
-  await expect(page.getByTestId("status-bar")).toContainText("select the target", { timeout: 2000 });
+  await expect(page.getByTestId("status-bar")).toContainText("select the target", {
+    timeout: 2000,
+  });
 
-  const tgtP = page
-    .locator(".simple-editor-wrapper")
-    .nth(targetEditor)
-    .locator("p")
-    .first();
+  const tgtP = page.locator(".simple-editor-wrapper").nth(targetEditor).locator("p").first();
   const tgtBox = await tgtP.boundingBox();
   expect(tgtBox).not.toBeNull();
 
@@ -127,9 +112,7 @@ test.describe("no dangling highlights when layer is hidden", () => {
     await page.keyboard.press("c");
   });
 
-  test("hiding layer removes all highlight decorations for that layer", async ({
-    page,
-  }) => {
+  test("hiding layer removes all highlight decorations for that layer", async ({ page }) => {
     // Create annotation to persist the highlight
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Highlight test");
@@ -141,9 +124,7 @@ test.describe("no dangling highlights when layer is hidden", () => {
     });
 
     // Verify highlight exists
-    const highlights = page.locator(
-      '.simple-editor span[style*="background-color"]'
-    );
+    const highlights = page.locator('.simple-editor span[style*="background-color"]');
     await expect(highlights.first()).toBeVisible({ timeout: 2000 });
     const countBefore = await highlights.count();
     expect(countBefore).toBeGreaterThan(0);
@@ -158,9 +139,7 @@ test.describe("no dangling highlights when layer is hidden", () => {
     });
   });
 
-  test("hiding layer removes arrow endpoint highlights too", async ({
-    page,
-  }) => {
+  test("hiding layer removes arrow endpoint highlights too", async ({ page }) => {
     // Draw an arrow
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -228,9 +207,7 @@ test.describe("no dangling elements when passage is hidden", () => {
     });
   });
 
-  test("cross-editor arrow disappears when destination passage hidden", async ({
-    page,
-  }) => {
+  test("cross-editor arrow disappears when destination passage hidden", async ({ page }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -248,9 +225,7 @@ test.describe("no dangling elements when passage is hidden", () => {
     });
 
     // Destination editor should be hidden
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(1)
-    ).not.toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(1)).not.toBeVisible();
 
     // Show passage 2 again — arrow should reappear
     await page.getByTestId("sectionVisibility-1").click();
@@ -277,9 +252,7 @@ test.describe("no orphaned connector lines", () => {
     await page.keyboard.press("c");
   });
 
-  test("connector line count matches annotation card count", async ({
-    page,
-  }) => {
+  test("connector line count matches annotation card count", async ({ page }) => {
     // Create first annotation
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Note A");
@@ -293,15 +266,11 @@ test.describe("no orphaned connector lines", () => {
     });
 
     // Count connector lines in the annotation panel SVG
-    const connectorLines = page.locator(
-      '[data-testid="annotation-panel"] svg line'
-    );
+    const connectorLines = page.locator('[data-testid="annotation-panel"] svg line');
     const lineCount = await connectorLines.count();
 
     // Count visible annotation cards (divs with absolute positioning in the panel)
-    const annotationCards = page.locator(
-      '[data-testid="annotation-panel"] .absolute.w-48'
-    );
+    const annotationCards = page.locator('[data-testid="annotation-panel"] .absolute.w-48');
     const cardCount = await annotationCards.count();
 
     // Each annotation card should have exactly one connector line
@@ -309,15 +278,13 @@ test.describe("no orphaned connector lines", () => {
     expect(lineCount).toBe(2);
   });
 
-  test("hiding layer removes both connector lines and cards", async ({
-    page,
-  }) => {
+  test("hiding layer removes both connector lines and cards", async ({ page }) => {
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Connector test");
 
-    await expect(
-      page.locator('[data-testid="annotation-panel"] svg line')
-    ).toHaveCount(1, { timeout: 2000 });
+    await expect(page.locator('[data-testid="annotation-panel"] svg line')).toHaveCount(1, {
+      timeout: 2000,
+    });
 
     // Hide test layer (index 3)
     await page.getByTestId("layerVisibility-3").click();
@@ -355,9 +322,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await page.keyboard.press("c");
   });
 
-  test("all 3 element types appear and disappear together on layer toggle", async ({
-    page,
-  }) => {
+  test("all 3 element types appear and disappear together on layer toggle", async ({ page }) => {
     // Create annotation on Layer 1 first (comments-mode click clears arrows — known bug)
     await clickWordInEditor(page, 0, 100);
     await addAnnotation(page, "Synced note");
@@ -382,9 +347,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
       timeout: 2000,
     });
 
-    const highlights = page.locator(
-      '.simple-editor span[style*="background-color"]'
-    );
+    const highlights = page.locator('.simple-editor span[style*="background-color"]');
     const highlightsBefore = await highlights.count();
     expect(highlightsBefore).toBeGreaterThan(0);
 
@@ -417,9 +380,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(endpointDecorations).toHaveCount(2, { timeout: 2000 });
   });
 
-  test("layer 2 elements unaffected when layer 1 is toggled", async ({
-    page,
-  }) => {
+  test("layer 2 elements unaffected when layer 1 is toggled", async ({ page }) => {
     // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1 note");
@@ -470,9 +431,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(page.getByText("L2 note")).toBeVisible({ timeout: 2000 });
   });
 
-  test("rapid layer toggle does not leave dangling elements", async ({
-    page,
-  }) => {
+  test("rapid layer toggle does not leave dangling elements", async ({ page }) => {
     // Create annotation first (comments-mode click clears arrows — known bug)
     await clickWordInEditor(page, 0, 100);
     await addAnnotation(page, "Rapid test");
@@ -497,9 +456,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(page.getByText("Rapid test")).toBeVisible({ timeout: 2000 });
   });
 
-  test("rapid passage toggle does not leave dangling elements", async ({
-    page,
-  }) => {
+  test("rapid passage toggle does not leave dangling elements", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Rapid passage test");
@@ -564,12 +521,10 @@ test.describe("all elements hidden state", () => {
     });
     await expect(
       page.locator(
-        '.simple-editor span[style*="background-color"]:not(.word-selection):not(.similar-text-highlight):not(.arrow-endpoint)'
-      )
+        '.simple-editor span[style*="background-color"]:not(.word-selection):not(.similar-text-highlight):not(.arrow-endpoint)',
+      ),
     ).toHaveCount(0, { timeout: 2000 });
-    await expect(
-      page.locator(".ProseMirror .arrow-endpoint")
-    ).toHaveCount(0, { timeout: 2000 });
+    await expect(page.locator(".ProseMirror .arrow-endpoint")).toHaveCount(0, { timeout: 2000 });
 
     // Word selection should still work (not layer-dependent)
     await clickWordInEditor(page, 0, 50);
@@ -578,9 +533,7 @@ test.describe("all elements hidden state", () => {
     });
   });
 
-  test("arrow overlay SVG is empty when no visible arrows", async ({
-    page,
-  }) => {
+  test("arrow overlay SVG is empty when no visible arrows", async ({ page }) => {
     // Draw an arrow
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {

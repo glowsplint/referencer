@@ -1,37 +1,37 @@
 // Unified undo/redo controller that merges Yjs UndoManager with the
 // command-pattern action history. Yjs undo takes priority (most recent
 // CRDT changes), falling back to action history for non-CRDT operations.
-import { useCallback, useMemo } from "react"
-import type { useYjsUndo } from "./use-yjs-undo"
-import type { useActionHistory } from "./use-action-history"
+import { useCallback, useMemo } from "react";
+import type { useYjsUndo } from "./use-yjs-undo";
+import type { useActionHistory } from "./use-action-history";
 
-type YjsUndo = ReturnType<typeof useYjsUndo>
-type History = ReturnType<typeof useActionHistory>
+type YjsUndo = ReturnType<typeof useYjsUndo>;
+type History = ReturnType<typeof useActionHistory>;
 
 export function useUnifiedUndo(yjsUndo: YjsUndo, history: History) {
   const undo = useCallback(() => {
     if (yjsUndo.canUndo) {
-      yjsUndo.undo()
+      yjsUndo.undo();
       // Sync the action console log: mark the most recent entry as undone
       // so it shows line-through styling even when Yjs handled the undo
-      history.markLastUndone()
+      history.markLastUndone();
     } else if (history.canUndo) {
-      history.undo()
+      history.undo();
     }
-  }, [yjsUndo, history])
+  }, [yjsUndo, history]);
 
   const redo = useCallback(() => {
     if (yjsUndo.canRedo) {
-      yjsUndo.redo()
+      yjsUndo.redo();
       // Sync the action console log: restore the most recent undone entry
-      history.markLastRedone()
+      history.markLastRedone();
     } else if (history.canRedo) {
-      history.redo()
+      history.redo();
     }
-  }, [yjsUndo, history])
+  }, [yjsUndo, history]);
 
-  const canUndo = yjsUndo.canUndo || history.canUndo
-  const canRedo = yjsUndo.canRedo || history.canRedo
+  const canUndo = yjsUndo.canUndo || history.canUndo;
+  const canRedo = yjsUndo.canRedo || history.canRedo;
 
-  return useMemo(() => ({ undo, redo, canUndo, canRedo }), [undo, redo, canUndo, canRedo])
+  return useMemo(() => ({ undo, redo, canUndo, canRedo }), [undo, redo, canUndo, canRedo]);
 }

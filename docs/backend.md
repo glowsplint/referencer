@@ -5,6 +5,7 @@ The backend is a TypeScript server running on Bun with the Hono framework. It ha
 ## Entry Point
 
 `backend/src/index.ts` initializes:
+
 1. SQLite database (WAL mode, foreign keys enabled)
 2. OAuth providers from environment variables
 3. Hono routes (auth, share API, static files)
@@ -16,22 +17,22 @@ The server exports Bun's native `fetch` handler.
 
 ### Authentication (`/auth/*`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/auth/:provider` | Start OAuth flow (redirects to provider) |
-| `GET` | `/auth/:provider/callback` | OAuth callback (Google, Facebook) |
-| `POST` | `/auth/:provider/callback` | OAuth callback (Apple sends POST) |
-| `GET` | `/auth/me` | Check current session, returns user or `{ authenticated: false }` |
-| `POST` | `/auth/logout` | End session, clear cookie |
+| Method | Endpoint                   | Description                                                       |
+| ------ | -------------------------- | ----------------------------------------------------------------- |
+| `GET`  | `/auth/:provider`          | Start OAuth flow (redirects to provider)                          |
+| `GET`  | `/auth/:provider/callback` | OAuth callback (Google, Facebook)                                 |
+| `POST` | `/auth/:provider/callback` | OAuth callback (Apple sends POST)                                 |
+| `GET`  | `/auth/me`                 | Check current session, returns user or `{ authenticated: false }` |
+| `POST` | `/auth/logout`             | End session, clear cookie                                         |
 
 Supported providers: `google`, `apple`, `facebook`. Providers are only enabled when their required environment variables are set.
 
 ### Share Links
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
+| Method | Endpoint     | Description                                                                                        |
+| ------ | ------------ | -------------------------------------------------------------------------------------------------- |
 | `POST` | `/api/share` | Create share link. Body: `{ workspaceId, access: "edit" \| "readonly" }`. Returns: `{ code, url }` |
-| `GET` | `/s/:code` | Resolve share link. Redirects to `/space/{workspaceId}` (with `?access=readonly` if applicable) |
+| `GET`  | `/s/:code`   | Resolve share link. Redirects to `/space/{workspaceId}` (with `?access=readonly` if applicable)    |
 
 Share codes are 6-character alphanumeric strings with retry on collision (up to 5 attempts).
 
@@ -67,6 +68,7 @@ Authentication is **optional** -- the app works fully for anonymous users. When 
 ### Account Linking
 
 When signing in, the system checks in order:
+
 1. By provider ID (`user_provider` table) -- returns existing user
 2. By email (`user` table) -- links new provider to existing user
 3. Neither found -- creates new user and provider record

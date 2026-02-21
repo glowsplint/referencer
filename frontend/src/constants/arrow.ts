@@ -5,4 +5,4 @@ export const ARROWHEAD = {
   REF_X: 4,
   REF_Y: 3,
   POINTS: "0 0, 8 3, 0 6",
-} as const
+} as const;

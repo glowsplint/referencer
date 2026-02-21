@@ -31,17 +31,11 @@ export function MobileInfoDialog({ open, onOpenChange }: MobileInfoDialogProps) 
         <DialogHeader className="p-6 pb-4 items-center text-center">
           <Monitor className="size-10 text-muted-foreground mb-2" />
           <DialogTitle>{t("mobile.title")}</DialogTitle>
-          <DialogDescription>
-            {t("mobile.description")}
-          </DialogDescription>
+          <DialogDescription>{t("mobile.description")}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="border-t bg-background p-4">
           <DialogClose asChild>
-            <Button
-              variant="outline"
-              className="w-full"
-              data-testid="mobileInfoDismissButton"
-            >
+            <Button variant="outline" className="w-full" data-testid="mobileInfoDismissButton">
               {t("mobile.continueReading")}
             </Button>
           </DialogClose>

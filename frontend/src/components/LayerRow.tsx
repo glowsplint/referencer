@@ -2,7 +2,17 @@
 // (click to open ColorPicker), inline-editable name, visibility toggle, and an
 // expandable section listing all highlights, arrows, and underlines in that layer.
 // Supports drag-and-drop reordering (drag to trash bin to delete).
-import { Eye, EyeOff, ChevronRight, ChevronDown, MessageSquareText, Highlighter, ArrowRight, Underline, X } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  ChevronRight,
+  ChevronDown,
+  MessageSquareText,
+  Highlighter,
+  ArrowRight,
+  Underline,
+  X,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ColorPicker } from "./ColorPicker";
 import { useState } from "react";
@@ -155,7 +165,8 @@ export function LayerRow({
       {expanded && hasItems && (
         <div className="ml-[14px] pl-2 border-l border-border" data-testid={`layerItems-${index}`}>
           {layer.highlights.map((h) => {
-            const passageName = sectionNames[h.editorIndex] ?? tc("passage", { number: h.editorIndex + 1 });
+            const passageName =
+              sectionNames[h.editorIndex] ?? tc("passage", { number: h.editorIndex + 1 });
             const label = h.annotation || h.text;
             const fullTitle = `${label} (${passageName})`;
             return (
@@ -164,8 +175,14 @@ export function LayerRow({
                 className="group flex items-center gap-1.5 pt-2.5 px-1 text-xs text-muted-foreground"
                 data-testid={`layerHighlight-${h.id}`}
               >
-                {h.type === "comment" ? <MessageSquareText size={12} className="shrink-0" /> : <Highlighter size={12} className="shrink-0" />}
-                <span className="truncate" title={fullTitle}>{label}</span>
+                {h.type === "comment" ? (
+                  <MessageSquareText size={12} className="shrink-0" />
+                ) : (
+                  <Highlighter size={12} className="shrink-0" />
+                )}
+                <span className="truncate" title={fullTitle}>
+                  {label}
+                </span>
                 <button
                   className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
                   onClick={() => onRemoveHighlight(layer.id, h.id)}
@@ -178,8 +195,10 @@ export function LayerRow({
             );
           })}
           {layer.arrows.map((a) => {
-            const fromName = sectionNames[a.from.editorIndex] ?? tc("passage", { number: a.from.editorIndex + 1 });
-            const toName = sectionNames[a.to.editorIndex] ?? tc("passage", { number: a.to.editorIndex + 1 });
+            const fromName =
+              sectionNames[a.from.editorIndex] ?? tc("passage", { number: a.from.editorIndex + 1 });
+            const toName =
+              sectionNames[a.to.editorIndex] ?? tc("passage", { number: a.to.editorIndex + 1 });
             const fromWords = a.from.text.split(/\s+/).filter(Boolean);
             const toWords = a.to.text.split(/\s+/).filter(Boolean);
             const label = `${fromWords[0] ?? ""} (${fromWords.length}) \u2192 ${toWords[0] ?? ""} (${toWords.length})`;
@@ -191,7 +210,9 @@ export function LayerRow({
                 data-testid={`layerArrow-${a.id}`}
               >
                 <ArrowRight size={12} className="shrink-0" />
-                <span className="truncate" title={fullTitle}>{label}</span>
+                <span className="truncate" title={fullTitle}>
+                  {label}
+                </span>
                 <button
                   className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
                   onClick={() => onRemoveArrow(layer.id, a.id)}
@@ -204,7 +225,8 @@ export function LayerRow({
             );
           })}
           {layer.underlines.map((u) => {
-            const passageName = sectionNames[u.editorIndex] ?? tc("passage", { number: u.editorIndex + 1 });
+            const passageName =
+              sectionNames[u.editorIndex] ?? tc("passage", { number: u.editorIndex + 1 });
             const fullTitle = `${u.text} (${passageName})`;
             return (
               <div
@@ -213,7 +235,9 @@ export function LayerRow({
                 data-testid={`layerUnderline-${u.id}`}
               >
                 <Underline size={12} className="shrink-0" />
-                <span className="truncate" title={fullTitle}>{u.text}</span>
+                <span className="truncate" title={fullTitle}>
+                  {u.text}
+                </span>
                 <button
                   className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
                   onClick={() => onRemoveUnderline(layer.id, u.id)}

@@ -43,7 +43,9 @@ test("selecting two different words and pressing Enter draws an arrow", async ({
   await page.keyboard.press("Enter");
 
   // One additional arrow should appear
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
   // Preview should disappear
   await expect(page.getByTestId("preview-arrow")).toHaveCount(0, { timeout: 2000 });
 });
@@ -84,7 +86,9 @@ test("click on arrow line selects it and activates arrow tool", async ({ page })
   await page.mouse.click(box!.x + 120, y);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
 
   // Switch to selection tool so arrow hit areas accept pointer events
   await page.keyboard.press("s");
@@ -110,7 +114,9 @@ test("clicking selected arrow X icon deletes it, hover alone does not show X", a
   await page.mouse.click(box!.x + 120, y);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
 
   // Switch to selection tool so arrow hit areas accept pointer events
   await page.keyboard.press("s");
@@ -161,10 +167,14 @@ test("arrow key navigation works after confirming anchor", async ({ page }) => {
 
   // Press Enter to confirm target and create arrow
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
 });
 
-test("selection is preserved when activating arrow tool, allowing arrow key navigation", async ({ page }) => {
+test("selection is preserved when activating arrow tool, allowing arrow key navigation", async ({
+  page,
+}) => {
   // This test starts fresh: lock, select a word, then activate arrow tool
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
@@ -197,7 +207,9 @@ test("selection is preserved when activating arrow tool, allowing arrow key navi
 
   // Confirm target
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
 });
 
 test("arrow tool button shows depressed state when active", async ({ page }) => {

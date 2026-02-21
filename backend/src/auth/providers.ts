@@ -31,9 +31,7 @@ export function initProviders(config: AuthConfig): void {
   }
 }
 
-export function getProvider(
-  name: string,
-): Google | Apple | Facebook | null {
+export function getProvider(name: string): Google | Apple | Facebook | null {
   switch (name) {
     case "google":
       return google;

@@ -79,9 +79,7 @@ export function FAQDialog({ open, onOpenChange }: FAQDialogProps) {
       >
         <DialogHeader className="p-6 pb-4">
           <DialogTitle>{t("faq.title")}</DialogTitle>
-          <DialogDescription>
-            {t("faq.description")}
-          </DialogDescription>
+          <DialogDescription>{t("faq.description")}</DialogDescription>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[60vh]">
           <div className="px-6 pb-4 space-y-4">

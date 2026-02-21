@@ -1,70 +1,70 @@
 // Renders a glowing blue outline around the currently selected word when the
 // editor is locked. Computes a bounding box from DOM range rects relative to the
 // editor wrapper, and recomputes on resize via ResizeObserver.
-import { useLayoutEffect, useState } from "react"
-import type { Editor } from "@tiptap/react"
-import type { WordSelection } from "@/types/editor"
-import { DEFAULT_LAYER_COLOR, DEFAULT_LAYER_COLOR_DARK } from "@/constants/colors"
+import { useLayoutEffect, useState } from "react";
+import type { Editor } from "@tiptap/react";
+import type { WordSelection } from "@/types/editor";
+import { DEFAULT_LAYER_COLOR, DEFAULT_LAYER_COLOR_DARK } from "@/constants/colors";
 
 interface OverlayRect {
-  top: number
-  left: number
-  width: number
-  height: number
+  top: number;
+  left: number;
+  width: number;
+  height: number;
 }
 
-const PADDING_X = 2
-const PADDING_Y = 1
+const PADDING_X = 2;
+const PADDING_Y = 1;
 
 /** Merge b into a, expanding a to encompass both. */
 function mergeInto(a: OverlayRect, b: OverlayRect): void {
-  const newTop = Math.min(a.top, b.top)
-  const newBottom = Math.max(a.top + a.height, b.top + b.height)
-  const newLeft = Math.min(a.left, b.left)
-  const newRight = Math.max(a.left + a.width, b.left + b.width)
-  a.top = newTop
-  a.left = newLeft
-  a.width = newRight - newLeft
-  a.height = newBottom - newTop
+  const newTop = Math.min(a.top, b.top);
+  const newBottom = Math.max(a.top + a.height, b.top + b.height);
+  const newLeft = Math.min(a.left, b.left);
+  const newRight = Math.max(a.left + a.width, b.left + b.width);
+  a.top = newTop;
+  a.left = newLeft;
+  a.width = newRight - newLeft;
+  a.height = newBottom - newTop;
 }
 
 function getSelectionRects(
   editor: Editor,
   selection: WordSelection,
-  wrapper: HTMLElement
+  wrapper: HTMLElement,
 ): OverlayRect[] {
-  const domStart = editor.view.domAtPos(selection.from)
-  const domEnd = editor.view.domAtPos(selection.to)
+  const domStart = editor.view.domAtPos(selection.from);
+  const domEnd = editor.view.domAtPos(selection.to);
 
-  const range = document.createRange()
-  range.setStart(domStart.node, domStart.offset)
-  range.setEnd(domEnd.node, domEnd.offset)
+  const range = document.createRange();
+  range.setStart(domStart.node, domStart.offset);
+  range.setEnd(domEnd.node, domEnd.offset);
 
-  const clientRects = range.getClientRects()
-  if (clientRects.length === 0) return []
+  const clientRects = range.getClientRects();
+  if (clientRects.length === 0) return [];
 
-  const wrapperRect = wrapper.getBoundingClientRect()
+  const wrapperRect = wrapper.getBoundingClientRect();
 
   // Convert to wrapper-relative coords (accounting for scroll)
-  const rects: OverlayRect[] = []
+  const rects: OverlayRect[] = [];
   for (const cr of clientRects) {
-    if (cr.width === 0) continue
+    if (cr.width === 0) continue;
     rects.push({
       top: cr.top - wrapperRect.top + wrapper.scrollTop,
       left: cr.left - wrapperRect.left + wrapper.scrollLeft,
       width: cr.width,
       height: cr.height,
-    })
+    });
   }
 
   // Merge all rects into a single bounding box (selection is always contiguous)
-  const first = rects[0]
-  const merged: OverlayRect = { ...first }
+  const first = rects[0];
+  const merged: OverlayRect = { ...first };
   for (let i = 1; i < rects.length; i++) {
-    mergeInto(merged, rects[i])
+    mergeInto(merged, rects[i]);
   }
 
-  return [merged]
+  return [merged];
 }
 
 export function SelectionRingOverlay({
@@ -75,17 +75,17 @@ export function SelectionRingOverlay({
   isDarkMode,
   wrapperRef,
 }: {
-  editor: Editor | null
-  selection: WordSelection | null
-  editorIndex: number
-  isLocked: boolean
-  isDarkMode: boolean
-  wrapperRef: React.RefObject<HTMLDivElement | null>
+  editor: Editor | null;
+  selection: WordSelection | null;
+  editorIndex: number;
+  isLocked: boolean;
+  isDarkMode: boolean;
+  wrapperRef: React.RefObject<HTMLDivElement | null>;
 }) {
-  const [rects, setRects] = useState<OverlayRect[]>([])
+  const [rects, setRects] = useState<OverlayRect[]>([]);
 
   useLayoutEffect(() => {
-    const wrapper = wrapperRef.current
+    const wrapper = wrapperRef.current;
     if (
       !editor ||
       editor.isDestroyed ||
@@ -94,29 +94,29 @@ export function SelectionRingOverlay({
       selection.editorIndex !== editorIndex ||
       !wrapper
     ) {
-      setRects([])
-      return
+      setRects([]);
+      return;
     }
 
     function compute() {
       try {
-        setRects(getSelectionRects(editor!, selection!, wrapper!))
+        setRects(getSelectionRects(editor!, selection!, wrapper!));
       } catch {
-        setRects([])
+        setRects([]);
       }
     }
 
-    compute()
+    compute();
 
-    const ro = new ResizeObserver(() => compute())
-    ro.observe(wrapper)
-    return () => ro.disconnect()
-  }, [editor, selection, editorIndex, isLocked, wrapperRef])
+    const ro = new ResizeObserver(() => compute());
+    ro.observe(wrapper);
+    return () => ro.disconnect();
+  }, [editor, selection, editorIndex, isLocked, wrapperRef]);
 
-  if (rects.length === 0) return null
+  if (rects.length === 0) return null;
 
-  const ringColor = isDarkMode ? DEFAULT_LAYER_COLOR_DARK : DEFAULT_LAYER_COLOR
-  const glowColor = isDarkMode ? `${DEFAULT_LAYER_COLOR_DARK}30` : `${DEFAULT_LAYER_COLOR}30`
+  const ringColor = isDarkMode ? DEFAULT_LAYER_COLOR_DARK : DEFAULT_LAYER_COLOR;
+  const glowColor = isDarkMode ? `${DEFAULT_LAYER_COLOR_DARK}30` : `${DEFAULT_LAYER_COLOR}30`;
 
   return (
     <>
@@ -136,5 +136,5 @@ export function SelectionRingOverlay({
         />
       ))}
     </>
-  )
+  );
 }

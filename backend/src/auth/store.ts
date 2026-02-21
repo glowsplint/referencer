@@ -11,17 +11,19 @@ export function upsertUser(
 ): string {
   // 1. Find by (provider, provider_user_id)
   const existing = db
-    .query<{ user_id: string }, [string, string]>(
-      "SELECT user_id FROM user_provider WHERE provider = ? AND provider_user_id = ?",
-    )
+    .query<
+      { user_id: string },
+      [string, string]
+    >("SELECT user_id FROM user_provider WHERE provider = ? AND provider_user_id = ?")
     .get(provider, providerUserId);
 
   if (existing) {
     // Update user info.
-    db.run(
-      "UPDATE user SET name = ?, avatar_url = ?, updated_at = datetime('now') WHERE id = ?",
-      [name, avatarUrl, existing.user_id],
-    );
+    db.run("UPDATE user SET name = ?, avatar_url = ?, updated_at = datetime('now') WHERE id = ?", [
+      name,
+      avatarUrl,
+      existing.user_id,
+    ]);
     return existing.user_id;
   }
 
@@ -37,10 +39,11 @@ export function upsertUser(
       "INSERT INTO user_provider (id, user_id, provider, provider_user_id) VALUES (?, ?, ?, ?)",
       [providerId, byEmail.id, provider, providerUserId],
     );
-    db.run(
-      "UPDATE user SET name = ?, avatar_url = ?, updated_at = datetime('now') WHERE id = ?",
-      [name, avatarUrl, byEmail.id],
-    );
+    db.run("UPDATE user SET name = ?, avatar_url = ?, updated_at = datetime('now') WHERE id = ?", [
+      name,
+      avatarUrl,
+      byEmail.id,
+    ]);
     return byEmail.id;
   }
 
@@ -49,10 +52,12 @@ export function upsertUser(
   const providerId = crypto.randomUUID();
 
   const tx = db.transaction(() => {
-    db.run(
-      "INSERT INTO user (id, email, name, avatar_url) VALUES (?, ?, ?, ?)",
-      [userId, email, name, avatarUrl],
-    );
+    db.run("INSERT INTO user (id, email, name, avatar_url) VALUES (?, ?, ?, ?)", [
+      userId,
+      email,
+      name,
+      avatarUrl,
+    ]);
     db.run(
       "INSERT INTO user_provider (id, user_id, provider, provider_user_id) VALUES (?, ?, ?, ?)",
       [providerId, userId, provider, providerUserId],
@@ -63,11 +68,7 @@ export function upsertUser(
   return userId;
 }
 
-export function createSession(
-  db: Database,
-  userId: string,
-  maxAge: number,
-): string {
+export function createSession(db: Database, userId: string, maxAge: number): string {
   // Generate 64-char hex token (32 random bytes).
   const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);
@@ -83,10 +84,7 @@ export function createSession(
   return token;
 }
 
-export function getSessionUser(
-  db: Database,
-  token: string,
-): User | null {
+export function getSessionUser(db: Database, token: string): User | null {
   const row = db
     .query<
       {
@@ -130,15 +128,9 @@ export function deleteSession(db: Database, token: string): void {
   db.run("DELETE FROM session WHERE id = ?", [token]);
 }
 
-export function maybeRefreshSession(
-  db: Database,
-  token: string,
-  maxAge: number,
-): void {
+export function maybeRefreshSession(db: Database, token: string, maxAge: number): void {
   const row = db
-    .query<{ created_at: string }, [string]>(
-      "SELECT created_at FROM session WHERE id = ?",
-    )
+    .query<{ created_at: string }, [string]>("SELECT created_at FROM session WHERE id = ?")
     .get(token);
 
   if (!row) return;
@@ -148,10 +140,10 @@ export function maybeRefreshSession(
 
   if (createdAt < oneDayAgo) {
     const newExpiry = new Date(Date.now() + maxAge * 1000).toISOString();
-    db.run(
-      "UPDATE session SET created_at = datetime('now'), expires_at = ? WHERE id = ?",
-      [newExpiry, token],
-    );
+    db.run("UPDATE session SET created_at = datetime('now'), expires_at = ? WHERE id = ?", [
+      newExpiry,
+      token,
+    ]);
   }
 }
 

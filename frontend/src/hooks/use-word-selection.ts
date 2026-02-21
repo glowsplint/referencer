@@ -3,18 +3,18 @@
 // boundaries), Home/End, Escape to clear, Enter to confirm, and Cmd+A for
 // select-all within a passage. Maintains a sticky X coordinate for vertical
 // movement consistency.
-import { useState, useCallback, useEffect, useRef } from "react"
-import type { Editor } from "@tiptap/react"
-import type { WordSelection } from "@/types/editor"
-import type { WordCenter } from "@/lib/tiptap/nearest-word"
+import { useState, useCallback, useEffect, useRef } from "react";
+import type { Editor } from "@tiptap/react";
+import type { WordSelection } from "@/types/editor";
+import type { WordCenter } from "@/lib/tiptap/nearest-word";
 import {
   getWordCenter,
   findFirstWordOnLine,
   findLastWordOnLine,
   isAtLineStart,
   isAtLineEnd,
-} from "@/lib/tiptap/nearest-word"
-import { isEditableElement } from "@/lib/dom"
+} from "@/lib/tiptap/nearest-word";
+import { isEditableElement } from "@/lib/dom";
 import {
   collectCandidates,
   resolveNavigationTarget,
@@ -24,22 +24,22 @@ import {
   findHorizontalTargetConstrained,
   findVerticalTargetConstrained,
   computeSelectAllInPassage,
-} from "@/lib/word-navigation"
+} from "@/lib/word-navigation";
 
-const ARROW_KEYS = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"])
-const HAS_ALPHANUMERIC = /[a-zA-Z0-9]/
+const ARROW_KEYS = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]);
+const HAS_ALPHANUMERIC = /[a-zA-Z0-9]/;
 
 function isCmdKey(e: KeyboardEvent): boolean {
-  return navigator.platform?.includes("Mac") ? e.metaKey : e.ctrlKey
+  return navigator.platform?.includes("Mac") ? e.metaKey : e.ctrlKey;
 }
 
 interface UseWordSelectionOptions {
-  isLocked: boolean
-  editorsRef: React.RefObject<Map<number, Editor>>
-  containerRef: React.RefObject<HTMLDivElement | null>
-  editorCount: number
-  onEnter?: () => void
-  onEscape?: () => void
+  isLocked: boolean;
+  editorsRef: React.RefObject<Map<number, Editor>>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  editorCount: number;
+  onEnter?: () => void;
+  onEscape?: () => void;
 }
 
 export function useWordSelection({
@@ -50,190 +50,172 @@ export function useWordSelection({
   onEnter,
   onEscape,
 }: UseWordSelectionOptions) {
-  const [selection, setSelection] = useState<WordSelection | null>(null)
-  const [selectionHidden, setSelectionHidden] = useState(false)
+  const [selection, setSelection] = useState<WordSelection | null>(null);
+  const [selectionHidden, setSelectionHidden] = useState(false);
   // Preserves horizontal position during vertical arrow-key navigation
-  const stickyXRef = useRef<number | null>(null)
-  const anchorRef = useRef<WordSelection | null>(null)
-  const headRef = useRef<WordSelection | null>(null)
-  const onEnterRef = useRef(onEnter)
-  onEnterRef.current = onEnter
-  const onEscapeRef = useRef(onEscape)
-  onEscapeRef.current = onEscape
+  const stickyXRef = useRef<number | null>(null);
+  const anchorRef = useRef<WordSelection | null>(null);
+  const headRef = useRef<WordSelection | null>(null);
+  const onEnterRef = useRef(onEnter);
+  onEnterRef.current = onEnter;
+  const onEscapeRef = useRef(onEscape);
+  onEscapeRef.current = onEscape;
 
-  const selectWord = useCallback(
-    (editorIndex: number, from: number, to: number, text: string) => {
-      if (!HAS_ALPHANUMERIC.test(text)) return
-      anchorRef.current = null
-      headRef.current = null
-      setSelectionHidden(false)
-      setSelection({ editorIndex, from, to, text })
-    },
-    []
-  )
+  const selectWord = useCallback((editorIndex: number, from: number, to: number, text: string) => {
+    if (!HAS_ALPHANUMERIC.test(text)) return;
+    anchorRef.current = null;
+    headRef.current = null;
+    setSelectionHidden(false);
+    setSelection({ editorIndex, from, to, text });
+  }, []);
 
   const selectRange = useCallback(
-    (
-      anchor: WordSelection,
-      head: WordSelection,
-      merged: WordSelection
-    ) => {
-      if (!HAS_ALPHANUMERIC.test(merged.text)) return
-      anchorRef.current = anchor
-      headRef.current = head
-      setSelectionHidden(false)
-      setSelection(merged)
+    (anchor: WordSelection, head: WordSelection, merged: WordSelection) => {
+      if (!HAS_ALPHANUMERIC.test(merged.text)) return;
+      anchorRef.current = anchor;
+      headRef.current = head;
+      setSelectionHidden(false);
+      setSelection(merged);
     },
-    []
-  )
+    [],
+  );
 
   const clearSelection = useCallback(() => {
-    anchorRef.current = null
-    headRef.current = null
-    setSelection(null)
-    setSelectionHidden(false)
-  }, [])
+    anchorRef.current = null;
+    headRef.current = null;
+    setSelection(null);
+    setSelectionHidden(false);
+  }, []);
 
   const hideSelection = useCallback(() => {
-    setSelectionHidden(true)
-  }, [])
+    setSelectionHidden(true);
+  }, []);
 
   useEffect(() => {
     if (!isLocked) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- reset on prop change
-      setSelection(null)
-      setSelectionHidden(false)
-      return
+      setSelection(null);
+      setSelectionHidden(false);
+      return;
     }
     // Seed selection at first word (hidden) so arrow keys work immediately
-    const container = containerRef.current
-    if (!container) return
-    const containerRect = container.getBoundingClientRect()
-    const ctx = { editorsRef, containerRect, editorCount }
-    const allCandidates = collectCandidates(ctx)
-    const first = findFirstWordInPassage(0, allCandidates)
+    const container = containerRef.current;
+    if (!container) return;
+    const containerRect = container.getBoundingClientRect();
+    const ctx = { editorsRef, containerRect, editorCount };
+    const allCandidates = collectCandidates(ctx);
+    const first = findFirstWordInPassage(0, allCandidates);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initialise on prop change
     if (first) {
-      setSelection(first)
-      setSelectionHidden(true)
+      setSelection(first);
+      setSelectionHidden(true);
     }
-  }, [isLocked, editorsRef, containerRef, editorCount])
+  }, [isLocked, editorsRef, containerRef, editorCount]);
 
   useEffect(() => {
-    if (!isLocked) return
+    if (!isLocked) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isEditableElement(document.activeElement)) return
+      if (isEditableElement(document.activeElement)) return;
 
-      const cmd = isCmdKey(e)
+      const cmd = isCmdKey(e);
 
       // ── Enter ───────────────────────────────────────────────────
       if (e.key === "Enter") {
         if (selection && onEnterRef.current) {
-          e.preventDefault()
-          onEnterRef.current()
+          e.preventDefault();
+          onEnterRef.current();
         }
-        return
+        return;
       }
 
       // ── Escape ──────────────────────────────────────────────────
       if (e.key === "Escape") {
-        e.preventDefault()
+        e.preventDefault();
         if (selection && !selectionHidden) {
           // First Escape: clear visible selection
-          anchorRef.current = null
-          headRef.current = null
-          setSelection(null)
+          anchorRef.current = null;
+          headRef.current = null;
+          setSelection(null);
         } else {
           // Double Escape: reset to first word (hidden) and notify parent
-          anchorRef.current = null
-          headRef.current = null
-          stickyXRef.current = null
-          const container = containerRef.current
+          anchorRef.current = null;
+          headRef.current = null;
+          stickyXRef.current = null;
+          const container = containerRef.current;
           if (container) {
-            const containerRect = container.getBoundingClientRect()
-            const ctx = { editorsRef, containerRect, editorCount }
-            const allCandidates = collectCandidates(ctx)
-            const first = findFirstWordInPassage(0, allCandidates)
+            const containerRect = container.getBoundingClientRect();
+            const ctx = { editorsRef, containerRect, editorCount };
+            const allCandidates = collectCandidates(ctx);
+            const first = findFirstWordInPassage(0, allCandidates);
             if (first) {
-              setSelection(first)
-              setSelectionHidden(true)
+              setSelection(first);
+              setSelectionHidden(true);
             }
           }
-          onEscapeRef.current?.()
+          onEscapeRef.current?.();
         }
-        return
+        return;
       }
 
       // ── Page Up/Down — let browser handle ──────────────────────
-      if (e.key === "PageUp" || e.key === "PageDown") return
+      if (e.key === "PageUp" || e.key === "PageDown") return;
 
       // ── Cmd+A — select all in passage ──────────────────────────
       if (cmd && e.key === "a") {
-        e.preventDefault()
-        setSelectionHidden(false)
-        const container = containerRef.current
-        if (!container) return
-        const containerRect = container.getBoundingClientRect()
-        const ctx = { editorsRef, containerRect, editorCount }
-        const allCandidates = collectCandidates(ctx)
-        const editorIndex = selection?.editorIndex ?? 0
-        const editor = editorsRef.current.get(editorIndex)
-        if (!editor) return
-        const selectAll = computeSelectAllInPassage(
-          editorIndex,
-          allCandidates,
-          editor
-        )
+        e.preventDefault();
+        setSelectionHidden(false);
+        const container = containerRef.current;
+        if (!container) return;
+        const containerRect = container.getBoundingClientRect();
+        const ctx = { editorsRef, containerRect, editorCount };
+        const allCandidates = collectCandidates(ctx);
+        const editorIndex = selection?.editorIndex ?? 0;
+        const editor = editorsRef.current.get(editorIndex);
+        if (!editor) return;
+        const selectAll = computeSelectAllInPassage(editorIndex, allCandidates, editor);
         if (selectAll) {
-          anchorRef.current = null
-          headRef.current = null
-          setSelection(selectAll)
+          anchorRef.current = null;
+          headRef.current = null;
+          setSelection(selectAll);
         }
-        return
+        return;
       }
 
       // ── Home / End (requires selection) ────────────────────────
       if (e.key === "Home" || e.key === "End") {
-        if (!selection) return
-        e.preventDefault()
-        setSelectionHidden(false)
-        const container = containerRef.current
-        if (!container) return
-        const containerRect = container.getBoundingClientRect()
-        const ctx = { editorsRef, containerRect, editorCount }
-        const allCandidates = collectCandidates(ctx)
+        if (!selection) return;
+        e.preventDefault();
+        setSelectionHidden(false);
+        const container = containerRef.current;
+        if (!container) return;
+        const containerRect = container.getBoundingClientRect();
+        const ctx = { editorsRef, containerRect, editorCount };
+        const allCandidates = collectCandidates(ctx);
         const sameEditorCandidates = allCandidates.filter(
-          (c) => c.word.editorIndex === selection.editorIndex
-        )
-        handleHomeEnd(
-          e,
-          selection,
-          allCandidates,
-          sameEditorCandidates,
-          editorsRef,
-          containerRect
-        )
-        return
+          (c) => c.word.editorIndex === selection.editorIndex,
+        );
+        handleHomeEnd(e, selection, allCandidates, sameEditorCandidates, editorsRef, containerRect);
+        return;
       }
 
       // ── All remaining keys require arrow keys ──────────────────
-      if (!ARROW_KEYS.has(e.key)) return
-      if (!selection) return
+      if (!ARROW_KEYS.has(e.key)) return;
+      if (!selection) return;
 
-      e.preventDefault()
+      e.preventDefault();
       // Unhide selection on any navigation
-      if (selectionHidden) setSelectionHidden(false)
+      if (selectionHidden) setSelectionHidden(false);
 
-      const container = containerRef.current
-      if (!container) return
-      const containerRect = container.getBoundingClientRect()
+      const container = containerRef.current;
+      if (!container) return;
+      const containerRect = container.getBoundingClientRect();
 
-      const ctx = { editorsRef, containerRect, editorCount }
-      const allCandidates = collectCandidates(ctx)
+      const ctx = { editorsRef, containerRect, editorCount };
+      const allCandidates = collectCandidates(ctx);
       const sameEditorCandidates = allCandidates.filter(
-        (c) => c.word.editorIndex === selection.editorIndex
-      )
+        (c) => c.word.editorIndex === selection.editorIndex,
+      );
 
       // ── Cmd+Shift+Arrow — extend to boundaries ────────────────
       if (cmd && e.shiftKey) {
@@ -243,9 +225,9 @@ export function useWordSelection({
           allCandidates,
           sameEditorCandidates,
           editorsRef,
-          containerRect
-        )
-        return
+          containerRect,
+        );
+        return;
       }
 
       // ── Cmd+Arrow — constrained navigation ────────────────────
@@ -256,67 +238,63 @@ export function useWordSelection({
           allCandidates,
           sameEditorCandidates,
           editorsRef,
-          containerRect
-        )
-        return
+          containerRect,
+        );
+        return;
       }
 
       // ── Shift+Arrow — range extension ──────────────────────────
       if (e.shiftKey) {
         // Initialize anchor/head on first shift+arrow
         if (!anchorRef.current) {
-          anchorRef.current = selection
-          headRef.current = selection
+          anchorRef.current = selection;
+          headRef.current = selection;
         }
 
-        const head = headRef.current!
-        const currentCenter = getWordCenter(head, editorsRef, containerRect)
-        if (!currentCenter) return
+        const head = headRef.current!;
+        const currentCenter = getWordCenter(head, editorsRef, containerRect);
+        if (!currentCenter) return;
 
         const { target, stickyX } = resolveNavigationTarget(
           e.key,
           currentCenter,
           allCandidates,
           head,
-          stickyXRef.current
-        )
-        stickyXRef.current = stickyX
+          stickyXRef.current,
+        );
+        stickyXRef.current = stickyX;
 
-        if (!target) return
+        if (!target) return;
 
-        const editor = editorsRef.current.get(anchorRef.current.editorIndex)
-        if (!editor) return
+        const editor = editorsRef.current.get(anchorRef.current.editorIndex);
+        if (!editor) return;
 
-        const rangeSelection = computeRangeSelection(
-          anchorRef.current,
-          target,
-          editor
-        )
-        if (!rangeSelection) return
+        const rangeSelection = computeRangeSelection(anchorRef.current, target, editor);
+        if (!rangeSelection) return;
 
-        headRef.current = target
-        setSelection(rangeSelection)
-        return
+        headRef.current = target;
+        setSelection(rangeSelection);
+        return;
       }
 
       // ── Plain arrow — normal navigation ────────────────────────
-      anchorRef.current = null
-      headRef.current = null
+      anchorRef.current = null;
+      headRef.current = null;
 
-      const currentCenter = getWordCenter(selection, editorsRef, containerRect)
-      if (!currentCenter) return
+      const currentCenter = getWordCenter(selection, editorsRef, containerRect);
+      if (!currentCenter) return;
 
       const { target, stickyX } = resolveNavigationTarget(
         e.key,
         currentCenter,
         allCandidates,
         selection,
-        stickyXRef.current
-      )
-      stickyXRef.current = stickyX
+        stickyXRef.current,
+      );
+      stickyXRef.current = stickyX;
 
-      if (target) setSelection(target)
-    }
+      if (target) setSelection(target);
+    };
 
     // ── Home/End handler ───────────────────────────────────────────
     function handleHomeEnd(
@@ -325,58 +303,54 @@ export function useWordSelection({
       allCandidates: WordCenter[],
       sameEditorCandidates: WordCenter[],
       eRef: React.RefObject<Map<number, Editor>>,
-      containerRect: DOMRect
+      containerRect: DOMRect,
     ) {
-      const isEnd = e.key === "End"
+      const isEnd = e.key === "End";
 
       if (e.shiftKey) {
         // Progressive: line boundary first, then passage boundary
         if (!anchorRef.current) {
-          anchorRef.current = sel
-          headRef.current = sel
+          anchorRef.current = sel;
+          headRef.current = sel;
         }
-        const head = headRef.current!
-        const headCenter = getWordCenter(head, eRef, containerRect)
-        if (!headCenter) return
+        const head = headRef.current!;
+        const headCenter = getWordCenter(head, eRef, containerRect);
+        if (!headCenter) return;
 
         const atBoundary = isEnd
           ? isAtLineEnd(headCenter, sameEditorCandidates)
-          : isAtLineStart(headCenter, sameEditorCandidates)
+          : isAtLineStart(headCenter, sameEditorCandidates);
 
-        let target: import("@/lib/tiptap/word-collection").CollectedWord | null
+        let target: import("@/lib/tiptap/word-collection").CollectedWord | null;
         if (atBoundary) {
           // Already at line boundary → go to passage boundary
           target = isEnd
             ? findLastWordInPassage(sel.editorIndex, allCandidates)
-            : findFirstWordInPassage(sel.editorIndex, allCandidates)
+            : findFirstWordInPassage(sel.editorIndex, allCandidates);
         } else {
           // Go to line boundary
           target = isEnd
             ? findLastWordOnLine(headCenter, sameEditorCandidates)
-            : findFirstWordOnLine(headCenter, sameEditorCandidates)
+            : findFirstWordOnLine(headCenter, sameEditorCandidates);
         }
-        if (!target) return
+        if (!target) return;
 
-        const editor = eRef.current.get(anchorRef.current.editorIndex)
-        if (!editor) return
-        const rangeSelection = computeRangeSelection(
-          anchorRef.current,
-          target,
-          editor
-        )
-        if (!rangeSelection) return
+        const editor = eRef.current.get(anchorRef.current.editorIndex);
+        if (!editor) return;
+        const rangeSelection = computeRangeSelection(anchorRef.current, target, editor);
+        if (!rangeSelection) return;
 
-        headRef.current = target
-        setSelection(rangeSelection)
+        headRef.current = target;
+        setSelection(rangeSelection);
       } else {
         // Without Shift: jump to passage start/end
-        anchorRef.current = null
-        headRef.current = null
-        stickyXRef.current = null
+        anchorRef.current = null;
+        headRef.current = null;
+        stickyXRef.current = null;
         const target = isEnd
           ? findLastWordInPassage(sel.editorIndex, allCandidates)
-          : findFirstWordInPassage(sel.editorIndex, allCandidates)
-        if (target) setSelection(target)
+          : findFirstWordInPassage(sel.editorIndex, allCandidates);
+        if (target) setSelection(target);
       }
     }
 
@@ -387,46 +361,42 @@ export function useWordSelection({
       allCandidates: WordCenter[],
       sameEditorCandidates: WordCenter[],
       eRef: React.RefObject<Map<number, Editor>>,
-      containerRect: DOMRect
+      containerRect: DOMRect,
     ) {
       if (!anchorRef.current) {
-        anchorRef.current = sel
-        headRef.current = sel
+        anchorRef.current = sel;
+        headRef.current = sel;
       }
-      const head = headRef.current!
-      const headCenter = getWordCenter(head, eRef, containerRect)
-      if (!headCenter) return
+      const head = headRef.current!;
+      const headCenter = getWordCenter(head, eRef, containerRect);
+      if (!headCenter) return;
 
-      let target: import("@/lib/tiptap/word-collection").CollectedWord | null
+      let target: import("@/lib/tiptap/word-collection").CollectedWord | null;
       switch (e.key) {
         case "ArrowLeft":
-          target = findFirstWordOnLine(headCenter, sameEditorCandidates)
-          break
+          target = findFirstWordOnLine(headCenter, sameEditorCandidates);
+          break;
         case "ArrowRight":
-          target = findLastWordOnLine(headCenter, sameEditorCandidates)
-          break
+          target = findLastWordOnLine(headCenter, sameEditorCandidates);
+          break;
         case "ArrowUp":
-          target = findFirstWordInPassage(sel.editorIndex, allCandidates)
-          break
+          target = findFirstWordInPassage(sel.editorIndex, allCandidates);
+          break;
         case "ArrowDown":
-          target = findLastWordInPassage(sel.editorIndex, allCandidates)
-          break
+          target = findLastWordInPassage(sel.editorIndex, allCandidates);
+          break;
         default:
-          return
+          return;
       }
-      if (!target) return
+      if (!target) return;
 
-      const editor = eRef.current.get(anchorRef.current.editorIndex)
-      if (!editor) return
-      const rangeSelection = computeRangeSelection(
-        anchorRef.current,
-        target,
-        editor
-      )
-      if (!rangeSelection) return
+      const editor = eRef.current.get(anchorRef.current.editorIndex);
+      if (!editor) return;
+      const rangeSelection = computeRangeSelection(anchorRef.current, target, editor);
+      if (!rangeSelection) return;
 
-      headRef.current = target
-      setSelection(rangeSelection)
+      headRef.current = target;
+      setSelection(rangeSelection);
     }
 
     // ── Cmd+Arrow handler ──────────────────────────────────────────
@@ -436,39 +406,39 @@ export function useWordSelection({
       allCandidates: WordCenter[],
       _sameEditorCandidates: WordCenter[],
       eRef: React.RefObject<Map<number, Editor>>,
-      containerRect: DOMRect
+      containerRect: DOMRect,
     ) {
-      anchorRef.current = null
-      headRef.current = null
+      anchorRef.current = null;
+      headRef.current = null;
 
-      const currentCenter = getWordCenter(sel, eRef, containerRect)
-      if (!currentCenter) return
+      const currentCenter = getWordCenter(sel, eRef, containerRect);
+      if (!currentCenter) return;
 
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
         const { target, stickyX } = findHorizontalTargetConstrained(
           e.key,
           currentCenter,
           allCandidates,
-          sel
-        )
-        stickyXRef.current = stickyX
-        if (target) setSelection(target)
+          sel,
+        );
+        stickyXRef.current = stickyX;
+        if (target) setSelection(target);
       } else {
         const { target, stickyX } = findVerticalTargetConstrained(
           e.key as "ArrowUp" | "ArrowDown",
           currentCenter,
           allCandidates,
           sel,
-          stickyXRef.current
-        )
-        stickyXRef.current = stickyX
-        if (target) setSelection(target)
+          stickyXRef.current,
+        );
+        stickyXRef.current = stickyX;
+        if (target) setSelection(target);
       }
     }
 
-    document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [isLocked, selection, selectionHidden, editorsRef, containerRef, editorCount])
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isLocked, selection, selectionHidden, editorsRef, containerRef, editorCount]);
 
-  return { selection, selectionHidden, selectWord, selectRange, clearSelection, hideSelection }
+  return { selection, selectionHidden, selectWord, selectRange, clearSelection, hideSelection };
 }

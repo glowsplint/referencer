@@ -19,10 +19,7 @@ export function handleShare(db: Database) {
       };
       return c.json(resp);
     } catch (err) {
-      return c.text(
-        err instanceof Error ? err.message : String(err),
-        500,
-      );
+      return c.text(err instanceof Error ? err.message : String(err), 500);
     }
   };
 }

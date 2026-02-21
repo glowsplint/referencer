@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useEffect, useMemo, useState } from "react"
-import type { Editor } from "@tiptap/react"
-import i18n from "@/i18n"
+import { useEffect, useMemo, useState } from "react";
+import type { Editor } from "@tiptap/react";
+import i18n from "@/i18n";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 
 // --- Icons ---
-import { ListIcon } from "@/components/tiptap-icons/list-icon"
-import { ListOrderedIcon } from "@/components/tiptap-icons/list-ordered-icon"
-import { ListTodoIcon } from "@/components/tiptap-icons/list-todo-icon"
+import { ListIcon } from "@/components/tiptap-icons/list-icon";
+import { ListOrderedIcon } from "@/components/tiptap-icons/list-ordered-icon";
+import { ListTodoIcon } from "@/components/tiptap-icons/list-todo-icon";
 
 // --- Lib ---
-import { isNodeInSchema } from "@/lib/tiptap-utils"
+import { isNodeInSchema } from "@/lib/tiptap-utils";
 
 // --- Tiptap UI ---
 import {
@@ -21,7 +21,7 @@ import {
   isListActive,
   listIcons,
   type ListType,
-} from "@/components/tiptap-ui/list-button"
+} from "@/components/tiptap-ui/list-button";
 
 /**
  * Configuration for the list dropdown menu functionality
@@ -30,23 +30,23 @@ export interface UseListDropdownMenuConfig {
   /**
    * The Tiptap editor instance.
    */
-  editor?: Editor | null
+  editor?: Editor | null;
   /**
    * The list types to display in the dropdown.
    * @default ["bulletList", "orderedList", "taskList"]
    */
-  types?: ListType[]
+  types?: ListType[];
   /**
    * Whether the dropdown should be hidden when no list types are available
    * @default false
    */
-  hideWhenUnavailable?: boolean
+  hideWhenUnavailable?: boolean;
 }
 
 export interface ListOption {
-  label: string
-  type: ListType
-  icon: React.ElementType
+  label: string;
+  type: ListType;
+  icon: React.ElementType;
 }
 
 export const listOptions: ListOption[] = [
@@ -65,50 +65,40 @@ export const listOptions: ListOption[] = [
     type: "taskList",
     icon: ListTodoIcon,
   },
-]
+];
 
-export function canToggleAnyList(
-  editor: Editor | null,
-  listTypes: ListType[]
-): boolean {
-  if (!editor || !editor.isEditable) return false
-  return listTypes.some((type) => canToggleList(editor, type))
+export function canToggleAnyList(editor: Editor | null, listTypes: ListType[]): boolean {
+  if (!editor || !editor.isEditable) return false;
+  return listTypes.some((type) => canToggleList(editor, type));
 }
 
-export function isAnyListActive(
-  editor: Editor | null,
-  listTypes: ListType[]
-): boolean {
-  if (!editor || !editor.isEditable) return false
-  return listTypes.some((type) => isListActive(editor, type))
+export function isAnyListActive(editor: Editor | null, listTypes: ListType[]): boolean {
+  if (!editor || !editor.isEditable) return false;
+  return listTypes.some((type) => isListActive(editor, type));
 }
 
-export function getFilteredListOptions(
-  availableTypes: ListType[]
-): typeof listOptions {
-  return listOptions.filter(
-    (option) => !option.type || availableTypes.includes(option.type)
-  )
+export function getFilteredListOptions(availableTypes: ListType[]): typeof listOptions {
+  return listOptions.filter((option) => !option.type || availableTypes.includes(option.type));
 }
 
 export function shouldShowListDropdown(params: {
-  editor: Editor | null
-  listTypes: ListType[]
-  hideWhenUnavailable: boolean
-  listInSchema: boolean
-  canToggleAny: boolean
+  editor: Editor | null;
+  listTypes: ListType[];
+  hideWhenUnavailable: boolean;
+  listInSchema: boolean;
+  canToggleAny: boolean;
 }): boolean {
-  const { editor, hideWhenUnavailable, listInSchema, canToggleAny } = params
+  const { editor, hideWhenUnavailable, listInSchema, canToggleAny } = params;
 
   if (!listInSchema || !editor) {
-    return false
+    return false;
   }
 
   if (hideWhenUnavailable && !editor.isActive("code")) {
-    return canToggleAny
+    return canToggleAny;
   }
 
-  return true
+  return true;
 }
 
 /**
@@ -116,10 +106,10 @@ export function shouldShowListDropdown(params: {
  */
 export function getActiveListType(
   editor: Editor | null,
-  availableTypes: ListType[]
+  availableTypes: ListType[],
 ): ListType | undefined {
-  if (!editor || !editor.isEditable) return undefined
-  return availableTypes.find((type) => isListActive(editor, type))
+  if (!editor || !editor.isEditable) return undefined;
+  return availableTypes.find((type) => isListActive(editor, type));
 }
 
 /**
@@ -166,22 +156,22 @@ export function useListDropdownMenu(config?: UseListDropdownMenuConfig) {
     editor: providedEditor,
     types = ["bulletList", "orderedList", "taskList"],
     hideWhenUnavailable = false,
-  } = config || {}
+  } = config || {};
 
-  const { editor } = useTiptapEditor(providedEditor)
-  const [isVisible, setIsVisible] = useState(true)
+  const { editor } = useTiptapEditor(providedEditor);
+  const [isVisible, setIsVisible] = useState(true);
 
-  const listInSchema = types.some((type) => isNodeInSchema(type, editor))
+  const listInSchema = types.some((type) => isNodeInSchema(type, editor));
 
-  const filteredLists = useMemo(() => getFilteredListOptions(types), [types])
+  const filteredLists = useMemo(() => getFilteredListOptions(types), [types]);
 
-  const canToggleAny = canToggleAnyList(editor, types)
-  const isAnyActive = isAnyListActive(editor, types)
-  const activeType = getActiveListType(editor, types)
-  const activeList = filteredLists.find((option) => option.type === activeType)
+  const canToggleAny = canToggleAnyList(editor, types);
+  const isAnyActive = isAnyListActive(editor, types);
+  const activeType = getActiveListType(editor, types);
+  const activeList = filteredLists.find((option) => option.type === activeType);
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor) return;
 
     const handleSelectionUpdate = () => {
       setIsVisible(
@@ -191,18 +181,18 @@ export function useListDropdownMenu(config?: UseListDropdownMenuConfig) {
           hideWhenUnavailable,
           listInSchema,
           canToggleAny,
-        })
-      )
-    }
+        }),
+      );
+    };
 
-    handleSelectionUpdate()
+    handleSelectionUpdate();
 
-    editor.on("selectionUpdate", handleSelectionUpdate)
+    editor.on("selectionUpdate", handleSelectionUpdate);
 
     return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
-    }
-  }, [canToggleAny, editor, hideWhenUnavailable, listInSchema, types])
+      editor.off("selectionUpdate", handleSelectionUpdate);
+    };
+  }, [canToggleAny, editor, hideWhenUnavailable, listInSchema, types]);
 
   return {
     isVisible,
@@ -213,5 +203,5 @@ export function useListDropdownMenu(config?: UseListDropdownMenuConfig) {
     filteredLists,
     label: i18n.t("editor:list.label"),
     Icon: activeList ? listIcons[activeList.type] : ListIcon,
-  }
+  };
 }

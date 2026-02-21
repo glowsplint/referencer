@@ -3,9 +3,7 @@ import { describe, it, expect, vi } from "vitest";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 
 function renderDialog(open = true, onOpenChange = () => {}) {
-  return render(
-    <KeyboardShortcutsDialog open={open} onOpenChange={onOpenChange} />
-  );
+  return render(<KeyboardShortcutsDialog open={open} onOpenChange={onOpenChange} />);
 }
 
 describe("KeyboardShortcutsDialog", () => {

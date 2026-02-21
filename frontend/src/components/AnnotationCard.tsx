@@ -1,20 +1,20 @@
 // Individual annotation card shown in the AnnotationPanel beside the editor.
 // Displays a colored top border matching its layer color, with a textarea for
 // editing or a static text view. Positioned absolutely by the parent panel.
-import { useRef, useEffect, useCallback } from "react"
-import { useTranslation } from "react-i18next"
+import { useRef, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 
 interface AnnotationCardProps {
-  layerId: string
-  highlightId: string
-  color: string
-  annotation: string
-  isEditing: boolean
-  top: number
-  onChange: (layerId: string, highlightId: string, annotation: string) => void
-  onBlur: (layerId: string, highlightId: string, annotation: string) => void
-  onClick: (layerId: string, highlightId: string) => void
-  cardRef?: (el: HTMLDivElement | null) => void
+  layerId: string;
+  highlightId: string;
+  color: string;
+  annotation: string;
+  isEditing: boolean;
+  top: number;
+  onChange: (layerId: string, highlightId: string, annotation: string) => void;
+  onBlur: (layerId: string, highlightId: string, annotation: string) => void;
+  onClick: (layerId: string, highlightId: string) => void;
+  cardRef?: (el: HTMLDivElement | null) => void;
 }
 
 export function AnnotationCard({
@@ -29,63 +29,63 @@ export function AnnotationCard({
   onClick,
   cardRef,
 }: AnnotationCardProps) {
-  const { t } = useTranslation("management")
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const { t } = useTranslation("management");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-expand textarea height to fit content (avoids scrollbar inside card)
   const autoResize = useCallback(() => {
-    const textarea = textareaRef.current
+    const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = "auto"
-      textarea.style.height = `${textarea.scrollHeight}px`
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (isEditing && textareaRef.current) {
-      textareaRef.current.focus()
-      autoResize()
+      textareaRef.current.focus();
+      autoResize();
     }
-  }, [isEditing, autoResize])
+  }, [isEditing, autoResize]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      onChange(layerId, highlightId, e.target.value)
-      autoResize()
+      onChange(layerId, highlightId, e.target.value);
+      autoResize();
     },
-    [layerId, highlightId, onChange, autoResize]
-  )
+    [layerId, highlightId, onChange, autoResize],
+  );
 
   const handleBlur = useCallback(() => {
-    onBlur(layerId, highlightId, annotation)
-  }, [onBlur, layerId, highlightId, annotation])
+    onBlur(layerId, highlightId, annotation);
+  }, [onBlur, layerId, highlightId, annotation]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault()
-        handleBlur()
+        e.preventDefault();
+        handleBlur();
       }
       if (e.key === "Escape") {
-        e.preventDefault()
-        textareaRef.current?.blur()
+        e.preventDefault();
+        textareaRef.current?.blur();
       }
       // Stop propagation so arrow keys/Enter/Escape don't trigger
       // workspace-level word navigation or tool shortcuts
-      e.stopPropagation()
+      e.stopPropagation();
     },
-    [handleBlur]
-  )
+    [handleBlur],
+  );
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
-      e.stopPropagation()
+      e.stopPropagation();
       if (!isEditing) {
-        onClick(layerId, highlightId)
+        onClick(layerId, highlightId);
       }
     },
-    [isEditing, layerId, highlightId, onClick]
-  )
+    [isEditing, layerId, highlightId, onClick],
+  );
 
   return (
     <div
@@ -111,9 +111,11 @@ export function AnnotationCard({
         />
       ) : (
         <div className="cursor-pointer p-2 text-xs text-zinc-600 dark:text-zinc-300 min-h-[2rem]">
-          {annotation || <span className="text-zinc-400 italic">{t("annotations.placeholder")}</span>}
+          {annotation || (
+            <span className="text-zinc-400 italic">{t("annotations.placeholder")}</span>
+          )}
         </div>
       )}
     </div>
-  )
+  );
 }

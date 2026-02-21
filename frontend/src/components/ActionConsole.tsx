@@ -1,9 +1,9 @@
 // Dev-facing action console that logs workspace mutations (add/remove layers,
 // highlights, arrows, etc.) in a terminal-style panel at the bottom of the screen.
 // Toggled with the backtick key. Useful for debugging annotation state changes.
-import { useRef, useEffect, useCallback } from "react"
-import { useTranslation } from "react-i18next"
-import type { ActionEntry, ActionDetail } from "@/types/editor"
+import { useRef, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import type { ActionEntry, ActionDetail } from "@/types/editor";
 
 const TYPE_COLORS: Record<string, string> = {
   addLayer: "text-emerald-400",
@@ -26,14 +26,14 @@ const TYPE_COLORS: Record<string, string> = {
   setActiveTool: "text-blue-400",
   toggleDarkMode: "text-zinc-300",
   toggleLayout: "text-zinc-300",
-}
+};
 
 function formatTime(timestamp: number): string {
-  const d = new Date(timestamp)
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+  const d = new Date(timestamp);
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
-const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i
+const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i;
 
 function ColorSwatch({ color }: { color: string }) {
   return (
@@ -42,7 +42,7 @@ function ColorSwatch({ color }: { color: string }) {
       className="inline-block w-2.5 h-2.5 rounded-sm align-middle mr-1"
       style={{ backgroundColor: color }}
     />
-  )
+  );
 }
 
 function DetailValue({ value }: { value: string }) {
@@ -51,11 +51,11 @@ function DetailValue({ value }: { value: string }) {
       {HEX_COLOR_RE.test(value) && <ColorSwatch color={value} />}
       <span className="text-zinc-400">{value}</span>
     </>
-  )
+  );
 }
 
 function DetailLine({ detail }: { detail: ActionDetail }) {
-  const { label, before, after } = detail
+  const { label, before, after } = detail;
   return (
     <div className="pl-6 text-zinc-500" data-testid="actionDetail">
       <span>{label}: </span>
@@ -71,55 +71,61 @@ function DetailLine({ detail }: { detail: ActionDetail }) {
         <DetailValue value={after} />
       ) : null}
     </div>
-  )
+  );
 }
 
 interface ActionConsoleProps {
-  log: ActionEntry[]
-  isOpen: boolean
-  onClose: () => void
-  height: number
-  onHeightChange: (height: number) => void
+  log: ActionEntry[];
+  isOpen: boolean;
+  onClose: () => void;
+  height: number;
+  onHeightChange: (height: number) => void;
 }
 
-export function ActionConsole({ log, isOpen, onClose, height, onHeightChange }: ActionConsoleProps) {
-  const { t } = useTranslation("management")
-  const scrollRef = useRef<HTMLDivElement>(null)
+export function ActionConsole({
+  log,
+  isOpen,
+  onClose,
+  height,
+  onHeightChange,
+}: ActionConsoleProps) {
+  const { t } = useTranslation("management");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [log])
+  }, [log]);
 
   // Drag-to-resize: tracks mouse delta from the top edge drag handle,
   // clamped between 80px and 600px. Disables text selection during drag.
   const handleDragStart = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault()
-      document.body.style.userSelect = "none"
-      const startY = e.clientY
-      const startHeight = height
+      e.preventDefault();
+      document.body.style.userSelect = "none";
+      const startY = e.clientY;
+      const startHeight = height;
 
       const onMouseMove = (e: MouseEvent) => {
-        const delta = startY - e.clientY
-        const newHeight = Math.min(600, Math.max(80, startHeight + delta))
-        onHeightChange(newHeight)
-      }
+        const delta = startY - e.clientY;
+        const newHeight = Math.min(600, Math.max(80, startHeight + delta));
+        onHeightChange(newHeight);
+      };
 
       const onMouseUp = () => {
-        document.removeEventListener("mousemove", onMouseMove)
-        document.removeEventListener("mouseup", onMouseUp)
-        document.body.style.userSelect = ""
-      }
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+        document.body.style.userSelect = "";
+      };
 
-      document.addEventListener("mousemove", onMouseMove)
-      document.addEventListener("mouseup", onMouseUp)
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
     },
-    [height, onHeightChange]
-  )
+    [height, onHeightChange],
+  );
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div
@@ -143,9 +149,7 @@ export function ActionConsole({ log, isOpen, onClose, height, onHeightChange }: 
         </button>
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-1">
-        {log.length === 0 && (
-          <div className="text-zinc-600 py-2">{t("actionConsole.empty")}</div>
-        )}
+        {log.length === 0 && <div className="text-zinc-600 py-2">{t("actionConsole.empty")}</div>}
         {log.map((entry) => (
           <div key={entry.id} className={entry.undone ? "opacity-40 line-through" : ""}>
             <div className="py-0.5 flex gap-2">
@@ -162,5 +166,5 @@ export function ActionConsole({ log, isOpen, onClose, height, onHeightChange }: 
         ))}
       </div>
     </div>
-  )
+  );
 }

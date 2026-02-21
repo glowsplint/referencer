@@ -1,52 +1,45 @@
 // Title bar with inline-editable document title, share dialog trigger,
 // and PDF export button. Sits above the editor toolbar.
-import { useCallback, useEffect, useRef, useState } from "react"
-import { Share2, Download } from "lucide-react"
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Share2, Download } from "lucide-react";
 
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/tiptap-ui-primitive/tooltip"
-import { ShareDialog } from "@/components/ShareDialog"
-import { CollaborationPresence } from "@/components/CollaborationPresence"
-import { useWorkspace } from "@/contexts/WorkspaceContext"
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/tiptap-ui-primitive/tooltip";
+import { ShareDialog } from "@/components/ShareDialog";
+import { CollaborationPresence } from "@/components/CollaborationPresence";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 export function TitleBar() {
-  const { workspaceId, readOnly, yjs } = useWorkspace()
-  const [title, setTitle] = useState("Title")
-  const [isEditing, setIsEditing] = useState(false)
-  const [shareOpen, setShareOpen] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const { workspaceId, readOnly, yjs } = useWorkspace();
+  const [title, setTitle] = useState("Title");
+  const [isEditing, setIsEditing] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const startEditing = useCallback(() => {
-    if (readOnly) return
-    setIsEditing(true)
-  }, [readOnly])
+    if (readOnly) return;
+    setIsEditing(true);
+  }, [readOnly]);
 
   const stopEditing = useCallback(() => {
-    setIsEditing(false)
+    setIsEditing(false);
     if (title.trim() === "") {
-      setTitle("Title")
+      setTitle("Title");
     }
-  }, [title])
+  }, [title]);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" || e.key === "Escape") {
-        e.preventDefault()
-        inputRef.current?.blur()
-      }
-    },
-    []
-  )
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === "Escape") {
+      e.preventDefault();
+      inputRef.current?.blur();
+    }
+  }, []);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
-      inputRef.current.focus()
-      inputRef.current.select()
+      inputRef.current.focus();
+      inputRef.current.select();
     }
-  }, [isEditing])
+  }, [isEditing]);
 
   return (
     <div className="flex items-center px-4 py-2 border-b border-[var(--tt-border-color-tint)] bg-[var(--tt-bg-color)] shrink-0">
@@ -85,14 +78,9 @@ export function TitleBar() {
               data-testid="connectionStatusDot"
             />
           </TooltipTrigger>
-          <TooltipContent>
-            {yjs.connected ? "Connected" : "Offline"}
-          </TooltipContent>
+          <TooltipContent>{yjs.connected ? "Connected" : "Offline"}</TooltipContent>
         </Tooltip>
-        <CollaborationPresence
-          provider={yjs.provider?.wsProvider ?? null}
-          className="mr-1"
-        />
+        <CollaborationPresence provider={yjs.provider?.wsProvider ?? null} className="mr-1" />
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
@@ -119,12 +107,8 @@ export function TitleBar() {
         </Tooltip>
       </div>
       {workspaceId && (
-        <ShareDialog
-          open={shareOpen}
-          onOpenChange={setShareOpen}
-          workspaceId={workspaceId}
-        />
+        <ShareDialog open={shareOpen} onOpenChange={setShareOpen} workspaceId={workspaceId} />
       )}
     </div>
-  )
+  );
 }

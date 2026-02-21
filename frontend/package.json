@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:e2e": "node node_modules/.bin/playwright test -x",
     "test:e2e:ui": "node node_modules/.bin/playwright test --ui",
     "test:integration": "node node_modules/.bin/playwright test --config=e2e/integration/playwright.integration.config.ts"
@@ -65,6 +66,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",

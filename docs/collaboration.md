@@ -44,16 +44,16 @@ Annotation positions (highlight start/end, arrow endpoints) are stored as **Yjs 
 ```typescript
 // Encode: ProseMirror position → RelativePosition (Uint8Array)
 function encodeRelativePosition(doc: Y.Doc, editorIndex: number, pos: number): Uint8Array {
-  const fragment = doc.getXmlFragment(`editor-${editorIndex}`)
-  const relPos = Y.createRelativePositionFromTypeIndex(fragment, pos)
-  return Y.encodeRelativePosition(relPos)
+  const fragment = doc.getXmlFragment(`editor-${editorIndex}`);
+  const relPos = Y.createRelativePositionFromTypeIndex(fragment, pos);
+  return Y.encodeRelativePosition(relPos);
 }
 
 // Decode: RelativePosition → absolute position (or null if deleted)
 function decodeRelativePosition(doc: Y.Doc, encoded: Uint8Array): number | null {
-  const relPos = Y.decodeRelativePosition(encoded)
-  const absPos = Y.createAbsolutePositionFromRelativePosition(relPos, doc)
-  return absPos?.index ?? null
+  const relPos = Y.decodeRelativePosition(encoded);
+  const absPos = Y.createAbsolutePositionFromRelativePosition(relPos, doc);
+  return absPos?.index ?? null;
 }
 ```
 
@@ -86,6 +86,7 @@ The WebSocket URL is configured via `VITE_COLLAB_WS_URL` env var. In development
 ### `useYjs(workspaceId)`
 
 Creates and manages the `Y.Doc` and `WebsocketProvider` for a workspace. Returns:
+
 - `doc` -- the `Y.Doc` instance
 - `connected` -- whether the WebSocket is connected
 - `synced` -- whether the initial sync is complete (or connection failed)
@@ -135,7 +136,7 @@ When a workspace Y.Doc is first created and the initial sync completes (or conne
 
 ```typescript
 if (yjs.synced && layersArray.length === 0) {
-  seedDefaultLayers(doc, createDefaultLayers())
+  seedDefaultLayers(doc, createDefaultLayers());
 }
 ```
 
@@ -155,8 +156,8 @@ The collab server (`collab-server/server.mjs`) is a lightweight Node.js process:
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `4444` | Server listen port |
-| `HOST` | `0.0.0.0` | Server listen host |
+| Variable | Default           | Description               |
+| -------- | ----------------- | ------------------------- |
+| `PORT`   | `4444`            | Server listen port        |
+| `HOST`   | `0.0.0.0`         | Server listen host        |
 | `DB_DIR` | `./data/yjs-docs` | LevelDB storage directory |

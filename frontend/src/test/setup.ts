@@ -1,30 +1,41 @@
-import "@testing-library/jest-dom/vitest"
-import "@/i18n"
+import * as matchers from "@testing-library/jest-dom/matchers";
+import { expect } from "vitest";
+
+expect.extend(matchers);
+import "@/i18n";
 
 class ResizeObserverMock {
-  observe = vi.fn()
-  unobserve = vi.fn()
-  disconnect = vi.fn()
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
 }
-vi.stubGlobal("ResizeObserver", ResizeObserverMock)
+vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 
 // Node 22+ ships a partial localStorage that conflicts with jsdom's implementation
 const localStorageMock = (() => {
-  let store: Record<string, string> = {}
+  let store: Record<string, string> = {};
   return {
     getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => { store[key] = String(value) },
-    removeItem: (key: string) => { delete store[key] },
-    clear: () => { store = {} },
-    get length() { return Object.keys(store).length },
+    setItem: (key: string, value: string) => {
+      store[key] = String(value);
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
+    get length() {
+      return Object.keys(store).length;
+    },
     key: (index: number) => Object.keys(store)[index] ?? null,
-  }
-})()
-vi.stubGlobal("localStorage", localStorageMock)
+  };
+})();
+vi.stubGlobal("localStorage", localStorageMock);
 
 beforeEach(() => {
-  localStorageMock.clear()
-})
+  localStorageMock.clear();
+});
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,
@@ -38,4 +49,4 @@ Object.defineProperty(window, "matchMedia", {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-})
+});

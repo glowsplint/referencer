@@ -8,11 +8,11 @@ Authentication is **optional**. The application works fully for anonymous users.
 
 ## Supported Providers
 
-| Provider | Protocol | ID Token | Notes |
-|----------|----------|----------|-------|
-| Google | OAuth 2.0 + PKCE | Yes (OIDC) | User info from userinfo endpoint |
-| Apple | OAuth 2.0 | Yes (JWT) | Name sent only on first login (POST callback) |
-| Facebook | OAuth 2.0 | No | User info from Graph API |
+| Provider | Protocol         | ID Token   | Notes                                         |
+| -------- | ---------------- | ---------- | --------------------------------------------- |
+| Google   | OAuth 2.0 + PKCE | Yes (OIDC) | User info from userinfo endpoint              |
+| Apple    | OAuth 2.0        | Yes (JWT)  | Name sent only on first login (POST callback) |
+| Facebook | OAuth 2.0        | No         | User info from Graph API                      |
 
 ### Provider Differences
 
@@ -41,13 +41,16 @@ The complete flow from login click to authenticated session:
 ## Session Management
 
 ### Storage
+
 Sessions are stored in the SQLite `session` table with fields:
+
 - `id`: 64-character hex token (32 random bytes)
 - `user_id`: Reference to the `user` table
 - `created_at`: When the session was created/last refreshed
 - `expires_at`: Absolute expiry timestamp
 
 ### Cookie
+
 - Name: `__session`
 - HttpOnly: Yes (not accessible via JavaScript)
 - Secure: Yes in production, No in development
@@ -56,13 +59,16 @@ Sessions are stored in the SQLite `session` table with fields:
 - MaxAge: Configured via `SESSION_MAX_AGE` (default 30 days)
 
 ### Sliding Window Refresh
+
 When a session is used and its `created_at` is more than 24 hours old, the session is refreshed:
+
 - `created_at` is updated to now
 - `expires_at` is extended by `SESSION_MAX_AGE`
 
 This means active users never need to re-login, while inactive sessions expire naturally.
 
 ### Cleanup
+
 `cleanExpiredSessions()` deletes all sessions where `expires_at < now`. This should be called periodically (e.g., on a timer or cron job).
 
 ## Account Linking
@@ -89,26 +95,32 @@ This means a user who signs in with Google and later signs in with Apple using t
 ## API Reference
 
 ### `GET /auth/:provider`
+
 Start the OAuth flow. Redirects the user to the provider's authorization page.
 
 **Parameters:**
+
 - `:provider` -- One of `google`, `apple`, `facebook`
 
 **Response:** 302 redirect to provider
 
 ### `GET /auth/:provider/callback`
+
 OAuth callback handler (used by Google and Facebook).
 
 **Query Parameters:**
+
 - `code` -- Authorization code from provider
 - `state` -- State parameter for CSRF verification
 
 **Response:** 302 redirect to `/` on success, JSON error on failure
 
 ### `POST /auth/:provider/callback`
+
 OAuth callback handler (used by Apple).
 
 **Form Body:**
+
 - `code` -- Authorization code
 - `state` -- State parameter
 - `user` (optional) -- JSON with user name (Apple first login only)
@@ -116,9 +128,11 @@ OAuth callback handler (used by Apple).
 **Response:** 302 redirect to `/` on success, JSON error on failure
 
 ### `GET /auth/me`
+
 Check current authentication status.
 
 **Response (authenticated):**
+
 ```json
 {
   "authenticated": true,
@@ -134,6 +148,7 @@ Check current authentication status.
 ```
 
 **Response (not authenticated):**
+
 ```json
 {
   "authenticated": false
@@ -141,9 +156,11 @@ Check current authentication status.
 ```
 
 ### `POST /auth/logout`
+
 End the current session.
 
 **Response:**
+
 ```json
 {
   "ok": true
@@ -152,19 +169,19 @@ End the current session.
 
 ## Configuration
 
-| Environment Variable | Description | Default |
-|---------------------|-------------|---------|
-| `BASE_URL` | Public URL of the backend (used for callback URLs) | `http://localhost:5000` |
-| `NODE_ENV` | Set to `production` to enable Secure cookies | - |
-| `SESSION_MAX_AGE` | Session lifetime in seconds | `2592000` (30 days) |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID | - |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | - |
-| `APPLE_CLIENT_ID` | Apple Services ID | - |
-| `APPLE_PRIVATE_KEY` | Apple private key (PEM content) | - |
-| `APPLE_TEAM_ID` | Apple Developer Team ID | - |
-| `APPLE_KEY_ID` | Apple Key ID | - |
-| `FACEBOOK_CLIENT_ID` | Facebook App ID | - |
-| `FACEBOOK_CLIENT_SECRET` | Facebook App Secret | - |
+| Environment Variable     | Description                                        | Default                 |
+| ------------------------ | -------------------------------------------------- | ----------------------- |
+| `BASE_URL`               | Public URL of the backend (used for callback URLs) | `http://localhost:5000` |
+| `NODE_ENV`               | Set to `production` to enable Secure cookies       | -                       |
+| `SESSION_MAX_AGE`        | Session lifetime in seconds                        | `2592000` (30 days)     |
+| `GOOGLE_CLIENT_ID`       | Google OAuth client ID                             | -                       |
+| `GOOGLE_CLIENT_SECRET`   | Google OAuth client secret                         | -                       |
+| `APPLE_CLIENT_ID`        | Apple Services ID                                  | -                       |
+| `APPLE_PRIVATE_KEY`      | Apple private key (PEM content)                    | -                       |
+| `APPLE_TEAM_ID`          | Apple Developer Team ID                            | -                       |
+| `APPLE_KEY_ID`           | Apple Key ID                                       | -                       |
+| `FACEBOOK_CLIENT_ID`     | Facebook App ID                                    | -                       |
+| `FACEBOOK_CLIENT_SECRET` | Facebook App Secret                                | -                       |
 
 Providers are only enabled when all their required env vars are set. If no provider env vars are configured, auth endpoints return 404 for those providers.
 
@@ -195,5 +212,6 @@ session
 ```
 
 Relationships:
+
 - `user` 1 ←→ N `user_provider` (one user can have multiple OAuth providers)
 - `user` 1 ←→ N `session` (one user can have multiple active sessions)

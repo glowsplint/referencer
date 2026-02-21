@@ -65,22 +65,13 @@ describe("upsertUser", () => {
 
     // Verify user exists in DB
     const row = db
-      .query<{ email: string }, [string]>(
-        "SELECT email FROM user WHERE id = ?",
-      )
+      .query<{ email: string }, [string]>("SELECT email FROM user WHERE id = ?")
       .get(userId);
     expect(row?.email).toBe("test@example.com");
   });
 
   it("finds existing user by provider ID and updates info", () => {
-    const userId1 = upsertUser(
-      db,
-      "google",
-      "google-123",
-      "test@example.com",
-      "Old Name",
-      "",
-    );
+    const userId1 = upsertUser(db, "google", "google-123", "test@example.com", "Old Name", "");
     const userId2 = upsertUser(
       db,
       "google",
@@ -92,38 +83,23 @@ describe("upsertUser", () => {
     expect(userId1).toBe(userId2);
 
     const row = db
-      .query<{ name: string; avatar_url: string }, [string]>(
-        "SELECT name, avatar_url FROM user WHERE id = ?",
-      )
+      .query<
+        { name: string; avatar_url: string },
+        [string]
+      >("SELECT name, avatar_url FROM user WHERE id = ?")
       .get(userId1);
     expect(row?.name).toBe("New Name");
     expect(row?.avatar_url).toBe("https://new-avatar.png");
   });
 
   it("links by email when same email with different provider", () => {
-    const userId1 = upsertUser(
-      db,
-      "google",
-      "google-123",
-      "test@example.com",
-      "Test User",
-      "",
-    );
-    const userId2 = upsertUser(
-      db,
-      "apple",
-      "apple-456",
-      "test@example.com",
-      "Test User",
-      "",
-    );
+    const userId1 = upsertUser(db, "google", "google-123", "test@example.com", "Test User", "");
+    const userId2 = upsertUser(db, "apple", "apple-456", "test@example.com", "Test User", "");
     expect(userId1).toBe(userId2);
 
     // Verify two providers linked to the same user
     const providers = db
-      .query<{ provider: string }, [string]>(
-        "SELECT provider FROM user_provider WHERE user_id = ?",
-      )
+      .query<{ provider: string }, [string]>("SELECT provider FROM user_provider WHERE user_id = ?")
       .all(userId1);
     expect(providers).toHaveLength(2);
     expect(providers.map((p) => p.provider).sort()).toEqual(["apple", "google"]);
@@ -182,14 +158,7 @@ describe("deleteSession", () => {
 
   beforeEach(() => {
     db = createTestDb();
-    userId = upsertUser(
-      db,
-      "google",
-      "google-123",
-      "test@example.com",
-      "Test User",
-      "",
-    );
+    userId = upsertUser(db, "google", "google-123", "test@example.com", "Test User", "");
   });
 
   it("removes the session so getSessionUser returns null", () => {
@@ -207,24 +176,14 @@ describe("cleanExpiredSessions", () => {
 
   beforeEach(() => {
     db = createTestDb();
-    userId = upsertUser(
-      db,
-      "google",
-      "google-123",
-      "test@example.com",
-      "Test User",
-      "",
-    );
+    userId = upsertUser(db, "google", "google-123", "test@example.com", "Test User", "");
   });
 
   it("removes expired sessions", () => {
     const token = createSession(db, userId, 3600);
 
     // Manually expire the session
-    db.run(
-      "UPDATE session SET expires_at = datetime('now', '-1 hour') WHERE id = ?",
-      [token],
-    );
+    db.run("UPDATE session SET expires_at = datetime('now', '-1 hour') WHERE id = ?", [token]);
 
     cleanExpiredSessions(db);
 

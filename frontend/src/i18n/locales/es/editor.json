@@ -9,12 +9,28 @@
     "subscript": "Subíndice"
   },
   "heading": { "label": "Encabezado {{level}}" },
-  "list": { "bulletList": "Lista con viñetas", "orderedList": "Lista numerada", "taskList": "Lista de tareas", "label": "Lista" },
+  "list": {
+    "bulletList": "Lista con viñetas",
+    "orderedList": "Lista numerada",
+    "taskList": "Lista de tareas",
+    "label": "Lista"
+  },
   "blockquote": { "label": "Cita en bloque" },
   "codeBlock": { "label": "Bloque de código" },
-  "link": { "label": "Enlace", "placeholder": "Introduce la URL", "openLink": "Abrir enlace", "copyLink": "Copiar enlace", "removeLink": "Eliminar enlace" },
+  "link": {
+    "label": "Enlace",
+    "placeholder": "Introduce la URL",
+    "openLink": "Abrir enlace",
+    "copyLink": "Copiar enlace",
+    "removeLink": "Eliminar enlace"
+  },
   "image": { "label": "Añadir imagen" },
-  "textAlign": { "left": "Alinear a la izquierda", "center": "Centrar", "right": "Alinear a la derecha", "justify": "Justificar" },
+  "textAlign": {
+    "left": "Alinear a la izquierda",
+    "center": "Centrar",
+    "right": "Alinear a la derecha",
+    "justify": "Justificar"
+  },
   "history": { "undo": "Deshacer", "redo": "Rehacer" },
   "colorHighlight": {
     "label": "Resaltado de color",

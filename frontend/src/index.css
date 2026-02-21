@@ -1,5 +1,5 @@
-@import './styles/_variables.scss';
-@import './styles/_keyframe-animations.scss';
+@import "./styles/_variables.scss";
+@import "./styles/_keyframe-animations.scss";
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -126,12 +126,14 @@
   }
 }
 
-
-
 *,
 *::before,
 *::after {
-  transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease, translate 0.15s ease !important;
+  transition:
+    background-color 0.1s ease,
+    color 0.1s ease,
+    border-color 0.1s ease,
+    translate 0.15s ease !important;
 }
 
 [data-sonner-toaster] *,

@@ -3,23 +3,16 @@ import { test, expect } from "@playwright/test";
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 }
 
-async function addAnnotation(
-  page: import("@playwright/test").Page,
-  text: string
-) {
+async function addAnnotation(page: import("@playwright/test").Page, text: string) {
   await page.keyboard.press("Enter");
   const input = page.getByPlaceholder("Add annotation...");
   await expect(input).toBeVisible({ timeout: 2000 });
@@ -128,9 +121,7 @@ test.describe("annotation visibility with layers", () => {
     });
   });
 
-  test("annotation panel disappears when all layers hidden", async ({
-    page,
-  }) => {
+  test("annotation panel disappears when all layers hidden", async ({ page }) => {
     // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Only note");
@@ -170,9 +161,7 @@ test.describe("annotation visibility with passages", () => {
     await page.keyboard.press("c");
   });
 
-  test("hiding passage hides annotations from that passage", async ({
-    page,
-  }) => {
+  test("hiding passage hides annotations from that passage", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Passage 1 note");
@@ -207,9 +196,7 @@ test.describe("annotation visibility with passages", () => {
     });
   });
 
-  test("annotations in different passages are independent", async ({
-    page,
-  }) => {
+  test("annotations in different passages are independent", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "P1 note");
@@ -234,9 +221,7 @@ test.describe("annotation visibility with passages", () => {
     await expect(page.getByText("P2 note")).toHaveCount(0, { timeout: 2000 });
   });
 
-  test("annotation panel disappears when all passages hidden", async ({
-    page,
-  }) => {
+  test("annotation panel disappears when all passages hidden", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Only passage note");
@@ -280,9 +265,7 @@ test.describe("combined layer + passage annotation visibility", () => {
     await page.keyboard.press("c");
   });
 
-  test("hiding layer then passage, restoring in reverse order", async ({
-    page,
-  }) => {
+  test("hiding layer then passage, restoring in reverse order", async ({ page }) => {
     // Create annotation on Layer 1 (index 3) in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Combined note");
@@ -309,9 +292,7 @@ test.describe("combined layer + passage annotation visibility", () => {
     });
   });
 
-  test("annotations across layers and passages all respect visibility", async ({
-    page,
-  }) => {
+  test("annotations across layers and passages all respect visibility", async ({ page }) => {
     // Layer 1 (index 3), Passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1P1");

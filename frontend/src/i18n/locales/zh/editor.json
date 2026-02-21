@@ -9,10 +9,21 @@
     "subscript": "下标"
   },
   "heading": { "label": "标题 {{level}}" },
-  "list": { "bulletList": "无序列表", "orderedList": "有序列表", "taskList": "任务列表", "label": "列表" },
+  "list": {
+    "bulletList": "无序列表",
+    "orderedList": "有序列表",
+    "taskList": "任务列表",
+    "label": "列表"
+  },
   "blockquote": { "label": "引用块" },
   "codeBlock": { "label": "代码块" },
-  "link": { "label": "链接", "placeholder": "输入网址", "openLink": "打开链接", "copyLink": "复制链接", "removeLink": "移除链接" },
+  "link": {
+    "label": "链接",
+    "placeholder": "输入网址",
+    "openLink": "打开链接",
+    "copyLink": "复制链接",
+    "removeLink": "移除链接"
+  },
   "image": { "label": "添加图片" },
   "textAlign": { "left": "左对齐", "center": "居中对齐", "right": "右对齐", "justify": "两端对齐" },
   "history": { "undo": "撤销", "redo": "重做" },

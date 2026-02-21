@@ -9,9 +9,7 @@ test.describe("lock editor via K key from inside editor", () => {
     await expect(page.getByTestId("editorToolbar")).toBeVisible();
   });
 
-  test("pressing K while editor is focused locks the editor", async ({
-    page,
-  }) => {
+  test("pressing K while editor is focused locks the editor", async ({ page }) => {
     // Click inside the editor to focus it
     const editorContent = page.locator(".ProseMirror").first();
     await editorContent.click();

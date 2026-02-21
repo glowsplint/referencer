@@ -3,45 +3,45 @@
 // and Home/End line jumps across multiple editor panes. Uses visual
 // (pixel) coordinates to find the nearest word in each direction,
 // with a "sticky X" to maintain column alignment during vertical movement.
-import type { Editor } from "@tiptap/react"
-import type { WordSelection } from "@/types/editor"
-import type { CollectedWord } from "@/lib/tiptap/word-collection"
-import type { WordCenter } from "@/lib/tiptap/nearest-word"
-import { collectAllWords } from "@/lib/tiptap/word-collection"
+import type { Editor } from "@tiptap/react";
+import type { WordSelection } from "@/types/editor";
+import type { CollectedWord } from "@/lib/tiptap/word-collection";
+import type { WordCenter } from "@/lib/tiptap/nearest-word";
+import { collectAllWords } from "@/lib/tiptap/word-collection";
 import {
   getWordCenter,
   findNearestWord,
   findNearestWordOnSameLine,
   findFirstWordOnAdjacentLine,
   findWordInReadingOrder,
-} from "@/lib/tiptap/nearest-word"
+} from "@/lib/tiptap/nearest-word";
 
 export interface NavigationResult {
-  target: CollectedWord | null
+  target: CollectedWord | null;
   /** Updated sticky X value (`null` means "clear it", a number means "set it") */
-  stickyX: number | null
+  stickyX: number | null;
 }
 
 export interface NavigationContext {
-  editorsRef: React.RefObject<Map<number, Editor>>
-  containerRect: DOMRect
-  editorCount: number
+  editorsRef: React.RefObject<Map<number, Editor>>;
+  containerRect: DOMRect;
+  editorCount: number;
 }
 
 /**
  * Collect all word candidates with their visual centers across all editors.
  */
 export function collectCandidates(ctx: NavigationContext): WordCenter[] {
-  const candidates: WordCenter[] = []
+  const candidates: WordCenter[] = [];
   for (let i = 0; i < ctx.editorCount; i++) {
-    const editor = ctx.editorsRef.current.get(i)
-    if (!editor) continue
+    const editor = ctx.editorsRef.current.get(i);
+    if (!editor) continue;
     for (const word of collectAllWords(editor, i)) {
-      const center = getWordCenter(word, ctx.editorsRef, ctx.containerRect)
-      if (center) candidates.push({ word, ...center })
+      const center = getWordCenter(word, ctx.editorsRef, ctx.containerRect);
+      if (center) candidates.push({ word, ...center });
     }
   }
-  return candidates
+  return candidates;
 }
 
 /**
@@ -53,13 +53,13 @@ export function collectCandidates(ctx: NavigationContext): WordCenter[] {
 export function findHorizontalTarget(
   key: "ArrowLeft" | "ArrowRight",
   currentCenter: { cx: number; cy: number },
-  allCandidates: WordCenter[]
+  allCandidates: WordCenter[],
 ): NavigationResult {
-  const sameLine = findNearestWordOnSameLine(currentCenter, allCandidates, key)
-  if (sameLine) return { target: sameLine, stickyX: null }
+  const sameLine = findNearestWordOnSameLine(currentCenter, allCandidates, key);
+  if (sameLine) return { target: sameLine, stickyX: null };
 
-  const wrapped = findFirstWordOnAdjacentLine(currentCenter, allCandidates, key)
-  return { target: wrapped, stickyX: null }
+  const wrapped = findFirstWordOnAdjacentLine(currentCenter, allCandidates, key);
+  return { target: wrapped, stickyX: null };
 }
 
 /**
@@ -74,32 +74,31 @@ export function findVerticalTarget(
   currentCenter: { cx: number; cy: number },
   allCandidates: WordCenter[],
   currentWord: WordSelection,
-  stickyX: number | null
+  stickyX: number | null,
 ): NavigationResult {
-  const effectiveStickyX = stickyX ?? currentCenter.cx
-  const navCenter = { cx: effectiveStickyX, cy: currentCenter.cy }
+  const effectiveStickyX = stickyX ?? currentCenter.cx;
+  const navCenter = { cx: effectiveStickyX, cy: currentCenter.cy };
 
   // 1. Try same-editor candidates first
   const sameEditorCandidates = allCandidates.filter(
-    (c) => c.word.editorIndex === currentWord.editorIndex
-  )
-  const sameEditorNearest = findNearestWord(navCenter, sameEditorCandidates, key)
+    (c) => c.word.editorIndex === currentWord.editorIndex,
+  );
+  const sameEditorNearest = findNearestWord(navCenter, sameEditorCandidates, key);
   if (sameEditorNearest) {
-    return { target: sameEditorNearest, stickyX: effectiveStickyX }
+    return { target: sameEditorNearest, stickyX: effectiveStickyX };
   }
 
   // 2. Try all candidates (cross-editor spatial)
-  const nearest = findNearestWord(navCenter, allCandidates, key)
+  const nearest = findNearestWord(navCenter, allCandidates, key);
   if (nearest) {
-    return { target: nearest, stickyX: effectiveStickyX }
+    return { target: nearest, stickyX: effectiveStickyX };
   }
 
   // 3. Fall back to reading order to cross editor boundaries
-  const fallbackDirection =
-    key === "ArrowDown" ? ("ArrowRight" as const) : ("ArrowLeft" as const)
-  const allWords = allCandidates.map((c) => c.word)
-  const fallback = findWordInReadingOrder(currentWord, allWords, fallbackDirection)
-  return { target: fallback, stickyX: effectiveStickyX }
+  const fallbackDirection = key === "ArrowDown" ? ("ArrowRight" as const) : ("ArrowLeft" as const);
+  const allWords = allCandidates.map((c) => c.word);
+  const fallback = findWordInReadingOrder(currentWord, allWords, fallbackDirection);
+  return { target: fallback, stickyX: effectiveStickyX };
 }
 
 /**
@@ -113,18 +112,18 @@ export function resolveNavigationTarget(
   currentCenter: { cx: number; cy: number },
   allCandidates: WordCenter[],
   currentWord: WordSelection,
-  stickyX: number | null
+  stickyX: number | null,
 ): NavigationResult {
   if (key === "ArrowLeft" || key === "ArrowRight") {
-    return findHorizontalTarget(key, currentCenter, allCandidates)
+    return findHorizontalTarget(key, currentCenter, allCandidates);
   }
   return findVerticalTarget(
     key as "ArrowUp" | "ArrowDown",
     currentCenter,
     allCandidates,
     currentWord,
-    stickyX
-  )
+    stickyX,
+  );
 }
 
 /**
@@ -132,15 +131,11 @@ export function resolveNavigationTarget(
  */
 export function findFirstWordInPassage(
   editorIndex: number,
-  allCandidates: WordCenter[]
+  allCandidates: WordCenter[],
 ): CollectedWord | null {
-  const inPassage = allCandidates.filter(
-    (c) => c.word.editorIndex === editorIndex
-  )
-  if (inPassage.length === 0) return null
-  return inPassage.reduce((best, c) =>
-    c.word.from < best.word.from ? c : best
-  ).word
+  const inPassage = allCandidates.filter((c) => c.word.editorIndex === editorIndex);
+  if (inPassage.length === 0) return null;
+  return inPassage.reduce((best, c) => (c.word.from < best.word.from ? c : best)).word;
 }
 
 /**
@@ -148,15 +143,11 @@ export function findFirstWordInPassage(
  */
 export function findLastWordInPassage(
   editorIndex: number,
-  allCandidates: WordCenter[]
+  allCandidates: WordCenter[],
 ): CollectedWord | null {
-  const inPassage = allCandidates.filter(
-    (c) => c.word.editorIndex === editorIndex
-  )
-  if (inPassage.length === 0) return null
-  return inPassage.reduce((best, c) =>
-    c.word.to > best.word.to ? c : best
-  ).word
+  const inPassage = allCandidates.filter((c) => c.word.editorIndex === editorIndex);
+  if (inPassage.length === 0) return null;
+  return inPassage.reduce((best, c) => (c.word.to > best.word.to ? c : best)).word;
 }
 
 /**
@@ -166,16 +157,14 @@ export function findHorizontalTargetConstrained(
   key: "ArrowLeft" | "ArrowRight",
   currentCenter: { cx: number; cy: number },
   allCandidates: WordCenter[],
-  currentWord: WordSelection
+  currentWord: WordSelection,
 ): NavigationResult {
-  const sameEditor = allCandidates.filter(
-    (c) => c.word.editorIndex === currentWord.editorIndex
-  )
-  const sameLine = findNearestWordOnSameLine(currentCenter, sameEditor, key)
-  if (sameLine) return { target: sameLine, stickyX: null }
+  const sameEditor = allCandidates.filter((c) => c.word.editorIndex === currentWord.editorIndex);
+  const sameLine = findNearestWordOnSameLine(currentCenter, sameEditor, key);
+  if (sameLine) return { target: sameLine, stickyX: null };
 
-  const wrapped = findFirstWordOnAdjacentLine(currentCenter, sameEditor, key)
-  return { target: wrapped, stickyX: null }
+  const wrapped = findFirstWordOnAdjacentLine(currentCenter, sameEditor, key);
+  return { target: wrapped, stickyX: null };
 }
 
 /**
@@ -187,16 +176,16 @@ export function findVerticalTargetConstrained(
   currentCenter: { cx: number; cy: number },
   allCandidates: WordCenter[],
   currentWord: WordSelection,
-  stickyX: number | null
+  stickyX: number | null,
 ): NavigationResult {
-  const effectiveStickyX = stickyX ?? currentCenter.cx
-  const navCenter = { cx: effectiveStickyX, cy: currentCenter.cy }
+  const effectiveStickyX = stickyX ?? currentCenter.cx;
+  const navCenter = { cx: effectiveStickyX, cy: currentCenter.cy };
 
   const sameEditorCandidates = allCandidates.filter(
-    (c) => c.word.editorIndex === currentWord.editorIndex
-  )
-  const nearest = findNearestWord(navCenter, sameEditorCandidates, key)
-  return { target: nearest, stickyX: effectiveStickyX }
+    (c) => c.word.editorIndex === currentWord.editorIndex,
+  );
+  const nearest = findNearestWord(navCenter, sameEditorCandidates, key);
+  return { target: nearest, stickyX: effectiveStickyX };
 }
 
 /**
@@ -205,16 +194,16 @@ export function findVerticalTargetConstrained(
 export function computeSelectAllInPassage(
   editorIndex: number,
   allCandidates: WordCenter[],
-  editor: Editor
+  editor: Editor,
 ): WordSelection | null {
-  const first = findFirstWordInPassage(editorIndex, allCandidates)
-  const last = findLastWordInPassage(editorIndex, allCandidates)
-  if (!first || !last) return null
+  const first = findFirstWordInPassage(editorIndex, allCandidates);
+  const last = findLastWordInPassage(editorIndex, allCandidates);
+  if (!first || !last) return null;
 
-  const from = first.from
-  const to = last.to
-  const text = editor.state.doc.textBetween(from, to, " ")
-  return { editorIndex, from, to, text }
+  const from = first.from;
+  const to = last.to;
+  const text = editor.state.doc.textBetween(from, to, " ");
+  return { editorIndex, from, to, text };
 }
 
 /**
@@ -226,13 +215,13 @@ export function computeSelectAllInPassage(
 export function computeRangeSelection(
   anchor: WordSelection,
   target: CollectedWord,
-  editor: Editor
+  editor: Editor,
 ): WordSelection | null {
-  if (target.editorIndex !== anchor.editorIndex) return null
+  if (target.editorIndex !== anchor.editorIndex) return null;
 
-  const from = Math.min(anchor.from, target.from)
-  const to = Math.max(anchor.to, target.to)
-  const text = editor.state.doc.textBetween(from, to, " ")
+  const from = Math.min(anchor.from, target.from);
+  const to = Math.max(anchor.to, target.to);
+  const text = editor.state.doc.textBetween(from, to, " ");
 
-  return { editorIndex: anchor.editorIndex, from, to, text }
+  return { editorIndex: anchor.editorIndex, from, to, text };
 }

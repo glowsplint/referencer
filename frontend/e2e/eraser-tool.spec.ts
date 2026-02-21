@@ -3,13 +3,9 @@ import { test, expect } from "@playwright/test";
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
@@ -22,13 +18,9 @@ async function clickWordInEditor(
 async function clickWordInEditorRaw(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
@@ -57,7 +49,7 @@ test.describe("eraser tool", () => {
   test("eraser removes a highlight when clicking on it", async ({ page }) => {
     // Record initial highlight count from default layers
     const highlights = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]'
+      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]',
     );
     const initialHighlightCount = await highlights.count();
 
@@ -87,7 +79,7 @@ test.describe("eraser tool", () => {
   test("eraser removes an underline when clicking on it", async ({ page }) => {
     // Record initial underline count from default layers
     const underlines = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="text-decoration"]'
+      '.simple-editor-wrapper .ProseMirror span[style*="text-decoration"]',
     );
     const initialUnderlineCount = await underlines.count();
 
@@ -113,7 +105,7 @@ test.describe("eraser tool", () => {
   test("eraser does not affect decorations on hidden layers", async ({ page }) => {
     // Record initial highlight count from default layers
     const highlights = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]'
+      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]',
     );
     const initialHighlightCount = await highlights.count();
 
@@ -148,7 +140,7 @@ test.describe("eraser tool", () => {
     await page.keyboard.press("e");
     await expect(page.getByTestId("status-bar")).toContainText(
       "Click and drag to erase annotations.",
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
   });
 });

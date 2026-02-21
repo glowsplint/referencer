@@ -4,7 +4,7 @@ async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
   xOffset = 30,
-  paragraphIndex = 0
+  paragraphIndex = 0,
 ) {
   const p = page
     .locator(".simple-editor-wrapper")
@@ -30,9 +30,7 @@ test.describe("annotation lifecycle", () => {
     await page.keyboard.press("c");
   });
 
-  test("clicking a word and pressing Enter creates annotation card in panel", async ({
-    page,
-  }) => {
+  test("clicking a word and pressing Enter creates annotation card in panel", async ({ page }) => {
     // Click a word to select it, then press Enter to confirm
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
@@ -46,9 +44,7 @@ test.describe("annotation lifecycle", () => {
     });
   });
 
-  test("typing annotation text and pressing Enter saves it", async ({
-    page,
-  }) => {
+  test("typing annotation text and pressing Enter saves it", async ({ page }) => {
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
 
@@ -79,16 +75,12 @@ test.describe("annotation lifecycle", () => {
     await page.getByText("My note").click();
 
     // Should be editable now (textarea visible with the text)
-    const textarea = page.locator(
-      '[data-testid="annotation-panel"] textarea'
-    );
+    const textarea = page.locator('[data-testid="annotation-panel"] textarea');
     await expect(textarea).toBeVisible({ timeout: 2000 });
     await expect(textarea).toHaveValue("My note");
   });
 
-  test("pressing Escape blurs annotation textarea without saving empty", async ({
-    page,
-  }) => {
+  test("pressing Escape blurs annotation textarea without saving empty", async ({ page }) => {
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
 
@@ -174,10 +166,7 @@ test.describe("annotation lifecycle", () => {
     }, selectedText!);
     expect(wordRect).not.toBeNull();
 
-    await page.mouse.click(
-      wordRect!.x + wordRect!.width / 2,
-      wordRect!.y + wordRect!.height / 2
-    );
+    await page.mouse.click(wordRect!.x + wordRect!.width / 2, wordRect!.y + wordRect!.height / 2);
     await expect(page.locator(".word-selection")).toBeVisible({
       timeout: 3000,
     });
@@ -190,9 +179,7 @@ test.describe("annotation lifecycle", () => {
     });
   });
 
-  test("multiple annotations from different words show in panel", async ({
-    page,
-  }) => {
+  test("multiple annotations from different words show in panel", async ({ page }) => {
     // Click first word, confirm and add annotation
     await clickWordInEditor(page, 0, 30);
     await page.keyboard.press("Enter");
@@ -219,9 +206,7 @@ test.describe("annotation lifecycle", () => {
     await expect(page.getByText("Second note")).toBeVisible({ timeout: 2000 });
   });
 
-  test("annotation panel not visible when editor is unlocked", async ({
-    page,
-  }) => {
+  test("annotation panel not visible when editor is unlocked", async ({ page }) => {
     // Create annotation
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");

@@ -10,11 +10,7 @@ interface DividerProps {
   direction?: "horizontal" | "vertical";
 }
 
-export function Divider({
-  onResize,
-  containerRef,
-  direction = "horizontal",
-}: DividerProps) {
+export function Divider({ onResize, containerRef, direction = "horizontal" }: DividerProps) {
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -56,28 +52,13 @@ export function Divider({
           : "flex flex-row items-center w-full h-3 cursor-row-resize hover:bg-accent transition-colors shrink-0"
       }
     >
-      <div
-        className={
-          isHorizontal
-            ? "flex-1 w-px bg-gray-300"
-            : "flex-1 h-px bg-gray-300"
-        }
-      />
+      <div className={isHorizontal ? "flex-1 w-px bg-gray-300" : "flex-1 h-px bg-gray-300"} />
       {isHorizontal ? (
-        <GripVertical
-          size={14}
-          className="text-muted-foreground shrink-0"
-        />
+        <GripVertical size={14} className="text-muted-foreground shrink-0" />
       ) : (
         <GripHorizontal size={14} className="text-muted-foreground shrink-0" />
       )}
-      <div
-        className={
-          isHorizontal
-            ? "flex-1 w-px bg-gray-300"
-            : "flex-1 h-px bg-gray-300"
-        }
-      />
+      <div className={isHorizontal ? "flex-1 w-px bg-gray-300" : "flex-1 h-px bg-gray-300"} />
     </div>
   );
 }

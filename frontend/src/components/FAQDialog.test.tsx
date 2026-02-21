@@ -10,9 +10,7 @@ describe("FAQDialog", () => {
   it("renders when open", () => {
     renderDialog();
     expect(screen.getByTestId("faqDialog")).toBeInTheDocument();
-    expect(
-      screen.getByText("Frequently Asked Questions")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Frequently Asked Questions")).toBeInTheDocument();
   });
 
   it("does not render when closed", () => {
@@ -23,31 +21,19 @@ describe("FAQDialog", () => {
   it("displays FAQ questions", () => {
     renderDialog();
     expect(screen.getByText("What is this app?")).toBeInTheDocument();
-    expect(
-      screen.getByText("What is inductive Bible study?")
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("How does collaboration work?")
-    ).toBeInTheDocument();
+    expect(screen.getByText("What is inductive Bible study?")).toBeInTheDocument();
+    expect(screen.getByText("How does collaboration work?")).toBeInTheDocument();
     expect(screen.getByText("What are layers?")).toBeInTheDocument();
     expect(screen.getByText("How do annotations work?")).toBeInTheDocument();
     expect(screen.getByText("What are arrows for?")).toBeInTheDocument();
-    expect(
-      screen.getByText("How do I share a workspace?")
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Can I use this on mobile?")
-    ).toBeInTheDocument();
+    expect(screen.getByText("How do I share a workspace?")).toBeInTheDocument();
+    expect(screen.getByText("Can I use this on mobile?")).toBeInTheDocument();
   });
 
   it("displays FAQ answers", () => {
     renderDialog();
-    expect(
-      screen.getByText(/collaborative tool for inductive Bible study/)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/method of reading Scripture/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/collaborative tool for inductive Bible study/)).toBeInTheDocument();
+    expect(screen.getByText(/method of reading Scripture/)).toBeInTheDocument();
   });
 
   it("has a close button in the footer", () => {

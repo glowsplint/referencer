@@ -16,9 +16,7 @@ function makeLayers(count: number): Layer[] {
 }
 
 function pressKey(key: string, options: Partial<KeyboardEvent> = {}) {
-  document.dispatchEvent(
-    new KeyboardEvent("keydown", { key, bubbles: true, ...options })
-  );
+  document.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, ...options }));
 }
 
 describe("useCycleLayer", () => {
@@ -30,7 +28,7 @@ describe("useCycleLayer", () => {
         layers,
         activeLayerId: "layer-0",
         setActiveLayer,
-      })
+      }),
     );
 
     pressKey("Tab");
@@ -45,7 +43,7 @@ describe("useCycleLayer", () => {
         layers,
         activeLayerId: "layer-2",
         setActiveLayer,
-      })
+      }),
     );
 
     pressKey("Tab");
@@ -60,7 +58,7 @@ describe("useCycleLayer", () => {
         layers,
         activeLayerId: null,
         setActiveLayer,
-      })
+      }),
     );
 
     pressKey("Tab");
@@ -75,7 +73,7 @@ describe("useCycleLayer", () => {
         layers,
         activeLayerId: "layer-1",
         setActiveLayer,
-      })
+      }),
     );
 
     pressKey("Tab", { shiftKey: true });
@@ -90,7 +88,7 @@ describe("useCycleLayer", () => {
         layers,
         activeLayerId: "layer-0",
         setActiveLayer,
-      })
+      }),
     );
 
     pressKey("Tab", { shiftKey: true });
@@ -104,7 +102,7 @@ describe("useCycleLayer", () => {
         layers: [],
         activeLayerId: null,
         setActiveLayer,
-      })
+      }),
     );
 
     pressKey("Tab");
@@ -119,7 +117,7 @@ describe("useCycleLayer", () => {
         layers,
         activeLayerId: "layer-0",
         setActiveLayer,
-      })
+      }),
     );
 
     pressKey("Tab", { repeat: true });
@@ -134,31 +132,30 @@ describe("useCycleLayer", () => {
         layers,
         activeLayerId: "layer-0",
         setActiveLayer,
-      })
+      }),
     );
 
     pressKey("a");
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
-  it.each([
-    { modifier: "metaKey" },
-    { modifier: "ctrlKey" },
-    { modifier: "altKey" },
-  ])("ignores Tab when $modifier is held", ({ modifier }) => {
-    const layers = makeLayers(3);
-    const setActiveLayer = vi.fn();
-    renderHook(() =>
-      useCycleLayer({
-        layers,
-        activeLayerId: "layer-0",
-        setActiveLayer,
-      })
-    );
+  it.each([{ modifier: "metaKey" }, { modifier: "ctrlKey" }, { modifier: "altKey" }])(
+    "ignores Tab when $modifier is held",
+    ({ modifier }) => {
+      const layers = makeLayers(3);
+      const setActiveLayer = vi.fn();
+      renderHook(() =>
+        useCycleLayer({
+          layers,
+          activeLayerId: "layer-0",
+          setActiveLayer,
+        }),
+      );
 
-    pressKey("Tab", { [modifier]: true });
-    expect(setActiveLayer).not.toHaveBeenCalled();
-  });
+      pressKey("Tab", { [modifier]: true });
+      expect(setActiveLayer).not.toHaveBeenCalled();
+    },
+  );
 
   it("ignores Tab when target is contentEditable", () => {
     const layers = makeLayers(3);
@@ -168,15 +165,13 @@ describe("useCycleLayer", () => {
         layers,
         activeLayerId: "layer-0",
         setActiveLayer,
-      })
+      }),
     );
 
     const editableDiv = document.createElement("div");
     editableDiv.contentEditable = "true";
     document.body.appendChild(editableDiv);
-    editableDiv.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "Tab", bubbles: true })
-    );
+    editableDiv.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
     document.body.removeChild(editableDiv);
 
     expect(setActiveLayer).not.toHaveBeenCalled();

@@ -1,10 +1,12 @@
-import { render } from "@testing-library/react"
-import { vi } from "vitest"
-import { WorkspaceProvider } from "@/contexts/WorkspaceContext"
-import { AuthProvider } from "@/contexts/AuthContext"
-import type { WorkspaceContextValue } from "@/contexts/WorkspaceContext"
+import { render } from "@testing-library/react";
+import { vi } from "vitest";
+import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import type { WorkspaceContextValue } from "@/contexts/WorkspaceContext";
 
-export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}): WorkspaceContextValue {
+export function makeMockWorkspace(
+  overrides: Partial<WorkspaceContextValue> = {},
+): WorkspaceContextValue {
   return {
     settings: {
       isDarkMode: false,
@@ -96,20 +98,20 @@ export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}
       canRedo: false,
     },
     ...overrides,
-  } as WorkspaceContextValue
+  } as WorkspaceContextValue;
 }
 
 export function renderWithWorkspace(
   ui: React.ReactElement,
-  overrides: Partial<WorkspaceContextValue> = {}
+  overrides: Partial<WorkspaceContextValue> = {},
 ) {
-  const workspace = makeMockWorkspace(overrides)
+  const workspace = makeMockWorkspace(overrides);
   return {
     ...render(
       <AuthProvider>
         <WorkspaceProvider value={workspace}>{ui}</WorkspaceProvider>
-      </AuthProvider>
+      </AuthProvider>,
     ),
     workspace,
-  }
+  };
 }

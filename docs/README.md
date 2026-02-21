@@ -27,22 +27,22 @@ referencer/
 
 ## Documentation Index
 
-| Document | Description |
-|----------|-------------|
-| [architecture.md](architecture.md) | High-level system architecture and how the three services connect |
+| Document                             | Description                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------ |
+| [architecture.md](architecture.md)   | High-level system architecture and how the three services connect              |
 | [collaboration.md](collaboration.md) | CRDT collaboration system: Yjs, annotations, relative positions, undo, offline |
-| [backend.md](backend.md) | Backend API: routes, authentication, database schema |
-| [development.md](development.md) | Development setup, commands, environment variables, testing |
+| [backend.md](backend.md)             | Backend API: routes, authentication, database schema                           |
+| [development.md](development.md)     | Development setup, commands, environment variables, testing                    |
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 19, TypeScript, Vite 7, Tailwind CSS v4 |
-| Rich text | TipTap 3 (ProseMirror) with custom extensions |
-| CRDT sync | Yjs with y-websocket protocol |
-| Backend | Bun runtime, Hono framework, bun:sqlite |
-| Collab server | Node.js, y-websocket, LevelDB persistence |
-| Auth | OAuth2 (Google, Apple, Facebook) via Arctic |
-| Testing | Vitest + React Testing Library, Playwright |
-| Package manager | Bun |
+| Layer           | Technology                                    |
+| --------------- | --------------------------------------------- |
+| Frontend        | React 19, TypeScript, Vite 7, Tailwind CSS v4 |
+| Rich text       | TipTap 3 (ProseMirror) with custom extensions |
+| CRDT sync       | Yjs with y-websocket protocol                 |
+| Backend         | Bun runtime, Hono framework, bun:sqlite       |
+| Collab server   | Node.js, y-websocket, LevelDB persistence     |
+| Auth            | OAuth2 (Google, Apple, Facebook) via Arctic   |
+| Testing         | Vitest + React Testing Library, Playwright    |
+| Package manager | Bun                                           |

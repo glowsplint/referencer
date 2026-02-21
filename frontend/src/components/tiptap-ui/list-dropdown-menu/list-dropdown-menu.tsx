@@ -1,52 +1,52 @@
-import { useCallback, useState } from "react"
-import { type Editor } from "@tiptap/react"
-import { useTranslation } from "react-i18next"
+import { useCallback, useState } from "react";
+import { type Editor } from "@tiptap/react";
+import { useTranslation } from "react-i18next";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 
 // --- Icons ---
-import { ChevronDownIcon } from "@/components/tiptap-icons/chevron-down-icon"
+import { ChevronDownIcon } from "@/components/tiptap-icons/chevron-down-icon";
 
 // --- Tiptap UI ---
-import { ListButton, type ListType } from "@/components/tiptap-ui/list-button"
+import { ListButton, type ListType } from "@/components/tiptap-ui/list-button";
 
-import { useListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu/use-list-dropdown-menu"
+import { useListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu/use-list-dropdown-menu";
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
-import { Button, ButtonGroup } from "@/components/tiptap-ui-primitive/button"
+import type { ButtonProps } from "@/components/tiptap-ui-primitive/button";
+import { Button, ButtonGroup } from "@/components/tiptap-ui-primitive/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/tiptap-ui-primitive/dropdown-menu"
-import { Card, CardBody } from "@/components/tiptap-ui-primitive/card"
+} from "@/components/tiptap-ui-primitive/dropdown-menu";
+import { Card, CardBody } from "@/components/tiptap-ui-primitive/card";
 
 export interface ListDropdownMenuProps extends Omit<ButtonProps, "type"> {
   /**
    * The Tiptap editor instance.
    */
-  editor?: Editor
+  editor?: Editor;
   /**
    * The list types to display in the dropdown.
    */
-  types?: ListType[]
+  types?: ListType[];
   /**
    * Whether the dropdown should be hidden when no list types are available
    * @default false
    */
-  hideWhenUnavailable?: boolean
+  hideWhenUnavailable?: boolean;
   /**
    * Callback for when the dropdown opens or closes
    */
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void;
   /**
    * Whether to render the dropdown menu in a portal
    * @default false
    */
-  portal?: boolean
+  portal?: boolean;
 }
 
 export function ListDropdownMenu({
@@ -57,27 +57,26 @@ export function ListDropdownMenu({
   portal = false,
   ...props
 }: ListDropdownMenuProps) {
-  const { t } = useTranslation("editor")
-  const { editor } = useTiptapEditor(providedEditor)
-  const [isOpen, setIsOpen] = useState(false)
+  const { t } = useTranslation("editor");
+  const { editor } = useTiptapEditor(providedEditor);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { filteredLists, canToggle, isActive, isVisible, Icon } =
-    useListDropdownMenu({
-      editor,
-      types,
-      hideWhenUnavailable,
-    })
+  const { filteredLists, canToggle, isActive, isVisible, Icon } = useListDropdownMenu({
+    editor,
+    types,
+    hideWhenUnavailable,
+  });
 
   const handleOnOpenChange = useCallback(
     (open: boolean) => {
-      setIsOpen(open)
-      onOpenChange?.(open)
+      setIsOpen(open);
+      onOpenChange?.(open);
     },
-    [onOpenChange]
-  )
+    [onOpenChange],
+  );
 
   if (!isVisible) {
-    return null
+    return null;
   }
 
   return (
@@ -119,7 +118,7 @@ export function ListDropdownMenu({
         </Card>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
-export default ListDropdownMenu
+export default ListDropdownMenu;

@@ -9,11 +9,7 @@ import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
 import { StatusBar } from "./components/StatusBar";
 import { Divider } from "./components/ui/Divider";
-import {
-  TitleBar,
-  SimpleEditorToolbar,
-  EditorPane,
-} from "./components/tiptap-templates/simple";
+import { TitleBar, SimpleEditorToolbar, EditorPane } from "./components/tiptap-templates/simple";
 import { DEFAULT_PASSAGE_CONTENTS, PLACEHOLDER_CONTENT } from "./data/default-workspace";
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
@@ -34,14 +30,21 @@ import { useInlineEdit } from "./hooks/use-inline-edit";
 import { ToastKbd } from "./components/ui/ToastKbd";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import type { EditingAnnotation } from "./types/editor";
 
-function PassageHeader({ name, index, onUpdateName }: {
-  name: string; index: number; onUpdateName: (name: string) => void
+function PassageHeader({
+  name,
+  index,
+  onUpdateName,
+}: {
+  name: string;
+  index: number;
+  onUpdateName: (name: string) => void;
 }) {
   const { isEditing, inputProps, startEditing } = useInlineEdit({
     currentName: name,
@@ -141,17 +144,18 @@ export function App() {
   const annotationBeforeEditRef = useRef<string>("");
   const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
 
-  const { selection, selectionHidden, selectWord, selectRange, clearSelection, hideSelection } = useWordSelection({
-    isLocked: settings.isLocked,
-    editorsRef,
-    containerRef,
-    editorCount,
-    onEnter: useCallback(() => confirmRef.current(), []),
-    onEscape: useCallback(() => {
-      setActiveTool("selection");
-      workspace.setSelectedArrow(null);
-    }, [setActiveTool, workspace]),
-  });
+  const { selection, selectionHidden, selectWord, selectRange, clearSelection, hideSelection } =
+    useWordSelection({
+      isLocked: settings.isLocked,
+      editorsRef,
+      containerRef,
+      editorCount,
+      onEnter: useCallback(() => confirmRef.current(), []),
+      onEscape: useCallback(() => {
+        setActiveTool("selection");
+        workspace.setSelectedArrow(null);
+      }, [setActiveTool, workspace]),
+    });
 
   const { drawingState, confirmSelection } = useDrawingMode({
     isLocked: settings.isLocked,
@@ -232,23 +236,30 @@ export function App() {
   // Hint to lock the editor when unlocked
   useEffect(() => {
     if (!settings.isLocked && !effectiveReadOnly) {
-      setStatus({ text: <Trans ns="tools" i18nKey="lockHint" components={{ kbd: <ToastKbd>_</ToastKbd> }} />, type: "info" })
+      setStatus({
+        text: <Trans ns="tools" i18nKey="lockHint" components={{ kbd: <ToastKbd>_</ToastKbd> }} />,
+        type: "info",
+      });
     }
-  }, [settings.isLocked, effectiveReadOnly, setStatus])
+  }, [settings.isLocked, effectiveReadOnly, setStatus]);
 
   // Default status message when locked with selection tool and no visible selection
   useEffect(() => {
-    if (settings.isLocked && annotations.activeTool === "selection" && (!selection || selectionHidden)) {
-      setStatus({ text: <Trans ns="tools" i18nKey="selection.defaultStatus" />, type: "info" })
+    if (
+      settings.isLocked &&
+      annotations.activeTool === "selection" &&
+      (!selection || selectionHidden)
+    ) {
+      setStatus({ text: <Trans ns="tools" i18nKey="selection.defaultStatus" />, type: "info" });
     }
-  }, [settings.isLocked, annotations.activeTool, selection, selectionHidden, setStatus])
+  }, [settings.isLocked, annotations.activeTool, selection, selectionHidden, setStatus]);
 
   // Mutual exclusivity: visible word selection clears arrow selection
   useEffect(() => {
     if (selection && !selectionHidden) {
       workspace.setSelectedArrow(null);
     }
-  }, [selection, selectionHidden, workspace])
+  }, [selection, selectionHidden, workspace]);
 
   confirmRef.current = () => {
     confirmSelection();
@@ -279,11 +290,11 @@ export function App() {
       workspace.setSelectedArrow(arrow);
       if (arrow) hideSelection();
     },
-    [workspace, hideSelection]
+    [workspace, hideSelection],
   );
 
   const activeLayerColor = activeLayerId
-    ? layers.find((l) => l.id === activeLayerId)?.color ?? null
+    ? (layers.find((l) => l.id === activeLayerId)?.color ?? null)
     : null;
 
   const handleAnnotationBlur = useCallback(
@@ -293,11 +304,13 @@ export function App() {
       } else {
         const oldText = annotationBeforeEditRef.current;
         if (oldText !== annotation) {
-          const truncated = (s: string) => s.length > 80 ? s.slice(0, 80) + "..." : s
+          const truncated = (s: string) => (s.length > 80 ? s.slice(0, 80) + "..." : s);
           history.record({
             type: "updateAnnotation",
             description: `Updated annotation to '${truncated(annotation)}'`,
-            details: [{ label: "annotation", before: truncated(oldText), after: truncated(annotation) }],
+            details: [
+              { label: "annotation", before: truncated(oldText), after: truncated(annotation) },
+            ],
             undo: () => {
               updateHighlightAnnotation(layerId, highlightId, oldText);
             },
@@ -309,7 +322,7 @@ export function App() {
       }
       setEditingAnnotation(null);
     },
-    [removeHighlight, history, updateHighlightAnnotation]
+    [removeHighlight, history, updateHighlightAnnotation],
   );
 
   const handleAnnotationClick = useCallback(
@@ -319,135 +332,164 @@ export function App() {
       annotationBeforeEditRef.current = highlight?.annotation ?? "";
       setEditingAnnotation({ layerId, highlightId });
     },
-    [layers]
+    [layers],
   );
 
   const hasAnyAnnotations = useMemo(
-    () => layers.some((l) => l.visible && l.highlights.some(
-      (h) => h.type === "comment" && sectionVisibility[h.editorIndex] !== false
-    )),
-    [layers, sectionVisibility]
+    () =>
+      layers.some(
+        (l) =>
+          l.visible &&
+          l.highlights.some(
+            (h) => h.type === "comment" && sectionVisibility[h.editorIndex] !== false,
+          ),
+      ),
+    [layers, sectionVisibility],
   );
 
   return (
     <WorkspaceProvider value={workspace}>
       <Toaster />
       <div className="flex flex-col h-screen overflow-hidden">
-      <div className="flex flex-1 min-h-0">
-        {!isMobile && <ButtonPane />}
-        {!isMobile && isManagementPaneOpen && <ManagementPane />}
-        <EditorContext.Provider value={{ editor: activeEditor }}>
-          <div className="flex flex-col flex-1 min-w-0">
-            <TitleBar />
-            <SimpleEditorToolbar isLocked={settings.isLocked} />
-            {!isMobile && <StatusBar message={statusMessage} />}
-            <div className="flex flex-1 min-w-0 min-h-0">
-              <div
-                ref={containerRef}
-                data-testid="editorContainer"
-                className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${settings.isLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${settings.isLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
-              >
-                <ArrowOverlay
-                  layers={layers}
-                  drawingState={drawingState}
-                  drawingColor={activeLayerColor}
-                  editorsRef={editorsRef}
-                  containerRef={containerRef}
-                  removeArrow={removeArrow}
-                  selectedArrow={workspace.selectedArrow}
-                  setSelectedArrow={handleSetSelectedArrow}
-                  activeTool={annotations.activeTool}
-                  sectionVisibility={sectionVisibility}
-                  isDarkMode={settings.isDarkMode}
-                  isLocked={settings.isLocked || effectiveReadOnly}
-                  hideOffscreenArrows={settings.hideOffscreenArrows}
-                />
-                {editorWidths.map((width, i) => {
-                  const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i]
-                  // "direction" is the resize drag axis, not the visual line orientation
-                  // (e.g. "horizontal" means drag left/right to resize side-by-side panes)
-                  const dividerDirection = settings.isMultipleRowsLayout ? "vertical" as const : "horizontal" as const
-                  return (
-                  <Fragment key={editorKeys[i]}>
-                    {showDivider && (
-                      <Divider
-                        onResize={(pct) => handleDividerResize(i - 1, pct)}
-                        containerRef={containerRef}
-                        direction={dividerDirection}
-                      />
-                    )}
-                    <div
-                      className="min-w-0 min-h-0 overflow-hidden flex flex-col"
-                      style={{
-                        flex: `${width} 0 0%`,
-                        display: sectionVisibility[i] === false ? "none" : undefined,
-                      }}
-                    >
-                      <PassageHeader
-                        name={workspace.sectionNames[i]}
-                        index={i}
-                        onUpdateName={(name) => workspace.updateSectionName(i, name)}
-                      />
-                      <div className="flex-1 min-h-0 overflow-hidden">
-                        <EditorPane
-                          isLocked={settings.isLocked || effectiveReadOnly}
-                          activeTool={annotations.activeTool}
-                          content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
-                          index={i}
-                          fragment={workspace.yjs.getFragment(i)}
-                          onEditorMount={handleEditorMount}
-                          onFocus={handlePaneFocus}
-                          onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
-                          onMouseMove={settings.isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
-                          onMouseUp={settings.isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
-                          onContentUpdate={effectiveReadOnly ? undefined : updateEditorContent}
-                          layers={layers}
-                          selection={selection}
-                          selectionHidden={selectionHidden}
-                          activeLayerColor={activeLayerColor}
-                          isDarkMode={settings.isDarkMode}
-                          removeArrow={removeArrow}
-                          sectionVisibility={sectionVisibility}
-                          selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-                          setLayers={workspace.setLayers}
-                          yjsSynced={workspace.yjs.synced}
-                        />
-                      </div>
-                    </div>
-                  </Fragment>
-                  )
-                })}
+        <div className="flex flex-1 min-h-0">
+          {!isMobile && <ButtonPane />}
+          {!isMobile && isManagementPaneOpen && <ManagementPane />}
+          <EditorContext.Provider value={{ editor: activeEditor }}>
+            <div className="flex flex-col flex-1 min-w-0">
+              <TitleBar />
+              <SimpleEditorToolbar isLocked={settings.isLocked} />
+              {!isMobile && <StatusBar message={statusMessage} />}
+              <div className="flex flex-1 min-w-0 min-h-0">
+                <div
+                  ref={containerRef}
+                  data-testid="editorContainer"
+                  className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${settings.isLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${settings.isLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
+                >
+                  <ErrorBoundary silent>
+                    <ArrowOverlay
+                      layers={layers}
+                      drawingState={drawingState}
+                      drawingColor={activeLayerColor}
+                      editorsRef={editorsRef}
+                      containerRef={containerRef}
+                      removeArrow={removeArrow}
+                      selectedArrow={workspace.selectedArrow}
+                      setSelectedArrow={handleSetSelectedArrow}
+                      activeTool={annotations.activeTool}
+                      sectionVisibility={sectionVisibility}
+                      isDarkMode={settings.isDarkMode}
+                      isLocked={settings.isLocked || effectiveReadOnly}
+                      hideOffscreenArrows={settings.hideOffscreenArrows}
+                    />
+                  </ErrorBoundary>
+                  {editorWidths.map((width, i) => {
+                    const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
+                    // "direction" is the resize drag axis, not the visual line orientation
+                    // (e.g. "horizontal" means drag left/right to resize side-by-side panes)
+                    const dividerDirection = settings.isMultipleRowsLayout
+                      ? ("vertical" as const)
+                      : ("horizontal" as const);
+                    return (
+                      <Fragment key={editorKeys[i]}>
+                        {showDivider && (
+                          <Divider
+                            onResize={(pct) => handleDividerResize(i - 1, pct)}
+                            containerRef={containerRef}
+                            direction={dividerDirection}
+                          />
+                        )}
+                        <div
+                          className="min-w-0 min-h-0 overflow-hidden flex flex-col"
+                          style={{
+                            flex: `${width} 0 0%`,
+                            display: sectionVisibility[i] === false ? "none" : undefined,
+                          }}
+                        >
+                          <PassageHeader
+                            name={workspace.sectionNames[i]}
+                            index={i}
+                            onUpdateName={(name) => workspace.updateSectionName(i, name)}
+                          />
+                          <div className="flex-1 min-h-0 overflow-hidden">
+                            <ErrorBoundary>
+                              <EditorPane
+                                isLocked={settings.isLocked || effectiveReadOnly}
+                                activeTool={annotations.activeTool}
+                                content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
+                                index={i}
+                                fragment={workspace.yjs.getFragment(i)}
+                                onEditorMount={handleEditorMount}
+                                onFocus={handlePaneFocus}
+                                onMouseDown={
+                                  settings.isLocked && !effectiveReadOnly
+                                    ? handleMouseDown
+                                    : undefined
+                                }
+                                onMouseMove={
+                                  settings.isLocked && !effectiveReadOnly
+                                    ? handleMouseMove
+                                    : undefined
+                                }
+                                onMouseUp={
+                                  settings.isLocked && !effectiveReadOnly
+                                    ? handleMouseUp
+                                    : undefined
+                                }
+                                onContentUpdate={
+                                  effectiveReadOnly ? undefined : updateEditorContent
+                                }
+                                layers={layers}
+                                selection={selection}
+                                selectionHidden={selectionHidden}
+                                activeLayerColor={activeLayerColor}
+                                isDarkMode={settings.isDarkMode}
+                                removeArrow={removeArrow}
+                                sectionVisibility={sectionVisibility}
+                                selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+                                setLayers={workspace.setLayers}
+                                yjsSynced={workspace.yjs.synced}
+                              />
+                            </ErrorBoundary>
+                          </div>
+                        </div>
+                      </Fragment>
+                    );
+                  })}
+                </div>
+                {!isMobile && settings.isLocked && hasAnyAnnotations && (
+                  <ErrorBoundary silent>
+                    <AnnotationPanel
+                      layers={layers}
+                      editorsRef={editorsRef}
+                      containerRef={containerRef}
+                      editingAnnotation={editingAnnotation}
+                      onAnnotationChange={updateHighlightAnnotation}
+                      onAnnotationBlur={handleAnnotationBlur}
+                      onAnnotationClick={handleAnnotationClick}
+                      isDarkMode={settings.isDarkMode}
+                      sectionVisibility={sectionVisibility}
+                    />
+                  </ErrorBoundary>
+                )}
               </div>
-              {!isMobile && settings.isLocked && hasAnyAnnotations && (
-                <AnnotationPanel
-                  layers={layers}
-                  editorsRef={editorsRef}
-                  containerRef={containerRef}
-                  editingAnnotation={editingAnnotation}
-                  onAnnotationChange={updateHighlightAnnotation}
-                  onAnnotationBlur={handleAnnotationBlur}
-                  onAnnotationClick={handleAnnotationClick}
-                  isDarkMode={settings.isDarkMode}
-                  sectionVisibility={sectionVisibility}
-                />
-              )}
             </div>
-          </div>
-        </EditorContext.Provider>
-      </div>
-      {!isMobile && (
-        <ActionConsole
-          log={history.log}
-          isOpen={actionConsole.isOpen}
-          onClose={() => actionConsole.setIsOpen(false)}
-          height={actionConsole.consoleHeight}
-          onHeightChange={actionConsole.setConsoleHeight}
+          </EditorContext.Provider>
+        </div>
+        {!isMobile && (
+          <ActionConsole
+            log={history.log}
+            isOpen={actionConsole.isOpen}
+            onClose={() => actionConsole.setIsOpen(false)}
+            height={actionConsole.consoleHeight}
+            onHeightChange={actionConsole.setConsoleHeight}
+          />
+        )}
+        <MobileInfoDialog
+          open={isMobile && !mobileDialogDismissed}
+          onOpenChange={(open) => {
+            if (!open) setMobileDialogDismissed(true);
+          }}
         />
-      )}
-      <MobileInfoDialog
-        open={isMobile && !mobileDialogDismissed}
-        onOpenChange={(open) => { if (!open) setMobileDialogDismissed(true); }}
-      />
       </div>
     </WorkspaceProvider>
   );

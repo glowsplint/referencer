@@ -36,11 +36,11 @@ bun run dev
 
 This uses `concurrently` to launch:
 
-| Service | Port | Runner |
-|---------|------|--------|
-| Backend | 5000 | Bun |
+| Service       | Port | Runner         |
+| ------------- | ---- | -------------- |
+| Backend       | 5000 | Bun            |
 | Collab server | 4444 | Node (via fnm) |
-| Frontend | 5173 | Bun |
+| Frontend      | 5173 | Bun            |
 
 The Vite dev server proxies API requests to the backend and Yjs WebSocket connections to the collab server.
 
@@ -57,12 +57,12 @@ Output goes to `frontend/dist/`. The backend serves this directory as static fil
 
 In development, `frontend/vite.config.ts` proxies:
 
-| Frontend path | Target | Notes |
-|---------------|--------|-------|
-| `/api/*` | `http://localhost:5000` | REST API |
-| `/s/*` | `http://localhost:5000` | Share link resolution |
-| `/auth/*` | `http://localhost:5000` | OAuth routes |
-| `/yjs/*` | `ws://localhost:4444` | CRDT sync (path prefix stripped) |
+| Frontend path | Target                  | Notes                            |
+| ------------- | ----------------------- | -------------------------------- |
+| `/api/*`      | `http://localhost:5000` | REST API                         |
+| `/s/*`        | `http://localhost:5000` | Share link resolution            |
+| `/auth/*`     | `http://localhost:5000` | OAuth routes                     |
+| `/yjs/*`      | `ws://localhost:4444`   | CRDT sync (path prefix stripped) |
 
 ## Testing
 
@@ -99,67 +99,67 @@ Uses a separate Playwright config at `e2e/integration/playwright.integration.con
 
 ### Backend (`backend/`)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `5000` | Server listen port |
-| `DB_PATH` | `./data/referencer.db` | SQLite database file path |
-| `BASE_URL` | `http://localhost:5000` | Public URL (used for OAuth callback URLs) |
-| `NODE_ENV` | -- | Set to `production` for Secure cookies |
-| `SESSION_MAX_AGE` | `2592000` (30 days) | Session lifetime in seconds |
-| `GOOGLE_CLIENT_ID` | -- | Google OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | -- | Google OAuth client secret |
-| `APPLE_CLIENT_ID` | -- | Apple Services ID |
-| `APPLE_PRIVATE_KEY` | -- | Apple private key (PEM content) |
-| `APPLE_TEAM_ID` | -- | Apple Developer Team ID |
-| `APPLE_KEY_ID` | -- | Apple Key ID |
-| `FACEBOOK_CLIENT_ID` | -- | Facebook App ID |
-| `FACEBOOK_CLIENT_SECRET` | -- | Facebook App Secret |
+| Variable                 | Default                 | Description                               |
+| ------------------------ | ----------------------- | ----------------------------------------- |
+| `PORT`                   | `5000`                  | Server listen port                        |
+| `DB_PATH`                | `./data/referencer.db`  | SQLite database file path                 |
+| `BASE_URL`               | `http://localhost:5000` | Public URL (used for OAuth callback URLs) |
+| `NODE_ENV`               | --                      | Set to `production` for Secure cookies    |
+| `SESSION_MAX_AGE`        | `2592000` (30 days)     | Session lifetime in seconds               |
+| `GOOGLE_CLIENT_ID`       | --                      | Google OAuth client ID                    |
+| `GOOGLE_CLIENT_SECRET`   | --                      | Google OAuth client secret                |
+| `APPLE_CLIENT_ID`        | --                      | Apple Services ID                         |
+| `APPLE_PRIVATE_KEY`      | --                      | Apple private key (PEM content)           |
+| `APPLE_TEAM_ID`          | --                      | Apple Developer Team ID                   |
+| `APPLE_KEY_ID`           | --                      | Apple Key ID                              |
+| `FACEBOOK_CLIENT_ID`     | --                      | Facebook App ID                           |
+| `FACEBOOK_CLIENT_SECRET` | --                      | Facebook App Secret                       |
 
 Providers are only enabled when all their required env vars are set.
 
 ### Collab Server (`collab-server/`)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `4444` | Server listen port |
-| `HOST` | `0.0.0.0` | Server listen host |
+| Variable | Default           | Description               |
+| -------- | ----------------- | ------------------------- |
+| `PORT`   | `4444`            | Server listen port        |
+| `HOST`   | `0.0.0.0`         | Server listen host        |
 | `DB_DIR` | `./data/yjs-docs` | LevelDB storage directory |
 
 ### Frontend (`frontend/`)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
+| Variable             | Default              | Description                 |
+| -------------------- | -------------------- | --------------------------- |
 | `VITE_COLLAB_WS_URL` | `ws[s]://{host}/yjs` | Collab server WebSocket URL |
 
 ## Scripts Reference
 
 ### Frontend (`frontend/package.json`)
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `dev` | `vite` | Start Vite dev server with HMR |
-| `build` | `tsc -b && vite build` | Type-check and build for production |
-| `lint` | `eslint .` | Run ESLint |
-| `preview` | `vite preview` | Preview production build locally |
-| `test` | `vitest` | Run unit tests in watch mode |
-| `test:run` | `vitest run` | Run unit tests once |
-| `test:e2e` | `playwright test -x` | Run Playwright E2E tests |
-| `test:e2e:ui` | `playwright test --ui` | Run Playwright in interactive UI mode |
-| `test:integration` | `playwright test --config=...` | Run integration tests |
+| Script             | Command                        | Description                           |
+| ------------------ | ------------------------------ | ------------------------------------- |
+| `dev`              | `vite`                         | Start Vite dev server with HMR        |
+| `build`            | `tsc -b && vite build`         | Type-check and build for production   |
+| `lint`             | `eslint .`                     | Run ESLint                            |
+| `preview`          | `vite preview`                 | Preview production build locally      |
+| `test`             | `vitest`                       | Run unit tests in watch mode          |
+| `test:run`         | `vitest run`                   | Run unit tests once                   |
+| `test:e2e`         | `playwright test -x`           | Run Playwright E2E tests              |
+| `test:e2e:ui`      | `playwright test --ui`         | Run Playwright in interactive UI mode |
+| `test:integration` | `playwright test --config=...` | Run integration tests                 |
 
 ### Backend (`backend/package.json`)
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `dev` | `bun run --hot src/index.ts` | Start with hot reloading |
-| `start` | `bun run src/index.ts` | Start without hot reloading |
+| Script  | Command                      | Description                 |
+| ------- | ---------------------------- | --------------------------- |
+| `dev`   | `bun run --hot src/index.ts` | Start with hot reloading    |
+| `start` | `bun run src/index.ts`       | Start without hot reloading |
 
 ### Collab Server (`collab-server/package.json`)
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `start` | `node server.mjs` | Start collab server |
-| `dev` | `node server.mjs` | Start collab server (same as start) |
+| Script  | Command           | Description                         |
+| ------- | ----------------- | ----------------------------------- |
+| `start` | `node server.mjs` | Start collab server                 |
+| `dev`   | `node server.mjs` | Start collab server (same as start) |
 
 ## Project Conventions
 

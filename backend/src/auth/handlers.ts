@@ -1,31 +1,76 @@
 import { Hono } from "hono";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
-import {
-  generateState,
-  generateCodeVerifier,
-  decodeIdToken,
-} from "arctic";
+import { generateState, generateCodeVerifier, decodeIdToken } from "arctic";
 import type { Database } from "bun:sqlite";
 import type { Google, Apple, Facebook } from "arctic";
+import { rateLimiter } from "hono-rate-limiter";
 import { getProvider } from "./providers";
 import type { AuthConfig } from "./config";
-import {
-  upsertUser,
-  createSession,
-  getSessionUser,
-  deleteSession,
-} from "./store";
+import { upsertUser, createSession, getSessionUser, deleteSession } from "./store";
 
 interface AuthState {
   state: string;
   codeVerifier?: string;
 }
 
+const authStartLimiter = rateLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  limit: 10,
+  keyGenerator: (c) =>
+    c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
+    c.req.header("x-real-ip") ??
+    "unknown",
+});
+
+const authCallbackLimiter = rateLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  limit: 5,
+  keyGenerator: (c) =>
+    c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
+    c.req.header("x-real-ip") ??
+    "unknown",
+});
+
+const authLogoutLimiter = rateLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  limit: 10,
+  keyGenerator: (c) =>
+    c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
+    c.req.header("x-real-ip") ??
+    "unknown",
+});
+
 export function createAuthRoutes(db: Database, config: AuthConfig) {
   const auth = new Hono();
 
+  // GET /auth/me — must be registered before /:provider to avoid shadowing
+  auth.get("/me", (c) => {
+    const token = getCookie(c, "__session");
+    if (!token) {
+      return c.json({ authenticated: false });
+    }
+
+    const user = getSessionUser(db, token);
+    if (!user) {
+      deleteCookie(c, "__session", { path: "/" });
+      return c.json({ authenticated: false });
+    }
+
+    return c.json({ authenticated: true, user });
+  });
+
+  // POST /auth/logout — must be registered before /:provider to avoid shadowing
+  auth.post("/logout", authLogoutLimiter, (c) => {
+    const token = getCookie(c, "__session");
+    if (token) {
+      deleteSession(db, token);
+    }
+    deleteCookie(c, "__session", { path: "/" });
+    return c.json({ ok: true });
+  });
+
   // GET /auth/:provider — start OAuth flow
-  auth.get("/:provider", (c) => {
+  auth.get("/:provider", authStartLimiter, (c) => {
     const providerName = c.req.param("provider");
     const provider = getProvider(providerName);
     if (!provider) {
@@ -39,21 +84,15 @@ export function createAuthRoutes(db: Database, config: AuthConfig) {
     if (providerName === "google") {
       const codeVerifier = generateCodeVerifier();
       authState.codeVerifier = codeVerifier;
-      authUrl = (provider as Google).createAuthorizationURL(
-        state,
-        codeVerifier,
-        ["openid", "email", "profile"],
-      );
+      authUrl = (provider as Google).createAuthorizationURL(state, codeVerifier, [
+        "openid",
+        "email",
+        "profile",
+      ]);
     } else if (providerName === "apple") {
-      authUrl = (provider as Apple).createAuthorizationURL(state, [
-        "name",
-        "email",
-      ]);
+      authUrl = (provider as Apple).createAuthorizationURL(state, ["name", "email"]);
     } else if (providerName === "facebook") {
-      authUrl = (provider as Facebook).createAuthorizationURL(state, [
-        "email",
-        "public_profile",
-      ]);
+      authUrl = (provider as Facebook).createAuthorizationURL(state, ["email", "public_profile"]);
     } else {
       return c.json({ error: "Unsupported provider" }, 400);
     }
@@ -71,39 +110,13 @@ export function createAuthRoutes(db: Database, config: AuthConfig) {
   });
 
   // GET /auth/:provider/callback — handle OAuth callback
-  auth.get("/:provider/callback", async (c) => {
+  auth.get("/:provider/callback", authCallbackLimiter, async (c) => {
     return handleCallback(c, db, config);
   });
 
   // POST /auth/:provider/callback — Apple uses POST for callback
-  auth.post("/:provider/callback", async (c) => {
+  auth.post("/:provider/callback", authCallbackLimiter, async (c) => {
     return handleCallback(c, db, config);
-  });
-
-  // POST /auth/logout
-  auth.post("/logout", (c) => {
-    const token = getCookie(c, "__session");
-    if (token) {
-      deleteSession(db, token);
-    }
-    deleteCookie(c, "__session", { path: "/" });
-    return c.json({ ok: true });
-  });
-
-  // GET /auth/me
-  auth.get("/me", (c) => {
-    const token = getCookie(c, "__session");
-    if (!token) {
-      return c.json({ authenticated: false });
-    }
-
-    const user = getSessionUser(db, token);
-    if (!user) {
-      deleteCookie(c, "__session", { path: "/" });
-      return c.json({ authenticated: false });
-    }
-
-    return c.json({ authenticated: true, user });
   });
 
   return auth;
@@ -156,10 +169,7 @@ async function handleCallback(c: any, db: Database, config: AuthConfig) {
   let tokens: any;
   try {
     if (providerName === "google") {
-      tokens = await (provider as Google).validateAuthorizationCode(
-        code,
-        authState.codeVerifier!,
-      );
+      tokens = await (provider as Google).validateAuthorizationCode(code, authState.codeVerifier!);
     } else if (providerName === "apple") {
       tokens = await (provider as Apple).validateAuthorizationCode(code);
     } else if (providerName === "facebook") {
@@ -177,10 +187,9 @@ async function handleCallback(c: any, db: Database, config: AuthConfig) {
   let providerUserId = "";
 
   if (providerName === "google") {
-    const res = await fetch(
-      "https://openidconnect.googleapis.com/v1/userinfo",
-      { headers: { Authorization: `Bearer ${tokens.accessToken()}` } },
-    );
+    const res = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+      headers: { Authorization: `Bearer ${tokens.accessToken()}` },
+    });
     const profile = (await res.json()) as any;
     providerUserId = profile.sub;
     email = profile.email ?? "";
@@ -198,9 +207,7 @@ async function handleCallback(c: any, db: Database, config: AuthConfig) {
         try {
           const userInfo = JSON.parse(body.user as string);
           name =
-            [userInfo.name?.firstName, userInfo.name?.lastName]
-              .filter(Boolean)
-              .join(" ") || "";
+            [userInfo.name?.firstName, userInfo.name?.lastName].filter(Boolean).join(" ") || "";
         } catch {
           // ignore
         }
@@ -222,14 +229,7 @@ async function handleCallback(c: any, db: Database, config: AuthConfig) {
   }
 
   // Upsert user and create session.
-  const userId = upsertUser(
-    db,
-    providerName,
-    providerUserId,
-    email,
-    name,
-    avatarUrl,
-  );
+  const userId = upsertUser(db, providerName, providerUserId, email, name, avatarUrl);
   const sessionToken = createSession(db, userId, config.sessionMaxAge);
 
   setCookie(c, "__session", sessionToken, {
