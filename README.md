@@ -117,11 +117,23 @@ Open [http://localhost:5173/referencer/](http://localhost:5173/referencer/).
 
 ### Full stack
 
-1. Start the collab server: `cd collab-server && npm install && npm start` (port 4444)
-2. Start the backend: `cd backend && bun install && bun run dev` (port 5000)
-3. Start the frontend: `cd frontend && bun install && bun run dev` (port 5173)
+Install all dependencies, then start all three services with a single command:
+
+```bash
+bun install            # install concurrently at root
+bun run install:all    # install deps for collab-server, backend, and frontend
+bun run dev            # start all three services in parallel
+```
+
+This runs the collab server (port 4444), backend (port 5000), and frontend (port 5173) together with labeled, colored output. `Ctrl+C` stops all of them.
 
 The Vite dev server proxies `/auth` and `/api` to the backend on port 5000, and `/yjs` WebSocket connections to the collab server on port 4444.
+
+You can also start each service individually in separate terminals:
+
+1. Collab server: `cd collab-server && npm install && npm start` (port 4444)
+2. Backend: `cd backend && bun install && bun run dev` (port 5000)
+3. Frontend: `cd frontend && bun install && bun run dev` (port 5173)
 
 ### Production build
 
