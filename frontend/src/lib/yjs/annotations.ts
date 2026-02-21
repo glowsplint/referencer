@@ -110,8 +110,13 @@ export function getLayersArray(doc: Y.Doc): Y.Array<Y.Map<unknown>> {
   return doc.getArray("layers")
 }
 
-/** Seed default layers into the Y.Doc if the layers array is empty */
-export function seedDefaultLayers(doc: Y.Doc, defaultLayers: Layer[]): void {
+/** Seed default layers into the Y.Doc if the layers array is empty.
+ *
+ * When EditorViews are provided, uses proper y-prosemirror position mapping
+ * to correctly encode ProseMirror positions as Yjs RelativePositions.
+ * This requires editors to be mounted with content already loaded.
+ */
+export function seedDefaultLayers(doc: Y.Doc, defaultLayers: Layer[], editorViews?: EditorViewMap): void {
   const yLayers = getLayersArray(doc)
   if (yLayers.length > 0) return // Already seeded
 
@@ -128,8 +133,8 @@ export function seedDefaultLayers(doc: Y.Doc, defaultLayers: Layer[]): void {
         const yH = new Y.Map<unknown>()
         yH.set("id", h.id)
         yH.set("editorIndex", h.editorIndex)
-        yH.set("fromRel", encodeRelativePosition(doc, h.editorIndex, h.from))
-        yH.set("toRel", encodeRelativePosition(doc, h.editorIndex, h.to))
+        yH.set("fromRel", encodeRelativePosition(doc, h.editorIndex, h.from, editorViews))
+        yH.set("toRel", encodeRelativePosition(doc, h.editorIndex, h.to, editorViews))
         yH.set("text", h.text)
         yH.set("annotation", h.annotation)
         yH.set("type", h.type)
@@ -142,12 +147,12 @@ export function seedDefaultLayers(doc: Y.Doc, defaultLayers: Layer[]): void {
         const yA = new Y.Map<unknown>()
         yA.set("id", a.id)
         yA.set("fromEditorIndex", a.from.editorIndex)
-        yA.set("fromRel", encodeRelativePosition(doc, a.from.editorIndex, a.from.from))
-        yA.set("fromToRel", encodeRelativePosition(doc, a.from.editorIndex, a.from.to))
+        yA.set("fromRel", encodeRelativePosition(doc, a.from.editorIndex, a.from.from, editorViews))
+        yA.set("fromToRel", encodeRelativePosition(doc, a.from.editorIndex, a.from.to, editorViews))
         yA.set("fromText", a.from.text)
         yA.set("toEditorIndex", a.to.editorIndex)
-        yA.set("toRel", encodeRelativePosition(doc, a.to.editorIndex, a.to.from))
-        yA.set("toToRel", encodeRelativePosition(doc, a.to.editorIndex, a.to.to))
+        yA.set("toRel", encodeRelativePosition(doc, a.to.editorIndex, a.to.from, editorViews))
+        yA.set("toToRel", encodeRelativePosition(doc, a.to.editorIndex, a.to.to, editorViews))
         yA.set("toText", a.to.text)
         yA.set("arrowStyle", a.arrowStyle ?? "solid")
         yArrows.push([yA])
@@ -159,8 +164,8 @@ export function seedDefaultLayers(doc: Y.Doc, defaultLayers: Layer[]): void {
         const yU = new Y.Map<unknown>()
         yU.set("id", u.id)
         yU.set("editorIndex", u.editorIndex)
-        yU.set("fromRel", encodeRelativePosition(doc, u.editorIndex, u.from))
-        yU.set("toRel", encodeRelativePosition(doc, u.editorIndex, u.to))
+        yU.set("fromRel", encodeRelativePosition(doc, u.editorIndex, u.from, editorViews))
+        yU.set("toRel", encodeRelativePosition(doc, u.editorIndex, u.to, editorViews))
         yU.set("text", u.text)
         yUnderlines.push([yU])
       }

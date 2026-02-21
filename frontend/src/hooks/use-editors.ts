@@ -29,6 +29,7 @@ export function useEditors() {
     () => Array.from({ length: DEFAULT_EDITOR_COUNT }, (_, i) => i)
   )
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null)
+  const [mountedEditorCount, setMountedEditorCount] = useState(0)
   const editorsRef = useRef<Map<number, Editor>>(new Map())
   const passageCounterRef = useRef(DEFAULT_EDITOR_COUNT)
   const editorCountRef = useRef(DEFAULT_EDITOR_COUNT)
@@ -114,6 +115,7 @@ export function useEditors() {
 
   const handleEditorMount = useCallback((index: number, editor: Editor) => {
     editorsRef.current.set(index, editor)
+    setMountedEditorCount((prev) => prev + 1)
     if (index === 0) {
       setActiveEditor(editor)
     }
@@ -155,6 +157,7 @@ export function useEditors() {
 
   return {
     editorCount,
+    mountedEditorCount,
     activeEditor,
     editorWidths,
     sectionVisibility,

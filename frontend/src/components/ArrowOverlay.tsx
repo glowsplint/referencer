@@ -506,8 +506,9 @@ export function ArrowOverlay({
         if (isHidden) {
           hitPath.style.pointerEvents = "none"
         } else {
-          // Restore React-controlled pointer-events (arrow tool → "none", other tools → "auto")
-          hitPath.style.pointerEvents = activeTool === "arrow" ? "none" : "auto"
+          // Only allow interaction when in selection or eraser mode — other tools
+          // (comments, highlight, underline, arrow) need clicks to pass through to editors
+          hitPath.style.pointerEvents = (activeTool === "selection" || activeTool === "eraser") ? "auto" : "none"
         }
       }
       selectionPathRefs.current.get(data.arrowId)?.setAttribute("d", result.d)
@@ -810,7 +811,7 @@ export function ArrowOverlay({
                 strokeWidth={12}
                 fill="none"
                 style={{
-                  pointerEvents: activeTool === "arrow" ? "none" : "auto",
+                  pointerEvents: (activeTool === "selection" || activeTool === "eraser") ? "auto" : "none",
                   cursor: isEraser ? "inherit" : "pointer",
                 }}
                 onMouseEnter={(e) => {

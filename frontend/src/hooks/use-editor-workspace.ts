@@ -12,8 +12,9 @@ import { useYjsLayers } from "./use-yjs-layers"
 import { useYjsUndo } from "./use-yjs-undo"
 import { useUnifiedUndo } from "./use-unified-undo"
 import { useYjsOffline } from "./use-yjs-offline"
-import { seedDefaultLayers } from "@/lib/yjs/annotations"
+import { seedDefaultLayers, type EditorViewMap } from "@/lib/yjs/annotations"
 import { createDefaultLayers } from "@/data/default-workspace"
+import type { Editor } from "@tiptap/react"
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
@@ -39,18 +40,30 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   useYjsOffline(yjs.doc, workspaceId ?? "default")
 
   // Seed default layers when Y.Doc is ready and empty.
-  // Wait for the Yjs provider to report synced (or connection failure)
-  // before seeding so we don't overwrite layers already stored on the server.
+  // Wait for BOTH Yjs sync AND all editors to mount so that:
+  // 1. We don't overwrite layers already stored on the server (sync gate)
+  // 2. EditorViews are available for proper ProseMirror<->Yjs position mapping
+  // 3. Editor content is loaded (child content-seeding effects run before this parent effect)
   const seededRef = useRef(false)
+  const allEditorsMounted = rawEditorsHook.mountedEditorCount >= rawEditorsHook.editorCount
   useEffect(() => {
-    if (!yjs.doc || seededRef.current || !yjs.synced) return
+    if (!yjs.doc || seededRef.current || !yjs.synced || !allEditorsMounted) return
     seededRef.current = true
     try {
-      seedDefaultLayers(yjs.doc, createDefaultLayers())
+      const views: EditorViewMap = new Map()
+      const editorsMap = trackedEditorsHook.editorsRef.current
+      if (editorsMap) {
+        for (const [index, editor] of editorsMap as Map<number, Editor>) {
+          if (editor && !editor.isDestroyed && editor.view) {
+            views.set(index, editor.view)
+          }
+        }
+      }
+      seedDefaultLayers(yjs.doc, createDefaultLayers(), views)
     } catch (err) {
       console.error("Failed to seed default layers:", err)
     }
-  }, [yjs.doc, yjs.synced])
+  }, [yjs.doc, yjs.synced, allEditorsMounted, trackedEditorsHook.editorsRef])
 
   // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {
