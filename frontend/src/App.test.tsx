@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { AuthProvider } from "./contexts/AuthContext"
 import { App } from "./App"
 
 // Mock the breakpoint hook for mobile detection
@@ -150,7 +151,7 @@ beforeEach(() => {
 
 describe("App", () => {
   it("renders the button pane with expected buttons", () => {
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
 
     expect(screen.getByTestId("menuButton")).toBeInTheDocument()
     expect(screen.getByTestId("settingsButton")).toBeInTheDocument()
@@ -158,41 +159,41 @@ describe("App", () => {
   })
 
   it("renders the title bar and toolbar", () => {
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
 
     expect(screen.getByTestId("title-bar")).toBeInTheDocument()
     expect(screen.getByTestId("toolbar")).toBeInTheDocument()
   })
 
   it("renders editor panes based on editorWidths", () => {
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
 
     const panes = screen.getAllByTestId("editor-pane")
     expect(panes).toHaveLength(1)
   })
 
   it("does not render management pane when closed", () => {
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(screen.queryByTestId("managementPane")).not.toBeInTheDocument()
   })
 
   it("renders management pane when open", () => {
     mockWorkspace.isManagementPaneOpen = true
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(screen.getByTestId("managementPane")).toBeInTheDocument()
   })
 
   it("renders multiple editor panes when editorWidths has multiple entries", () => {
     mockWorkspace.editorWidths = [50, 50]
     mockWorkspace.editorKeys = [1, 2]
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     const panes = screen.getAllByTestId("editor-pane")
     expect(panes).toHaveLength(2)
   })
 
   it("does not pass mouse handlers to EditorPane when not locked", () => {
     mockWorkspace.settings.isLocked = false
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(capturedEditorPaneProps[0].onMouseDown).toBeUndefined()
     expect(capturedEditorPaneProps[0].onMouseMove).toBeUndefined()
     expect(capturedEditorPaneProps[0].onMouseUp).toBeUndefined()
@@ -200,7 +201,7 @@ describe("App", () => {
 
   it("passes mouse handlers to EditorPane when locked", () => {
     mockWorkspace.settings.isLocked = true
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(capturedEditorPaneProps[0].onMouseDown).toBeDefined()
     expect(capturedEditorPaneProps[0].onMouseMove).toBeDefined()
     expect(capturedEditorPaneProps[0].onMouseUp).toBeDefined()
@@ -210,7 +211,7 @@ describe("App", () => {
     mockWorkspace.layers = [
       { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [], arrows: [], underlines: [] },
     ]
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
 
     expect(capturedEditorPaneProps[0].layers).toEqual(mockWorkspace.layers)
     expect(capturedEditorPaneProps[0].selection).toBeNull()
@@ -221,14 +222,14 @@ describe("App", () => {
     mockWorkspace.layers = [
       { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
   })
 
   it("does not render AnnotationPanel when locked but no annotations", () => {
     mockWorkspace.settings.isLocked = true
     mockWorkspace.layers = []
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
   })
 
@@ -237,7 +238,7 @@ describe("App", () => {
     mockWorkspace.layers = [
       { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument()
   })
 
@@ -246,7 +247,7 @@ describe("App", () => {
     mockWorkspace.layers = [
       { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
 
     expect(capturedAnnotationPanelProps).not.toBeNull()
     expect(capturedAnnotationPanelProps!.onAnnotationChange).toBeDefined()
@@ -260,7 +261,7 @@ describe("App", () => {
     mockWorkspace.layers = [
       { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument()
   })
 
@@ -270,14 +271,14 @@ describe("App", () => {
     mockWorkspace.layers = [
       { id: "layer-1", name: "Layer 1", color: "#fca5a5", visible: true, arrowStyle: "solid", highlights: [{ id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "note", type: "comment" }], arrows: [], underlines: [] },
     ]
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
     expect(capturedAnnotationPanelProps).not.toBeNull()
     expect(capturedAnnotationPanelProps!.sectionVisibility).toEqual([true])
   })
 
   it("does not pass annotation props to EditorPane", () => {
     mockWorkspace.settings.isLocked = true
-    render(<App />)
+    render(<AuthProvider><App /></AuthProvider>)
 
     expect(capturedEditorPaneProps[0].editingAnnotation).toBeUndefined()
     expect(capturedEditorPaneProps[0].onAnnotationChange).toBeUndefined()
@@ -291,25 +292,25 @@ describe("App", () => {
     })
 
     it("hides ButtonPane on mobile", () => {
-      render(<App />)
+      render(<AuthProvider><App /></AuthProvider>)
       expect(screen.queryByTestId("buttonPane")).not.toBeInTheDocument()
     })
 
     it("shows MobileInfoDialog on mobile", () => {
-      render(<App />)
+      render(<AuthProvider><App /></AuthProvider>)
       expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument()
       expect(screen.getByText("Best on Desktop")).toBeInTheDocument()
     })
 
     it("does not show MobileInfoDialog on desktop", () => {
       mockIsMobile = false
-      render(<App />)
+      render(<AuthProvider><App /></AuthProvider>)
       expect(screen.queryByTestId("mobileInfoDialog")).not.toBeInTheDocument()
     })
 
     it("dismisses MobileInfoDialog when button is clicked", async () => {
       const user = userEvent.setup()
-      render(<App />)
+      render(<AuthProvider><App /></AuthProvider>)
 
       expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument()
       await user.click(screen.getByTestId("mobileInfoDismissButton"))
@@ -318,25 +319,25 @@ describe("App", () => {
 
     it("passes isLocked=true to EditorPane on mobile (read-only)", () => {
       mockWorkspace.settings.isLocked = false
-      render(<App />)
+      render(<AuthProvider><App /></AuthProvider>)
       expect(capturedEditorPaneProps[0].isLocked).toBe(true)
     })
 
     it("does not pass mouse handlers to EditorPane on mobile even when locked", () => {
       mockWorkspace.settings.isLocked = true
-      render(<App />)
+      render(<AuthProvider><App /></AuthProvider>)
       expect(capturedEditorPaneProps[0].onMouseDown).toBeUndefined()
       expect(capturedEditorPaneProps[0].onMouseMove).toBeUndefined()
       expect(capturedEditorPaneProps[0].onMouseUp).toBeUndefined()
     })
 
     it("does not pass onContentUpdate to EditorPane on mobile", () => {
-      render(<App />)
+      render(<AuthProvider><App /></AuthProvider>)
       expect(capturedEditorPaneProps[0].onContentUpdate).toBeUndefined()
     })
 
     it("hides StatusBar on mobile", () => {
-      render(<App />)
+      render(<AuthProvider><App /></AuthProvider>)
       expect(screen.queryByTestId("status-bar")).not.toBeInTheDocument()
     })
   })

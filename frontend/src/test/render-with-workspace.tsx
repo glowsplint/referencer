@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react"
 import { vi } from "vitest"
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext"
+import { AuthProvider } from "@/contexts/AuthContext"
 import type { WorkspaceContextValue } from "@/contexts/WorkspaceContext"
 
 export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}): WorkspaceContextValue {
@@ -79,7 +80,9 @@ export function renderWithWorkspace(
   const workspace = makeMockWorkspace(overrides)
   return {
     ...render(
-      <WorkspaceProvider value={workspace}>{ui}</WorkspaceProvider>
+      <AuthProvider>
+        <WorkspaceProvider value={workspace}>{ui}</WorkspaceProvider>
+      </AuthProvider>
     ),
     workspace,
   }

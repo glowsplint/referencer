@@ -25,6 +25,9 @@ export default defineConfig({
       "/s": {
         target: "http://localhost:5000",
       },
+      "/auth": {
+        target: "http://localhost:5000",
+      },
     },
   },
   test: {
