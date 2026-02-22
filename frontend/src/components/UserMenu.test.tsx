@@ -11,7 +11,7 @@ const mockUser = {
   avatarUrl: "",
 };
 
-vi.mock("@/hooks/use-auth", () => ({
+vi.mock("@/hooks/data/use-auth", () => ({
   useAuth: () => ({
     user: mockUser,
     isAuthenticated: true,

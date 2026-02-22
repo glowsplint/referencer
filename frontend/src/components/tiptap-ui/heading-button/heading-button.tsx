@@ -11,7 +11,7 @@ import { HEADING_SHORTCUT_KEYS, useHeading } from "@/components/tiptap-ui/headin
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button";
 import { Button } from "@/components/tiptap-ui-primitive/button";
 import { Badge } from "@/components/tiptap-ui-primitive/badge";
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 
 export interface HeadingButtonProps extends Omit<ButtonProps, "type">, UseHeadingConfig {
   /**

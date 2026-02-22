@@ -1,8 +1,8 @@
 // React context that provides recording and playback state to descendant
 // components. Typed from the useRecordings and usePlayback hook return values.
 import { createContext, useContext } from "react";
-import type { useRecordings } from "@/hooks/use-recordings";
-import type { usePlayback } from "@/hooks/use-playback";
+import type { useRecordings } from "@/hooks/recording/use-recordings";
+import type { usePlayback } from "@/hooks/recording/use-playback";
 
 export type RecordingContextValue = {
   recordings: ReturnType<typeof useRecordings>;

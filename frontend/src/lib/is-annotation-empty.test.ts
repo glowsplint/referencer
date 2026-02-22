@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-
-// Inline copy of the function from App.tsx (module-level, not exported)
-function isAnnotationEmpty(html: string): boolean {
-  return !html?.replace(/<[^>]*>/g, "").trim();
-}
+import { isAnnotationEmpty } from "./is-annotation-empty";
 
 describe("isAnnotationEmpty", () => {
   it("returns true for empty string", () => {

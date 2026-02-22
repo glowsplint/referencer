@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { ColorPicker } from "./ColorPicker";
-import { TAILWIND_300_COLORS } from "@/types/editor";
+import { TAILWIND_300_COLORS } from "@/constants/colors";
 
 // Mock react-colorful: HexColorPicker is canvas-based (no DOM in jsdom),
 // and HexColorInput needs to behave as a controlled input with onChange.

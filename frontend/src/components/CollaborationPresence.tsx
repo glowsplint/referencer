@@ -3,14 +3,13 @@
 // The local user's avatar is shown with a click-to-edit name feature.
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { WebsocketProvider } from "y-websocket";
+import { STORAGE_KEYS } from "@/constants/storage-keys";
 
 interface UserPresence {
   clientId: number;
   name: string;
   color: string;
 }
-
-const LOCALSTORAGE_NAME_KEY = "referencer-user-name";
 
 // Predefined colors for collaborators
 const PRESENCE_COLORS = [
@@ -38,7 +37,7 @@ function getInitials(name: string): string {
 }
 
 function getLocalUserName(clientId: number): string {
-  const saved = localStorage.getItem(LOCALSTORAGE_NAME_KEY);
+  const saved = localStorage.getItem(STORAGE_KEYS.USER_NAME);
   if (saved && saved.trim()) return saved;
   return `User ${clientId % 100}`;
 }
@@ -124,7 +123,7 @@ export function CollaborationPresence({
       return;
     }
 
-    localStorage.setItem(LOCALSTORAGE_NAME_KEY, trimmed);
+    localStorage.setItem(STORAGE_KEYS.USER_NAME, trimmed);
     provider.awareness.setLocalStateField("user", {
       name: trimmed,
       color: localUser?.color ?? getPresenceColor(provider.awareness.clientID),

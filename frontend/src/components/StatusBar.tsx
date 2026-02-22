@@ -2,7 +2,7 @@
 // (e.g., "PDF exported successfully"). Shows a green checkmark icon for success
 // messages. Collapses to a minimal height when there is no active message.
 import { CheckCircle2 } from "lucide-react";
-import type { StatusMessage } from "@/hooks/use-status-message";
+import type { StatusMessage } from "@/hooks/ui/use-status-message";
 
 interface StatusBarProps {
   message: StatusMessage | null;

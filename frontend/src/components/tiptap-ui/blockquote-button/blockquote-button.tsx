@@ -5,7 +5,7 @@ import type { UseBlockquoteConfig } from "@/components/tiptap-ui/blockquote-butt
 import { BLOCKQUOTE_SHORTCUT_KEY, useBlockquote } from "@/components/tiptap-ui/blockquote-button";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 
 // --- Lib ---
 import { parseShortcutKeys } from "@/lib/tiptap-utils";

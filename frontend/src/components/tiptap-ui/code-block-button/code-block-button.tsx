@@ -1,7 +1,7 @@
 import { forwardRef, useCallback } from "react";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 
 // --- Lib ---
 import { parseShortcutKeys } from "@/lib/tiptap-utils";

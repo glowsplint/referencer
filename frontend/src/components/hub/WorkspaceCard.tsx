@@ -1,6 +1,12 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2 } from "lucide-react";
-import { formatRelativeTime } from "./format-relative-time";
+import {
+  MoreHorizontal,
+  ExternalLink,
+  Pencil,
+  Copy,
+  Trash2,
+} from "lucide-react";
+import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
 interface WorkspaceCardProps {

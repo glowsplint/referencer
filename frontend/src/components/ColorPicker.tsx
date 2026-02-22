@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Plus, Check } from "lucide-react";
 import { HexColorPicker, HexColorInput } from "react-colorful";
-import { TAILWIND_300_COLORS } from "@/types/editor";
+import { TAILWIND_300_COLORS } from "@/constants/colors";
 import { hexToRgb, rgbToHex } from "@/lib/color";
 
 interface ColorPickerProps {

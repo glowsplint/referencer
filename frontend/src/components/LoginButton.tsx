@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/tiptap-ui-primitive/tooltip/tooltip";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/data/use-auth";
 import type { AuthProvider } from "@/lib/auth-client";
 
 const providers: { id: AuthProvider; label: string }[] = [

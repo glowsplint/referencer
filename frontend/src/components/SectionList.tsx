@@ -5,7 +5,7 @@ import { Eye, EyeOff, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DRAG_TYPE_SECTION } from "@/constants/drag-types";
-import { useInlineEdit } from "@/hooks/use-inline-edit";
+import { useInlineEdit } from "@/hooks/ui/use-inline-edit";
 
 interface SectionListProps {
   editorCount: number;

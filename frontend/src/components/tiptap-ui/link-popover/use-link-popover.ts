@@ -3,7 +3,7 @@ import type { Editor } from "@tiptap/react";
 import i18n from "@/i18n";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 
 // --- Icons ---
 import { LinkIcon } from "@/components/tiptap-icons/link-icon";

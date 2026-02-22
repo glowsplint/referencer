@@ -3,9 +3,9 @@ import { type Editor } from "@tiptap/react";
 import { useTranslation } from "react-i18next";
 
 // --- Hooks ---
-import { useMenuNavigation } from "@/hooks/use-menu-navigation";
-import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
+import { useMenuNavigation } from "@/hooks/ui/use-menu-navigation";
+import { useIsBreakpoint } from "@/hooks/ui/use-is-breakpoint";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 
 // --- Icons ---
 import { BanIcon } from "@/components/tiptap-icons/ban-icon";

@@ -11,14 +11,14 @@ import type { Editor } from "@tiptap/react";
 import type * as Y from "yjs";
 
 import { createSimpleEditorExtensions } from "./extensions";
-import { useUnifiedDecorations } from "@/hooks/use-unified-decorations";
-import { useLayerUnderlineDecorations } from "@/hooks/use-layer-underline-decorations";
-import { useSelectionHighlight } from "@/hooks/use-selection-highlight";
-import { useSimilarTextHighlight } from "@/hooks/use-similar-text-highlight";
-import { useSelectionScroll } from "@/hooks/use-selection-decoration";
-import { useWordHover } from "@/hooks/use-word-hover";
-import { useEditorArrows } from "@/hooks/use-editor-arrows";
-import { usePositionMapping } from "@/hooks/use-position-mapping";
+import { useUnifiedDecorations } from "@/hooks/annotations/use-unified-decorations";
+import { useLayerUnderlineDecorations } from "@/hooks/annotations/use-layer-underline-decorations";
+import { useSelectionHighlight } from "@/hooks/annotations/use-selection-highlight";
+import { useSimilarTextHighlight } from "@/hooks/annotations/use-similar-text-highlight";
+import { useSelectionScroll } from "@/hooks/selection/use-selection-decoration";
+import { useWordHover } from "@/hooks/selection/use-word-hover";
+import { useEditorArrows } from "@/hooks/annotations/use-editor-arrows";
+import { usePositionMapping } from "@/hooks/annotations/use-position-mapping";
 import { SelectionRingOverlay } from "@/components/SelectionRingOverlay";
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor";
 

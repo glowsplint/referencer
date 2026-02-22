@@ -1,5 +1,5 @@
 import type { Layer } from "@/types/editor";
-import { migrateAnnotation } from "../utils/migrateAnnotation";
+import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
 
 interface PrintAnnotationsProps {
   layers: Layer[];

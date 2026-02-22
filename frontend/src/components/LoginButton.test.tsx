@@ -5,7 +5,7 @@ import { LoginButton } from "./LoginButton";
 
 const mockLogin = vi.fn();
 
-vi.mock("@/hooks/use-auth", () => ({
+vi.mock("@/hooks/data/use-auth", () => ({
   useAuth: () => ({
     user: null,
     isAuthenticated: false,

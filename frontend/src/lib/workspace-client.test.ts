@@ -8,31 +8,38 @@ import {
   duplicateWorkspace,
 } from "./workspace-client";
 
+vi.mock("@/lib/api-client", () => ({
+  apiFetch: vi.fn(),
+  apiPost: vi.fn(),
+  apiPatch: vi.fn(),
+  apiDelete: vi.fn(),
+}));
+
+import { apiFetch, apiPost, apiPatch, apiDelete } from "@/lib/api-client";
+const mockApiFetch = vi.mocked(apiFetch);
+const mockApiPost = vi.mocked(apiPost);
+const mockApiPatch = vi.mocked(apiPatch);
+const mockApiDelete = vi.mocked(apiDelete);
+
 describe("workspace-client", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
   describe("fetchWorkspaces", () => {
-    it("calls /api/workspaces with credentials and returns data", async () => {
+    it("calls /api/workspaces and returns data", async () => {
       const mockData = [
         { workspaceId: "id-1", title: "Test", createdAt: "2024-01-01", updatedAt: "2024-01-01" },
       ];
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockData),
-      } as Response);
+      mockApiFetch.mockResolvedValue(mockData);
 
       const result = await fetchWorkspaces();
-      expect(fetch).toHaveBeenCalledWith("/api/workspaces", { credentials: "include" });
+      expect(mockApiFetch).toHaveBeenCalledWith("/api/workspaces");
       expect(result).toEqual(mockData);
     });
 
-    it("throws when response is not ok", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({
-        ok: false,
-        json: () => Promise.resolve({}),
-      } as Response);
+    it("throws when apiFetch throws", async () => {
+      mockApiFetch.mockRejectedValue(new Error("Failed to fetch workspaces"));
 
       await expect(fetchWorkspaces()).rejects.toThrow("Failed to fetch workspaces");
     });
@@ -40,78 +47,60 @@ describe("workspace-client", () => {
 
   describe("createWorkspace", () => {
     it("sends POST with correct body", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+      mockApiPost.mockResolvedValue(undefined);
 
       await createWorkspace("ws-123", "My Workspace");
-      expect(fetch).toHaveBeenCalledWith("/api/workspaces", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: "ws-123", title: "My Workspace" }),
-        credentials: "include",
+      expect(mockApiPost).toHaveBeenCalledWith("/api/workspaces", {
+        workspaceId: "ws-123",
+        title: "My Workspace",
       });
     });
 
     it("sends POST without title when not provided", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+      mockApiPost.mockResolvedValue(undefined);
 
       await createWorkspace("ws-123");
-      expect(fetch).toHaveBeenCalledWith("/api/workspaces", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: "ws-123" }),
-        credentials: "include",
+      expect(mockApiPost).toHaveBeenCalledWith("/api/workspaces", {
+        workspaceId: "ws-123",
+        title: undefined,
       });
     });
   });
 
   describe("renameWorkspace", () => {
     it("sends PATCH with correct body", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+      mockApiPatch.mockResolvedValue(undefined);
 
       await renameWorkspace("ws-123", "New Title");
-      expect(fetch).toHaveBeenCalledWith("/api/workspaces/ws-123", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: "New Title" }),
-        credentials: "include",
-      });
+      expect(mockApiPatch).toHaveBeenCalledWith("/api/workspaces/ws-123", { title: "New Title" });
     });
   });
 
   describe("touchWorkspace", () => {
     it("sends PATCH to correct URL", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+      mockApiPatch.mockResolvedValue(undefined);
 
       await touchWorkspace("ws-123");
-      expect(fetch).toHaveBeenCalledWith("/api/workspaces/ws-123/touch", {
-        method: "PATCH",
-        credentials: "include",
-      });
+      expect(mockApiPatch).toHaveBeenCalledWith("/api/workspaces/ws-123/touch");
     });
   });
 
   describe("deleteWorkspace", () => {
     it("sends DELETE to correct URL", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+      mockApiDelete.mockResolvedValue(undefined);
 
       await deleteWorkspace("ws-123");
-      expect(fetch).toHaveBeenCalledWith("/api/workspaces/ws-123", {
-        method: "DELETE",
-        credentials: "include",
-      });
+      expect(mockApiDelete).toHaveBeenCalledWith("/api/workspaces/ws-123");
     });
   });
 
   describe("duplicateWorkspace", () => {
     it("sends POST with correct body", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+      mockApiPost.mockResolvedValue(undefined);
 
       await duplicateWorkspace("source-id", "new-id");
-      expect(fetch).toHaveBeenCalledWith("/api/workspaces/source-id/duplicate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newWorkspaceId: "new-id" }),
-        credentials: "include",
+      expect(mockApiPost).toHaveBeenCalledWith("/api/workspaces/source-id/duplicate", {
+        newWorkspaceId: "new-id",
       });
     });
   });

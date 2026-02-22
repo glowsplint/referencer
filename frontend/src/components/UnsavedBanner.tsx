@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/data/use-auth";
 
 export function UnsavedBanner() {
   const { isAuthenticated, isLoading } = useAuth();

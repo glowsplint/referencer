@@ -1,6 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { fetchAuthStatus, loginWith, logout } from "./auth-client";
 
+vi.mock("@/lib/api-client", () => ({
+  apiFetch: vi.fn(),
+  apiUrl: (path: string) => path,
+}));
+
+import { apiFetch } from "@/lib/api-client";
+const mockApiFetch = vi.mocked(apiFetch);
+
 describe("auth-client", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -12,21 +20,15 @@ describe("auth-client", () => {
         authenticated: true,
         user: { id: "1", email: "test@test.com", name: "Test", avatarUrl: "" },
       };
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockResponse),
-      } as Response);
+      mockApiFetch.mockResolvedValue(mockResponse);
 
       const result = await fetchAuthStatus();
-      expect(fetch).toHaveBeenCalledWith("/auth/me", { credentials: "include" });
+      expect(mockApiFetch).toHaveBeenCalledWith("/auth/me");
       expect(result).toEqual(mockResponse);
     });
 
     it("returns unauthenticated when fetch fails", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({
-        ok: false,
-        json: () => Promise.resolve({}),
-      } as Response);
+      mockApiFetch.mockRejectedValue(new Error("fail"));
 
       const result = await fetchAuthStatus();
       expect(result).toEqual({ authenticated: false });
@@ -59,16 +61,10 @@ describe("auth-client", () => {
 
   describe("logout", () => {
     it("calls POST /auth/logout", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve({ ok: true }),
-      } as Response);
+      mockApiFetch.mockResolvedValue(undefined);
 
       await logout();
-      expect(fetch).toHaveBeenCalledWith("/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      expect(mockApiFetch).toHaveBeenCalledWith("/auth/logout", { method: "POST" });
     });
   });
 });
