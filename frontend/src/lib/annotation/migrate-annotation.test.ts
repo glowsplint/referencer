@@ -19,9 +19,7 @@ describe("migrateAnnotation", () => {
   });
 
   it("converts empty lines to <p><br></p>", () => {
-    expect(migrateAnnotation("line1\n\nline2")).toBe(
-      "<p>line1</p><p><br></p><p>line2</p>",
-    );
+    expect(migrateAnnotation("line1\n\nline2")).toBe("<p>line1</p><p><br></p><p>line2</p>");
   });
 
   it("returns HTML with leading whitespace before tag as-is", () => {

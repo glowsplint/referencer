@@ -15,10 +15,7 @@ export function apiUrl(path: string): string {
   return `${API_URL}${path}`;
 }
 
-export async function apiFetch<T = unknown>(
-  path: string,
-  options: RequestInit = {},
-): Promise<T> {
+export async function apiFetch<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(apiUrl(path), {
     credentials: "include",
     ...options,
@@ -32,10 +29,7 @@ export async function apiFetch<T = unknown>(
   return res.json();
 }
 
-export async function apiPost<T = unknown>(
-  path: string,
-  body?: unknown,
-): Promise<T> {
+export async function apiPost<T = unknown>(path: string, body?: unknown): Promise<T> {
   return apiFetch<T>(path, {
     method: "POST",
     ...(body !== undefined && {
@@ -45,10 +39,7 @@ export async function apiPost<T = unknown>(
   });
 }
 
-export async function apiPatch<T = unknown>(
-  path: string,
-  body?: unknown,
-): Promise<T> {
+export async function apiPatch<T = unknown>(path: string, body?: unknown): Promise<T> {
   return apiFetch<T>(path, {
     method: "PATCH",
     ...(body !== undefined && {

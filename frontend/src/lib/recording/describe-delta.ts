@@ -14,11 +14,7 @@ export function describeDelta(
     if (key.startsWith("layer:")) {
       const id = key.slice("layer:".length);
       const name = layers.find((l) => l.id === id)?.name ?? "Unknown";
-      parts.push(
-        visible
-          ? t("recording.showLayer", { name })
-          : t("recording.hideLayer", { name }),
-      );
+      parts.push(visible ? t("recording.showLayer", { name }) : t("recording.hideLayer", { name }));
     } else if (key.startsWith("section:")) {
       const idx = Number(key.slice("section:".length));
       parts.push(

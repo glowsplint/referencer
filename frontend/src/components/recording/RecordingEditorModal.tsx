@@ -18,7 +18,11 @@ export function RecordingEditorModal({ recordingId, onClose }: RecordingEditorMo
   if (!recording) return null;
 
   const describe = (delta: Record<string, boolean>) =>
-    describeDelta(delta, layers, t as unknown as (key: string, opts?: Record<string, unknown>) => string);
+    describeDelta(
+      delta,
+      layers,
+      t as unknown as (key: string, opts?: Record<string, unknown>) => string,
+    );
 
   const handleMoveStep = (fromIdx: number, direction: "up" | "down") => {
     const toIdx = direction === "up" ? fromIdx - 1 : fromIdx + 1;
@@ -58,9 +62,7 @@ export function RecordingEditorModal({ recordingId, onClose }: RecordingEditorMo
           </div>
 
           {recording.steps.length === 0 ? (
-            <p className="text-xs text-muted-foreground px-2 py-2">
-              {t("recording.noRecordings")}
-            </p>
+            <p className="text-xs text-muted-foreground px-2 py-2">{t("recording.noRecordings")}</p>
           ) : (
             recording.steps.map((step, idx) => (
               <div
@@ -150,9 +152,7 @@ export function RecordingEditorModal({ recordingId, onClose }: RecordingEditorMo
                 {t("recording.instant")}
               </button>
               <button
-                onClick={() =>
-                  rec.updateRecordingSettings(recordingId, { transitionType: "fade" })
-                }
+                onClick={() => rec.updateRecordingSettings(recordingId, { transitionType: "fade" })}
                 className={`px-2 py-0.5 rounded text-xs ${
                   recording.transitionType === "fade"
                     ? "bg-accent text-accent-foreground"

@@ -1,5 +1,9 @@
 export { useAnnotationToolMode } from "./use-annotation-tool-mode";
-export type { AnnotationToolConfig, AnnotationItem, UseAnnotationToolModeOptions } from "./use-annotation-tool-mode";
+export type {
+  AnnotationToolConfig,
+  AnnotationItem,
+  UseAnnotationToolModeOptions,
+} from "./use-annotation-tool-mode";
 export { useCommentMode } from "./use-comment-mode";
 export type { UseCommentModeOptions } from "./use-comment-mode";
 export { useDrawingMode } from "./use-drawing-mode";

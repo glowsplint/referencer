@@ -165,7 +165,10 @@ describe("useAnnotationToolMode", () => {
     });
 
     expect(addLayer).toHaveBeenCalled();
-    expect(addItem).toHaveBeenCalledWith("auto-layer-1", expect.objectContaining({ text: "hello" }));
+    expect(addItem).toHaveBeenCalledWith(
+      "auto-layer-1",
+      expect.objectContaining({ text: "hello" }),
+    );
   });
 
   it("does nothing when addLayer fails (returns empty string)", () => {
@@ -343,9 +346,7 @@ describe("useAnnotationToolMode", () => {
       layers: [
         {
           id: "layer-1",
-          items: [
-            { id: "item-1", editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" },
-          ],
+          items: [{ id: "item-1", editorIndex: 0, from: 1, to: 5, text: "hello", annotation: "" }],
         },
       ],
     });
