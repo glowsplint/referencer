@@ -47,10 +47,7 @@ export function captureVisibilitySnapshot(
 }
 
 // Helper: compute delta between two snapshots
-export function computeDelta(
-  prev: VisibilitySnapshot,
-  curr: VisibilitySnapshot,
-): VisibilityDelta {
+export function computeDelta(prev: VisibilitySnapshot, curr: VisibilitySnapshot): VisibilityDelta {
   const delta: VisibilityDelta = {};
 
   // Compare layers
@@ -312,10 +309,7 @@ export function useRecordings(
   );
 
   const updateRecordingSettings = useCallback(
-    (
-      id: string,
-      settings: { globalDelayMs?: number; transitionType?: TransitionType },
-    ) => {
+    (id: string, settings: { globalDelayMs?: number; transitionType?: TransitionType }) => {
       if (!doc) return;
       updateRecordingSettingsInDoc(doc, id, settings);
     },

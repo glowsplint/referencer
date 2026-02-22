@@ -93,10 +93,7 @@ export function createAuthRoutes() {
     } else if (providerName === "apple") {
       authUrl = (provider as Apple).createAuthorizationURL(state, ["name", "email"]);
     } else if (providerName === "facebook") {
-      authUrl = (provider as Facebook).createAuthorizationURL(state, [
-        "email",
-        "public_profile",
-      ]);
+      authUrl = (provider as Facebook).createAuthorizationURL(state, ["email", "public_profile"]);
     } else {
       return c.json({ error: "Unsupported provider" }, 400);
     }
@@ -178,10 +175,7 @@ async function handleCallback(c: any, config: AuthConfig) {
   let tokens: any;
   try {
     if (providerName === "google") {
-      tokens = await (provider as Google).validateAuthorizationCode(
-        code,
-        authState.codeVerifier!,
-      );
+      tokens = await (provider as Google).validateAuthorizationCode(code, authState.codeVerifier!);
     } else if (providerName === "apple") {
       tokens = await (provider as Apple).validateAuthorizationCode(code);
     } else if (providerName === "facebook") {

@@ -11,14 +11,7 @@ interface HubPageProps {
 
 export function HubPage({ navigate }: HubPageProps) {
   const { isAuthenticated, isLoading: authLoading, login } = useAuth();
-  const {
-    workspaces,
-    isLoading: wsLoading,
-    create,
-    rename,
-    remove,
-    duplicate,
-  } = useWorkspaces();
+  const { workspaces, isLoading: wsLoading, create, rename, remove, duplicate } = useWorkspaces();
 
   const handleTryWithoutSignIn = () => {
     const id = crypto.randomUUID();
@@ -39,8 +32,7 @@ export function HubPage({ navigate }: HubPageProps) {
           <span className="text-lg font-semibold">Referencer</span>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          {!authLoading &&
-            (isAuthenticated ? <UserMenu /> : <LoginButton />)}
+          {!authLoading && (isAuthenticated ? <UserMenu /> : <LoginButton />)}
         </div>
       </header>
 
@@ -50,12 +42,10 @@ export function HubPage({ navigate }: HubPageProps) {
           /* Guest hero */
           <div className="flex flex-col items-center justify-center h-full px-4">
             <div className="max-w-md text-center space-y-6">
-              <h1 className="text-4xl font-bold tracking-tight">
-                Referencer
-              </h1>
+              <h1 className="text-4xl font-bold tracking-tight">Referencer</h1>
               <p className="text-muted-foreground text-lg">
-                Annotate, highlight, and connect passages side by side. A
-                collaborative workspace for close reading.
+                Annotate, highlight, and connect passages side by side. A collaborative workspace
+                for close reading.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Button
@@ -66,11 +56,7 @@ export function HubPage({ navigate }: HubPageProps) {
                 >
                   Try without signing in
                 </Button>
-                <Button
-                  size="lg"
-                  onClick={() => login("google")}
-                  data-testid="heroSignIn"
-                >
+                <Button size="lg" onClick={() => login("google")} data-testid="heroSignIn">
                   Sign in
                 </Button>
               </div>

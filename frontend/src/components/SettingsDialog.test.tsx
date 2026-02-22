@@ -101,18 +101,12 @@ describe("SettingsDialog", () => {
 
   it("renders status bar switch with correct checked state", () => {
     renderDialog({ showStatusBar: true });
-    expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute(
-      "data-state",
-      "checked",
-    );
+    expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute("data-state", "checked");
   });
 
   it("renders status bar switch as unchecked when disabled", () => {
     renderDialog({ showStatusBar: false });
-    expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute(
-      "data-state",
-      "unchecked",
-    );
+    expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute("data-state", "unchecked");
   });
 
   it("calls toggleShowStatusBar when status bar switch is clicked", () => {

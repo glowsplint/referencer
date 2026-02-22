@@ -116,7 +116,6 @@ export function AnnotationPanel({
     return map;
   }, [positions]);
 
-   
   const containerWidth = containerRef.current?.offsetWidth ?? 0;
 
   // Always render the wrapper div to reserve panel width in the flex layout.

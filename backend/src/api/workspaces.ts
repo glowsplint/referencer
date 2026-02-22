@@ -21,10 +21,7 @@ workspaces.get("/", async (c) => {
     const items = await listUserWorkspaces(supabase, user.id);
     return c.json(items);
   } catch (err) {
-    return c.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      500,
-    );
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });
 
@@ -40,18 +37,10 @@ workspaces.post("/", async (c) => {
     }
 
     const supabase = c.get("supabase");
-    await createUserWorkspace(
-      supabase,
-      user.id,
-      body.workspaceId,
-      body.title ?? "",
-    );
+    await createUserWorkspace(supabase, user.id, body.workspaceId, body.title ?? "");
     return c.json({ ok: true }, 201);
   } catch (err) {
-    return c.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      500,
-    );
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });
 
@@ -71,10 +60,7 @@ workspaces.patch("/:id", async (c) => {
     await renameUserWorkspace(supabase, user.id, workspaceId, body.title);
     return c.json({ ok: true });
   } catch (err) {
-    return c.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      500,
-    );
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });
 
@@ -89,10 +75,7 @@ workspaces.patch("/:id/touch", async (c) => {
     await touchUserWorkspace(supabase, user.id, workspaceId);
     return c.json({ ok: true });
   } catch (err) {
-    return c.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      500,
-    );
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });
 
@@ -107,10 +90,7 @@ workspaces.delete("/:id", async (c) => {
     await deleteUserWorkspace(supabase, user.id, workspaceId);
     return c.json({ ok: true });
   } catch (err) {
-    return c.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      500,
-    );
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });
 
@@ -130,10 +110,7 @@ workspaces.post("/:id/duplicate", async (c) => {
     await duplicateWorkspace(supabase, user.id, sourceId, body.newWorkspaceId);
     return c.json({ ok: true }, 201);
   } catch (err) {
-    return c.json(
-      { error: err instanceof Error ? err.message : String(err) },
-      500,
-    );
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });
 

@@ -47,11 +47,7 @@ app.get("/s/:code", handleResolveShare());
 
 export default {
   fetch: app.fetch,
-  async scheduled(
-    _event: ScheduledEvent,
-    env: Env["Bindings"],
-    _ctx: ExecutionContext,
-  ) {
+  async scheduled(_event: ScheduledEvent, env: Env["Bindings"], _ctx: ExecutionContext) {
     const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_KEY);
     await cleanExpiredSessions(supabase);
   },

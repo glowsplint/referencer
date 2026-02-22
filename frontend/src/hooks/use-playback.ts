@@ -2,11 +2,7 @@
 // visibility deltas, applying snapshots to the editor, and autoplay.
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import type {
-  Recording,
-  VisibilitySnapshot,
-  VisibilityDelta,
-} from "@/types/recording";
+import type { Recording, VisibilitySnapshot, VisibilityDelta } from "@/types/recording";
 
 // ---------------------------------------------------------------------------
 // Pure helpers (exported for testing)
@@ -91,10 +87,7 @@ export function usePlayback(
   // Apply snapshot whenever step changes ----------------------------------------
   useEffect(() => {
     if (!isPlaying || !activeRecording) return;
-    const { snapshot, warnings } = computeSnapshotAtStep(
-      activeRecording,
-      currentStepIndex,
-    );
+    const { snapshot, warnings } = computeSnapshotAtStep(activeRecording, currentStepIndex);
     setHasWarnings(warnings.length > 0);
     applyVisibilitySnapshot(snapshot);
   }, [isPlaying, activeRecording, currentStepIndex, applyVisibilitySnapshot]);

@@ -18,7 +18,7 @@ app.use(
   cors({
     origin: (origin, c) => c.env.ALLOWED_ORIGIN || origin || "*",
     credentials: true,
-  })
+  }),
 );
 
 app.get("/health", (c) => c.json({ status: "ok" }));

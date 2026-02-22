@@ -16,12 +16,7 @@ interface RenameDialogProps {
   onRename: (title: string) => Promise<void>;
 }
 
-export function RenameDialog({
-  open,
-  onOpenChange,
-  currentTitle,
-  onRename,
-}: RenameDialogProps) {
+export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: RenameDialogProps) {
   const [title, setTitle] = useState(currentTitle);
 
   useEffect(() => {
@@ -35,16 +30,10 @@ export function RenameDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className="sm:max-w-sm"
-        data-testid="renameDialog"
-      >
+      <DialogContent showCloseButton={false} className="sm:max-w-sm" data-testid="renameDialog">
         <DialogHeader>
           <DialogTitle>Rename Workspace</DialogTitle>
-          <DialogDescription>
-            Enter a new name for this workspace.
-          </DialogDescription>
+          <DialogDescription>Enter a new name for this workspace.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <input
@@ -56,11 +45,7 @@ export function RenameDialog({
             data-testid="renameInput"
           />
           <DialogFooter className="mt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button type="submit" disabled={!title.trim()}>

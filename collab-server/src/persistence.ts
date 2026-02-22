@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 export async function loadSnapshot(
   url: string,
   key: string,
-  roomName: string
+  roomName: string,
 ): Promise<Uint8Array | null> {
   const supabase = createClient(url, key);
   const { data, error } = await supabase
@@ -25,7 +25,7 @@ export async function saveSnapshot(
   url: string,
   key: string,
   roomName: string,
-  state: Uint8Array
+  state: Uint8Array,
 ): Promise<void> {
   const supabase = createClient(url, key);
   // Encode as base64 for Supabase bytea column
@@ -40,6 +40,6 @@ export async function saveSnapshot(
       state: encoded,
       updated_at: new Date().toISOString(),
     },
-    { onConflict: "room_name" }
+    { onConflict: "room_name" },
   );
 }

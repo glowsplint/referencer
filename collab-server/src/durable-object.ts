@@ -62,8 +62,7 @@ export class YjsRoom extends DurableObject<Env> {
 
     // Load room name if not set
     if (!this.roomName) {
-      this.roomName =
-        (await this.ctx.storage.get<string>("room-name")) || "default";
+      this.roomName = (await this.ctx.storage.get<string>("room-name")) || "default";
     }
 
     // Try to load from DO storage first (primary)
@@ -76,7 +75,7 @@ export class YjsRoom extends DurableObject<Env> {
         const snapshot = await loadSnapshot(
           this.env.SUPABASE_URL,
           this.env.SUPABASE_SERVICE_KEY,
-          this.roomName
+          this.roomName,
         );
         if (snapshot) {
           Y.applyUpdate(this.doc, snapshot);
@@ -84,7 +83,7 @@ export class YjsRoom extends DurableObject<Env> {
       } catch (err) {
         console.error(
           `[collab-do] failed to load snapshot from Supabase for ${this.roomName}:`,
-          err
+          err,
         );
       }
     }
@@ -96,10 +95,7 @@ export class YjsRoom extends DurableObject<Env> {
     }
   }
 
-  async webSocketMessage(
-    ws: WebSocket,
-    message: ArrayBuffer | string
-  ): Promise<void> {
+  async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string): Promise<void> {
     if (typeof message === "string") return;
     const data = new Uint8Array(message);
     if (data.length === 0) return;
@@ -124,7 +120,7 @@ export class YjsRoom extends DurableObject<Env> {
   private handleSyncMessage(
     ws: WebSocket,
     decoder: decoding.Decoder,
-    rawMessage: Uint8Array
+    rawMessage: Uint8Array,
   ): void {
     if (!this.doc) return;
 
@@ -166,7 +162,7 @@ export class YjsRoom extends DurableObject<Env> {
   private handleAwarenessMessage(
     ws: WebSocket,
     decoder: decoding.Decoder,
-    rawMessage: Uint8Array
+    rawMessage: Uint8Array,
   ): void {
     // Read the awareness data (writeVarUint8Array format)
     const update = decoding.readVarUint8Array(decoder);
@@ -189,7 +185,7 @@ export class YjsRoom extends DurableObject<Env> {
     encoding.writeVarUint(encoder, MSG_AWARENESS);
     encoding.writeVarUint8Array(
       encoder,
-      awarenessProtocol.encodeAwarenessUpdate(this.awareness, clients)
+      awarenessProtocol.encodeAwarenessUpdate(this.awareness, clients),
     );
     ws.send(encoding.toUint8Array(encoder));
   }
@@ -254,8 +250,7 @@ export class YjsRoom extends DurableObject<Env> {
   private async saveToSupabase(): Promise<void> {
     if (!this.doc) return;
     if (!this.roomName) {
-      this.roomName =
-        (await this.ctx.storage.get<string>("room-name")) || null;
+      this.roomName = (await this.ctx.storage.get<string>("room-name")) || null;
     }
     if (!this.roomName) return;
 
@@ -265,13 +260,10 @@ export class YjsRoom extends DurableObject<Env> {
         this.env.SUPABASE_URL,
         this.env.SUPABASE_SERVICE_KEY,
         this.roomName,
-        state
+        state,
       );
     } catch (err) {
-      console.error(
-        `[collab-do] failed to save snapshot to Supabase for ${this.roomName}:`,
-        err
-      );
+      console.error(`[collab-do] failed to save snapshot to Supabase for ${this.roomName}:`, err);
     }
   }
 }

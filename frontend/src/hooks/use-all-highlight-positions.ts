@@ -43,7 +43,6 @@ export function useAllHighlightPositions(
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) {
-       
       setPositions([]);
       return;
     }

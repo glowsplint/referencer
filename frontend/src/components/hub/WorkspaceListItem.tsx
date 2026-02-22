@@ -1,11 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import {
-  MoreHorizontal,
-  ExternalLink,
-  Pencil,
-  Copy,
-  Trash2,
-} from "lucide-react";
+import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2 } from "lucide-react";
 import { formatRelativeTime } from "./format-relative-time";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
@@ -30,9 +24,7 @@ export function WorkspaceListItem({
       onClick={onOpen}
       data-testid={`workspaceListItem-${workspace.workspaceId}`}
     >
-      <span className="font-medium text-sm truncate flex-1">
-        {workspace.title || "Untitled"}
-      </span>
+      <span className="font-medium text-sm truncate flex-1">{workspace.title || "Untitled"}</span>
       <span className="text-xs text-muted-foreground mr-4 shrink-0">
         {formatRelativeTime(workspace.updatedAt)}
       </span>

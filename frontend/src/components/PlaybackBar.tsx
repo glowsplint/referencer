@@ -3,14 +3,7 @@
 // and keyboard shortcuts (arrows, space, escape).
 import { useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  SkipBack,
-  SkipForward,
-  Play,
-  Pause,
-  X,
-  AlertTriangle,
-} from "lucide-react";
+import { SkipBack, SkipForward, Play, Pause, X, AlertTriangle } from "lucide-react";
 import {
   Tooltip,
   TooltipTrigger,
@@ -131,7 +124,10 @@ export function PlaybackBar() {
       <div className="w-px h-4 bg-border" />
 
       {/* Step counter */}
-      <span className="text-xs text-muted-foreground tabular-nums" data-testid="playbackStepCounter">
+      <span
+        className="text-xs text-muted-foreground tabular-nums"
+        data-testid="playbackStepCounter"
+      >
         {t("recording.stepOf", { current: displayCurrent, total: displayTotal })}
       </span>
 

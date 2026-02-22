@@ -82,7 +82,7 @@ export function EditorPane({
   const extensions = useMemo(
     () => createSimpleEditorExtensions({ fragment: fragment ?? undefined }),
     // Fragment identity is stable per editor pane lifecycle
-     
+
     [fragment],
   );
   const wrapperRef = useRef<HTMLDivElement>(null);

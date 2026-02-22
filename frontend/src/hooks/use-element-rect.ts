@@ -97,7 +97,6 @@ export function useElementRect({
 
   useEffect(() => {
     if (!enabled) {
-       
       setRect(initialRect);
       return;
     }
