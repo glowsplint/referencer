@@ -16,7 +16,7 @@ interface UseUnderlineModeOptions {
   activeLayerId: string | null;
   addLayer: () => string;
   layers: { id: string; underlines: LayerUnderline[] }[];
-  addUnderline: (layerId: string, underline: Omit<LayerUnderline, "id">) => string;
+  addUnderline: (layerId: string, underline: Omit<LayerUnderline, "id" | "visible">) => string;
   removeUnderline: (layerId: string, underlineId: string) => void;
   showUnderlineToasts: boolean;
   setStatus: (msg: StatusMessage) => void;

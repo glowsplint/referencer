@@ -3,9 +3,6 @@
 // (selection, arrow, highlight, comments, underline, eraser), and layout/lock
 // toggles. Tool buttons are disabled when the editor is unlocked or read-only.
 import { useState, useCallback, useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { LoginButton } from "./LoginButton";
-import { UserMenu } from "./UserMenu";
 import { useTranslation } from "react-i18next";
 import {
   Columns2,
@@ -34,6 +31,7 @@ import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { FAQDialog } from "./FAQDialog";
 import { SettingsDialog } from "./SettingsDialog";
 import { ArrowStylePicker } from "./ArrowStylePicker";
+import { RecordingControls } from "./RecordingControls";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import type { ActiveTool, ArrowStyle } from "@/types/editor";
 
@@ -120,9 +118,8 @@ export function ButtonPane() {
     toggleShowHighlightToasts,
     toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
+    toggleShowStatusBar,
   } = useWorkspace();
-
-  const { isAuthenticated, isLoading } = useAuth();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
@@ -282,6 +279,9 @@ export function ButtonPane() {
         );
       })}
       <div className="w-6 border-t border-border" role="separator" />
+      {/* Recording controls */}
+      <RecordingControls />
+      <div className="w-6 border-t border-border" role="separator" />
       {/* Settings group */}
       <Tooltip placement="right">
         <TooltipTrigger asChild>
@@ -328,11 +328,9 @@ export function ButtonPane() {
         toggleOverscrollEnabled={toggleOverscrollEnabled}
         hideOffscreenArrows={settings.hideOffscreenArrows}
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
+        showStatusBar={settings.showStatusBar}
+        toggleShowStatusBar={toggleShowStatusBar}
       />
-      {/* Auth section - pushed to bottom */}
-      <div className="mt-auto">
-        {isLoading ? null : isAuthenticated ? <UserMenu /> : <LoginButton />}
-      </div>
     </div>
   );
 }

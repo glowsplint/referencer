@@ -25,7 +25,7 @@ export default defineConfig({
         target: backendUrl,
         changeOrigin: true,
       },
-      "/s": {
+      "/s/": {
         target: backendUrl,
       },
       "/auth": {

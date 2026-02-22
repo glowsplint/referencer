@@ -39,6 +39,7 @@ export function useEditorArrows(
     for (const layer of layers) {
       if (!layer.visible) continue;
       for (const arrow of layer.arrows) {
+        if (arrow.visible === false) continue;
         // Only within-editor arrows (both endpoints in this editor)
         if (arrow.from.editorIndex !== editorIndex) continue;
         if (arrow.to.editorIndex !== editorIndex) continue;

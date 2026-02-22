@@ -7,13 +7,14 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import "./i18n";
 import "./index.css";
 import "./print.css";
-import App from "./App.tsx";
+import "./styles/editor.css";
+import { AppRouter } from "./AppRouter";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
       <AuthProvider>
-        <App />
+        <AppRouter />
       </AuthProvider>
     </ErrorBoundary>
   </StrictMode>,

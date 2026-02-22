@@ -147,6 +147,7 @@ export function seedDefaultLayers(
         yH.set("text", h.text);
         yH.set("annotation", h.annotation);
         yH.set("type", h.type);
+        yH.set("visible", h.visible ?? true);
         yHighlights.push([yH]);
       }
       yLayer.set("highlights", yHighlights);
@@ -170,6 +171,7 @@ export function seedDefaultLayers(
         yA.set("toToRel", encodeRelativePosition(doc, a.to.editorIndex, a.to.to, editorViews));
         yA.set("toText", a.to.text);
         yA.set("arrowStyle", a.arrowStyle ?? "solid");
+        yA.set("visible", a.visible ?? true);
         yArrows.push([yA]);
       }
       yLayer.set("arrows", yArrows);
@@ -182,6 +184,7 @@ export function seedDefaultLayers(
         yU.set("fromRel", encodeRelativePosition(doc, u.editorIndex, u.from, editorViews));
         yU.set("toRel", encodeRelativePosition(doc, u.editorIndex, u.to, editorViews));
         yU.set("text", u.text);
+        yU.set("visible", u.visible ?? true);
         yUnderlines.push([yU]);
       }
       yLayer.set("underlines", yUnderlines);
@@ -244,6 +247,7 @@ function readHighlights(
 
     const text = yH.get("text") as string;
     const annotation = (yH.get("annotation") as string) ?? "";
+    const lastEdited = (yH.get("lastEdited") as number) ?? undefined;
     highlights.push({
       id,
       editorIndex,
@@ -252,6 +256,8 @@ function readHighlights(
       text,
       annotation,
       type: (yH.get("type") as "highlight" | "comment") ?? "highlight",
+      lastEdited,
+      visible: (yH.get("visible") as boolean) ?? true,
     });
   }
 
@@ -305,6 +311,7 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>, editorViews?: EditorView
         text: yA.get("toText") as string,
       },
       arrowStyle: (yA.get("arrowStyle") as ArrowStyle) ?? "solid",
+      visible: (yA.get("visible") as boolean) ?? true,
     });
   }
 
@@ -343,6 +350,7 @@ function readUnderlines(
       from,
       to,
       text: yU.get("text") as string,
+      visible: (yU.get("visible") as boolean) ?? true,
     });
   }
 
@@ -418,7 +426,7 @@ export function toggleAllLayerVisibilityInDoc(doc: Y.Doc): void {
 export function addHighlightToDoc(
   doc: Y.Doc,
   layerId: string,
-  highlight: Omit<Highlight, "id">,
+  highlight: Omit<Highlight, "id" | "visible">,
   id: string,
   editorViews?: EditorViewMap,
 ): void {
@@ -436,6 +444,8 @@ export function addHighlightToDoc(
   yH.set("text", highlight.text);
   yH.set("annotation", highlight.annotation);
   yH.set("type", highlight.type);
+  yH.set("lastEdited", Date.now());
+  yH.set("visible", true);
   yHighlights.push([yH]);
 }
 
@@ -464,6 +474,7 @@ export function updateHighlightAnnotationInDoc(
     const yH = yHighlights.get(i);
     if (yH.get("id") === highlightId) {
       yH.set("annotation", annotation);
+      yH.set("lastEdited", Date.now());
       return;
     }
   }
@@ -481,7 +492,7 @@ export function clearLayerHighlightsInDoc(doc: Y.Doc, layerId: string): void {
 export function addArrowToDoc(
   doc: Y.Doc,
   layerId: string,
-  arrow: Omit<Arrow, "id">,
+  arrow: Omit<Arrow, "id" | "visible">,
   id: string,
   editorViews?: EditorViewMap,
 ): void {
@@ -505,6 +516,7 @@ export function addArrowToDoc(
   yA.set("toToRel", encodeRelativePosition(doc, arrow.to.editorIndex, arrow.to.to, editorViews));
   yA.set("toText", arrow.to.text);
   yA.set("arrowStyle", arrow.arrowStyle ?? "solid");
+  yA.set("visible", true);
   yArrows.push([yA]);
 }
 
@@ -550,7 +562,7 @@ export function clearLayerArrowsInDoc(doc: Y.Doc, layerId: string): void {
 export function addUnderlineToDoc(
   doc: Y.Doc,
   layerId: string,
-  underline: Omit<LayerUnderline, "id">,
+  underline: Omit<LayerUnderline, "id" | "visible">,
   id: string,
   editorViews?: EditorViewMap,
 ): void {
@@ -566,6 +578,7 @@ export function addUnderlineToDoc(
   );
   yU.set("toRel", encodeRelativePosition(doc, underline.editorIndex, underline.to, editorViews));
   yU.set("text", underline.text);
+  yU.set("visible", true);
   yUnderlines.push([yU]);
 }
 
@@ -587,5 +600,80 @@ export function clearLayerUnderlinesInDoc(doc: Y.Doc, layerId: string): void {
   const yUnderlines = result.yLayer.get("underlines") as Y.Array<Y.Map<unknown>>;
   if (yUnderlines.length > 0) {
     yUnderlines.delete(0, yUnderlines.length);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Annotation visibility toggles
+// ---------------------------------------------------------------------------
+
+export function toggleHighlightVisibilityInDoc(
+  doc: Y.Doc,
+  layerId: string,
+  highlightId: string,
+): void {
+  const result = findYLayer(doc, layerId);
+  if (!result) return;
+  const yHighlights = result.yLayer.get("highlights") as Y.Array<Y.Map<unknown>>;
+  for (let i = 0; i < yHighlights.length; i++) {
+    const yH = yHighlights.get(i);
+    if (yH.get("id") === highlightId) {
+      yH.set("visible", !(yH.get("visible") as boolean ?? true));
+      return;
+    }
+  }
+}
+
+export function toggleArrowVisibilityInDoc(
+  doc: Y.Doc,
+  layerId: string,
+  arrowId: string,
+): void {
+  const result = findYLayer(doc, layerId);
+  if (!result) return;
+  const yArrows = result.yLayer.get("arrows") as Y.Array<Y.Map<unknown>>;
+  for (let i = 0; i < yArrows.length; i++) {
+    const yA = yArrows.get(i);
+    if (yA.get("id") === arrowId) {
+      yA.set("visible", !(yA.get("visible") as boolean ?? true));
+      return;
+    }
+  }
+}
+
+export function toggleUnderlineVisibilityInDoc(
+  doc: Y.Doc,
+  layerId: string,
+  underlineId: string,
+): void {
+  const result = findYLayer(doc, layerId);
+  if (!result) return;
+  const yUnderlines = result.yLayer.get("underlines") as Y.Array<Y.Map<unknown>>;
+  for (let i = 0; i < yUnderlines.length; i++) {
+    const yU = yUnderlines.get(i);
+    if (yU.get("id") === underlineId) {
+      yU.set("visible", !(yU.get("visible") as boolean ?? true));
+      return;
+    }
+  }
+}
+
+export function setAnnotationVisibilityInDoc(
+  doc: Y.Doc,
+  layerId: string,
+  annotationType: "highlights" | "arrows" | "underlines",
+  annotationId: string,
+  visible: boolean,
+): void {
+  const result = findYLayer(doc, layerId);
+  if (!result) return;
+  const yArray = result.yLayer.get(annotationType) as Y.Array<Y.Map<unknown>>;
+  if (!yArray) return;
+  for (let i = 0; i < yArray.length; i++) {
+    const yItem = yArray.get(i);
+    if (yItem.get("id") === annotationId) {
+      yItem.set("visible", visible);
+      return;
+    }
   }
 }

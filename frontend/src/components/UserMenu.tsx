@@ -16,7 +16,7 @@ export function UserMenu() {
 
   return (
     <DropdownMenu.Root>
-      <Tooltip placement="right">
+      <Tooltip placement="bottom">
         <TooltipTrigger asChild>
           <DropdownMenu.Trigger asChild>
             <button
@@ -33,7 +33,7 @@ export function UserMenu() {
       </Tooltip>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          side="right"
+          side="bottom"
           sideOffset={8}
           className="z-50 min-w-[180px] rounded-lg border border-border bg-popover p-1 shadow-md"
           data-testid="userMenuDropdown"

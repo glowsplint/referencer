@@ -41,8 +41,8 @@ export function handleResolveShare() {
     }
 
     if (result.access === "readonly") {
-      return c.redirect(`${frontendUrl}/space/${result.workspaceId}?access=readonly`, 302);
+      return c.redirect(`${frontendUrl}/#/${result.workspaceId}?access=readonly`, 302);
     }
-    return c.redirect(`${frontendUrl}/space/${result.workspaceId}`, 302);
+    return c.redirect(`${frontendUrl}/#/${result.workspaceId}`, 302);
   };
 }

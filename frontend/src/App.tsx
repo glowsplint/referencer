@@ -10,6 +10,7 @@ import { ManagementPane } from "./components/ManagementPane";
 import { StatusBar } from "./components/StatusBar";
 import { Divider } from "./components/ui/Divider";
 import { TitleBar, SimpleEditorToolbar, EditorPane } from "./components/tiptap-templates/simple";
+import { UnsavedBanner } from "./components/UnsavedBanner";
 import { DEFAULT_PASSAGE_CONTENTS, PLACEHOLDER_CONTENT } from "./data/default-workspace";
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
@@ -27,15 +28,28 @@ import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/use-action-console";
 import { useIsBreakpoint } from "./hooks/use-is-breakpoint";
 import { useInlineEdit } from "./hooks/use-inline-edit";
+import { useWorkspaceAutosave } from "./hooks/use-workspace-autosave";
 import { ToastKbd } from "./components/ui/ToastKbd";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
+import { PrintAnnotations } from "./components/PrintAnnotations";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
+import { RecordingProvider } from "./contexts/RecordingContext";
+import { useRecordings } from "./hooks/use-recordings";
+import { usePlayback } from "./hooks/use-playback";
+import { PlaybackBar } from "./components/PlaybackBar";
+import { setAnnotationVisibilityInDoc } from "./lib/yjs/annotations";
+import { useCollapsedAnnotations } from "./hooks/use-collapsed-annotations";
 import type { EditingAnnotation } from "./types/editor";
+import type { VisibilitySnapshot } from "./types/recording";
+
+function isAnnotationEmpty(html: string): boolean {
+  return !html?.replace(/<[^>]*>/g, "").trim();
+}
 
 function PassageHeader({
   name,
@@ -72,24 +86,14 @@ function PassageHeader({
   );
 }
 
-// Extract workspace ID from hash-based route (e.g. "#/{uuid}?access=readonly").
-// Falls back to generating a new random UUID for fresh sessions.
-function getWorkspaceId(): string {
-  const hash = window.location.hash;
-  const hashPath = hash.replace(/^#\/?/, "").split("?")[0];
-  if (hashPath) return hashPath;
-  return crypto.randomUUID();
+interface AppProps {
+  workspaceId: string;
+  readOnly: boolean;
+  navigate: (hash: string) => void;
 }
 
-function getReadOnly(): boolean {
-  const hash = window.location.hash;
-  const qs = hash.includes("?") ? hash.slice(hash.indexOf("?")) : "";
-  return new URLSearchParams(qs).get("access") === "readonly";
-}
-
-export function App() {
-  const [workspaceId] = useState(getWorkspaceId);
-  const [readOnly] = useState(getReadOnly);
+export function App({ workspaceId, readOnly, navigate }: AppProps) {
+  useWorkspaceAutosave(workspaceId);
   const workspace = useEditorWorkspace(workspaceId, readOnly);
   const {
     settings,
@@ -136,11 +140,63 @@ export function App() {
     toggleManagementPane: workspace.toggleManagementPane,
   });
   useUndoRedoKeyboard(unifiedUndo);
+
+  // Recording & playback hooks
+  const recordingsHook = useRecordings(workspace.yjs.doc, workspace.layers, workspace.sectionVisibility);
+
+  const applyVisibilitySnapshot = useCallback(
+    (snapshot: VisibilitySnapshot) => {
+      // Apply layer visibility
+      for (const [layerId, visible] of Object.entries(snapshot.layers)) {
+        const layer = workspace.layers.find((l) => l.id === layerId);
+        if (layer && layer.visible !== visible) {
+          workspace.toggleLayerVisibility(layerId);
+        }
+      }
+      // Apply annotation visibility
+      if (workspace.yjs.doc) {
+        workspace.yjs.doc.transact(() => {
+          for (const [key, visible] of Object.entries(snapshot.annotations)) {
+            const parts = key.split(":");
+            const type = parts[0]; // "highlight", "arrow", "underline"
+            const layerId = parts[1];
+            const annotationId = parts.slice(2).join(":");
+            const yType =
+              type === "highlight" ? "highlights" : type === "arrow" ? "arrows" : "underlines";
+            setAnnotationVisibilityInDoc(
+              workspace.yjs.doc!,
+              layerId,
+              yType,
+              annotationId,
+              visible,
+            );
+          }
+        });
+      }
+      // Apply section visibility
+      for (const [idxStr, visible] of Object.entries(snapshot.sections)) {
+        const idx = Number(idxStr);
+        const currentVisible = workspace.sectionVisibility[idx] ?? true;
+        if (currentVisible !== visible) {
+          workspace.toggleSectionVisibility(idx);
+        }
+      }
+    },
+    [workspace],
+  );
+
+  const playbackHook = usePlayback(recordingsHook.recordings, applyVisibilitySnapshot);
+  const recordingContextValue = useMemo(
+    () => ({ recordings: recordingsHook, playback: playbackHook }),
+    [recordingsHook, playbackHook],
+  );
+
   const actionConsole = useActionConsole();
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
+  const { collapsedIds, toggleCollapse, collapseAll, expandAll } = useCollapsedAnnotations(workspaceId);
   const annotationBeforeEditRef = useRef<string>("");
   const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
 
@@ -299,7 +355,7 @@ export function App() {
 
   const handleAnnotationBlur = useCallback(
     (layerId: string, highlightId: string, annotation: string) => {
-      if (!annotation.trim()) {
+      if (isAnnotationEmpty(annotation)) {
         removeHighlight(layerId, highlightId);
       } else {
         const oldText = annotationBeforeEditRef.current;
@@ -347,8 +403,16 @@ export function App() {
     [layers, sectionVisibility],
   );
 
+  const handleCollapseAll = useCallback(() => {
+    const allCommentIds = layers.flatMap((l) =>
+      l.visible ? l.highlights.filter((h) => h.type === "comment").map((h) => h.id) : [],
+    );
+    collapseAll(allCommentIds);
+  }, [layers, collapseAll]);
+
   return (
     <WorkspaceProvider value={workspace}>
+      <RecordingProvider value={recordingContextValue}>
       <Toaster />
       <div className="flex flex-col h-screen overflow-hidden">
         <div className="flex flex-1 min-h-0">
@@ -356,9 +420,10 @@ export function App() {
           {!isMobile && isManagementPaneOpen && <ManagementPane />}
           <EditorContext.Provider value={{ editor: activeEditor }}>
             <div className="flex flex-col flex-1 min-w-0">
-              <TitleBar />
+              <TitleBar navigate={navigate} />
+              <UnsavedBanner />
               <SimpleEditorToolbar isLocked={settings.isLocked} />
-              {!isMobile && <StatusBar message={statusMessage} />}
+              {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
               <div className="flex flex-1 min-w-0 min-h-0">
                 <div
                   ref={containerRef}
@@ -468,9 +533,20 @@ export function App() {
                       onAnnotationClick={handleAnnotationClick}
                       isDarkMode={settings.isDarkMode}
                       sectionVisibility={sectionVisibility}
+                      collapsedIds={collapsedIds}
+                      onToggleCollapse={toggleCollapse}
+                      onCollapseAll={handleCollapseAll}
+                      onExpandAll={expandAll}
                     />
                   </ErrorBoundary>
                 )}
+                <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
+                  <PrintAnnotations
+                    layers={layers}
+                    sectionNames={workspace.sectionNames}
+                    sectionVisibility={sectionVisibility}
+                  />
+                </div>
               </div>
             </div>
           </EditorContext.Provider>
@@ -491,8 +567,9 @@ export function App() {
           }}
         />
       </div>
+      <PlaybackBar />
+      </RecordingProvider>
     </WorkspaceProvider>
   );
 }
 
-export default App;

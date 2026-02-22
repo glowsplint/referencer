@@ -19,7 +19,7 @@ export function LoginButton() {
 
   return (
     <Popover.Root>
-      <Tooltip placement="right">
+      <Tooltip placement="bottom">
         <TooltipTrigger asChild>
           <Popover.Trigger asChild>
             <button
@@ -34,7 +34,7 @@ export function LoginButton() {
       </Tooltip>
       <Popover.Portal>
         <Popover.Content
-          side="right"
+          side="bottom"
           sideOffset={8}
           className="z-50 rounded-lg border border-border bg-popover p-2 shadow-md"
           data-testid="loginPopover"

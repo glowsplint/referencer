@@ -22,6 +22,7 @@ describe("useSettings", () => {
       showHighlightToasts: true,
       overscrollEnabled: false,
       hideOffscreenArrows: false,
+      showStatusBar: true,
     });
   });
 
@@ -224,6 +225,7 @@ describe("useSettings", () => {
       showHighlightToasts: true,
       overscrollEnabled: false,
       hideOffscreenArrows: false,
+      showStatusBar: true,
     });
   });
 
@@ -260,6 +262,22 @@ describe("useSettings", () => {
       result.current.toggleHideOffscreenArrows();
     });
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
+  });
+
+  it("toggleShowStatusBar toggles showStatusBar", () => {
+    const { result } = renderHook(() => useSettings());
+
+    expect(result.current.settings.showStatusBar).toBe(true);
+
+    act(() => {
+      result.current.toggleShowStatusBar();
+    });
+    expect(result.current.settings.showStatusBar).toBe(false);
+
+    act(() => {
+      result.current.toggleShowStatusBar();
+    });
+    expect(result.current.settings.showStatusBar).toBe(true);
   });
 
   it("applies dark mode class on mount from persisted settings", () => {

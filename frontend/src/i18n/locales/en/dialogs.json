@@ -26,6 +26,10 @@
       "label": "Hide off-screen arrows",
       "description": "Completely hide arrows when either endpoint is scrolled out of view"
     },
+    "statusBar": {
+      "label": "Status bar",
+      "description": "Show the status bar below the toolbar"
+    },
     "language": {
       "label": "Language",
       "description": "Choose your preferred language"

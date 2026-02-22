@@ -43,6 +43,7 @@ export function useLayerUnderlineDecorations(
     for (const layer of layers) {
       if (!layer.visible) continue;
       for (const underline of layer.underlines) {
+        if (underline.visible === false) continue;
         if (underline.editorIndex !== editorIndex) continue;
         tryPushDecoration(decorations, underline.from, underline.to, layer.color);
       }
