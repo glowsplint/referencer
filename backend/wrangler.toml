@@ -8,7 +8,7 @@ crons = ["0 * * * *"]
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "placeholder"
+id = "8c948d37b14d4f0199076fc63d3de491"
 
 [vars]
 FRONTEND_URL = "https://referencer.pages.dev"

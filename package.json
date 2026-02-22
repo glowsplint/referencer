@@ -2,9 +2,8 @@
   "name": "referencer",
   "private": true,
   "scripts": {
-    "dev": "concurrently -k -n api,collab,frontend -c green,blue,yellow \"cd backend && npx wrangler dev\" \"cd collab-server && node server.mjs\" \"cd frontend && bun ./node_modules/vite/bin/vite.js\"",
+    "dev": "concurrently -k -n api,collab,frontend -c green,blue,yellow \"cd backend && npx wrangler dev\" \"cd collab-server && npx wrangler dev --port 8788\" \"cd frontend && bun ./node_modules/vite/bin/vite.js\"",
     "install:all": "bun install && cd collab-server && bun install && cd ../backend && bun install && cd ../frontend && bun install",
-    "dev:cf": "concurrently -k -n api,collab,frontend -c green,blue,yellow \"cd backend && npx wrangler dev\" \"cd collab-server && npx wrangler dev --port 8788\" \"cd frontend && bun ./node_modules/vite/bin/vite.js\"",
     "format": "bunx prettier --write .",
     "format:check": "bunx prettier --check ."
   },

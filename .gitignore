@@ -12,13 +12,7 @@ bun.lockb
 .claude/worktrees/
 .claude/settings.local.json
 
-# Database
-/data/referencer.db
-/data/referencer.db-wal
-/data/referencer.db-shm
-
-# Docker
-docker-compose.override.yml
+# Collab server data
 /collab-server/data/
 
 # Wrangler
