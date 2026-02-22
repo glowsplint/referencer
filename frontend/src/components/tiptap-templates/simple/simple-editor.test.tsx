@@ -98,25 +98,25 @@ vi.mock("@/components/tiptap-icons/link-icon", () => ({
 }));
 
 // Mock hooks
-vi.mock("@/hooks/use-is-breakpoint", () => ({
+vi.mock("@/hooks/ui/use-is-breakpoint", () => ({
   useIsBreakpoint: () => false,
 }));
-vi.mock("@/hooks/use-window-size", () => ({
+vi.mock("@/hooks/utilities/use-window-size", () => ({
   useWindowSize: () => ({ width: 1024, height: 768, offsetTop: 0, offsetLeft: 0, scale: 1 }),
 }));
-vi.mock("@/hooks/use-cursor-visibility", () => ({
+vi.mock("@/hooks/ui/use-cursor-visibility", () => ({
   useCursorVisibility: () => ({ x: 0, y: 0, width: 0, height: 0 }),
 }));
-vi.mock("@/hooks/use-unified-decorations", () => ({
+vi.mock("@/hooks/annotations/use-unified-decorations", () => ({
   useUnifiedDecorations: vi.fn(),
 }));
-vi.mock("@/hooks/use-selection-highlight", () => ({
+vi.mock("@/hooks/annotations/use-selection-highlight", () => ({
   useSelectionHighlight: vi.fn(),
 }));
-vi.mock("@/hooks/use-word-hover", () => ({
+vi.mock("@/hooks/selection/use-word-hover", () => ({
   useWordHover: vi.fn(),
 }));
-vi.mock("@/hooks/use-selection-decoration", () => ({
+vi.mock("@/hooks/selection/use-selection-decoration", () => ({
   useSelectionScroll: vi.fn(),
 }));
 // Mock tiptap extensions

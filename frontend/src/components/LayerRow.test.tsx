@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { LayerRow } from "./LayerRow";
-import { TAILWIND_300_COLORS } from "@/types/editor";
+import { TAILWIND_300_COLORS } from "@/constants/colors";
 
 import type { Layer, Highlight, Arrow } from "@/types/editor";
 

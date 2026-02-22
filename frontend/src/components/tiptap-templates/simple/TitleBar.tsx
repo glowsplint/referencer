@@ -8,7 +8,7 @@ import { ShareDialog } from "@/components/ShareDialog";
 import { CollaborationPresence } from "@/components/CollaborationPresence";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 interface TitleBarProps {

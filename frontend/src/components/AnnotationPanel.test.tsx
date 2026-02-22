@@ -3,10 +3,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AnnotationPanel } from "./AnnotationPanel";
 import type { Layer, EditingAnnotation } from "@/types/editor";
 import type { Editor } from "@tiptap/react";
-import { useAllHighlightPositions } from "@/hooks/use-all-highlight-positions";
+import { useAllHighlightPositions } from "@/hooks/annotations/use-all-highlight-positions";
 
 // Mock hooks and libs
-vi.mock("@/hooks/use-all-highlight-positions", () => ({
+vi.mock("@/hooks/annotations/use-all-highlight-positions", () => ({
   useAllHighlightPositions: vi.fn(() => [
     { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300 },
   ]),

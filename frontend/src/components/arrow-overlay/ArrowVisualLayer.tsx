@@ -4,7 +4,7 @@
 import { forwardRef } from "react";
 import type { CrossEditorArrow } from "./types";
 import { getArrowStyleAttrs } from "@/lib/arrow-styles";
-import { ARROWHEAD } from "@/constants/arrow";
+import { ARROWHEAD, ARROW_OPACITY } from "@/constants/arrow";
 
 interface ArrowVisualLayerProps {
   crossEditorArrows: CrossEditorArrow[];
@@ -25,8 +25,6 @@ interface ArrowVisualLayerProps {
   previewRectRef: React.RefObject<SVGRectElement | null>;
   previewMarkerPolygonRef: React.RefObject<SVGPolygonElement | null>;
 }
-
-const ARROW_OPACITY = 0.6;
 
 export const ArrowVisualLayer = forwardRef<SVGSVGElement, ArrowVisualLayerProps>(
   function ArrowVisualLayer(

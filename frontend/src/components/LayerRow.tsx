@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { ColorPicker } from "./ColorPicker";
 import { useState } from "react";
 import { DRAG_TYPE_LAYER } from "@/constants/drag-types";
-import { useInlineEdit } from "@/hooks/use-inline-edit";
+import { useInlineEdit } from "@/hooks/ui/use-inline-edit";
 
 import type { Layer } from "@/types/editor";
 

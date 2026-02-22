@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { ChevronDownIcon } from "@/components/tiptap-icons/chevron-down-icon";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 
 // --- Tiptap UI ---
 import { HeadingButton } from "@/components/tiptap-ui/heading-button";

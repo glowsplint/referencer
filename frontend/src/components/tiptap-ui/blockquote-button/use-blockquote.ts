@@ -6,7 +6,7 @@ import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 import i18n from "@/i18n";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 
 // --- Icons ---
 import { BlockquoteIcon } from "@/components/tiptap-icons/blockquote-icon";

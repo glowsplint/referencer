@@ -1,5 +1,5 @@
-import { useAuth } from "@/hooks/use-auth";
-import { useWorkspaces } from "@/hooks/use-workspaces";
+import { useAuth } from "@/hooks/data/use-auth";
+import { useWorkspaces } from "@/hooks/data/use-workspaces";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
 import { WorkspaceGrid } from "./WorkspaceGrid";

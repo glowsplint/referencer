@@ -24,9 +24,9 @@ import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
 import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 
-import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
-import { useWindowSize } from "@/hooks/use-window-size";
-import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
+import { useIsBreakpoint } from "@/hooks/ui/use-is-breakpoint";
+import { useWindowSize } from "@/hooks/utilities/use-window-size";
+import { useCursorVisibility } from "@/hooks/ui/use-cursor-visibility";
 
 // --- Toolbar content (private) ---
 

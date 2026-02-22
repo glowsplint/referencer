@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LayoutGrid, List, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { STORAGE_KEYS } from "@/constants/storage-keys";
 import { WorkspaceCard } from "./WorkspaceCard";
 import { WorkspaceListItem } from "./WorkspaceListItem";
 import { RenameDialog } from "./RenameDialog";
@@ -29,14 +30,14 @@ export function WorkspaceGrid({
   onDuplicate,
 }: WorkspaceGridProps) {
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
-    return (localStorage.getItem("hub-view-mode") as ViewMode) || "grid";
+    return (localStorage.getItem(STORAGE_KEYS.HUB_VIEW_MODE) as ViewMode) || "grid";
   });
   const [renameTarget, setRenameTarget] = useState<WorkspaceItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<WorkspaceItem | null>(null);
 
   const toggleView = (mode: ViewMode) => {
     setViewMode(mode);
-    localStorage.setItem("hub-view-mode", mode);
+    localStorage.setItem(STORAGE_KEYS.HUB_VIEW_MODE, mode);
   };
 
   const handleOpen = (id: string) => navigate(`#/${id}`);

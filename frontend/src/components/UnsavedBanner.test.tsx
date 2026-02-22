@@ -10,7 +10,7 @@ const mockAuth = {
   logout: vi.fn(),
 };
 
-vi.mock("@/hooks/use-auth", () => ({
+vi.mock("@/hooks/data/use-auth", () => ({
   useAuth: () => mockAuth,
 }));
 

@@ -6,8 +6,8 @@ import { type Editor } from "@tiptap/react";
 import i18n from "@/i18n";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
-import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
+import { useIsBreakpoint } from "@/hooks/ui/use-is-breakpoint";
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils";

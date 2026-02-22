@@ -6,7 +6,7 @@ import { forwardRef, useCallback } from "react";
 import { parseShortcutKeys } from "@/lib/tiptap-utils";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 
 // --- Tiptap UI ---
 import type { TextAlign, UseTextAlignConfig } from "@/components/tiptap-ui/text-align-button";

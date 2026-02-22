@@ -5,7 +5,7 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import type { Editor } from "@tiptap/react";
 import type { Layer, EditingAnnotation } from "@/types/editor";
-import { useAllHighlightPositions } from "@/hooks/use-all-highlight-positions";
+import { useAllHighlightPositions } from "@/hooks/annotations/use-all-highlight-positions";
 import { resolveAnnotationOverlaps } from "@/lib/resolve-annotation-overlaps";
 import { blendWithBackground } from "@/lib/color";
 import { AnnotationCard } from "./AnnotationCard";

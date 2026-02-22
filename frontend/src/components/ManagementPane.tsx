@@ -9,7 +9,7 @@ import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
 import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { useCustomColors } from "@/hooks/use-custom-colors";
+import { useCustomColors } from "@/hooks/ui/use-custom-colors";
 
 export function ManagementPane() {
   const { t } = useTranslation("management");

@@ -5,15 +5,10 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { MiniCommentEditor } from "./MiniCommentEditor";
-import { migrateAnnotation } from "../utils/migrateAnnotation";
+import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
+import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 
-function formatRelativeTime(ts: number): string {
-  const diff = Math.floor((Date.now() - ts) / 1000);
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return new Date(ts).toLocaleDateString();
-}
+export { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
 
 interface AnnotationCardProps {
   layerId: string;

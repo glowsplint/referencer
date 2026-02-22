@@ -1,3 +1,5 @@
+import { apiFetch, apiUrl } from "@/lib/api-client";
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -12,18 +14,18 @@ export interface AuthStatus {
 
 export type AuthProvider = "google" | "apple" | "facebook";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "";
-
 export async function fetchAuthStatus(): Promise<AuthStatus> {
-  const res = await fetch(`${API_URL}/auth/me`, { credentials: "include" });
-  if (!res.ok) return { authenticated: false };
-  return res.json();
+  try {
+    return await apiFetch<AuthStatus>("/auth/me");
+  } catch {
+    return { authenticated: false };
+  }
 }
 
 export function loginWith(provider: AuthProvider): void {
-  window.location.href = `${API_URL}/auth/${provider}`;
+  window.location.href = apiUrl(`/auth/${provider}`);
 }
 
 export async function logout(): Promise<void> {
-  await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "include" });
+  await apiFetch("/auth/logout", { method: "POST" });
 }

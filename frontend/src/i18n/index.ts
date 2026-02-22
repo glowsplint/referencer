@@ -2,6 +2,7 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
+// Static imports are required for bundling — each language has 5 namespace files.
 import commonEn from "./locales/en/common.json";
 import toolsEn from "./locales/en/tools.json";
 import dialogsEn from "./locales/en/dialogs.json";
@@ -188,6 +189,8 @@ import dialogsAf from "./locales/af/dialogs.json";
 import managementAf from "./locales/af/management.json";
 import editorAf from "./locales/af/editor.json";
 
+import { STORAGE_KEYS } from "@/constants/storage-keys";
+
 export const LANGUAGE_OPTIONS = [
   { code: "en", label: "English" },
   { code: "zh", label: "中文" },
@@ -222,225 +225,43 @@ export const LANGUAGE_OPTIONS = [
   { code: "af", label: "Afrikaans" },
 ] as const;
 
-const resources = {
-  en: {
-    common: commonEn,
-    tools: toolsEn,
-    dialogs: dialogsEn,
-    management: managementEn,
-    editor: editorEn,
-  },
-  zh: {
-    common: commonZh,
-    tools: toolsZh,
-    dialogs: dialogsZh,
-    management: managementZh,
-    editor: editorZh,
-  },
-  es: {
-    common: commonEs,
-    tools: toolsEs,
-    dialogs: dialogsEs,
-    management: managementEs,
-    editor: editorEs,
-  },
-  hi: {
-    common: commonHi,
-    tools: toolsHi,
-    dialogs: dialogsHi,
-    management: managementHi,
-    editor: editorHi,
-  },
-  ar: {
-    common: commonAr,
-    tools: toolsAr,
-    dialogs: dialogsAr,
-    management: managementAr,
-    editor: editorAr,
-  },
-  fr: {
-    common: commonFr,
-    tools: toolsFr,
-    dialogs: dialogsFr,
-    management: managementFr,
-    editor: editorFr,
-  },
-  bn: {
-    common: commonBn,
-    tools: toolsBn,
-    dialogs: dialogsBn,
-    management: managementBn,
-    editor: editorBn,
-  },
-  pt: {
-    common: commonPt,
-    tools: toolsPt,
-    dialogs: dialogsPt,
-    management: managementPt,
-    editor: editorPt,
-  },
-  ru: {
-    common: commonRu,
-    tools: toolsRu,
-    dialogs: dialogsRu,
-    management: managementRu,
-    editor: editorRu,
-  },
-  ja: {
-    common: commonJa,
-    tools: toolsJa,
-    dialogs: dialogsJa,
-    management: managementJa,
-    editor: editorJa,
-  },
-  ko: {
-    common: commonKo,
-    tools: toolsKo,
-    dialogs: dialogsKo,
-    management: managementKo,
-    editor: editorKo,
-  },
-  de: {
-    common: commonDe,
-    tools: toolsDe,
-    dialogs: dialogsDe,
-    management: managementDe,
-    editor: editorDe,
-  },
-  it: {
-    common: commonIt,
-    tools: toolsIt,
-    dialogs: dialogsIt,
-    management: managementIt,
-    editor: editorIt,
-  },
-  tr: {
-    common: commonTr,
-    tools: toolsTr,
-    dialogs: dialogsTr,
-    management: managementTr,
-    editor: editorTr,
-  },
-  vi: {
-    common: commonVi,
-    tools: toolsVi,
-    dialogs: dialogsVi,
-    management: managementVi,
-    editor: editorVi,
-  },
-  th: {
-    common: commonTh,
-    tools: toolsTh,
-    dialogs: dialogsTh,
-    management: managementTh,
-    editor: editorTh,
-  },
-  id: {
-    common: commonId,
-    tools: toolsId,
-    dialogs: dialogsId,
-    management: managementId,
-    editor: editorId,
-  },
-  pl: {
-    common: commonPl,
-    tools: toolsPl,
-    dialogs: dialogsPl,
-    management: managementPl,
-    editor: editorPl,
-  },
-  uk: {
-    common: commonUk,
-    tools: toolsUk,
-    dialogs: dialogsUk,
-    management: managementUk,
-    editor: editorUk,
-  },
-  nl: {
-    common: commonNl,
-    tools: toolsNl,
-    dialogs: dialogsNl,
-    management: managementNl,
-    editor: editorNl,
-  },
-  sw: {
-    common: commonSw,
-    tools: toolsSw,
-    dialogs: dialogsSw,
-    management: managementSw,
-    editor: editorSw,
-  },
-  ms: {
-    common: commonMs,
-    tools: toolsMs,
-    dialogs: dialogsMs,
-    management: managementMs,
-    editor: editorMs,
-  },
-  tl: {
-    common: commonTl,
-    tools: toolsTl,
-    dialogs: dialogsTl,
-    management: managementTl,
-    editor: editorTl,
-  },
-  am: {
-    common: commonAm,
-    tools: toolsAm,
-    dialogs: dialogsAm,
-    management: managementAm,
-    editor: editorAm,
-  },
-  ro: {
-    common: commonRo,
-    tools: toolsRo,
-    dialogs: dialogsRo,
-    management: managementRo,
-    editor: editorRo,
-  },
-  yo: {
-    common: commonYo,
-    tools: toolsYo,
-    dialogs: dialogsYo,
-    management: managementYo,
-    editor: editorYo,
-  },
-  el: {
-    common: commonEl,
-    tools: toolsEl,
-    dialogs: dialogsEl,
-    management: managementEl,
-    editor: editorEl,
-  },
-  he: {
-    common: commonHe,
-    tools: toolsHe,
-    dialogs: dialogsHe,
-    management: managementHe,
-    editor: editorHe,
-  },
-  ta: {
-    common: commonTa,
-    tools: toolsTa,
-    dialogs: dialogsTa,
-    management: managementTa,
-    editor: editorTa,
-  },
-  sv: {
-    common: commonSv,
-    tools: toolsSv,
-    dialogs: dialogsSv,
-    management: managementSv,
-    editor: editorSv,
-  },
-  af: {
-    common: commonAf,
-    tools: toolsAf,
-    dialogs: dialogsAf,
-    management: managementAf,
-    editor: editorAf,
-  },
-};
+type Namespaces = { common: object; tools: object; dialogs: object; management: object; editor: object };
+
+const localeData: [string, Namespaces][] = [
+  ["en", { common: commonEn, tools: toolsEn, dialogs: dialogsEn, management: managementEn, editor: editorEn }],
+  ["zh", { common: commonZh, tools: toolsZh, dialogs: dialogsZh, management: managementZh, editor: editorZh }],
+  ["es", { common: commonEs, tools: toolsEs, dialogs: dialogsEs, management: managementEs, editor: editorEs }],
+  ["hi", { common: commonHi, tools: toolsHi, dialogs: dialogsHi, management: managementHi, editor: editorHi }],
+  ["ar", { common: commonAr, tools: toolsAr, dialogs: dialogsAr, management: managementAr, editor: editorAr }],
+  ["fr", { common: commonFr, tools: toolsFr, dialogs: dialogsFr, management: managementFr, editor: editorFr }],
+  ["bn", { common: commonBn, tools: toolsBn, dialogs: dialogsBn, management: managementBn, editor: editorBn }],
+  ["pt", { common: commonPt, tools: toolsPt, dialogs: dialogsPt, management: managementPt, editor: editorPt }],
+  ["ru", { common: commonRu, tools: toolsRu, dialogs: dialogsRu, management: managementRu, editor: editorRu }],
+  ["ja", { common: commonJa, tools: toolsJa, dialogs: dialogsJa, management: managementJa, editor: editorJa }],
+  ["ko", { common: commonKo, tools: toolsKo, dialogs: dialogsKo, management: managementKo, editor: editorKo }],
+  ["de", { common: commonDe, tools: toolsDe, dialogs: dialogsDe, management: managementDe, editor: editorDe }],
+  ["it", { common: commonIt, tools: toolsIt, dialogs: dialogsIt, management: managementIt, editor: editorIt }],
+  ["tr", { common: commonTr, tools: toolsTr, dialogs: dialogsTr, management: managementTr, editor: editorTr }],
+  ["vi", { common: commonVi, tools: toolsVi, dialogs: dialogsVi, management: managementVi, editor: editorVi }],
+  ["th", { common: commonTh, tools: toolsTh, dialogs: dialogsTh, management: managementTh, editor: editorTh }],
+  ["id", { common: commonId, tools: toolsId, dialogs: dialogsId, management: managementId, editor: editorId }],
+  ["pl", { common: commonPl, tools: toolsPl, dialogs: dialogsPl, management: managementPl, editor: editorPl }],
+  ["uk", { common: commonUk, tools: toolsUk, dialogs: dialogsUk, management: managementUk, editor: editorUk }],
+  ["nl", { common: commonNl, tools: toolsNl, dialogs: dialogsNl, management: managementNl, editor: editorNl }],
+  ["sw", { common: commonSw, tools: toolsSw, dialogs: dialogsSw, management: managementSw, editor: editorSw }],
+  ["ms", { common: commonMs, tools: toolsMs, dialogs: dialogsMs, management: managementMs, editor: editorMs }],
+  ["tl", { common: commonTl, tools: toolsTl, dialogs: dialogsTl, management: managementTl, editor: editorTl }],
+  ["am", { common: commonAm, tools: toolsAm, dialogs: dialogsAm, management: managementAm, editor: editorAm }],
+  ["ro", { common: commonRo, tools: toolsRo, dialogs: dialogsRo, management: managementRo, editor: editorRo }],
+  ["yo", { common: commonYo, tools: toolsYo, dialogs: dialogsYo, management: managementYo, editor: editorYo }],
+  ["el", { common: commonEl, tools: toolsEl, dialogs: dialogsEl, management: managementEl, editor: editorEl }],
+  ["he", { common: commonHe, tools: toolsHe, dialogs: dialogsHe, management: managementHe, editor: editorHe }],
+  ["ta", { common: commonTa, tools: toolsTa, dialogs: dialogsTa, management: managementTa, editor: editorTa }],
+  ["sv", { common: commonSv, tools: toolsSv, dialogs: dialogsSv, management: managementSv, editor: editorSv }],
+  ["af", { common: commonAf, tools: toolsAf, dialogs: dialogsAf, management: managementAf, editor: editorAf }],
+];
+
+const resources = Object.fromEntries(localeData);
 
 i18n
   .use(LanguageDetector)
@@ -455,7 +276,7 @@ i18n
     },
     detection: {
       order: ["localStorage", "navigator"],
-      lookupLocalStorage: "referencer-language",
+      lookupLocalStorage: STORAGE_KEYS.LANGUAGE,
       caches: ["localStorage"],
     },
   });

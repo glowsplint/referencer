@@ -6,7 +6,7 @@ import { App } from "./App";
 
 // Mock the breakpoint hook for mobile detection
 let mockIsMobile = false;
-vi.mock("./hooks/use-is-breakpoint", () => ({
+vi.mock("./hooks/ui/use-is-breakpoint", () => ({
   useIsBreakpoint: () => mockIsMobile,
 }));
 
@@ -21,6 +21,8 @@ const mockWorkspace = {
     showCommentsToasts: true,
     showHighlightToasts: true,
     overscrollEnabled: false,
+    showStatusBar: true,
+    hideOffscreenArrows: false,
   },
   annotations: { activeTool: "selection" as const },
   layers: [] as {
@@ -120,12 +122,12 @@ const mockWorkspace = {
   },
 };
 
-vi.mock("./hooks/use-editor-workspace", () => ({
+vi.mock("./hooks/data/use-editor-workspace", () => ({
   useEditorWorkspace: () => mockWorkspace,
 }));
 
 // Mock workspace autosave
-vi.mock("./hooks/use-workspace-autosave", () => ({
+vi.mock("./hooks/data/use-workspace-autosave", () => ({
   useWorkspaceAutosave: vi.fn(),
 }));
 

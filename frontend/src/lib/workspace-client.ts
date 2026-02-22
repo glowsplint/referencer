@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "";
+import { apiFetch, apiPost, apiPatch, apiDelete } from "@/lib/api-client";
 
 export interface WorkspaceItem {
   workspaceId: string;
@@ -8,48 +8,25 @@ export interface WorkspaceItem {
 }
 
 export async function fetchWorkspaces(): Promise<WorkspaceItem[]> {
-  const res = await fetch(`${API_URL}/api/workspaces`, { credentials: "include" });
-  if (!res.ok) throw new Error("Failed to fetch workspaces");
-  return res.json();
+  return apiFetch<WorkspaceItem[]>("/api/workspaces");
 }
 
 export async function createWorkspace(workspaceId: string, title?: string): Promise<void> {
-  await fetch(`${API_URL}/api/workspaces`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ workspaceId, title }),
-    credentials: "include",
-  });
+  await apiPost("/api/workspaces", { workspaceId, title });
 }
 
 export async function renameWorkspace(workspaceId: string, title: string): Promise<void> {
-  await fetch(`${API_URL}/api/workspaces/${workspaceId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title }),
-    credentials: "include",
-  });
+  await apiPatch(`/api/workspaces/${workspaceId}`, { title });
 }
 
 export async function touchWorkspace(workspaceId: string): Promise<void> {
-  await fetch(`${API_URL}/api/workspaces/${workspaceId}/touch`, {
-    method: "PATCH",
-    credentials: "include",
-  });
+  await apiPatch(`/api/workspaces/${workspaceId}/touch`);
 }
 
 export async function deleteWorkspace(workspaceId: string): Promise<void> {
-  await fetch(`${API_URL}/api/workspaces/${workspaceId}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
+  await apiDelete(`/api/workspaces/${workspaceId}`);
 }
 
 export async function duplicateWorkspace(sourceId: string, newId: string): Promise<void> {
-  await fetch(`${API_URL}/api/workspaces/${sourceId}/duplicate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ newWorkspaceId: newId }),
-    credentials: "include",
-  });
+  await apiPost(`/api/workspaces/${sourceId}/duplicate`, { newWorkspaceId: newId });
 }
