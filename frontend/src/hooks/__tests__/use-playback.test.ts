@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { applyDelta, computeSnapshotAtStep } from "../use-playback";
 import type { Recording, VisibilitySnapshot, VisibilityDelta } from "@/types/recording";
 

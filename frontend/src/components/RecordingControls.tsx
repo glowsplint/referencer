@@ -85,10 +85,7 @@ function RecordingListItem({
           >
             <Check size={12} />
           </button>
-          <button
-            onClick={() => setIsRenaming(false)}
-            className="p-0.5 rounded hover:bg-accent"
-          >
+          <button onClick={() => setIsRenaming(false)} className="p-0.5 rounded hover:bg-accent">
             <X size={12} />
           </button>
         </div>
@@ -178,7 +175,7 @@ function RecordingListItem({
 export function RecordingControls() {
   const { t } = useTranslation("tools");
   const { recordings: rec, playback } = useRecordingContext();
-  const { readOnly, settings } = useWorkspace();
+  const { readOnly } = useWorkspace();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [editingRecordingId, setEditingRecordingId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -280,9 +277,7 @@ export function RecordingControls() {
           data-testid="recordingDropdown"
         >
           {rec.recordings.length === 0 ? (
-            <p className="text-xs text-muted-foreground px-2 py-2">
-              {t("recording.noRecordings")}
-            </p>
+            <p className="text-xs text-muted-foreground px-2 py-2">{t("recording.noRecordings")}</p>
           ) : (
             <div className="max-h-60 overflow-y-auto">
               {rec.recordings.map((recording) => (
@@ -345,9 +340,7 @@ function RecordingEditorModal({
         const id = key.slice("layer:".length);
         const name = layers.find((l) => l.id === id)?.name ?? "Unknown";
         parts.push(
-          visible
-            ? t("recording.showLayer", { name })
-            : t("recording.hideLayer", { name }),
+          visible ? t("recording.showLayer", { name }) : t("recording.hideLayer", { name }),
         );
       } else if (key.startsWith("section:")) {
         const idx = Number(key.slice("section:".length));
@@ -401,9 +394,7 @@ function RecordingEditorModal({
           </div>
 
           {recording.steps.length === 0 ? (
-            <p className="text-xs text-muted-foreground px-2 py-2">
-              {t("recording.noRecordings")}
-            </p>
+            <p className="text-xs text-muted-foreground px-2 py-2">{t("recording.noRecordings")}</p>
           ) : (
             recording.steps.map((step, idx) => (
               <div
@@ -493,9 +484,7 @@ function RecordingEditorModal({
                 {t("recording.instant")}
               </button>
               <button
-                onClick={() =>
-                  rec.updateRecordingSettings(recordingId, { transitionType: "fade" })
-                }
+                onClick={() => rec.updateRecordingSettings(recordingId, { transitionType: "fade" })}
                 className={`px-2 py-0.5 rounded text-xs ${
                   recording.transitionType === "fade"
                     ? "bg-accent text-accent-foreground"

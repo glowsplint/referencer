@@ -5,15 +5,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { MiniCommentEditor } from "./MiniCommentEditor";
-
-export function migrateAnnotation(annotation: string): string {
-  if (!annotation) return "";
-  if (annotation.trimStart().startsWith("<")) return annotation;
-  return annotation
-    .split("\n")
-    .map((line) => `<p>${line || "<br>"}</p>`)
-    .join("");
-}
+import { migrateAnnotation } from "../utils/migrateAnnotation";
 
 function formatRelativeTime(ts: number): string {
   const diff = Math.floor((Date.now() - ts) / 1000);

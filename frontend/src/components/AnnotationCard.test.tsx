@@ -1,6 +1,7 @@
 import { render, fireEvent, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import { AnnotationCard, migrateAnnotation } from "./AnnotationCard";
+import { AnnotationCard } from "./AnnotationCard";
+import { migrateAnnotation } from "../utils/migrateAnnotation";
 
 function createProps(overrides: Partial<Parameters<typeof AnnotationCard>[0]> = {}) {
   return {
@@ -43,11 +44,10 @@ describe("AnnotationCard", () => {
   });
 
   it("migrates plain text annotation to HTML for display", () => {
-    const { container } = render(
-      <AnnotationCard {...createProps({ annotation: "plain text" })} />,
-    );
+    const { container } = render(<AnnotationCard {...createProps({ annotation: "plain text" })} />);
 
-    const html = container.querySelector("[dangerouslySetInnerHTML]") ?? container.querySelector(".prose-xs");
+    const html =
+      container.querySelector("[dangerouslySetInnerHTML]") ?? container.querySelector(".prose-xs");
     expect(html?.innerHTML).toContain("<p>plain text</p>");
   });
 
@@ -105,11 +105,7 @@ describe("AnnotationCard", () => {
 
   it("renders timestamp when lastEdited is provided", () => {
     const now = Date.now();
-    render(
-      <AnnotationCard
-        {...createProps({ annotation: "<p>note</p>", lastEdited: now })}
-      />,
-    );
+    render(<AnnotationCard {...createProps({ annotation: "<p>note</p>", lastEdited: now })} />);
 
     expect(screen.getByText("just now")).toBeTruthy();
   });
@@ -117,18 +113,14 @@ describe("AnnotationCard", () => {
   it("renders timestamp for minutes ago", () => {
     const fiveMinAgo = Date.now() - 5 * 60 * 1000;
     render(
-      <AnnotationCard
-        {...createProps({ annotation: "<p>note</p>", lastEdited: fiveMinAgo })}
-      />,
+      <AnnotationCard {...createProps({ annotation: "<p>note</p>", lastEdited: fiveMinAgo })} />,
     );
 
     expect(screen.getByText("5m ago")).toBeTruthy();
   });
 
   it("renders color strip at top", () => {
-    const { container } = render(
-      <AnnotationCard {...createProps({ color: "#86efac" })} />,
-    );
+    const { container } = render(<AnnotationCard {...createProps({ color: "#86efac" })} />);
 
     const colorStrip = container.querySelector(".h-1.rounded-t");
     expect(colorStrip).toBeTruthy();
@@ -136,9 +128,7 @@ describe("AnnotationCard", () => {
   });
 
   it("positions card at the given top offset", () => {
-    const { container } = render(
-      <AnnotationCard {...createProps({ top: 120 })} />,
-    );
+    const { container } = render(<AnnotationCard {...createProps({ top: 120 })} />);
 
     const card = container.querySelector("[data-highlight-id]") as HTMLElement;
     expect(card.style.top).toBe("120px");
@@ -163,9 +153,7 @@ describe("migrateAnnotation", () => {
   });
 
   it("converts empty lines to <p><br></p>", () => {
-    expect(migrateAnnotation("line1\n\nline2")).toBe(
-      "<p>line1</p><p><br></p><p>line2</p>",
-    );
+    expect(migrateAnnotation("line1\n\nline2")).toBe("<p>line1</p><p><br></p><p>line2</p>");
   });
 
   it("returns HTML with leading whitespace before tag as-is", () => {

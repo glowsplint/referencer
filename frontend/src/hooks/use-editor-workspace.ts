@@ -66,7 +66,9 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   }, [yjs.doc, yjs.synced, allEditorsMounted, trackedEditorsHook.editorsRef]);
 
   // Wraps mutation callbacks to no-op when in read-only mode
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return ((...args: any[]) => (readOnly ? fallback : fn(...args))) as T;
   }
 
@@ -123,9 +125,16 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   );
 
   const addHighlight = useCallback(
-    guarded((layerId: string, highlight: Omit<Highlight, "id" | "visible">, opts?: { id?: string }): string => {
-      return yjsLayers.addHighlight(layerId, highlight, opts);
-    }, ""),
+    guarded(
+      (
+        layerId: string,
+        highlight: Omit<Highlight, "id" | "visible">,
+        opts?: { id?: string },
+      ): string => {
+        return yjsLayers.addHighlight(layerId, highlight, opts);
+      },
+      "",
+    ),
     [readOnly, yjsLayers],
   );
 
@@ -144,9 +153,12 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   );
 
   const addArrow = useCallback(
-    guarded((layerId: string, arrow: Omit<Arrow, "id" | "visible">, opts?: { id?: string }): string => {
-      return yjsLayers.addArrow(layerId, arrow, opts);
-    }, ""),
+    guarded(
+      (layerId: string, arrow: Omit<Arrow, "id" | "visible">, opts?: { id?: string }): string => {
+        return yjsLayers.addArrow(layerId, arrow, opts);
+      },
+      "",
+    ),
     [readOnly, yjsLayers],
   );
 
@@ -166,7 +178,11 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
 
   const addUnderline = useCallback(
     guarded(
-      (layerId: string, underline: Omit<LayerUnderline, "id" | "visible">, opts?: { id?: string }): string => {
+      (
+        layerId: string,
+        underline: Omit<LayerUnderline, "id" | "visible">,
+        opts?: { id?: string },
+      ): string => {
         return yjsLayers.addUnderline(layerId, underline, opts);
       },
       "",
@@ -241,7 +257,9 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
 
   // No-op: text content is synced via Yjs Collaboration extension
   const updateEditorContent = useCallback(
-    guarded((_editorIndex: number, _contentJson: unknown) => {}),
+    guarded((_editorIndex: number, _contentJson: unknown) => {
+      /* no-op: synced via Yjs */
+    }),
     [readOnly],
   );
 

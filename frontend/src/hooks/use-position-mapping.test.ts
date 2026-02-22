@@ -37,7 +37,7 @@ function createMockEditor() {
 
 function createMapping(offset: number) {
   return {
-    map(pos: number, _assoc?: number) {
+    map(pos: number) {
       return pos + offset;
     },
   };
