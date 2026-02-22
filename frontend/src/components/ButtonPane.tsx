@@ -3,9 +3,6 @@
 // (selection, arrow, highlight, comments, underline, eraser), and layout/lock
 // toggles. Tool buttons are disabled when the editor is unlocked or read-only.
 import { useState, useCallback, useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { LoginButton } from "./LoginButton";
-import { UserMenu } from "./UserMenu";
 import { useTranslation } from "react-i18next";
 import {
   Columns2,
@@ -121,8 +118,6 @@ export function ButtonPane() {
     toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
   } = useWorkspace();
-
-  const { isAuthenticated, isLoading } = useAuth();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
@@ -329,10 +324,6 @@ export function ButtonPane() {
         hideOffscreenArrows={settings.hideOffscreenArrows}
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
       />
-      {/* Auth section - pushed to bottom */}
-      <div className="mt-auto">
-        {isLoading ? null : isAuthenticated ? <UserMenu /> : <LoginButton />}
-      </div>
     </div>
   );
 }

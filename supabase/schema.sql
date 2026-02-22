@@ -69,3 +69,14 @@ BEGIN
     RETURN p_user_id;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE TABLE user_workspace (
+    user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+    title TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (user_id, workspace_id)
+);
+CREATE INDEX idx_user_workspace_user_id ON user_workspace(user_id);
+CREATE INDEX idx_user_workspace_updated_at ON user_workspace(updated_at DESC);

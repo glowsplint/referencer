@@ -1,15 +1,23 @@
 // Title bar with inline-editable document title, share dialog trigger,
 // and PDF export button. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Share2, Download } from "lucide-react";
+import { Share2, Download, Home } from "lucide-react";
 
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/tiptap-ui-primitive/tooltip";
 import { ShareDialog } from "@/components/ShareDialog";
 import { CollaborationPresence } from "@/components/CollaborationPresence";
+import { LoginButton } from "@/components/LoginButton";
+import { UserMenu } from "@/components/UserMenu";
+import { useAuth } from "@/hooks/use-auth";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 
-export function TitleBar() {
+interface TitleBarProps {
+  navigate?: (hash: string) => void;
+}
+
+export function TitleBar({ navigate }: TitleBarProps) {
   const { workspaceId, readOnly, yjs } = useWorkspace();
+  const { isAuthenticated, isLoading } = useAuth();
   const [title, setTitle] = useState("Title");
   const [isEditing, setIsEditing] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -43,6 +51,20 @@ export function TitleBar() {
 
   return (
     <div className="flex items-center px-4 py-2 border-b border-[var(--tt-border-color-tint)] bg-[var(--tt-bg-color)] shrink-0">
+      {navigate && (
+        <Tooltip placement="bottom" delay={300}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => navigate("#/")}
+              className="p-1.5 mr-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+              data-testid="homeButton"
+            >
+              <Home size={16} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Home</TooltipContent>
+        </Tooltip>
+      )}
       {isEditing ? (
         <input
           ref={inputRef}
@@ -105,6 +127,7 @@ export function TitleBar() {
           </TooltipTrigger>
           <TooltipContent>Share</TooltipContent>
         </Tooltip>
+        {!isLoading && (isAuthenticated ? <UserMenu /> : <LoginButton />)}
       </div>
       {workspaceId && (
         <ShareDialog open={shareOpen} onOpenChange={setShareOpen} workspaceId={workspaceId} />

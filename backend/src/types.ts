@@ -16,3 +16,11 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface UserWorkspace {
+  userId: string;
+  workspaceId: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -10,6 +10,7 @@ import { ManagementPane } from "./components/ManagementPane";
 import { StatusBar } from "./components/StatusBar";
 import { Divider } from "./components/ui/Divider";
 import { TitleBar, SimpleEditorToolbar, EditorPane } from "./components/tiptap-templates/simple";
+import { UnsavedBanner } from "./components/UnsavedBanner";
 import { DEFAULT_PASSAGE_CONTENTS, PLACEHOLDER_CONTENT } from "./data/default-workspace";
 import { useEditorWorkspace } from "./hooks/use-editor-workspace";
 import { useWordSelection } from "./hooks/use-word-selection";
@@ -27,6 +28,7 @@ import { useUndoRedoKeyboard } from "./hooks/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/use-action-console";
 import { useIsBreakpoint } from "./hooks/use-is-breakpoint";
 import { useInlineEdit } from "./hooks/use-inline-edit";
+import { useWorkspaceAutosave } from "./hooks/use-workspace-autosave";
 import { ToastKbd } from "./components/ui/ToastKbd";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
@@ -72,24 +74,14 @@ function PassageHeader({
   );
 }
 
-// Extract workspace ID from hash-based route (e.g. "#/{uuid}?access=readonly").
-// Falls back to generating a new random UUID for fresh sessions.
-function getWorkspaceId(): string {
-  const hash = window.location.hash;
-  const hashPath = hash.replace(/^#\/?/, "").split("?")[0];
-  if (hashPath) return hashPath;
-  return crypto.randomUUID();
+interface AppProps {
+  workspaceId: string;
+  readOnly: boolean;
+  navigate: (hash: string) => void;
 }
 
-function getReadOnly(): boolean {
-  const hash = window.location.hash;
-  const qs = hash.includes("?") ? hash.slice(hash.indexOf("?")) : "";
-  return new URLSearchParams(qs).get("access") === "readonly";
-}
-
-export function App() {
-  const [workspaceId] = useState(getWorkspaceId);
-  const [readOnly] = useState(getReadOnly);
+export function App({ workspaceId, readOnly, navigate }: AppProps) {
+  useWorkspaceAutosave(workspaceId);
   const workspace = useEditorWorkspace(workspaceId, readOnly);
   const {
     settings,
@@ -356,7 +348,8 @@ export function App() {
           {!isMobile && isManagementPaneOpen && <ManagementPane />}
           <EditorContext.Provider value={{ editor: activeEditor }}>
             <div className="flex flex-col flex-1 min-w-0">
-              <TitleBar />
+              <TitleBar navigate={navigate} />
+              <UnsavedBanner />
               <SimpleEditorToolbar isLocked={settings.isLocked} />
               {!isMobile && <StatusBar message={statusMessage} />}
               <div className="flex flex-1 min-w-0 min-h-0">
@@ -495,4 +488,3 @@ export function App() {
   );
 }
 
-export default App;

@@ -5,6 +5,7 @@ import { createAuthRoutes } from "./auth/handlers";
 import { loadAuthConfig } from "./auth/config";
 import { optionalAuth } from "./auth/middleware";
 import { handleShare, handleResolveShare } from "./api/share";
+import { workspaces } from "./api/workspaces";
 import { cleanExpiredSessions } from "./auth/store";
 import type { Env } from "./env";
 
@@ -34,6 +35,9 @@ app.use("*", (c, next) => {
 
 // Auth routes (mounted directly so they share the main app's middleware context)
 app.route("/auth", createAuthRoutes());
+
+// Workspaces API
+app.route("/api/workspaces", workspaces);
 
 // Share API
 app.post("/api/share", handleShare());
