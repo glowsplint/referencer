@@ -65,6 +65,7 @@ export function LayerRow({
   });
 
   const itemCount = layer.highlights.length + layer.arrows.length + layer.underlines.length;
+  const commentCount = layer.highlights.filter(h => h.type === "comment").length;
   const hasItems = itemCount > 0;
 
   return (
@@ -128,6 +129,16 @@ export function LayerRow({
             data-testid={`layerActiveTag-${index}`}
           >
             {tc("active")}
+          </span>
+        )}
+        {commentCount > 0 && !expanded && (
+          <span
+            className="text-[10px] font-medium text-muted-foreground bg-muted rounded-full px-1.5 shrink-0 flex items-center gap-0.5"
+            data-testid={`layerCommentCount-${index}`}
+            title={`${commentCount} comment${commentCount !== 1 ? "s" : ""}`}
+          >
+            <MessageSquareText size={8} />
+            {commentCount}
           </span>
         )}
         {hasItems && !expanded && (

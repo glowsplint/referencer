@@ -117,6 +117,7 @@ export function ButtonPane() {
     toggleShowHighlightToasts,
     toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
+    toggleShowStatusBar,
   } = useWorkspace();
 
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -323,6 +324,8 @@ export function ButtonPane() {
         toggleOverscrollEnabled={toggleOverscrollEnabled}
         hideOffscreenArrows={settings.hideOffscreenArrows}
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
+        showStatusBar={settings.showStatusBar}
+        toggleShowStatusBar={toggleShowStatusBar}
       />
     </div>
   );

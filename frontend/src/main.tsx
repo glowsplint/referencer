@@ -7,6 +7,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import "./i18n";
 import "./index.css";
 import "./print.css";
+import "./styles/editor.css";
 import { AppRouter } from "./AppRouter";
 
 createRoot(document.getElementById("root")!).render(

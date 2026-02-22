@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS: EditorSettings = {
   showHighlightToasts: true,
   overscrollEnabled: false,
   hideOffscreenArrows: false,
+  showStatusBar: true,
 };
 
 function loadSettings(): EditorSettings {
@@ -65,6 +66,7 @@ export function useSettings() {
   const toggleShowHighlightToasts = useToggle(setSettings, "showHighlightToasts");
   const toggleOverscrollEnabled = useToggle(setSettings, "overscrollEnabled");
   const toggleHideOffscreenArrows = useToggle(setSettings, "hideOffscreenArrows");
+  const toggleShowStatusBar = useToggle(setSettings, "showStatusBar");
   const setActiveTool = useCallback((tool: ActiveTool) => setAnnotations({ activeTool: tool }), []);
 
   return {
@@ -85,6 +87,7 @@ export function useSettings() {
     toggleShowHighlightToasts,
     toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
+    toggleShowStatusBar,
     setActiveTool,
   };
 }

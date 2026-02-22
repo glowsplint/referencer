@@ -1,4 +1,14 @@
 @media print {
+  @page {
+    margin: 0.75in;
+  }
+
+  /* Force colors in print */
+  * {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
   /* Hide all UI chrome */
   [data-testid="buttonPane"],
   [data-testid="managementPane"],
@@ -7,7 +17,7 @@
     display: none !important;
   }
 
-  /* Hide toolbar and title bar */
+  /* Hide toolbar and title bar actions (keep title text) */
   .simple-editor-toolbar,
   [role="toolbar"] {
     display: none !important;
@@ -15,6 +25,11 @@
 
   /* Hide action console */
   [data-testid="actionConsole"] {
+    display: none !important;
+  }
+
+  /* Hide unsaved banner */
+  [data-testid="unsavedBanner"] {
     display: none !important;
   }
 
@@ -32,9 +47,9 @@
     overflow: visible !important;
   }
 
-  /* Hide arrow overlays and annotation panels in print */
+  /* Hide interactive annotation panel and arrow overlays */
   [data-testid="arrowOverlay"],
-  [data-testid="annotationPanel"] {
+  [data-testid="annotation-panel"] {
     display: none !important;
   }
 
@@ -56,5 +71,42 @@
   /* Hide toaster */
   [data-sonner-toaster] {
     display: none !important;
+  }
+
+  /* Show print-only annotations sidebar */
+  .hidden.print\:block,
+  .print-annotations-container {
+    display: block !important;
+  }
+
+  /* Print annotations styling */
+  .print-annotations {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-annotations h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #d4d4d8;
+    padding-bottom: 0.25rem;
+  }
+
+  /* Prose-xs in print */
+  .prose-xs {
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+  }
+  .prose-xs p {
+    margin: 0.125rem 0;
+  }
+  .prose-xs a {
+    color: #3b82f6;
+    text-decoration: underline;
+  }
+  .prose-xs img {
+    max-width: 100%;
+    margin: 0.25rem 0;
   }
 }

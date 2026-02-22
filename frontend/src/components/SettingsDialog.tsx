@@ -56,6 +56,8 @@ interface SettingsDialogProps {
   toggleOverscrollEnabled: () => void;
   hideOffscreenArrows: boolean;
   toggleHideOffscreenArrows: () => void;
+  showStatusBar: boolean;
+  toggleShowStatusBar: () => void;
 }
 
 export function SettingsDialog({
@@ -73,6 +75,8 @@ export function SettingsDialog({
   toggleOverscrollEnabled,
   hideOffscreenArrows,
   toggleHideOffscreenArrows,
+  showStatusBar,
+  toggleShowStatusBar,
 }: SettingsDialogProps) {
   const { t } = useTranslation("dialogs");
   const { t: tc } = useTranslation("common");
@@ -119,6 +123,13 @@ export function SettingsDialog({
       description: t("settings.hideOffscreenArrows.description"),
       checked: hideOffscreenArrows,
       onCheckedChange: toggleHideOffscreenArrows,
+    },
+    {
+      id: "show-status-bar",
+      label: t("settings.statusBar.label"),
+      description: t("settings.statusBar.description"),
+      checked: showStatusBar,
+      onCheckedChange: toggleShowStatusBar,
     },
   ];
 

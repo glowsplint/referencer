@@ -244,6 +244,7 @@ function readHighlights(
 
     const text = yH.get("text") as string;
     const annotation = (yH.get("annotation") as string) ?? "";
+    const lastEdited = (yH.get("lastEdited") as number) ?? undefined;
     highlights.push({
       id,
       editorIndex,
@@ -252,6 +253,7 @@ function readHighlights(
       text,
       annotation,
       type: (yH.get("type") as "highlight" | "comment") ?? "highlight",
+      lastEdited,
     });
   }
 
@@ -436,6 +438,7 @@ export function addHighlightToDoc(
   yH.set("text", highlight.text);
   yH.set("annotation", highlight.annotation);
   yH.set("type", highlight.type);
+  yH.set("lastEdited", Date.now());
   yHighlights.push([yH]);
 }
 
@@ -464,6 +467,7 @@ export function updateHighlightAnnotationInDoc(
     const yH = yHighlights.get(i);
     if (yH.get("id") === highlightId) {
       yH.set("annotation", annotation);
+      yH.set("lastEdited", Date.now());
       return;
     }
   }

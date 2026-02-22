@@ -13,6 +13,7 @@ export interface EditorSettings {
   showHighlightToasts: boolean;
   overscrollEnabled: boolean;
   hideOffscreenArrows: boolean;
+  showStatusBar: boolean;
 }
 
 export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline" | "eraser";
@@ -33,6 +34,7 @@ export interface Highlight {
   text: string;
   annotation: string;
   type: HighlightType;
+  lastEdited?: number;
 }
 
 export interface LayerUnderline {

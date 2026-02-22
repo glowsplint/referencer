@@ -20,6 +20,10 @@ interface AnnotationPanelProps {
   onAnnotationClick: (layerId: string, highlightId: string) => void;
   isDarkMode: boolean;
   sectionVisibility: boolean[];
+  collapsedIds?: Set<string>;
+  onToggleCollapse?: (highlightId: string) => void;
+  onCollapseAll?: () => void;
+  onExpandAll?: () => void;
 }
 
 const PANEL_WIDTH = 224; // w-56
@@ -38,6 +42,10 @@ export function AnnotationPanel({
   onAnnotationClick,
   isDarkMode,
   sectionVisibility,
+  collapsedIds,
+  onToggleCollapse,
+  onCollapseAll,
+  onExpandAll,
 }: AnnotationPanelProps) {
   const positions = useAllHighlightPositions(editorsRef, layers, containerRef, sectionVisibility);
 
@@ -88,14 +96,16 @@ export function AnnotationPanel({
     const color = new Map<string, string>();
     const layerId = new Map<string, string>();
     const annotation = new Map<string, string>();
+    const lastEdited = new Map<string, number | undefined>();
     for (const layer of layers) {
       for (const h of layer.highlights) {
         color.set(h.id, layer.color);
         layerId.set(h.id, layer.id);
+        lastEdited.set(h.id, h.lastEdited);
         if (layer.visible) annotation.set(h.id, h.annotation);
       }
     }
-    return { color, layerId, annotation };
+    return { color, layerId, annotation, lastEdited };
   }, [layers]);
 
   const positionByHighlightId = useMemo(() => {
@@ -120,6 +130,26 @@ export function AnnotationPanel({
     >
       {positions.length > 0 && (
         <>
+          {(onCollapseAll || onExpandAll) && (
+            <div className="flex justify-end gap-1 px-1 py-0.5">
+              {onCollapseAll && (
+                <button
+                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={onCollapseAll}
+                >
+                  Collapse all
+                </button>
+              )}
+              {onExpandAll && (
+                <button
+                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={onExpandAll}
+                >
+                  Expand all
+                </button>
+              )}
+            </div>
+          )}
           {/* SVG connector lines - overflow visible to extend into editor area */}
           <svg
             className="pointer-events-none absolute inset-0"
@@ -180,6 +210,9 @@ export function AnnotationPanel({
                   onBlur={onAnnotationBlur}
                   onClick={onAnnotationClick}
                   cardRef={observeCard}
+                  lastEdited={highlightLookup.lastEdited.get(resolved.id)}
+                  isCollapsed={collapsedIds?.has(resolved.id)}
+                  onToggleCollapse={onToggleCollapse}
                 />
               );
             })}

@@ -18,6 +18,8 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
     toggleOverscrollEnabled: vi.fn(),
     hideOffscreenArrows: false,
     toggleHideOffscreenArrows: vi.fn(),
+    showStatusBar: true,
+    toggleShowStatusBar: vi.fn(),
     ...overrides,
   };
   render(<SettingsDialog {...props} />);
@@ -95,6 +97,28 @@ describe("SettingsDialog", () => {
     const props = renderDialog();
     fireEvent.click(screen.getByTestId("hide-offscreen-arrows-switch"));
     expect(props.toggleHideOffscreenArrows).toHaveBeenCalledOnce();
+  });
+
+  it("renders status bar switch with correct checked state", () => {
+    renderDialog({ showStatusBar: true });
+    expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute(
+      "data-state",
+      "checked",
+    );
+  });
+
+  it("renders status bar switch as unchecked when disabled", () => {
+    renderDialog({ showStatusBar: false });
+    expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute(
+      "data-state",
+      "unchecked",
+    );
+  });
+
+  it("calls toggleShowStatusBar when status bar switch is clicked", () => {
+    const props = renderDialog();
+    fireEvent.click(screen.getByTestId("show-status-bar-switch"));
+    expect(props.toggleShowStatusBar).toHaveBeenCalledOnce();
   });
 
   it("does not render when open is false", () => {

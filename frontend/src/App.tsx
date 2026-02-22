@@ -32,12 +32,18 @@ import { useWorkspaceAutosave } from "./hooks/use-workspace-autosave";
 import { ToastKbd } from "./components/ui/ToastKbd";
 import { ArrowOverlay } from "./components/ArrowOverlay";
 import { AnnotationPanel } from "./components/AnnotationPanel";
+import { PrintAnnotations } from "./components/PrintAnnotations";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
+import { useCollapsedAnnotations } from "./hooks/use-collapsed-annotations";
 import type { EditingAnnotation } from "./types/editor";
+
+function isAnnotationEmpty(html: string): boolean {
+  return !html?.replace(/<[^>]*>/g, "").trim();
+}
 
 function PassageHeader({
   name,
@@ -133,6 +139,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
+  const { collapsedIds, toggleCollapse, collapseAll, expandAll } = useCollapsedAnnotations(workspaceId);
   const annotationBeforeEditRef = useRef<string>("");
   const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
 
@@ -291,7 +298,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
 
   const handleAnnotationBlur = useCallback(
     (layerId: string, highlightId: string, annotation: string) => {
-      if (!annotation.trim()) {
+      if (isAnnotationEmpty(annotation)) {
         removeHighlight(layerId, highlightId);
       } else {
         const oldText = annotationBeforeEditRef.current;
@@ -339,6 +346,13 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
     [layers, sectionVisibility],
   );
 
+  const handleCollapseAll = useCallback(() => {
+    const allCommentIds = layers.flatMap((l) =>
+      l.visible ? l.highlights.filter((h) => h.type === "comment").map((h) => h.id) : [],
+    );
+    collapseAll(allCommentIds);
+  }, [layers, collapseAll]);
+
   return (
     <WorkspaceProvider value={workspace}>
       <Toaster />
@@ -351,7 +365,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
               <TitleBar navigate={navigate} />
               <UnsavedBanner />
               <SimpleEditorToolbar isLocked={settings.isLocked} />
-              {!isMobile && <StatusBar message={statusMessage} />}
+              {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
               <div className="flex flex-1 min-w-0 min-h-0">
                 <div
                   ref={containerRef}
@@ -461,9 +475,20 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
                       onAnnotationClick={handleAnnotationClick}
                       isDarkMode={settings.isDarkMode}
                       sectionVisibility={sectionVisibility}
+                      collapsedIds={collapsedIds}
+                      onToggleCollapse={toggleCollapse}
+                      onCollapseAll={handleCollapseAll}
+                      onExpandAll={expandAll}
                     />
                   </ErrorBoundary>
                 )}
+                <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
+                  <PrintAnnotations
+                    layers={layers}
+                    sectionNames={workspace.sectionNames}
+                    sectionVisibility={sectionVisibility}
+                  />
+                </div>
               </div>
             </div>
           </EditorContext.Provider>
