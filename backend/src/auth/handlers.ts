@@ -1,56 +1,54 @@
 import { Hono } from "hono";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { generateState, generateCodeVerifier, decodeIdToken } from "arctic";
-import type { Database } from "bun:sqlite";
 import type { Google, Apple, Facebook } from "arctic";
-import { rateLimiter } from "hono-rate-limiter";
-import { getProvider } from "./providers";
-import type { AuthConfig } from "./config";
+import { kvRateLimiter } from "../lib/rate-limit";
+import { createProviders, getProviderFromMap } from "./providers";
+import { loadAuthConfig, type AuthConfig } from "./config";
 import { upsertUser, createSession, getSessionUser, deleteSession } from "./store";
+import type { Env } from "../env";
 
 interface AuthState {
   state: string;
   codeVerifier?: string;
 }
 
-const authStartLimiter = rateLimiter({
-  windowMs: 60 * 1000, // 1 minute
+const getClientIp = (c: any) =>
+  c.req.header("cf-connecting-ip") ??
+  c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
+  c.req.header("x-real-ip") ??
+  "unknown";
+
+const authStartLimiter = kvRateLimiter({
+  windowMs: 60 * 1000,
   limit: 10,
-  keyGenerator: (c) =>
-    c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
-    c.req.header("x-real-ip") ??
-    "unknown",
+  keyGenerator: getClientIp,
 });
 
-const authCallbackLimiter = rateLimiter({
-  windowMs: 60 * 1000, // 1 minute
+const authCallbackLimiter = kvRateLimiter({
+  windowMs: 60 * 1000,
   limit: 5,
-  keyGenerator: (c) =>
-    c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
-    c.req.header("x-real-ip") ??
-    "unknown",
+  keyGenerator: getClientIp,
 });
 
-const authLogoutLimiter = rateLimiter({
-  windowMs: 60 * 1000, // 1 minute
+const authLogoutLimiter = kvRateLimiter({
+  windowMs: 60 * 1000,
   limit: 10,
-  keyGenerator: (c) =>
-    c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
-    c.req.header("x-real-ip") ??
-    "unknown",
+  keyGenerator: getClientIp,
 });
 
-export function createAuthRoutes(db: Database, config: AuthConfig) {
-  const auth = new Hono();
+export function createAuthRoutes() {
+  const auth = new Hono<Env>();
 
-  // GET /auth/me — must be registered before /:provider to avoid shadowing
-  auth.get("/me", (c) => {
+  // GET /auth/me
+  auth.get("/me", async (c) => {
     const token = getCookie(c, "__session");
     if (!token) {
       return c.json({ authenticated: false });
     }
 
-    const user = getSessionUser(db, token);
+    const supabase = c.get("supabase");
+    const user = await getSessionUser(supabase, token);
     if (!user) {
       deleteCookie(c, "__session", { path: "/" });
       return c.json({ authenticated: false });
@@ -59,11 +57,12 @@ export function createAuthRoutes(db: Database, config: AuthConfig) {
     return c.json({ authenticated: true, user });
   });
 
-  // POST /auth/logout — must be registered before /:provider to avoid shadowing
-  auth.post("/logout", authLogoutLimiter, (c) => {
+  // POST /auth/logout
+  auth.post("/logout", authLogoutLimiter, async (c) => {
     const token = getCookie(c, "__session");
     if (token) {
-      deleteSession(db, token);
+      const supabase = c.get("supabase");
+      await deleteSession(supabase, token);
     }
     deleteCookie(c, "__session", { path: "/" });
     return c.json({ ok: true });
@@ -71,8 +70,10 @@ export function createAuthRoutes(db: Database, config: AuthConfig) {
 
   // GET /auth/:provider — start OAuth flow
   auth.get("/:provider", authStartLimiter, (c) => {
+    const config = loadAuthConfig(c.env);
     const providerName = c.req.param("provider");
-    const provider = getProvider(providerName);
+    const providers = createProviders(config);
+    const provider = getProviderFromMap(providers, providerName);
     if (!provider) {
       return c.json({ error: `Unknown provider: ${providerName}` }, 404);
     }
@@ -92,7 +93,10 @@ export function createAuthRoutes(db: Database, config: AuthConfig) {
     } else if (providerName === "apple") {
       authUrl = (provider as Apple).createAuthorizationURL(state, ["name", "email"]);
     } else if (providerName === "facebook") {
-      authUrl = (provider as Facebook).createAuthorizationURL(state, ["email", "public_profile"]);
+      authUrl = (provider as Facebook).createAuthorizationURL(state, [
+        "email",
+        "public_profile",
+      ]);
     } else {
       return c.json({ error: "Unsupported provider" }, 400);
     }
@@ -100,8 +104,8 @@ export function createAuthRoutes(db: Database, config: AuthConfig) {
     // Store state in cookie (10 minute expiry).
     setCookie(c, "__auth_state", JSON.stringify(authState), {
       httpOnly: true,
-      secure: config.cookieSecure,
-      sameSite: providerName === "apple" ? "None" : "Lax",
+      secure: true,
+      sameSite: "None",
       path: "/",
       maxAge: 600,
     });
@@ -109,25 +113,30 @@ export function createAuthRoutes(db: Database, config: AuthConfig) {
     return c.redirect(authUrl.toString());
   });
 
-  // GET /auth/:provider/callback — handle OAuth callback
+  // GET /auth/:provider/callback
   auth.get("/:provider/callback", authCallbackLimiter, async (c) => {
-    return handleCallback(c, db, config);
+    const config = loadAuthConfig(c.env);
+    return handleCallback(c, config);
   });
 
   // POST /auth/:provider/callback — Apple uses POST for callback
   auth.post("/:provider/callback", authCallbackLimiter, async (c) => {
-    return handleCallback(c, db, config);
+    const config = loadAuthConfig(c.env);
+    return handleCallback(c, config);
   });
 
   return auth;
 }
 
-async function handleCallback(c: any, db: Database, config: AuthConfig) {
+async function handleCallback(c: any, config: AuthConfig) {
   const providerName = c.req.param("provider");
-  const provider = getProvider(providerName);
+  const providers = createProviders(config);
+  const provider = getProviderFromMap(providers, providerName);
   if (!provider) {
     return c.json({ error: `Unknown provider: ${providerName}` }, 404);
   }
+
+  const frontendUrl: string = c.env.FRONTEND_URL ?? "http://localhost:5173";
 
   // Read state from cookie.
   const stateCookie = getCookie(c, "__auth_state");
@@ -169,7 +178,10 @@ async function handleCallback(c: any, db: Database, config: AuthConfig) {
   let tokens: any;
   try {
     if (providerName === "google") {
-      tokens = await (provider as Google).validateAuthorizationCode(code, authState.codeVerifier!);
+      tokens = await (provider as Google).validateAuthorizationCode(
+        code,
+        authState.codeVerifier!,
+      );
     } else if (providerName === "apple") {
       tokens = await (provider as Apple).validateAuthorizationCode(code);
     } else if (providerName === "facebook") {
@@ -196,11 +208,9 @@ async function handleCallback(c: any, db: Database, config: AuthConfig) {
     name = profile.name ?? "";
     avatarUrl = profile.picture ?? "";
   } else if (providerName === "apple") {
-    // Apple includes user info in the ID token (JWT).
     const claims = decodeIdToken(tokens.idToken()) as any;
     providerUserId = claims.sub;
     email = claims.email ?? "";
-    // Apple may send name in the first callback only, via POST body.
     if (c.req.method === "POST") {
       const body = await c.req.parseBody();
       if (body.user) {
@@ -229,16 +239,17 @@ async function handleCallback(c: any, db: Database, config: AuthConfig) {
   }
 
   // Upsert user and create session.
-  const userId = upsertUser(db, providerName, providerUserId, email, name, avatarUrl);
-  const sessionToken = createSession(db, userId, config.sessionMaxAge);
+  const supabase = c.get("supabase");
+  const userId = await upsertUser(supabase, providerName, providerUserId, email, name, avatarUrl);
+  const sessionToken = await createSession(supabase, userId, config.sessionMaxAge);
 
   setCookie(c, "__session", sessionToken, {
     httpOnly: true,
-    secure: config.cookieSecure,
-    sameSite: "Lax",
+    secure: true,
+    sameSite: "None",
     path: "/",
     maxAge: config.sessionMaxAge,
   });
 
-  return c.redirect("/");
+  return c.redirect(frontendUrl);
 }

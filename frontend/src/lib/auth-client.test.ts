@@ -18,7 +18,7 @@ describe("auth-client", () => {
       } as Response);
 
       const result = await fetchAuthStatus();
-      expect(fetch).toHaveBeenCalledWith("/auth/me");
+      expect(fetch).toHaveBeenCalledWith("/auth/me", { credentials: "include" });
       expect(result).toEqual(mockResponse);
     });
 
@@ -65,7 +65,7 @@ describe("auth-client", () => {
       } as Response);
 
       await logout();
-      expect(fetch).toHaveBeenCalledWith("/auth/logout", { method: "POST" });
+      expect(fetch).toHaveBeenCalledWith("/auth/logout", { method: "POST", credentials: "include" });
     });
   });
 });

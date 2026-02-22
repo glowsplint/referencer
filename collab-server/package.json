@@ -4,12 +4,23 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "dev": "node server.mjs"
+    "dev": "node server.mjs",
+    "dev:cf": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "ws": "^8.18.0",
     "y-leveldb": "^0.1.2",
     "y-websocket": "^1.5.0",
-    "yjs": "^13.6.29"
+    "yjs": "^13.6.29",
+    "hono": "^4.7.0",
+    "lib0": "^0.2.99",
+    "y-protocols": "^1.0.6",
+    "@supabase/supabase-js": "^2.47.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0",
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "typescript": "~5.9.3"
   }
 }

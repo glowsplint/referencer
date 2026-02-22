@@ -1,10 +1,10 @@
 import type { Context } from "hono";
-import type { Database } from "bun:sqlite";
 import { createShareLink, resolveShareLink } from "../db/share-queries";
 import type { ShareRequest, ShareResponse } from "../types";
+import type { Env } from "../env";
 
-export function handleShare(db: Database) {
-  return async (c: Context) => {
+export function handleShare() {
+  return async (c: Context<Env>) => {
     const req = await c.req.json<ShareRequest>();
 
     if (req.access !== "edit" && req.access !== "readonly") {
@@ -12,7 +12,8 @@ export function handleShare(db: Database) {
     }
 
     try {
-      const code = createShareLink(db, req.workspaceId, req.access);
+      const supabase = c.get("supabase");
+      const code = await createShareLink(supabase, req.workspaceId, req.access);
       const resp: ShareResponse = {
         code,
         url: "/s/" + code,
@@ -24,23 +25,24 @@ export function handleShare(db: Database) {
   };
 }
 
-export function handleResolveShare(db: Database, staticDir: string) {
-  return async (c: Context) => {
+export function handleResolveShare() {
+  return async (c: Context<Env>) => {
     const code = c.req.param("code");
     if (!code) {
       return c.text("code required", 400);
     }
 
-    const result = resolveShareLink(db, code);
+    const frontendUrl = c.env.FRONTEND_URL ?? "http://localhost:5173";
+
+    const supabase = c.get("supabase");
+    const result = await resolveShareLink(supabase, code);
     if (!result) {
-      // Share link not found - serve index.html as fallback.
-      const html = await Bun.file(`${staticDir}/index.html`).text();
-      return c.html(html);
+      return c.redirect(frontendUrl, 302);
     }
 
     if (result.access === "readonly") {
-      return c.redirect(`/space/${result.workspaceId}?access=readonly`, 302);
+      return c.redirect(`${frontendUrl}/space/${result.workspaceId}?access=readonly`, 302);
     }
-    return c.redirect(`/space/${result.workspaceId}`, 302);
+    return c.redirect(`${frontendUrl}/space/${result.workspaceId}`, 302);
   };
 }

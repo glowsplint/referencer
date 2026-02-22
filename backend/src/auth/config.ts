@@ -12,38 +12,42 @@ export interface AuthConfig {
   facebook: { clientId: string; clientSecret: string } | null;
 }
 
-export function loadAuthConfig(): AuthConfig {
-  const baseUrl = process.env.BASE_URL ?? "http://localhost:5000";
-  const cookieSecure = process.env.NODE_ENV === "production";
-  const sessionMaxAge = Number(process.env.SESSION_MAX_AGE ?? 2592000); // 30 days
+export function loadAuthConfig(env: Record<string, unknown>): AuthConfig {
+  const str = (key: string): string | undefined => {
+    const v = env[key];
+    return typeof v === "string" ? v : undefined;
+  };
 
+  const baseUrl = str("BASE_URL") ?? "http://localhost:8787";
+  const cookieSecure = true;
+  const sessionMaxAge = Number(str("SESSION_MAX_AGE") ?? 2592000); // 30 days
+
+  const googleClientId = str("GOOGLE_CLIENT_ID");
+  const googleClientSecret = str("GOOGLE_CLIENT_SECRET");
   const google =
-    process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-      ? {
-          clientId: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        }
+    googleClientId && googleClientSecret
+      ? { clientId: googleClientId, clientSecret: googleClientSecret }
       : null;
 
+  const appleClientId = str("APPLE_CLIENT_ID");
+  const applePrivateKey = str("APPLE_PRIVATE_KEY");
+  const appleTeamId = str("APPLE_TEAM_ID");
+  const appleKeyId = str("APPLE_KEY_ID");
   const apple =
-    process.env.APPLE_CLIENT_ID &&
-    process.env.APPLE_PRIVATE_KEY &&
-    process.env.APPLE_TEAM_ID &&
-    process.env.APPLE_KEY_ID
+    appleClientId && applePrivateKey && appleTeamId && appleKeyId
       ? {
-          clientId: process.env.APPLE_CLIENT_ID,
-          privateKey: process.env.APPLE_PRIVATE_KEY,
-          teamId: process.env.APPLE_TEAM_ID,
-          keyId: process.env.APPLE_KEY_ID,
+          clientId: appleClientId,
+          privateKey: applePrivateKey,
+          teamId: appleTeamId,
+          keyId: appleKeyId,
         }
       : null;
 
+  const facebookClientId = str("FACEBOOK_CLIENT_ID");
+  const facebookClientSecret = str("FACEBOOK_CLIENT_SECRET");
   const facebook =
-    process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET
-      ? {
-          clientId: process.env.FACEBOOK_CLIENT_ID,
-          clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-        }
+    facebookClientId && facebookClientSecret
+      ? { clientId: facebookClientId, clientSecret: facebookClientSecret }
       : null;
 
   return { baseUrl, cookieSecure, sessionMaxAge, google, apple, facebook };

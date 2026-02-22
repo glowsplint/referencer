@@ -1,37 +1,32 @@
-import type { Database } from "bun:sqlite";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { generateCode } from "../lib/utils";
 
-export function createShareLink(db: Database, workspaceId: string, access: string): string {
+export async function createShareLink(
+  supabase: SupabaseClient,
+  workspaceId: string,
+  access: string,
+): Promise<string> {
   const maxRetries = 5;
   for (let i = 0; i < maxRetries; i++) {
     const code = generateCode(6);
-    try {
-      db.run("INSERT INTO share_link (code, workspace_id, access) VALUES (?, ?, ?)", [
-        code,
-        workspaceId,
-        access,
-      ]);
-      return code;
-    } catch {
-      // On unique constraint violation, retry.
-    }
+    const { error } = await supabase
+      .from("share_link")
+      .insert({ code, workspace_id: workspaceId, access });
+    if (!error) return code;
+    // Retry on unique constraint violation
   }
   throw new Error(`failed to generate unique share code after ${maxRetries} retries`);
 }
 
-export function resolveShareLink(
-  db: Database,
+export async function resolveShareLink(
+  supabase: SupabaseClient,
   code: string,
-): { workspaceId: string; access: string } | null {
-  const row = db
-    .query<
-      { workspace_id: string; access: string },
-      [string]
-    >("SELECT workspace_id, access FROM share_link WHERE code = ?")
-    .get(code);
-
-  if (!row) {
-    return null;
-  }
-  return { workspaceId: row.workspace_id, access: row.access };
+): Promise<{ workspaceId: string; access: string } | null> {
+  const { data } = await supabase
+    .from("share_link")
+    .select("workspace_id, access")
+    .eq("code", code)
+    .single();
+  if (!data) return null;
+  return { workspaceId: data.workspace_id, access: data.access };
 }

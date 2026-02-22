@@ -1,67 +1,54 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { serveStatic } from "hono/bun";
-import { join } from "path";
-
-import { openDatabase } from "./db/database";
-import { handleShare, handleResolveShare } from "./api/share";
-import { loadAuthConfig } from "./auth/config";
-import { initProviders } from "./auth/providers";
+import { createSupabaseClient } from "./db/database";
 import { createAuthRoutes } from "./auth/handlers";
+import { loadAuthConfig } from "./auth/config";
 import { optionalAuth } from "./auth/middleware";
+import { handleShare, handleResolveShare } from "./api/share";
 import { cleanExpiredSessions } from "./auth/store";
+import type { Env } from "./env";
 
-const dbPath = process.env.DB_PATH ?? join(import.meta.dir, "..", "data", "referencer.db");
-const db = openDatabase(dbPath);
-const authConfig = loadAuthConfig();
-initProviders(authConfig);
+const app = new Hono<Env>();
 
-const app = new Hono();
+// Create Supabase client per-request
+app.use("*", async (c, next) => {
+  const supabase = createSupabaseClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY);
+  c.set("supabase", supabase);
+  await next();
+});
 
 // CORS
 app.use(
   "*",
   cors({
-    origin: (origin) => origin || "*",
+    origin: (_, c) => c.env.FRONTEND_URL,
     credentials: true,
   }),
 );
 
-// Auth middleware on all routes.
-app.use("*", optionalAuth(db, authConfig));
-
-// Auth routes.
-app.route("/auth", createAuthRoutes(db, authConfig));
-
-// Share API.
-app.post("/api/share", handleShare(db));
-
-// Share link resolution.
-const staticDir = join(import.meta.dir, "..", "..", "frontend", "dist");
-app.get("/s/:code", handleResolveShare(db, staticDir));
-
-// Static file serving for the frontend dist.
-app.use(
-  "/referencer/*",
-  serveStatic({
-    root: staticDir,
-    rewriteRequestPath: (path) => path.replace(/^\/referencer/, ""),
-  }),
-);
-
-// SPA fallback: serve index.html for unmatched routes.
-app.get("*", async (c) => {
-  const html = await Bun.file(join(staticDir, "index.html")).text();
-  return c.html(html);
+// Auth middleware
+app.use("*", (c, next) => {
+  const config = loadAuthConfig(c.env);
+  return optionalAuth(config)(c, next);
 });
 
-// Clean expired sessions periodically (every hour).
-setInterval(() => cleanExpiredSessions(db), 60 * 60 * 1000);
+// Auth routes (mounted directly so they share the main app's middleware context)
+app.route("/auth", createAuthRoutes());
 
-const port = Number(process.env.PORT ?? 5000);
-console.log(`Server starting on port ${port}`);
+// Share API
+app.post("/api/share", handleShare());
+
+// Share link resolution
+app.get("/s/:code", handleResolveShare());
 
 export default {
   fetch: app.fetch,
-  port,
+  async scheduled(
+    _event: ScheduledEvent,
+    env: Env["Bindings"],
+    _ctx: ExecutionContext,
+  ) {
+    const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_KEY);
+    await cleanExpiredSessions(supabase);
+  },
 };

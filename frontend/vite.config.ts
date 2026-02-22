@@ -4,9 +4,12 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+const backendUrl = process.env.VITE_BACKEND_URL || "http://localhost:8787";
+const collabWsUrl = process.env.VITE_COLLAB_WS_URL || "ws://localhost:8788";
+
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/referencer/",
+  base: "/",
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -14,19 +17,22 @@ export default defineConfig({
     },
   },
   server: {
+    watch: {
+      usePolling: !!process.env.VITE_USE_POLLING,
+    },
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: backendUrl,
         changeOrigin: true,
       },
       "/s": {
-        target: "http://localhost:5000",
+        target: backendUrl,
       },
       "/auth": {
-        target: "http://localhost:5000",
+        target: backendUrl,
       },
       "/yjs": {
-        target: "ws://localhost:4444",
+        target: collabWsUrl,
         ws: true,
         rewrite: (path) => path.replace(/^\/yjs/, ""),
       },

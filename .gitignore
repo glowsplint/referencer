@@ -16,3 +16,10 @@ bun.lockb
 /data/referencer.db
 /data/referencer.db-wal
 /data/referencer.db-shm
+
+# Docker
+docker-compose.override.yml
+/collab-server/data/
+
+# Wrangler
+.wrangler/

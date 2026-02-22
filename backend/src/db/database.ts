@@ -1,56 +1,7 @@
-import { Database } from "bun:sqlite";
-import { mkdirSync } from "fs";
-import { dirname } from "path";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const schema = `
-CREATE TABLE IF NOT EXISTS workspace (
-    id TEXT PRIMARY KEY,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
+export type { SupabaseClient };
 
-CREATE TABLE IF NOT EXISTS share_link (
-    code TEXT PRIMARY KEY,
-    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
-    access TEXT NOT NULL CHECK (access IN ('edit', 'readonly')),
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE TABLE IF NOT EXISTS user (
-    id TEXT PRIMARY KEY,
-    email TEXT NOT NULL,
-    name TEXT NOT NULL DEFAULT '',
-    avatar_url TEXT NOT NULL DEFAULT '',
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_user_email ON user(email);
-
-CREATE TABLE IF NOT EXISTS user_provider (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    provider TEXT NOT NULL,
-    provider_user_id TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    UNIQUE(provider, provider_user_id)
-);
-
-CREATE TABLE IF NOT EXISTS session (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    expires_at TEXT NOT NULL
-);
-CREATE INDEX IF NOT EXISTS idx_session_user_id ON session(user_id);
-CREATE INDEX IF NOT EXISTS idx_session_expires_at ON session(expires_at);
-`;
-
-export function openDatabase(path: string): Database {
-  mkdirSync(dirname(path), { recursive: true });
-
-  const db = new Database(path);
-  db.exec("PRAGMA journal_mode=WAL");
-  db.exec("PRAGMA foreign_keys=ON");
-  db.exec(schema);
-
-  return db;
+export function createSupabaseClient(url: string, key: string): SupabaseClient {
+  return createClient(url, key);
 }
