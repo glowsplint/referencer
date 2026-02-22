@@ -59,9 +59,7 @@ export function ManagementPane() {
     >
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2 px-1">
-          <h3 className="text-xs font-medium text-muted-foreground">
-            {t("layers.title")}
-          </h3>
+          <h3 className="text-xs font-medium text-muted-foreground">{t("layers.title")}</h3>
           <div className="flex items-center gap-1">
             <button
               className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"

@@ -131,9 +131,7 @@ export function SettingsDialog({
       >
         <DialogHeader className="p-6 pb-4">
           <DialogTitle>{t("settings.title")}</DialogTitle>
-          <DialogDescription>
-            {t("settings.description")}
-          </DialogDescription>
+          <DialogDescription>{t("settings.description")}</DialogDescription>
         </DialogHeader>
         <div className="px-6 pb-4 space-y-4">
           {rows.map((row) => (

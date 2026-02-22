@@ -8,26 +8,23 @@ type ProtocolOptions = {
    * @example 'ftp'
    * @example 'git'
    */
-  scheme: string
+  scheme: string;
 
   /**
    * If enabled, it allows optional slashes after the protocol.
    * @default false
    * @example true
    */
-  optionalSlashes?: boolean
-}
+  optionalSlashes?: boolean;
+};
 
-type ProtocolConfig = Array<ProtocolOptions | string>
+type ProtocolConfig = Array<ProtocolOptions | string>;
 
 const ATTR_WHITESPACE =
   // eslint-disable-next-line no-control-regex
-  /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g
+  /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g;
 
-export function isAllowedUri(
-  uri: string | undefined,
-  protocols?: ProtocolConfig
-) {
+export function isAllowedUri(uri: string | undefined, protocols?: ProtocolConfig) {
   const allowedProtocols: string[] = [
     "http",
     "https",
@@ -39,17 +36,16 @@ export function isAllowedUri(
     "sms",
     "cid",
     "xmpp",
-  ]
+  ];
 
   if (protocols) {
     protocols.forEach((protocol) => {
-      const nextProtocol =
-        typeof protocol === "string" ? protocol : protocol.scheme
+      const nextProtocol = typeof protocol === "string" ? protocol : protocol.scheme;
 
       if (nextProtocol) {
-        allowedProtocols.push(nextProtocol)
+        allowedProtocols.push(nextProtocol);
       }
-    })
+    });
   }
 
   return (
@@ -58,25 +54,21 @@ export function isAllowedUri(
       new RegExp(
         // eslint-disable-next-line no-useless-escape
         `^(?:(?:${allowedProtocols.join("|")}):|[^a-z]|[a-z0-9+.\-]+(?:[^a-z+.\-:]|$))`,
-        "i"
-      )
+        "i",
+      ),
     )
-  )
+  );
 }
 
-export function sanitizeUrl(
-  inputUrl: string,
-  baseUrl: string,
-  protocols?: ProtocolConfig
-): string {
+export function sanitizeUrl(inputUrl: string, baseUrl: string, protocols?: ProtocolConfig): string {
   try {
-    const url = new URL(inputUrl, baseUrl)
+    const url = new URL(inputUrl, baseUrl);
 
     if (isAllowedUri(url.href, protocols)) {
-      return url.href
+      return url.href;
     }
   } catch {
     // If URL creation fails, it's considered invalid
   }
-  return "#"
+  return "#";
 }

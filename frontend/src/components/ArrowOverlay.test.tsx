@@ -1,14 +1,14 @@
-import { render, screen, fireEvent, act } from "@testing-library/react"
-import { describe, it, expect, vi, beforeEach } from "vitest"
-import { ArrowOverlay } from "./ArrowOverlay"
-import type { Layer, DrawingState, ActiveTool } from "@/types/editor"
-import type { Editor } from "@tiptap/react"
+import { render, screen, fireEvent, act } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ArrowOverlay } from "./ArrowOverlay";
+import type { Layer, DrawingState, ActiveTool } from "@/types/editor";
+import type { Editor } from "@tiptap/react";
 
 // Mock getWordCenter, getWordRect, clamped variants, and wrapper-relative variants
 // to return deterministic positions based on word offset for reproducible tests.
 vi.mock("@/lib/tiptap/nearest-word", () => ({
   getWordCenter: vi.fn((word: { editorIndex: number; from: number }) => {
-    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 }
+    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 };
   }),
   getWordRect: vi.fn((word: { editorIndex: number; from: number; to: number }) => {
     return {
@@ -16,18 +16,18 @@ vi.mock("@/lib/tiptap/nearest-word", () => ({
       y: word.editorIndex * 50 + 15,
       width: (word.to - word.from) * 10,
       height: 20,
-    }
+    };
   }),
   // Clamped variants return the same positions with clamped: false (no off-screen
   // endpoints in the test environment, so arrows render at full opacity)
   getClampedWordCenter: vi.fn((word: { editorIndex: number; from: number }) => {
-    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25, clamped: false }
+    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25, clamped: false };
   }),
   getClampedWordCenterRelativeToWrapper: vi.fn((word: { editorIndex: number; from: number }) => {
-    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25, clamped: false }
+    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25, clamped: false };
   }),
   getWordCenterRelativeToWrapper: vi.fn((word: { editorIndex: number; from: number }) => {
-    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 }
+    return { cx: word.from * 10, cy: word.editorIndex * 50 + 25 };
   }),
   getWordRectRelativeToWrapper: vi.fn((word: { editorIndex: number; from: number; to: number }) => {
     return {
@@ -35,9 +35,9 @@ vi.mock("@/lib/tiptap/nearest-word", () => ({
       y: word.editorIndex * 50 + 15,
       width: (word.to - word.from) * 10,
       height: 20,
-    }
+    };
   }),
-}))
+}));
 
 function createLayer(overrides: Partial<Layer> = {}): Layer {
   return {
@@ -49,16 +49,22 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
     arrows: [],
     underlines: [],
     ...overrides,
-  }
+  };
 }
 
 function createDefaultProps(overrides: Record<string, unknown> = {}) {
-  const containerEl = document.createElement("div")
+  const containerEl = document.createElement("div");
   containerEl.getBoundingClientRect = () => ({
-    x: 0, y: 0, width: 800, height: 600,
-    top: 0, right: 800, bottom: 600, left: 0,
+    x: 0,
+    y: 0,
+    width: 800,
+    height: 600,
+    top: 0,
+    right: 800,
+    bottom: 600,
+    left: 0,
     toJSON: () => {},
-  })
+  });
 
   return {
     layers: [] as Layer[],
@@ -75,18 +81,18 @@ function createDefaultProps(overrides: Record<string, unknown> = {}) {
     isLocked: true,
     hideOffscreenArrows: false,
     ...overrides,
-  }
+  };
 }
 
 describe("ArrowOverlay", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   it("renders SVG with correct testid", () => {
-    render(<ArrowOverlay {...createDefaultProps()} />)
-    expect(screen.getByTestId("arrow-overlay")).toBeInTheDocument()
-  })
+    render(<ArrowOverlay {...createDefaultProps()} />);
+    expect(screen.getByTestId("arrow-overlay")).toBeInTheDocument();
+  });
 
   it("renders lines for visible layer arrows", () => {
     const layer = createLayer({
@@ -97,12 +103,12 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const lines = screen.getAllByTestId("arrow-line")
-    expect(lines).toHaveLength(1)
-  })
+    const lines = screen.getAllByTestId("arrow-line");
+    expect(lines).toHaveLength(1);
+  });
 
   it("renders multiple arrows from multiple layers", () => {
     const layer1 = createLayer({
@@ -114,7 +120,7 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     const layer2 = createLayer({
       id: "l2",
       color: "#93c5fd",
@@ -125,11 +131,11 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 1, to: 4, text: "bar" },
         },
       ],
-    })
+    });
 
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer1, layer2] })} />)
-    expect(screen.getAllByTestId("arrow-line")).toHaveLength(2)
-  })
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer1, layer2] })} />);
+    expect(screen.getAllByTestId("arrow-line")).toHaveLength(2);
+  });
 
   it("hides lines for invisible layers", () => {
     const layer = createLayer({
@@ -141,104 +147,104 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
-    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
-  })
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
+    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument();
+  });
 
   it("renders dashed preview line from drawingState", () => {
     const drawingState: DrawingState = {
       anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
       cursor: { editorIndex: 0, from: 10, to: 15, text: "world" },
-    }
+    };
     render(
       <ArrowOverlay
         {...createDefaultProps({
           drawingState,
           drawingColor: "#fca5a5",
         })}
-      />
-    )
+      />,
+    );
 
-    const preview = screen.getByTestId("preview-arrow")
-    expect(preview).toBeInTheDocument()
-    expect(preview.getAttribute("stroke-dasharray")).toBe("6 4")
-  })
+    const preview = screen.getByTestId("preview-arrow");
+    expect(preview).toBeInTheDocument();
+    expect(preview.getAttribute("stroke-dasharray")).toBe("6 4");
+  });
 
   it("renders anchor highlight rect during preview", () => {
     const drawingState: DrawingState = {
       anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
       cursor: { editorIndex: 0, from: 10, to: 15, text: "world" },
-    }
+    };
     render(
       <ArrowOverlay
         {...createDefaultProps({
           drawingState,
           drawingColor: "#fca5a5",
         })}
-      />
-    )
+      />,
+    );
 
-    const anchorRect = screen.getByTestId("preview-anchor-rect")
-    expect(anchorRect).toBeInTheDocument()
-    expect(anchorRect.getAttribute("fill")).toBe("#fca5a5")
+    const anchorRect = screen.getByTestId("preview-anchor-rect");
+    expect(anchorRect).toBeInTheDocument();
+    expect(anchorRect.getAttribute("fill")).toBe("#fca5a5");
     // Anchor word: from=1, to=5 → x=10, y=15, width=40, height=20
-    expect(anchorRect.getAttribute("x")).toBe("10")
-    expect(anchorRect.getAttribute("width")).toBe("40")
-  })
+    expect(anchorRect.getAttribute("x")).toBe("10");
+    expect(anchorRect.getAttribute("width")).toBe("40");
+  });
 
   it("renders anchor highlight rect even when anchor === cursor", () => {
     const drawingState: DrawingState = {
       anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
       cursor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-    }
+    };
     render(
       <ArrowOverlay
         {...createDefaultProps({
           drawingState,
           drawingColor: "#fca5a5",
         })}
-      />
-    )
+      />,
+    );
 
-    const anchorRect = screen.getByTestId("preview-anchor-rect")
-    expect(anchorRect).toBeInTheDocument()
-    expect(screen.queryByTestId("preview-arrow")).not.toBeInTheDocument()
-  })
+    const anchorRect = screen.getByTestId("preview-anchor-rect");
+    expect(anchorRect).toBeInTheDocument();
+    expect(screen.queryByTestId("preview-arrow")).not.toBeInTheDocument();
+  });
 
   it("does not render preview when anchor === cursor", () => {
     const drawingState: DrawingState = {
       anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
       cursor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
-    }
+    };
     render(
       <ArrowOverlay
         {...createDefaultProps({
           drawingState,
           drawingColor: "#fca5a5",
         })}
-      />
-    )
+      />,
+    );
 
-    expect(screen.queryByTestId("preview-arrow")).not.toBeInTheDocument()
-  })
+    expect(screen.queryByTestId("preview-arrow")).not.toBeInTheDocument();
+  });
 
   it("does not render preview when drawingColor is null", () => {
     const drawingState: DrawingState = {
       anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
       cursor: { editorIndex: 0, from: 10, to: 15, text: "world" },
-    }
+    };
     render(
       <ArrowOverlay
         {...createDefaultProps({
           drawingState,
           drawingColor: null,
         })}
-      />
-    )
+      />,
+    );
 
-    expect(screen.queryByTestId("preview-arrow")).not.toBeInTheDocument()
-  })
+    expect(screen.queryByTestId("preview-arrow")).not.toBeInTheDocument();
+  });
 
   it("hides arrows when an endpoint's section is hidden", () => {
     const layer = createLayer({
@@ -249,20 +255,20 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           sectionVisibility: [true, false, true],
         })}
-      />
-    )
-    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
-  })
+      />,
+    );
+    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument();
+  });
 
   it("click on arrow hit area triggers setSelectedArrow callback", () => {
-    const setSelectedArrow = vi.fn()
+    const setSelectedArrow = vi.fn();
     const layer = createLayer({
       arrows: [
         {
@@ -271,23 +277,17 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], setSelectedArrow })}
-      />
-    )
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], setSelectedArrow })} />);
 
-    fireEvent.click(screen.getByTestId("arrow-hit-area"))
-    expect(setSelectedArrow).toHaveBeenCalledWith({ layerId: "layer-1", arrowId: "a1" })
-  })
+    fireEvent.click(screen.getByTestId("arrow-hit-area"));
+    expect(setSelectedArrow).toHaveBeenCalledWith({ layerId: "layer-1", arrowId: "a1" });
+  });
 
   it("recalculates positions on scroll within container synchronously", async () => {
     // updatePositions now uses getClampedWordCenter (not getWordCenter) for
     // cross-editor arrows, so we check that the clamped variant gets called on scroll
-    const { getClampedWordCenter } = vi.mocked(
-      await import("@/lib/tiptap/nearest-word")
-    )
+    const { getClampedWordCenter } = vi.mocked(await import("@/lib/tiptap/nearest-word"));
     const layer = createLayer({
       arrows: [
         {
@@ -296,21 +296,19 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    const props = createDefaultProps({ layers: [layer] })
-    render(<ArrowOverlay {...props} />)
+    });
+    const props = createDefaultProps({ layers: [layer] });
+    render(<ArrowOverlay {...props} />);
 
-    const callsBefore = getClampedWordCenter.mock.calls.length
+    const callsBefore = getClampedWordCenter.mock.calls.length;
 
     // flushSync makes the update synchronous — no RAF wait needed
     act(() => {
-      props.containerRef.current!.dispatchEvent(
-        new Event("scroll", { bubbles: false })
-      )
-    })
+      props.containerRef.current!.dispatchEvent(new Event("scroll", { bubbles: false }));
+    });
 
-    expect(getClampedWordCenter.mock.calls.length).toBeGreaterThan(callsBefore)
-  })
+    expect(getClampedWordCenter.mock.calls.length).toBeGreaterThan(callsBefore);
+  });
 
   it("does not render visual arrow-line for within-editor arrows (handled by plugin)", () => {
     const layer = createLayer({
@@ -321,39 +319,31 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 0, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
     // Visual arrow-line is rendered by the plugin, not ArrowOverlay
-    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
+    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument();
     // But interaction hit area IS rendered here for all arrows
-    expect(screen.getByTestId("arrow-hit-area")).toBeInTheDocument()
-  })
+    expect(screen.getByTestId("arrow-hit-area")).toBeInTheDocument();
+  });
 
   it("SVG overlay uses mix-blend-mode multiply in light mode", () => {
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ isDarkMode: false })}
-      />
-    )
+    render(<ArrowOverlay {...createDefaultProps({ isDarkMode: false })} />);
 
-    const svg = screen.getByTestId("arrow-overlay")
-    expect(svg).toHaveStyle({ mixBlendMode: "multiply" })
-  })
+    const svg = screen.getByTestId("arrow-overlay");
+    expect(svg).toHaveStyle({ mixBlendMode: "multiply" });
+  });
 
   it("SVG overlay uses mix-blend-mode screen in dark mode", () => {
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ isDarkMode: true })}
-      />
-    )
+    render(<ArrowOverlay {...createDefaultProps({ isDarkMode: true })} />);
 
-    const svg = screen.getByTestId("arrow-overlay")
-    expect(svg).toHaveStyle({ mixBlendMode: "screen" })
-  })
+    const svg = screen.getByTestId("arrow-overlay");
+    expect(svg).toHaveStyle({ mixBlendMode: "screen" });
+  });
 
   it("arrow line and arrowhead share same base color", () => {
-    const layerColor = "#fca5a5"
+    const layerColor = "#fca5a5";
     const layer = createLayer({
       color: layerColor,
       arrows: [
@@ -363,20 +353,16 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer] })}
-      />
-    )
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const line = screen.getByTestId("arrow-line")
-    expect(line.getAttribute("stroke")).toBe(layerColor)
+    const line = screen.getByTestId("arrow-line");
+    expect(line.getAttribute("stroke")).toBe(layerColor);
 
-    const marker = document.getElementById("arrowhead-a1")
-    const polygon = marker?.querySelector("polygon")
-    expect(polygon?.getAttribute("fill")).toBe(layerColor)
-  })
+    const marker = document.getElementById("arrowhead-a1");
+    const polygon = marker?.querySelector("polygon");
+    expect(polygon?.getAttribute("fill")).toBe(layerColor);
+  });
 
   it("arrow hit areas have pointer-events none when arrow tool is active", () => {
     const layer = createLayer({
@@ -387,16 +373,12 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], activeTool: "arrow" })}
-      />
-    )
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], activeTool: "arrow" })} />);
 
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    expect(hitArea).toHaveStyle({ pointerEvents: "none" })
-  })
+    const hitArea = screen.getByTestId("arrow-hit-area");
+    expect(hitArea).toHaveStyle({ pointerEvents: "none" });
+  });
 
   it("arrow hit areas have pointer-events auto when selection tool is active", () => {
     const layer = createLayer({
@@ -407,25 +389,21 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], activeTool: "selection" })}
-      />
-    )
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], activeTool: "selection" })} />);
 
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    expect(hitArea).toHaveStyle({ pointerEvents: "auto" })
-    expect(hitArea).toHaveStyle({ cursor: "pointer" })
-  })
+    const hitArea = screen.getByTestId("arrow-hit-area");
+    expect(hitArea).toHaveStyle({ pointerEvents: "auto" });
+    expect(hitArea).toHaveStyle({ cursor: "pointer" });
+  });
 
   it("interaction layer SVG has no mix-blend-mode", () => {
-    render(<ArrowOverlay {...createDefaultProps()} />)
+    render(<ArrowOverlay {...createDefaultProps()} />);
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer).not.toHaveStyle({ mixBlendMode: "multiply" })
-    expect(interactionLayer).not.toHaveStyle({ mixBlendMode: "screen" })
-  })
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer).not.toHaveStyle({ mixBlendMode: "multiply" });
+    expect(interactionLayer).not.toHaveStyle({ mixBlendMode: "screen" });
+  });
 
   it("hit areas are in the interaction layer, not the blended visual layer", () => {
     const layer = createLayer({
@@ -436,16 +414,16 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer.contains(hitArea)).toBe(true)
+    const hitArea = screen.getByTestId("arrow-hit-area");
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer.contains(hitArea)).toBe(true);
 
-    const visualLayer = screen.getByTestId("arrow-overlay")
-    expect(visualLayer.contains(hitArea)).toBe(false)
-  })
+    const visualLayer = screen.getByTestId("arrow-overlay");
+    expect(visualLayer.contains(hitArea)).toBe(false);
+  });
 
   it("does not show X icon on hover alone", () => {
     const layer = createLayer({
@@ -456,19 +434,19 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
+    const hitArea = screen.getByTestId("arrow-hit-area");
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
 
     // No X icon initially
-    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
+    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument();
 
     // Hover does NOT show X icon
-    fireEvent.mouseEnter(hitArea)
-    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
-  })
+    fireEvent.mouseEnter(hitArea);
+    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument();
+  });
 
   it("shows X icon when arrow is selected and hides on deselect", () => {
     const layer = createLayer({
@@ -479,31 +457,27 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     const { rerender } = render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer.querySelector("circle")).toBeInTheDocument()
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer.querySelector("circle")).toBeInTheDocument();
 
     // Deselect hides X icon
-    rerender(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], selectedArrow: null })}
-      />
-    )
-    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument()
-  })
+    rerender(<ArrowOverlay {...createDefaultProps({ layers: [layer], selectedArrow: null })} />);
+    expect(interactionLayer.querySelector("circle")).not.toBeInTheDocument();
+  });
 
   it("clicking X icon on selected arrow calls removeArrow", () => {
-    const removeArrow = vi.fn()
-    const setSelectedArrow = vi.fn()
+    const removeArrow = vi.fn();
+    const setSelectedArrow = vi.fn();
     const layer = createLayer({
       arrows: [
         {
@@ -512,7 +486,7 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
@@ -521,18 +495,18 @@ describe("ArrowOverlay", () => {
           setSelectedArrow,
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer.querySelector("circle")).toBeInTheDocument()
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer.querySelector("circle")).toBeInTheDocument();
 
     // Click X icon to delete
-    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
-    fireEvent.click(xIconGroup)
-    expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
-    expect(setSelectedArrow).toHaveBeenCalledWith(null)
-  })
+    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!;
+    fireEvent.click(xIconGroup);
+    expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1");
+    expect(setSelectedArrow).toHaveBeenCalledWith(null);
+  });
 
   it("arrow lines are in the visual layer, not the interaction layer", () => {
     const layer = createLayer({
@@ -543,16 +517,16 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const arrowLine = screen.getByTestId("arrow-line")
-    const visualLayer = screen.getByTestId("arrow-overlay")
-    expect(visualLayer.contains(arrowLine)).toBe(true)
+    const arrowLine = screen.getByTestId("arrow-line");
+    const visualLayer = screen.getByTestId("arrow-overlay");
+    expect(visualLayer.contains(arrowLine)).toBe(true);
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer.contains(arrowLine)).toBe(false)
-  })
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer.contains(arrowLine)).toBe(false);
+  });
 
   it("visual and interaction layers share the same arrow path geometry", () => {
     const layer = createLayer({
@@ -563,13 +537,13 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const arrowLine = screen.getByTestId("arrow-line")
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    expect(arrowLine.getAttribute("d")).toBe(hitArea.getAttribute("d"))
-  })
+    const arrowLine = screen.getByTestId("arrow-line");
+    const hitArea = screen.getByTestId("arrow-hit-area");
+    expect(arrowLine.getAttribute("d")).toBe(hitArea.getAttribute("d"));
+  });
 
   it("interaction layer renders one hit area per visible arrow", () => {
     const layer = createLayer({
@@ -585,12 +559,12 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 30, to: 35, text: "bar" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    expect(screen.getAllByTestId("arrow-hit-area")).toHaveLength(2)
-    expect(screen.getAllByTestId("arrow-line")).toHaveLength(2)
-  })
+    expect(screen.getAllByTestId("arrow-hit-area")).toHaveLength(2);
+    expect(screen.getAllByTestId("arrow-line")).toHaveLength(2);
+  });
 
   it("hit areas have pointer-events auto when selection tool is active", () => {
     const layer = createLayer({
@@ -601,20 +575,16 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], activeTool: "selection" })}
-      />
-    )
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], activeTool: "selection" })} />);
 
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    expect(hitArea).toHaveStyle({ pointerEvents: "auto" })
-    expect(hitArea).toHaveStyle({ cursor: "pointer" })
-  })
+    const hitArea = screen.getByTestId("arrow-hit-area");
+    expect(hitArea).toHaveStyle({ pointerEvents: "auto" });
+    expect(hitArea).toHaveStyle({ cursor: "pointer" });
+  });
 
   it("clicking one arrow selects only that arrow", () => {
-    const setSelectedArrow = vi.fn()
+    const setSelectedArrow = vi.fn();
     const layer = createLayer({
       arrows: [
         {
@@ -628,19 +598,15 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 30, to: 35, text: "bar" },
         },
       ],
-    })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], setSelectedArrow })}
-      />
-    )
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], setSelectedArrow })} />);
 
-    const hitAreas = screen.getAllByTestId("arrow-hit-area")
-    fireEvent.click(hitAreas[0])
+    const hitAreas = screen.getAllByTestId("arrow-hit-area");
+    fireEvent.click(hitAreas[0]);
 
-    expect(setSelectedArrow).toHaveBeenCalledTimes(1)
-    expect(setSelectedArrow).toHaveBeenCalledWith({ layerId: "layer-1", arrowId: "a1" })
-  })
+    expect(setSelectedArrow).toHaveBeenCalledTimes(1);
+    expect(setSelectedArrow).toHaveBeenCalledWith({ layerId: "layer-1", arrowId: "a1" });
+  });
 
   it("only selected arrow shows X icon, not other arrows", () => {
     const layer = createLayer({
@@ -656,19 +622,19 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 30, to: 35, text: "bar" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer.querySelectorAll("circle")).toHaveLength(1)
-  })
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer.querySelectorAll("circle")).toHaveLength(1);
+  });
 
   it("X icon is positioned at arrow midpoint", () => {
     const layer = createLayer({
@@ -679,24 +645,24 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!;
 
     // from: {editorIndex: 0, from: 1} → cx = 10, cy = 25
     // to: {editorIndex: 1, from: 10} → cx = 100, cy = 75
     // midX = (10 + 100) / 2 = 55, midY = (25 + 75) / 2 = 50
-    expect(xIconGroup.getAttribute("transform")).toBe("translate(55, 50)")
-  })
+    expect(xIconGroup.getAttribute("transform")).toBe("translate(55, 50)");
+  });
 
   it("X icon circle has white fill and blended stroke color", () => {
     const layer = createLayer({
@@ -708,24 +674,24 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    const circle = interactionLayer.querySelector("circle")!
-    expect(circle.getAttribute("fill")).toBe("white")
-    expect(circle.getAttribute("r")).toBe("8")
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    const circle = interactionLayer.querySelector("circle")!;
+    expect(circle.getAttribute("fill")).toBe("white");
+    expect(circle.getAttribute("r")).toBe("8");
     // Stroke should be the blended color (not the raw layer color)
-    expect(circle.getAttribute("stroke")).not.toBe("#fca5a5")
-    expect(circle.getAttribute("stroke")).toBeTruthy()
-  })
+    expect(circle.getAttribute("stroke")).not.toBe("#fca5a5");
+    expect(circle.getAttribute("stroke")).toBeTruthy();
+  });
 
   it("X icon has pointer-events auto and cursor pointer for clickable removal", () => {
     const layer = createLayer({
@@ -736,53 +702,49 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
-    expect(xIconGroup).toHaveStyle({ pointerEvents: "auto", cursor: "pointer" })
-  })
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!;
+    expect(xIconGroup).toHaveStyle({ pointerEvents: "auto", cursor: "pointer" });
+  });
 
   it("preview arrow is in the visual layer, not the interaction layer", () => {
     const drawingState: DrawingState = {
       anchor: { editorIndex: 0, from: 1, to: 5, text: "hello" },
       cursor: { editorIndex: 0, from: 10, to: 15, text: "world" },
-    }
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ drawingState, drawingColor: "#fca5a5" })}
-      />
-    )
+    };
+    render(<ArrowOverlay {...createDefaultProps({ drawingState, drawingColor: "#fca5a5" })} />);
 
-    const preview = screen.getByTestId("preview-arrow")
-    const visualLayer = screen.getByTestId("arrow-overlay")
-    expect(visualLayer.contains(preview)).toBe(true)
+    const preview = screen.getByTestId("preview-arrow");
+    const visualLayer = screen.getByTestId("arrow-overlay");
+    expect(visualLayer.contains(preview)).toBe(true);
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer.contains(preview)).toBe(false)
-  })
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer.contains(preview)).toBe(false);
+  });
 
   it("visual layer has pointer-events-none class", () => {
-    render(<ArrowOverlay {...createDefaultProps()} />)
+    render(<ArrowOverlay {...createDefaultProps()} />);
 
-    const visualLayer = screen.getByTestId("arrow-overlay")
-    expect(visualLayer.classList.contains("pointer-events-none")).toBe(true)
-  })
+    const visualLayer = screen.getByTestId("arrow-overlay");
+    expect(visualLayer.classList.contains("pointer-events-none")).toBe(true);
+  });
 
   it("interaction layer has pointer-events-none class", () => {
-    render(<ArrowOverlay {...createDefaultProps()} />)
+    render(<ArrowOverlay {...createDefaultProps()} />);
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer.classList.contains("pointer-events-none")).toBe(true)
-  })
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer.classList.contains("pointer-events-none")).toBe(true);
+  });
 
   it("no hit areas or X icons render for invisible layers", () => {
     const layer = createLayer({
@@ -794,12 +756,12 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    expect(screen.queryByTestId("arrow-hit-area")).not.toBeInTheDocument()
-    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument()
-  })
+    expect(screen.queryByTestId("arrow-hit-area")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("arrow-line")).not.toBeInTheDocument();
+  });
 
   it("shows hover ring on mouseEnter", () => {
     const layer = createLayer({
@@ -810,16 +772,16 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument()
+    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument();
 
-    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
-    expect(screen.getByTestId("arrow-hover-ring")).toBeInTheDocument()
-    expect(screen.getByTestId("arrow-hover-ring").getAttribute("stroke-width")).toBe("6")
-    expect(screen.getByTestId("arrow-hover-ring").getAttribute("stroke-opacity")).toBe("0.15")
-  })
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"));
+    expect(screen.getByTestId("arrow-hover-ring")).toBeInTheDocument();
+    expect(screen.getByTestId("arrow-hover-ring").getAttribute("stroke-width")).toBe("6");
+    expect(screen.getByTestId("arrow-hover-ring").getAttribute("stroke-opacity")).toBe("0.15");
+  });
 
   it("hides hover ring on mouseLeave", () => {
     const layer = createLayer({
@@ -830,15 +792,15 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
-    expect(screen.getByTestId("arrow-hover-ring")).toBeInTheDocument()
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"));
+    expect(screen.getByTestId("arrow-hover-ring")).toBeInTheDocument();
 
-    fireEvent.mouseLeave(screen.getByTestId("arrow-hit-area"))
-    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument()
-  })
+    fireEvent.mouseLeave(screen.getByTestId("arrow-hit-area"));
+    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument();
+  });
 
   it("does not show hover ring when arrow is selected", () => {
     const layer = createLayer({
@@ -849,21 +811,21 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
-    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument()
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"));
+    expect(screen.queryByTestId("arrow-hover-ring")).not.toBeInTheDocument();
     // Selection ring should be shown instead
-    expect(screen.getByTestId("arrow-selection-ring")).toBeInTheDocument()
-  })
+    expect(screen.getByTestId("arrow-selection-ring")).toBeInTheDocument();
+  });
 
   it("keeps arrowhead marker when arrow is hovered without selection", () => {
     const layer = createLayer({
@@ -874,15 +836,15 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const arrowLine = screen.getByTestId("arrow-line")
-    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
+    const arrowLine = screen.getByTestId("arrow-line");
+    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)");
 
-    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"))
-    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
-  })
+    fireEvent.mouseEnter(screen.getByTestId("arrow-hit-area"));
+    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)");
+  });
 
   it("hides arrowhead marker when arrow is selected", () => {
     const layer = createLayer({
@@ -893,13 +855,11 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    const { rerender } = render(
-      <ArrowOverlay {...createDefaultProps({ layers: [layer] })} />
-    )
+    });
+    const { rerender } = render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const arrowLine = screen.getByTestId("arrow-line")
-    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
+    const arrowLine = screen.getByTestId("arrow-line");
+    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)");
 
     rerender(
       <ArrowOverlay
@@ -907,10 +867,10 @@ describe("ArrowOverlay", () => {
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
-    expect(arrowLine.getAttribute("marker-mid")).toBeNull()
-  })
+      />,
+    );
+    expect(arrowLine.getAttribute("marker-mid")).toBeNull();
+  });
 
   it("restores arrowhead marker when arrow is deselected", () => {
     const layer = createLayer({
@@ -921,23 +881,21 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     const { rerender } = render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    rerender(
-      <ArrowOverlay {...createDefaultProps({ layers: [layer] })} />
-    )
+    rerender(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const arrowLine = screen.getByTestId("arrow-line")
-    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)")
-  })
+    const arrowLine = screen.getByTestId("arrow-line");
+    expect(arrowLine.getAttribute("marker-mid")).toBe("url(#arrowhead-a1)");
+  });
 
   it("renders dashed arrow with stroke-dasharray '8 4'", () => {
     const layer = createLayer({
@@ -949,12 +907,12 @@ describe("ArrowOverlay", () => {
           arrowStyle: "dashed",
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const line = screen.getByTestId("arrow-line")
-    expect(line.getAttribute("stroke-dasharray")).toBe("8 4")
-  })
+    const line = screen.getByTestId("arrow-line");
+    expect(line.getAttribute("stroke-dasharray")).toBe("8 4");
+  });
 
   it("renders dotted arrow with stroke-dasharray '2 4'", () => {
     const layer = createLayer({
@@ -966,12 +924,12 @@ describe("ArrowOverlay", () => {
           arrowStyle: "dotted",
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const line = screen.getByTestId("arrow-line")
-    expect(line.getAttribute("stroke-dasharray")).toBe("2 4")
-  })
+    const line = screen.getByTestId("arrow-line");
+    expect(line.getAttribute("stroke-dasharray")).toBe("2 4");
+  });
 
   it("renders solid arrow without stroke-dasharray", () => {
     const layer = createLayer({
@@ -983,12 +941,12 @@ describe("ArrowOverlay", () => {
           arrowStyle: "solid",
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const line = screen.getByTestId("arrow-line")
-    expect(line.getAttribute("stroke-dasharray")).toBeNull()
-  })
+    const line = screen.getByTestId("arrow-line");
+    expect(line.getAttribute("stroke-dasharray")).toBeNull();
+  });
 
   it("renders double arrow with two path elements", () => {
     const layer = createLayer({
@@ -1000,16 +958,16 @@ describe("ArrowOverlay", () => {
           arrowStyle: "double",
         },
       ],
-    })
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />)
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer] })} />);
 
-    const lines = screen.getAllByTestId("arrow-line")
-    expect(lines).toHaveLength(2)
+    const lines = screen.getAllByTestId("arrow-line");
+    expect(lines).toHaveLength(2);
     // Both paths should have stroke-width 1
     for (const line of lines) {
-      expect(line.getAttribute("stroke-width")).toBe("1")
+      expect(line.getAttribute("stroke-width")).toBe("1");
     }
-  })
+  });
 
   it("shows selection ring when arrow is selected", () => {
     const layer = createLayer({
@@ -1020,22 +978,22 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const ring = screen.getByTestId("arrow-selection-ring")
-    expect(ring).toBeInTheDocument()
-    expect(ring.getAttribute("stroke")).toBe("#fca5a5")
-    expect(ring.getAttribute("stroke-width")).toBe("8")
-    expect(ring.getAttribute("stroke-opacity")).toBe("0.3")
-  })
+    const ring = screen.getByTestId("arrow-selection-ring");
+    expect(ring).toBeInTheDocument();
+    expect(ring.getAttribute("stroke")).toBe("#fca5a5");
+    expect(ring.getAttribute("stroke-width")).toBe("8");
+    expect(ring.getAttribute("stroke-opacity")).toBe("0.3");
+  });
 
   it("does not show selection ring when no arrow is selected", () => {
     const layer = createLayer({
@@ -1046,19 +1004,15 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
-    render(
-      <ArrowOverlay
-        {...createDefaultProps({ layers: [layer], selectedArrow: null })}
-      />
-    )
+    });
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], selectedArrow: null })} />);
 
-    expect(screen.queryByTestId("arrow-selection-ring")).not.toBeInTheDocument()
-  })
+    expect(screen.queryByTestId("arrow-selection-ring")).not.toBeInTheDocument();
+  });
 
   it("X icon click calls removeArrow and does not propagate to hit area", () => {
-    const removeArrow = vi.fn()
-    const setSelectedArrow = vi.fn()
+    const removeArrow = vi.fn();
+    const setSelectedArrow = vi.fn();
     const layer = createLayer({
       arrows: [
         {
@@ -1067,7 +1021,7 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
@@ -1076,22 +1030,22 @@ describe("ArrowOverlay", () => {
           setSelectedArrow,
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!;
 
     // Click X icon
-    fireEvent.click(xIconGroup)
+    fireEvent.click(xIconGroup);
 
-    expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
-    expect(setSelectedArrow).toHaveBeenCalledWith(null)
-  })
+    expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1");
+    expect(setSelectedArrow).toHaveBeenCalledWith(null);
+  });
 
   it("X icon click clears selectedArrow if the removed arrow was selected", () => {
-    const removeArrow = vi.fn()
-    const setSelectedArrow = vi.fn()
+    const removeArrow = vi.fn();
+    const setSelectedArrow = vi.fn();
     const layer = createLayer({
       arrows: [
         {
@@ -1100,7 +1054,7 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
@@ -1109,18 +1063,18 @@ describe("ArrowOverlay", () => {
           setSelectedArrow,
           selectedArrow: { layerId: "layer-1", arrowId: "a1" },
         })}
-      />
-    )
+      />,
+    );
 
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    const xIconGroup = interactionLayer.querySelector("circle")!.parentElement!;
 
     // Click X icon
-    fireEvent.click(xIconGroup)
+    fireEvent.click(xIconGroup);
 
-    expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1")
-    expect(setSelectedArrow).toHaveBeenCalledWith(null)
-  })
+    expect(removeArrow).toHaveBeenCalledWith("layer-1", "a1");
+    expect(setSelectedArrow).toHaveBeenCalledWith(null);
+  });
 
   it("no hit areas render when section visibility hides an endpoint", () => {
     const layer = createLayer({
@@ -1131,19 +1085,19 @@ describe("ArrowOverlay", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
     render(
       <ArrowOverlay
         {...createDefaultProps({
           layers: [layer],
           sectionVisibility: [true, false, true],
         })}
-      />
-    )
+      />,
+    );
 
-    expect(screen.queryByTestId("arrow-hit-area")).not.toBeInTheDocument()
-  })
-})
+    expect(screen.queryByTestId("arrow-hit-area")).not.toBeInTheDocument();
+  });
+});
 
 // ── Editor hover tracking and wrapper SVG tests ──
 
@@ -1152,39 +1106,44 @@ function createMockEditorWithWrapper(wrapper: HTMLElement) {
     view: {
       dom: {
         closest: vi.fn((selector: string) => {
-          if (selector === ".simple-editor-wrapper") return wrapper
-          return null
+          if (selector === ".simple-editor-wrapper") return wrapper;
+          return null;
         }),
       },
     },
-  } as unknown as Editor
+  } as unknown as Editor;
 }
 
 function createMockWrapper() {
-  const wrapper = document.createElement("div")
-  wrapper.className = "simple-editor-wrapper"
-  Object.defineProperty(wrapper, "scrollWidth", { value: 400, configurable: true })
-  Object.defineProperty(wrapper, "scrollHeight", { value: 300, configurable: true })
-  document.body.appendChild(wrapper)
-  return wrapper
+  const wrapper = document.createElement("div");
+  wrapper.className = "simple-editor-wrapper";
+  Object.defineProperty(wrapper, "scrollWidth", { value: 400, configurable: true });
+  Object.defineProperty(wrapper, "scrollHeight", { value: 300, configurable: true });
+  document.body.appendChild(wrapper);
+  return wrapper;
 }
 
 describe("ArrowOverlay editor hover tracking", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   afterEach(() => {
-    document.querySelectorAll(".simple-editor-wrapper").forEach((el) => el.remove())
-  })
+    document.querySelectorAll(".simple-editor-wrapper").forEach((el) => el.remove());
+  });
 
   it("hides container visual paths when hovering an editor with cross-editor arrows", () => {
-    const wrapper0 = createMockWrapper()
-    const wrapper1 = createMockWrapper()
-    const editor0 = createMockEditorWithWrapper(wrapper0)
-    const editor1 = createMockEditorWithWrapper(wrapper1)
+    const wrapper0 = createMockWrapper();
+    const wrapper1 = createMockWrapper();
+    const editor0 = createMockEditorWithWrapper(wrapper0);
+    const editor1 = createMockEditorWithWrapper(wrapper1);
 
-    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+    const editorsRef = {
+      current: new Map([
+        [0, editor0],
+        [1, editor1],
+      ]),
+    } as React.RefObject<Map<number, Editor>>;
 
     const layer = createLayer({
       arrows: [
@@ -1194,31 +1153,36 @@ describe("ArrowOverlay editor hover tracking", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
 
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
 
-    const containerSvg = screen.getByTestId("arrow-overlay")
+    const containerSvg = screen.getByTestId("arrow-overlay");
 
     // Before hover, no clip-path on container SVG
-    expect(containerSvg.getAttribute("clip-path")).toBeNull()
+    expect(containerSvg.getAttribute("clip-path")).toBeNull();
 
     // Hover editor 0
     act(() => {
-      fireEvent.mouseEnter(wrapper0)
-    })
+      fireEvent.mouseEnter(wrapper0);
+    });
 
     // Container SVG should be clipped to the gap (excluding editor wrapper areas)
-    expect(containerSvg.getAttribute("clip-path")).toBe("url(#container-gap-clip)")
-  })
+    expect(containerSvg.getAttribute("clip-path")).toBe("url(#container-gap-clip)");
+  });
 
   it("removes container clip-path when leaving an editor", () => {
-    const wrapper0 = createMockWrapper()
-    const wrapper1 = createMockWrapper()
-    const editor0 = createMockEditorWithWrapper(wrapper0)
-    const editor1 = createMockEditorWithWrapper(wrapper1)
+    const wrapper0 = createMockWrapper();
+    const wrapper1 = createMockWrapper();
+    const editor0 = createMockEditorWithWrapper(wrapper0);
+    const editor1 = createMockEditorWithWrapper(wrapper1);
 
-    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+    const editorsRef = {
+      current: new Map([
+        [0, editor0],
+        [1, editor1],
+      ]),
+    } as React.RefObject<Map<number, Editor>>;
 
     const layer = createLayer({
       arrows: [
@@ -1228,33 +1192,38 @@ describe("ArrowOverlay editor hover tracking", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
 
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
 
-    const containerSvg = screen.getByTestId("arrow-overlay")
+    const containerSvg = screen.getByTestId("arrow-overlay");
 
     // Hover then leave
     act(() => {
-      fireEvent.mouseEnter(wrapper0)
-    })
-    expect(containerSvg.getAttribute("clip-path")).toBe("url(#container-gap-clip)")
+      fireEvent.mouseEnter(wrapper0);
+    });
+    expect(containerSvg.getAttribute("clip-path")).toBe("url(#container-gap-clip)");
 
     act(() => {
-      fireEvent.mouseLeave(wrapper0)
-    })
+      fireEvent.mouseLeave(wrapper0);
+    });
 
     // Clip-path should be removed
-    expect(containerSvg.getAttribute("clip-path")).toBeNull()
-  })
+    expect(containerSvg.getAttribute("clip-path")).toBeNull();
+  });
 
   it("shows wrapper SVG when hovering and hides when leaving", () => {
-    const wrapper0 = createMockWrapper()
-    const wrapper1 = createMockWrapper()
-    const editor0 = createMockEditorWithWrapper(wrapper0)
-    const editor1 = createMockEditorWithWrapper(wrapper1)
+    const wrapper0 = createMockWrapper();
+    const wrapper1 = createMockWrapper();
+    const editor0 = createMockEditorWithWrapper(wrapper0);
+    const editor1 = createMockEditorWithWrapper(wrapper1);
 
-    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+    const editorsRef = {
+      current: new Map([
+        [0, editor0],
+        [1, editor1],
+      ]),
+    } as React.RefObject<Map<number, Editor>>;
 
     const layer = createLayer({
       arrows: [
@@ -1264,36 +1233,43 @@ describe("ArrowOverlay editor hover tracking", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
 
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
 
-    const wrapperSvg0 = wrapper0.querySelector("[data-testid='wrapper-arrow-svg-0']") as SVGSVGElement
-    expect(wrapperSvg0).toBeTruthy()
-    expect(wrapperSvg0.style.display).toBe("none")
+    const wrapperSvg0 = wrapper0.querySelector(
+      "[data-testid='wrapper-arrow-svg-0']",
+    ) as SVGSVGElement;
+    expect(wrapperSvg0).toBeTruthy();
+    expect(wrapperSvg0.style.display).toBe("none");
 
     // Hover editor 0
     act(() => {
-      fireEvent.mouseEnter(wrapper0)
-    })
+      fireEvent.mouseEnter(wrapper0);
+    });
 
-    expect(wrapperSvg0.style.display).toBe("")
+    expect(wrapperSvg0.style.display).toBe("");
 
     // Leave editor 0
     act(() => {
-      fireEvent.mouseLeave(wrapper0)
-    })
+      fireEvent.mouseLeave(wrapper0);
+    });
 
-    expect(wrapperSvg0.style.display).toBe("none")
-  })
+    expect(wrapperSvg0.style.display).toBe("none");
+  });
 
   it("interaction layer stays at container level during hover", () => {
-    const wrapper0 = createMockWrapper()
-    const wrapper1 = createMockWrapper()
-    const editor0 = createMockEditorWithWrapper(wrapper0)
-    const editor1 = createMockEditorWithWrapper(wrapper1)
+    const wrapper0 = createMockWrapper();
+    const wrapper1 = createMockWrapper();
+    const editor0 = createMockEditorWithWrapper(wrapper0);
+    const editor1 = createMockEditorWithWrapper(wrapper1);
 
-    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+    const editorsRef = {
+      current: new Map([
+        [0, editor0],
+        [1, editor1],
+      ]),
+    } as React.RefObject<Map<number, Editor>>;
 
     const layer = createLayer({
       arrows: [
@@ -1303,31 +1279,36 @@ describe("ArrowOverlay editor hover tracking", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
 
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
 
     // Hover editor 0
     act(() => {
-      fireEvent.mouseEnter(wrapper0)
-    })
+      fireEvent.mouseEnter(wrapper0);
+    });
 
     // Hit area should still be in the interaction layer
-    const hitArea = screen.getByTestId("arrow-hit-area")
-    const interactionLayer = screen.getByTestId("arrow-interaction-layer")
-    expect(interactionLayer.contains(hitArea)).toBe(true)
+    const hitArea = screen.getByTestId("arrow-hit-area");
+    const interactionLayer = screen.getByTestId("arrow-interaction-layer");
+    expect(interactionLayer.contains(hitArea)).toBe(true);
 
     // Hit area should still have a valid d (non-empty) for interaction
-    expect(hitArea.getAttribute("d")).not.toBe("")
-  })
+    expect(hitArea.getAttribute("d")).not.toBe("");
+  });
 
   it("shows all wrapper SVGs when hovering any editor (each clips its portion)", () => {
-    const wrapper0 = createMockWrapper()
-    const wrapper1 = createMockWrapper()
-    const editor0 = createMockEditorWithWrapper(wrapper0)
-    const editor1 = createMockEditorWithWrapper(wrapper1)
+    const wrapper0 = createMockWrapper();
+    const wrapper1 = createMockWrapper();
+    const editor0 = createMockEditorWithWrapper(wrapper0);
+    const editor1 = createMockEditorWithWrapper(wrapper1);
 
-    const editorsRef = { current: new Map([[0, editor0], [1, editor1]]) } as React.RefObject<Map<number, Editor>>
+    const editorsRef = {
+      current: new Map([
+        [0, editor0],
+        [1, editor1],
+      ]),
+    } as React.RefObject<Map<number, Editor>>;
 
     const layer = createLayer({
       arrows: [
@@ -1337,19 +1318,23 @@ describe("ArrowOverlay editor hover tracking", () => {
           to: { editorIndex: 1, from: 10, to: 15, text: "world" },
         },
       ],
-    })
+    });
 
-    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />)
+    render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
 
-    const wrapperSvg0 = wrapper0.querySelector("[data-testid='wrapper-arrow-svg-0']") as SVGSVGElement
-    const wrapperSvg1 = wrapper1.querySelector("[data-testid='wrapper-arrow-svg-1']") as SVGSVGElement
+    const wrapperSvg0 = wrapper0.querySelector(
+      "[data-testid='wrapper-arrow-svg-0']",
+    ) as SVGSVGElement;
+    const wrapperSvg1 = wrapper1.querySelector(
+      "[data-testid='wrapper-arrow-svg-1']",
+    ) as SVGSVGElement;
 
     // Hover editor 0 — both wrappers should show (each clips to its own bounds)
     act(() => {
-      fireEvent.mouseEnter(wrapper0)
-    })
+      fireEvent.mouseEnter(wrapper0);
+    });
 
-    expect(wrapperSvg0.style.display).toBe("")
-    expect(wrapperSvg1.style.display).toBe("")
-  })
-})
+    expect(wrapperSvg0.style.display).toBe("");
+    expect(wrapperSvg1.style.display).toBe("");
+  });
+});

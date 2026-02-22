@@ -1,0 +1,12 @@
+name = "referencer-collab"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[durable_objects.bindings]]
+name = "YJS_ROOM"
+class_name = "YjsRoom"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["YjsRoom"]

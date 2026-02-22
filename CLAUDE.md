@@ -1,6 +1,6 @@
 ## Project Setup
 
-This project uses **bun** instead of node. Use `bun` for all package management and script execution (e.g., `bun install`, `bun run dev`). Always `cd /Users/tym/coding/referencer/frontend` before running any bun commands.
+This project uses **bun** instead of node. Use `bun` for all package management and script execution (e.g., `bun install`, `bun run dev`). Always `cd` to the `frontend/` directory before running any bun commands.
 
 ## Styling
 
@@ -24,6 +24,7 @@ Use agent teams for any non-trivial task. Prefer parallelizing work across teamm
 - **Code review / research**: Use multiple Explore agents in parallel to investigate different parts of the codebase simultaneously.
 
 When creating teams:
+
 - Use `general-purpose` agents for any work that requires writing/editing files or running commands.
 - Use `Explore` agents for read-only research, codebase search, and investigation.
 - Use `Plan` agents when you need architectural analysis before implementation.

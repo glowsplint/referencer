@@ -1,6 +1,6 @@
 // Schema introspection helpers for checking whether specific marks,
 // nodes, or extensions are available in a Tiptap editor instance.
-import type { Editor } from "@tiptap/react"
+import type { Editor } from "@tiptap/react";
 
 /**
  * Checks if a mark exists in the editor schema
@@ -8,13 +8,10 @@ import type { Editor } from "@tiptap/react"
  * @param editor - The editor instance
  * @returns boolean indicating if the mark exists in the schema
  */
-export const isMarkInSchema = (
-  markName: string,
-  editor: Editor | null
-): boolean => {
-  if (!editor?.schema) return false
-  return editor.schema.spec.marks.get(markName) !== undefined
-}
+export const isMarkInSchema = (markName: string, editor: Editor | null): boolean => {
+  if (!editor?.schema) return false;
+  return editor.schema.spec.marks.get(markName) !== undefined;
+};
 
 /**
  * Checks if a node exists in the editor schema
@@ -22,13 +19,10 @@ export const isMarkInSchema = (
  * @param editor - The editor instance
  * @returns boolean indicating if the node exists in the schema
  */
-export const isNodeInSchema = (
-  nodeName: string,
-  editor: Editor | null
-): boolean => {
-  if (!editor?.schema) return false
-  return editor.schema.spec.nodes.get(nodeName) !== undefined
-}
+export const isNodeInSchema = (nodeName: string, editor: Editor | null): boolean => {
+  if (!editor?.schema) return false;
+  return editor.schema.spec.nodes.get(nodeName) !== undefined;
+};
 
 /**
  * Checks if one or more extensions are registered in the Tiptap editor.
@@ -38,15 +32,11 @@ export const isNodeInSchema = (
  */
 export function isExtensionAvailable(
   editor: Editor | null,
-  extensionNames: string | string[]
+  extensionNames: string | string[],
 ): boolean {
-  if (!editor) return false
+  if (!editor) return false;
 
-  const names = Array.isArray(extensionNames)
-    ? extensionNames
-    : [extensionNames]
+  const names = Array.isArray(extensionNames) ? extensionNames : [extensionNames];
 
-  return names.some((name) =>
-    editor.extensionManager.extensions.some((ext) => ext.name === name)
-  )
+  return names.some((name) => editor.extensionManager.extensions.some((ext) => ext.name === name));
 }

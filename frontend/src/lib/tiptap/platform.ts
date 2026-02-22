@@ -15,7 +15,7 @@ export const MAC_SYMBOLS: Record<string, string> = {
   enter: "⏎",
   escape: "⎋",
   capslock: "⇪",
-} as const
+} as const;
 
 export const SR_ONLY = {
   position: "absolute",
@@ -27,17 +27,14 @@ export const SR_ONLY = {
   clip: "rect(0, 0, 0, 0)",
   whiteSpace: "nowrap",
   borderWidth: 0,
-} as const
+} as const;
 
 /**
  * Determines if the current platform is macOS
  * @returns boolean indicating if the current platform is Mac
  */
 export function isMac(): boolean {
-  return (
-    typeof navigator !== "undefined" &&
-    navigator.platform.toLowerCase().includes("mac")
-  )
+  return typeof navigator !== "undefined" && navigator.platform.toLowerCase().includes("mac");
 }
 
 /**
@@ -47,18 +44,14 @@ export function isMac(): boolean {
  * @param capitalize - Whether to capitalize the key (default: true)
  * @returns Formatted shortcut key symbol
  */
-export const formatShortcutKey = (
-  key: string,
-  isMac: boolean,
-  capitalize: boolean = true
-) => {
+export const formatShortcutKey = (key: string, isMac: boolean, capitalize: boolean = true) => {
   if (isMac) {
-    const lowerKey = key.toLowerCase()
-    return MAC_SYMBOLS[lowerKey] || (capitalize ? key.toUpperCase() : key)
+    const lowerKey = key.toLowerCase();
+    return MAC_SYMBOLS[lowerKey] || (capitalize ? key.toUpperCase() : key);
   }
 
-  return capitalize ? key.charAt(0).toUpperCase() + key.slice(1) : key
-}
+  return capitalize ? key.charAt(0).toUpperCase() + key.slice(1) : key;
+};
 
 /**
  * Parses a shortcut key string into an array of formatted key symbols
@@ -68,16 +61,16 @@ export const formatShortcutKey = (
  * @returns Array of formatted shortcut key symbols
  */
 export const parseShortcutKeys = (props: {
-  shortcutKeys: string | undefined
-  delimiter?: string
-  capitalize?: boolean
+  shortcutKeys: string | undefined;
+  delimiter?: string;
+  capitalize?: boolean;
 }) => {
-  const { shortcutKeys, delimiter = "+", capitalize = true } = props
+  const { shortcutKeys, delimiter = "+", capitalize = true } = props;
 
-  if (!shortcutKeys) return []
+  if (!shortcutKeys) return [];
 
   return shortcutKeys
     .split(delimiter)
     .map((key) => key.trim())
-    .map((key) => formatShortcutKey(key, isMac(), capitalize))
-}
+    .map((key) => formatShortcutKey(key, isMac(), capitalize));
+};

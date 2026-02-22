@@ -1,45 +1,65 @@
-name: Deploy to GitHub Pages
+name: Deploy to Cloudflare
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
-  group: pages
+  group: deploy
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy-frontend:
+    name: Deploy Frontend (Pages)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: oven-sh/setup-bun@v2
-
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
-
       - name: Build
         working-directory: frontend
         run: bun run build
-
-      - uses: actions/upload-pages-artifact@v3
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_COLLAB_WS_URL: ${{ vars.VITE_COLLAB_WS_URL }}
+      - name: Deploy to Pages
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: frontend/dist
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy frontend/dist --project-name=referencer
 
-  deploy:
-    needs: build
+  deploy-api:
+    name: Deploy API Worker
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        working-directory: backend
+        run: bun install --frozen-lockfile
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: backend
+
+  deploy-collab:
+    name: Deploy Collab Worker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        working-directory: collab-server
+        run: bun install --frozen-lockfile
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: collab-server

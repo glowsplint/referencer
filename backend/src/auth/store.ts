@@ -1,73 +1,80 @@
-import type { Database } from "bun:sqlite";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "../types";
 
-export function upsertUser(
-  db: Database,
+export async function upsertUser(
+  supabase: SupabaseClient,
   provider: string,
   providerUserId: string,
   email: string,
   name: string,
   avatarUrl: string,
-): string {
+): Promise<string> {
   // 1. Find by (provider, provider_user_id)
-  const existing = db
-    .query<{ user_id: string }, [string, string]>(
-      "SELECT user_id FROM user_provider WHERE provider = ? AND provider_user_id = ?",
-    )
-    .get(provider, providerUserId);
+  const { data: existing } = await supabase
+    .from("user_provider")
+    .select("user_id")
+    .eq("provider", provider)
+    .eq("provider_user_id", providerUserId)
+    .single();
 
   if (existing) {
     // Update user info.
-    db.run(
-      "UPDATE user SET name = ?, avatar_url = ?, updated_at = datetime('now') WHERE id = ?",
-      [name, avatarUrl, existing.user_id],
-    );
+    await supabase
+      .from("user")
+      .update({ name, avatar_url: avatarUrl, updated_at: new Date().toISOString() })
+      .eq("id", existing.user_id);
     return existing.user_id;
   }
 
   // 2. Find by email (account linking).
-  const byEmail = db
-    .query<{ id: string }, [string]>("SELECT id FROM user WHERE email = ?")
-    .get(email);
+  const { data: byEmail } = await supabase
+    .from("user")
+    .select("id")
+    .eq("email", email)
+    .single();
 
   if (byEmail) {
     // Link new provider to existing user.
     const providerId = crypto.randomUUID();
-    db.run(
-      "INSERT INTO user_provider (id, user_id, provider, provider_user_id) VALUES (?, ?, ?, ?)",
-      [providerId, byEmail.id, provider, providerUserId],
-    );
-    db.run(
-      "UPDATE user SET name = ?, avatar_url = ?, updated_at = datetime('now') WHERE id = ?",
-      [name, avatarUrl, byEmail.id],
-    );
+    await supabase.from("user_provider").insert({
+      id: providerId,
+      user_id: byEmail.id,
+      provider,
+      provider_user_id: providerUserId,
+    });
+    await supabase
+      .from("user")
+      .update({ name, avatar_url: avatarUrl, updated_at: new Date().toISOString() })
+      .eq("id", byEmail.id);
     return byEmail.id;
   }
 
-  // 3. Create new user.
+  // 3. Create new user via RPC (atomic).
   const userId = crypto.randomUUID();
   const providerId = crypto.randomUUID();
 
-  const tx = db.transaction(() => {
-    db.run(
-      "INSERT INTO user (id, email, name, avatar_url) VALUES (?, ?, ?, ?)",
-      [userId, email, name, avatarUrl],
-    );
-    db.run(
-      "INSERT INTO user_provider (id, user_id, provider, provider_user_id) VALUES (?, ?, ?, ?)",
-      [providerId, userId, provider, providerUserId],
-    );
+  const { error } = await supabase.rpc("create_user_with_provider", {
+    p_user_id: userId,
+    p_email: email,
+    p_name: name,
+    p_avatar_url: avatarUrl,
+    p_provider_id: providerId,
+    p_provider: provider,
+    p_provider_user_id: providerUserId,
   });
-  tx();
+
+  if (error) {
+    throw new Error(`Failed to create user: ${error.message}`);
+  }
 
   return userId;
 }
 
-export function createSession(
-  db: Database,
+export async function createSession(
+  supabase: SupabaseClient,
   userId: string,
   maxAge: number,
-): string {
+): Promise<string> {
   // Generate 64-char hex token (32 random bytes).
   const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);
@@ -76,85 +83,81 @@ export function createSession(
     .join("");
 
   const expiresAt = new Date(Date.now() + maxAge * 1000).toISOString();
-  db.run(
-    "INSERT INTO session (id, user_id, created_at, expires_at) VALUES (?, ?, datetime('now'), ?)",
-    [token, userId, expiresAt],
-  );
+  await supabase.from("session").insert({
+    id: token,
+    user_id: userId,
+    created_at: new Date().toISOString(),
+    expires_at: expiresAt,
+  });
+
   return token;
 }
 
-export function getSessionUser(
-  db: Database,
+export async function getSessionUser(
+  supabase: SupabaseClient,
   token: string,
-): User | null {
-  const row = db
-    .query<
-      {
-        id: string;
-        email: string;
-        name: string;
-        avatar_url: string;
-        created_at: string;
-        updated_at: string;
-        expires_at: string;
-      },
-      [string]
-    >(
-      `SELECT u.id, u.email, u.name, u.avatar_url, u.created_at, u.updated_at, s.expires_at
-       FROM session s
-       JOIN user u ON s.user_id = u.id
-       WHERE s.id = ?`,
-    )
-    .get(token);
+): Promise<User | null> {
+  const { data: session } = await supabase
+    .from("session")
+    .select("user_id, expires_at")
+    .eq("id", token)
+    .single();
 
-  if (!row) return null;
+  if (!session) return null;
 
   // Check expiry.
-  if (new Date(row.expires_at) < new Date()) {
-    // Expired — clean up.
-    db.run("DELETE FROM session WHERE id = ?", [token]);
+  if (new Date(session.expires_at) < new Date()) {
+    await supabase.from("session").delete().eq("id", token);
     return null;
   }
 
+  const { data: user } = await supabase
+    .from("user")
+    .select("id, email, name, avatar_url, created_at, updated_at")
+    .eq("id", session.user_id)
+    .single();
+
+  if (!user) return null;
+
   return {
-    id: row.id,
-    email: row.email,
-    name: row.name,
-    avatarUrl: row.avatar_url,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    avatarUrl: user.avatar_url,
+    createdAt: user.created_at,
+    updatedAt: user.updated_at,
   };
 }
 
-export function deleteSession(db: Database, token: string): void {
-  db.run("DELETE FROM session WHERE id = ?", [token]);
+export async function deleteSession(supabase: SupabaseClient, token: string): Promise<void> {
+  await supabase.from("session").delete().eq("id", token);
 }
 
-export function maybeRefreshSession(
-  db: Database,
+export async function maybeRefreshSession(
+  supabase: SupabaseClient,
   token: string,
   maxAge: number,
-): void {
-  const row = db
-    .query<{ created_at: string }, [string]>(
-      "SELECT created_at FROM session WHERE id = ?",
-    )
-    .get(token);
+): Promise<void> {
+  const { data: session } = await supabase
+    .from("session")
+    .select("created_at")
+    .eq("id", token)
+    .single();
 
-  if (!row) return;
+  if (!session) return;
 
-  const createdAt = new Date(row.created_at);
+  const createdAt = new Date(session.created_at);
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
   if (createdAt < oneDayAgo) {
     const newExpiry = new Date(Date.now() + maxAge * 1000).toISOString();
-    db.run(
-      "UPDATE session SET created_at = datetime('now'), expires_at = ? WHERE id = ?",
-      [newExpiry, token],
-    );
+    await supabase
+      .from("session")
+      .update({ created_at: new Date().toISOString(), expires_at: newExpiry })
+      .eq("id", token);
   }
 }
 
-export function cleanExpiredSessions(db: Database): void {
-  db.run("DELETE FROM session WHERE expires_at < datetime('now')");
+export async function cleanExpiredSessions(supabase: SupabaseClient): Promise<void> {
+  await supabase.from("session").delete().lt("expires_at", new Date().toISOString());
 }

@@ -4,109 +4,109 @@
 // used for layer colors.
 
 export interface EditorSettings {
-  isDarkMode: boolean
-  isLayersOn: boolean
-  isMultipleRowsLayout: boolean
-  isLocked: boolean
-  showDrawingToasts: boolean
-  showCommentsToasts: boolean
-  showHighlightToasts: boolean
-  overscrollEnabled: boolean
-  hideOffscreenArrows: boolean
+  isDarkMode: boolean;
+  isLayersOn: boolean;
+  isMultipleRowsLayout: boolean;
+  isLocked: boolean;
+  showDrawingToasts: boolean;
+  showCommentsToasts: boolean;
+  showHighlightToasts: boolean;
+  overscrollEnabled: boolean;
+  hideOffscreenArrows: boolean;
 }
 
-export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline" | "eraser"
+export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline" | "eraser";
 
-export type DrawingPhase = "idle" | "selecting-anchor" | "anchor-confirmed"
+export type DrawingPhase = "idle" | "selecting-anchor" | "anchor-confirmed";
 
 export interface AnnotationSettings {
-  activeTool: ActiveTool
+  activeTool: ActiveTool;
 }
 
-export type HighlightType = "highlight" | "comment"
+export type HighlightType = "highlight" | "comment";
 
 export interface Highlight {
-  id: string
-  editorIndex: number
-  from: number
-  to: number
-  text: string
-  annotation: string
-  type: HighlightType
+  id: string;
+  editorIndex: number;
+  from: number;
+  to: number;
+  text: string;
+  annotation: string;
+  type: HighlightType;
 }
 
 export interface LayerUnderline {
-  id: string
-  editorIndex: number
-  from: number
-  to: number
-  text: string
+  id: string;
+  editorIndex: number;
+  from: number;
+  to: number;
+  text: string;
 }
 
 export interface EditingAnnotation {
-  layerId: string
-  highlightId: string
+  layerId: string;
+  highlightId: string;
 }
 
-export type ArrowStyle = "solid" | "dashed" | "dotted" | "double"
+export type ArrowStyle = "solid" | "dashed" | "dotted" | "double";
 
 export interface Layer {
-  id: string
-  name: string
-  color: string
-  visible: boolean
-  highlights: Highlight[]
-  arrows: Arrow[]
-  underlines: LayerUnderline[]
+  id: string;
+  name: string;
+  color: string;
+  visible: boolean;
+  highlights: Highlight[];
+  arrows: Arrow[];
+  underlines: LayerUnderline[];
 }
 
 export interface ArrowEndpoint {
-  editorIndex: number
-  from: number
-  to: number
-  text: string
+  editorIndex: number;
+  from: number;
+  to: number;
+  text: string;
 }
 
 export interface Arrow {
-  id: string
-  from: ArrowEndpoint
-  to: ArrowEndpoint
-  arrowStyle?: ArrowStyle
+  id: string;
+  from: ArrowEndpoint;
+  to: ArrowEndpoint;
+  arrowStyle?: ArrowStyle;
 }
 
 export interface DrawingState {
-  anchor: ArrowEndpoint
-  cursor: ArrowEndpoint
+  anchor: ArrowEndpoint;
+  cursor: ArrowEndpoint;
 }
 
 export interface WordSelection {
-  editorIndex: number
-  from: number
-  to: number
-  text: string
+  editorIndex: number;
+  from: number;
+  to: number;
+  text: string;
 }
 
 export interface ActionDetail {
-  label: string
-  before?: string
-  after?: string
+  label: string;
+  before?: string;
+  after?: string;
 }
 
 export interface ActionEntry {
-  id: string
-  type: string
-  description: string
-  timestamp: number
-  undone: boolean
-  details?: ActionDetail[]
+  id: string;
+  type: string;
+  description: string;
+  timestamp: number;
+  undone: boolean;
+  details?: ActionDetail[];
 }
 
 export interface ActionCommand {
-  type: string
-  description: string
-  details?: ActionDetail[]
-  undo: () => void
-  redo: () => void
+  type: string;
+  description: string;
+  details?: ActionDetail[];
+  undo: () => void;
+  redo: () => void;
 }
 
 export const TAILWIND_300_COLORS = [
@@ -128,4 +128,4 @@ export const TAILWIND_300_COLORS = [
   "#f9a8d4", // pink-300
   "#fda4af", // rose-300
   "#d4d4d8", // zinc-300
-]
+];

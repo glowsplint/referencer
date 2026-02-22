@@ -20,8 +20,7 @@ function StylePreview({ style, color }: { style: ArrowStyle; color: string }) {
     );
   }
 
-  const dasharray =
-    style === "dashed" ? "8 4" : style === "dotted" ? "2 4" : undefined;
+  const dasharray = style === "dashed" ? "8 4" : style === "dotted" ? "2 4" : undefined;
 
   return (
     <svg width="32" height="12" viewBox="0 0 32 12" className="shrink-0">

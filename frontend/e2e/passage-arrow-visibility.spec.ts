@@ -8,16 +8,12 @@ async function drawArrowInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
   anchorXOffset = 30,
-  targetXOffset = 120
+  targetXOffset = 120,
 ) {
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   await page.keyboard.press("a");
 
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
 
@@ -38,16 +34,12 @@ async function drawArrowBetweenEditors(
   sourceEditor: number,
   targetEditor: number,
   anchorXOffset = 30,
-  targetXOffset = 30
+  targetXOffset = 30,
 ) {
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   await page.keyboard.press("a");
 
-  const srcP = page
-    .locator(".simple-editor-wrapper")
-    .nth(sourceEditor)
-    .locator("p")
-    .first();
+  const srcP = page.locator(".simple-editor-wrapper").nth(sourceEditor).locator("p").first();
   const srcBox = await srcP.boundingBox();
   expect(srcBox).not.toBeNull();
 
@@ -56,11 +48,7 @@ async function drawArrowBetweenEditors(
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
 
-  const tgtP = page
-    .locator(".simple-editor-wrapper")
-    .nth(targetEditor)
-    .locator("p")
-    .first();
+  const tgtP = page.locator(".simple-editor-wrapper").nth(targetEditor).locator("p").first();
   const tgtBox = await tgtP.boundingBox();
   expect(tgtBox).not.toBeNull();
 
@@ -82,11 +70,11 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 2 passages and 4 default layers. Add a fresh layer.
+    // Editor starts locked with 2 passages and 3 default layers. Add a fresh layer.
     await page.getByTestId("addLayerButton").click();
 
     await page.getByTestId("menuButton").click();
@@ -121,9 +109,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     }
   });
 
-  test("cross-editor arrow hides when source passage is hidden", async ({
-    page,
-  }) => {
+  test("cross-editor arrow hides when source passage is hidden", async ({ page }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -137,9 +123,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
 
     // E2 should still be visible
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(1)
-    ).toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(1)).toBeVisible();
 
     // Re-show E1
     await page.getByTestId("sectionVisibility-0").click();
@@ -148,9 +132,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
   });
 
-  test("hiding both passages hides all arrows, re-showing restores them", async ({
-    page,
-  }) => {
+  test("hiding both passages hides all arrows, re-showing restores them", async ({ page }) => {
     // Draw cross-editor arrow E1→E2
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -165,12 +147,8 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(0)
-    ).not.toBeVisible();
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(1)
-    ).not.toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(0)).not.toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(1)).not.toBeVisible();
 
     // Show both
     await page.getByTestId("sectionVisibility-0").click();
@@ -180,9 +158,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
   });
 
-  test("combined layer hidden + section hidden restores correctly", async ({
-    page,
-  }) => {
+  test("combined layer hidden + section hidden restores correctly", async ({ page }) => {
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -190,8 +166,8 @@ test.describe("passage visibility with arrows (2 editors)", () => {
 
     await page.getByTestId("menuButton").click();
 
-    // Hide layer (index 4)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide layer (index 3)
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -200,7 +176,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await page.getByTestId("sectionVisibility-0").click();
 
     // Show layer (section still hidden) — arrow should not appear
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -237,15 +213,11 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
   });
 
-  test("drawing arrow in visible editor while other passage is hidden", async ({
-    page,
-  }) => {
+  test("drawing arrow in visible editor while other passage is hidden", async ({ page }) => {
     // Hide E2
     await page.getByTestId("menuButton").click();
     await page.getByTestId("sectionVisibility-1").click();
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(1)
-    ).not.toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(1)).not.toBeVisible();
     await page.getByTestId("menuButton").click();
 
     // Draw arrow in E1 while E2 is hidden
@@ -290,11 +262,11 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 2 passages and 4 default layers.
+    // Editor starts locked with 2 passages and 3 default layers.
     // Add one more passage for 3 total.
     await page.getByTestId("addPassageButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
@@ -306,23 +278,21 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await page.keyboard.type("Alpha Beta Gamma Delta Epsilon Zeta Eta Theta");
     await page.getByTestId("lockButton").click();
 
-    // Add two fresh layers at indices 4 and 5.
+    // Add two fresh layers at indices 3 and 4.
     await page.getByTestId("addLayerButton").click();
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
-    await expect(page.getByTestId("layerName-5")).toHaveText("Layer 2");
+    await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
+    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 2");
 
-    // Activate Layer 1 (index 4)
-    await page.getByTestId("layerName-4").click();
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Activate Layer 1 (index 3)
+    await page.getByTestId("layerName-3").click();
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
 
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("hiding middle editor removes arrows to/from it, keeps E1-E3 arrow", async ({
-    page,
-  }) => {
+  test("hiding middle editor removes arrows to/from it, keeps E1-E3 arrow", async ({ page }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -350,9 +320,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
 
     // E2 should not be visible
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(1)
-    ).not.toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(1)).not.toBeVisible();
 
     // Remaining arrow has valid coordinates
     const d = await page.getByTestId("arrow-line").getAttribute("d");
@@ -368,9 +336,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("hiding E1 removes arrows originating from it, keeps E2-E3 arrow", async ({
-    page,
-  }) => {
+  test("hiding E1 removes arrows originating from it, keeps E2-E3 arrow", async ({ page }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -398,9 +364,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("hiding E3 removes arrows targeting it, keeps E1-E2 arrow", async ({
-    page,
-  }) => {
+  test("hiding E3 removes arrows targeting it, keeps E1-E2 arrow", async ({ page }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -456,9 +420,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("hiding all 3 passages hides all arrows and editors", async ({
-    page,
-  }) => {
+  test("hiding all 3 passages hides all arrows and editors", async ({ page }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -475,9 +437,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
       timeout: 2000,
     });
     for (let i = 0; i < 3; i++) {
-      await expect(
-        page.locator(".simple-editor-wrapper").nth(i)
-      ).not.toBeVisible();
+      await expect(page.locator(".simple-editor-wrapper").nth(i)).not.toBeVisible();
     }
 
     // Show all 3
@@ -489,15 +449,11 @@ test.describe("passage visibility with arrows (3 editors)", () => {
       timeout: 2000,
     });
     for (let i = 0; i < 3; i++) {
-      await expect(
-        page.locator(".simple-editor-wrapper").nth(i)
-      ).toBeVisible();
+      await expect(page.locator(".simple-editor-wrapper").nth(i)).toBeVisible();
     }
   });
 
-  test("layer + section visibility combined in 3-editor setup", async ({
-    page,
-  }) => {
+  test("layer + section visibility combined in 3-editor setup", async ({ page }) => {
     // Draw E1→E2 on Layer 1, E2→E3 on Layer 2
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -509,8 +465,8 @@ test.describe("passage visibility with arrows (3 editors)", () => {
 
     await page.getByTestId("menuButton").click();
 
-    // Hide Layer 1 (index 4) — only E2→E3 (Layer 2) remains
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3) — only E2→E3 (Layer 2) remains
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -522,7 +478,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
 
     // Show Layer 1 (E2 still hidden) — E1→E2 can't show because E2 hidden
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -534,9 +490,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("arrow coordinates remain valid after hide/show cycle", async ({
-    page,
-  }) => {
+  test("arrow coordinates remain valid after hide/show cycle", async ({ page }) => {
     // Draw E1→E3 on Layer 1
     await drawArrowBetweenEditors(page, 0, 2);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {

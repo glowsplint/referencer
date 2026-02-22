@@ -1,407 +1,308 @@
 // Central workspace hook that composes settings, layers, editors, action history,
-// and WebSocket sync into a single API. Wraps every mutation with read-only guards,
-// WebSocket broadcasting, and undo/redo history recording.
-import { useState, useCallback, useRef } from "react"
-import { useSettings } from "./use-settings"
-import { useLayers } from "./use-layers"
-import { useEditors } from "./use-editors"
-import { useActionHistory } from "./use-action-history"
-import { useTrackedLayers } from "./use-tracked-layers"
-import { useTrackedEditors } from "./use-tracked-editors"
-import { useWebSocket } from "./use-websocket"
-import type { Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor"
+// and Yjs CRDT collaboration into a single API. All data (text, annotations,
+// layers) is synced via Yjs shared types through the collab server.
+// All collaboration uses Yjs observe/transact.
+import { useState, useCallback, useEffect, useRef } from "react";
+import { useSettings } from "./use-settings";
+import { useEditors } from "./use-editors";
+import { useActionHistory } from "./use-action-history";
+import { useTrackedEditors } from "./use-tracked-editors";
+import { useYjs } from "./use-yjs";
+import { useYjsLayers } from "./use-yjs-layers";
+import { useYjsUndo } from "./use-yjs-undo";
+import { useUnifiedUndo } from "./use-unified-undo";
+import { useYjsOffline } from "./use-yjs-offline";
+import { seedDefaultLayers, type EditorViewMap } from "@/lib/yjs/annotations";
+import { createDefaultLayers } from "@/data/default-workspace";
+import type { Editor } from "@tiptap/react";
+import type { Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor";
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
-  const settingsHook = useSettings()
-  const rawLayersHook = useLayers()
-  const rawEditorsHook = useEditors()
-  const history = useActionHistory()
+  const settingsHook = useSettings();
+  const rawEditorsHook = useEditors();
+  const history = useActionHistory();
 
-  const trackedLayersHook = useTrackedLayers(rawLayersHook, history)
-  const trackedEditorsHook = useTrackedEditors(rawEditorsHook, history)
+  const trackedEditorsHook = useTrackedEditors(rawEditorsHook, history);
 
-  const { connected: wsConnected, sendAction } = useWebSocket(
-    workspaceId ?? null,
-    rawLayersHook,
-    rawEditorsHook
-  )
+  // Yjs provider for all CRDT collaboration (text + annotations)
+  const yjs = useYjs(workspaceId ?? "default");
 
-  // Debounce timer ref for editor content updates
-  const contentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Yjs-backed layers for annotations (pass editorsRef for proper ProseMirror<->Yjs position mapping)
+  const yjsLayers = useYjsLayers(yjs.doc, trackedEditorsHook.editorsRef);
 
-  // Wraps mutation callbacks to no-op when in read-only mode (shared workspaces)
+  // Yjs undo/redo (replaces command-pattern history for CRDT operations)
+  const yjsUndo = useYjsUndo(yjs.doc);
+
+  // Unified undo/redo: Yjs first, then action history fallback
+  const unifiedUndo = useUnifiedUndo(yjsUndo, history);
+
+  // Offline persistence via IndexedDB
+  useYjsOffline(yjs.doc, workspaceId ?? "default");
+
+  // Seed default layers when Y.Doc is ready and empty.
+  // Wait for BOTH Yjs sync AND all editors to mount so that:
+  // 1. We don't overwrite layers already stored on the server (sync gate)
+  // 2. EditorViews are available for proper ProseMirror<->Yjs position mapping
+  // 3. Editor content is loaded (child content-seeding effects run before this parent effect)
+  const seededRef = useRef(false);
+  const allEditorsMounted = rawEditorsHook.mountedEditorCount >= rawEditorsHook.editorCount;
+  useEffect(() => {
+    if (!yjs.doc || seededRef.current || !yjs.synced || !allEditorsMounted) return;
+    seededRef.current = true;
+    try {
+      const views: EditorViewMap = new Map();
+      const editorsMap = trackedEditorsHook.editorsRef.current;
+      if (editorsMap) {
+        for (const [index, editor] of editorsMap as Map<number, Editor>) {
+          if (editor && !editor.isDestroyed && editor.view) {
+            views.set(index, editor.view);
+          }
+        }
+      }
+      seedDefaultLayers(yjs.doc, createDefaultLayers(), views);
+    } catch (err) {
+      console.error("Failed to seed default layers:", err);
+    }
+  }, [yjs.doc, yjs.synced, allEditorsMounted, trackedEditorsHook.editorsRef]);
+
+  // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {
-    return ((...args: any[]) => readOnly ? fallback : fn(...args)) as T
+    return ((...args: any[]) => (readOnly ? fallback : fn(...args))) as T;
   }
 
-  const guardedSendAction = useCallback(
-    (type: string, payload: Record<string, unknown>) => {
-      if (!readOnly) sendAction(type, payload)
-    },
-    [readOnly, sendAction]
-  )
-
-  // Wrap tracked layer actions to also send over WebSocket
+  // Layer mutations — all write to Y.Doc directly
   const addLayer = useCallback(
-    guarded(
-      (opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }) => {
-        const id = trackedLayersHook.addLayer(opts)
-        if (!id) return ""
-        const layer = rawLayersHook.layers.find((l) => l.id === id)
-        // The layer may not be in state yet (setState is async), so derive from opts
-        const name =
-          opts?.name ??
-          layer?.name ??
-          `Layer ${rawLayersHook.layers.length + 1}`
-        const color = opts?.color ?? layer?.color ?? ""
-        guardedSendAction("addLayer", { id, name, color })
-        return id
-      },
-      ""
-    ),
-    [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction]
-  )
+    guarded((opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }) => {
+      const result = yjsLayers.addLayer(opts);
+      if (!result) return "";
+      const { id, name } = result;
+      const color = yjsLayers.layers.find((l) => l.id === id)?.color ?? opts?.color ?? "";
+      history.logOnly("addLayer", `Created layer '${name}'`, [
+        { label: "name", after: name },
+        { label: "color", after: color },
+      ]);
+      return id;
+    }, ""),
+    [readOnly, yjsLayers, history],
+  );
 
   const removeLayer = useCallback(
     guarded((id: string) => {
-      trackedLayersHook.removeLayer(id)
-      guardedSendAction("removeLayer", { id })
+      const layer = yjsLayers.layers.find((l) => l.id === id);
+      yjsLayers.removeLayer(id);
+      if (layer) {
+        history.logOnly("removeLayer", `Deleted layer '${layer.name}'`, [
+          { label: "name", before: layer.name },
+          { label: "highlights", before: String(layer.highlights.length) },
+          { label: "arrows", before: String(layer.arrows.length) },
+        ]);
+      }
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers, history],
+  );
 
   const updateLayerName = useCallback(
     guarded((id: string, name: string) => {
-      trackedLayersHook.updateLayerName(id, name)
-      guardedSendAction("updateLayerName", { id, name })
+      yjsLayers.updateLayerName(id, name);
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const updateLayerColor = useCallback(
     guarded((id: string, color: string) => {
-      trackedLayersHook.updateLayerColor(id, color)
-      guardedSendAction("updateLayerColor", { id, color })
+      yjsLayers.updateLayerColor(id, color);
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const toggleLayerVisibility = useCallback(
     guarded((id: string) => {
-      const layer = rawLayersHook.layers.find((l) => l.id === id)
-      const wasVisible = layer?.visible ?? true
-      trackedLayersHook.toggleLayerVisibility(id)
-      guardedSendAction("toggleLayerVisibility", { id })
-      history.record({
-        type: wasVisible ? "hideLayer" : "showLayer",
-        description: `${wasVisible ? "Hid" : "Showed"} layer '${layer?.name ?? "layer"}'`,
-        details: [{ label: "visible", before: String(wasVisible), after: String(!wasVisible) }],
-        undo: () => rawLayersHook.toggleLayerVisibility(id),
-        redo: () => rawLayersHook.toggleLayerVisibility(id),
-      })
+      yjsLayers.toggleLayerVisibility(id);
     }),
-    [readOnly, trackedLayersHook, rawLayersHook, guardedSendAction, history]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const addHighlight = useCallback(
-    guarded(
-      (
-        layerId: string,
-        highlight: Omit<Highlight, "id">,
-        opts?: { id?: string }
-      ): string => {
-        const id = trackedLayersHook.addHighlight(layerId, highlight, opts)
-        guardedSendAction("addHighlight", {
-          layerId,
-          highlight: { ...highlight, id },
-        })
-        return id
-      },
-      ""
-    ),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    guarded((layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
+      return yjsLayers.addHighlight(layerId, highlight, opts);
+    }, ""),
+    [readOnly, yjsLayers],
+  );
 
   const removeHighlight = useCallback(
     guarded((layerId: string, highlightId: string) => {
-      trackedLayersHook.removeHighlight(layerId, highlightId)
-      guardedSendAction("removeHighlight", { layerId, highlightId })
+      yjsLayers.removeHighlight(layerId, highlightId);
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const updateHighlightAnnotation = useCallback(
     guarded((layerId: string, highlightId: string, annotation: string) => {
-      trackedLayersHook.updateHighlightAnnotation(
-        layerId,
-        highlightId,
-        annotation
-      )
-      guardedSendAction("updateHighlightAnnotation", {
-        layerId,
-        highlightId,
-        annotation,
-      })
+      yjsLayers.updateHighlightAnnotation(layerId, highlightId, annotation);
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const addArrow = useCallback(
-    guarded(
-      (
-        layerId: string,
-        arrow: Omit<Arrow, "id">,
-        opts?: { id?: string }
-      ): string => {
-        const id = trackedLayersHook.addArrow(layerId, arrow, opts)
-        guardedSendAction("addArrow", {
-          layerId,
-          arrow: { ...arrow, id },
-        })
-        return id
-      },
-      ""
-    ),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    guarded((layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
+      return yjsLayers.addArrow(layerId, arrow, opts);
+    }, ""),
+    [readOnly, yjsLayers],
+  );
 
   const removeArrow = useCallback(
     guarded((layerId: string, arrowId: string) => {
-      trackedLayersHook.removeArrow(layerId, arrowId)
-      guardedSendAction("removeArrow", { layerId, arrowId })
+      yjsLayers.removeArrow(layerId, arrowId);
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const updateArrowStyle = useCallback(
     guarded((layerId: string, arrowId: string, arrowStyle: ArrowStyle) => {
-      trackedLayersHook.updateArrowStyle(layerId, arrowId, arrowStyle)
-      guardedSendAction("updateArrowStyle", { layerId, arrowId, arrowStyle })
+      yjsLayers.updateArrowStyle(layerId, arrowId, arrowStyle);
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const addUnderline = useCallback(
     guarded(
-      (
-        layerId: string,
-        underline: Omit<LayerUnderline, "id">,
-        opts?: { id?: string }
-      ): string => {
-        const id = trackedLayersHook.addUnderline(layerId, underline, opts)
-        guardedSendAction("addUnderline", {
-          layerId,
-          underline: { ...underline, id },
-        })
-        return id
+      (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
+        return yjsLayers.addUnderline(layerId, underline, opts);
       },
-      ""
+      "",
     ),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const removeUnderline = useCallback(
     guarded((layerId: string, underlineId: string) => {
-      trackedLayersHook.removeUnderline(layerId, underlineId)
-      guardedSendAction("removeUnderline", { layerId, underlineId })
+      yjsLayers.removeUnderline(layerId, underlineId);
     }),
-    [readOnly, trackedLayersHook, guardedSendAction]
-  )
+    [readOnly, yjsLayers],
+  );
 
   const addEditor = useCallback(
     guarded(() => {
-      trackedEditorsHook.addEditor()
-      const newIndex = rawEditorsHook.editorCount
-      const name =
-        rawEditorsHook.sectionNames[newIndex] ??
-        `Passage ${rawEditorsHook.editorCount + 1}`
-      guardedSendAction("addEditor", { index: newIndex, name })
+      trackedEditorsHook.addEditor();
     }),
-    [readOnly, trackedEditorsHook, rawEditorsHook, guardedSendAction]
-  )
+    [readOnly, trackedEditorsHook],
+  );
 
   const removeEditor = useCallback(
     guarded((index: number) => {
-      trackedEditorsHook.removeEditor(index)
-      guardedSendAction("removeEditor", { index })
+      trackedEditorsHook.removeEditor(index);
     }),
-    [readOnly, trackedEditorsHook, guardedSendAction]
-  )
+    [readOnly, trackedEditorsHook],
+  );
 
   const updateSectionName = useCallback(
     guarded((index: number, name: string) => {
-      trackedEditorsHook.updateSectionName(index, name)
-      guardedSendAction("updateSectionName", { index, name })
+      trackedEditorsHook.updateSectionName(index, name);
     }),
-    [readOnly, trackedEditorsHook, guardedSendAction]
-  )
+    [readOnly, trackedEditorsHook],
+  );
 
-  // Reorder editors according to a permutation array where permutation[newIndex] = oldIndex.
-  // All annotation editorIndex values must be remapped to match the new ordering.
   const reorderEditors = useCallback(
     guarded((permutation: number[]) => {
-      // Build index map: oldIndex → newIndex
-      const indexMap = new Map<number, number>()
-      for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
-        indexMap.set(permutation[newIdx], newIdx)
-      }
-
-      // Compute inverse permutation for undo
-      const inverse = new Array<number>(permutation.length)
-      for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
-        inverse[permutation[newIdx]] = newIdx
-      }
-
-      // Snapshot layers before for undo
-      const layersBefore = rawLayersHook.layers.map(l => ({ ...l }))
-
-      // Apply editor reorder
-      rawEditorsHook.reorderEditors(permutation)
-
-      // Remap editorIndex in all highlights, arrows, and underlines
-      rawLayersHook.setLayers(prev =>
-        prev.map(layer => ({
-          ...layer,
-          highlights: layer.highlights.map(h => ({
-            ...h,
-            editorIndex: indexMap.get(h.editorIndex) ?? h.editorIndex,
-          })),
-          arrows: layer.arrows.map(a => ({
-            ...a,
-            from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
-            to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
-          })),
-          underlines: layer.underlines.map(u => ({
-            ...u,
-            editorIndex: indexMap.get(u.editorIndex) ?? u.editorIndex,
-          })),
-        }))
-      )
-
-      guardedSendAction("reorderEditors", { permutation })
-
+      rawEditorsHook.reorderEditors(permutation);
       history.record({
         type: "reorderEditors",
         description: "Reordered passages",
         undo: () => {
-          rawEditorsHook.reorderEditors(inverse)
-          rawLayersHook.setLayers(layersBefore)
+          const inverse = new Array<number>(permutation.length);
+          for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
+            inverse[permutation[newIdx]] = newIdx;
+          }
+          rawEditorsHook.reorderEditors(inverse);
         },
         redo: () => {
-          rawEditorsHook.reorderEditors(permutation)
-          rawLayersHook.setLayers(prev =>
-            prev.map(layer => ({
-              ...layer,
-              highlights: layer.highlights.map(h => ({
-                ...h,
-                editorIndex: indexMap.get(h.editorIndex) ?? h.editorIndex,
-              })),
-              arrows: layer.arrows.map(a => ({
-                ...a,
-                from: { ...a.from, editorIndex: indexMap.get(a.from.editorIndex) ?? a.from.editorIndex },
-                to: { ...a.to, editorIndex: indexMap.get(a.to.editorIndex) ?? a.to.editorIndex },
-              })),
-              underlines: layer.underlines.map(u => ({
-                ...u,
-                editorIndex: indexMap.get(u.editorIndex) ?? u.editorIndex,
-              })),
-            }))
-          )
+          rawEditorsHook.reorderEditors(permutation);
         },
-      })
+      });
     }),
-    [readOnly, rawEditorsHook, rawLayersHook, guardedSendAction, history]
-  )
+    [readOnly, rawEditorsHook, history],
+  );
 
   const toggleSectionVisibility = useCallback(
     guarded((index: number) => {
-      const wasVisible = rawEditorsHook.sectionVisibility[index] ?? true
-      const name = rawEditorsHook.sectionNames[index] ?? `Passage ${index + 1}`
-      rawEditorsHook.toggleSectionVisibility(index)
-      guardedSendAction("toggleSectionVisibility", { index })
+      const wasVisible = rawEditorsHook.sectionVisibility[index] ?? true;
+      const name = rawEditorsHook.sectionNames[index] ?? `Passage ${index + 1}`;
+      rawEditorsHook.toggleSectionVisibility(index);
       history.record({
         type: wasVisible ? "hidePassage" : "showPassage",
         description: `${wasVisible ? "Hid" : "Showed"} passage '${name}'`,
         details: [{ label: "visible", before: String(wasVisible), after: String(!wasVisible) }],
         undo: () => rawEditorsHook.toggleSectionVisibility(index),
         redo: () => rawEditorsHook.toggleSectionVisibility(index),
-      })
+      });
     }),
-    [readOnly, rawEditorsHook, guardedSendAction, history]
-  )
+    [readOnly, rawEditorsHook, history],
+  );
 
-  // Debounce content updates to avoid flooding the WebSocket on every keystroke
+  // No-op: text content is synced via Yjs Collaboration extension
   const updateEditorContent = useCallback(
-    guarded((editorIndex: number, contentJson: unknown) => {
-      if (contentTimerRef.current) {
-        clearTimeout(contentTimerRef.current)
-      }
-      // 2s debounce balances responsiveness with minimizing WebSocket traffic
-      contentTimerRef.current = setTimeout(() => {
-        guardedSendAction("updateEditorContent", { editorIndex, contentJson: contentJson as Record<string, unknown> })
-        contentTimerRef.current = null
-      }, 2000)
-    }),
-    [readOnly, guardedSendAction]
-  )
+    guarded((_editorIndex: number, _contentJson: unknown) => {}),
+    [readOnly],
+  );
 
   const toggleLocked = useCallback(() => {
-    const wasLocked = settingsHook.settings.isLocked
-    settingsHook.toggleLocked()
+    const wasLocked = settingsHook.settings.isLocked;
+    settingsHook.toggleLocked();
     history.record({
       type: wasLocked ? "unlock" : "lock",
       description: wasLocked ? "Unlocked editor" : "Locked editor",
       undo: () => settingsHook.toggleLocked(),
       redo: () => settingsHook.toggleLocked(),
-    })
-  }, [settingsHook, history])
+    });
+  }, [settingsHook, history]);
 
   const setActiveTool = useCallback(
     (tool: Parameters<typeof settingsHook.setActiveTool>[0]) => {
-      if (tool === settingsHook.annotations.activeTool) return
-      const oldTool = settingsHook.annotations.activeTool
-      settingsHook.setActiveTool(tool)
+      if (tool === settingsHook.annotations.activeTool) return;
+      const oldTool = settingsHook.annotations.activeTool;
+      settingsHook.setActiveTool(tool);
       history.record({
         type: "setActiveTool",
         description: `Switched to ${tool} tool`,
         details: [{ label: "tool", before: oldTool, after: tool }],
         undo: () => settingsHook.setActiveTool(oldTool),
         redo: () => settingsHook.setActiveTool(tool),
-      })
+      });
     },
-    [settingsHook, history]
-  )
+    [settingsHook, history],
+  );
 
   const toggleDarkMode = useCallback(() => {
-    const wasDark = settingsHook.settings.isDarkMode
-    settingsHook.toggleDarkMode()
+    const wasDark = settingsHook.settings.isDarkMode;
+    settingsHook.toggleDarkMode();
     history.record({
       type: "toggleDarkMode",
       description: `Switched to ${wasDark ? "light" : "dark"} mode`,
-      details: [{ label: "mode", before: wasDark ? "dark" : "light", after: wasDark ? "light" : "dark" }],
+      details: [
+        { label: "mode", before: wasDark ? "dark" : "light", after: wasDark ? "light" : "dark" },
+      ],
       undo: () => settingsHook.toggleDarkMode(),
       redo: () => settingsHook.toggleDarkMode(),
-    })
-  }, [settingsHook, history])
+    });
+  }, [settingsHook, history]);
 
   const toggleMultipleRowsLayout = useCallback(() => {
-    const wasRows = settingsHook.settings.isMultipleRowsLayout
-    settingsHook.toggleMultipleRowsLayout()
+    const wasRows = settingsHook.settings.isMultipleRowsLayout;
+    settingsHook.toggleMultipleRowsLayout();
     history.record({
       type: "toggleLayout",
       description: `Switched to ${wasRows ? "column" : "row"} layout`,
-      details: [{ label: "layout", before: wasRows ? "row" : "column", after: wasRows ? "column" : "row" }],
+      details: [
+        { label: "layout", before: wasRows ? "row" : "column", after: wasRows ? "column" : "row" },
+      ],
       undo: () => settingsHook.toggleMultipleRowsLayout(),
       redo: () => settingsHook.toggleMultipleRowsLayout(),
-    })
-  }, [settingsHook, history])
+    });
+  }, [settingsHook, history]);
 
-  const [isManagementPaneOpen, setIsManagementPaneOpen] = useState(true)
+  const [isManagementPaneOpen, setIsManagementPaneOpen] = useState(true);
 
-  const toggleManagementPane = useCallback(
-    () => setIsManagementPaneOpen((v) => !v),
-    []
-  )
+  const toggleManagementPane = useCallback(() => setIsManagementPaneOpen((v) => !v), []);
 
   return {
     ...settingsHook,
@@ -409,17 +310,16 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     setActiveTool,
     toggleDarkMode,
     toggleMultipleRowsLayout,
-    // Spread remaining properties from tracked hooks (layers state, activeLayerId, etc.)
-    layers: trackedLayersHook.layers,
-    activeLayerId: trackedLayersHook.activeLayerId,
-    setActiveLayer: trackedLayersHook.setActiveLayer,
-    setActiveLayerId: trackedLayersHook.setActiveLayerId,
-    setLayers: trackedLayersHook.setLayers,
-    toggleAllLayerVisibility: trackedLayersHook.toggleAllLayerVisibility,
-    clearLayerHighlights: trackedLayersHook.clearLayerHighlights,
-    clearLayerArrows: trackedLayersHook.clearLayerArrows,
-    clearLayerUnderlines: trackedLayersHook.clearLayerUnderlines,
-    // WS-wrapped layer actions
+    // Layers from Yjs CRDT
+    layers: yjsLayers.layers,
+    activeLayerId: yjsLayers.activeLayerId,
+    setActiveLayer: yjsLayers.setActiveLayer,
+    setActiveLayerId: yjsLayers.setActiveLayerId,
+    setLayers: yjsLayers.setLayers,
+    toggleAllLayerVisibility: guarded(() => yjsLayers.toggleAllLayerVisibility()),
+    clearLayerHighlights: guarded((layerId: string) => yjsLayers.clearLayerHighlights(layerId)),
+    clearLayerArrows: guarded((layerId: string) => yjsLayers.clearLayerArrows(layerId)),
+    clearLayerUnderlines: guarded((layerId: string) => yjsLayers.clearLayerUnderlines(layerId)),
     addLayer,
     removeLayer,
     updateLayerName,
@@ -433,7 +333,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     updateArrowStyle,
     addUnderline,
     removeUnderline,
-    // Editor state from tracked hook
+    // Editors (still local state — not yet CRDT)
     editorCount: trackedEditorsHook.editorCount,
     activeEditor: trackedEditorsHook.activeEditor,
     editorWidths: trackedEditorsHook.editorWidths,
@@ -445,19 +345,21 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     handleEditorMount: trackedEditorsHook.handleEditorMount,
     handlePaneFocus: trackedEditorsHook.handlePaneFocus,
     toggleAllSectionVisibility: trackedEditorsHook.toggleAllSectionVisibility,
-    // WS-wrapped editor actions
     addEditor,
     removeEditor,
     reorderEditors,
     updateSectionName,
     toggleSectionVisibility,
     updateEditorContent,
-    // Other
     workspaceId: workspaceId ?? null,
     readOnly,
     isManagementPaneOpen,
     toggleManagementPane,
     history,
-    wsConnected,
-  }
+    wsConnected: yjs.connected,
+    // Yjs CRDT collaboration
+    yjs,
+    // Unified undo/redo (Yjs + action history)
+    unifiedUndo,
+  };
 }

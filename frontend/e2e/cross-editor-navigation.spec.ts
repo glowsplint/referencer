@@ -2,7 +2,11 @@ import { test, expect } from "@playwright/test";
 
 async function editorOfSelection(page: import("@playwright/test").Page, editorCount: number) {
   for (let e = 0; e < editorCount; e++) {
-    const count = await page.locator(".simple-editor-wrapper").nth(e).locator(".word-selection").count();
+    const count = await page
+      .locator(".simple-editor-wrapper")
+      .nth(e)
+      .locator(".word-selection")
+      .count();
     if (count > 0) return e;
   }
   return -1;
@@ -13,7 +17,7 @@ test.describe("cross-editor navigation (2 editors)", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
     // Editor starts locked with 2 passages. Close management pane for more space.
@@ -58,7 +62,7 @@ test.describe("cross-editor navigation (3 editors)", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
     // Editor starts locked with 2 passages. Add one more for 3 total.
@@ -84,14 +88,18 @@ test.describe("cross-editor navigation (3 editors)", () => {
     await page.mouse.click(box!.x + 10, box!.y + 10);
     await expect(page.locator(".word-selection").first()).toBeVisible({ timeout: 2000 });
 
-    let reachedE2 = false, reachedE3 = false;
+    let reachedE2 = false,
+      reachedE3 = false;
 
     for (let i = 0; i < 150; i++) {
       await page.keyboard.press("ArrowDown");
       await page.waitForTimeout(30);
       const ed = await editorOfSelection(page, 3);
       if (ed === 1) reachedE2 = true;
-      if (ed === 2) { reachedE3 = true; break; }
+      if (ed === 2) {
+        reachedE3 = true;
+        break;
+      }
     }
 
     expect(reachedE2).toBe(true);
@@ -111,7 +119,10 @@ test.describe("cross-editor navigation (3 editors)", () => {
       await page.keyboard.press("ArrowUp");
       await page.waitForTimeout(30);
       const ed = await editorOfSelection(page, 3);
-      if (ed === 1) { reachedE2 = true; break; }
+      if (ed === 1) {
+        reachedE2 = true;
+        break;
+      }
     }
 
     expect(reachedE2).toBe(true);
@@ -130,13 +141,19 @@ test.describe("cross-editor navigation (3 editors)", () => {
       await page.keyboard.press("ArrowDown");
       await page.waitForTimeout(30);
       const ed = await editorOfSelection(page, 3);
-      if (ed !== 0) { crossedDown = true; break; }
+      if (ed !== 0) {
+        crossedDown = true;
+        break;
+      }
       if (ed === prevEd) {
         // Check if stuck
         await page.keyboard.press("ArrowDown");
         await page.waitForTimeout(30);
         const ed2 = await editorOfSelection(page, 3);
-        if (ed2 !== 0) { crossedDown = true; break; }
+        if (ed2 !== 0) {
+          crossedDown = true;
+          break;
+        }
       }
       prevEd = ed;
     }
@@ -147,7 +164,10 @@ test.describe("cross-editor navigation (3 editors)", () => {
     for (let i = 0; i < 100; i++) {
       await page.keyboard.press("ArrowUp");
       await page.waitForTimeout(30);
-      if ((await editorOfSelection(page, 3)) === 0) { crossedUp = true; break; }
+      if ((await editorOfSelection(page, 3)) === 0) {
+        crossedUp = true;
+        break;
+      }
     }
     expect(crossedUp).toBe(true);
   });

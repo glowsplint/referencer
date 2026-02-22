@@ -15,7 +15,7 @@ interface SwitchingButtonIconProps {
 export const SwitchingButtonIcon = forwardRef<HTMLButtonElement, SwitchingButtonIconProps>(
   function SwitchingButtonIcon(
     { iconOne, iconTwo, bool, callback, title, buttonProps, ...rest },
-    ref
+    ref,
   ) {
     return (
       <button
@@ -29,5 +29,5 @@ export const SwitchingButtonIcon = forwardRef<HTMLButtonElement, SwitchingButton
         {bool ? iconTwo : iconOne}
       </button>
     );
-  }
+  },
 );

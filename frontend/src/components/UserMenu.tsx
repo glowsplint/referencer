@@ -1,18 +1,18 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
-import { LogOut } from "lucide-react"
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { LogOut } from "lucide-react";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/tiptap-ui-primitive/tooltip/tooltip"
-import { useAuth } from "@/hooks/use-auth"
+} from "@/components/tiptap-ui-primitive/tooltip/tooltip";
+import { useAuth } from "@/hooks/use-auth";
 
 export function UserMenu() {
-  const { user, logout } = useAuth()
+  const { user, logout } = useAuth();
 
-  if (!user) return null
+  if (!user) return null;
 
-  const initial = user.name?.charAt(0).toUpperCase() ?? "?"
+  const initial = user.name?.charAt(0).toUpperCase() ?? "?";
 
   return (
     <DropdownMenu.Root>
@@ -54,5 +54,5 @@ export function UserMenu() {
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
-  )
+  );
 }

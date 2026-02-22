@@ -3,13 +3,9 @@ import { test, expect } from "@playwright/test";
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
@@ -20,16 +16,15 @@ async function drawArrowInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
   anchorXOffset = 30,
-  targetXOffset = 120
+  targetXOffset = 120,
 ) {
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+  // Switch to selection first, then arrow, to ensure a clean entry into arrow
+  // mode (clears any lingering flash message from a previous arrow creation).
+  await page.keyboard.press("s");
   await page.keyboard.press("a");
 
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
 
@@ -39,13 +34,16 @@ async function drawArrowInEditor(
   await page.keyboard.press("Enter");
 
   // Wait for status bar to confirm anchor was accepted
-  await expect(page.getByTestId("status-bar")).toContainText("select the target", { timeout: 2000 });
+  await expect(page.getByTestId("status-bar")).toContainText("select the target", {
+    timeout: 2000,
+  });
 
   // Select and confirm target
   await page.mouse.click(box!.x + targetXOffset, box!.y + 10);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
-  // Tool auto-switches to selection
+  // Wait for arrow creation to settle
+  await page.waitForTimeout(300);
 }
 
 async function drawArrowBetweenEditors(
@@ -53,16 +51,12 @@ async function drawArrowBetweenEditors(
   sourceEditor: number,
   targetEditor: number,
   anchorXOffset = 30,
-  targetXOffset = 30
+  targetXOffset = 30,
 ) {
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   await page.keyboard.press("a");
 
-  const srcP = page
-    .locator(".simple-editor-wrapper")
-    .nth(sourceEditor)
-    .locator("p")
-    .first();
+  const srcP = page.locator(".simple-editor-wrapper").nth(sourceEditor).locator("p").first();
   const srcBox = await srcP.boundingBox();
   expect(srcBox).not.toBeNull();
 
@@ -72,13 +66,11 @@ async function drawArrowBetweenEditors(
   await page.keyboard.press("Enter");
 
   // Wait for status bar to confirm anchor was accepted
-  await expect(page.getByTestId("status-bar")).toContainText("select the target", { timeout: 2000 });
+  await expect(page.getByTestId("status-bar")).toContainText("select the target", {
+    timeout: 2000,
+  });
 
-  const tgtP = page
-    .locator(".simple-editor-wrapper")
-    .nth(targetEditor)
-    .locator("p")
-    .first();
+  const tgtP = page.locator(".simple-editor-wrapper").nth(targetEditor).locator("p").first();
   const tgtBox = await tgtP.boundingBox();
   expect(tgtBox).not.toBeNull();
 
@@ -96,7 +88,7 @@ test.describe("cross-editor arrows (2 editors)", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
@@ -118,16 +110,14 @@ test.describe("cross-editor arrows (2 editors)", () => {
     });
   });
 
-  test("cross-editor arrow highlights appear as inline decorations", async ({
-    page,
-  }) => {
+  test("cross-editor arrow highlights appear as inline decorations", async ({ page }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
 
     // Both arrow endpoints should be highlighted as inline decorations
-    const endpointDecorations = page.locator('.ProseMirror .arrow-endpoint');
+    const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
     await expect(endpointDecorations).toHaveCount(2, { timeout: 2000 });
   });
 
@@ -155,9 +145,7 @@ test.describe("cross-editor arrows (2 editors)", () => {
     });
   });
 
-  test("hiding layer removes cross-editor arrow and all highlights", async ({
-    page,
-  }) => {
+  test("hiding layer removes cross-editor arrow and all highlights", async ({ page }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -167,15 +155,15 @@ test.describe("cross-editor arrows (2 editors)", () => {
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).toBeVisible();
 
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
 
-    const endpointDecorations = page.locator('.ProseMirror .arrow-endpoint');
+    const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
     await expect(endpointDecorations).toHaveCount(0, { timeout: 2000 });
 
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -189,19 +177,19 @@ test.describe("multiple layers (2 editors)", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Add two fresh layers at indices 4 and 5.
+    // Add two fresh layers at indices 3 and 4.
     await page.getByTestId("addLayerButton").click();
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
-    await expect(page.getByTestId("layerName-5")).toHaveText("Layer 2");
+    await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
+    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 2");
 
-    // Make Layer 1 (index 4) active — Layer 2 (index 5) is active by default
-    await page.getByTestId("layerName-4").click();
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Make Layer 1 (index 3) active — Layer 2 (index 4) is active by default
+    await page.getByTestId("layerName-3").click();
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
 
     // Close management pane for more space when drawing arrows
     await page.getByTestId("menuButton").click();
@@ -209,15 +197,21 @@ test.describe("multiple layers (2 editors)", () => {
   });
 
   test("arrows on different layers are independent", async ({ page }) => {
-    // Draw arrow on Layer 1 (index 4) in E1
+    // Draw arrow on Layer 1 (index 3) in E1
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
 
-    // Cycle to Layer 2 (index 5)
+    // Cycle to Layer 2 (index 4)
     await page.keyboard.press("Tab");
-    await expect(page.getByTestId("layerActiveTag-5")).toBeVisible();
+
+    // Open management pane to verify active layer changed
+    await page.getByTestId("menuButton").click();
+    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Close management pane again for drawing space
+    await page.getByTestId("menuButton").click();
+    await expect(page.getByTestId("managementPane")).not.toBeVisible();
 
     // Draw arrow on Layer 2 in E2
     await drawArrowInEditor(page, 1);
@@ -226,9 +220,7 @@ test.describe("multiple layers (2 editors)", () => {
     });
   });
 
-  test("toggling one layer visibility doesn't affect other layer's arrows", async ({
-    page,
-  }) => {
+  test("toggling one layer visibility doesn't affect other layer's arrows", async ({ page }) => {
     // Draw arrow on Layer 1 in E1
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -246,45 +238,47 @@ test.describe("multiple layers (2 editors)", () => {
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).toBeVisible();
 
-    // Hide Layer 1 (index 4) — only its arrow should disappear
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3) — only its arrow should disappear
+    await page.getByTestId("layerVisibility-3").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
 
-    // Show Layer 1, hide Layer 2 (index 5)
+    // Show Layer 1, hide Layer 2 (index 4)
+    await page.getByTestId("layerVisibility-3").click();
     await page.getByTestId("layerVisibility-4").click();
-    await page.getByTestId("layerVisibility-5").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
 
     // Show both
-    await page.getByTestId("layerVisibility-5").click();
+    await page.getByTestId("layerVisibility-4").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,
     });
   });
 
   test("Tab key cycles the active layer", async ({ page }) => {
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Open management pane so layerActiveTag test IDs are visible
+    await page.getByTestId("menuButton").click();
+    await expect(page.getByTestId("managementPane")).toBeVisible();
+
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
 
     await page.keyboard.press("Tab");
-    await expect(page.getByTestId("layerActiveTag-5")).toBeVisible();
+    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
 
-    // Tab again — cycles through all 6 layers back to index 4
-    for (let i = 0; i < 5; i++) {
+    // Tab again — cycles through all 5 layers back to index 3
+    for (let i = 0; i < 4; i++) {
       await page.keyboard.press("Tab");
     }
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
   });
 
-  test("highlights on different layers coexist across editors", async ({
-    page,
-  }) => {
+  test("highlights on different layers coexist across editors", async ({ page }) => {
     // Switch to comments tool for annotation creation
     await page.keyboard.press("c");
-    // Click word in E1 → highlight on Layer 1 (index 4)
+    // Click word in E1 → highlight on Layer 1 (index 3)
     await clickWordInEditor(page, 0);
 
     // Confirm selection and add annotation so highlight persists across layer switch
@@ -302,7 +296,7 @@ test.describe("multiple layers (2 editors)", () => {
       .locator('span[style*="background-color"]');
     await expect(e1Highlights).toHaveCount(1, { timeout: 2000 });
 
-    // Cycle to Layer 2 (index 5) and click word in E2
+    // Cycle to Layer 2 (index 4) and click word in E2
     await page.keyboard.press("Tab");
     await clickWordInEditor(page, 1, 60);
 
@@ -327,14 +321,14 @@ test.describe("multiple layers (2 editors)", () => {
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).toBeVisible();
 
-    // Hide Layer 1 (index 4) — only E1 highlight disappears
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 3) — only E1 highlight disappears
+    await page.getByTestId("layerVisibility-3").click();
     await expect(e1Highlights).toHaveCount(0, { timeout: 2000 });
     await expect(e2Highlights).toHaveCount(1, { timeout: 2000 });
 
-    // Show Layer 1, hide Layer 2 (index 5)
+    // Show Layer 1, hide Layer 2 (index 4)
+    await page.getByTestId("layerVisibility-3").click();
     await page.getByTestId("layerVisibility-4").click();
-    await page.getByTestId("layerVisibility-5").click();
     await expect(e1Highlights).toHaveCount(1, { timeout: 2000 });
     await expect(e2Highlights).toHaveCount(0, { timeout: 2000 });
   });
@@ -346,7 +340,7 @@ test.describe("section visibility with layers (2 editors)", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
@@ -355,30 +349,18 @@ test.describe("section visibility with layers (2 editors)", () => {
   });
 
   test("hiding a passage hides the editor pane", async ({ page }) => {
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(0)
-    ).toBeVisible();
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(1)
-    ).toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(0)).toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(1)).toBeVisible();
 
     await page.getByTestId("sectionVisibility-1").click();
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(1)
-    ).not.toBeVisible({ timeout: 2000 });
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(0)
-    ).toBeVisible();
+    await expect(page.locator(".simple-editor-wrapper").nth(1)).not.toBeVisible({ timeout: 2000 });
+    await expect(page.locator(".simple-editor-wrapper").nth(0)).toBeVisible();
 
     await page.getByTestId("sectionVisibility-1").click();
-    await expect(
-      page.locator(".simple-editor-wrapper").nth(1)
-    ).toBeVisible({ timeout: 2000 });
+    await expect(page.locator(".simple-editor-wrapper").nth(1)).toBeVisible({ timeout: 2000 });
   });
 
-  test("arrows in visible editor persist after hiding another passage", async ({
-    page,
-  }) => {
+  test("arrows in visible editor persist after hiding another passage", async ({ page }) => {
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -397,9 +379,7 @@ test.describe("section visibility with layers (2 editors)", () => {
     });
   });
 
-  test("cross-editor arrow disappears when destination passage is hidden", async ({
-    page,
-  }) => {
+  test("cross-editor arrow disappears when destination passage is hidden", async ({ page }) => {
     // Close management pane for cross-editor click
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();

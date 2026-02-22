@@ -1,12 +1,15 @@
 /// <reference types="vitest/config" />
-import path from "path"
-import tailwindcss from "@tailwindcss/vite"
-import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
+import path from "path";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+const backendUrl = process.env.VITE_BACKEND_URL || "http://localhost:8787";
+const collabWsUrl = process.env.VITE_COLLAB_WS_URL || "ws://localhost:8788";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/referencer/",
+  base: "/",
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -14,19 +17,24 @@ export default defineConfig({
     },
   },
   server: {
+    watch: {
+      usePolling: !!process.env.VITE_USE_POLLING,
+    },
     proxy: {
-      "/ws": {
-        target: "http://localhost:5000",
-        ws: true,
-      },
       "/api": {
-        target: "http://localhost:5000",
+        target: backendUrl,
+        changeOrigin: true,
       },
       "/s": {
-        target: "http://localhost:5000",
+        target: backendUrl,
       },
       "/auth": {
-        target: "http://localhost:5000",
+        target: backendUrl,
+      },
+      "/yjs": {
+        target: collabWsUrl,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/yjs/, ""),
       },
     },
   },
@@ -36,5 +44,28 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     css: false,
     exclude: ["e2e/**", "node_modules/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov", "json-summary"],
+      reportsDirectory: "./coverage",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/test/**",
+        "src/**/*.d.ts",
+        "src/vite-env.d.ts",
+        "src/main.tsx",
+        "src/tiptap-icons/**",
+        "src/tiptap-ui/**",
+        "src/tiptap-ui-primitive/**",
+        "src/tiptap-node/**",
+        "src/tiptap-extension/**",
+      ],
+      thresholds: {
+        statements: 50,
+        branches: 50,
+        functions: 50,
+        lines: 50,
+      },
+    },
   },
-})
+});

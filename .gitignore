@@ -1,12 +1,19 @@
 .vscode
 /.env
+node_modules/
 
 /output.txt
+nul
 
 # Bun
 bun.lockb
 
-# Database
-/data/referencer.db
-/data/referencer.db-wal
-/data/referencer.db-shm
+# Claude Code
+.claude/worktrees/
+.claude/settings.local.json
+
+# Collab server data
+/collab-server/data/
+
+# Wrangler
+.wrangler/

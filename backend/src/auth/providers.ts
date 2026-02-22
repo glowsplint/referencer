@@ -1,47 +1,50 @@
 import { Google, Apple, Facebook } from "arctic";
 import type { AuthConfig } from "./config";
 
-let google: Google | null = null;
-let apple: Apple | null = null;
-let facebook: Facebook | null = null;
+export function createProviders(config: AuthConfig): Map<string, Google | Apple | Facebook> {
+  const providers = new Map<string, Google | Apple | Facebook>();
 
-export function initProviders(config: AuthConfig): void {
   if (config.google) {
-    google = new Google(
-      config.google.clientId,
-      config.google.clientSecret,
-      `${config.baseUrl}/auth/google/callback`,
+    providers.set(
+      "google",
+      new Google(
+        config.google.clientId,
+        config.google.clientSecret,
+        `${config.baseUrl}/auth/google/callback`,
+      ),
     );
   }
+
   if (config.apple) {
-    apple = new Apple(
-      config.apple.clientId,
-      config.apple.teamId,
-      config.apple.keyId,
-      new TextEncoder().encode(config.apple.privateKey),
-      `${config.baseUrl}/auth/apple/callback`,
+    providers.set(
+      "apple",
+      new Apple(
+        config.apple.clientId,
+        config.apple.teamId,
+        config.apple.keyId,
+        new TextEncoder().encode(config.apple.privateKey),
+        `${config.baseUrl}/auth/apple/callback`,
+      ),
     );
   }
+
   if (config.facebook) {
-    facebook = new Facebook(
-      config.facebook.clientId,
-      config.facebook.clientSecret,
-      `${config.baseUrl}/auth/facebook/callback`,
+    providers.set(
+      "facebook",
+      new Facebook(
+        config.facebook.clientId,
+        config.facebook.clientSecret,
+        `${config.baseUrl}/auth/facebook/callback`,
+      ),
     );
   }
+
+  return providers;
 }
 
-export function getProvider(
+export function getProviderFromMap(
+  providers: Map<string, Google | Apple | Facebook>,
   name: string,
 ): Google | Apple | Facebook | null {
-  switch (name) {
-    case "google":
-      return google;
-    case "apple":
-      return apple;
-    case "facebook":
-      return facebook;
-    default:
-      return null;
-  }
+  return providers.get(name) ?? null;
 }

@@ -7,63 +7,75 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("undo reverts adding a layer", async ({ page }) => {
-  // Add a layer (appended after 4 default layers, at index 4)
+  // Add a layer (appended after 3 default layers, at index 3)
   await page.getByTestId("addLayerButton").click();
-  await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
+  await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
 
   // Undo
   await page.keyboard.press("Meta+z");
-  await expect(page.getByTestId("layerName-4")).not.toBeVisible();
+  await expect(page.getByTestId("layerName-3")).not.toBeVisible();
 });
 
 test("redo restores an undone layer", async ({ page }) => {
   await page.getByTestId("addLayerButton").click();
-  await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
+  await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
 
   // Undo then redo
   await page.keyboard.press("Meta+z");
-  await expect(page.getByTestId("layerName-4")).not.toBeVisible();
+  await expect(page.getByTestId("layerName-3")).not.toBeVisible();
 
   await page.keyboard.press("Meta+Shift+z");
-  await expect(page.getByTestId("layerName-4")).toBeVisible();
+  await expect(page.getByTestId("layerName-3")).toBeVisible();
 });
 
 test("undo reverts renaming a layer", async ({ page }) => {
   // Add a layer
   await page.getByTestId("addLayerButton").click();
-  await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
+  await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
+
+  // Wait for Yjs UndoManager captureTimeout (500ms) so the add and rename
+  // are recorded as separate undo steps
+  await page.waitForTimeout(600);
 
   // Rename the layer
-  await page.getByTestId("layerName-4").dblclick();
-  const input = page.getByTestId("layerNameInput-4");
+  await page.getByTestId("layerName-3").dblclick();
+  const input = page.getByTestId("layerNameInput-3");
   await input.fill("Renamed");
   await input.press("Enter");
-  await expect(page.getByTestId("layerName-4")).toHaveText("Renamed");
+  await expect(page.getByTestId("layerName-3")).toHaveText("Renamed");
 
-  // Undo the rename
+  // Undo the rename — only the rename should revert, not the layer addition
   await page.keyboard.press("Meta+z");
-  await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
+  await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
 });
 
 test("multiple undo/redo with layers", async ({ page }) => {
-  // Add two layers
+  // Add first layer
   await page.getByTestId("addLayerButton").click();
+  await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
+
+  // Wait for Yjs UndoManager captureTimeout (500ms) so each layer addition
+  // is recorded as a separate undo step
+  await page.waitForTimeout(600);
+
+  // Add second layer
   await page.getByTestId("addLayerButton").click();
-  await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
-  await expect(page.getByTestId("layerName-5")).toHaveText("Layer 2");
+  await expect(page.getByTestId("layerName-4")).toHaveText("Layer 2");
 
-  // Undo both
-  await page.keyboard.press("Meta+z");
-  await expect(page.getByTestId("layerName-5")).not.toBeVisible();
-  await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
-
+  // Undo second layer
   await page.keyboard.press("Meta+z");
   await expect(page.getByTestId("layerName-4")).not.toBeVisible();
+  await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
 
-  // Redo both
+  // Undo first layer
+  await page.keyboard.press("Meta+z");
+  await expect(page.getByTestId("layerName-3")).not.toBeVisible();
+
+  // Redo first layer
+  await page.keyboard.press("Meta+Shift+z");
+  await expect(page.getByTestId("layerName-3")).toBeVisible();
+
+  // Redo second layer
   await page.keyboard.press("Meta+Shift+z");
   await expect(page.getByTestId("layerName-4")).toBeVisible();
-
-  await page.keyboard.press("Meta+Shift+z");
-  await expect(page.getByTestId("layerName-5")).toBeVisible();
 });

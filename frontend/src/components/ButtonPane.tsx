@@ -55,19 +55,41 @@ function ArrowStyleIcon({ style, size = 20 }: { style: ArrowStyle; size?: number
     const gap = 2;
     const lineEnd = right - arrowSize;
     return (
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <line x1={pad} y1={mid - gap} x2={lineEnd} y2={mid - gap} />
         <line x1={pad} y1={mid + gap} x2={lineEnd} y2={mid + gap} />
-        <polyline points={`${right - arrowSize},${mid - arrowSize} ${right},${mid} ${right - arrowSize},${mid + arrowSize}`} />
+        <polyline
+          points={`${right - arrowSize},${mid - arrowSize} ${right},${mid} ${right - arrowSize},${mid + arrowSize}`}
+        />
       </svg>
     );
   }
-  const dasharray =
-    style === "dashed" ? "4 2.5" : style === "dotted" ? "1.5 2.5" : undefined;
+  const dasharray = style === "dashed" ? "4 2.5" : style === "dotted" ? "1.5 2.5" : undefined;
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <line x1={pad} y1={mid} x2={right} y2={mid} strokeDasharray={dasharray} />
-      <polyline points={`${right - arrowSize},${mid - arrowSize} ${right},${mid} ${right - arrowSize},${mid + arrowSize}`} strokeDasharray={undefined} />
+      <polyline
+        points={`${right - arrowSize},${mid - arrowSize} ${right},${mid} ${right - arrowSize},${mid + arrowSize}`}
+        strokeDasharray={undefined}
+      />
     </svg>
   );
 }
@@ -125,17 +147,48 @@ export function ButtonPane() {
         updateArrowStyle(selectedArrow.layerId, selectedArrow.arrowId, style);
       }
     },
-    [setActiveArrowStyle, selectedArrow, updateArrowStyle]
+    [setActiveArrowStyle, selectedArrow, updateArrowStyle],
   );
 
-  const toolButtons: { tool: ActiveTool; icon: React.ReactNode; label: string; testId: string }[] = [
-    { tool: "selection", icon: <MousePointer2 size={20} />, label: tt("selection.label"), testId: "selectionToolButton" },
-    { tool: "arrow", icon: <ArrowStyleIcon style={activeArrowStyle} />, label: tt("arrow.label"), testId: "arrowToolButton" },
-    { tool: "highlight", icon: <Highlighter size={20} />, label: tt("highlight.label"), testId: "highlightToolButton" },
-    { tool: "comments", icon: <MessageSquareText size={20} />, label: tt("comments.label"), testId: "commentsToolButton" },
-    { tool: "underline", icon: <Underline size={20} />, label: tt("underline.label"), testId: "underlineToolButton" },
-    { tool: "eraser", icon: <Eraser size={20} />, label: tt("eraser.label"), testId: "eraserToolButton" },
-  ];
+  const toolButtons: { tool: ActiveTool; icon: React.ReactNode; label: string; testId: string }[] =
+    [
+      {
+        tool: "selection",
+        icon: <MousePointer2 size={20} />,
+        label: tt("selection.label"),
+        testId: "selectionToolButton",
+      },
+      {
+        tool: "arrow",
+        icon: <ArrowStyleIcon style={activeArrowStyle} />,
+        label: tt("arrow.label"),
+        testId: "arrowToolButton",
+      },
+      {
+        tool: "highlight",
+        icon: <Highlighter size={20} />,
+        label: tt("highlight.label"),
+        testId: "highlightToolButton",
+      },
+      {
+        tool: "comments",
+        icon: <MessageSquareText size={20} />,
+        label: tt("comments.label"),
+        testId: "commentsToolButton",
+      },
+      {
+        tool: "underline",
+        icon: <Underline size={20} />,
+        label: tt("underline.label"),
+        testId: "underlineToolButton",
+      },
+      {
+        tool: "eraser",
+        icon: <Eraser size={20} />,
+        label: tt("eraser.label"),
+        testId: "eraserToolButton",
+      },
+    ];
 
   return (
     <div className="flex flex-col items-center gap-1 h-full p-1" data-testid="buttonPane">
@@ -150,7 +203,9 @@ export function ButtonPane() {
             buttonProps={{ "data-testid": "menuButton" }}
           />
         </TooltipTrigger>
-        <TooltipContent>{tm("tooltips.toggleManagementPane")} <kbd>M</kbd></TooltipContent>
+        <TooltipContent>
+          {tm("tooltips.toggleManagementPane")} <kbd>M</kbd>
+        </TooltipContent>
       </Tooltip>
       <Tooltip placement="right">
         <TooltipTrigger asChild>
@@ -209,7 +264,9 @@ export function ButtonPane() {
                   {icon}
                 </button>
               </TooltipTrigger>
-              <TooltipContent>{label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd></TooltipContent>
+              <TooltipContent>
+                {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
+              </TooltipContent>
             </Tooltip>
             {isArrow && arrowStylePickerOpen && (
               <div className="absolute left-full top-0 ml-1 z-50" data-testid="arrowStylePopover">
@@ -236,7 +293,9 @@ export function ButtonPane() {
             buttonProps={{ "data-testid": "editorLayoutButton" }}
           />
         </TooltipTrigger>
-        <TooltipContent>{tm("tooltips.toggleEditorLayout")} <kbd>R</kbd></TooltipContent>
+        <TooltipContent>
+          {tm("tooltips.toggleEditorLayout")} <kbd>R</kbd>
+        </TooltipContent>
       </Tooltip>
       <Tooltip placement="right">
         <TooltipTrigger asChild>
@@ -248,12 +307,11 @@ export function ButtonPane() {
             buttonProps={{ "data-testid": "lockButton", disabled: readOnly }}
           />
         </TooltipTrigger>
-        <TooltipContent>{tm("tooltips.toggleEditorLock")} <kbd>K</kbd></TooltipContent>
+        <TooltipContent>
+          {tm("tooltips.toggleEditorLock")} <kbd>K</kbd>
+        </TooltipContent>
       </Tooltip>
-      <KeyboardShortcutsDialog
-        open={shortcutsOpen}
-        onOpenChange={setShortcutsOpen}
-      />
+      <KeyboardShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
       <FAQDialog open={faqOpen} onOpenChange={setFaqOpen} />
       <SettingsDialog
         open={settingsOpen}

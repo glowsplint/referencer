@@ -1,10 +1,12 @@
-import { render } from "@testing-library/react"
-import { vi } from "vitest"
-import { WorkspaceProvider } from "@/contexts/WorkspaceContext"
-import { AuthProvider } from "@/contexts/AuthContext"
-import type { WorkspaceContextValue } from "@/contexts/WorkspaceContext"
+import { render } from "@testing-library/react";
+import { vi } from "vitest";
+import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import type { WorkspaceContextValue } from "@/contexts/WorkspaceContext";
 
-export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}): WorkspaceContextValue {
+export function makeMockWorkspace(
+  overrides: Partial<WorkspaceContextValue> = {},
+): WorkspaceContextValue {
   return {
     settings: {
       isDarkMode: false,
@@ -13,6 +15,8 @@ export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}
       isLocked: false,
       showDrawingToasts: true,
       showCommentsToasts: true,
+      showHighlightToasts: true,
+      overscrollEnabled: false,
     },
     annotations: { activeTool: "selection" as const },
     layers: [],
@@ -49,6 +53,16 @@ export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}
     removeHighlight: vi.fn(),
     removeArrow: vi.fn(),
     clearLayerHighlights: vi.fn(),
+    clearLayerArrows: vi.fn(),
+    clearLayerUnderlines: vi.fn(),
+    addArrow: vi.fn(),
+    updateHighlightAnnotation: vi.fn(),
+    addUnderline: vi.fn(),
+    removeUnderline: vi.fn(),
+    updateEditorContent: vi.fn(),
+    setActiveLayerId: vi.fn(),
+    setLayers: vi.fn(),
+    editorKeys: [1],
     editorsRef: { current: new Map() },
     sectionVisibility: [true],
     sectionNames: ["Passage 1"],
@@ -69,21 +83,35 @@ export function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}
       redo: vi.fn(),
       record: vi.fn(),
     },
+    wsConnected: false,
+    yjs: {
+      provider: null,
+      doc: null,
+      connected: false,
+      getFragment: () => null,
+      awareness: null,
+    },
+    unifiedUndo: {
+      undo: vi.fn(),
+      redo: vi.fn(),
+      canUndo: false,
+      canRedo: false,
+    },
     ...overrides,
-  } as WorkspaceContextValue
+  } as WorkspaceContextValue;
 }
 
 export function renderWithWorkspace(
   ui: React.ReactElement,
-  overrides: Partial<WorkspaceContextValue> = {}
+  overrides: Partial<WorkspaceContextValue> = {},
 ) {
-  const workspace = makeMockWorkspace(overrides)
+  const workspace = makeMockWorkspace(overrides);
   return {
     ...render(
       <AuthProvider>
         <WorkspaceProvider value={workspace}>{ui}</WorkspaceProvider>
-      </AuthProvider>
+      </AuthProvider>,
     ),
     workspace,
-  }
+  };
 }

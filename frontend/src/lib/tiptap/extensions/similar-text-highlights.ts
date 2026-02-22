@@ -1,11 +1,11 @@
 // ProseMirror decoration plugin that highlights all occurrences of the
 // currently selected word's text throughout the document. Driven externally
 // via transaction metadata from the useSimilarTextHighlight hook.
-import { Extension } from "@tiptap/core"
-import { Plugin, PluginKey } from "@tiptap/pm/state"
-import { DecorationSet } from "@tiptap/pm/view"
+import { Extension } from "@tiptap/core";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { DecorationSet } from "@tiptap/pm/view";
 
-export const similarTextPluginKey = new PluginKey("similarTextHighlights")
+export const similarTextPluginKey = new PluginKey("similarTextHighlights");
 
 export const SimilarTextHighlightsExtension = Extension.create({
   name: "similarTextHighlights",
@@ -16,20 +16,20 @@ export const SimilarTextHighlightsExtension = Extension.create({
         key: similarTextPluginKey,
         state: {
           init() {
-            return DecorationSet.empty
+            return DecorationSet.empty;
           },
           apply(tr, value) {
-            const meta = tr.getMeta(similarTextPluginKey)
-            if (meta !== undefined) return meta
-            return value.map(tr.mapping, tr.doc)
+            const meta = tr.getMeta(similarTextPluginKey);
+            if (meta !== undefined) return meta;
+            return value.map(tr.mapping, tr.doc);
           },
         },
         props: {
           decorations(state) {
-            return similarTextPluginKey.getState(state)
+            return similarTextPluginKey.getState(state);
           },
         },
       }),
-    ]
+    ];
   },
-})
+});

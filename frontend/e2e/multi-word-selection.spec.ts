@@ -3,13 +3,9 @@ import { test, expect } from "@playwright/test";
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
@@ -23,14 +19,12 @@ test.describe("multi-word selection with Shift+Arrow", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
   });
 
-  test("Shift+ArrowRight expands selection to include next word", async ({
-    page,
-  }) => {
+  test("Shift+ArrowRight expands selection to include next word", async ({ page }) => {
     await clickWordInEditor(page, 0, 30);
     // Dismiss auto-focused annotation so keyboard reaches word selection handler
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
@@ -50,9 +44,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
     expect(expandedBox!.width).toBeGreaterThan(initialWidth);
   });
 
-  test("Shift+ArrowLeft expands selection to include previous word", async ({
-    page,
-  }) => {
+  test("Shift+ArrowLeft expands selection to include previous word", async ({ page }) => {
     // Click a word that's not the first one (offset further right)
     await clickWordInEditor(page, 0, 100);
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
@@ -74,9 +66,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
     expect(expandedBox!.x).toBeLessThan(initialX);
   });
 
-  test("multiple Shift+ArrowRight presses keep expanding", async ({
-    page,
-  }) => {
+  test("multiple Shift+ArrowRight presses keep expanding", async ({ page }) => {
     await clickWordInEditor(page, 0, 30);
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
@@ -95,9 +85,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
     expect(box2!.width).toBeGreaterThan(box1!.width);
   });
 
-  test("Shift+Arrow does not extend across editor boundaries", async ({
-    page,
-  }) => {
+  test("Shift+Arrow does not extend across editor boundaries", async ({ page }) => {
     // Already have 2 passages by default
 
     // Click word in editor 1
@@ -119,9 +107,7 @@ test.describe("multi-word selection with Shift+Arrow", () => {
     expect(selectionInE0).toBeGreaterThan(0);
   });
 
-  test("normal arrow key after Shift+Arrow resets to single word", async ({
-    page,
-  }) => {
+  test("normal arrow key after Shift+Arrow resets to single word", async ({ page }) => {
     await clickWordInEditor(page, 0, 30);
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
@@ -153,16 +139,14 @@ test.describe("drag-to-select multiple words", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Editor starts locked with 4 default layers. Add a fresh layer for tests.
+    // Editor starts locked with 3 default layers. Add a fresh layer for tests.
     await page.getByTestId("addLayerButton").click();
 
     // Switch to comments tool for annotation creation
     await page.keyboard.press("c");
   });
 
-  test("dragging across words creates multi-word selection", async ({
-    page,
-  }) => {
+  test("dragging across words creates multi-word selection", async ({ page }) => {
     const p = page.locator(".simple-editor p").first();
     const box = await p.boundingBox();
     expect(box).not.toBeNull();
@@ -248,9 +232,7 @@ test.describe("drag-to-select multiple words", () => {
     });
 
     // Should have background-color styled spans (highlight decorations)
-    const highlights = page.locator(
-      '.simple-editor span[style*="background-color"]'
-    );
+    const highlights = page.locator('.simple-editor span[style*="background-color"]');
     await expect(highlights.first()).toBeVisible({ timeout: 2000 });
   });
 });
@@ -260,13 +242,12 @@ test.describe("selection clears on state changes", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
   });
 
   test("unlocking editor clears multi-word selection", async ({ page }) => {
-
     await clickWordInEditor(page, 0, 30);
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 

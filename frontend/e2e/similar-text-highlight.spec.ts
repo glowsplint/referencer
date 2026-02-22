@@ -6,7 +6,9 @@ test.beforeEach(async ({ page }) => {
   // Editor starts locked — no need to click lockButton
 });
 
-test("clicking a word shows similar-text-highlight decorations for matching words", async ({ page }) => {
+test("clicking a word shows similar-text-highlight decorations for matching words", async ({
+  page,
+}) => {
   // Click on a word in the first editor
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
@@ -35,7 +37,9 @@ test("clicking a word shows similar-text-highlight decorations for matching word
   }
 });
 
-test("primary selected word has word-selection class, not similar-text-highlight", async ({ page }) => {
+test("primary selected word has word-selection class, not similar-text-highlight", async ({
+  page,
+}) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();

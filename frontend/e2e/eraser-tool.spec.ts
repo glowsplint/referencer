@@ -3,13 +3,9 @@ import { test, expect } from "@playwright/test";
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
@@ -22,13 +18,9 @@ async function clickWordInEditor(
 async function clickWordInEditorRaw(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
@@ -39,11 +31,11 @@ test.describe("eraser tool", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 4 default layers. Add a fresh layer for tests.
+    // Editor starts locked with 3 default layers. Add a fresh layer for tests.
     await page.getByTestId("addLayerButton").click();
   });
 
@@ -57,7 +49,7 @@ test.describe("eraser tool", () => {
   test("eraser removes a highlight when clicking on it", async ({ page }) => {
     // Record initial highlight count from default layers
     const highlights = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]'
+      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]',
     );
     const initialHighlightCount = await highlights.count();
 
@@ -87,7 +79,7 @@ test.describe("eraser tool", () => {
   test("eraser removes an underline when clicking on it", async ({ page }) => {
     // Record initial underline count from default layers
     const underlines = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="text-decoration"]'
+      '.simple-editor-wrapper .ProseMirror span[style*="text-decoration"]',
     );
     const initialUnderlineCount = await underlines.count();
 
@@ -113,11 +105,11 @@ test.describe("eraser tool", () => {
   test("eraser does not affect decorations on hidden layers", async ({ page }) => {
     // Record initial highlight count from default layers
     const highlights = page.locator(
-      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]'
+      '.simple-editor-wrapper .ProseMirror span[style*="background-color"]',
     );
     const initialHighlightCount = await highlights.count();
 
-    // Create highlight on the test layer (index 4)
+    // Create highlight on the test layer (index 3)
     await page.keyboard.press("h");
     await clickWordInEditor(page, 0, 30);
     await page.keyboard.press("Enter");
@@ -129,8 +121,8 @@ test.describe("eraser tool", () => {
     const afterCreate = await highlights.count();
     expect(afterCreate).toBeGreaterThanOrEqual(initialHighlightCount + 1);
 
-    // Hide the test layer (index 4) — its highlight should disappear
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide the test layer (index 3) — its highlight should disappear
+    await page.getByTestId("layerVisibility-3").click();
     const afterHide = await highlights.count();
     expect(afterHide).toBe(afterCreate - 1);
 
@@ -139,7 +131,7 @@ test.describe("eraser tool", () => {
     await clickWordInEditorRaw(page, 0, 30);
 
     // Show the test layer — highlight should still be there since layer was hidden during erase
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-3").click();
     const afterShow = await highlights.count();
     expect(afterShow).toBe(afterCreate);
   });
@@ -148,7 +140,7 @@ test.describe("eraser tool", () => {
     await page.keyboard.press("e");
     await expect(page.getByTestId("status-bar")).toContainText(
       "Click and drag to erase annotations.",
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
   });
 });

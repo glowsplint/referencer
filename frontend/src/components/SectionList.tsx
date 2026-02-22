@@ -63,9 +63,7 @@ export function SectionList({
   return (
     <div>
       <div className="flex items-center justify-between mb-2 px-1">
-        <h3 className="text-xs font-medium text-muted-foreground">
-          {t("passages.title")}
-        </h3>
+        <h3 className="text-xs font-medium text-muted-foreground">{t("passages.title")}</h3>
         <div className="flex items-center gap-1">
           <button
             className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
@@ -81,11 +79,7 @@ export function SectionList({
             title={sectionVisibility.some(Boolean) ? t("passages.hideAll") : t("passages.showAll")}
             data-testid="toggleAllSectionVisibility"
           >
-            {sectionVisibility.some(Boolean) ? (
-              <Eye size={14} />
-            ) : (
-              <EyeOff size={14} />
-            )}
+            {sectionVisibility.some(Boolean) ? <Eye size={14} /> : <EyeOff size={14} />}
           </button>
         </div>
       </div>
@@ -113,7 +107,7 @@ export function SectionList({
               }
             }}
             onDragLeave={() => {
-              setDropTargetIndex(prev => prev === i ? null : prev);
+              setDropTargetIndex((prev) => (prev === i ? null : prev));
             }}
             onDrop={(e) => {
               e.preventDefault();
@@ -158,11 +152,7 @@ export function SectionList({
               title={sectionVisibility[i] ? t("passages.hidePassage") : t("passages.showPassage")}
               data-testid={`sectionVisibility-${i}`}
             >
-              {sectionVisibility[i] ? (
-                <Eye size={14} />
-              ) : (
-                <EyeOff size={14} />
-              )}
+              {sectionVisibility[i] ? <Eye size={14} /> : <EyeOff size={14} />}
             </button>
           </div>
         ))}

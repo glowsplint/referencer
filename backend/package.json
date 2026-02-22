@@ -3,15 +3,18 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "start": "bun run src/index.ts"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
+    "@oslojs/encoding": "^1.1.0",
+    "@supabase/supabase-js": "^2.47.0",
     "arctic": "^3.5.0",
-    "hono": "^4.7.0",
-    "@oslojs/encoding": "^1.1.0"
+    "hono": "^4.7.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.0"
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.0.0"
   }
 }

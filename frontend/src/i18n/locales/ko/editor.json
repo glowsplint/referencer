@@ -9,12 +9,28 @@
     "subscript": "아래 첨자"
   },
   "heading": { "label": "제목 {{level}}" },
-  "list": { "bulletList": "글머리 기호 목록", "orderedList": "번호 매기기 목록", "taskList": "할 일 목록", "label": "목록" },
+  "list": {
+    "bulletList": "글머리 기호 목록",
+    "orderedList": "번호 매기기 목록",
+    "taskList": "할 일 목록",
+    "label": "목록"
+  },
   "blockquote": { "label": "인용문" },
   "codeBlock": { "label": "코드 블록" },
-  "link": { "label": "링크", "placeholder": "URL 입력", "openLink": "링크 열기", "copyLink": "링크 복사", "removeLink": "링크 삭제" },
+  "link": {
+    "label": "링크",
+    "placeholder": "URL 입력",
+    "openLink": "링크 열기",
+    "copyLink": "링크 복사",
+    "removeLink": "링크 삭제"
+  },
   "image": { "label": "이미지 추가" },
-  "textAlign": { "left": "왼쪽 정렬", "center": "가운데 정렬", "right": "오른쪽 정렬", "justify": "양쪽 정렬" },
+  "textAlign": {
+    "left": "왼쪽 정렬",
+    "center": "가운데 정렬",
+    "right": "오른쪽 정렬",
+    "justify": "양쪽 정렬"
+  },
   "history": { "undo": "실행 취소", "redo": "다시 실행" },
   "colorHighlight": {
     "label": "색상 형광펜",

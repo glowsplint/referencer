@@ -29,6 +29,8 @@ test.skip("auto-creates a layer when drawing without an active layer", async ({ 
 
   // Should enter drawing mode (anchor confirmed, waiting for target)
   // No toast warning should appear
-  const warningToast = page.locator("[data-sonner-toast]").filter({ hasText: "Add a new layer before drawing arrows" });
+  const warningToast = page
+    .locator("[data-sonner-toast]")
+    .filter({ hasText: "Add a new layer before drawing arrows" });
   await expect(warningToast).toHaveCount(0);
 });

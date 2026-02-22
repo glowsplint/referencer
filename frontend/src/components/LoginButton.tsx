@@ -1,21 +1,21 @@
-import * as Popover from "@radix-ui/react-popover"
-import { LogIn } from "lucide-react"
+import * as Popover from "@radix-ui/react-popover";
+import { LogIn } from "lucide-react";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/tiptap-ui-primitive/tooltip/tooltip"
-import { useAuth } from "@/hooks/use-auth"
-import type { AuthProvider } from "@/lib/auth-client"
+} from "@/components/tiptap-ui-primitive/tooltip/tooltip";
+import { useAuth } from "@/hooks/use-auth";
+import type { AuthProvider } from "@/lib/auth-client";
 
 const providers: { id: AuthProvider; label: string }[] = [
   { id: "google", label: "Sign in with Google" },
   { id: "apple", label: "Sign in with Apple" },
   { id: "facebook", label: "Sign in with Facebook" },
-]
+];
 
 export function LoginButton() {
-  const { login } = useAuth()
+  const { login } = useAuth();
 
   return (
     <Popover.Root>
@@ -54,5 +54,5 @@ export function LoginButton() {
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
-  )
+  );
 }

@@ -3,13 +3,9 @@ import { test, expect } from "@playwright/test";
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  xOffset = 30
+  xOffset = 30,
 ) {
-  const p = page
-    .locator(".simple-editor-wrapper")
-    .nth(editorIndex)
-    .locator("p")
-    .first();
+  const p = page.locator(".simple-editor-wrapper").nth(editorIndex).locator("p").first();
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
@@ -25,7 +21,7 @@ test.describe("keyboard navigation", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
     // Editor starts locked — no need to click lockButton
@@ -97,33 +93,33 @@ test.describe("Tab layer cycling", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 4 default layers. Add two more at indices 4 and 5.
+    // Editor starts locked with 3 default layers. Add two more at indices 3 and 4.
     await page.getByTestId("addLayerButton").click();
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
-    await expect(page.getByTestId("layerName-5")).toHaveText("Layer 2");
+    await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
+    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 2");
 
-    // Activate Layer 1 (index 4) — Layer 2 (index 5) is active by default as most recently added
-    await page.getByTestId("layerName-4").click();
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Activate Layer 1 (index 3) — Layer 2 (index 4) is active by default as most recently added
+    await page.getByTestId("layerName-3").click();
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
 
     // Click on a word so focus is in the locked (non-editable) editor area
     await clickWordInEditor(page, 0, 50);
     await page.waitForTimeout(200);
 
-    // Tab should cycle to Layer 2 (index 5)
+    // Tab should cycle to Layer 2 (index 4)
     await page.keyboard.press("Tab");
-    await expect(page.getByTestId("layerActiveTag-5")).toBeVisible();
+    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
 
-    // Tab again should cycle (wrapping through all 6 layers)
-    // Keep pressing Tab until we get back to index 4
-    for (let i = 0; i < 5; i++) {
+    // Tab again should cycle (wrapping through all 5 layers)
+    // Keep pressing Tab until we get back to index 3
+    for (let i = 0; i < 4; i++) {
       await page.keyboard.press("Tab");
     }
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
   });
 });

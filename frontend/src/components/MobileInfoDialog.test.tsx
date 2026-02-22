@@ -9,9 +9,7 @@ describe("MobileInfoDialog", () => {
 
     expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument();
     expect(screen.getByText("Best on Desktop")).toBeInTheDocument();
-    expect(
-      screen.getByText(/designed for desktop use/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/designed for desktop use/)).toBeInTheDocument();
     expect(screen.getByText("Continue Reading")).toBeInTheDocument();
   });
 

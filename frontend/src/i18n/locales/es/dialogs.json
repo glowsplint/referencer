@@ -3,25 +3,64 @@
     "title": "Configuración",
     "description": "Personaliza las preferencias de tu espacio de trabajo.",
     "darkMode": { "label": "Modo oscuro", "description": "Alternar entre temas claro y oscuro" },
-    "drawingNotifications": { "label": "Notificaciones de dibujo", "description": "Mostrar avisos al usar la herramienta de flecha" },
-    "commentsNotifications": { "label": "Notificaciones de comentarios", "description": "Mostrar avisos al usar la herramienta de comentarios" },
-    "highlightNotifications": { "label": "Notificaciones de resaltado", "description": "Mostrar avisos al usar la herramienta de resaltado" },
-    "overscroll": { "label": "Desplazamiento elástico", "description": "Permitir rebote elástico al desplazarse más allá de los bordes" },
-    "hideOffscreenArrows": { "label": "Ocultar flechas fuera de pantalla", "description": "Ocultar completamente las flechas cuando algún extremo esté fuera de la vista" },
+    "drawingNotifications": {
+      "label": "Notificaciones de dibujo",
+      "description": "Mostrar avisos al usar la herramienta de flecha"
+    },
+    "commentsNotifications": {
+      "label": "Notificaciones de comentarios",
+      "description": "Mostrar avisos al usar la herramienta de comentarios"
+    },
+    "highlightNotifications": {
+      "label": "Notificaciones de resaltado",
+      "description": "Mostrar avisos al usar la herramienta de resaltado"
+    },
+    "overscroll": {
+      "label": "Desplazamiento elástico",
+      "description": "Permitir rebote elástico al desplazarse más allá de los bordes"
+    },
+    "hideOffscreenArrows": {
+      "label": "Ocultar flechas fuera de pantalla",
+      "description": "Ocultar completamente las flechas cuando algún extremo esté fuera de la vista"
+    },
     "language": { "label": "Idioma", "description": "Elige tu idioma preferido" }
   },
   "faq": {
     "title": "Preguntas frecuentes",
     "description": "Aprende sobre Referencer y cómo usarlo.",
     "items": {
-      "whatIsApp": { "question": "¿Qué es esta aplicación?", "answer": "Referencer es una herramienta colaborativa para el estudio inductivo de la Biblia. Ofrece a los grupos de estudio un espacio de trabajo compartido donde pueden leer, anotar y discutir las Escrituras juntos en tiempo real." },
-      "inductiveStudy": { "question": "¿Qué es el estudio inductivo de la Biblia?", "answer": "El estudio inductivo de la Biblia es un método de lectura de las Escrituras que avanza desde la observación (¿qué dice el texto?) a la interpretación (¿qué significa?) y a la aplicación (¿cómo se aplica?). En lugar de comenzar con comentarios externos, permite que el texto hable por sí mismo examinando cuidadosamente sus palabras, estructura y contexto." },
-      "collaboration": { "question": "¿Cómo funciona la colaboración?", "answer": "Cada espacio de trabajo se puede compartir con otros mediante un enlace. Todos los participantes ven el mismo texto y pueden añadir sus propias anotaciones. Los cambios se sincronizan en tiempo real para que todos estén en la misma página." },
-      "layers": { "question": "¿Qué son las capas?", "answer": "Las capas permiten organizar las anotaciones en grupos separados — por ejemplo, una capa para observaciones y otra para interpretaciones. Puedes alternar entre capas con la tecla L para enfocarte en un conjunto de anotaciones a la vez." },
-      "annotations": { "question": "¿Cómo funcionan las anotaciones?", "answer": "Bloquea el editor con el botón de bloqueo (o presiona K), luego selecciona texto para resaltarlo. Puedes elegir colores, añadir comentarios y dibujar flechas entre anotaciones para mostrar conexiones. Haz clic en una anotación existente para eliminarla." },
-      "arrows": { "question": "¿Para qué sirven las flechas?", "answer": "Las flechas conectan dos anotaciones para mostrar una relación entre pasajes — por ejemplo, vincular una palabra repetida con su primera aparición, o conectar una profecía con su cumplimiento. Selecciona la herramienta de flecha (o presiona A), luego haz clic en dos anotaciones para dibujar un conector." },
-      "sharing": { "question": "¿Cómo comparto un espacio de trabajo?", "answer": "Abre el panel de gestión (presiona M o haz clic en el icono del menú) y usa las opciones de compartir para generar un enlace. Cualquier persona con el enlace puede unirse al espacio de trabajo y colaborar." },
-      "mobile": { "question": "¿Puedo usar esto en el móvil?", "answer": "La aplicación funciona en navegadores móviles, pero las herramientas completas de anotación y flechas se aprovechan mejor en un dispositivo con teclado y ratón." }
+      "whatIsApp": {
+        "question": "¿Qué es esta aplicación?",
+        "answer": "Referencer es una herramienta colaborativa para el estudio inductivo de la Biblia. Ofrece a los grupos de estudio un espacio de trabajo compartido donde pueden leer, anotar y discutir las Escrituras juntos en tiempo real."
+      },
+      "inductiveStudy": {
+        "question": "¿Qué es el estudio inductivo de la Biblia?",
+        "answer": "El estudio inductivo de la Biblia es un método de lectura de las Escrituras que avanza desde la observación (¿qué dice el texto?) a la interpretación (¿qué significa?) y a la aplicación (¿cómo se aplica?). En lugar de comenzar con comentarios externos, permite que el texto hable por sí mismo examinando cuidadosamente sus palabras, estructura y contexto."
+      },
+      "collaboration": {
+        "question": "¿Cómo funciona la colaboración?",
+        "answer": "Cada espacio de trabajo se puede compartir con otros mediante un enlace. Todos los participantes ven el mismo texto y pueden añadir sus propias anotaciones. Los cambios se sincronizan en tiempo real para que todos estén en la misma página."
+      },
+      "layers": {
+        "question": "¿Qué son las capas?",
+        "answer": "Las capas permiten organizar las anotaciones en grupos separados — por ejemplo, una capa para observaciones y otra para interpretaciones. Puedes alternar entre capas con la tecla L para enfocarte en un conjunto de anotaciones a la vez."
+      },
+      "annotations": {
+        "question": "¿Cómo funcionan las anotaciones?",
+        "answer": "Bloquea el editor con el botón de bloqueo (o presiona K), luego selecciona texto para resaltarlo. Puedes elegir colores, añadir comentarios y dibujar flechas entre anotaciones para mostrar conexiones. Haz clic en una anotación existente para eliminarla."
+      },
+      "arrows": {
+        "question": "¿Para qué sirven las flechas?",
+        "answer": "Las flechas conectan dos anotaciones para mostrar una relación entre pasajes — por ejemplo, vincular una palabra repetida con su primera aparición, o conectar una profecía con su cumplimiento. Selecciona la herramienta de flecha (o presiona A), luego haz clic en dos anotaciones para dibujar un conector."
+      },
+      "sharing": {
+        "question": "¿Cómo comparto un espacio de trabajo?",
+        "answer": "Abre el panel de gestión (presiona M o haz clic en el icono del menú) y usa las opciones de compartir para generar un enlace. Cualquier persona con el enlace puede unirse al espacio de trabajo y colaborar."
+      },
+      "mobile": {
+        "question": "¿Puedo usar esto en el móvil?",
+        "answer": "La aplicación funciona en navegadores móviles, pero las herramientas completas de anotación y flechas se aprovechan mejor en un dispositivo con teclado y ratón."
+      }
     }
   },
   "shortcuts": {

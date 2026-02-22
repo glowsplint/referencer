@@ -8,11 +8,11 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
   // Hide default layers so their arrows/highlights don't interfere with tests
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 3; i++) {
     await page.getByTestId(`layerVisibility-${i}`).click();
   }
 
-  // Editor starts locked with 4 default layers (some have arrows). Add a fresh layer for tests.
+  // Editor starts locked with 3 default layers (some have arrows). Add a fresh layer for tests.
   await page.getByTestId("addLayerButton").click();
 
   // Record initial arrow and endpoint counts from default layers
@@ -34,7 +34,9 @@ async function drawArrowViaEnter(page: import("@playwright/test").Page) {
   await page.keyboard.press("Enter");
 
   // Wait for status bar to confirm anchor was accepted
-  await expect(page.getByTestId("status-bar")).toContainText("select the target", { timeout: 2000 });
+  await expect(page.getByTestId("status-bar")).toContainText("select the target", {
+    timeout: 2000,
+  });
 
   // Click target word and confirm
   await page.mouse.click(box!.x + 120, box!.y + box!.height / 2);
@@ -46,7 +48,9 @@ test("arrow endpoints are highlighted as inline decorations after drawing", asyn
   await drawArrowViaEnter(page);
 
   // Arrow should be drawn
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
 
   // New arrow endpoints should be highlighted as inline decorations in the editor.
   // Note: if a new endpoint shares a word with an existing arrow endpoint, ProseMirror
@@ -56,23 +60,27 @@ test("arrow endpoints are highlighted as inline decorations after drawing", asyn
   expect(count).toBeGreaterThanOrEqual(initialEndpointCount + 1);
 });
 
-test("within-editor arrow SVG uses mix-blend-mode multiply for text visibility", async ({ page }) => {
+test("within-editor arrow SVG uses mix-blend-mode multiply for text visibility", async ({
+  page,
+}) => {
   await drawArrowViaEnter(page);
 
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
 
   // Verify the plugin's visual SVG uses mix-blend-mode multiply (light mode default)
   const svg = page.getByTestId("editor-arrow-visual").first();
-  const blendMode = await svg.evaluate((el) =>
-    window.getComputedStyle(el).mixBlendMode
-  );
+  const blendMode = await svg.evaluate((el) => window.getComputedStyle(el).mixBlendMode);
   expect(blendMode).toBe("multiply");
 });
 
 test("arrow endpoint decorations, line, and arrowhead share same base color", async ({ page }) => {
   await drawArrowViaEnter(page);
 
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
 
   const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
   const count = await endpointDecorations.count();
@@ -81,8 +89,8 @@ test("arrow endpoint decorations, line, and arrowhead share same base color", as
   // Verify endpoint has a non-transparent background (use one without word-selection
   // since ProseMirror merges overlapping decoration styles)
   const cleanEndpoint = page.locator(".ProseMirror .arrow-endpoint:not(.word-selection)").first();
-  const endpointBg = await cleanEndpoint.evaluate((el) =>
-    window.getComputedStyle(el).backgroundColor
+  const endpointBg = await cleanEndpoint.evaluate(
+    (el) => window.getComputedStyle(el).backgroundColor,
   );
   expect(endpointBg).toBeTruthy();
   expect(endpointBg).not.toBe("rgba(0, 0, 0, 0)");
@@ -99,7 +107,9 @@ test("arrow endpoint decorations, line, and arrowhead share same base color", as
 test("arrow endpoint decorations disappear when unlocked", async ({ page }) => {
   await drawArrowViaEnter(page);
 
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, { timeout: 2000 });
+  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+    timeout: 2000,
+  });
 
   const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
   const countBefore = await endpointDecorations.count();

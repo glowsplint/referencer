@@ -9,12 +9,28 @@
     "subscript": "सबस्क्रिप्ट"
   },
   "heading": { "label": "शीर्षक {{level}}" },
-  "list": { "bulletList": "बुलेट सूची", "orderedList": "क्रमांकित सूची", "taskList": "कार्य सूची", "label": "सूची" },
+  "list": {
+    "bulletList": "बुलेट सूची",
+    "orderedList": "क्रमांकित सूची",
+    "taskList": "कार्य सूची",
+    "label": "सूची"
+  },
   "blockquote": { "label": "उद्धरण ब्लॉक" },
   "codeBlock": { "label": "कोड ब्लॉक" },
-  "link": { "label": "लिंक", "placeholder": "URL दर्ज करें", "openLink": "लिंक खोलें", "copyLink": "लिंक कॉपी करें", "removeLink": "लिंक हटाएं" },
+  "link": {
+    "label": "लिंक",
+    "placeholder": "URL दर्ज करें",
+    "openLink": "लिंक खोलें",
+    "copyLink": "लिंक कॉपी करें",
+    "removeLink": "लिंक हटाएं"
+  },
   "image": { "label": "छवि जोड़ें" },
-  "textAlign": { "left": "बाएं संरेखित करें", "center": "केंद्र में संरेखित करें", "right": "दाएं संरेखित करें", "justify": "दोनों ओर संरेखित करें" },
+  "textAlign": {
+    "left": "बाएं संरेखित करें",
+    "center": "केंद्र में संरेखित करें",
+    "right": "दाएं संरेखित करें",
+    "justify": "दोनों ओर संरेखित करें"
+  },
   "history": { "undo": "पूर्ववत करें", "redo": "फिर से करें" },
   "colorHighlight": {
     "label": "रंग हाइलाइट",

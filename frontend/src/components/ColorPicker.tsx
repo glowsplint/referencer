@@ -24,8 +24,7 @@ export function ColorPicker({
   const [showAdvancedPicker, setShowAdvancedPicker] = useState(false);
   const [pickerColor, setPickerColor] = useState("#000000");
 
-  const showCustomSection =
-    (customColors && customColors.length > 0) || onAddCustomColor;
+  const showCustomSection = (customColors && customColors.length > 0) || onAddCustomColor;
 
   const handleColorChange = useCallback((hex: string) => {
     setPickerColor(hex);
@@ -125,7 +124,10 @@ export function ColorPicker({
               </div>
               <div className="flex gap-1">
                 {(["r", "g", "b"] as const).map((ch) => (
-                  <label key={ch} className="flex-1 flex flex-col items-center gap-0.5 text-[10px] text-muted-foreground uppercase">
+                  <label
+                    key={ch}
+                    className="flex-1 flex flex-col items-center gap-0.5 text-[10px] text-muted-foreground uppercase"
+                  >
                     {ch}
                     <input
                       type="number"

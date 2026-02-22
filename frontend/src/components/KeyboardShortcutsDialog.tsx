@@ -39,9 +39,7 @@ function KeyCombination({ keys }: { keys: string[] }) {
     <div className="flex items-center gap-1">
       {keys.map((key, i) => (
         <span key={i} className="flex items-center gap-1">
-          {i > 0 && (
-            <span className="text-xs text-muted-foreground">+</span>
-          )}
+          {i > 0 && <span className="text-xs text-muted-foreground">+</span>}
           <Kbd>{key}</Kbd>
         </span>
       ))}
@@ -78,10 +76,7 @@ interface KeyboardShortcutsDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function KeyboardShortcutsDialog({
-  open,
-  onOpenChange,
-}: KeyboardShortcutsDialogProps) {
+export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcutsDialogProps) {
   const { t } = useTranslation("dialogs");
   const { t: tc } = useTranslation("common");
 
@@ -169,9 +164,7 @@ export function KeyboardShortcutsDialog({
       >
         <DialogHeader className="p-6 pb-4">
           <DialogTitle>{t("shortcuts.title")}</DialogTitle>
-          <DialogDescription>
-            {t("shortcuts.description")}
-          </DialogDescription>
+          <DialogDescription>{t("shortcuts.description")}</DialogDescription>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[60vh]">
           <div className="px-6 pb-4 grid grid-cols-2 gap-x-8">

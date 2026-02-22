@@ -1,27 +1,28 @@
-// Binds Cmd+Z / Cmd+Shift+Z to the action history undo/redo,
-// but only when focus is not in an editable element (to avoid
-// conflicting with native text undo in editors/textareas).
-import { useEffect } from "react"
-import { isEditableElement } from "@/lib/dom"
-import type { useActionHistory } from "./use-action-history"
+// Binds Cmd+Z / Cmd+Shift+Z to undo/redo, but only when focus is
+// not in an editable element (to avoid conflicting with native text undo).
+import { useEffect } from "react";
+import { isEditableElement } from "@/lib/dom";
 
-type History = ReturnType<typeof useActionHistory>
+interface UndoRedo {
+  undo: () => void;
+  redo: () => void;
+}
 
-export function useUndoRedoKeyboard(history: History) {
+export function useUndoRedoKeyboard(undoRedo: UndoRedo) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (!e.metaKey || e.key.toLowerCase() !== "z") return
-      if (isEditableElement(e.target)) return
+      if (!e.metaKey || e.key.toLowerCase() !== "z") return;
+      if (isEditableElement(e.target)) return;
 
-      e.preventDefault()
+      e.preventDefault();
       if (e.shiftKey) {
-        history.redo()
+        undoRedo.redo();
       } else {
-        history.undo()
+        undoRedo.undo();
       }
-    }
+    };
 
-    document.addEventListener("keydown", handler)
-    return () => document.removeEventListener("keydown", handler)
-  }, [history])
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [undoRedo]);
 }
