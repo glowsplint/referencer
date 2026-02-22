@@ -38,8 +38,14 @@ import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
+import { RecordingProvider } from "./contexts/RecordingContext";
+import { useRecordings } from "./hooks/use-recordings";
+import { usePlayback } from "./hooks/use-playback";
+import { PlaybackBar } from "./components/PlaybackBar";
+import { setAnnotationVisibilityInDoc } from "./lib/yjs/annotations";
 import { useCollapsedAnnotations } from "./hooks/use-collapsed-annotations";
 import type { EditingAnnotation } from "./types/editor";
+import type { VisibilitySnapshot } from "./types/recording";
 
 function isAnnotationEmpty(html: string): boolean {
   return !html?.replace(/<[^>]*>/g, "").trim();
@@ -134,6 +140,57 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
     toggleManagementPane: workspace.toggleManagementPane,
   });
   useUndoRedoKeyboard(unifiedUndo);
+
+  // Recording & playback hooks
+  const recordingsHook = useRecordings(workspace.yjs.doc, workspace.layers, workspace.sectionVisibility);
+
+  const applyVisibilitySnapshot = useCallback(
+    (snapshot: VisibilitySnapshot) => {
+      // Apply layer visibility
+      for (const [layerId, visible] of Object.entries(snapshot.layers)) {
+        const layer = workspace.layers.find((l) => l.id === layerId);
+        if (layer && layer.visible !== visible) {
+          workspace.toggleLayerVisibility(layerId);
+        }
+      }
+      // Apply annotation visibility
+      if (workspace.yjs.doc) {
+        workspace.yjs.doc.transact(() => {
+          for (const [key, visible] of Object.entries(snapshot.annotations)) {
+            const parts = key.split(":");
+            const type = parts[0]; // "highlight", "arrow", "underline"
+            const layerId = parts[1];
+            const annotationId = parts.slice(2).join(":");
+            const yType =
+              type === "highlight" ? "highlights" : type === "arrow" ? "arrows" : "underlines";
+            setAnnotationVisibilityInDoc(
+              workspace.yjs.doc!,
+              layerId,
+              yType,
+              annotationId,
+              visible,
+            );
+          }
+        });
+      }
+      // Apply section visibility
+      for (const [idxStr, visible] of Object.entries(snapshot.sections)) {
+        const idx = Number(idxStr);
+        const currentVisible = workspace.sectionVisibility[idx] ?? true;
+        if (currentVisible !== visible) {
+          workspace.toggleSectionVisibility(idx);
+        }
+      }
+    },
+    [workspace],
+  );
+
+  const playbackHook = usePlayback(recordingsHook.recordings, applyVisibilitySnapshot);
+  const recordingContextValue = useMemo(
+    () => ({ recordings: recordingsHook, playback: playbackHook }),
+    [recordingsHook, playbackHook],
+  );
+
   const actionConsole = useActionConsole();
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
@@ -355,6 +412,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
 
   return (
     <WorkspaceProvider value={workspace}>
+      <RecordingProvider value={recordingContextValue}>
       <Toaster />
       <div className="flex flex-col h-screen overflow-hidden">
         <div className="flex flex-1 min-h-0">
@@ -509,6 +567,8 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
           }}
         />
       </div>
+      <PlaybackBar />
+      </RecordingProvider>
     </WorkspaceProvider>
   );
 }

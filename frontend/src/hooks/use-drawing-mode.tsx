@@ -38,7 +38,7 @@ interface UseDrawingModeOptions {
   activeLayerId: string | null;
   activeArrowStyle: ArrowStyle;
   addLayer: () => string;
-  addArrow: (layerId: string, arrow: Omit<Arrow, "id">) => void;
+  addArrow: (layerId: string, arrow: Omit<Arrow, "id" | "visible">) => void;
   showDrawingToasts: boolean;
   setStatus: (msg: StatusMessage) => void;
   flashStatus: (msg: StatusMessage, duration: number) => void;

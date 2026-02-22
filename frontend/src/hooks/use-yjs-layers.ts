@@ -28,6 +28,9 @@ import {
   addUnderlineToDoc,
   removeUnderlineFromDoc,
   clearLayerUnderlinesInDoc,
+  toggleHighlightVisibilityInDoc,
+  toggleArrowVisibilityInDoc,
+  toggleUnderlineVisibilityInDoc,
   type EditorViewMap,
 } from "@/lib/yjs/annotations";
 
@@ -163,7 +166,7 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
   );
 
   const addHighlight = useCallback(
-    (layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
+    (layerId: string, highlight: Omit<Highlight, "id" | "visible">, opts?: { id?: string }): string => {
       if (!doc) return "";
       const id = opts?.id ?? crypto.randomUUID();
       const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined;
@@ -198,7 +201,7 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
   );
 
   const addArrow = useCallback(
-    (layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
+    (layerId: string, arrow: Omit<Arrow, "id" | "visible">, opts?: { id?: string }): string => {
       if (!doc) return "";
       const id = opts?.id ?? crypto.randomUUID();
       const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined;
@@ -233,7 +236,7 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
   );
 
   const addUnderline = useCallback(
-    (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
+    (layerId: string, underline: Omit<LayerUnderline, "id" | "visible">, opts?: { id?: string }): string => {
       if (!doc) return "";
       const id = opts?.id ?? crypto.randomUUID();
       const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined;
@@ -255,6 +258,30 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
     (layerId: string) => {
       if (!doc) return;
       clearLayerUnderlinesInDoc(doc, layerId);
+    },
+    [doc],
+  );
+
+  const toggleHighlightVisibility = useCallback(
+    (layerId: string, highlightId: string) => {
+      if (!doc) return;
+      toggleHighlightVisibilityInDoc(doc, layerId, highlightId);
+    },
+    [doc],
+  );
+
+  const toggleArrowVisibility = useCallback(
+    (layerId: string, arrowId: string) => {
+      if (!doc) return;
+      toggleArrowVisibilityInDoc(doc, layerId, arrowId);
+    },
+    [doc],
+  );
+
+  const toggleUnderlineVisibility = useCallback(
+    (layerId: string, underlineId: string) => {
+      if (!doc) return;
+      toggleUnderlineVisibilityInDoc(doc, layerId, underlineId);
     },
     [doc],
   );
@@ -288,6 +315,9 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
     addUnderline,
     removeUnderline,
     clearLayerUnderlines,
+    toggleHighlightVisibility,
+    toggleArrowVisibility,
+    toggleUnderlineVisibility,
     setLayers,
     setActiveLayerId,
   };

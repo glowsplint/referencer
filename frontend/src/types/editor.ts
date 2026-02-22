@@ -35,6 +35,7 @@ export interface Highlight {
   annotation: string;
   type: HighlightType;
   lastEdited?: number;
+  visible: boolean;
 }
 
 export interface LayerUnderline {
@@ -43,6 +44,7 @@ export interface LayerUnderline {
   from: number;
   to: number;
   text: string;
+  visible: boolean;
 }
 
 export interface EditingAnnotation {
@@ -74,6 +76,7 @@ export interface Arrow {
   from: ArrowEndpoint;
   to: ArrowEndpoint;
   arrowStyle?: ArrowStyle;
+  visible: boolean;
 }
 
 export interface DrawingState {

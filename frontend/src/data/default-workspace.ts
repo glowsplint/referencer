@@ -90,6 +90,7 @@ function hl(editorIndex: number, doc: any, text: string, occurrence = 0): Highli
     text,
     annotation: "",
     type: "highlight",
+    visible: true,
   };
 }
 
@@ -123,6 +124,7 @@ function arrow(
       text: toText,
     },
     arrowStyle: style,
+    visible: true,
   };
 }
 
@@ -135,6 +137,7 @@ function ul(editorIndex: number, doc: any, text: string, occurrence = 0): LayerU
     from: pos.from,
     to: pos.to,
     text,
+    visible: true,
   };
 }
 

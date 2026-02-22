@@ -123,7 +123,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   );
 
   const addHighlight = useCallback(
-    guarded((layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
+    guarded((layerId: string, highlight: Omit<Highlight, "id" | "visible">, opts?: { id?: string }): string => {
       return yjsLayers.addHighlight(layerId, highlight, opts);
     }, ""),
     [readOnly, yjsLayers],
@@ -144,7 +144,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   );
 
   const addArrow = useCallback(
-    guarded((layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
+    guarded((layerId: string, arrow: Omit<Arrow, "id" | "visible">, opts?: { id?: string }): string => {
       return yjsLayers.addArrow(layerId, arrow, opts);
     }, ""),
     [readOnly, yjsLayers],
@@ -166,7 +166,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
 
   const addUnderline = useCallback(
     guarded(
-      (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
+      (layerId: string, underline: Omit<LayerUnderline, "id" | "visible">, opts?: { id?: string }): string => {
         return yjsLayers.addUnderline(layerId, underline, opts);
       },
       "",
@@ -333,6 +333,15 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     updateArrowStyle,
     addUnderline,
     removeUnderline,
+    toggleHighlightVisibility: guarded((layerId: string, highlightId: string) =>
+      yjsLayers.toggleHighlightVisibility(layerId, highlightId),
+    ),
+    toggleArrowVisibility: guarded((layerId: string, arrowId: string) =>
+      yjsLayers.toggleArrowVisibility(layerId, arrowId),
+    ),
+    toggleUnderlineVisibility: guarded((layerId: string, underlineId: string) =>
+      yjsLayers.toggleUnderlineVisibility(layerId, underlineId),
+    ),
     // Editors (still local state — not yet CRDT)
     editorCount: trackedEditorsHook.editorCount,
     activeEditor: trackedEditorsHook.activeEditor,

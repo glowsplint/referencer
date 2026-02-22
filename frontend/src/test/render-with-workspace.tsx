@@ -1,8 +1,10 @@
 import { render } from "@testing-library/react";
 import { vi } from "vitest";
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { RecordingProvider } from "@/contexts/RecordingContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import type { WorkspaceContextValue } from "@/contexts/WorkspaceContext";
+import type { RecordingContextValue } from "@/contexts/RecordingContext";
 
 export function makeMockWorkspace(
   overrides: Partial<WorkspaceContextValue> = {},
@@ -101,15 +103,52 @@ export function makeMockWorkspace(
   } as WorkspaceContextValue;
 }
 
+export function makeMockRecordingContext(): RecordingContextValue {
+  return {
+    recordings: {
+      recordings: [],
+      isRecording: false,
+      activeRecordingId: null,
+      createRecording: vi.fn(() => ""),
+      deleteRecording: vi.fn(),
+      renameRecording: vi.fn(),
+      duplicateRecording: vi.fn(() => ""),
+      startRecording: vi.fn(),
+      stopRecording: vi.fn(),
+      deleteStep: vi.fn(),
+      reorderSteps: vi.fn(),
+      updateRecordingSettings: vi.fn(),
+    },
+    playback: {
+      isPlaying: false,
+      isAutoPlaying: false,
+      activeRecordingId: null,
+      currentStepIndex: -1,
+      totalSteps: 0,
+      startPlayback: vi.fn(),
+      stopPlayback: vi.fn(),
+      nextStep: vi.fn(),
+      previousStep: vi.fn(),
+      goToStep: vi.fn(),
+      toggleAutoPlay: vi.fn(),
+      currentSnapshot: null,
+      hasWarnings: false,
+    },
+  };
+}
+
 export function renderWithWorkspace(
   ui: React.ReactElement,
   overrides: Partial<WorkspaceContextValue> = {},
 ) {
   const workspace = makeMockWorkspace(overrides);
+  const recordingContext = makeMockRecordingContext();
   return {
     ...render(
       <AuthProvider>
-        <WorkspaceProvider value={workspace}>{ui}</WorkspaceProvider>
+        <WorkspaceProvider value={workspace}>
+          <RecordingProvider value={recordingContext}>{ui}</RecordingProvider>
+        </WorkspaceProvider>
       </AuthProvider>,
     ),
     workspace,

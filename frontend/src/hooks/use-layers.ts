@@ -114,11 +114,11 @@ export function useLayers() {
   }, []);
 
   const addHighlight = useCallback(
-    (layerId: string, highlight: Omit<Highlight, "id">, opts?: { id?: string }): string => {
+    (layerId: string, highlight: Omit<Highlight, "id" | "visible">, opts?: { id?: string }): string => {
       const id = opts?.id ?? crypto.randomUUID();
       updateLayer(layerId, (l) => ({
         ...l,
-        highlights: [...l.highlights, { ...highlight, id }],
+        highlights: [...l.highlights, { ...highlight, id, visible: true }],
       }));
       return id;
     },
@@ -147,11 +147,11 @@ export function useLayers() {
   }, []);
 
   const addArrow = useCallback(
-    (layerId: string, arrow: Omit<Arrow, "id">, opts?: { id?: string }): string => {
+    (layerId: string, arrow: Omit<Arrow, "id" | "visible">, opts?: { id?: string }): string => {
       const id = opts?.id ?? crypto.randomUUID();
       updateLayer(layerId, (l) => ({
         ...l,
-        arrows: [...l.arrows, { ...arrow, id }],
+        arrows: [...l.arrows, { ...arrow, id, visible: true }],
       }));
       return id;
     },
@@ -180,11 +180,11 @@ export function useLayers() {
   }, []);
 
   const addUnderline = useCallback(
-    (layerId: string, underline: Omit<LayerUnderline, "id">, opts?: { id?: string }): string => {
+    (layerId: string, underline: Omit<LayerUnderline, "id" | "visible">, opts?: { id?: string }): string => {
       const id = opts?.id ?? crypto.randomUUID();
       updateLayer(layerId, (l) => ({
         ...l,
-        underlines: [...l.underlines, { ...underline, id }],
+        underlines: [...l.underlines, { ...underline, id, visible: true }],
       }));
       return id;
     },

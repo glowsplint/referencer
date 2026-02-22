@@ -27,6 +27,7 @@ function collectRanges(layers: Layer[], editorIndex: number): ColoredRange[] {
     if (!layer.visible) continue;
 
     for (const highlight of layer.highlights) {
+      if (highlight.visible === false) continue;
       if (highlight.editorIndex !== editorIndex) continue;
       ranges.push({
         from: highlight.from,
@@ -38,6 +39,7 @@ function collectRanges(layers: Layer[], editorIndex: number): ColoredRange[] {
     }
 
     for (const arrow of layer.arrows) {
+      if (arrow.visible === false) continue;
       if (arrow.from.editorIndex === editorIndex) {
         ranges.push({
           from: arrow.from.from,

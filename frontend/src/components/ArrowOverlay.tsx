@@ -129,6 +129,7 @@ export function ArrowOverlay({
     for (const layer of layers) {
       if (!layer.visible) continue;
       for (const arrow of layer.arrows) {
+        if (arrow.visible === false) continue;
         if (arrow.from.editorIndex === arrow.to.editorIndex) continue;
         if (sectionVisibility[arrow.from.editorIndex] === false) continue;
         if (sectionVisibility[arrow.to.editorIndex] === false) continue;
@@ -151,6 +152,7 @@ export function ArrowOverlay({
     for (const layer of layers) {
       if (!layer.visible) continue;
       for (const arrow of layer.arrows) {
+        if (arrow.visible === false) continue;
         if (sectionVisibility[arrow.from.editorIndex] === false) continue;
         if (sectionVisibility[arrow.to.editorIndex] === false) continue;
         result.push({

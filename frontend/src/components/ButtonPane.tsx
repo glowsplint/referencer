@@ -31,6 +31,7 @@ import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { FAQDialog } from "./FAQDialog";
 import { SettingsDialog } from "./SettingsDialog";
 import { ArrowStylePicker } from "./ArrowStylePicker";
+import { RecordingControls } from "./RecordingControls";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import type { ActiveTool, ArrowStyle } from "@/types/editor";
 
@@ -277,6 +278,9 @@ export function ButtonPane() {
           </div>
         );
       })}
+      <div className="w-6 border-t border-border" role="separator" />
+      {/* Recording controls */}
+      <RecordingControls />
       <div className="w-6 border-t border-border" role="separator" />
       {/* Settings group */}
       <Tooltip placement="right">
