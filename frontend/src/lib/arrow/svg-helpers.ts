@@ -68,11 +68,7 @@ export function createMarkerOnlyPath(d: string, markerId: string): SVGPathElemen
 /**
  * Create a hover ring path for wrapper SVG rendering.
  */
-export function createHoverRingPath(
-  d: string,
-  color: string,
-  isEraser: boolean,
-): SVGPathElement {
+export function createHoverRingPath(d: string, color: string, isEraser: boolean): SVGPathElement {
   const ring = document.createElementNS(SVG_NS, "path");
   ring.setAttribute("d", d);
   ring.setAttribute("stroke", isEraser ? "#ef4444" : color);

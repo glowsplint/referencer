@@ -126,11 +126,7 @@ export function drawIntoWrapperSvg(
   const defs = document.createElementNS(SVG_NS, "defs");
 
   for (const data of arrows) {
-    const fromResult = getClampedWordCenterRelativeToWrapper(
-      data.arrow.from,
-      editorsRef,
-      wrapper,
-    );
+    const fromResult = getClampedWordCenterRelativeToWrapper(data.arrow.from, editorsRef, wrapper);
     const toResult = getClampedWordCenterRelativeToWrapper(data.arrow.to, editorsRef, wrapper);
     if (!fromResult || !toResult) continue;
 
@@ -162,9 +158,14 @@ export function drawIntoWrapperSvg(
       const [pathA, pathB] = computeDoubleLinePaths(x1, y1, mx, my, x2, y2);
       for (const d of [pathA, pathB]) {
         g.appendChild(
-          createArrowPath(d, data.color, { ...styleAttrs, strokeDasharray: null }, {
-            testId: "wrapper-arrow-line",
-          }),
+          createArrowPath(
+            d,
+            data.color,
+            { ...styleAttrs, strokeDasharray: null },
+            {
+              testId: "wrapper-arrow-line",
+            },
+          ),
         );
       }
       if (!hideMarker) {
@@ -286,10 +287,7 @@ export function updatePreviewPositions(
  * Patch all SVG element positions imperatively on scroll / layout change.
  * Updates container visual paths, wrapper SVGs, and interaction hit areas.
  */
-export function updatePositions(
-  refs: PositionUpdateRefs,
-  opts: PositionUpdateOpts,
-): void {
+export function updatePositions(refs: PositionUpdateRefs, opts: PositionUpdateOpts): void {
   const containerRect = opts.containerRef.current?.getBoundingClientRect();
   if (!containerRect) return;
 

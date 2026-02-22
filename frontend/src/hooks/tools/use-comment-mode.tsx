@@ -22,9 +22,9 @@ interface CommentLayer {
   highlights: CommentHighlightItem[];
 }
 
-function createCommentConfig(
-  removeHighlightRef: { current: (layerId: string, highlightId: string) => void },
-): AnnotationToolConfig<CommentLayer> {
+function createCommentConfig(removeHighlightRef: {
+  current: (layerId: string, highlightId: string) => void;
+}): AnnotationToolConfig<CommentLayer> {
   return {
     toolName: "comments",
     i18nKey: "comments",

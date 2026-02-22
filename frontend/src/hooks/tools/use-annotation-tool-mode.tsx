@@ -16,7 +16,10 @@ export interface AnnotationToolConfig<TLayer> {
   /** Extract the relevant items array from a layer for toggle matching */
   getItems: (layer: TLayer) => readonly AnnotationItem[];
   /** Find an existing item to toggle off. Return undefined to skip toggle. */
-  findExisting: (items: readonly AnnotationItem[], sel: WordSelection) => AnnotationItem | undefined;
+  findExisting: (
+    items: readonly AnnotationItem[],
+    sel: WordSelection,
+  ) => AnnotationItem | undefined;
   /** Build the payload to pass to the add function. */
   buildPayload: (sel: WordSelection) => unknown;
   /** Optional pre-confirm cleanup (e.g. comment removes empty-annotation items). */
@@ -169,10 +172,7 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
       payload,
     );
     if (showToastsRef.current && addedTextRef.current) {
-      flashStatusRef.current(
-        { text: addedTextRef.current, type: "success" },
-        FLASH_DURATION_MS,
-      );
+      flashStatusRef.current({ text: addedTextRef.current, type: "success" }, FLASH_DURATION_MS);
     }
     onItemAddedRef.current?.(layerId!, itemId);
   }, []);

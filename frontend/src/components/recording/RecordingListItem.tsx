@@ -71,10 +71,7 @@ export function RecordingListItem({
           >
             <Check size={12} />
           </button>
-          <button
-            onClick={() => setIsRenaming(false)}
-            className="p-0.5 rounded hover:bg-accent"
-          >
+          <button onClick={() => setIsRenaming(false)} className="p-0.5 rounded hover:bg-accent">
             <X size={12} />
           </button>
         </div>
