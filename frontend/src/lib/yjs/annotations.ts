@@ -38,6 +38,7 @@ export type EditorViewMap = Map<number, EditorView>;
  * Get the y-prosemirror sync state (type + mapping) from an EditorView.
  * Returns null if the sync plugin is not active.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getSyncState(view: EditorView): { type: Y.XmlFragment; mapping: Map<any, any> } | null {
   const syncState = ySyncPluginKey.getState(view.state);
   if (!syncState?.binding?.mapping) return null;
@@ -618,24 +619,20 @@ export function toggleHighlightVisibilityInDoc(
   for (let i = 0; i < yHighlights.length; i++) {
     const yH = yHighlights.get(i);
     if (yH.get("id") === highlightId) {
-      yH.set("visible", !(yH.get("visible") as boolean ?? true));
+      yH.set("visible", !((yH.get("visible") as boolean) ?? true));
       return;
     }
   }
 }
 
-export function toggleArrowVisibilityInDoc(
-  doc: Y.Doc,
-  layerId: string,
-  arrowId: string,
-): void {
+export function toggleArrowVisibilityInDoc(doc: Y.Doc, layerId: string, arrowId: string): void {
   const result = findYLayer(doc, layerId);
   if (!result) return;
   const yArrows = result.yLayer.get("arrows") as Y.Array<Y.Map<unknown>>;
   for (let i = 0; i < yArrows.length; i++) {
     const yA = yArrows.get(i);
     if (yA.get("id") === arrowId) {
-      yA.set("visible", !(yA.get("visible") as boolean ?? true));
+      yA.set("visible", !((yA.get("visible") as boolean) ?? true));
       return;
     }
   }
@@ -652,7 +649,7 @@ export function toggleUnderlineVisibilityInDoc(
   for (let i = 0; i < yUnderlines.length; i++) {
     const yU = yUnderlines.get(i);
     if (yU.get("id") === underlineId) {
-      yU.set("visible", !(yU.get("visible") as boolean ?? true));
+      yU.set("visible", !((yU.get("visible") as boolean) ?? true));
       return;
     }
   }

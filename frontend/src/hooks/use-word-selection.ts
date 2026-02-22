@@ -93,7 +93,6 @@ export function useWordSelection({
 
   useEffect(() => {
     if (!isLocked) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset on prop change
       setSelection(null);
       setSelectionHidden(false);
       return;
@@ -105,7 +104,7 @@ export function useWordSelection({
     const ctx = { editorsRef, containerRect, editorCount };
     const allCandidates = collectCandidates(ctx);
     const first = findFirstWordInPassage(0, allCandidates);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialise on prop change
+
     if (first) {
       setSelection(first);
       setSelectionHidden(true);

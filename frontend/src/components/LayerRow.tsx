@@ -65,7 +65,7 @@ export function LayerRow({
   });
 
   const itemCount = layer.highlights.length + layer.arrows.length + layer.underlines.length;
-  const commentCount = layer.highlights.filter(h => h.type === "comment").length;
+  const commentCount = layer.highlights.filter((h) => h.type === "comment").length;
   const hasItems = itemCount > 0;
 
   return (

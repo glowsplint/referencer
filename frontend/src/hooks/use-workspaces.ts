@@ -26,27 +26,41 @@ export function useWorkspaces() {
     }
   }, []);
 
-  useEffect(() => { refetch(); }, [refetch]);
-
-  const create = useCallback(async (workspaceId: string, title?: string) => {
-    await createApi(workspaceId, title);
-    await refetch();
+  useEffect(() => {
+    refetch();
   }, [refetch]);
 
-  const rename = useCallback(async (workspaceId: string, title: string) => {
-    await renameApi(workspaceId, title);
-    await refetch();
-  }, [refetch]);
+  const create = useCallback(
+    async (workspaceId: string, title?: string) => {
+      await createApi(workspaceId, title);
+      await refetch();
+    },
+    [refetch],
+  );
 
-  const remove = useCallback(async (workspaceId: string) => {
-    await deleteApi(workspaceId);
-    await refetch();
-  }, [refetch]);
+  const rename = useCallback(
+    async (workspaceId: string, title: string) => {
+      await renameApi(workspaceId, title);
+      await refetch();
+    },
+    [refetch],
+  );
 
-  const duplicate = useCallback(async (sourceId: string, newId: string) => {
-    await duplicateApi(sourceId, newId);
-    await refetch();
-  }, [refetch]);
+  const remove = useCallback(
+    async (workspaceId: string) => {
+      await deleteApi(workspaceId);
+      await refetch();
+    },
+    [refetch],
+  );
+
+  const duplicate = useCallback(
+    async (sourceId: string, newId: string) => {
+      await duplicateApi(sourceId, newId);
+      await refetch();
+    },
+    [refetch],
+  );
 
   return { workspaces, isLoading, error, refetch, create, rename, remove, duplicate };
 }

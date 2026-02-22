@@ -1,7 +1,7 @@
 // Displays connected collaborators as colored avatars.
 // Shows each user's name/color from the Yjs awareness protocol.
 // The local user's avatar is shown with a click-to-edit name feature.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { WebsocketProvider } from "y-websocket";
 
 interface UserPresence {
@@ -51,7 +51,17 @@ export function CollaborationPresence({
   className?: string;
 }) {
   const [users, setUsers] = useState<UserPresence[]>([]);
-  const [localUser, setLocalUser] = useState<UserPresence | null>(null);
+  const [localNameOverride, setLocalNameOverride] = useState<string | null>(null);
+  const localUser = useMemo<UserPresence | null>(() => {
+    if (!provider) return null;
+    const clientID = provider.awareness.clientID;
+    const name = localNameOverride ?? getLocalUserName(clientID);
+    return {
+      clientId: clientID,
+      name,
+      color: getPresenceColor(clientID),
+    };
+  }, [provider, localNameOverride]);
   const [isEditingName, setIsEditingName] = useState(false);
   const [editValue, setEditValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -60,16 +70,10 @@ export function CollaborationPresence({
     if (!provider) return;
 
     const awareness = provider.awareness;
-    const localName = getLocalUserName(awareness.clientID);
+    const localName = localNameOverride ?? getLocalUserName(awareness.clientID);
     const localColor = getPresenceColor(awareness.clientID);
 
     awareness.setLocalStateField("user", {
-      name: localName,
-      color: localColor,
-    });
-
-    setLocalUser({
-      clientId: awareness.clientID,
       name: localName,
       color: localColor,
     });
@@ -97,7 +101,7 @@ export function CollaborationPresence({
     return () => {
       awareness.off("change", update);
     };
-  }, [provider]);
+  }, [provider, localNameOverride]);
 
   useEffect(() => {
     if (isEditingName && inputRef.current) {
@@ -125,7 +129,7 @@ export function CollaborationPresence({
       name: trimmed,
       color: localUser?.color ?? getPresenceColor(provider.awareness.clientID),
     });
-    setLocalUser((prev) => (prev ? { ...prev, name: trimmed } : prev));
+    setLocalNameOverride(trimmed);
     setIsEditingName(false);
   };
 

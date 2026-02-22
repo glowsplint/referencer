@@ -9,11 +9,5 @@ export function AppRouter() {
     return <HubPage navigate={navigate} />;
   }
 
-  return (
-    <App
-      workspaceId={route.workspaceId}
-      readOnly={route.readOnly}
-      navigate={navigate}
-    />
-  );
+  return <App workspaceId={route.workspaceId} readOnly={route.readOnly} navigate={navigate} />;
 }

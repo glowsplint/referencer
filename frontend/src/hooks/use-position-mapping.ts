@@ -28,6 +28,7 @@ export function usePositionMapping({
   useEffect(() => {
     if (!editor || !setLayers) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleTransaction = ({ transaction }: { transaction: any }) => {
       if (!transaction.docChanged) return;
 

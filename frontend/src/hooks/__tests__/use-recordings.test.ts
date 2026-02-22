@@ -23,14 +23,26 @@ describe("captureVisibilitySnapshot", () => {
         id: "layer-1",
         visible: true,
         highlights: [
-          { id: "h1", editorIndex: 0, from: 0, to: 5, text: "hello", annotation: "", type: "highlight", visible: true },
+          {
+            id: "h1",
+            editorIndex: 0,
+            from: 0,
+            to: 5,
+            text: "hello",
+            annotation: "",
+            type: "highlight",
+            visible: true,
+          },
         ],
         arrows: [
-          { id: "a1", from: { editorIndex: 0, from: 0, to: 3, text: "foo" }, to: { editorIndex: 0, from: 10, to: 13, text: "bar" }, visible: false },
+          {
+            id: "a1",
+            from: { editorIndex: 0, from: 0, to: 3, text: "foo" },
+            to: { editorIndex: 0, from: 10, to: 13, text: "bar" },
+            visible: false,
+          },
         ],
-        underlines: [
-          { id: "u1", editorIndex: 0, from: 0, to: 5, text: "hello", visible: true },
-        ],
+        underlines: [{ id: "u1", editorIndex: 0, from: 0, to: 5, text: "hello", visible: true }],
       }),
       createLayer({
         id: "layer-2",

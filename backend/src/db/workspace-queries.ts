@@ -30,9 +30,7 @@ export async function createUserWorkspace(
   title: string = "",
 ): Promise<void> {
   // Ensure the workspace row exists
-  await supabase
-    .from("workspace")
-    .upsert({ id: workspaceId }, { onConflict: "id" });
+  await supabase.from("workspace").upsert({ id: workspaceId }, { onConflict: "id" });
 
   // Upsert: insert the user_workspace row, on conflict update title only if non-empty
   const { error } = await supabase.from("user_workspace").upsert(
@@ -45,8 +43,7 @@ export async function createUserWorkspace(
     { onConflict: "user_id,workspace_id" },
   );
 
-  if (error)
-    throw new Error(`Failed to create user workspace: ${error.message}`);
+  if (error) throw new Error(`Failed to create user workspace: ${error.message}`);
 }
 
 export async function renameUserWorkspace(
@@ -61,8 +58,7 @@ export async function renameUserWorkspace(
     .eq("user_id", userId)
     .eq("workspace_id", workspaceId);
 
-  if (error)
-    throw new Error(`Failed to rename workspace: ${error.message}`);
+  if (error) throw new Error(`Failed to rename workspace: ${error.message}`);
 }
 
 export async function touchUserWorkspace(
@@ -76,8 +72,7 @@ export async function touchUserWorkspace(
     .eq("user_id", userId)
     .eq("workspace_id", workspaceId);
 
-  if (error)
-    throw new Error(`Failed to touch workspace: ${error.message}`);
+  if (error) throw new Error(`Failed to touch workspace: ${error.message}`);
 }
 
 export async function deleteUserWorkspace(
@@ -91,8 +86,7 @@ export async function deleteUserWorkspace(
     .eq("user_id", userId)
     .eq("workspace_id", workspaceId);
 
-  if (error)
-    throw new Error(`Failed to delete workspace: ${error.message}`);
+  if (error) throw new Error(`Failed to delete workspace: ${error.message}`);
 }
 
 export async function duplicateWorkspace(
@@ -109,23 +103,18 @@ export async function duplicateWorkspace(
     .single();
 
   if (readError || !doc) {
-    throw new Error(
-      `Failed to read source document: ${readError?.message ?? "not found"}`,
-    );
+    throw new Error(`Failed to read source document: ${readError?.message ?? "not found"}`);
   }
 
   // Create the workspace row for the new workspace
-  await supabase
-    .from("workspace")
-    .upsert({ id: newWorkspaceId }, { onConflict: "id" });
+  await supabase.from("workspace").upsert({ id: newWorkspaceId }, { onConflict: "id" });
 
   // Create a new yjs_document with the copied state
   const { error: writeError } = await supabase
     .from("yjs_document")
     .insert({ room_name: newWorkspaceId, state: doc.state });
 
-  if (writeError)
-    throw new Error(`Failed to duplicate document: ${writeError.message}`);
+  if (writeError) throw new Error(`Failed to duplicate document: ${writeError.message}`);
 
   // Create the user_workspace entry
   await createUserWorkspace(supabase, userId, newWorkspaceId);

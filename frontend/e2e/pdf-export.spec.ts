@@ -13,20 +13,6 @@ test.describe("PDF export", () => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
-    // Intercept window.print to verify it gets called
-    const printCalled = await page.evaluate(() => {
-      return new Promise<boolean>((resolve) => {
-        window.print = () => resolve(true);
-        // Safety timeout in case print is never called
-        setTimeout(() => resolve(false), 3000);
-      });
-    });
-
-    // We need to trigger click separately since evaluate already set up the listener
-    // Re-approach: set up intercept then click
-    await page.goto("/");
-    await expect(page.locator(".simple-editor p").first()).toBeVisible();
-
     await page.evaluate(() => {
       (window as any).__printCalled = false;
       window.print = () => {

@@ -19,6 +19,22 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // React Compiler rules — this project doesn't use the React Compiler,
+      // so disable rules that enforce compiler-specific constraints.
+      "react-hooks/refs": "off",
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/inline-hook-arguments": "off",
+      "react-hooks/compilation": "off",
+      "react-hooks/use-memo": "off",
+      "react-hooks/preserve-manual-memoization": "off",
+      "react-hooks/immutability": "off",
+      // Allow unused vars/args prefixed with _
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
   },
   {
     files: [
@@ -32,8 +48,6 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-empty-object-type": "off",
       "react-refresh/only-export-components": "off",
-      "react-hooks/set-state-in-effect": "off",
-      "react-hooks/refs": "off",
     },
   },
   {

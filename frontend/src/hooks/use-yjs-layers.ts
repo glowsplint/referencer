@@ -166,7 +166,11 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
   );
 
   const addHighlight = useCallback(
-    (layerId: string, highlight: Omit<Highlight, "id" | "visible">, opts?: { id?: string }): string => {
+    (
+      layerId: string,
+      highlight: Omit<Highlight, "id" | "visible">,
+      opts?: { id?: string },
+    ): string => {
       if (!doc) return "";
       const id = opts?.id ?? crypto.randomUUID();
       const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined;
@@ -236,7 +240,11 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
   );
 
   const addUnderline = useCallback(
-    (layerId: string, underline: Omit<LayerUnderline, "id" | "visible">, opts?: { id?: string }): string => {
+    (
+      layerId: string,
+      underline: Omit<LayerUnderline, "id" | "visible">,
+      opts?: { id?: string },
+    ): string => {
       if (!doc) return "";
       const id = opts?.id ?? crypto.randomUUID();
       const views = editorsRef ? buildEditorViewMap(editorsRef) : undefined;
@@ -288,7 +296,7 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
 
   // setLayers is provided for compatibility but is a no-op with Yjs
   // (all mutations go through the specific mutation functions above)
-  const setLayers = useCallback((_updater: Layer[] | ((prev: Layer[]) => Layer[])) => {
+  const setLayers = useCallback((_updater: Layer[] | ((prev: Layer[]) => Layer[])): void => {
     // No-op: Yjs is the source of truth. Direct setLayers is not supported
     // in CRDT mode. Use specific mutation functions instead.
     console.warn("[yjs-layers] setLayers called but ignored in CRDT mode");

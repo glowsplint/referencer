@@ -14,6 +14,29 @@ import {
   ImageIcon,
 } from "lucide-react";
 
+function ToolbarButton({
+  isActive,
+  onClick,
+  children,
+}: {
+  isActive?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      className={`p-0.5 rounded transition-colors ${isActive ? "bg-zinc-200 dark:bg-zinc-600" : "hover:bg-zinc-100 dark:hover:bg-zinc-700"}`}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
 interface MiniCommentEditorProps {
   value: string;
   onChange: (html: string) => void;
@@ -151,27 +174,6 @@ export function MiniCommentEditor({
 
   if (!editor) return null;
 
-  const ToolbarButton = ({
-    isActive,
-    onClick,
-    children,
-  }: {
-    isActive?: boolean;
-    onClick: () => void;
-    children: React.ReactNode;
-  }) => (
-    <button
-      type="button"
-      className={`p-0.5 rounded transition-colors ${isActive ? "bg-zinc-200 dark:bg-zinc-600" : "hover:bg-zinc-100 dark:hover:bg-zinc-700"}`}
-      onMouseDown={(e) => {
-        e.preventDefault();
-        onClick();
-      }}
-    >
-      {children}
-    </button>
-  );
-
   return (
     <div ref={containerRef} className="w-full">
       {focused && (
@@ -200,10 +202,7 @@ export function MiniCommentEditor({
           >
             <List size={12} />
           </ToolbarButton>
-          <ToolbarButton
-            isActive={editor.isActive("link")}
-            onClick={addLink}
-          >
+          <ToolbarButton isActive={editor.isActive("link")} onClick={addLink}>
             <LinkIcon size={12} />
           </ToolbarButton>
           <ToolbarButton onClick={addImage}>

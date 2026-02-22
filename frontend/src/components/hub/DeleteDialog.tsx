@@ -15,39 +15,26 @@ interface DeleteDialogProps {
   onDelete: () => Promise<void>;
 }
 
-export function DeleteDialog({
-  open,
-  onOpenChange,
-  workspaceTitle,
-  onDelete,
-}: DeleteDialogProps) {
+export function DeleteDialog({ open, onOpenChange, workspaceTitle, onDelete }: DeleteDialogProps) {
   const handleDelete = async () => {
     await onDelete();
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className="sm:max-w-sm"
-        data-testid="deleteDialog"
-      >
+      <DialogContent showCloseButton={false} className="sm:max-w-sm" data-testid="deleteDialog">
         <DialogHeader>
           <DialogTitle>Delete Workspace</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete &ldquo;{workspaceTitle}&rdquo;? This
-            action cannot be undone.
+            Are you sure you want to delete &ldquo;{workspaceTitle}&rdquo;? This action cannot be
+            undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            data-testid="confirmDelete"
-          >
+          <Button variant="destructive" onClick={handleDelete} data-testid="confirmDelete">
             Delete
           </Button>
         </DialogFooter>

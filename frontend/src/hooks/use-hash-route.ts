@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-export type Route =
-  | { type: "hub" }
-  | { type: "editor"; workspaceId: string; readOnly: boolean };
+export type Route = { type: "hub" } | { type: "editor"; workspaceId: string; readOnly: boolean };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

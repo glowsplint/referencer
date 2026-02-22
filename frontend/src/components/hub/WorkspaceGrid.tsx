@@ -77,9 +77,7 @@ export function WorkspaceGrid({
 
       {/* Content */}
       {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground">
-          Loading...
-        </div>
+        <div className="text-center py-12 text-muted-foreground">Loading...</div>
       ) : workspaces.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">No workspaces yet</p>

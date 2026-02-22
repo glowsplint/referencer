@@ -30,12 +30,7 @@ function setupLayerWithAnnotations(doc: Y.Doc) {
     },
     "a1",
   );
-  addUnderlineToDoc(
-    doc,
-    "layer-1",
-    { editorIndex: 0, from: 0, to: 5, text: "hello" },
-    "u1",
-  );
+  addUnderlineToDoc(doc, "layer-1", { editorIndex: 0, from: 0, to: 5, text: "hello" }, "u1");
 }
 
 describe("annotation visibility", () => {
@@ -113,12 +108,7 @@ describe("annotation visibility", () => {
     it("new underlines default to visible: true", () => {
       const doc = new Y.Doc();
       addLayerToDoc(doc, { id: "layer-1", name: "Layer 1", color: "#ff0000" });
-      addUnderlineToDoc(
-        doc,
-        "layer-1",
-        { editorIndex: 0, from: 0, to: 5, text: "hello" },
-        "u1",
-      );
+      addUnderlineToDoc(doc, "layer-1", { editorIndex: 0, from: 0, to: 5, text: "hello" }, "u1");
 
       const layers = readLayers(doc);
       expect(layers[0].underlines[0].visible).toBe(true);

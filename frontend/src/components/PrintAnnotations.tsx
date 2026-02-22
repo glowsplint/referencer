@@ -1,5 +1,5 @@
 import type { Layer } from "@/types/editor";
-import { migrateAnnotation } from "./AnnotationCard";
+import { migrateAnnotation } from "../utils/migrateAnnotation";
 
 interface PrintAnnotationsProps {
   layers: Layer[];
@@ -7,7 +7,11 @@ interface PrintAnnotationsProps {
   sectionVisibility: boolean[];
 }
 
-export function PrintAnnotations({ layers, sectionNames, sectionVisibility }: PrintAnnotationsProps) {
+export function PrintAnnotations({
+  layers,
+  sectionNames,
+  sectionVisibility,
+}: PrintAnnotationsProps) {
   // Collect all visible comments in document order
   const comments: {
     layerColor: string;
@@ -54,11 +58,7 @@ export function PrintAnnotations({ layers, sectionNames, sectionVisibility }: Pr
             {sectionNames[editorIndex] ?? `Passage ${editorIndex + 1}`}
           </div>
           {items.map((item, i) => (
-            <div
-              key={i}
-              className="mb-2 border-l-2 pl-2"
-              style={{ borderColor: item.layerColor }}
-            >
+            <div key={i} className="mb-2 border-l-2 pl-2" style={{ borderColor: item.layerColor }}>
               <div className="text-[10px] font-bold italic text-zinc-600 mb-0.5">
                 &ldquo;{item.text}&rdquo;
               </div>

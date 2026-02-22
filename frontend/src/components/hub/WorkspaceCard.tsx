@@ -1,11 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import {
-  MoreHorizontal,
-  ExternalLink,
-  Pencil,
-  Copy,
-  Trash2,
-} from "lucide-react";
+import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2 } from "lucide-react";
 import { formatRelativeTime } from "./format-relative-time";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
@@ -31,9 +25,7 @@ export function WorkspaceCard({
       data-testid={`workspaceCard-${workspace.workspaceId}`}
     >
       <div className="flex items-start justify-between">
-        <h3 className="font-medium text-sm truncate pr-2">
-          {workspace.title || "Untitled"}
-        </h3>
+        <h3 className="font-medium text-sm truncate pr-2">{workspace.title || "Untitled"}</h3>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button

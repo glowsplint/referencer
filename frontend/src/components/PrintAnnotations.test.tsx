@@ -44,11 +44,7 @@ describe("PrintAnnotations", () => {
       ],
     });
     const { container } = render(
-      <PrintAnnotations
-        layers={[layer]}
-        sectionNames={["Passage 1"]}
-        sectionVisibility={[true]}
-      />,
+      <PrintAnnotations layers={[layer]} sectionNames={["Passage 1"]} sectionVisibility={[true]} />,
     );
     expect(container.innerHTML).toBe("");
   });
@@ -68,11 +64,7 @@ describe("PrintAnnotations", () => {
       ],
     });
     const { container } = render(
-      <PrintAnnotations
-        layers={[layer]}
-        sectionNames={["Passage 1"]}
-        sectionVisibility={[true]}
-      />,
+      <PrintAnnotations layers={[layer]} sectionNames={["Passage 1"]} sectionVisibility={[true]} />,
     );
     expect(container.innerHTML).toBe("");
   });
@@ -130,11 +122,7 @@ describe("PrintAnnotations", () => {
     });
 
     const { container } = render(
-      <PrintAnnotations
-        layers={[layer]}
-        sectionNames={["Passage 1"]}
-        sectionVisibility={[true]}
-      />,
+      <PrintAnnotations layers={[layer]} sectionNames={["Passage 1"]} sectionVisibility={[true]} />,
     );
 
     // Quoted text uses &ldquo; and &rdquo; so check for the text content
@@ -159,11 +147,7 @@ describe("PrintAnnotations", () => {
     });
 
     const { container } = render(
-      <PrintAnnotations
-        layers={[layer]}
-        sectionNames={["Passage 1"]}
-        sectionVisibility={[true]}
-      />,
+      <PrintAnnotations layers={[layer]} sectionNames={["Passage 1"]} sectionVisibility={[true]} />,
     );
 
     const borderEl = container.querySelector(".border-l-2") as HTMLElement;
@@ -223,11 +207,7 @@ describe("PrintAnnotations", () => {
     });
 
     const { container } = render(
-      <PrintAnnotations
-        layers={[layer]}
-        sectionNames={["Passage 1"]}
-        sectionVisibility={[true]}
-      />,
+      <PrintAnnotations layers={[layer]} sectionNames={["Passage 1"]} sectionVisibility={[true]} />,
     );
 
     // migrateAnnotation wraps plain text in <p> tags

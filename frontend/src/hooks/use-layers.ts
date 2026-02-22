@@ -114,7 +114,11 @@ export function useLayers() {
   }, []);
 
   const addHighlight = useCallback(
-    (layerId: string, highlight: Omit<Highlight, "id" | "visible">, opts?: { id?: string }): string => {
+    (
+      layerId: string,
+      highlight: Omit<Highlight, "id" | "visible">,
+      opts?: { id?: string },
+    ): string => {
       const id = opts?.id ?? crypto.randomUUID();
       updateLayer(layerId, (l) => ({
         ...l,
@@ -180,7 +184,11 @@ export function useLayers() {
   }, []);
 
   const addUnderline = useCallback(
-    (layerId: string, underline: Omit<LayerUnderline, "id" | "visible">, opts?: { id?: string }): string => {
+    (
+      layerId: string,
+      underline: Omit<LayerUnderline, "id" | "visible">,
+      opts?: { id?: string },
+    ): string => {
       const id = opts?.id ?? crypto.randomUUID();
       updateLayer(layerId, (l) => ({
         ...l,

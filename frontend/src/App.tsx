@@ -142,7 +142,11 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
   useUndoRedoKeyboard(unifiedUndo);
 
   // Recording & playback hooks
-  const recordingsHook = useRecordings(workspace.yjs.doc, workspace.layers, workspace.sectionVisibility);
+  const recordingsHook = useRecordings(
+    workspace.yjs.doc,
+    workspace.layers,
+    workspace.sectionVisibility,
+  );
 
   const applyVisibilitySnapshot = useCallback(
     (snapshot: VisibilitySnapshot) => {
@@ -163,13 +167,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
             const annotationId = parts.slice(2).join(":");
             const yType =
               type === "highlight" ? "highlights" : type === "arrow" ? "arrows" : "underlines";
-            setAnnotationVisibilityInDoc(
-              workspace.yjs.doc!,
-              layerId,
-              yType,
-              annotationId,
-              visible,
-            );
+            setAnnotationVisibilityInDoc(workspace.yjs.doc!, layerId, yType, annotationId, visible);
           }
         });
       }
@@ -196,7 +194,8 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<EditingAnnotation | null>(null);
-  const { collapsedIds, toggleCollapse, collapseAll, expandAll } = useCollapsedAnnotations(workspaceId);
+  const { collapsedIds, toggleCollapse, collapseAll, expandAll } =
+    useCollapsedAnnotations(workspaceId);
   const annotationBeforeEditRef = useRef<string>("");
   const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
 
@@ -317,13 +316,15 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
     }
   }, [selection, selectionHidden, workspace]);
 
-  confirmRef.current = () => {
-    confirmSelection();
-    confirmComment();
-    confirmHighlight();
-    confirmUnderline();
-    confirmErase();
-  };
+  useEffect(() => {
+    confirmRef.current = () => {
+      confirmSelection();
+      confirmComment();
+      confirmHighlight();
+      confirmUnderline();
+      confirmErase();
+    };
+  });
 
   useCycleLayer({
     layers,
@@ -413,163 +414,162 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
   return (
     <WorkspaceProvider value={workspace}>
       <RecordingProvider value={recordingContextValue}>
-      <Toaster />
-      <div className="flex flex-col h-screen overflow-hidden">
-        <div className="flex flex-1 min-h-0">
-          {!isMobile && <ButtonPane />}
-          {!isMobile && isManagementPaneOpen && <ManagementPane />}
-          <EditorContext.Provider value={{ editor: activeEditor }}>
-            <div className="flex flex-col flex-1 min-w-0">
-              <TitleBar navigate={navigate} />
-              <UnsavedBanner />
-              <SimpleEditorToolbar isLocked={settings.isLocked} />
-              {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
-              <div className="flex flex-1 min-w-0 min-h-0">
-                <div
-                  ref={containerRef}
-                  data-testid="editorContainer"
-                  className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${settings.isLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${settings.isLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
-                >
-                  <ErrorBoundary silent>
-                    <ArrowOverlay
-                      layers={layers}
-                      drawingState={drawingState}
-                      drawingColor={activeLayerColor}
-                      editorsRef={editorsRef}
-                      containerRef={containerRef}
-                      removeArrow={removeArrow}
-                      selectedArrow={workspace.selectedArrow}
-                      setSelectedArrow={handleSetSelectedArrow}
-                      activeTool={annotations.activeTool}
-                      sectionVisibility={sectionVisibility}
-                      isDarkMode={settings.isDarkMode}
-                      isLocked={settings.isLocked || effectiveReadOnly}
-                      hideOffscreenArrows={settings.hideOffscreenArrows}
-                    />
-                  </ErrorBoundary>
-                  {editorWidths.map((width, i) => {
-                    const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
-                    // "direction" is the resize drag axis, not the visual line orientation
-                    // (e.g. "horizontal" means drag left/right to resize side-by-side panes)
-                    const dividerDirection = settings.isMultipleRowsLayout
-                      ? ("vertical" as const)
-                      : ("horizontal" as const);
-                    return (
-                      <Fragment key={editorKeys[i]}>
-                        {showDivider && (
-                          <Divider
-                            onResize={(pct) => handleDividerResize(i - 1, pct)}
-                            containerRef={containerRef}
-                            direction={dividerDirection}
-                          />
-                        )}
-                        <div
-                          className="min-w-0 min-h-0 overflow-hidden flex flex-col"
-                          style={{
-                            flex: `${width} 0 0%`,
-                            display: sectionVisibility[i] === false ? "none" : undefined,
-                          }}
-                        >
-                          <PassageHeader
-                            name={workspace.sectionNames[i]}
-                            index={i}
-                            onUpdateName={(name) => workspace.updateSectionName(i, name)}
-                          />
-                          <div className="flex-1 min-h-0 overflow-hidden">
-                            <ErrorBoundary>
-                              <EditorPane
-                                isLocked={settings.isLocked || effectiveReadOnly}
-                                activeTool={annotations.activeTool}
-                                content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
-                                index={i}
-                                fragment={workspace.yjs.getFragment(i)}
-                                onEditorMount={handleEditorMount}
-                                onFocus={handlePaneFocus}
-                                onMouseDown={
-                                  settings.isLocked && !effectiveReadOnly
-                                    ? handleMouseDown
-                                    : undefined
-                                }
-                                onMouseMove={
-                                  settings.isLocked && !effectiveReadOnly
-                                    ? handleMouseMove
-                                    : undefined
-                                }
-                                onMouseUp={
-                                  settings.isLocked && !effectiveReadOnly
-                                    ? handleMouseUp
-                                    : undefined
-                                }
-                                onContentUpdate={
-                                  effectiveReadOnly ? undefined : updateEditorContent
-                                }
-                                layers={layers}
-                                selection={selection}
-                                selectionHidden={selectionHidden}
-                                activeLayerColor={activeLayerColor}
-                                isDarkMode={settings.isDarkMode}
-                                removeArrow={removeArrow}
-                                sectionVisibility={sectionVisibility}
-                                selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-                                setLayers={workspace.setLayers}
-                                yjsSynced={workspace.yjs.synced}
-                              />
-                            </ErrorBoundary>
+        <Toaster />
+        <div className="flex flex-col h-screen overflow-hidden">
+          <div className="flex flex-1 min-h-0">
+            {!isMobile && <ButtonPane />}
+            {!isMobile && isManagementPaneOpen && <ManagementPane />}
+            <EditorContext.Provider value={{ editor: activeEditor }}>
+              <div className="flex flex-col flex-1 min-w-0">
+                <TitleBar navigate={navigate} />
+                <UnsavedBanner />
+                <SimpleEditorToolbar isLocked={settings.isLocked} />
+                {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
+                <div className="flex flex-1 min-w-0 min-h-0">
+                  <div
+                    ref={containerRef}
+                    data-testid="editorContainer"
+                    className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${settings.isLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${settings.isLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
+                  >
+                    <ErrorBoundary silent>
+                      <ArrowOverlay
+                        layers={layers}
+                        drawingState={drawingState}
+                        drawingColor={activeLayerColor}
+                        editorsRef={editorsRef}
+                        containerRef={containerRef}
+                        removeArrow={removeArrow}
+                        selectedArrow={workspace.selectedArrow}
+                        setSelectedArrow={handleSetSelectedArrow}
+                        activeTool={annotations.activeTool}
+                        sectionVisibility={sectionVisibility}
+                        isDarkMode={settings.isDarkMode}
+                        isLocked={settings.isLocked || effectiveReadOnly}
+                        hideOffscreenArrows={settings.hideOffscreenArrows}
+                      />
+                    </ErrorBoundary>
+                    {editorWidths.map((width, i) => {
+                      const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
+                      // "direction" is the resize drag axis, not the visual line orientation
+                      // (e.g. "horizontal" means drag left/right to resize side-by-side panes)
+                      const dividerDirection = settings.isMultipleRowsLayout
+                        ? ("vertical" as const)
+                        : ("horizontal" as const);
+                      return (
+                        <Fragment key={editorKeys[i]}>
+                          {showDivider && (
+                            <Divider
+                              onResize={(pct) => handleDividerResize(i - 1, pct)}
+                              containerRef={containerRef}
+                              direction={dividerDirection}
+                            />
+                          )}
+                          <div
+                            className="min-w-0 min-h-0 overflow-hidden flex flex-col"
+                            style={{
+                              flex: `${width} 0 0%`,
+                              display: sectionVisibility[i] === false ? "none" : undefined,
+                            }}
+                          >
+                            <PassageHeader
+                              name={workspace.sectionNames[i]}
+                              index={i}
+                              onUpdateName={(name) => workspace.updateSectionName(i, name)}
+                            />
+                            <div className="flex-1 min-h-0 overflow-hidden">
+                              <ErrorBoundary>
+                                <EditorPane
+                                  isLocked={settings.isLocked || effectiveReadOnly}
+                                  activeTool={annotations.activeTool}
+                                  content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
+                                  index={i}
+                                  fragment={workspace.yjs.getFragment(i)}
+                                  onEditorMount={handleEditorMount}
+                                  onFocus={handlePaneFocus}
+                                  onMouseDown={
+                                    settings.isLocked && !effectiveReadOnly
+                                      ? handleMouseDown
+                                      : undefined
+                                  }
+                                  onMouseMove={
+                                    settings.isLocked && !effectiveReadOnly
+                                      ? handleMouseMove
+                                      : undefined
+                                  }
+                                  onMouseUp={
+                                    settings.isLocked && !effectiveReadOnly
+                                      ? handleMouseUp
+                                      : undefined
+                                  }
+                                  onContentUpdate={
+                                    effectiveReadOnly ? undefined : updateEditorContent
+                                  }
+                                  layers={layers}
+                                  selection={selection}
+                                  selectionHidden={selectionHidden}
+                                  activeLayerColor={activeLayerColor}
+                                  isDarkMode={settings.isDarkMode}
+                                  removeArrow={removeArrow}
+                                  sectionVisibility={sectionVisibility}
+                                  selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+                                  setLayers={workspace.setLayers}
+                                  yjsSynced={workspace.yjs.synced}
+                                />
+                              </ErrorBoundary>
+                            </div>
                           </div>
-                        </div>
-                      </Fragment>
-                    );
-                  })}
-                </div>
-                {!isMobile && settings.isLocked && hasAnyAnnotations && (
-                  <ErrorBoundary silent>
-                    <AnnotationPanel
+                        </Fragment>
+                      );
+                    })}
+                  </div>
+                  {!isMobile && settings.isLocked && hasAnyAnnotations && (
+                    <ErrorBoundary silent>
+                      <AnnotationPanel
+                        layers={layers}
+                        editorsRef={editorsRef}
+                        containerRef={containerRef}
+                        editingAnnotation={editingAnnotation}
+                        onAnnotationChange={updateHighlightAnnotation}
+                        onAnnotationBlur={handleAnnotationBlur}
+                        onAnnotationClick={handleAnnotationClick}
+                        isDarkMode={settings.isDarkMode}
+                        sectionVisibility={sectionVisibility}
+                        collapsedIds={collapsedIds}
+                        onToggleCollapse={toggleCollapse}
+                        onCollapseAll={handleCollapseAll}
+                        onExpandAll={expandAll}
+                      />
+                    </ErrorBoundary>
+                  )}
+                  <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
+                    <PrintAnnotations
                       layers={layers}
-                      editorsRef={editorsRef}
-                      containerRef={containerRef}
-                      editingAnnotation={editingAnnotation}
-                      onAnnotationChange={updateHighlightAnnotation}
-                      onAnnotationBlur={handleAnnotationBlur}
-                      onAnnotationClick={handleAnnotationClick}
-                      isDarkMode={settings.isDarkMode}
+                      sectionNames={workspace.sectionNames}
                       sectionVisibility={sectionVisibility}
-                      collapsedIds={collapsedIds}
-                      onToggleCollapse={toggleCollapse}
-                      onCollapseAll={handleCollapseAll}
-                      onExpandAll={expandAll}
                     />
-                  </ErrorBoundary>
-                )}
-                <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
-                  <PrintAnnotations
-                    layers={layers}
-                    sectionNames={workspace.sectionNames}
-                    sectionVisibility={sectionVisibility}
-                  />
+                  </div>
                 </div>
               </div>
-            </div>
-          </EditorContext.Provider>
-        </div>
-        {!isMobile && (
-          <ActionConsole
-            log={history.log}
-            isOpen={actionConsole.isOpen}
-            onClose={() => actionConsole.setIsOpen(false)}
-            height={actionConsole.consoleHeight}
-            onHeightChange={actionConsole.setConsoleHeight}
+            </EditorContext.Provider>
+          </div>
+          {!isMobile && (
+            <ActionConsole
+              log={history.log}
+              isOpen={actionConsole.isOpen}
+              onClose={() => actionConsole.setIsOpen(false)}
+              height={actionConsole.consoleHeight}
+              onHeightChange={actionConsole.setConsoleHeight}
+            />
+          )}
+          <MobileInfoDialog
+            open={isMobile && !mobileDialogDismissed}
+            onOpenChange={(open) => {
+              if (!open) setMobileDialogDismissed(true);
+            }}
           />
-        )}
-        <MobileInfoDialog
-          open={isMobile && !mobileDialogDismissed}
-          onOpenChange={(open) => {
-            if (!open) setMobileDialogDismissed(true);
-          }}
-        />
-      </div>
-      <PlaybackBar />
+        </div>
+        <PlaybackBar />
       </RecordingProvider>
     </WorkspaceProvider>
   );
 }
-

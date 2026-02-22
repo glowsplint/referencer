@@ -65,7 +65,10 @@ describe("auth-client", () => {
       } as Response);
 
       await logout();
-      expect(fetch).toHaveBeenCalledWith("/auth/logout", { method: "POST", credentials: "include" });
+      expect(fetch).toHaveBeenCalledWith("/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
     });
   });
 });

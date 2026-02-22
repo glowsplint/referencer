@@ -122,11 +122,7 @@ export function removeRecordingFromDoc(doc: Y.Doc, recordingId: string): void {
   getRecordingsArray(doc).delete(result.index);
 }
 
-export function updateRecordingNameInDoc(
-  doc: Y.Doc,
-  recordingId: string,
-  name: string,
-): void {
+export function updateRecordingNameInDoc(doc: Y.Doc, recordingId: string, name: string): void {
   const result = findYRecording(doc, recordingId);
   if (!result) return;
   doc.transact(() => {
