@@ -49,7 +49,6 @@ function createOptions(
     layers: [] as TestLayer[],
     addItem: vi.fn().mockReturnValue("item-1") as never,
     removeItem: vi.fn(),
-    showToasts: true,
     setStatus: vi.fn(),
     flashStatus: vi.fn(),
     clearStatus: vi.fn(),
@@ -109,11 +108,11 @@ describe("useAnnotationToolMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("suppresses entry status when showToasts is false", () => {
+  it("always shows entry status", () => {
     const setStatus = vi.fn();
-    renderHook(() => useAnnotationToolMode(createOptions({ showToasts: false, setStatus })));
+    renderHook(() => useAnnotationToolMode(createOptions({ setStatus })));
 
-    expect(setStatus).not.toHaveBeenCalled();
+    expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
   it("does nothing when activeTool does not match", () => {
@@ -260,23 +259,6 @@ describe("useAnnotationToolMode", () => {
     });
 
     expect(flashStatus).toHaveBeenCalledWith({ text: "Removed!", type: "success" }, 3000);
-  });
-
-  it("does not show toast when showToasts is false", () => {
-    const flashStatus = vi.fn();
-    const opts = createOptions({
-      selection: word1,
-      showToasts: false,
-      flashStatus,
-      addedText: "Added!",
-    });
-    const { result } = renderHook(() => useAnnotationToolMode(opts));
-
-    act(() => {
-      result.current.confirm();
-    });
-
-    expect(flashStatus).not.toHaveBeenCalled();
   });
 
   it("does not show removed toast when removedText is undefined", () => {

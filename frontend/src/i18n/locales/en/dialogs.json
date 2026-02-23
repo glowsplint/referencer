@@ -6,18 +6,6 @@
       "label": "Dark mode",
       "description": "Switch between light and dark themes"
     },
-    "drawingNotifications": {
-      "label": "Drawing notifications",
-      "description": "Show toasts when using the arrow tool"
-    },
-    "commentsNotifications": {
-      "label": "Comments notifications",
-      "description": "Show toasts when using the comments tool"
-    },
-    "highlightNotifications": {
-      "label": "Highlight notifications",
-      "description": "Show toasts when using the highlight tool"
-    },
     "overscroll": {
       "label": "Overscroll",
       "description": "Allow elastic bounce when scrolling past edges"

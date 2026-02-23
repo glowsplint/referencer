@@ -6,18 +6,6 @@
       "label": "Modalita scura",
       "description": "Passa dal tema chiaro a quello scuro"
     },
-    "drawingNotifications": {
-      "label": "Notifiche disegno",
-      "description": "Mostra notifiche quando si usa lo strumento freccia"
-    },
-    "commentsNotifications": {
-      "label": "Notifiche commenti",
-      "description": "Mostra notifiche quando si usa lo strumento commenti"
-    },
-    "highlightNotifications": {
-      "label": "Notifiche evidenziazione",
-      "description": "Mostra notifiche quando si usa lo strumento evidenziazione"
-    },
     "overscroll": {
       "label": "Scorrimento elastico",
       "description": "Consenti il rimbalzo elastico quando si scorre oltre i bordi"

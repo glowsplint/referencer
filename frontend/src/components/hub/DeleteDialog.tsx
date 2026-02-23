@@ -22,7 +22,7 @@ export function DeleteDialog({ open, onOpenChange, workspaceTitle, onDelete }: D
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="sm:max-w-sm" data-testid="deleteDialog">
+      <DialogContent className="sm:max-w-sm" data-testid="deleteDialog">
         <DialogHeader>
           <DialogTitle>Delete Workspace</DialogTitle>
           <DialogDescription>

@@ -6,18 +6,6 @@
       "label": "Chế độ tối",
       "description": "Chuyển đổi giữa giao diện sáng và tối"
     },
-    "drawingNotifications": {
-      "label": "Thông báo vẽ",
-      "description": "Hiển thị thông báo khi sử dụng công cụ mũi tên"
-    },
-    "commentsNotifications": {
-      "label": "Thông báo bình luận",
-      "description": "Hiển thị thông báo khi sử dụng công cụ bình luận"
-    },
-    "highlightNotifications": {
-      "label": "Thông báo đánh dấu",
-      "description": "Hiển thị thông báo khi sử dụng công cụ đánh dấu"
-    },
     "overscroll": {
       "label": "Cuộn quá giới hạn",
       "description": "Cho phép hiệu ứng nảy khi cuộn qua mép"

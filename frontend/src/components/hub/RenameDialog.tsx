@@ -30,7 +30,7 @@ export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: Ren
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="sm:max-w-sm" data-testid="renameDialog">
+      <DialogContent className="sm:max-w-sm" data-testid="renameDialog">
         <DialogHeader>
           <DialogTitle>Rename Workspace</DialogTitle>
           <DialogDescription>Enter a new name for this workspace.</DialogDescription>

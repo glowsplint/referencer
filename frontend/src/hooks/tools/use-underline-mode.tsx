@@ -41,7 +41,6 @@ export interface UseUnderlineModeOptions {
   layers: { id: string; underlines: LayerUnderline[] }[];
   addUnderline: (layerId: string, underline: Omit<LayerUnderline, "id" | "visible">) => string;
   removeUnderline: (layerId: string, underlineId: string) => void;
-  showUnderlineToasts: boolean;
   setStatus: (msg: StatusMessage) => void;
   flashStatus: (msg: StatusMessage, duration: number) => void;
   clearStatus: () => void;
@@ -56,7 +55,6 @@ export function useUnderlineMode({
   layers,
   addUnderline,
   removeUnderline,
-  showUnderlineToasts,
   setStatus,
   flashStatus,
   clearStatus,
@@ -71,7 +69,6 @@ export function useUnderlineMode({
     layers,
     addItem: addUnderline as never,
     removeItem: removeUnderline,
-    showToasts: showUnderlineToasts,
     setStatus,
     flashStatus,
     clearStatus,

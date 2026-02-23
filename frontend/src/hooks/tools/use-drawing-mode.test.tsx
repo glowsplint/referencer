@@ -12,7 +12,6 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     activeArrowStyle: "solid" as import("@/types/editor").ArrowStyle,
     addLayer: vi.fn(() => "auto-layer-1"),
     addArrow: vi.fn(),
-    showDrawingToasts: true,
     setStatus: vi.fn(),
     flashStatus: vi.fn(),
     clearStatus: vi.fn(),
@@ -360,14 +359,14 @@ describe("useDrawingMode", () => {
     });
   });
 
-  it("suppresses info status when showDrawingToasts is false", () => {
+  it("always shows status messages for arrow tool", () => {
     const setStatus = vi.fn();
-    renderHook(() => useDrawingMode(createOptions({ showDrawingToasts: false, setStatus })));
+    renderHook(() => useDrawingMode(createOptions({ setStatus })));
 
-    expect(setStatus).not.toHaveBeenCalled();
+    expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("suppresses success status when showDrawingToasts is false", () => {
+  it("always shows success status when arrow is created", () => {
     const addArrow = vi.fn();
     const setStatus = vi.fn();
     const flashStatus = vi.fn();
@@ -375,7 +374,6 @@ describe("useDrawingMode", () => {
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(
           createOptions({
-            showDrawingToasts: false,
             addArrow,
             selection: props.selection,
             setStatus,
@@ -395,32 +393,7 @@ describe("useDrawingMode", () => {
     });
 
     expect(addArrow).toHaveBeenCalled();
-    expect(setStatus).not.toHaveBeenCalled();
-    expect(flashStatus).not.toHaveBeenCalled();
-  });
-
-  it("auto-creates layer even when showDrawingToasts is false", () => {
-    const addLayer = vi.fn(() => "auto-layer-1");
-    const { result, rerender } = renderHook(
-      (props: { selection: WordSelection | null }) =>
-        useDrawingMode(
-          createOptions({
-            showDrawingToasts: false,
-            activeLayerId: null,
-            addLayer,
-            selection: props.selection,
-          }),
-        ),
-      { initialProps: { selection: null as WordSelection | null } },
-    );
-
-    rerender({ selection: word1 });
-    act(() => {
-      result.current.confirmSelection();
-    });
-
-    expect(addLayer).toHaveBeenCalled();
-    expect(result.current.isDrawing).toBe(true);
+    expect(flashStatus).toHaveBeenCalledWith({ text: "Arrow created.", type: "success" }, 3000);
   });
 
   it("selection is preserved after confirming anchor", () => {
@@ -471,9 +444,7 @@ describe("useDrawingMode", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
-        useDrawingMode(
-          createOptions({ activeTool: props.activeTool, showDrawingToasts: false, clearStatus }),
-        ),
+        useDrawingMode(createOptions({ activeTool: props.activeTool, clearStatus })),
       { initialProps: { activeTool: "selection" as ActiveTool } },
     );
 

@@ -6,18 +6,6 @@
       "label": "Mod gelap",
       "description": "Tukar antara tema cerah dan gelap"
     },
-    "drawingNotifications": {
-      "label": "Pemberitahuan lukisan",
-      "description": "Papar pemberitahuan semasa menggunakan alat anak panah"
-    },
-    "commentsNotifications": {
-      "label": "Pemberitahuan komen",
-      "description": "Papar pemberitahuan semasa menggunakan alat komen"
-    },
-    "highlightNotifications": {
-      "label": "Pemberitahuan sorotan",
-      "description": "Papar pemberitahuan semasa menggunakan alat sorotan"
-    },
     "overscroll": {
       "label": "Tatal lampau",
       "description": "Benarkan lantunan elastik apabila menatal melepasi tepi"

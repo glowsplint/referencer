@@ -6,12 +6,9 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 interface MobileInfoDialogProps {
   open: boolean;
@@ -24,7 +21,6 @@ export function MobileInfoDialog({ open, onOpenChange }: MobileInfoDialogProps) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        showCloseButton={false}
         className="flex flex-col gap-0 p-0 sm:max-w-sm"
         data-testid="mobileInfoDialog"
       >
@@ -33,13 +29,6 @@ export function MobileInfoDialog({ open, onOpenChange }: MobileInfoDialogProps) 
           <DialogTitle>{t("mobile.title")}</DialogTitle>
           <DialogDescription>{t("mobile.description")}</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="border-t bg-background p-4">
-          <DialogClose asChild>
-            <Button variant="outline" className="w-full" data-testid="mobileInfoDismissButton">
-              {t("mobile.continueReading")}
-            </Button>
-          </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

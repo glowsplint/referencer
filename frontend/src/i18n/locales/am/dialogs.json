@@ -6,18 +6,6 @@
       "label": "ጨለማ ሁነታ",
       "description": "በብርሃን እና ጨለማ ገጽታዎች መካከል ይቀያይሩ"
     },
-    "drawingNotifications": {
-      "label": "የስዕል ማሳወቂያዎች",
-      "description": "የቀስት መሣሪያውን ሲጠቀሙ ማሳወቂያዎችን ያሳዩ"
-    },
-    "commentsNotifications": {
-      "label": "የአስተያየት ማሳወቂያዎች",
-      "description": "የአስተያየት መሣሪያውን ሲጠቀሙ ማሳወቂያዎችን ያሳዩ"
-    },
-    "highlightNotifications": {
-      "label": "የማድመቂያ ማሳወቂያዎች",
-      "description": "የማድመቂያ መሣሪያውን ሲጠቀሙ ማሳወቂያዎችን ያሳዩ"
-    },
     "overscroll": {
       "label": "ከመጠን በላይ ማሸብለል",
       "description": "ከጠርዞች ባሻገር ሲያሸብልሉ የመለጠጥ ባህሪን ይፍቀዱ"

@@ -17,9 +17,6 @@ describe("useSettings", () => {
       isLayersOn: false,
       isMultipleRowsLayout: false,
       isLocked: true,
-      showDrawingToasts: true,
-      showCommentsToasts: true,
-      showHighlightToasts: true,
       overscrollEnabled: false,
       hideOffscreenArrows: false,
       showStatusBar: true,
@@ -93,38 +90,6 @@ describe("useSettings", () => {
     expect(result.current.annotations.activeTool).toBe("selection");
   });
 
-  it("toggleShowDrawingToasts toggles showDrawingToasts", () => {
-    const { result } = renderHook(() => useSettings());
-
-    expect(result.current.settings.showDrawingToasts).toBe(true);
-
-    act(() => {
-      result.current.toggleShowDrawingToasts();
-    });
-    expect(result.current.settings.showDrawingToasts).toBe(false);
-
-    act(() => {
-      result.current.toggleShowDrawingToasts();
-    });
-    expect(result.current.settings.showDrawingToasts).toBe(true);
-  });
-
-  it("toggleShowCommentsToasts toggles showCommentsToasts", () => {
-    const { result } = renderHook(() => useSettings());
-
-    expect(result.current.settings.showCommentsToasts).toBe(true);
-
-    act(() => {
-      result.current.toggleShowCommentsToasts();
-    });
-    expect(result.current.settings.showCommentsToasts).toBe(false);
-
-    act(() => {
-      result.current.toggleShowCommentsToasts();
-    });
-    expect(result.current.settings.showCommentsToasts).toBe(true);
-  });
-
   it("toggling one setting does not affect others", () => {
     const { result } = renderHook(() => useSettings());
 
@@ -135,27 +100,8 @@ describe("useSettings", () => {
     expect(result.current.settings.isLayersOn).toBe(false);
     expect(result.current.settings.isMultipleRowsLayout).toBe(false);
     expect(result.current.settings.isLocked).toBe(true);
-    expect(result.current.settings.showDrawingToasts).toBe(true);
-    expect(result.current.settings.showCommentsToasts).toBe(true);
-    expect(result.current.settings.showHighlightToasts).toBe(true);
     expect(result.current.settings.overscrollEnabled).toBe(false);
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
-  });
-
-  it("toggleShowHighlightToasts toggles showHighlightToasts", () => {
-    const { result } = renderHook(() => useSettings());
-
-    expect(result.current.settings.showHighlightToasts).toBe(true);
-
-    act(() => {
-      result.current.toggleShowHighlightToasts();
-    });
-    expect(result.current.settings.showHighlightToasts).toBe(false);
-
-    act(() => {
-      result.current.toggleShowHighlightToasts();
-    });
-    expect(result.current.settings.showHighlightToasts).toBe(true);
   });
 
   it("toggleOverscrollEnabled toggles overscrollEnabled and updates classList", () => {
@@ -196,9 +142,6 @@ describe("useSettings", () => {
         isLayersOn: true,
         isMultipleRowsLayout: false,
         isLocked: false,
-        showDrawingToasts: false,
-        showCommentsToasts: true,
-        showHighlightToasts: true,
         overscrollEnabled: false,
       }),
     );
@@ -207,7 +150,6 @@ describe("useSettings", () => {
 
     expect(result.current.settings.isDarkMode).toBe(true);
     expect(result.current.settings.isLayersOn).toBe(true);
-    expect(result.current.settings.showDrawingToasts).toBe(false);
   });
 
   it("falls back to defaults when localStorage has invalid JSON", () => {
@@ -220,9 +162,6 @@ describe("useSettings", () => {
       isLayersOn: false,
       isMultipleRowsLayout: false,
       isLocked: true,
-      showDrawingToasts: true,
-      showCommentsToasts: true,
-      showHighlightToasts: true,
       overscrollEnabled: false,
       hideOffscreenArrows: false,
       showStatusBar: true,
@@ -241,9 +180,6 @@ describe("useSettings", () => {
 
     expect(result.current.settings.isDarkMode).toBe(true);
     expect(result.current.settings.isLayersOn).toBe(false);
-    expect(result.current.settings.showDrawingToasts).toBe(true);
-    expect(result.current.settings.showCommentsToasts).toBe(true);
-    expect(result.current.settings.showHighlightToasts).toBe(true);
     expect(result.current.settings.overscrollEnabled).toBe(false);
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
   });

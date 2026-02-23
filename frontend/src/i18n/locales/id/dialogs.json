@@ -6,18 +6,6 @@
       "label": "Mode gelap",
       "description": "Beralih antara tema terang dan gelap"
     },
-    "drawingNotifications": {
-      "label": "Notifikasi gambar",
-      "description": "Tampilkan notifikasi saat menggunakan alat panah"
-    },
-    "commentsNotifications": {
-      "label": "Notifikasi komentar",
-      "description": "Tampilkan notifikasi saat menggunakan alat komentar"
-    },
-    "highlightNotifications": {
-      "label": "Notifikasi sorotan",
-      "description": "Tampilkan notifikasi saat menggunakan alat sorotan"
-    },
     "overscroll": {
       "label": "Gulir berlebih",
       "description": "Izinkan efek pantulan saat menggulir melewati tepi"

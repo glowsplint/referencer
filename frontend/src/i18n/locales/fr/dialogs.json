@@ -6,18 +6,6 @@
       "label": "Mode sombre",
       "description": "Basculer entre les thèmes clair et sombre"
     },
-    "drawingNotifications": {
-      "label": "Notifications de dessin",
-      "description": "Afficher les notifications lors de l'utilisation de l'outil flèche"
-    },
-    "commentsNotifications": {
-      "label": "Notifications de commentaires",
-      "description": "Afficher les notifications lors de l'utilisation de l'outil de commentaires"
-    },
-    "highlightNotifications": {
-      "label": "Notifications de surlignage",
-      "description": "Afficher les notifications lors de l'utilisation de l'outil de surlignage"
-    },
     "overscroll": {
       "label": "Défilement élastique",
       "description": "Permettre le rebond élastique au-delà des bords"

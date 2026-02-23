@@ -10,7 +10,6 @@ describe("MobileInfoDialog", () => {
     expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument();
     expect(screen.getByText("Best on Desktop")).toBeInTheDocument();
     expect(screen.getByText(/designed for desktop use/)).toBeInTheDocument();
-    expect(screen.getByText("Continue Reading")).toBeInTheDocument();
   });
 
   it("does not render when closed", () => {
@@ -19,13 +18,13 @@ describe("MobileInfoDialog", () => {
     expect(screen.queryByTestId("mobileInfoDialog")).not.toBeInTheDocument();
   });
 
-  it("calls onOpenChange when dismiss button is clicked", async () => {
+  it("calls onOpenChange when X close button is clicked", async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();
 
     render(<MobileInfoDialog open={true} onOpenChange={onOpenChange} />);
 
-    await user.click(screen.getByTestId("mobileInfoDismissButton"));
+    await user.click(screen.getByRole("button", { name: "Close" }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

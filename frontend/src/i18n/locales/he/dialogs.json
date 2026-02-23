@@ -6,18 +6,6 @@
       "label": "מצב כהה",
       "description": "מעבר בין ערכת נושא בהירה לכהה"
     },
-    "drawingNotifications": {
-      "label": "התראות שרטוט",
-      "description": "הצגת התראות בעת שימוש בכלי החץ"
-    },
-    "commentsNotifications": {
-      "label": "התראות הערות",
-      "description": "הצגת התראות בעת שימוש בכלי ההערות"
-    },
-    "highlightNotifications": {
-      "label": "התראות הדגשה",
-      "description": "הצגת התראות בעת שימוש בכלי ההדגשה"
-    },
     "overscroll": {
       "label": "גלילת יתר",
       "description": "אפשרו קפיצה אלסטית בגלילה מעבר לקצוות"

@@ -1,6 +1,6 @@
-// Manages all UI settings (dark mode, layout, lock state, toast preferences)
-// persisted to localStorage. Also tracks transient annotation state like
-// the active tool, arrow style picker, and selected arrow.
+// Manages all UI settings (dark mode, layout, lock state) persisted to
+// localStorage. Also tracks transient annotation state like the active tool,
+// arrow style picker, and selected arrow.
 import { useEffect, useState, useCallback } from "react";
 import type { EditorSettings, AnnotationSettings, ActiveTool, ArrowStyle } from "@/types/editor";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
@@ -10,9 +10,6 @@ const DEFAULT_SETTINGS: EditorSettings = {
   isLayersOn: false,
   isMultipleRowsLayout: false,
   isLocked: true,
-  showDrawingToasts: true,
-  showCommentsToasts: true,
-  showHighlightToasts: true,
   overscrollEnabled: false,
   hideOffscreenArrows: false,
   showStatusBar: true,
@@ -60,9 +57,6 @@ export function useSettings() {
   const toggleLayersOn = useToggle(setSettings, "isLayersOn");
   const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout");
   const toggleLocked = useToggle(setSettings, "isLocked");
-  const toggleShowDrawingToasts = useToggle(setSettings, "showDrawingToasts");
-  const toggleShowCommentsToasts = useToggle(setSettings, "showCommentsToasts");
-  const toggleShowHighlightToasts = useToggle(setSettings, "showHighlightToasts");
   const toggleOverscrollEnabled = useToggle(setSettings, "overscrollEnabled");
   const toggleHideOffscreenArrows = useToggle(setSettings, "hideOffscreenArrows");
   const toggleShowStatusBar = useToggle(setSettings, "showStatusBar");
@@ -81,9 +75,6 @@ export function useSettings() {
     toggleLayersOn,
     toggleMultipleRowsLayout,
     toggleLocked,
-    toggleShowDrawingToasts,
-    toggleShowCommentsToasts,
-    toggleShowHighlightToasts,
     toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,

@@ -7,9 +7,6 @@ export interface EditorSettings {
   isLayersOn: boolean;
   isMultipleRowsLayout: boolean;
   isLocked: boolean;
-  showDrawingToasts: boolean;
-  showCommentsToasts: boolean;
-  showHighlightToasts: boolean;
   overscrollEnabled: boolean;
   hideOffscreenArrows: boolean;
   showStatusBar: boolean;

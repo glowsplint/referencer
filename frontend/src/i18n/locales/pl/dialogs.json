@@ -6,18 +6,6 @@
       "label": "Tryb ciemny",
       "description": "Przelaczaj miedzy jasnym a ciemnym motywem"
     },
-    "drawingNotifications": {
-      "label": "Powiadomienia o rysowaniu",
-      "description": "Pokazuj powiadomienia podczas korzystania z narzedzia strzalek"
-    },
-    "commentsNotifications": {
-      "label": "Powiadomienia o komentarzach",
-      "description": "Pokazuj powiadomienia podczas korzystania z narzedzia komentarzy"
-    },
-    "highlightNotifications": {
-      "label": "Powiadomienia o podswietleniu",
-      "description": "Pokazuj powiadomienia podczas korzystania z narzedzia podswietlania"
-    },
     "overscroll": {
       "label": "Nadmierne przewijanie",
       "description": "Pozwol na efekt sprezystosci przy przewijaniu poza krawedzie"

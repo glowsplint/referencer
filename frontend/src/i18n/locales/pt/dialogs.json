@@ -6,18 +6,6 @@
       "label": "Modo escuro",
       "description": "Alternar entre temas claro e escuro"
     },
-    "drawingNotifications": {
-      "label": "Notificações de desenho",
-      "description": "Mostrar avisos ao usar a ferramenta de seta"
-    },
-    "commentsNotifications": {
-      "label": "Notificações de comentários",
-      "description": "Mostrar avisos ao usar a ferramenta de comentários"
-    },
-    "highlightNotifications": {
-      "label": "Notificações de destaque",
-      "description": "Mostrar avisos ao usar a ferramenta de destaque"
-    },
     "overscroll": {
       "label": "Rolagem elástica",
       "description": "Permitir efeito elástico ao rolar além das bordas"

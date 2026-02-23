@@ -6,18 +6,6 @@
       "label": "Donkere modus",
       "description": "Schakel tussen licht en donker thema"
     },
-    "drawingNotifications": {
-      "label": "Tekenmeldingen",
-      "description": "Toon meldingen bij gebruik van het pijlgereedschap"
-    },
-    "commentsNotifications": {
-      "label": "Opmerkingsmeldingen",
-      "description": "Toon meldingen bij gebruik van het opmerkingsgereedschap"
-    },
-    "highlightNotifications": {
-      "label": "Markeringsmeldingen",
-      "description": "Toon meldingen bij gebruik van het markeringsgereedschap"
-    },
     "overscroll": {
       "label": "Overscrolling",
       "description": "Sta elastisch terugveren toe bij het scrollen voorbij de randen"

@@ -6,18 +6,6 @@
       "label": "Karanlik mod",
       "description": "Acik ve karanlik temalar arasinda gecis yapin"
     },
-    "drawingNotifications": {
-      "label": "Cizim bildirimleri",
-      "description": "Ok araci kullanilirken bildirim goster"
-    },
-    "commentsNotifications": {
-      "label": "Yorum bildirimleri",
-      "description": "Yorum araci kullanilirken bildirim goster"
-    },
-    "highlightNotifications": {
-      "label": "Vurgulama bildirimleri",
-      "description": "Vurgulama araci kullanilirken bildirim goster"
-    },
     "overscroll": {
       "label": "Asiri kayma",
       "description": "Kenarlari gectiginde esnek sekme efektine izin ver"

@@ -24,7 +24,6 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     }[],
     addHighlight: vi.fn().mockReturnValue("h-1"),
     removeHighlight: vi.fn(),
-    showHighlightToasts: true,
     setStatus: vi.fn(),
     flashStatus: vi.fn(),
     clearStatus: vi.fn(),
@@ -227,9 +226,9 @@ describe("useHighlightMode", () => {
     expect(opts.addHighlight).toHaveBeenCalled();
   });
 
-  it("shows success status when highlight is created and showHighlightToasts is true", () => {
+  it("always shows success status when highlight is created", () => {
     const flashStatus = vi.fn();
-    const opts = createOptions({ selection: word1, showHighlightToasts: true, flashStatus });
+    const opts = createOptions({ selection: word1, flashStatus });
     const { result } = renderHook(() => useHighlightMode(opts));
 
     act(() => {
@@ -240,31 +239,10 @@ describe("useHighlightMode", () => {
     expect(flashStatus).toHaveBeenCalledWith({ text: "Highlight added.", type: "success" }, 3000);
   });
 
-  it("does not show success status when showHighlightToasts is false", () => {
-    const flashStatus = vi.fn();
-    const opts = createOptions({ selection: word1, showHighlightToasts: false, flashStatus });
-    const { result } = renderHook(() => useHighlightMode(opts));
-
-    act(() => {
-      result.current.confirmHighlight();
-    });
-
-    expect(opts.addHighlight).toHaveBeenCalled();
-    expect(flashStatus).not.toHaveBeenCalled();
-  });
-
-  it("suppresses entry status when showHighlightToasts is false", () => {
-    const setStatus = vi.fn();
-    renderHook(() => useHighlightMode(createOptions({ showHighlightToasts: false, setStatus })));
-
-    expect(setStatus).not.toHaveBeenCalled();
-  });
-
   it("shows removed status when toggling off highlight", () => {
     const flashStatus = vi.fn();
     const opts = createOptions({
       selection: word1,
-      showHighlightToasts: true,
       flashStatus,
       layers: [
         {
