@@ -28,8 +28,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: false,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
     });
     expect(screen.getByTestId("selectionToolButton")).toBeDisabled();
@@ -44,8 +42,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
     });
     expect(screen.getByTestId("selectionToolButton")).toBeEnabled();
@@ -60,8 +56,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
     });
     fireEvent.click(screen.getByTestId("selectionToolButton"));
@@ -75,8 +69,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
     });
     fireEvent.click(screen.getByTestId("arrowToolButton"));
@@ -90,8 +82,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
     });
     fireEvent.click(screen.getByTestId("commentsToolButton"));
@@ -105,8 +95,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       annotations: { activeTool: "arrow" },
     });
@@ -124,8 +112,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: false,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       annotations: { activeTool: "arrow" },
     });
@@ -193,8 +179,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
     });
     const btn = screen.getByTestId("selectionToolButton");
@@ -215,8 +199,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
     });
     const btn = screen.getByTestId("arrowToolButton");
@@ -276,8 +258,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       annotations: { activeTool: "arrow" },
     });
@@ -291,8 +271,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       annotations: { activeTool: "selection" },
     });
@@ -306,8 +284,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
     });
@@ -321,8 +297,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       arrowStylePickerOpen: true,
     });
@@ -337,8 +311,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       arrowStylePickerOpen: false,
     });
@@ -352,8 +324,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       arrowStylePickerOpen: true,
     });
@@ -370,8 +340,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       arrowStylePickerOpen: true,
       selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
@@ -390,8 +358,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       arrowStylePickerOpen: true,
       selectedArrow: null,
@@ -410,8 +376,6 @@ describe("ButtonPane", () => {
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
-        showDrawingToasts: true,
-        showCommentsToasts: true,
       },
       activeArrowStyle: "dashed",
     });

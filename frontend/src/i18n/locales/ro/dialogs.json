@@ -6,18 +6,6 @@
       "label": "Mod întunecat",
       "description": "Comutați între temele luminoasă și întunecată"
     },
-    "drawingNotifications": {
-      "label": "Notificări de desen",
-      "description": "Afișați notificări când folosiți instrumentul săgeată"
-    },
-    "commentsNotifications": {
-      "label": "Notificări de comentarii",
-      "description": "Afișați notificări când folosiți instrumentul de comentarii"
-    },
-    "highlightNotifications": {
-      "label": "Notificări de evidențiere",
-      "description": "Afișați notificări când folosiți instrumentul de evidențiere"
-    },
     "overscroll": {
       "label": "Derulare elastică",
       "description": "Permiteți efectul elastic la derularea dincolo de margini"

@@ -38,7 +38,7 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="sm:max-w-sm" data-testid="shareDialog">
+      <DialogContent className="sm:max-w-sm" data-testid="shareDialog">
         <DialogHeader>
           <DialogTitle>{t("share.title")}</DialogTitle>
           <DialogDescription>{t("share.description")}</DialogDescription>

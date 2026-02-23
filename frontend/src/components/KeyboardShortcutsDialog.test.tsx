@@ -83,15 +83,15 @@ describe("KeyboardShortcutsDialog", () => {
     expect(screen.getByText("Redo (workspace when locked)")).toBeInTheDocument();
   });
 
-  it("has a close button in the footer", () => {
+  it("has a close button (X) in the top-right", () => {
     renderDialog();
-    expect(screen.getByTestId("shortcutsCloseButton")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
   });
 
   it("calls onOpenChange when close button is clicked", () => {
     const onOpenChange = vi.fn();
     renderDialog(true, onOpenChange);
-    fireEvent.click(screen.getByTestId("shortcutsCloseButton"));
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 

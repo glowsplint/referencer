@@ -17,9 +17,6 @@ const mockWorkspace = {
     isLayersOn: false,
     isMultipleRowsLayout: false,
     isLocked: false,
-    showDrawingToasts: true,
-    showCommentsToasts: true,
-    showHighlightToasts: true,
     overscrollEnabled: false,
     showStatusBar: true,
     hideOffscreenArrows: false,
@@ -52,9 +49,6 @@ const mockWorkspace = {
   toggleLayersOn: vi.fn(),
   toggleMultipleRowsLayout: vi.fn(),
   toggleLocked: vi.fn(),
-  toggleShowDrawingToasts: vi.fn(),
-  toggleShowCommentsToasts: vi.fn(),
-  toggleShowHighlightToasts: vi.fn(),
   setActiveTool: vi.fn(),
   setArrowStylePickerOpen: vi.fn(),
   arrowStylePickerOpen: false,
@@ -181,9 +175,6 @@ beforeEach(() => {
     isLayersOn: false,
     isMultipleRowsLayout: false,
     isLocked: false,
-    showDrawingToasts: true,
-    showCommentsToasts: true,
-    showHighlightToasts: true,
     overscrollEnabled: false,
   };
   mockWorkspace.layers = [];
@@ -553,7 +544,7 @@ describe("App", () => {
       );
 
       expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument();
-      await user.click(screen.getByTestId("mobileInfoDismissButton"));
+      await user.click(screen.getByRole("button", { name: "Close" }));
       expect(screen.queryByTestId("mobileInfoDialog")).not.toBeInTheDocument();
     });
 

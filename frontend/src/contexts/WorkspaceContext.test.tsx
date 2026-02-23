@@ -10,7 +10,6 @@ function makeMockWorkspace(): WorkspaceContextValue {
       isLayersOn: false,
       isMultipleRowsLayout: false,
       isLocked: false,
-      showDrawingToasts: true,
     },
     annotations: { activeTool: "selection" as const },
     layers: [],

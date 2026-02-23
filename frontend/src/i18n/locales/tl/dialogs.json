@@ -6,18 +6,6 @@
       "label": "Dark mode",
       "description": "Magpalipat-lipat sa pagitan ng maliwanag at madilim na tema"
     },
-    "drawingNotifications": {
-      "label": "Mga abiso sa pagguhit",
-      "description": "Magpakita ng mga toast kapag ginagamit ang kasangkapang palaso"
-    },
-    "commentsNotifications": {
-      "label": "Mga abiso sa komento",
-      "description": "Magpakita ng mga toast kapag ginagamit ang kasangkapang pang-komento"
-    },
-    "highlightNotifications": {
-      "label": "Mga abiso sa highlight",
-      "description": "Magpakita ng mga toast kapag ginagamit ang kasangkapang pang-highlight"
-    },
     "overscroll": {
       "label": "Overscroll",
       "description": "Payagan ang elastic bounce kapag nag-scroll na lampas sa mga gilid"

@@ -1,17 +1,14 @@
-// Workspace settings dialog with toggle switches for dark mode, notification
-// preferences (drawing/comments/highlight toasts), and overscroll behavior.
+// Workspace settings dialog with toggle switches for dark mode, overscroll
+// behavior, arrow visibility, and status bar.
 import { useTranslation } from "react-i18next";
 import i18n, { LANGUAGE_OPTIONS } from "@/i18n";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
 interface SettingsRow {
@@ -46,12 +43,6 @@ interface SettingsDialogProps {
   onOpenChange: (open: boolean) => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
-  showDrawingToasts: boolean;
-  toggleShowDrawingToasts: () => void;
-  showCommentsToasts: boolean;
-  toggleShowCommentsToasts: () => void;
-  showHighlightToasts: boolean;
-  toggleShowHighlightToasts: () => void;
   overscrollEnabled: boolean;
   toggleOverscrollEnabled: () => void;
   hideOffscreenArrows: boolean;
@@ -65,12 +56,6 @@ export function SettingsDialog({
   onOpenChange,
   isDarkMode,
   toggleDarkMode,
-  showDrawingToasts,
-  toggleShowDrawingToasts,
-  showCommentsToasts,
-  toggleShowCommentsToasts,
-  showHighlightToasts,
-  toggleShowHighlightToasts,
   overscrollEnabled,
   toggleOverscrollEnabled,
   hideOffscreenArrows,
@@ -79,7 +64,6 @@ export function SettingsDialog({
   toggleShowStatusBar,
 }: SettingsDialogProps) {
   const { t } = useTranslation("dialogs");
-  const { t: tc } = useTranslation("common");
 
   const rows: SettingsRow[] = [
     {
@@ -88,27 +72,6 @@ export function SettingsDialog({
       description: t("settings.darkMode.description"),
       checked: isDarkMode,
       onCheckedChange: toggleDarkMode,
-    },
-    {
-      id: "drawing-notifications",
-      label: t("settings.drawingNotifications.label"),
-      description: t("settings.drawingNotifications.description"),
-      checked: showDrawingToasts,
-      onCheckedChange: toggleShowDrawingToasts,
-    },
-    {
-      id: "comments-notifications",
-      label: t("settings.commentsNotifications.label"),
-      description: t("settings.commentsNotifications.description"),
-      checked: showCommentsToasts,
-      onCheckedChange: toggleShowCommentsToasts,
-    },
-    {
-      id: "highlight-notifications",
-      label: t("settings.highlightNotifications.label"),
-      description: t("settings.highlightNotifications.description"),
-      checked: showHighlightToasts,
-      onCheckedChange: toggleShowHighlightToasts,
     },
     {
       id: "overscroll",
@@ -136,7 +99,6 @@ export function SettingsDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        showCloseButton={false}
         className="flex flex-col gap-0 p-0 sm:max-w-sm"
         data-testid="settingsDialog"
       >
@@ -170,13 +132,6 @@ export function SettingsDialog({
             </select>
           </div>
         </div>
-        <DialogFooter className="sticky bottom-0 border-t bg-background p-4">
-          <DialogClose asChild>
-            <Button variant="outline" data-testid="settingsCloseButton">
-              {tc("close")}
-            </Button>
-          </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

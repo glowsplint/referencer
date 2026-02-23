@@ -2,18 +2,9 @@
   "settings": {
     "title": "Configuración",
     "description": "Personaliza las preferencias de tu espacio de trabajo.",
-    "darkMode": { "label": "Modo oscuro", "description": "Alternar entre temas claro y oscuro" },
-    "drawingNotifications": {
-      "label": "Notificaciones de dibujo",
-      "description": "Mostrar avisos al usar la herramienta de flecha"
-    },
-    "commentsNotifications": {
-      "label": "Notificaciones de comentarios",
-      "description": "Mostrar avisos al usar la herramienta de comentarios"
-    },
-    "highlightNotifications": {
-      "label": "Notificaciones de resaltado",
-      "description": "Mostrar avisos al usar la herramienta de resaltado"
+    "darkMode": {
+      "label": "Modo oscuro",
+      "description": "Alternar entre temas claro y oscuro"
     },
     "overscroll": {
       "label": "Desplazamiento elástico",
@@ -23,7 +14,10 @@
       "label": "Ocultar flechas fuera de pantalla",
       "description": "Ocultar completamente las flechas cuando algún extremo esté fuera de la vista"
     },
-    "language": { "label": "Idioma", "description": "Elige tu idioma preferido" }
+    "language": {
+      "label": "Idioma",
+      "description": "Elige tu idioma preferido"
+    }
   },
   "faq": {
     "title": "Preguntas frecuentes",

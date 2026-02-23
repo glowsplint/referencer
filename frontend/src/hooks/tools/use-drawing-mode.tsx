@@ -39,7 +39,6 @@ interface UseDrawingModeOptions {
   activeArrowStyle: ArrowStyle;
   addLayer: () => string;
   addArrow: (layerId: string, arrow: Omit<Arrow, "id" | "visible">) => void;
-  showDrawingToasts: boolean;
   setStatus: (msg: StatusMessage) => void;
   flashStatus: (msg: StatusMessage, duration: number) => void;
   clearStatus: () => void;
@@ -53,7 +52,6 @@ export function useDrawingMode({
   activeArrowStyle,
   addLayer,
   addArrow,
-  showDrawingToasts,
   setStatus,
   flashStatus,
   clearStatus,
@@ -73,8 +71,6 @@ export function useDrawingMode({
   const addArrowRef = useLatestRef(addArrow);
   const activeArrowStyleRef = useLatestRef(activeArrowStyle);
 
-  const showDrawingToastsRef = useLatestRef(showDrawingToasts);
-
   const setStatusRef = useLatestRef(setStatus);
   const flashStatusRef = useLatestRef(flashStatus);
   const clearStatusRef = useLatestRef(clearStatus);
@@ -86,9 +82,7 @@ export function useDrawingMode({
   const isArrowTool = activeTool === "arrow" && isLocked;
 
   const showInfo = (text: ReactNode) => {
-    if (showDrawingToastsRef.current) {
-      setStatusRef.current({ text, type: "info" });
-    }
+    setStatusRef.current({ text, type: "info" });
   };
 
   // Entry/exit effect: entering arrow mode → selecting-anchor; leaving → idle
@@ -182,12 +176,10 @@ export function useDrawingMode({
       anchorRef.current = null;
       phaseRef.current = "selecting-anchor";
       setDrawingState(null);
-      if (showDrawingToastsRef.current) {
-        flashStatusRef.current(
-          { text: i18n.t("tools:arrow.created"), type: "success" },
-          FLASH_DURATION_MS,
-        );
-      }
+      flashStatusRef.current(
+        { text: i18n.t("tools:arrow.created"), type: "success" },
+        FLASH_DURATION_MS,
+      );
       showInfo(
         <Trans
           ns="tools"

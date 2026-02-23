@@ -44,7 +44,6 @@ export interface UseAnnotationToolModeOptions<TLayer> {
   layers: TLayer[];
   addItem: (layerId: string, payload: never) => string;
   removeItem: (layerId: string, itemId: string) => void;
-  showToasts: boolean;
   setStatus: (msg: StatusMessage) => void;
   flashStatus: (msg: StatusMessage, duration: number) => void;
   clearStatus: () => void;
@@ -71,7 +70,6 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
   layers,
   addItem,
   removeItem,
-  showToasts,
   setStatus,
   flashStatus,
   clearStatus,
@@ -94,7 +92,6 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
   const selectionRef = useLatestRef(selection);
   const activeToolRef = useLatestRef(activeTool);
   const isLockedRef = useLatestRef(isLocked);
-  const showToastsRef = useLatestRef(showToasts);
   const setStatusRef = useLatestRef(setStatus);
   const flashStatusRef = useLatestRef(flashStatus);
   const clearStatusRef = useLatestRef(clearStatus);
@@ -108,19 +105,17 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
   // Entry/exit effect
   useEffect(() => {
     if (isActive) {
-      if (showToastsRef.current) {
-        setStatusRef.current({
-          text: (
-            <Trans
-              ns="tools"
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              i18nKey={`${configRef.current.i18nKey}.selectWords` as any}
-              components={{ kbd: <ToastKbd>_</ToastKbd> }}
-            />
-          ),
-          type: "info",
-        });
-      }
+      setStatusRef.current({
+        text: (
+          <Trans
+            ns="tools"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            i18nKey={`${configRef.current.i18nKey}.selectWords` as any}
+            components={{ kbd: <ToastKbd>_</ToastKbd> }}
+          />
+        ),
+        type: "info",
+      });
     } else if (activeToolRef.current === "selection" || !isLockedRef.current) {
       clearStatusRef.current();
     }
@@ -155,7 +150,7 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
       const existing = cfg.findExisting(items, sel);
       if (existing) {
         removeItemRef.current(layerId!, existing.id);
-        if (showToastsRef.current && removedTextRef.current) {
+        if (removedTextRef.current) {
           flashStatusRef.current(
             { text: removedTextRef.current, type: "success" },
             FLASH_DURATION_MS,
@@ -171,7 +166,7 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
       layerId!,
       payload,
     );
-    if (showToastsRef.current && addedTextRef.current) {
+    if (addedTextRef.current) {
       flashStatusRef.current({ text: addedTextRef.current, type: "success" }, FLASH_DURATION_MS);
     }
     onItemAddedRef.current?.(layerId!, itemId);

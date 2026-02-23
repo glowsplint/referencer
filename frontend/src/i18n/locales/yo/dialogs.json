@@ -6,18 +6,6 @@
       "label": "Ọ̀nà dúdú",
       "description": "Yí padà láàárín àwọn àwòrán ìmọ́lẹ̀ àti dúdú"
     },
-    "drawingNotifications": {
-      "label": "Àwọn ìfitónilétí yíya",
-      "description": "Fi àwọn ìkìlọ̀ hàn nígbà tí o bá ń lo ohun èlò ọfà"
-    },
-    "commentsNotifications": {
-      "label": "Àwọn ìfitónilétí àlàyé",
-      "description": "Fi àwọn ìkìlọ̀ hàn nígbà tí o bá ń lo ohun èlò àlàyé"
-    },
-    "highlightNotifications": {
-      "label": "Àwọn ìfitónilétí àmì ìtànṣán",
-      "description": "Fi àwọn ìkìlọ̀ hàn nígbà tí o bá ń lo ohun èlò àmì ìtànṣán"
-    },
     "overscroll": {
       "label": "Yíyí kọjá àlà",
       "description": "Gba àyà yíyí padà nígbà tí o bá yí kọjá àwọn ẹ̀gbẹ́"

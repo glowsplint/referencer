@@ -8,12 +8,6 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
     onOpenChange: vi.fn(),
     isDarkMode: false,
     toggleDarkMode: vi.fn(),
-    showDrawingToasts: true,
-    toggleShowDrawingToasts: vi.fn(),
-    showCommentsToasts: true,
-    toggleShowCommentsToasts: vi.fn(),
-    showHighlightToasts: true,
-    toggleShowHighlightToasts: vi.fn(),
     overscrollEnabled: false,
     toggleOverscrollEnabled: vi.fn(),
     hideOffscreenArrows: false,
@@ -37,41 +31,28 @@ describe("SettingsDialog", () => {
   it("renders all setting rows", () => {
     renderDialog();
     expect(screen.getByText("Dark mode")).toBeInTheDocument();
-    expect(screen.getByText("Drawing notifications")).toBeInTheDocument();
-    expect(screen.getByText("Comments notifications")).toBeInTheDocument();
-    expect(screen.getByText("Highlight notifications")).toBeInTheDocument();
     expect(screen.getByText("Overscroll")).toBeInTheDocument();
+    expect(screen.getByText("Hide off-screen arrows")).toBeInTheDocument();
+    expect(screen.getByText("Status bar")).toBeInTheDocument();
+  });
+
+  it("does not render removed toast notification settings", () => {
+    renderDialog();
+    expect(screen.queryByText("Drawing notifications")).not.toBeInTheDocument();
+    expect(screen.queryByText("Comments notifications")).not.toBeInTheDocument();
+    expect(screen.queryByText("Highlight notifications")).not.toBeInTheDocument();
   });
 
   it("renders switches with correct checked state", () => {
-    renderDialog({ isDarkMode: true, showDrawingToasts: false, showCommentsToasts: true });
+    renderDialog({ isDarkMode: true, overscrollEnabled: false });
     expect(screen.getByTestId("dark-mode-switch")).toHaveAttribute("data-state", "checked");
-    expect(screen.getByTestId("drawing-notifications-switch")).toHaveAttribute(
-      "data-state",
-      "unchecked",
-    );
-    expect(screen.getByTestId("comments-notifications-switch")).toHaveAttribute(
-      "data-state",
-      "checked",
-    );
+    expect(screen.getByTestId("overscroll-switch")).toHaveAttribute("data-state", "unchecked");
   });
 
   it("calls toggleDarkMode when dark mode switch is clicked", () => {
     const props = renderDialog();
     fireEvent.click(screen.getByTestId("dark-mode-switch"));
     expect(props.toggleDarkMode).toHaveBeenCalledOnce();
-  });
-
-  it("calls toggleShowDrawingToasts when drawing switch is clicked", () => {
-    const props = renderDialog();
-    fireEvent.click(screen.getByTestId("drawing-notifications-switch"));
-    expect(props.toggleShowDrawingToasts).toHaveBeenCalledOnce();
-  });
-
-  it("calls toggleShowCommentsToasts when comments switch is clicked", () => {
-    const props = renderDialog();
-    fireEvent.click(screen.getByTestId("comments-notifications-switch"));
-    expect(props.toggleShowCommentsToasts).toHaveBeenCalledOnce();
   });
 
   it("renders overscroll switch with correct checked state", () => {

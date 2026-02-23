@@ -85,7 +85,6 @@ export interface UseCommentModeOptions {
   ) => string;
   removeHighlight: (layerId: string, highlightId: string) => void;
   onHighlightAdded?: (layerId: string, highlightId: string) => void;
-  showCommentToasts: boolean;
   setStatus: (msg: StatusMessage) => void;
   flashStatus: (msg: StatusMessage, duration: number) => void;
   clearStatus: () => void;
@@ -101,7 +100,6 @@ export function useCommentMode({
   addHighlight,
   removeHighlight,
   onHighlightAdded,
-  showCommentToasts,
   setStatus,
   flashStatus,
   clearStatus,
@@ -119,7 +117,6 @@ export function useCommentMode({
     layers,
     addItem: addHighlight as never,
     removeItem: removeHighlight,
-    showToasts: showCommentToasts,
     setStatus,
     flashStatus,
     clearStatus,

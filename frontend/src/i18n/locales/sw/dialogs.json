@@ -6,18 +6,6 @@
       "label": "Hali ya giza",
       "description": "Badilisha kati ya mandhari meupe na meusi"
     },
-    "drawingNotifications": {
-      "label": "Arifa za kuchora",
-      "description": "Onyesha arifa unapotumia chombo cha mshale"
-    },
-    "commentsNotifications": {
-      "label": "Arifa za maoni",
-      "description": "Onyesha arifa unapotumia chombo cha maoni"
-    },
-    "highlightNotifications": {
-      "label": "Arifa za kuangazia",
-      "description": "Onyesha arifa unapotumia chombo cha kuangazia"
-    },
     "overscroll": {
       "label": "Kusogeza kupita",
       "description": "Ruhusu kuruka unaposogeza zaidi ya kingo"

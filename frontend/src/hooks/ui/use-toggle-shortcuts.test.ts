@@ -114,7 +114,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleDarkMode).not.toHaveBeenCalled();
   });
 
-  it("K toggles lock even when target is contentEditable element", () => {
+  it("K does not toggle lock when target is contentEditable element", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -125,37 +125,7 @@ describe("useToggleShortcuts", () => {
 
     editableDiv.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyK", bubbles: true }));
 
-    expect(callbacks.toggleLocked).toHaveBeenCalledOnce();
-    document.body.removeChild(editableDiv);
-  });
-
-  it("K blurs active element before toggling lock", () => {
-    const callbacks = makeCallbacks();
-    // Track the order: blur must happen before toggleLocked
-    const callOrder: string[] = [];
-    callbacks.toggleLocked = vi.fn(() => callOrder.push("lock"));
-
-    renderHook(() => useToggleShortcuts(callbacks));
-
-    const editableDiv = document.createElement("div");
-    editableDiv.contentEditable = "true";
-    document.body.appendChild(editableDiv);
-    editableDiv.focus();
-
-    // Spy on blur of whatever is activeElement
-    const originalBlur = HTMLElement.prototype.blur;
-    HTMLElement.prototype.blur = vi.fn(function (this: HTMLElement) {
-      callOrder.push("blur");
-      return originalBlur.call(this);
-    });
-
-    editableDiv.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyK", bubbles: true }));
-
-    expect(callOrder).toContain("blur");
-    expect(callOrder).toContain("lock");
-    expect(callOrder.indexOf("blur")).toBeLessThan(callOrder.indexOf("lock"));
-
-    HTMLElement.prototype.blur = originalBlur;
+    expect(callbacks.toggleLocked).not.toHaveBeenCalled();
     document.body.removeChild(editableDiv);
   });
 

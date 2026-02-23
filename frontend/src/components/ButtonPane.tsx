@@ -113,9 +113,6 @@ export function ButtonPane() {
     toggleMultipleRowsLayout,
     setActiveTool,
     toggleLocked,
-    toggleShowDrawingToasts,
-    toggleShowCommentsToasts,
-    toggleShowHighlightToasts,
     toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
@@ -318,12 +315,6 @@ export function ButtonPane() {
         onOpenChange={setSettingsOpen}
         isDarkMode={settings.isDarkMode}
         toggleDarkMode={toggleDarkMode}
-        showDrawingToasts={settings.showDrawingToasts}
-        toggleShowDrawingToasts={toggleShowDrawingToasts}
-        showCommentsToasts={settings.showCommentsToasts}
-        toggleShowCommentsToasts={toggleShowCommentsToasts}
-        showHighlightToasts={settings.showHighlightToasts}
-        toggleShowHighlightToasts={toggleShowHighlightToasts}
         overscrollEnabled={settings.overscrollEnabled}
         toggleOverscrollEnabled={toggleOverscrollEnabled}
         hideOffscreenArrows={settings.hideOffscreenArrows}

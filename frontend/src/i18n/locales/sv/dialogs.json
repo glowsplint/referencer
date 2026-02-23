@@ -6,18 +6,6 @@
       "label": "Mörkt läge",
       "description": "Växla mellan ljust och mörkt tema"
     },
-    "drawingNotifications": {
-      "label": "Ritaviseringar",
-      "description": "Visa aviseringar när pilverktyget används"
-    },
-    "commentsNotifications": {
-      "label": "Kommentaraviseringar",
-      "description": "Visa aviseringar när kommentarverktyget används"
-    },
-    "highlightNotifications": {
-      "label": "Markeringsaviseringar",
-      "description": "Visa aviseringar när markeringsverktyget används"
-    },
     "overscroll": {
       "label": "Överrullning",
       "description": "Tillåt elastisk studs vid rullning förbi kanterna"

@@ -6,18 +6,6 @@
       "label": "Dunkelmodus",
       "description": "Zwischen hellem und dunklem Design wechseln"
     },
-    "drawingNotifications": {
-      "label": "Zeichnungsbenachrichtigungen",
-      "description": "Benachrichtigungen beim Verwenden des Pfeilwerkzeugs anzeigen"
-    },
-    "commentsNotifications": {
-      "label": "Kommentarbenachrichtigungen",
-      "description": "Benachrichtigungen beim Verwenden des Kommentarwerkzeugs anzeigen"
-    },
-    "highlightNotifications": {
-      "label": "Hervorhebungsbenachrichtigungen",
-      "description": "Benachrichtigungen beim Verwenden des Hervorhebungswerkzeugs anzeigen"
-    },
     "overscroll": {
       "label": "Überscrollung",
       "description": "Elastisches Zurückfedern beim Scrollen über den Rand hinaus erlauben"

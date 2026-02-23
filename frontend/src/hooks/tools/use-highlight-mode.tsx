@@ -71,7 +71,6 @@ export interface UseHighlightModeOptions {
     },
   ) => string;
   removeHighlight: (layerId: string, highlightId: string) => void;
-  showHighlightToasts: boolean;
   setStatus: (msg: StatusMessage) => void;
   flashStatus: (msg: StatusMessage, duration: number) => void;
   clearStatus: () => void;
@@ -86,7 +85,6 @@ export function useHighlightMode({
   layers,
   addHighlight,
   removeHighlight,
-  showHighlightToasts,
   setStatus,
   flashStatus,
   clearStatus,
@@ -101,7 +99,6 @@ export function useHighlightMode({
     layers,
     addItem: addHighlight as never,
     removeItem: removeHighlight,
-    showToasts: showHighlightToasts,
     setStatus,
     flashStatus,
     clearStatus,

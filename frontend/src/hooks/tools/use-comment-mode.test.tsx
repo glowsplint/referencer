@@ -25,7 +25,6 @@ function createOptions(overrides: Record<string, unknown> = {}) {
     addHighlight: vi.fn().mockReturnValue("h-1"),
     removeHighlight: vi.fn(),
     onHighlightAdded: vi.fn(),
-    showCommentToasts: true,
     setStatus: vi.fn(),
     flashStatus: vi.fn(),
     clearStatus: vi.fn(),
@@ -261,9 +260,9 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("shows success status when highlight is created and showCommentToasts is true", () => {
+  it("always shows success status when comment is created", () => {
     const flashStatus = vi.fn();
-    const opts = createOptions({ selection: word1, showCommentToasts: true, flashStatus });
+    const opts = createOptions({ selection: word1, flashStatus });
     const { result } = renderHook(() => useCommentMode(opts));
 
     act(() => {
@@ -272,26 +271,6 @@ describe("useCommentMode", () => {
 
     expect(opts.addHighlight).toHaveBeenCalled();
     expect(flashStatus).toHaveBeenCalledWith({ text: "Comment added.", type: "success" }, 3000);
-  });
-
-  it("does not show success status when showCommentToasts is false", () => {
-    const flashStatus = vi.fn();
-    const opts = createOptions({ selection: word1, showCommentToasts: false, flashStatus });
-    const { result } = renderHook(() => useCommentMode(opts));
-
-    act(() => {
-      result.current.confirmComment();
-    });
-
-    expect(opts.addHighlight).toHaveBeenCalled();
-    expect(flashStatus).not.toHaveBeenCalled();
-  });
-
-  it("suppresses entry status when showCommentToasts is false", () => {
-    const setStatus = vi.fn();
-    renderHook(() => useCommentMode(createOptions({ showCommentToasts: false, setStatus })));
-
-    expect(setStatus).not.toHaveBeenCalled();
   });
 
   it("stays in comments mode (does NOT switch to selection)", () => {

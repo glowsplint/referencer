@@ -6,18 +6,6 @@
       "label": "Donker modus",
       "description": "Wissel tussen lig en donker temas"
     },
-    "drawingNotifications": {
-      "label": "Tekenkennisgewings",
-      "description": "Wys kennisgewings wanneer die pyltjie-instrument gebruik word"
-    },
-    "commentsNotifications": {
-      "label": "Kommentaarkennisgewings",
-      "description": "Wys kennisgewings wanneer die kommentaar-instrument gebruik word"
-    },
-    "highlightNotifications": {
-      "label": "Uitligkennisgewings",
-      "description": "Wys kennisgewings wanneer die uitlig-instrument gebruik word"
-    },
     "overscroll": {
       "label": "Oorrolling",
       "description": "Laat elastiese weerkaatsing toe wanneer verby rande gerol word"

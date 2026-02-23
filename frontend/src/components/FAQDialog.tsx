@@ -5,12 +5,9 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 interface FAQItem {
   question: string;
@@ -33,7 +30,6 @@ interface FAQDialogProps {
 
 export function FAQDialog({ open, onOpenChange }: FAQDialogProps) {
   const { t } = useTranslation("dialogs");
-  const { t: tc } = useTranslation("common");
 
   const FAQ_ITEMS: FAQItem[] = [
     {
@@ -73,7 +69,6 @@ export function FAQDialog({ open, onOpenChange }: FAQDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        showCloseButton={false}
         className="flex flex-col gap-0 p-0 sm:max-w-lg"
         data-testid="faqDialog"
       >
@@ -88,13 +83,6 @@ export function FAQDialog({ open, onOpenChange }: FAQDialogProps) {
             ))}
           </div>
         </div>
-        <DialogFooter className="sticky bottom-0 border-t bg-background p-4">
-          <DialogClose asChild>
-            <Button variant="outline" data-testid="faqCloseButton">
-              {tc("close")}
-            </Button>
-          </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

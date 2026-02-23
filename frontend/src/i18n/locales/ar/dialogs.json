@@ -6,18 +6,6 @@
       "label": "الوضع الداكن",
       "description": "التبديل بين السمة الفاتحة والداكنة"
     },
-    "drawingNotifications": {
-      "label": "إشعارات الرسم",
-      "description": "إظهار الإشعارات عند استخدام أداة السهم"
-    },
-    "commentsNotifications": {
-      "label": "إشعارات التعليقات",
-      "description": "إظهار الإشعارات عند استخدام أداة التعليقات"
-    },
-    "highlightNotifications": {
-      "label": "إشعارات التمييز",
-      "description": "إظهار الإشعارات عند استخدام أداة التمييز"
-    },
     "overscroll": {
       "label": "التمرير المرن",
       "description": "السماح بالارتداد المرن عند التمرير إلى ما بعد الحواف"

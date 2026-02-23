@@ -6,12 +6,9 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 interface ShortcutEntry {
   keys: string[];
@@ -78,7 +75,6 @@ interface KeyboardShortcutsDialogProps {
 
 export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcutsDialogProps) {
   const { t } = useTranslation("dialogs");
-  const { t: tc } = useTranslation("common");
 
   const LEFT_SECTIONS: ShortcutSection[] = [
     {
@@ -158,7 +154,6 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        showCloseButton={false}
         className="flex flex-col gap-0 p-0 sm:max-w-2xl"
         data-testid="keyboardShortcutsDialog"
       >
@@ -177,13 +172,6 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
             ))}
           </div>
         </div>
-        <DialogFooter className="sticky bottom-0 border-t bg-background p-4">
-          <DialogClose asChild>
-            <Button variant="outline" data-testid="shortcutsCloseButton">
-              {tc("close")}
-            </Button>
-          </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
