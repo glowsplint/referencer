@@ -8,8 +8,6 @@ import { MiniCommentEditor } from "./MiniCommentEditor";
 import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 
-export { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
-
 interface AnnotationCardProps {
   layerId: string;
   highlightId: string;
