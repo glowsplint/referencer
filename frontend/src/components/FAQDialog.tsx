@@ -68,10 +68,7 @@ export function FAQDialog({ open, onOpenChange }: FAQDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="flex flex-col gap-0 p-0 sm:max-w-lg"
-        data-testid="faqDialog"
-      >
+      <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-lg" data-testid="faqDialog">
         <DialogHeader className="p-6 pb-4">
           <DialogTitle>{t("faq.title")}</DialogTitle>
           <DialogDescription>{t("faq.description")}</DialogDescription>

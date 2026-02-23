@@ -98,10 +98,7 @@ export function SettingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="flex flex-col gap-0 p-0 sm:max-w-sm"
-        data-testid="settingsDialog"
-      >
+      <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-sm" data-testid="settingsDialog">
         <DialogHeader className="p-6 pb-4">
           <DialogTitle>{t("settings.title")}</DialogTitle>
           <DialogDescription>{t("settings.description")}</DialogDescription>

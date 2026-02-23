@@ -99,17 +99,17 @@ Uses a separate Playwright config at `e2e/integration/playwright.integration.con
 
 ### Backend (`backend/`)
 
-| Variable                 | Default                 | Description                               |
-| ------------------------ | ----------------------- | ----------------------------------------- |
-| `PORT`                   | `5000`                  | Server listen port                        |
-| `DB_PATH`                | `./data/referencer.db`  | SQLite database file path                 |
-| `BASE_URL`               | `http://localhost:5000` | Public URL (used for OAuth callback URLs) |
-| `NODE_ENV`               | --                      | Set to `production` for Secure cookies    |
-| `SESSION_MAX_AGE`        | `2592000` (30 days)     | Session lifetime in seconds               |
-| `GOOGLE_CLIENT_ID`       | --                      | Google OAuth client ID                    |
-| `GOOGLE_CLIENT_SECRET`   | --                      | Google OAuth client secret                |
-| `GITHUB_CLIENT_ID`       | --                      | GitHub OAuth client ID                    |
-| `GITHUB_CLIENT_SECRET`   | --                      | GitHub OAuth client secret                |
+| Variable               | Default                 | Description                               |
+| ---------------------- | ----------------------- | ----------------------------------------- |
+| `PORT`                 | `5000`                  | Server listen port                        |
+| `DB_PATH`              | `./data/referencer.db`  | SQLite database file path                 |
+| `BASE_URL`             | `http://localhost:5000` | Public URL (used for OAuth callback URLs) |
+| `NODE_ENV`             | --                      | Set to `production` for Secure cookies    |
+| `SESSION_MAX_AGE`      | `2592000` (30 days)     | Session lifetime in seconds               |
+| `GOOGLE_CLIENT_ID`     | --                      | Google OAuth client ID                    |
+| `GOOGLE_CLIENT_SECRET` | --                      | Google OAuth client secret                |
+| `GITHUB_CLIENT_ID`     | --                      | GitHub OAuth client ID                    |
+| `GITHUB_CLIENT_SECRET` | --                      | GitHub OAuth client secret                |
 
 Providers are only enabled when all their required env vars are set.
 
