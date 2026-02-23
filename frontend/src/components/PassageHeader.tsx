@@ -17,12 +17,12 @@ export function PassageHeader({ name, index, onUpdateName }: PassageHeaderProps)
       {isEditing ? (
         <input
           {...inputProps}
-          className="text-xs font-medium bg-transparent border-0 ring-1 ring-border rounded px-1 py-0 outline-none w-full"
+          className="text-sm font-medium bg-transparent border-0 ring-1 ring-border rounded px-1 py-0 outline-none w-full"
           data-testid={`passageHeaderInput-${index}`}
         />
       ) : (
         <span
-          className="text-xs font-medium text-muted-foreground hover:bg-muted/50 hover:underline decoration-muted-foreground/30 cursor-text rounded px-1"
+          className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:underline decoration-muted-foreground/30 cursor-text rounded px-1"
           onDoubleClick={() => startEditing()}
           data-testid={`passageHeader-${index}`}
         >
