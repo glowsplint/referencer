@@ -8,10 +8,10 @@ Authentication is **optional**. The application works fully for anonymous users.
 
 ## Supported Providers
 
-| Provider | Protocol         | ID Token   | Notes                            |
-| -------- | ---------------- | ---------- | -------------------------------- |
-| Google   | OAuth 2.0 + PKCE | Yes (OIDC) | User info from userinfo endpoint |
-| GitHub   | OAuth 2.0        | No         | User info from /user + /user/emails  |
+| Provider | Protocol         | ID Token   | Notes                               |
+| -------- | ---------------- | ---------- | ----------------------------------- |
+| Google   | OAuth 2.0 + PKCE | Yes (OIDC) | User info from userinfo endpoint    |
+| GitHub   | OAuth 2.0        | No         | User info from /user + /user/emails |
 
 ### Provider Details
 
@@ -154,15 +154,15 @@ End the current session.
 
 ## Configuration
 
-| Environment Variable     | Description                                        | Default                 |
-| ------------------------ | -------------------------------------------------- | ----------------------- |
-| `BASE_URL`               | Public URL of the backend (used for callback URLs) | `http://localhost:5000` |
-| `NODE_ENV`               | Set to `production` to enable Secure cookies       | -                       |
-| `SESSION_MAX_AGE`        | Session lifetime in seconds                        | `2592000` (30 days)     |
-| `GOOGLE_CLIENT_ID`       | Google OAuth client ID                             | -                       |
-| `GOOGLE_CLIENT_SECRET`   | Google OAuth client secret                         | -                       |
-| `GITHUB_CLIENT_ID`       | GitHub OAuth client ID                             | -                       |
-| `GITHUB_CLIENT_SECRET`   | GitHub OAuth client secret                         | -                       |
+| Environment Variable   | Description                                        | Default                 |
+| ---------------------- | -------------------------------------------------- | ----------------------- |
+| `BASE_URL`             | Public URL of the backend (used for callback URLs) | `http://localhost:5000` |
+| `NODE_ENV`             | Set to `production` to enable Secure cookies       | -                       |
+| `SESSION_MAX_AGE`      | Session lifetime in seconds                        | `2592000` (30 days)     |
+| `GOOGLE_CLIENT_ID`     | Google OAuth client ID                             | -                       |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret                         | -                       |
+| `GITHUB_CLIENT_ID`     | GitHub OAuth client ID                             | -                       |
+| `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret                         | -                       |
 
 Google is only enabled when both `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set. GitHub is only enabled when both `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` are set. If not configured, the auth endpoint returns 404.
 

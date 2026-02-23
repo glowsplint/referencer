@@ -21,6 +21,7 @@ workspaces.get("/", async (c) => {
     const items = await listUserWorkspaces(supabase, user.id);
     return c.json(items);
   } catch (err) {
+    console.error("GET /api/workspaces error:", err);
     return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });
@@ -40,6 +41,7 @@ workspaces.post("/", async (c) => {
     await createUserWorkspace(supabase, user.id, body.workspaceId, body.title ?? "");
     return c.json({ ok: true }, 201);
   } catch (err) {
+    console.error("POST /api/workspaces error:", err);
     return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });

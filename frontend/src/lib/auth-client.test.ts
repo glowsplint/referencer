@@ -57,7 +57,6 @@ describe("auth-client", () => {
       loginWith("github");
       expect(window.location.href).toBe("/auth/github");
     });
-
   });
 
   describe("logout", () => {

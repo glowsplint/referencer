@@ -20,10 +20,7 @@ export function MobileInfoDialog({ open, onOpenChange }: MobileInfoDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="flex flex-col gap-0 p-0 sm:max-w-sm"
-        data-testid="mobileInfoDialog"
-      >
+      <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-sm" data-testid="mobileInfoDialog">
         <DialogHeader className="p-6 pb-4 items-center text-center">
           <Monitor className="size-10 text-muted-foreground mb-2" />
           <DialogTitle>{t("mobile.title")}</DialogTitle>

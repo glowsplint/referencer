@@ -90,10 +90,7 @@ export function createAuthRoutes() {
         "profile",
       ]);
     } else {
-      authUrl = (provider as GitHub).createAuthorizationURL(state, [
-        "read:user",
-        "user:email",
-      ]);
+      authUrl = (provider as GitHub).createAuthorizationURL(state, ["read:user", "user:email"]);
     }
 
     // Store state in cookie (10 minute expiry).
