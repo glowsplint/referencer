@@ -12,7 +12,7 @@ export interface AuthStatus {
   user?: AuthUser;
 }
 
-export type AuthProvider = "google" | "apple" | "facebook";
+export type AuthProvider = "google" | "github";
 
 export async function fetchAuthStatus(): Promise<AuthStatus> {
   try {

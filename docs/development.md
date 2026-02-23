@@ -108,12 +108,8 @@ Uses a separate Playwright config at `e2e/integration/playwright.integration.con
 | `SESSION_MAX_AGE`        | `2592000` (30 days)     | Session lifetime in seconds               |
 | `GOOGLE_CLIENT_ID`       | --                      | Google OAuth client ID                    |
 | `GOOGLE_CLIENT_SECRET`   | --                      | Google OAuth client secret                |
-| `APPLE_CLIENT_ID`        | --                      | Apple Services ID                         |
-| `APPLE_PRIVATE_KEY`      | --                      | Apple private key (PEM content)           |
-| `APPLE_TEAM_ID`          | --                      | Apple Developer Team ID                   |
-| `APPLE_KEY_ID`           | --                      | Apple Key ID                              |
-| `FACEBOOK_CLIENT_ID`     | --                      | Facebook App ID                           |
-| `FACEBOOK_CLIENT_SECRET` | --                      | Facebook App Secret                       |
+| `GITHUB_CLIENT_ID`       | --                      | GitHub OAuth client ID                    |
+| `GITHUB_CLIENT_SECRET`   | --                      | GitHub OAuth client secret                |
 
 Providers are only enabled when all their required env vars are set.
 

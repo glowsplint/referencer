@@ -1,8 +1,10 @@
-import { Google, Apple, Facebook } from "arctic";
+import { Google, GitHub } from "arctic";
 import type { AuthConfig } from "./config";
 
-export function createProviders(config: AuthConfig): Map<string, Google | Apple | Facebook> {
-  const providers = new Map<string, Google | Apple | Facebook>();
+export type OAuthProvider = Google | GitHub;
+
+export function createProviders(config: AuthConfig): Map<string, OAuthProvider> {
+  const providers = new Map<string, OAuthProvider>();
 
   if (config.google) {
     providers.set(
@@ -15,26 +17,13 @@ export function createProviders(config: AuthConfig): Map<string, Google | Apple 
     );
   }
 
-  if (config.apple) {
+  if (config.github) {
     providers.set(
-      "apple",
-      new Apple(
-        config.apple.clientId,
-        config.apple.teamId,
-        config.apple.keyId,
-        new TextEncoder().encode(config.apple.privateKey),
-        `${config.baseUrl}/auth/apple/callback`,
-      ),
-    );
-  }
-
-  if (config.facebook) {
-    providers.set(
-      "facebook",
-      new Facebook(
-        config.facebook.clientId,
-        config.facebook.clientSecret,
-        `${config.baseUrl}/auth/facebook/callback`,
+      "github",
+      new GitHub(
+        config.github.clientId,
+        config.github.clientSecret,
+        `${config.baseUrl}/auth/github/callback`,
       ),
     );
   }
@@ -43,8 +32,8 @@ export function createProviders(config: AuthConfig): Map<string, Google | Apple 
 }
 
 export function getProviderFromMap(
-  providers: Map<string, Google | Apple | Facebook>,
+  providers: Map<string, OAuthProvider>,
   name: string,
-): Google | Apple | Facebook | null {
+): OAuthProvider | null {
   return providers.get(name) ?? null;
 }

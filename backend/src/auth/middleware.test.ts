@@ -48,8 +48,7 @@ const testConfig: AuthConfig = {
   cookieSecure: false,
   sessionMaxAge: 3600,
   google: null,
-  apple: null,
-  facebook: null,
+  github: null,
 };
 
 describe("optionalAuth middleware", () => {

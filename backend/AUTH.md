@@ -8,31 +8,29 @@ Authentication is **optional**. The application works fully for anonymous users.
 
 ## Supported Providers
 
-| Provider | Protocol         | ID Token   | Notes                                         |
-| -------- | ---------------- | ---------- | --------------------------------------------- |
-| Google   | OAuth 2.0 + PKCE | Yes (OIDC) | User info from userinfo endpoint              |
-| Apple    | OAuth 2.0        | Yes (JWT)  | Name sent only on first login (POST callback) |
-| Facebook | OAuth 2.0        | No         | User info from Graph API                      |
+| Provider | Protocol         | ID Token   | Notes                            |
+| -------- | ---------------- | ---------- | -------------------------------- |
+| Google   | OAuth 2.0 + PKCE | Yes (OIDC) | User info from userinfo endpoint |
+| GitHub   | OAuth 2.0        | No         | User info from /user + /user/emails  |
 
-### Provider Differences
+### Provider Details
 
 - **Google** uses PKCE (`code_verifier`/`code_challenge`) for additional security. User info is fetched from the OpenID Connect userinfo endpoint.
-- **Apple** sends the callback as a POST request (not GET). User name is only available on the first authorization and must be captured from the POST body. The ID token is a JWT decoded with `arctic.decodeIdToken()`.
-- **Facebook** uses a standard OAuth code flow. User info (including profile picture) is fetched from the Graph API.
+- **GitHub** does not use PKCE. User info is fetched from the GitHub REST API (`/user` and `/user/emails` endpoints). The numeric user ID is converted to a string. The `name` field may be null, in which case the `login` (username) is used as a fallback. Scopes requested: `read:user`, `user:email`.
 
 ## OAuth Flow
 
 The complete flow from login click to authenticated session:
 
-1. **User clicks "Sign in with [Provider]"** -- Frontend calls `loginWith(provider)` which sets `window.location.href = /auth/{provider}`.
-2. **Backend generates OAuth state** -- `GET /auth/:provider` creates a random `state` parameter (and `code_verifier` for Google PKCE).
-3. **State stored in cookie** -- The `__auth_state` cookie (HttpOnly, 10min TTL) stores the state and optional code verifier.
-4. **Redirect to provider** -- The user is redirected to the provider's authorization URL with appropriate scopes.
-5. **User authorizes** -- The user logs in and grants permission at the provider's site.
-6. **Provider redirects back** -- The provider redirects to `/auth/:provider/callback` with `code` and `state` query parameters (Apple uses POST).
+1. **User clicks "Sign in with Google"** -- Frontend calls `loginWith("google")` which sets `window.location.href = /auth/google`.
+2. **Backend generates OAuth state** -- `GET /auth/:provider` creates a random `state` parameter and `code_verifier` for PKCE.
+3. **State stored in cookie** -- The `__auth_state` cookie (HttpOnly, 10min TTL) stores the state and code verifier.
+4. **Redirect to provider** -- The user is redirected to Google's authorization URL with appropriate scopes.
+5. **User authorizes** -- The user logs in and grants permission at Google's site.
+6. **Provider redirects back** -- Google redirects to `/auth/google/callback` with `code` and `state` query parameters.
 7. **State verification** -- The backend reads `__auth_state` from the cookie and compares the returned `state` to prevent CSRF.
-8. **Code exchange** -- The authorization code is exchanged for tokens using the provider's token endpoint.
-9. **User info extraction** -- User profile (email, name, avatar) is extracted from the provider's API or ID token.
+8. **Code exchange** -- The authorization code is exchanged for tokens using Google's token endpoint.
+9. **User info extraction** -- User profile (email, name, avatar) is extracted from the Google userinfo endpoint.
 10. **User upsert** -- `upsertUser()` finds or creates the user, handling account linking by email.
 11. **Session creation** -- A 64-character hex session token is generated and stored in the `session` table with an expiry.
 12. **Session cookie set** -- The `__session` cookie (HttpOnly, Secure in production, SameSite=Lax) is set with the token.
@@ -79,7 +77,7 @@ When a user signs in, the system checks for existing accounts in order:
 2. **By email** (`user.email`): If found, link the new provider to the existing user (creates a new `user_provider` row) and return the existing user.
 3. **New user**: Create both a `user` and `user_provider` row.
 
-This means a user who signs in with Google and later signs in with Apple using the same email will have both providers linked to one account.
+This means if a new provider is added in the future and a user signs in with the same email, the providers will be linked to one account.
 
 ## Security Measures
 
@@ -87,7 +85,6 @@ This means a user who signs in with Google and later signs in with Apple using t
 - **State parameter**: Random state stored in an HttpOnly cookie prevents CSRF attacks on the OAuth callback.
 - **HttpOnly cookies**: Session tokens are never accessible to client-side JavaScript, preventing XSS-based token theft.
 - **SameSite=Lax**: Prevents the session cookie from being sent in cross-origin requests (CSRF protection).
-- **SameSite=None for Apple**: Required because Apple sends callbacks as cross-origin POST requests.
 - **Secure flag** (production): Ensures cookies are only sent over HTTPS.
 - **No tokens in frontend**: OAuth access tokens, refresh tokens, and ID tokens never leave the backend.
 - **Session token entropy**: 32 random bytes (256 bits) provides sufficient entropy against brute-force attacks.
@@ -100,30 +97,18 @@ Start the OAuth flow. Redirects the user to the provider's authorization page.
 
 **Parameters:**
 
-- `:provider` -- One of `google`, `apple`, `facebook`
+- `:provider` -- `google`, `github`
 
 **Response:** 302 redirect to provider
 
 ### `GET /auth/:provider/callback`
 
-OAuth callback handler (used by Google and Facebook).
+OAuth callback handler.
 
 **Query Parameters:**
 
 - `code` -- Authorization code from provider
 - `state` -- State parameter for CSRF verification
-
-**Response:** 302 redirect to `/` on success, JSON error on failure
-
-### `POST /auth/:provider/callback`
-
-OAuth callback handler (used by Apple).
-
-**Form Body:**
-
-- `code` -- Authorization code
-- `state` -- State parameter
-- `user` (optional) -- JSON with user name (Apple first login only)
 
 **Response:** 302 redirect to `/` on success, JSON error on failure
 
@@ -176,14 +161,10 @@ End the current session.
 | `SESSION_MAX_AGE`        | Session lifetime in seconds                        | `2592000` (30 days)     |
 | `GOOGLE_CLIENT_ID`       | Google OAuth client ID                             | -                       |
 | `GOOGLE_CLIENT_SECRET`   | Google OAuth client secret                         | -                       |
-| `APPLE_CLIENT_ID`        | Apple Services ID                                  | -                       |
-| `APPLE_PRIVATE_KEY`      | Apple private key (PEM content)                    | -                       |
-| `APPLE_TEAM_ID`          | Apple Developer Team ID                            | -                       |
-| `APPLE_KEY_ID`           | Apple Key ID                                       | -                       |
-| `FACEBOOK_CLIENT_ID`     | Facebook App ID                                    | -                       |
-| `FACEBOOK_CLIENT_SECRET` | Facebook App Secret                                | -                       |
+| `GITHUB_CLIENT_ID`       | GitHub OAuth client ID                             | -                       |
+| `GITHUB_CLIENT_SECRET`   | GitHub OAuth client secret                         | -                       |
 
-Providers are only enabled when all their required env vars are set. If no provider env vars are configured, auth endpoints return 404 for those providers.
+Google is only enabled when both `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set. GitHub is only enabled when both `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` are set. If not configured, the auth endpoint returns 404.
 
 ## Database Schema
 

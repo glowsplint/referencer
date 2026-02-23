@@ -47,16 +47,17 @@ describe("auth-client", () => {
       expect(window.location.href).toBe("/auth/google");
     });
 
-    it("sets window.location.href for apple", () => {
+    it("sets window.location.href for github", () => {
       Object.defineProperty(window, "location", {
         value: { href: "" },
         writable: true,
         configurable: true,
       });
 
-      loginWith("apple");
-      expect(window.location.href).toBe("/auth/apple");
+      loginWith("github");
+      expect(window.location.href).toBe("/auth/github");
     });
+
   });
 
   describe("logout", () => {

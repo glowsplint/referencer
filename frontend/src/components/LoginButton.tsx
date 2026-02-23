@@ -6,13 +6,6 @@ import {
   TooltipContent,
 } from "@/components/tiptap-ui-primitive/tooltip/tooltip";
 import { useAuth } from "@/hooks/data/use-auth";
-import type { AuthProvider } from "@/lib/auth-client";
-
-const providers: { id: AuthProvider; label: string }[] = [
-  { id: "google", label: "Sign in with Google" },
-  { id: "apple", label: "Sign in with Apple" },
-  { id: "facebook", label: "Sign in with Facebook" },
-];
 
 export function LoginButton() {
   const { login } = useAuth();
@@ -40,16 +33,20 @@ export function LoginButton() {
           data-testid="loginPopover"
         >
           <div className="flex flex-col gap-1">
-            {providers.map(({ id, label }) => (
-              <button
-                key={id}
-                onClick={() => login(id)}
-                className="px-3 py-2 text-sm rounded-md text-left hover:bg-accent hover:text-accent-foreground transition-colors whitespace-nowrap"
-                data-testid={`login-${id}`}
-              >
-                {label}
-              </button>
-            ))}
+            <button
+              onClick={() => login("google")}
+              className="px-3 py-2 text-sm rounded-md text-left hover:bg-accent hover:text-accent-foreground transition-colors whitespace-nowrap"
+              data-testid="login-google"
+            >
+              Sign in with Google
+            </button>
+            <button
+              onClick={() => login("github")}
+              className="px-3 py-2 text-sm rounded-md text-left hover:bg-accent hover:text-accent-foreground transition-colors whitespace-nowrap"
+              data-testid="login-github"
+            >
+              Sign in with GitHub
+            </button>
           </div>
         </Popover.Content>
       </Popover.Portal>

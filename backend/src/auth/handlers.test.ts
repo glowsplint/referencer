@@ -48,8 +48,7 @@ const testConfig: AuthConfig = {
   cookieSecure: false,
   sessionMaxAge: 3600,
   google: null,
-  apple: null,
-  facebook: null,
+  github: null,
 };
 
 function createApp(db: Database, config: AuthConfig = testConfig) {
@@ -81,6 +80,12 @@ describe("auth routes", () => {
       const app = createApp(db);
       const res = await app.request("/auth/google");
       // No providers configured, so getProvider returns null
+      expect(res.status).toBe(404);
+    });
+
+    it("returns 404 when github is not configured", async () => {
+      const app = createApp(db);
+      const res = await app.request("/auth/github");
       expect(res.status).toBe(404);
     });
   });

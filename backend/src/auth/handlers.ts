@@ -1,9 +1,8 @@
 import { Hono } from "hono";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
-import { generateState, generateCodeVerifier, decodeIdToken } from "arctic";
-import type { Google, Apple, Facebook } from "arctic";
+import { generateState, generateCodeVerifier, Google, GitHub } from "arctic";
 import { kvRateLimiter } from "../lib/rate-limit";
-import { createProviders, getProviderFromMap } from "./providers";
+import { createProviders, getProviderFromMap, type OAuthProvider } from "./providers";
 import { loadAuthConfig, type AuthConfig } from "./config";
 import { upsertUser, createSession, getSessionUser, deleteSession } from "./store";
 import type { Env } from "../env";
@@ -82,27 +81,26 @@ export function createAuthRoutes() {
     const authState: AuthState = { state };
     let authUrl: URL;
 
-    if (providerName === "google") {
+    if (provider instanceof Google) {
       const codeVerifier = generateCodeVerifier();
       authState.codeVerifier = codeVerifier;
-      authUrl = (provider as Google).createAuthorizationURL(state, codeVerifier, [
+      authUrl = provider.createAuthorizationURL(state, codeVerifier, [
         "openid",
         "email",
         "profile",
       ]);
-    } else if (providerName === "apple") {
-      authUrl = (provider as Apple).createAuthorizationURL(state, ["name", "email"]);
-    } else if (providerName === "facebook") {
-      authUrl = (provider as Facebook).createAuthorizationURL(state, ["email", "public_profile"]);
     } else {
-      return c.json({ error: "Unsupported provider" }, 400);
+      authUrl = (provider as GitHub).createAuthorizationURL(state, [
+        "read:user",
+        "user:email",
+      ]);
     }
 
     // Store state in cookie (10 minute expiry).
     setCookie(c, "__auth_state", JSON.stringify(authState), {
       httpOnly: true,
       secure: true,
-      sameSite: "None",
+      sameSite: "Lax",
       path: "/",
       maxAge: 600,
     });
@@ -112,12 +110,6 @@ export function createAuthRoutes() {
 
   // GET /auth/:provider/callback
   auth.get("/:provider/callback", authCallbackLimiter, async (c) => {
-    const config = loadAuthConfig(c.env);
-    return handleCallback(c, config);
-  });
-
-  // POST /auth/:provider/callback — Apple uses POST for callback
-  auth.post("/:provider/callback", authCallbackLimiter, async (c) => {
     const config = loadAuthConfig(c.env);
     return handleCallback(c, config);
   });
@@ -150,18 +142,8 @@ async function handleCallback(c: any, config: AuthConfig) {
     return c.json({ error: "Invalid auth state" }, 400);
   }
 
-  // Get code and state from query params or form body.
-  let code: string | undefined;
-  let returnedState: string | undefined;
-
-  if (c.req.method === "POST") {
-    const body = await c.req.parseBody();
-    code = body.code as string;
-    returnedState = body.state as string;
-  } else {
-    code = c.req.query("code");
-    returnedState = c.req.query("state");
-  }
+  const code = c.req.query("code");
+  const returnedState = c.req.query("state");
 
   if (!code || !returnedState) {
     return c.json({ error: "Missing code or state" }, 400);
@@ -174,25 +156,22 @@ async function handleCallback(c: any, config: AuthConfig) {
   // Exchange code for tokens.
   let tokens: any;
   try {
-    if (providerName === "google") {
-      tokens = await (provider as Google).validateAuthorizationCode(code, authState.codeVerifier!);
-    } else if (providerName === "apple") {
-      tokens = await (provider as Apple).validateAuthorizationCode(code);
-    } else if (providerName === "facebook") {
-      tokens = await (provider as Facebook).validateAuthorizationCode(code);
+    if (provider instanceof Google) {
+      tokens = await provider.validateAuthorizationCode(code, authState.codeVerifier!);
+    } else {
+      tokens = await (provider as GitHub).validateAuthorizationCode(code);
     }
   } catch (err) {
     console.error("Token exchange failed:", err);
     return c.json({ error: "Token exchange failed" }, 400);
   }
 
-  // Extract user info from provider.
-  let email = "";
-  let name = "";
-  let avatarUrl = "";
-  let providerUserId = "";
+  let providerUserId: string;
+  let email: string;
+  let name: string;
+  let avatarUrl: string;
 
-  if (providerName === "google") {
+  if (provider instanceof Google) {
     const res = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
       headers: { Authorization: `Bearer ${tokens.accessToken()}` },
     });
@@ -201,31 +180,31 @@ async function handleCallback(c: any, config: AuthConfig) {
     email = profile.email ?? "";
     name = profile.name ?? "";
     avatarUrl = profile.picture ?? "";
-  } else if (providerName === "apple") {
-    const claims = decodeIdToken(tokens.idToken()) as any;
-    providerUserId = claims.sub;
-    email = claims.email ?? "";
-    if (c.req.method === "POST") {
-      const body = await c.req.parseBody();
-      if (body.user) {
-        try {
-          const userInfo = JSON.parse(body.user as string);
-          name =
-            [userInfo.name?.firstName, userInfo.name?.lastName].filter(Boolean).join(" ") || "";
-        } catch {
-          // ignore
-        }
-      }
-    }
-  } else if (providerName === "facebook") {
-    const res = await fetch(
-      `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${tokens.accessToken()}`,
-    );
+  } else {
+    // GitHub
+    const res = await fetch("https://api.github.com/user", {
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken()}`,
+        "User-Agent": "referencer",
+      },
+    });
     const profile = (await res.json()) as any;
-    providerUserId = profile.id;
+    providerUserId = String(profile.id);
+    name = profile.name ?? profile.login ?? "";
+    avatarUrl = profile.avatar_url ?? "";
     email = profile.email ?? "";
-    name = profile.name ?? "";
-    avatarUrl = profile.picture?.data?.url ?? "";
+
+    if (!email) {
+      const emailsRes = await fetch("https://api.github.com/user/emails", {
+        headers: {
+          Authorization: `Bearer ${tokens.accessToken()}`,
+          "User-Agent": "referencer",
+        },
+      });
+      const emails = (await emailsRes.json()) as any[];
+      const primary = emails.find((e: any) => e.primary && e.verified);
+      email = primary?.email ?? "";
+    }
   }
 
   if (!email) {
@@ -240,7 +219,7 @@ async function handleCallback(c: any, config: AuthConfig) {
   setCookie(c, "__session", sessionToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "None",
+    sameSite: "Lax",
     path: "/",
     maxAge: config.sessionMaxAge,
   });

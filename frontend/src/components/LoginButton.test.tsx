@@ -33,8 +33,7 @@ describe("LoginButton", () => {
 
     expect(await screen.findByTestId("loginPopover")).toBeInTheDocument();
     expect(screen.getByTestId("login-google")).toHaveTextContent("Sign in with Google");
-    expect(screen.getByTestId("login-apple")).toHaveTextContent("Sign in with Apple");
-    expect(screen.getByTestId("login-facebook")).toHaveTextContent("Sign in with Facebook");
+    expect(screen.getByTestId("login-github")).toHaveTextContent("Sign in with GitHub");
   });
 
   it("calls login with correct provider on click", async () => {
@@ -45,5 +44,15 @@ describe("LoginButton", () => {
     await user.click(screen.getByTestId("login-google"));
 
     expect(mockLogin).toHaveBeenCalledWith("google");
+  });
+
+  it("calls login with github provider on click", async () => {
+    const user = userEvent.setup();
+    render(<LoginButton />);
+
+    await user.click(screen.getByTestId("loginButton"));
+    await user.click(screen.getByTestId("login-github"));
+
+    expect(mockLogin).toHaveBeenCalledWith("github");
   });
 });

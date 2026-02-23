@@ -94,7 +94,7 @@ describe("upsertUser", () => {
 
   it("links by email when same email with different provider", () => {
     const userId1 = upsertUser(db, "google", "google-123", "test@example.com", "Test User", "");
-    const userId2 = upsertUser(db, "apple", "apple-456", "test@example.com", "Test User", "");
+    const userId2 = upsertUser(db, "github", "github-456", "test@example.com", "Test User", "");
     expect(userId1).toBe(userId2);
 
     // Verify two providers linked to the same user
@@ -102,7 +102,7 @@ describe("upsertUser", () => {
       .query<{ provider: string }, [string]>("SELECT provider FROM user_provider WHERE user_id = ?")
       .all(userId1);
     expect(providers).toHaveLength(2);
-    expect(providers.map((p) => p.provider).sort()).toEqual(["apple", "google"]);
+    expect(providers.map((p) => p.provider).sort()).toEqual(["github", "google"]);
   });
 });
 
