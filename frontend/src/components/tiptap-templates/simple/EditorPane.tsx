@@ -108,6 +108,42 @@ export function EditorPane({
           "aria-label": "Content area, start typing to enter text.",
           class: "simple-editor",
         },
+        handlePaste: (_view, event) => {
+          const items = event.clipboardData?.items;
+          if (!items) return false;
+          for (const item of items) {
+            if (item.type.startsWith("image/")) {
+              event.preventDefault();
+              const file = item.getAsFile();
+              if (!file) return false;
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const src = e.target?.result as string;
+                editor?.chain().focus().setImage({ src }).run();
+              };
+              reader.readAsDataURL(file);
+              return true;
+            }
+          }
+          return false;
+        },
+        handleDrop: (_view, event) => {
+          const files = event.dataTransfer?.files;
+          if (!files?.length) return false;
+          for (const file of files) {
+            if (file.type.startsWith("image/")) {
+              event.preventDefault();
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const src = e.target?.result as string;
+                editor?.chain().focus().setImage({ src }).run();
+              };
+              reader.readAsDataURL(file);
+              return true;
+            }
+          }
+          return false;
+        },
       },
       extensions,
       // Only provide content when NOT using Yjs (Yjs manages content via fragment)

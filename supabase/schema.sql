@@ -76,7 +76,9 @@ CREATE TABLE user_workspace (
     title TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    is_favorite BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (user_id, workspace_id)
 );
 CREATE INDEX idx_user_workspace_user_id ON user_workspace(user_id);
 CREATE INDEX idx_user_workspace_updated_at ON user_workspace(updated_at DESC);
+CREATE INDEX idx_user_workspace_favorite ON user_workspace(user_id, is_favorite DESC, updated_at DESC);

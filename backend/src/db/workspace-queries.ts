@@ -7,7 +7,7 @@ export async function listUserWorkspaces(
 ): Promise<UserWorkspace[]> {
   const { data, error } = await supabase
     .from("user_workspace")
-    .select("user_id, workspace_id, title, created_at, updated_at")
+    .select("user_id, workspace_id, title, created_at, updated_at, is_favorite")
     .eq("user_id", userId)
     .order("updated_at", { ascending: false });
 
@@ -20,6 +20,7 @@ export async function listUserWorkspaces(
     title: row.title,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    isFavorite: row.is_favorite,
   }));
 }
 
@@ -39,11 +40,36 @@ export async function createUserWorkspace(
       workspace_id: workspaceId,
       title,
       updated_at: new Date().toISOString(),
+      is_favorite: false,
     },
     { onConflict: "user_id,workspace_id" },
   );
 
   if (error) throw new Error(`Failed to create user workspace: ${error.message}`);
+}
+
+export async function getUserWorkspace(
+  supabase: SupabaseClient,
+  userId: string,
+  workspaceId: string,
+): Promise<UserWorkspace | null> {
+  const { data, error } = await supabase
+    .from("user_workspace")
+    .select("user_id, workspace_id, title, created_at, updated_at, is_favorite")
+    .eq("user_id", userId)
+    .eq("workspace_id", workspaceId)
+    .single();
+
+  if (error || !data) return null;
+
+  return {
+    userId: data.user_id,
+    workspaceId: data.workspace_id,
+    title: data.title,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    isFavorite: data.is_favorite,
+  };
 }
 
 export async function renameUserWorkspace(
@@ -59,6 +85,21 @@ export async function renameUserWorkspace(
     .eq("workspace_id", workspaceId);
 
   if (error) throw new Error(`Failed to rename workspace: ${error.message}`);
+}
+
+export async function toggleFavoriteWorkspace(
+  supabase: SupabaseClient,
+  userId: string,
+  workspaceId: string,
+  isFavorite: boolean,
+): Promise<void> {
+  const { error } = await supabase
+    .from("user_workspace")
+    .update({ is_favorite: isFavorite })
+    .eq("user_id", userId)
+    .eq("workspace_id", workspaceId);
+
+  if (error) throw new Error(`Failed to toggle favorite: ${error.message}`);
 }
 
 export async function touchUserWorkspace(

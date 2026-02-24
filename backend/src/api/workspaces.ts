@@ -2,8 +2,10 @@ import { Hono } from "hono";
 import type { Env } from "../env";
 import {
   listUserWorkspaces,
+  getUserWorkspace,
   createUserWorkspace,
   renameUserWorkspace,
+  toggleFavoriteWorkspace,
   touchUserWorkspace,
   deleteUserWorkspace,
   duplicateWorkspace,
@@ -46,6 +48,23 @@ workspaces.post("/", async (c) => {
   }
 });
 
+// GET /:id - get single workspace
+workspaces.get("/:id", async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+
+  try {
+    const workspaceId = c.req.param("id");
+    const supabase = c.get("supabase");
+    const workspace = await getUserWorkspace(supabase, user.id, workspaceId);
+    if (!workspace) return c.json({ error: "Not found" }, 404);
+    return c.json(workspace);
+  } catch (err) {
+    console.error("GET /api/workspaces/:id error:", err);
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+  }
+});
+
 // PATCH /:id - rename workspace
 workspaces.patch("/:id", async (c) => {
   const user = c.get("user");
@@ -75,6 +94,26 @@ workspaces.patch("/:id/touch", async (c) => {
     const workspaceId = c.req.param("id");
     const supabase = c.get("supabase");
     await touchUserWorkspace(supabase, user.id, workspaceId);
+    return c.json({ ok: true });
+  } catch (err) {
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+  }
+});
+
+// PATCH /:id/favorite - toggle favorite
+workspaces.patch("/:id/favorite", async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+
+  try {
+    const workspaceId = c.req.param("id");
+    const body = await c.req.json<{ isFavorite: boolean }>();
+    if (typeof body.isFavorite !== "boolean") {
+      return c.json({ error: "isFavorite is required" }, 400);
+    }
+
+    const supabase = c.get("supabase");
+    await toggleFavoriteWorkspace(supabase, user.id, workspaceId, body.isFavorite);
     return c.json({ ok: true });
   } catch (err) {
     return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);

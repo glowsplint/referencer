@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { LayoutGrid, List, Plus } from "lucide-react";
+import { LayoutGrid, List, Plus, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
+import { useWorkspaceSort } from "@/hooks/data/use-workspace-sort";
 import { WorkspaceCard } from "./WorkspaceCard";
 import { WorkspaceListItem } from "./WorkspaceListItem";
 import { RenameDialog } from "./RenameDialog";
@@ -18,6 +19,9 @@ interface WorkspaceGridProps {
   onRename: (workspaceId: string, title: string) => Promise<void>;
   onDelete: (workspaceId: string) => Promise<void>;
   onDuplicate: (sourceId: string, newId: string) => Promise<void>;
+  onToggleFavorite: (workspaceId: string, isFavorite: boolean) => Promise<void>;
+  ownerName?: string;
+  ownerAvatarUrl?: string;
 }
 
 export function WorkspaceGrid({
@@ -28,12 +32,16 @@ export function WorkspaceGrid({
   onRename,
   onDelete,
   onDuplicate,
+  onToggleFavorite,
+  ownerName,
+  ownerAvatarUrl,
 }: WorkspaceGridProps) {
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem(STORAGE_KEYS.HUB_VIEW_MODE) as ViewMode) || "grid";
   });
   const [renameTarget, setRenameTarget] = useState<WorkspaceItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<WorkspaceItem | null>(null);
+  const { sorted, sortConfig, setSort } = useWorkspaceSort(workspaces);
 
   const toggleView = (mode: ViewMode) => {
     setViewMode(mode);
@@ -92,7 +100,7 @@ export function WorkspaceGrid({
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
           data-testid="workspaceGrid"
         >
-          {workspaces.map((ws) => (
+          {sorted.map((ws) => (
             <WorkspaceCard
               key={ws.workspaceId}
               workspace={ws}
@@ -100,12 +108,29 @@ export function WorkspaceGrid({
               onRename={() => setRenameTarget(ws)}
               onDuplicate={() => handleDuplicate(ws.workspaceId)}
               onDelete={() => setDeleteTarget(ws)}
+              onToggleFavorite={onToggleFavorite}
+              ownerName={ownerName}
+              ownerAvatarUrl={ownerAvatarUrl}
             />
           ))}
         </div>
       ) : (
         <div className="flex flex-col gap-1" data-testid="workspaceList">
-          {workspaces.map((ws) => (
+          <div className="flex items-center px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border mb-1">
+            <div className="w-8" /> {/* star column */}
+            <button onClick={() => setSort("title")} className="flex items-center gap-1 flex-1" data-testid="sortByTitle">
+              Name {sortConfig.field === "title" && (sortConfig.direction === "asc" ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+            </button>
+            <button onClick={() => setSort("createdAt")} className="flex items-center gap-1 w-[120px] shrink-0" data-testid="sortByCreated">
+              Created {sortConfig.field === "createdAt" && (sortConfig.direction === "asc" ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+            </button>
+            <button onClick={() => setSort("updatedAt")} className="flex items-center gap-1 w-[120px] shrink-0" data-testid="sortByModified">
+              Modified {sortConfig.field === "updatedAt" && (sortConfig.direction === "asc" ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+            </button>
+            <div className="w-[140px] shrink-0">Owner</div>
+            <div className="w-8" /> {/* menu column */}
+          </div>
+          {sorted.map((ws) => (
             <WorkspaceListItem
               key={ws.workspaceId}
               workspace={ws}
@@ -113,6 +138,9 @@ export function WorkspaceGrid({
               onRename={() => setRenameTarget(ws)}
               onDuplicate={() => handleDuplicate(ws.workspaceId)}
               onDelete={() => setDeleteTarget(ws)}
+              onToggleFavorite={onToggleFavorite}
+              ownerName={ownerName}
+              ownerAvatarUrl={ownerAvatarUrl}
             />
           ))}
         </div>

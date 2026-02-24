@@ -1,5 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2 } from "lucide-react";
+import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2, Star } from "lucide-react";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
@@ -9,6 +9,9 @@ interface WorkspaceListItemProps {
   onRename: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
+  onToggleFavorite?: (workspaceId: string, isFavorite: boolean) => void;
+  ownerName?: string;
+  ownerAvatarUrl?: string;
 }
 
 export function WorkspaceListItem({
@@ -17,6 +20,9 @@ export function WorkspaceListItem({
   onRename,
   onDuplicate,
   onDelete,
+  onToggleFavorite,
+  ownerName,
+  ownerAvatarUrl,
 }: WorkspaceListItemProps) {
   return (
     <div
@@ -24,10 +30,24 @@ export function WorkspaceListItem({
       onClick={onOpen}
       data-testid={`workspaceListItem-${workspace.workspaceId}`}
     >
-      <span className="font-medium text-sm truncate flex-1">{workspace.title || "Untitled"}</span>
-      <span className="text-xs text-muted-foreground mr-4 shrink-0">
-        {formatRelativeTime(workspace.updatedAt)}
-      </span>
+      <button
+        onClick={(e) => { e.stopPropagation(); onToggleFavorite?.(workspace.workspaceId, !workspace.isFavorite); }}
+        className="p-1 rounded-md hover:bg-accent transition-colors shrink-0"
+        data-testid="favoriteToggle"
+      >
+        <Star size={14} className={workspace.isFavorite ? "fill-current text-yellow-500" : "text-muted-foreground"} />
+      </button>
+      <span className="font-medium text-sm truncate flex-1 ml-1">{workspace.title || "Untitled"}</span>
+      <span className="text-xs text-muted-foreground w-[120px] shrink-0">{formatRelativeTime(workspace.createdAt)}</span>
+      <span className="text-xs text-muted-foreground w-[120px] shrink-0">{formatRelativeTime(workspace.updatedAt)}</span>
+      <div className="flex items-center gap-1.5 w-[140px] shrink-0">
+        {ownerAvatarUrl ? (
+          <img src={ownerAvatarUrl} alt="" className="w-5 h-5 rounded-full" />
+        ) : ownerName ? (
+          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium">{ownerName[0]}</div>
+        ) : null}
+        {ownerName && <span className="text-xs text-muted-foreground truncate">{ownerName}</span>}
+      </div>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <button

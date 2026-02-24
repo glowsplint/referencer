@@ -23,4 +23,5 @@ export interface UserWorkspace {
   title: string;
   createdAt: string;
   updatedAt: string;
+  isFavorite: boolean;
 }

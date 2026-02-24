@@ -5,6 +5,8 @@ export const STORAGE_KEYS = {
   USER_NAME: "referencer-user-name",
   /** Hub page view mode (grid/list). */
   HUB_VIEW_MODE: "hub-view-mode",
+  /** Hub page sort configuration. */
+  HUB_SORT: "hub-sort",
   /** Prefix for collapsed annotation IDs, suffixed with workspaceId. */
   COLLAPSED_PREFIX: "referencer-collapsed-",
   /** User-defined custom colors. */

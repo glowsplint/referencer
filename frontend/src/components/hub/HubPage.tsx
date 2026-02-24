@@ -10,8 +10,8 @@ interface HubPageProps {
 }
 
 export function HubPage({ navigate }: HubPageProps) {
-  const { isAuthenticated, isLoading: authLoading, login } = useAuth();
-  const { workspaces, isLoading: wsLoading, create, rename, remove, duplicate } = useWorkspaces();
+  const { user, isAuthenticated, isLoading: authLoading, login } = useAuth();
+  const { workspaces, isLoading: wsLoading, create, rename, remove, duplicate, toggleFavorite } = useWorkspaces();
 
   const handleTryWithoutSignIn = () => {
     const id = crypto.randomUUID();
@@ -73,6 +73,9 @@ export function HubPage({ navigate }: HubPageProps) {
               onRename={rename}
               onDelete={remove}
               onDuplicate={duplicate}
+              onToggleFavorite={toggleFavorite}
+              ownerName={user?.name}
+              ownerAvatarUrl={user?.avatarUrl}
             />
           </div>
         ) : null}

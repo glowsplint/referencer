@@ -38,13 +38,18 @@ export function MiniCommentEditor({
         openOnClick: false,
         HTMLAttributes: { class: "text-blue-500 underline" },
       }),
-      Placeholder.configure({ placeholder }),
+      Placeholder.configure({
+        placeholder: ({ editor: e }) => {
+          if (e.isEmpty) return placeholder;
+          return "";
+        },
+      }),
     ],
     content: value,
     autofocus: autoFocus,
     editorProps: {
       attributes: {
-        class: "prose-xs p-2 text-xs outline-none min-h-[1.5rem] dark:text-zinc-200",
+        class: "prose-xs p-2 text-xs outline-none min-h-[1.5rem] dark:text-zinc-200 mini-editor",
       },
       handleKeyDown: (_view, event) => {
         event.stopPropagation();

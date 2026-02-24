@@ -22,3 +22,8 @@
   border-radius: 0.25rem;
   margin: 0.25rem 0;
 }
+.mini-editor.tiptap.ProseMirror p:not(:first-child) {
+  font-size: inherit;
+  line-height: inherit;
+  margin-top: 0.125rem;
+}

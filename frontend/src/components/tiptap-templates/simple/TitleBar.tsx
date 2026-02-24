@@ -10,7 +10,7 @@ import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { renameWorkspace } from "@/lib/workspace-client";
+import { renameWorkspace, fetchWorkspace } from "@/lib/workspace-client";
 
 interface TitleBarProps {
   navigate?: (hash: string) => void;
@@ -23,6 +23,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dbSeededRef = useRef(false);
 
   // Sync title with Yjs shared map for real-time collaboration
   useEffect(() => {
@@ -39,6 +40,23 @@ export function TitleBar({ navigate }: TitleBarProps) {
     meta.observe(observer);
     return () => meta.unobserve(observer);
   }, [yjs.doc]);
+
+  // Fetch DB title and seed Yjs once on first sync (handles hub renames)
+  useEffect(() => {
+    if (!isAuthenticated || !workspaceId || !yjs.doc || !yjs.synced) return;
+    if (dbSeededRef.current) return;
+    dbSeededRef.current = true;
+    fetchWorkspace(workspaceId).then((ws) => {
+      if (!ws?.title) return;
+      const meta = yjs.doc!.getMap("workspace-meta");
+      const yjsTitle = meta.get("title");
+      // DB is source of truth on initial load — update Yjs if they differ
+      if (yjsTitle !== ws.title) {
+        meta.set("title", ws.title);
+        setTitle(ws.title);
+      }
+    });
+  }, [isAuthenticated, workspaceId, yjs.doc, yjs.synced]);
 
   const startEditing = useCallback(() => {
     if (readOnly) return;

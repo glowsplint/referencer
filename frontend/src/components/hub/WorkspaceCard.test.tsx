@@ -13,6 +13,7 @@ const workspace: WorkspaceItem = {
   title: "Test Workspace",
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-02T00:00:00Z",
+  isFavorite: false,
 };
 
 describe("WorkspaceCard", () => {
@@ -20,12 +21,14 @@ describe("WorkspaceCard", () => {
   let onRename: ReturnType<typeof vi.fn>;
   let onDuplicate: ReturnType<typeof vi.fn>;
   let onDelete: ReturnType<typeof vi.fn>;
+  let onToggleFavorite: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     onOpen = vi.fn();
     onRename = vi.fn();
     onDuplicate = vi.fn();
     onDelete = vi.fn();
+    onToggleFavorite = vi.fn();
   });
 
   function renderCard() {
@@ -36,6 +39,9 @@ describe("WorkspaceCard", () => {
         onRename={onRename}
         onDuplicate={onDuplicate}
         onDelete={onDelete}
+        onToggleFavorite={onToggleFavorite}
+        ownerName="Test User"
+        ownerAvatarUrl="https://example.com/avatar.jpg"
       />,
     );
   }
@@ -43,7 +49,7 @@ describe("WorkspaceCard", () => {
   it("renders workspace title and relative time", () => {
     renderCard();
     expect(screen.getByText("Test Workspace")).toBeInTheDocument();
-    expect(screen.getByText("2h ago")).toBeInTheDocument();
+    expect(screen.getByText(/2h ago/)).toBeInTheDocument();
   });
 
   it("calls onOpen when clicking the card itself", async () => {
@@ -115,6 +121,37 @@ describe("WorkspaceCard", () => {
     await user.click(deleteItem);
 
     expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(onOpen).not.toHaveBeenCalled();
+  });
+
+  it("displays created and modified dates", () => {
+    renderCard();
+    expect(screen.getByText(/Modified 2h ago/)).toBeInTheDocument();
+    expect(screen.getByText(/Created 2h ago/)).toBeInTheDocument();
+  });
+
+  it("displays owner name and avatar", () => {
+    renderCard();
+    expect(screen.getByText("Test User")).toBeInTheDocument();
+    const avatar = document.querySelector("img[src='https://example.com/avatar.jpg']");
+    expect(avatar).toBeInTheDocument();
+  });
+
+  it("calls onToggleFavorite when star is clicked", async () => {
+    const user = userEvent.setup();
+    renderCard();
+
+    await user.click(screen.getByTestId("favoriteToggle"));
+
+    expect(onToggleFavorite).toHaveBeenCalledWith("ws-1", true);
+  });
+
+  it("does not call onOpen when clicking favorite toggle", async () => {
+    const user = userEvent.setup();
+    renderCard();
+
+    await user.click(screen.getByTestId("favoriteToggle"));
+
     expect(onOpen).not.toHaveBeenCalled();
   });
 

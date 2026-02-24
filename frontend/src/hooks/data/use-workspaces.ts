@@ -5,6 +5,7 @@ import {
   renameWorkspace as renameApi,
   deleteWorkspace as deleteApi,
   duplicateWorkspace as duplicateApi,
+  toggleFavorite as toggleFavoriteApi,
   type WorkspaceItem,
 } from "@/lib/workspace-client";
 
@@ -62,5 +63,13 @@ export function useWorkspaces() {
     [refetch],
   );
 
-  return { workspaces, isLoading, error, refetch, create, rename, remove, duplicate };
+  const toggleFavorite = useCallback(
+    async (workspaceId: string, isFavorite: boolean) => {
+      await toggleFavoriteApi(workspaceId, isFavorite);
+      await refetch();
+    },
+    [refetch],
+  );
+
+  return { workspaces, isLoading, error, refetch, create, rename, remove, duplicate, toggleFavorite };
 }

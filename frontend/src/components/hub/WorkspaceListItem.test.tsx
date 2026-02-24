@@ -13,6 +13,7 @@ const workspace: WorkspaceItem = {
   title: "List Workspace",
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-03T00:00:00Z",
+  isFavorite: false,
 };
 
 describe("WorkspaceListItem", () => {
@@ -20,12 +21,14 @@ describe("WorkspaceListItem", () => {
   let onRename: ReturnType<typeof vi.fn>;
   let onDuplicate: ReturnType<typeof vi.fn>;
   let onDelete: ReturnType<typeof vi.fn>;
+  let onToggleFavorite: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     onOpen = vi.fn();
     onRename = vi.fn();
     onDuplicate = vi.fn();
     onDelete = vi.fn();
+    onToggleFavorite = vi.fn();
   });
 
   function renderListItem() {
@@ -36,6 +39,9 @@ describe("WorkspaceListItem", () => {
         onRename={onRename}
         onDuplicate={onDuplicate}
         onDelete={onDelete}
+        onToggleFavorite={onToggleFavorite}
+        ownerName="Test User"
+        ownerAvatarUrl="https://example.com/avatar.jpg"
       />,
     );
   }
@@ -43,7 +49,8 @@ describe("WorkspaceListItem", () => {
   it("renders workspace title and relative time", () => {
     renderListItem();
     expect(screen.getByText("List Workspace")).toBeInTheDocument();
-    expect(screen.getByText("3d ago")).toBeInTheDocument();
+    const dateElements = screen.getAllByText("3d ago");
+    expect(dateElements.length).toBeGreaterThanOrEqual(1);
   });
 
   it("calls onOpen when clicking the list item itself", async () => {
@@ -115,6 +122,37 @@ describe("WorkspaceListItem", () => {
     await user.click(deleteItem);
 
     expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(onOpen).not.toHaveBeenCalled();
+  });
+
+  it("displays created and modified dates", () => {
+    renderListItem();
+    const dateElements = screen.getAllByText("3d ago");
+    expect(dateElements.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("displays owner name and avatar", () => {
+    renderListItem();
+    expect(screen.getByText("Test User")).toBeInTheDocument();
+    const avatar = document.querySelector("img[src='https://example.com/avatar.jpg']");
+    expect(avatar).toBeInTheDocument();
+  });
+
+  it("calls onToggleFavorite when star is clicked", async () => {
+    const user = userEvent.setup();
+    renderListItem();
+
+    await user.click(screen.getByTestId("favoriteToggle"));
+
+    expect(onToggleFavorite).toHaveBeenCalledWith("ws-2", true);
+  });
+
+  it("does not call onOpen when clicking favorite toggle", async () => {
+    const user = userEvent.setup();
+    renderListItem();
+
+    await user.click(screen.getByTestId("favoriteToggle"));
+
     expect(onOpen).not.toHaveBeenCalled();
   });
 

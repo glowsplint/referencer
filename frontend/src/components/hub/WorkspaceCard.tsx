@@ -1,5 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2 } from "lucide-react";
+import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2, Star } from "lucide-react";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
@@ -9,6 +9,9 @@ interface WorkspaceCardProps {
   onRename: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
+  onToggleFavorite?: (workspaceId: string, isFavorite: boolean) => void;
+  ownerName?: string;
+  ownerAvatarUrl?: string;
 }
 
 export function WorkspaceCard({
@@ -17,6 +20,9 @@ export function WorkspaceCard({
   onRename,
   onDuplicate,
   onDelete,
+  onToggleFavorite,
+  ownerName,
+  ownerAvatarUrl,
 }: WorkspaceCardProps) {
   return (
     <div
@@ -25,7 +31,16 @@ export function WorkspaceCard({
       data-testid={`workspaceCard-${workspace.workspaceId}`}
     >
       <div className="flex items-start justify-between">
-        <h3 className="font-medium text-sm truncate pr-2">{workspace.title || "Untitled"}</h3>
+        <div className="flex items-center gap-1.5 min-w-0 flex-1">
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggleFavorite?.(workspace.workspaceId, !workspace.isFavorite); }}
+            className="p-1 rounded-md hover:bg-accent transition-colors shrink-0"
+            data-testid="favoriteToggle"
+          >
+            <Star size={14} className={workspace.isFavorite ? "fill-current text-yellow-500" : "text-muted-foreground"} />
+          </button>
+          <h3 className="font-medium text-sm truncate">{workspace.title || "Untitled"}</h3>
+        </div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button
@@ -72,8 +87,18 @@ export function WorkspaceCard({
         </DropdownMenu.Root>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        {formatRelativeTime(workspace.updatedAt)}
+        Modified {formatRelativeTime(workspace.updatedAt)} · Created {formatRelativeTime(workspace.createdAt)}
       </p>
+      {ownerName && (
+        <div className="flex items-center gap-1.5 mt-2">
+          {ownerAvatarUrl ? (
+            <img src={ownerAvatarUrl} alt="" className="w-5 h-5 rounded-full" />
+          ) : (
+            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium">{ownerName[0]}</div>
+          )}
+          <span className="text-xs text-muted-foreground truncate">{ownerName}</span>
+        </div>
+      )}
     </div>
   );
 }
