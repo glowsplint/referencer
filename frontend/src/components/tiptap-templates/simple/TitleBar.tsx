@@ -10,6 +10,7 @@ import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { renameWorkspace } from "@/lib/workspace-client";
 
 interface TitleBarProps {
   navigate?: (hash: string) => void;
@@ -23,6 +24,22 @@ export function TitleBar({ navigate }: TitleBarProps) {
   const [shareOpen, setShareOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Sync title with Yjs shared map for real-time collaboration
+  useEffect(() => {
+    if (!yjs.doc) return;
+    const meta = yjs.doc.getMap("workspace-meta");
+    const existing = meta.get("title");
+    if (typeof existing === "string" && existing) {
+      setTitle(existing);
+    }
+    const observer = () => {
+      const t = meta.get("title");
+      if (typeof t === "string" && t) setTitle(t);
+    };
+    meta.observe(observer);
+    return () => meta.unobserve(observer);
+  }, [yjs.doc]);
+
   const startEditing = useCallback(() => {
     if (readOnly) return;
     setIsEditing(true);
@@ -30,10 +47,20 @@ export function TitleBar({ navigate }: TitleBarProps) {
 
   const stopEditing = useCallback(() => {
     setIsEditing(false);
+    const finalTitle = title.trim() || "Title";
     if (title.trim() === "") {
       setTitle("Title");
     }
-  }, [title]);
+
+    // Persist to Yjs map for real-time sync
+    const meta = yjs.doc?.getMap("workspace-meta");
+    meta?.set("title", finalTitle);
+
+    // Persist to database for authenticated users
+    if (isAuthenticated && workspaceId) {
+      renameWorkspace(workspaceId, finalTitle).catch(() => {});
+    }
+  }, [title, yjs.doc, isAuthenticated, workspaceId]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === "Escape") {
