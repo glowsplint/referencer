@@ -1,73 +1,75 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Hono } from "hono";
-import { Database } from "bun:sqlite";
 import { handleShare, handleResolveShare } from "./share";
+import type { Env } from "../env";
 
-const schema = `
-CREATE TABLE IF NOT EXISTS workspace (
-    id TEXT PRIMARY KEY,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE TABLE IF NOT EXISTS share_link (
-    code TEXT PRIMARY KEY,
-    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
-    access TEXT NOT NULL CHECK (access IN ('edit', 'readonly')),
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE TABLE IF NOT EXISTS user (
-    id TEXT PRIMARY KEY,
-    email TEXT NOT NULL,
-    name TEXT NOT NULL DEFAULT '',
-    avatar_url TEXT NOT NULL DEFAULT '',
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_user_email ON user(email);
-
-CREATE TABLE IF NOT EXISTS user_provider (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    provider TEXT NOT NULL,
-    provider_user_id TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    UNIQUE(provider, provider_user_id)
-);
-
-CREATE TABLE IF NOT EXISTS session (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    expires_at TEXT NOT NULL
-);
-CREATE INDEX IF NOT EXISTS idx_session_user_id ON session(user_id);
-CREATE INDEX IF NOT EXISTS idx_session_expires_at ON session(expires_at);
-`;
-
-function createTestDb(): Database {
-  const db = new Database(":memory:");
-  db.exec("PRAGMA foreign_keys=ON");
-  db.exec(schema);
-  return db;
-}
-
+const FRONTEND_URL = "http://localhost:5173";
 const WS_ID = "test-workspace-1";
 
+// In-memory store to simulate Supabase share_link table
+let rows: Array<{ code: string; workspace_id: string; access: string }>;
+
+function createMockSupabase() {
+  return {
+    from(_table: string) {
+      return {
+        insert(row: { code: string; workspace_id: string; access: string }) {
+          const duplicate = rows.find((r) => r.code === row.code);
+          if (duplicate) {
+            return Promise.resolve({ error: { code: "23505", message: "duplicate" } });
+          }
+          rows.push(row);
+          return Promise.resolve({ error: null });
+        },
+        select(_cols: string) {
+          return {
+            eq(column: string, value: string) {
+              return {
+                single() {
+                  const found = rows.find((r) => (r as Record<string, string>)[column] === value);
+                  return Promise.resolve({ data: found ?? null });
+                },
+              };
+            },
+          };
+        },
+      };
+    },
+  } as any;
+}
+
+const ENV_BINDINGS = { FRONTEND_URL } as Env["Bindings"];
+
+function createApp() {
+  const app = new Hono<Env>();
+
+  // Middleware that provides supabase via context variables
+  app.use("*", async (c, next) => {
+    c.set("supabase", createMockSupabase());
+    await next();
+  });
+
+  app.post("/api/share", handleShare());
+  app.get("/s/:code", handleResolveShare());
+
+  return app;
+}
+
+function request(app: Hono<Env>, path: string, init?: RequestInit) {
+  return app.request(path, init, ENV_BINDINGS);
+}
+
 describe("share API routes", () => {
-  let db: Database;
+  let app: ReturnType<typeof createApp>;
 
   beforeEach(() => {
-    db = createTestDb();
-    db.run("INSERT INTO workspace (id) VALUES (?)", [WS_ID]);
+    rows = [];
+    app = createApp();
   });
 
   describe("POST /api/share", () => {
     it("creates an edit share link", async () => {
-      const app = new Hono();
-      app.post("/api/share", handleShare(db));
-
-      const res = await app.request("/api/share", {
+      const res = await request(app, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workspaceId: WS_ID, access: "edit" }),
@@ -81,10 +83,7 @@ describe("share API routes", () => {
     });
 
     it("creates a readonly share link", async () => {
-      const app = new Hono();
-      app.post("/api/share", handleShare(db));
-
-      const res = await app.request("/api/share", {
+      const res = await request(app, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workspaceId: WS_ID, access: "readonly" }),
@@ -96,10 +95,7 @@ describe("share API routes", () => {
     });
 
     it("returns 400 for invalid access type", async () => {
-      const app = new Hono();
-      app.post("/api/share", handleShare(db));
-
-      const res = await app.request("/api/share", {
+      const res = await request(app, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workspaceId: WS_ID, access: "invalid" }),
@@ -113,34 +109,25 @@ describe("share API routes", () => {
 
   describe("GET /s/:code — share link resolution", () => {
     it("redirects to workspace for valid edit share code", async () => {
-      // Create a share link directly in DB
-      db.run("INSERT INTO share_link (code, workspace_id, access) VALUES (?, ?, ?)", [
-        "ABC123",
-        WS_ID,
-        "edit",
-      ]);
+      rows.push({ code: "ABC123", workspace_id: WS_ID, access: "edit" });
 
-      const app = new Hono();
-      app.get("/s/:code", handleResolveShare(db, "/tmp/fake-static"));
-
-      const res = await app.request("/s/ABC123", { redirect: "manual" });
+      const res = await request(app, "/s/ABC123", { redirect: "manual" });
       expect(res.status).toBe(302);
-      expect(res.headers.get("location")).toBe(`/space/${WS_ID}`);
+      expect(res.headers.get("location")).toBe(`${FRONTEND_URL}/#/${WS_ID}`);
     });
 
     it("redirects with readonly param for readonly share code", async () => {
-      db.run("INSERT INTO share_link (code, workspace_id, access) VALUES (?, ?, ?)", [
-        "RDO456",
-        WS_ID,
-        "readonly",
-      ]);
+      rows.push({ code: "RDO456", workspace_id: WS_ID, access: "readonly" });
 
-      const app = new Hono();
-      app.get("/s/:code", handleResolveShare(db, "/tmp/fake-static"));
-
-      const res = await app.request("/s/RDO456", { redirect: "manual" });
+      const res = await request(app, "/s/RDO456", { redirect: "manual" });
       expect(res.status).toBe(302);
-      expect(res.headers.get("location")).toBe(`/space/${WS_ID}?access=readonly`);
+      expect(res.headers.get("location")).toBe(`${FRONTEND_URL}/#/${WS_ID}?access=readonly`);
+    });
+
+    it("redirects to frontend root for unknown code", async () => {
+      const res = await request(app, "/s/ZZZZZZ", { redirect: "manual" });
+      expect(res.status).toBe(302);
+      expect(res.headers.get("location")).toBe(FRONTEND_URL);
     });
   });
 });

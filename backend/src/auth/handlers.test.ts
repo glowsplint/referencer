@@ -1,47 +1,9 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Hono } from "hono";
-import { Database } from "bun:sqlite";
 import { createAuthRoutes } from "./handlers";
 import { optionalAuth } from "./middleware";
 import type { AuthConfig } from "./config";
-import { upsertUser, createSession } from "./store";
-
-const schema = `
-CREATE TABLE IF NOT EXISTS user (
-    id TEXT PRIMARY KEY,
-    email TEXT NOT NULL,
-    name TEXT NOT NULL DEFAULT '',
-    avatar_url TEXT NOT NULL DEFAULT '',
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_user_email ON user(email);
-
-CREATE TABLE IF NOT EXISTS user_provider (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    provider TEXT NOT NULL,
-    provider_user_id TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    UNIQUE(provider, provider_user_id)
-);
-
-CREATE TABLE IF NOT EXISTS session (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-    expires_at TEXT NOT NULL
-);
-CREATE INDEX IF NOT EXISTS idx_session_user_id ON session(user_id);
-CREATE INDEX IF NOT EXISTS idx_session_expires_at ON session(expires_at);
-`;
-
-function createTestDb(): Database {
-  const db = new Database(":memory:");
-  db.exec("PRAGMA foreign_keys=ON");
-  db.exec(schema);
-  return db;
-}
+import type { Env } from "../env";
 
 const testConfig: AuthConfig = {
   baseUrl: "http://localhost:5000",
@@ -51,157 +13,275 @@ const testConfig: AuthConfig = {
   github: null,
 };
 
-function createApp(db: Database, config: AuthConfig = testConfig) {
-  const app = new Hono();
-  app.use("*", optionalAuth(db, config));
-  app.route("/auth", createAuthRoutes(db, config));
+// Minimal env bindings so loadAuthConfig(c.env) works.
+const testEnv = {
+  SUPABASE_URL: "http://localhost:54321",
+  SUPABASE_SERVICE_KEY: "test-key",
+  FRONTEND_URL: "http://localhost:5173",
+  BASE_URL: "http://localhost:5000",
+} as Env["Bindings"];
+
+// In-memory stores for mock Supabase
+let users: Array<Record<string, string>>;
+let sessions: Array<Record<string, string>>;
+
+function createMockSupabase() {
+  return {
+    from(table: string) {
+      function getStore() {
+        if (table === "user") return users;
+        if (table === "session") return sessions;
+        return [];
+      }
+
+      return {
+        select(_cols: string) {
+          return {
+            eq(col1: string, val1: string) {
+              return {
+                eq(col2: string, val2: string) {
+                  return {
+                    single() {
+                      const found = getStore().find(
+                        (r) => r[col1] === val1 && r[col2] === val2,
+                      );
+                      return Promise.resolve({ data: found ?? null });
+                    },
+                  };
+                },
+                single() {
+                  const found = getStore().find((r) => r[col1] === val1);
+                  return Promise.resolve({ data: found ?? null });
+                },
+              };
+            },
+          };
+        },
+        insert(row: Record<string, string>) {
+          getStore().push({ ...row });
+          return Promise.resolve({ error: null });
+        },
+        update(fields: Record<string, string>) {
+          return {
+            eq(col: string, val: string) {
+              for (const row of getStore()) {
+                if (row[col] === val) Object.assign(row, fields);
+              }
+              return Promise.resolve({ error: null });
+            },
+          };
+        },
+        delete() {
+          return {
+            eq(col: string, val: string) {
+              const store = getStore();
+              const idx = store.findIndex((r) => r[col] === val);
+              if (idx !== -1) store.splice(idx, 1);
+              return Promise.resolve({ error: null });
+            },
+          };
+        },
+      };
+    },
+  } as any;
+}
+
+function seedUserAndSession() {
+  const userId = "user-1";
+  const token = "valid-session-token";
+  users.push({
+    id: userId,
+    email: "test@example.com",
+    name: "Test User",
+    avatar_url: "https://avatar.png",
+    created_at: "2025-01-01T00:00:00.000Z",
+    updated_at: "2025-01-01T00:00:00.000Z",
+  });
+  sessions.push({
+    id: token,
+    user_id: userId,
+    created_at: new Date().toISOString(),
+    expires_at: new Date(Date.now() + 3600 * 1000).toISOString(),
+  });
+  return { userId, token };
+}
+
+function createApp() {
+  const app = new Hono<Env>();
+
+  // Provide env bindings and supabase in context.
+  app.use("*", async (c, next) => {
+    (c.env as any) = { ...testEnv, ...c.env };
+    c.set("supabase", createMockSupabase());
+    await next();
+  });
+
+  app.use("*", optionalAuth(testConfig));
+  app.route("/auth", createAuthRoutes());
   return app;
 }
 
-describe("auth routes", () => {
-  let db: Database;
+function request(app: Hono<Env>, path: string, init?: RequestInit) {
+  return app.request(path, init, testEnv);
+}
 
+describe("auth routes", () => {
   beforeEach(() => {
-    db = createTestDb();
+    users = [];
+    sessions = [];
   });
 
   describe("GET /auth/:provider — unknown provider", () => {
     it("returns 404 for unknown provider", async () => {
-      const app = createApp(db);
-      const res = await app.request("/auth/unknown");
+      const app = createApp();
+      const res = await request(app, "/auth/unknown");
       expect(res.status).toBe(404);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.error).toContain("Unknown provider");
     });
   });
 
   describe("GET /auth/:provider — unconfigured provider", () => {
     it("returns 404 when google is not configured", async () => {
-      const app = createApp(db);
-      const res = await app.request("/auth/google");
-      // No providers configured, so getProvider returns null
+      const app = createApp();
+      const res = await request(app, "/auth/google");
+      // No providers configured, so getProviderFromMap returns null
       expect(res.status).toBe(404);
     });
 
     it("returns 404 when github is not configured", async () => {
-      const app = createApp(db);
-      const res = await app.request("/auth/github");
+      const app = createApp();
+      const res = await request(app, "/auth/github");
       expect(res.status).toBe(404);
     });
   });
 
   describe("GET /auth/:provider/callback — error cases", () => {
     it("returns 404 for unknown provider callback", async () => {
-      const app = createApp(db);
-      const res = await app.request("/auth/unknown/callback?code=abc&state=xyz");
+      const app = createApp();
+      const res = await request(app, "/auth/unknown/callback?code=abc&state=xyz");
       expect(res.status).toBe(404);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.error).toContain("Unknown provider");
     });
 
     it("returns 400 when missing auth state cookie", async () => {
-      const app = createApp(db, {
-        ...testConfig,
-        google: { clientId: "test-id", clientSecret: "test-secret" },
+      // Provide google config so the provider is found.
+      const appWithGoogle = new Hono<Env>();
+      const envWithGoogle = {
+        ...testEnv,
+        GOOGLE_CLIENT_ID: "test-id",
+        GOOGLE_CLIENT_SECRET: "test-secret",
+      };
+      appWithGoogle.use("*", async (c, next) => {
+        (c.env as any) = { ...envWithGoogle, ...c.env };
+        c.set("supabase", createMockSupabase());
+        await next();
       });
-      // Need to init providers for this test — but since we're testing the handler directly,
-      // getProvider("google") will return null unless initProviders was called.
-      // Since providers aren't initialized in tests, google still returns null -> 404.
-      const res = await app.request("/auth/google/callback?code=abc&state=xyz");
-      // getProvider returns null because initProviders wasn't called
-      expect(res.status).toBe(404);
+      appWithGoogle.use("*", optionalAuth(testConfig));
+      appWithGoogle.route("/auth", createAuthRoutes());
+
+      const res = await appWithGoogle.request(
+        "/auth/google/callback?code=abc&state=xyz",
+        undefined,
+        envWithGoogle as any,
+      );
+      expect(res.status).toBe(400);
+      const body = (await res.json()) as any;
+      expect(body.error).toContain("Missing auth state");
     });
   });
 
   describe("GET /auth/me", () => {
     it("returns unauthenticated when no session cookie", async () => {
-      const app = createApp(db);
-      const res = await app.request("/auth/me");
+      const app = createApp();
+      const res = await request(app, "/auth/me");
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.authenticated).toBe(false);
     });
 
     it("returns unauthenticated for invalid session token", async () => {
-      const app = createApp(db);
-      const res = await app.request("/auth/me", {
+      const app = createApp();
+      const res = await request(app, "/auth/me", {
         headers: { Cookie: "__session=invalid-token" },
       });
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.authenticated).toBe(false);
     });
 
     it("returns authenticated user with valid session", async () => {
-      const userId = upsertUser(
-        db,
-        "google",
-        "google-123",
-        "test@example.com",
-        "Test User",
-        "https://avatar.png",
-      );
-      const token = createSession(db, userId, 3600);
+      const { token } = seedUserAndSession();
 
-      const app = createApp(db);
-      const res = await app.request("/auth/me", {
+      const app = createApp();
+      const res = await request(app, "/auth/me", {
         headers: { Cookie: `__session=${token}` },
       });
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.authenticated).toBe(true);
-      expect(body.user.id).toBe(userId);
+      expect(body.user.id).toBe("user-1");
       expect(body.user.email).toBe("test@example.com");
       expect(body.user.name).toBe("Test User");
     });
 
     it("returns unauthenticated for expired session", async () => {
-      const userId = upsertUser(db, "google", "google-123", "test@example.com", "Test User", "");
-      const token = createSession(db, userId, 0);
-      db.run("UPDATE session SET expires_at = datetime('now', '-1 hour') WHERE id = ?", [token]);
+      const userId = "user-1";
+      users.push({
+        id: userId,
+        email: "test@example.com",
+        name: "Test User",
+        avatar_url: "",
+        created_at: "2025-01-01T00:00:00.000Z",
+        updated_at: "2025-01-01T00:00:00.000Z",
+      });
+      sessions.push({
+        id: "expired-token",
+        user_id: userId,
+        created_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() - 3600 * 1000).toISOString(),
+      });
 
-      const app = createApp(db);
-      const res = await app.request("/auth/me", {
-        headers: { Cookie: `__session=${token}` },
+      const app = createApp();
+      const res = await request(app, "/auth/me", {
+        headers: { Cookie: "__session=expired-token" },
       });
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.authenticated).toBe(false);
     });
   });
 
   describe("POST /auth/logout", () => {
     it("returns ok when no session exists", async () => {
-      const app = createApp(db);
-      const res = await app.request("/auth/logout", { method: "POST" });
+      const app = createApp();
+      const res = await request(app, "/auth/logout", { method: "POST" });
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.ok).toBe(true);
     });
 
     it("deletes session and returns ok", async () => {
-      const userId = upsertUser(db, "google", "google-123", "test@example.com", "Test User", "");
-      const token = createSession(db, userId, 3600);
+      const { token } = seedUserAndSession();
 
-      const app = createApp(db);
-      const res = await app.request("/auth/logout", {
+      const app = createApp();
+      const res = await request(app, "/auth/logout", {
         method: "POST",
         headers: { Cookie: `__session=${token}` },
       });
       expect(res.status).toBe(200);
-      const body = await res.json();
+      const body = (await res.json()) as any;
       expect(body.ok).toBe(true);
 
-      // Verify the session is deleted
-      const row = db
-        .query<{ id: string }, [string]>("SELECT id FROM session WHERE id = ?")
-        .get(token);
-      expect(row).toBeNull();
+      // Verify the session is deleted from the in-memory store
+      const remaining = sessions.find((s) => s.id === token);
+      expect(remaining).toBeUndefined();
     });
 
     it("clears the session cookie", async () => {
-      const app = createApp(db);
-      const res = await app.request("/auth/logout", { method: "POST" });
+      const app = createApp();
+      const res = await request(app, "/auth/logout", { method: "POST" });
       const setCookie = res.headers.get("set-cookie");
       expect(setCookie).toContain("__session=");
     });
