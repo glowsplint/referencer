@@ -40,6 +40,7 @@ export function WorkspaceCard({
             <DropdownMenu.Content
               sideOffset={4}
               className="z-50 min-w-[160px] rounded-lg border border-border bg-popover p-1 shadow-md"
+              onClick={(e) => e.stopPropagation()}
             >
               <DropdownMenu.Item
                 onSelect={onOpen}
