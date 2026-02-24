@@ -1,7 +1,7 @@
 // Composes the recording and playback hooks with the visibility snapshot
 // applicator, providing a single RecordingContext value for the app.
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useRecordings } from "./use-recordings";
 import { usePlayback } from "./use-playback";
 import { setAnnotationVisibilityInDoc } from "@/lib/yjs/annotations";
@@ -27,11 +27,16 @@ export function useRecordingManager({
 }: UseRecordingManagerArgs) {
   const recordingsHook = useRecordings(doc, layers, sectionVisibility);
 
+  const layersRef = useRef(layers);
+  layersRef.current = layers;
+  const sectionVisibilityRef = useRef(sectionVisibility);
+  sectionVisibilityRef.current = sectionVisibility;
+
   const applyVisibilitySnapshot = useCallback(
     (snapshot: VisibilitySnapshot) => {
       // Apply layer visibility
       for (const [layerId, visible] of Object.entries(snapshot.layers)) {
-        const layer = layers.find((l) => l.id === layerId);
+        const layer = layersRef.current.find((l) => l.id === layerId);
         if (layer && layer.visible !== visible) {
           toggleLayerVisibility(layerId);
         }
@@ -48,13 +53,13 @@ export function useRecordingManager({
       // Apply section visibility
       for (const [idxStr, visible] of Object.entries(snapshot.sections)) {
         const idx = Number(idxStr);
-        const currentVisible = sectionVisibility[idx] ?? true;
+        const currentVisible = sectionVisibilityRef.current[idx] ?? true;
         if (currentVisible !== visible) {
           toggleSectionVisibility(idx);
         }
       }
     },
-    [doc, layers, sectionVisibility, toggleLayerVisibility, toggleSectionVisibility],
+    [doc, toggleLayerVisibility, toggleSectionVisibility],
   );
 
   const playbackHook = usePlayback(recordingsHook.recordings, applyVisibilitySnapshot);

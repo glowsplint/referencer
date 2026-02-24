@@ -24,4 +24,14 @@ export interface UserWorkspace {
   createdAt: string;
   updatedAt: string;
   isFavorite: boolean;
+  folderId: string | null;
+}
+
+export interface WorkspaceFolder {
+  id: string;
+  userId: string;
+  parentId: string | null;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -59,6 +59,7 @@
     "hideAnnotation": "Hide annotation",
     "showSection": "Show section {{index}}",
     "hideSection": "Hide section {{index}}",
-    "deletedAnnotationWarning": "Some steps reference deleted annotations"
+    "deletedAnnotationWarning": "Some steps reference deleted annotations",
+    "statusHint": "Recording\u2026 Toggle layer/annotation visibility to capture steps. Press \u25A0 to stop."
   }
 }

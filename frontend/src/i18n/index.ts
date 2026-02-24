@@ -8,6 +8,7 @@ import toolsEn from "./locales/en/tools.json";
 import dialogsEn from "./locales/en/dialogs.json";
 import managementEn from "./locales/en/management.json";
 import editorEn from "./locales/en/editor.json";
+import tourEn from "./locales/en/tour.json";
 
 import commonZh from "./locales/zh/common.json";
 import toolsZh from "./locales/zh/tools.json";
@@ -231,6 +232,7 @@ type Namespaces = {
   dialogs: object;
   management: object;
   editor: object;
+  tour: object;
 };
 
 const localeData: [string, Namespaces][] = [
@@ -242,6 +244,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsEn,
       management: managementEn,
       editor: editorEn,
+      tour: tourEn,
     },
   ],
   [
@@ -252,6 +255,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsZh,
       management: managementZh,
       editor: editorZh,
+      tour: tourEn,
     },
   ],
   [
@@ -262,6 +266,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsEs,
       management: managementEs,
       editor: editorEs,
+      tour: tourEn,
     },
   ],
   [
@@ -272,6 +277,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsHi,
       management: managementHi,
       editor: editorHi,
+      tour: tourEn,
     },
   ],
   [
@@ -282,6 +288,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsAr,
       management: managementAr,
       editor: editorAr,
+      tour: tourEn,
     },
   ],
   [
@@ -292,6 +299,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsFr,
       management: managementFr,
       editor: editorFr,
+      tour: tourEn,
     },
   ],
   [
@@ -302,6 +310,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsBn,
       management: managementBn,
       editor: editorBn,
+      tour: tourEn,
     },
   ],
   [
@@ -312,6 +321,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsPt,
       management: managementPt,
       editor: editorPt,
+      tour: tourEn,
     },
   ],
   [
@@ -322,6 +332,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsRu,
       management: managementRu,
       editor: editorRu,
+      tour: tourEn,
     },
   ],
   [
@@ -332,6 +343,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsJa,
       management: managementJa,
       editor: editorJa,
+      tour: tourEn,
     },
   ],
   [
@@ -342,6 +354,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsKo,
       management: managementKo,
       editor: editorKo,
+      tour: tourEn,
     },
   ],
   [
@@ -352,6 +365,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsDe,
       management: managementDe,
       editor: editorDe,
+      tour: tourEn,
     },
   ],
   [
@@ -362,6 +376,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsIt,
       management: managementIt,
       editor: editorIt,
+      tour: tourEn,
     },
   ],
   [
@@ -372,6 +387,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsTr,
       management: managementTr,
       editor: editorTr,
+      tour: tourEn,
     },
   ],
   [
@@ -382,6 +398,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsVi,
       management: managementVi,
       editor: editorVi,
+      tour: tourEn,
     },
   ],
   [
@@ -392,6 +409,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsTh,
       management: managementTh,
       editor: editorTh,
+      tour: tourEn,
     },
   ],
   [
@@ -402,6 +420,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsId,
       management: managementId,
       editor: editorId,
+      tour: tourEn,
     },
   ],
   [
@@ -412,6 +431,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsPl,
       management: managementPl,
       editor: editorPl,
+      tour: tourEn,
     },
   ],
   [
@@ -422,6 +442,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsUk,
       management: managementUk,
       editor: editorUk,
+      tour: tourEn,
     },
   ],
   [
@@ -432,6 +453,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsNl,
       management: managementNl,
       editor: editorNl,
+      tour: tourEn,
     },
   ],
   [
@@ -442,6 +464,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsSw,
       management: managementSw,
       editor: editorSw,
+      tour: tourEn,
     },
   ],
   [
@@ -452,6 +475,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsMs,
       management: managementMs,
       editor: editorMs,
+      tour: tourEn,
     },
   ],
   [
@@ -462,6 +486,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsTl,
       management: managementTl,
       editor: editorTl,
+      tour: tourEn,
     },
   ],
   [
@@ -472,6 +497,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsAm,
       management: managementAm,
       editor: editorAm,
+      tour: tourEn,
     },
   ],
   [
@@ -482,6 +508,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsRo,
       management: managementRo,
       editor: editorRo,
+      tour: tourEn,
     },
   ],
   [
@@ -492,6 +519,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsYo,
       management: managementYo,
       editor: editorYo,
+      tour: tourEn,
     },
   ],
   [
@@ -502,6 +530,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsEl,
       management: managementEl,
       editor: editorEl,
+      tour: tourEn,
     },
   ],
   [
@@ -512,6 +541,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsHe,
       management: managementHe,
       editor: editorHe,
+      tour: tourEn,
     },
   ],
   [
@@ -522,6 +552,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsTa,
       management: managementTa,
       editor: editorTa,
+      tour: tourEn,
     },
   ],
   [
@@ -532,6 +563,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsSv,
       management: managementSv,
       editor: editorSv,
+      tour: tourEn,
     },
   ],
   [
@@ -542,6 +574,7 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsAf,
       management: managementAf,
       editor: editorAf,
+      tour: tourEn,
     },
   ],
 ];
@@ -555,7 +588,7 @@ i18n
     resources,
     fallbackLng: "en",
     defaultNS: "common",
-    ns: ["common", "tools", "dialogs", "management", "editor"],
+    ns: ["common", "tools", "dialogs", "management", "editor", "tour"],
     interpolation: {
       escapeValue: false,
     },

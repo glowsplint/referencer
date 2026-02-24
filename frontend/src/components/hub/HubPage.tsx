@@ -1,5 +1,6 @@
 import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspaces } from "@/hooks/data/use-workspaces";
+import { useFolders } from "@/hooks/data/use-folders";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
 import { WorkspaceGrid } from "./WorkspaceGrid";
@@ -11,7 +12,8 @@ interface HubPageProps {
 
 export function HubPage({ navigate }: HubPageProps) {
   const { user, isAuthenticated, isLoading: authLoading, login } = useAuth();
-  const { workspaces, isLoading: wsLoading, create, rename, remove, duplicate, toggleFavorite } = useWorkspaces();
+  const { workspaces, isLoading: wsLoading, create, rename, remove, duplicate, toggleFavorite, refetch: refetchWorkspaces } = useWorkspaces();
+  const { folders, create: createFolder, rename: renameFolder, remove: removeFolder, moveWorkspace, unfileWorkspace } = useFolders();
 
   const handleTryWithoutSignIn = () => {
     const id = crypto.randomUUID();
@@ -74,6 +76,13 @@ export function HubPage({ navigate }: HubPageProps) {
               onDelete={remove}
               onDuplicate={duplicate}
               onToggleFavorite={toggleFavorite}
+              folders={folders}
+              onCreateFolder={createFolder}
+              onRenameFolder={renameFolder}
+              onDeleteFolder={removeFolder}
+              onMoveWorkspaceToFolder={moveWorkspace}
+              onUnfileWorkspace={unfileWorkspace}
+              onRefetchWorkspaces={refetchWorkspaces}
               ownerName={user?.name}
               ownerAvatarUrl={user?.avatarUrl}
             />

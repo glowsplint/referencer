@@ -2,6 +2,8 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2, Star } from "lucide-react";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { FolderItem } from "@/lib/folder-client";
+import { MoveToFolderMenu } from "./MoveToFolderMenu";
 
 interface WorkspaceListItemProps {
   workspace: WorkspaceItem;
@@ -10,6 +12,8 @@ interface WorkspaceListItemProps {
   onDuplicate: () => void;
   onDelete: () => void;
   onToggleFavorite?: (workspaceId: string, isFavorite: boolean) => void;
+  folders?: FolderItem[];
+  onMoveToFolder?: (workspaceId: string, folderId: string | null) => void;
   ownerName?: string;
   ownerAvatarUrl?: string;
 }
@@ -21,6 +25,8 @@ export function WorkspaceListItem({
   onDuplicate,
   onDelete,
   onToggleFavorite,
+  folders,
+  onMoveToFolder,
   ownerName,
   ownerAvatarUrl,
 }: WorkspaceListItemProps) {
@@ -35,7 +41,7 @@ export function WorkspaceListItem({
         className="p-1 rounded-md hover:bg-accent transition-colors shrink-0"
         data-testid="favoriteToggle"
       >
-        <Star size={14} className={workspace.isFavorite ? "fill-current text-yellow-500" : "text-muted-foreground"} />
+        <Star size={14} fill={workspace.isFavorite ? "currentColor" : "none"} className={workspace.isFavorite ? "text-yellow-500" : "text-muted-foreground"} />
       </button>
       <span className="font-medium text-sm truncate flex-1 ml-1">{workspace.title || "Untitled"}</span>
       <span className="text-xs text-muted-foreground w-[120px] shrink-0">{formatRelativeTime(workspace.createdAt)}</span>
@@ -82,6 +88,13 @@ export function WorkspaceListItem({
             >
               <Copy size={14} /> Duplicate
             </DropdownMenu.Item>
+            {folders && onMoveToFolder && (
+              <MoveToFolderMenu
+                folders={folders}
+                currentFolderId={workspace.folderId}
+                onMove={(folderId) => onMoveToFolder(workspace.workspaceId, folderId)}
+              />
+            )}
             <DropdownMenu.Separator className="my-1 h-px bg-border" />
             <DropdownMenu.Item
               onSelect={onDelete}

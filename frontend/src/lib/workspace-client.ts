@@ -6,6 +6,7 @@ export interface WorkspaceItem {
   createdAt: string;
   updatedAt: string;
   isFavorite: boolean;
+  folderId: string | null;
 }
 
 export async function fetchWorkspaces(): Promise<WorkspaceItem[]> {

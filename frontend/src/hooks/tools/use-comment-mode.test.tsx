@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { useCommentMode } from "./use-comment-mode";
 import type { WordSelection, ActiveTool } from "@/types/editor";
+
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <AuthProvider>{children}</AuthProvider>
+);
 
 function createOptions(overrides: Record<string, unknown> = {}) {
   return {
@@ -42,7 +47,7 @@ describe("useCommentMode", () => {
 
   it("shows entry status when comments tool is activated", () => {
     const setStatus = vi.fn();
-    renderHook(() => useCommentMode(createOptions({ setStatus })));
+    renderHook(() => useCommentMode(createOptions({ setStatus })), { wrapper });
 
     expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
@@ -52,7 +57,7 @@ describe("useCommentMode", () => {
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
         useCommentMode(createOptions({ activeTool: props.activeTool, clearStatus })),
-      { initialProps: { activeTool: "comments" as ActiveTool } },
+      { initialProps: { activeTool: "comments" as ActiveTool }, wrapper },
     );
 
     rerender({ activeTool: "selection" });
@@ -64,7 +69,7 @@ describe("useCommentMode", () => {
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
         useCommentMode(createOptions({ activeTool: props.activeTool, clearStatus })),
-      { initialProps: { activeTool: "comments" as ActiveTool } },
+      { initialProps: { activeTool: "comments" as ActiveTool }, wrapper },
     );
 
     rerender({ activeTool: "underline" });
@@ -76,7 +81,7 @@ describe("useCommentMode", () => {
     const { rerender } = renderHook(
       (props: { isLocked: boolean }) =>
         useCommentMode(createOptions({ isLocked: props.isLocked, clearStatus })),
-      { initialProps: { isLocked: true } },
+      { initialProps: { isLocked: true }, wrapper },
     );
 
     rerender({ isLocked: false });
@@ -85,7 +90,7 @@ describe("useCommentMode", () => {
 
   it("does nothing when activeTool is not comments", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -96,7 +101,7 @@ describe("useCommentMode", () => {
 
   it("does nothing when isLocked is false", () => {
     const opts = createOptions({ isLocked: false, selection: word1 });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -107,7 +112,7 @@ describe("useCommentMode", () => {
 
   it("does nothing when there is no selection", () => {
     const opts = createOptions({ selection: null });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -127,7 +132,7 @@ describe("useCommentMode", () => {
       onHighlightAdded,
       selection: word1,
     });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -148,7 +153,7 @@ describe("useCommentMode", () => {
   it("does nothing when addLayer fails (all colors used)", () => {
     const addLayer = vi.fn(() => "");
     const opts = createOptions({ activeLayerId: null, addLayer, selection: word1 });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -160,7 +165,7 @@ describe("useCommentMode", () => {
 
   it("creates highlight and calls onHighlightAdded", () => {
     const opts = createOptions({ selection: word1 });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -180,7 +185,7 @@ describe("useCommentMode", () => {
   it("preserves selection after creating highlight for keyboard navigation", () => {
     const clearSelection = vi.fn();
     const opts = createOptions({ selection: word1 });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -219,7 +224,7 @@ describe("useCommentMode", () => {
         },
       ],
     });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -250,7 +255,7 @@ describe("useCommentMode", () => {
         },
       ],
     });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -263,7 +268,7 @@ describe("useCommentMode", () => {
   it("always shows success status when comment is created", () => {
     const flashStatus = vi.fn();
     const opts = createOptions({ selection: word1, flashStatus });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();
@@ -276,7 +281,7 @@ describe("useCommentMode", () => {
   it("stays in comments mode (does NOT switch to selection)", () => {
     const setActiveTool = vi.fn();
     const opts = createOptions({ selection: word1 });
-    const { result } = renderHook(() => useCommentMode(opts));
+    const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
     act(() => {
       result.current.confirmComment();

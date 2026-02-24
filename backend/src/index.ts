@@ -6,6 +6,8 @@ import { loadAuthConfig } from "./auth/config";
 import { optionalAuth } from "./auth/middleware";
 import { handleShare, handleResolveShare } from "./api/share";
 import { workspaces } from "./api/workspaces";
+import { folders } from "./api/folders";
+import { preferences } from "./api/preferences";
 import { cleanExpiredSessions } from "./auth/store";
 import type { Env } from "./env";
 
@@ -38,6 +40,12 @@ app.route("/auth", createAuthRoutes());
 
 // Workspaces API
 app.route("/api/workspaces", workspaces);
+
+// Folders API
+app.route("/api/folders", folders);
+
+// Preferences API
+app.route("/api/preferences", preferences);
 
 // Share API
 app.post("/api/share", handleShare());

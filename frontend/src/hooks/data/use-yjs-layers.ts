@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import i18n from "@/i18n";
 import type * as Y from "yjs";
 import type { Editor } from "@tiptap/react";
-import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor";
+import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
 import { TAILWIND_300_COLORS } from "@/constants/colors";
 import {
   readLayers,
@@ -31,6 +31,11 @@ import {
   toggleHighlightVisibilityInDoc,
   toggleArrowVisibilityInDoc,
   toggleUnderlineVisibilityInDoc,
+  addReplyToDoc,
+  updateReplyInDoc,
+  removeReplyFromDoc,
+  toggleReactionOnHighlightInDoc,
+  toggleReactionOnReplyInDoc,
   type EditorViewMap,
 } from "@/lib/yjs/annotations";
 
@@ -294,6 +299,46 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
     [doc],
   );
 
+  const addReply = useCallback(
+    (layerId: string, highlightId: string, reply: CommentReply) => {
+      if (!doc) return;
+      addReplyToDoc(doc, layerId, highlightId, reply);
+    },
+    [doc],
+  );
+
+  const updateReply = useCallback(
+    (layerId: string, highlightId: string, replyId: string, text: string) => {
+      if (!doc) return;
+      updateReplyInDoc(doc, layerId, highlightId, replyId, text);
+    },
+    [doc],
+  );
+
+  const removeReply = useCallback(
+    (layerId: string, highlightId: string, replyId: string) => {
+      if (!doc) return;
+      removeReplyFromDoc(doc, layerId, highlightId, replyId);
+    },
+    [doc],
+  );
+
+  const toggleReactionOnHighlight = useCallback(
+    (layerId: string, highlightId: string, emoji: string, userName: string) => {
+      if (!doc) return;
+      toggleReactionOnHighlightInDoc(doc, layerId, highlightId, emoji, userName);
+    },
+    [doc],
+  );
+
+  const toggleReactionOnReply = useCallback(
+    (layerId: string, highlightId: string, replyId: string, emoji: string, userName: string) => {
+      if (!doc) return;
+      toggleReactionOnReplyInDoc(doc, layerId, highlightId, replyId, emoji, userName);
+    },
+    [doc],
+  );
+
   // setLayers is provided for compatibility but is a no-op with Yjs
   // (all mutations go through the specific mutation functions above)
   const setLayers = useCallback((_updater: Layer[] | ((prev: Layer[]) => Layer[])): void => {
@@ -326,6 +371,11 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
     toggleHighlightVisibility,
     toggleArrowVisibility,
     toggleUnderlineVisibility,
+    addReply,
+    updateReply,
+    removeReply,
+    toggleReactionOnHighlight,
+    toggleReactionOnReply,
     setLayers,
     setActiveLayerId,
   };

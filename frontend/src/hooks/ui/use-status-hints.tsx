@@ -17,6 +17,7 @@ interface UseStatusHintsArgs {
   selectionHidden: boolean;
   setStatus: (msg: StatusMessage) => void;
   setSelectedArrow: (arrow: null) => void;
+  isRecording: boolean;
 }
 
 export function useStatusHints({
@@ -27,6 +28,7 @@ export function useStatusHints({
   selectionHidden,
   setStatus,
   setSelectedArrow,
+  isRecording,
 }: UseStatusHintsArgs) {
   // Hint to lock the editor when unlocked
   useEffect(() => {
@@ -51,4 +53,14 @@ export function useStatusHints({
       setSelectedArrow(null);
     }
   }, [selection, selectionHidden, setSelectedArrow]);
+
+  // Hint during recording
+  useEffect(() => {
+    if (isRecording) {
+      setStatus({
+        text: <Trans ns="tools" i18nKey="recording.statusHint" />,
+        type: "info",
+      });
+    }
+  }, [isRecording, setStatus]);
 }

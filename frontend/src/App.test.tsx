@@ -2,7 +2,20 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AuthProvider } from "./contexts/AuthContext";
+import { TourProvider } from "./contexts/TourContext";
 import { App } from "./App";
+
+// Mock auth and tour API clients
+vi.mock("@/lib/auth-client", () => ({
+  fetchAuthStatus: vi.fn().mockResolvedValue({ authenticated: false }),
+  loginWith: vi.fn(),
+  logout: vi.fn(),
+}));
+
+vi.mock("@/lib/tour-client", () => ({
+  fetchTourPreferences: vi.fn().mockResolvedValue({}),
+  saveTourPreference: vi.fn().mockResolvedValue(undefined),
+}));
 
 // Mock the breakpoint hook for mobile detection
 let mockIsMobile = false;
@@ -20,6 +33,7 @@ const mockWorkspace = {
     overscrollEnabled: false,
     showStatusBar: true,
     hideOffscreenArrows: false,
+    commentPlacement: "right" as const,
   },
   annotations: { activeTool: "selection" as const },
   layers: [] as {
@@ -59,6 +73,10 @@ const mockWorkspace = {
   updateArrowStyle: vi.fn(),
   readOnly: false,
   toggleManagementPane: vi.fn(),
+  toggleOverscrollEnabled: vi.fn(),
+  toggleHideOffscreenArrows: vi.fn(),
+  toggleShowStatusBar: vi.fn(),
+  toggleCommentPlacement: vi.fn(),
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
   setActiveLayer: vi.fn(),
@@ -69,6 +87,11 @@ const mockWorkspace = {
   addHighlight: vi.fn(),
   removeHighlight: vi.fn(),
   updateHighlightAnnotation: vi.fn(),
+  addReply: vi.fn(),
+  updateReply: vi.fn(),
+  removeReply: vi.fn(),
+  toggleReactionOnHighlight: vi.fn(),
+  toggleReactionOnReply: vi.fn(),
   clearLayerHighlights: vi.fn(),
   addArrow: vi.fn(),
   removeArrow: vi.fn(),
@@ -76,6 +99,9 @@ const mockWorkspace = {
   clearLayerUnderlines: vi.fn(),
   addUnderline: vi.fn(),
   removeUnderline: vi.fn(),
+  toggleHighlightVisibility: vi.fn(),
+  toggleArrowVisibility: vi.fn(),
+  toggleUnderlineVisibility: vi.fn(),
   updateEditorContent: vi.fn(),
   setActiveLayerId: vi.fn(),
   setLayers: vi.fn(),
@@ -85,6 +111,7 @@ const mockWorkspace = {
   editorKeys: [1],
   addEditor: vi.fn(),
   removeEditor: vi.fn(),
+  reorderEditors: vi.fn(),
   updateSectionName: vi.fn(),
   toggleSectionVisibility: vi.fn(),
   toggleAllSectionVisibility: vi.fn(),
@@ -105,6 +132,7 @@ const mockWorkspace = {
     provider: null,
     doc: null,
     connected: false,
+    synced: false,
     getFragment: () => null,
     awareness: null,
   },
@@ -176,6 +204,9 @@ beforeEach(() => {
     isMultipleRowsLayout: false,
     isLocked: false,
     overscrollEnabled: false,
+    showStatusBar: true,
+    hideOffscreenArrows: false,
+    commentPlacement: "right" as const,
   };
   mockWorkspace.layers = [];
   mockWorkspace.activeLayerId = null;
@@ -200,7 +231,9 @@ describe("App", () => {
   it("renders the button pane with expected buttons", () => {
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
 
@@ -212,7 +245,9 @@ describe("App", () => {
   it("renders the title bar and toolbar", () => {
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
 
@@ -223,7 +258,9 @@ describe("App", () => {
   it("renders editor panes based on editorWidths", () => {
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
 
@@ -234,7 +271,9 @@ describe("App", () => {
   it("does not render management pane when closed", () => {
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(screen.queryByTestId("managementPane")).not.toBeInTheDocument();
@@ -244,7 +283,9 @@ describe("App", () => {
     mockWorkspace.isManagementPaneOpen = true;
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(screen.getByTestId("managementPane")).toBeInTheDocument();
@@ -255,7 +296,9 @@ describe("App", () => {
     mockWorkspace.editorKeys = [1, 2];
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     const panes = screen.getAllByTestId("editor-pane");
@@ -266,7 +309,9 @@ describe("App", () => {
     mockWorkspace.settings.isLocked = false;
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(capturedEditorPaneProps[0].onMouseDown).toBeUndefined();
@@ -278,7 +323,9 @@ describe("App", () => {
     mockWorkspace.settings.isLocked = true;
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(capturedEditorPaneProps[0].onMouseDown).toBeDefined();
@@ -301,7 +348,9 @@ describe("App", () => {
     ];
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
 
@@ -335,7 +384,9 @@ describe("App", () => {
     ];
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
@@ -346,7 +397,9 @@ describe("App", () => {
     mockWorkspace.layers = [];
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
@@ -378,7 +431,9 @@ describe("App", () => {
     ];
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
@@ -410,7 +465,9 @@ describe("App", () => {
     ];
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
 
@@ -447,7 +504,9 @@ describe("App", () => {
     ];
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
@@ -480,7 +539,9 @@ describe("App", () => {
     ];
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
     expect(capturedAnnotationPanelProps).not.toBeNull();
@@ -491,7 +552,9 @@ describe("App", () => {
     mockWorkspace.settings.isLocked = true;
     render(
       <AuthProvider>
-        <App {...defaultProps} />
+        <TourProvider>
+          <App {...defaultProps} />
+        </TourProvider>
       </AuthProvider>,
     );
 
@@ -509,7 +572,9 @@ describe("App", () => {
     it("hides ButtonPane on mobile", () => {
       render(
         <AuthProvider>
-          <App {...defaultProps} />
+          <TourProvider>
+            <App {...defaultProps} />
+          </TourProvider>
         </AuthProvider>,
       );
       expect(screen.queryByTestId("buttonPane")).not.toBeInTheDocument();
@@ -518,7 +583,9 @@ describe("App", () => {
     it("shows MobileInfoDialog on mobile", () => {
       render(
         <AuthProvider>
-          <App {...defaultProps} />
+          <TourProvider>
+            <App {...defaultProps} />
+          </TourProvider>
         </AuthProvider>,
       );
       expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument();
@@ -529,7 +596,9 @@ describe("App", () => {
       mockIsMobile = false;
       render(
         <AuthProvider>
-          <App {...defaultProps} />
+          <TourProvider>
+            <App {...defaultProps} />
+          </TourProvider>
         </AuthProvider>,
       );
       expect(screen.queryByTestId("mobileInfoDialog")).not.toBeInTheDocument();
@@ -539,7 +608,9 @@ describe("App", () => {
       const user = userEvent.setup();
       render(
         <AuthProvider>
-          <App {...defaultProps} />
+          <TourProvider>
+            <App {...defaultProps} />
+          </TourProvider>
         </AuthProvider>,
       );
 
@@ -552,7 +623,9 @@ describe("App", () => {
       mockWorkspace.settings.isLocked = false;
       render(
         <AuthProvider>
-          <App {...defaultProps} />
+          <TourProvider>
+            <App {...defaultProps} />
+          </TourProvider>
         </AuthProvider>,
       );
       expect(capturedEditorPaneProps[0].isLocked).toBe(true);
@@ -562,7 +635,9 @@ describe("App", () => {
       mockWorkspace.settings.isLocked = true;
       render(
         <AuthProvider>
-          <App {...defaultProps} />
+          <TourProvider>
+            <App {...defaultProps} />
+          </TourProvider>
         </AuthProvider>,
       );
       expect(capturedEditorPaneProps[0].onMouseDown).toBeUndefined();
@@ -573,7 +648,9 @@ describe("App", () => {
     it("does not pass onContentUpdate to EditorPane on mobile", () => {
       render(
         <AuthProvider>
-          <App {...defaultProps} />
+          <TourProvider>
+            <App {...defaultProps} />
+          </TourProvider>
         </AuthProvider>,
       );
       expect(capturedEditorPaneProps[0].onContentUpdate).toBeUndefined();
@@ -582,7 +659,9 @@ describe("App", () => {
     it("hides StatusBar on mobile", () => {
       render(
         <AuthProvider>
-          <App {...defaultProps} />
+          <TourProvider>
+            <App {...defaultProps} />
+          </TourProvider>
         </AuthProvider>,
       );
       expect(screen.queryByTestId("status-bar")).not.toBeInTheDocument();

@@ -11,6 +11,7 @@ export interface HighlightPosition {
   editorIndex: number;
   top: number;
   rightEdge: number;
+  leftEdge: number;
 }
 
 export function useAllHighlightPositions(
@@ -92,6 +93,7 @@ export function useAllHighlightPositions(
             const top = visibleRect.top - containerRect.top + container.scrollTop;
             const rightEdge =
               (lastVisibleRect ?? visibleRect).right - containerRect.left + container.scrollLeft;
+            const leftEdge = visibleRect.left - containerRect.left + container.scrollLeft;
 
             result.push({
               highlightId: highlight.id,
@@ -99,6 +101,7 @@ export function useAllHighlightPositions(
               editorIndex: highlight.editorIndex,
               top,
               rightEdge,
+              leftEdge,
             });
           } catch {
             // Position may be invalid — skip

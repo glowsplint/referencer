@@ -286,6 +286,17 @@ export function useRecordings(
       addStepToRecordingInDoc(currentDoc, recId, step);
     }
 
+    // Auto-delete empty recordings
+    const currentRecId = activeRecordingIdRef.current;
+    const currentDoc2 = docRef.current;
+    if (currentRecId && currentDoc2) {
+      const currentRecordings = readRecordings(currentDoc2);
+      const rec = currentRecordings.find((r) => r.id === currentRecId);
+      if (rec && rec.steps.length === 0) {
+        removeRecordingFromDoc(currentDoc2, currentRecId);
+      }
+    }
+
     pendingDeltaRef.current = {};
     lastSnapshotRef.current = null;
     setIsRecording(false);

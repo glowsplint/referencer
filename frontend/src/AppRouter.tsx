@@ -1,5 +1,6 @@
 import { App } from "./App";
 import { HubPage } from "./components/hub/HubPage";
+import { TourProvider } from "./contexts/TourContext";
 import { useHashRoute } from "./hooks/ui/use-hash-route";
 
 export function AppRouter() {
@@ -9,5 +10,9 @@ export function AppRouter() {
     return <HubPage navigate={navigate} />;
   }
 
-  return <App workspaceId={route.workspaceId} readOnly={route.readOnly} navigate={navigate} />;
+  return (
+    <TourProvider>
+      <App workspaceId={route.workspaceId} readOnly={route.readOnly} navigate={navigate} />
+    </TourProvider>
+  );
 }

@@ -7,7 +7,7 @@ export async function listUserWorkspaces(
 ): Promise<UserWorkspace[]> {
   const { data, error } = await supabase
     .from("user_workspace")
-    .select("user_id, workspace_id, title, created_at, updated_at, is_favorite")
+    .select("user_id, workspace_id, title, created_at, updated_at, is_favorite, folder_id")
     .eq("user_id", userId)
     .order("updated_at", { ascending: false });
 
@@ -21,6 +21,7 @@ export async function listUserWorkspaces(
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     isFavorite: row.is_favorite,
+    folderId: row.folder_id,
   }));
 }
 
@@ -41,6 +42,7 @@ export async function createUserWorkspace(
       title,
       updated_at: new Date().toISOString(),
       is_favorite: false,
+      folder_id: null,
     },
     { onConflict: "user_id,workspace_id" },
   );
@@ -55,7 +57,7 @@ export async function getUserWorkspace(
 ): Promise<UserWorkspace | null> {
   const { data, error } = await supabase
     .from("user_workspace")
-    .select("user_id, workspace_id, title, created_at, updated_at, is_favorite")
+    .select("user_id, workspace_id, title, created_at, updated_at, is_favorite, folder_id")
     .eq("user_id", userId)
     .eq("workspace_id", workspaceId)
     .single();
@@ -69,6 +71,7 @@ export async function getUserWorkspace(
     createdAt: data.created_at,
     updatedAt: data.updated_at,
     isFavorite: data.is_favorite,
+    folderId: data.folder_id,
   };
 }
 

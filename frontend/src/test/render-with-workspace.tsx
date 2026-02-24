@@ -3,6 +3,7 @@ import { vi } from "vitest";
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import { RecordingProvider } from "@/contexts/RecordingContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { TourProvider } from "@/contexts/TourContext";
 import type { WorkspaceContextValue } from "@/contexts/WorkspaceContext";
 import type { RecordingContextValue } from "@/contexts/RecordingContext";
 
@@ -16,6 +17,9 @@ export function makeMockWorkspace(
       isMultipleRowsLayout: false,
       isLocked: false,
       overscrollEnabled: false,
+      hideOffscreenArrows: false,
+      showStatusBar: true,
+      commentPlacement: "right" as const,
     },
     annotations: { activeTool: "selection" as const },
     layers: [],
@@ -39,6 +43,10 @@ export function makeMockWorkspace(
     updateArrowStyle: vi.fn(),
     setActiveTool: vi.fn(),
     toggleManagementPane: vi.fn(),
+    toggleOverscrollEnabled: vi.fn(),
+    toggleHideOffscreenArrows: vi.fn(),
+    toggleShowStatusBar: vi.fn(),
+    toggleCommentPlacement: vi.fn(),
     addLayer: vi.fn(),
     removeLayer: vi.fn(),
     setActiveLayer: vi.fn(),
@@ -54,8 +62,16 @@ export function makeMockWorkspace(
     clearLayerUnderlines: vi.fn(),
     addArrow: vi.fn(),
     updateHighlightAnnotation: vi.fn(),
+    addReply: vi.fn(),
+    updateReply: vi.fn(),
+    removeReply: vi.fn(),
+    toggleReactionOnHighlight: vi.fn(),
+    toggleReactionOnReply: vi.fn(),
     addUnderline: vi.fn(),
     removeUnderline: vi.fn(),
+    toggleHighlightVisibility: vi.fn(),
+    toggleArrowVisibility: vi.fn(),
+    toggleUnderlineVisibility: vi.fn(),
     updateEditorContent: vi.fn(),
     setActiveLayerId: vi.fn(),
     setLayers: vi.fn(),
@@ -85,6 +101,7 @@ export function makeMockWorkspace(
       provider: null,
       doc: null,
       connected: false,
+      synced: false,
       getFragment: () => null,
       awareness: null,
     },
@@ -141,9 +158,11 @@ export function renderWithWorkspace(
   return {
     ...render(
       <AuthProvider>
-        <WorkspaceProvider value={workspace}>
-          <RecordingProvider value={recordingContext}>{ui}</RecordingProvider>
-        </WorkspaceProvider>
+        <TourProvider>
+          <WorkspaceProvider value={workspace}>
+            <RecordingProvider value={recordingContext}>{ui}</RecordingProvider>
+          </WorkspaceProvider>
+        </TourProvider>
       </AuthProvider>,
     ),
     workspace,

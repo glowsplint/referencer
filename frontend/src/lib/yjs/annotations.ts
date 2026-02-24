@@ -8,7 +8,7 @@ import {
   ySyncPluginKey,
 } from "@tiptap/y-tiptap";
 import type { EditorView } from "@tiptap/pm/view";
-import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor";
+import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
 
 // ---------------------------------------------------------------------------
 // Y.Doc structure for annotations
@@ -220,6 +220,35 @@ export function readLayers(doc: Y.Doc, editorViews?: EditorViewMap): Layer[] {
   return layers;
 }
 
+function readReactions(yReactions: Y.Array<Y.Map<unknown>> | undefined): import("@/types/editor").CommentReaction[] {
+  if (!yReactions) return [];
+  const reactions: import("@/types/editor").CommentReaction[] = [];
+  for (let i = 0; i < yReactions.length; i++) {
+    const yR = yReactions.get(i);
+    reactions.push({
+      emoji: yR.get("emoji") as string,
+      userName: yR.get("userName") as string,
+    });
+  }
+  return reactions;
+}
+
+function readReplies(yReplies: Y.Array<Y.Map<unknown>> | undefined): CommentReply[] {
+  if (!yReplies) return [];
+  const replies: CommentReply[] = [];
+  for (let i = 0; i < yReplies.length; i++) {
+    const yReply = yReplies.get(i);
+    replies.push({
+      id: yReply.get("id") as string,
+      text: yReply.get("text") as string,
+      userName: yReply.get("userName") as string,
+      timestamp: yReply.get("timestamp") as number,
+      reactions: readReactions(yReply.get("reactions") as Y.Array<Y.Map<unknown>> | undefined),
+    });
+  }
+  return replies;
+}
+
 function readHighlights(
   doc: Y.Doc,
   yLayer: Y.Map<unknown>,
@@ -249,6 +278,7 @@ function readHighlights(
     const text = yH.get("text") as string;
     const annotation = (yH.get("annotation") as string) ?? "";
     const lastEdited = (yH.get("lastEdited") as number) ?? undefined;
+    const userName = (yH.get("userName") as string) ?? undefined;
     highlights.push({
       id,
       editorIndex,
@@ -259,6 +289,9 @@ function readHighlights(
       type: (yH.get("type") as "highlight" | "comment") ?? "highlight",
       lastEdited,
       visible: (yH.get("visible") as boolean) ?? true,
+      userName,
+      reactions: readReactions(yH.get("reactions") as Y.Array<Y.Map<unknown>> | undefined),
+      replies: readReplies(yH.get("replies") as Y.Array<Y.Map<unknown>> | undefined),
     });
   }
 
@@ -447,6 +480,11 @@ export function addHighlightToDoc(
   yH.set("type", highlight.type);
   yH.set("lastEdited", Date.now());
   yH.set("visible", true);
+  if ((highlight as { userName?: string }).userName) {
+    yH.set("userName", (highlight as { userName?: string }).userName);
+  }
+  yH.set("reactions", new Y.Array<Y.Map<unknown>>());
+  yH.set("replies", new Y.Array<Y.Map<unknown>>());
   yHighlights.push([yH]);
 }
 
@@ -457,6 +495,142 @@ export function removeHighlightFromDoc(doc: Y.Doc, layerId: string, highlightId:
   for (let i = 0; i < yHighlights.length; i++) {
     if (yHighlights.get(i).get("id") === highlightId) {
       yHighlights.delete(i);
+      return;
+    }
+  }
+}
+
+function findYHighlight(
+  doc: Y.Doc,
+  layerId: string,
+  highlightId: string,
+): Y.Map<unknown> | null {
+  const result = findYLayer(doc, layerId);
+  if (!result) return null;
+  const yHighlights = result.yLayer.get("highlights") as Y.Array<Y.Map<unknown>>;
+  for (let i = 0; i < yHighlights.length; i++) {
+    const yH = yHighlights.get(i);
+    if (yH.get("id") === highlightId) return yH;
+  }
+  return null;
+}
+
+function getOrCreateYArray(yMap: Y.Map<unknown>, key: string): Y.Array<Y.Map<unknown>> {
+  let arr = yMap.get(key) as Y.Array<Y.Map<unknown>> | undefined;
+  if (!arr) {
+    arr = new Y.Array<Y.Map<unknown>>();
+    yMap.set(key, arr);
+  }
+  return arr;
+}
+
+export function addReplyToDoc(
+  doc: Y.Doc,
+  layerId: string,
+  highlightId: string,
+  reply: CommentReply,
+): void {
+  const yH = findYHighlight(doc, layerId, highlightId);
+  if (!yH) return;
+  const yReplies = getOrCreateYArray(yH, "replies");
+  const yReply = new Y.Map<unknown>();
+  yReply.set("id", reply.id);
+  yReply.set("text", reply.text);
+  yReply.set("userName", reply.userName);
+  yReply.set("timestamp", reply.timestamp);
+  yReply.set("reactions", new Y.Array<Y.Map<unknown>>());
+  yReplies.push([yReply]);
+}
+
+export function updateReplyInDoc(
+  doc: Y.Doc,
+  layerId: string,
+  highlightId: string,
+  replyId: string,
+  text: string,
+): void {
+  const yH = findYHighlight(doc, layerId, highlightId);
+  if (!yH) return;
+  const yReplies = yH.get("replies") as Y.Array<Y.Map<unknown>> | undefined;
+  if (!yReplies) return;
+  for (let i = 0; i < yReplies.length; i++) {
+    const yReply = yReplies.get(i);
+    if (yReply.get("id") === replyId) {
+      yReply.set("text", text);
+      yReply.set("timestamp", Date.now());
+      return;
+    }
+  }
+}
+
+export function removeReplyFromDoc(
+  doc: Y.Doc,
+  layerId: string,
+  highlightId: string,
+  replyId: string,
+): void {
+  const yH = findYHighlight(doc, layerId, highlightId);
+  if (!yH) return;
+  const yReplies = yH.get("replies") as Y.Array<Y.Map<unknown>> | undefined;
+  if (!yReplies) return;
+  for (let i = 0; i < yReplies.length; i++) {
+    if (yReplies.get(i).get("id") === replyId) {
+      yReplies.delete(i);
+      return;
+    }
+  }
+}
+
+export function toggleReactionOnHighlightInDoc(
+  doc: Y.Doc,
+  layerId: string,
+  highlightId: string,
+  emoji: string,
+  userName: string,
+): void {
+  const yH = findYHighlight(doc, layerId, highlightId);
+  if (!yH) return;
+  const yReactions = getOrCreateYArray(yH, "reactions");
+  for (let i = 0; i < yReactions.length; i++) {
+    const yR = yReactions.get(i);
+    if (yR.get("emoji") === emoji && yR.get("userName") === userName) {
+      yReactions.delete(i);
+      return;
+    }
+  }
+  const yR = new Y.Map<unknown>();
+  yR.set("emoji", emoji);
+  yR.set("userName", userName);
+  yReactions.push([yR]);
+}
+
+export function toggleReactionOnReplyInDoc(
+  doc: Y.Doc,
+  layerId: string,
+  highlightId: string,
+  replyId: string,
+  emoji: string,
+  userName: string,
+): void {
+  const yH = findYHighlight(doc, layerId, highlightId);
+  if (!yH) return;
+  const yReplies = yH.get("replies") as Y.Array<Y.Map<unknown>> | undefined;
+  if (!yReplies) return;
+  for (let i = 0; i < yReplies.length; i++) {
+    const yReply = yReplies.get(i);
+    if (yReply.get("id") === replyId) {
+      const yReactions = getOrCreateYArray(yReply, "reactions");
+      for (let j = 0; j < yReactions.length; j++) {
+        const yR = yReactions.get(j);
+        if (yR.get("emoji") === emoji && yR.get("userName") === userName) {
+          yReactions.delete(j);
+          return;
+        }
+      }
+      const yR = new Y.Map<unknown>();
+      yR.set("emoji", emoji);
+      yR.set("userName", userName);
+      yReactions.push([yR]);
       return;
     }
   }

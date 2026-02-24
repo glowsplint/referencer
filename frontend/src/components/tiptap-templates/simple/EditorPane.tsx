@@ -108,7 +108,7 @@ export function EditorPane({
           "aria-label": "Content area, start typing to enter text.",
           class: "simple-editor",
         },
-        handlePaste: (_view, event) => {
+        handlePaste: (view, event) => {
           const items = event.clipboardData?.items;
           if (!items) return false;
           for (const item of items) {
@@ -119,7 +119,10 @@ export function EditorPane({
               const reader = new FileReader();
               reader.onload = (e) => {
                 const src = e.target?.result as string;
-                editor?.chain().focus().setImage({ src }).run();
+                if (!src) return;
+                const { state, dispatch } = view;
+                const node = state.schema.nodes.image?.create({ src });
+                if (node) dispatch(state.tr.replaceSelectionWith(node));
               };
               reader.readAsDataURL(file);
               return true;
@@ -127,7 +130,7 @@ export function EditorPane({
           }
           return false;
         },
-        handleDrop: (_view, event) => {
+        handleDrop: (view, event) => {
           const files = event.dataTransfer?.files;
           if (!files?.length) return false;
           for (const file of files) {
@@ -136,7 +139,10 @@ export function EditorPane({
               const reader = new FileReader();
               reader.onload = (e) => {
                 const src = e.target?.result as string;
-                editor?.chain().focus().setImage({ src }).run();
+                if (!src) return;
+                const { state, dispatch } = view;
+                const node = state.schema.nodes.image?.create({ src });
+                if (node) dispatch(state.tr.replaceSelectionWith(node));
               };
               reader.readAsDataURL(file);
               return true;
