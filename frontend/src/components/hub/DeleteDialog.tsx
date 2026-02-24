@@ -12,12 +12,12 @@ interface DeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   workspaceTitle: string;
-  onDelete: () => Promise<void>;
+  onDelete: () => void;
 }
 
 export function DeleteDialog({ open, onOpenChange, workspaceTitle, onDelete }: DeleteDialogProps) {
-  const handleDelete = async () => {
-    await onDelete();
+  const handleDelete = () => {
+    onDelete();
   };
 
   return (

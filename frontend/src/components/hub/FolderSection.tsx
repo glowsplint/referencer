@@ -18,14 +18,14 @@ interface FolderSectionProps {
   creatingSubfolderId: string | null;
   onSetRenamingFolder: (id: string | null) => void;
   onSetCreatingSubfolder: (parentId: string | null) => void;
-  onRenameFolder: (id: string, name: string) => Promise<void>;
+  onRenameFolder: (id: string, name: string) => void;
   onDeleteFolder: (folder: FolderItem) => void;
-  onCreateFolder: (parentId: string | null, name: string) => Promise<void>;
+  onCreateFolder: (parentId: string | null, name: string) => void;
   onOpenWorkspace: (id: string) => void;
   onRenameWorkspace: (ws: WorkspaceItem) => void;
   onDuplicateWorkspace: (sourceId: string) => void;
   onDeleteWorkspace: (ws: WorkspaceItem) => void;
-  onToggleFavorite: (workspaceId: string, isFavorite: boolean) => Promise<void>;
+  onToggleFavorite: (workspaceId: string, isFavorite: boolean) => void;
   onMoveToFolder: (workspaceId: string, folderId: string | null) => void;
   ownerName?: string;
   ownerAvatarUrl?: string;

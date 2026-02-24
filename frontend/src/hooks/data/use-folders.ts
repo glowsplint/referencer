@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import {
   fetchFolders,
   createFolder as createApi,
   renameFolder as renameApi,
   deleteFolder as deleteApi,
-  moveWorkspaceToFolder as moveApi,
-  unfileWorkspace as unfileApi,
   type FolderItem,
 } from "@/lib/folder-client";
 
@@ -27,48 +26,55 @@ export function useFolders() {
     }
   }, []);
 
+  /** Refetch from server without showing loading indicator (used for rollback). */
+  const silentRefetch = useCallback(async () => {
+    try {
+      const data = await fetchFolders();
+      setFolders(data);
+      setError(null);
+    } catch {
+      /* If refetch also fails, keep optimistic state — user already saw the toast */
+    }
+  }, []);
+
   useEffect(() => {
     refetch();
   }, [refetch]);
 
   const create = useCallback(
-    async (id: string, parentId: string | null, name: string) => {
-      await createApi(id, parentId, name);
-      await refetch();
+    (id: string, parentId: string | null, name: string) => {
+      const now = new Date().toISOString();
+      setFolders((prev) => [...prev, { id, parentId, name, createdAt: now, updatedAt: now }]);
+      createApi(id, parentId, name).catch(() => {
+        toast.error("Failed to create folder");
+        silentRefetch();
+      });
     },
-    [refetch],
+    [silentRefetch],
   );
 
   const rename = useCallback(
-    async (id: string, name: string) => {
-      await renameApi(id, name);
-      await refetch();
+    (id: string, name: string) => {
+      setFolders((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, name, updatedAt: new Date().toISOString() } : f)),
+      );
+      renameApi(id, name).catch(() => {
+        toast.error("Failed to rename folder");
+        silentRefetch();
+      });
     },
-    [refetch],
+    [silentRefetch],
   );
 
   const remove = useCallback(
-    async (id: string) => {
-      await deleteApi(id);
-      await refetch();
+    (id: string) => {
+      setFolders((prev) => prev.filter((f) => f.id !== id));
+      deleteApi(id).catch(() => {
+        toast.error("Failed to delete folder");
+        silentRefetch();
+      });
     },
-    [refetch],
-  );
-
-  const moveWorkspace = useCallback(
-    async (folderId: string, workspaceId: string) => {
-      await moveApi(folderId, workspaceId);
-      await refetch();
-    },
-    [refetch],
-  );
-
-  const unfileWorkspace = useCallback(
-    async (workspaceId: string) => {
-      await unfileApi(workspaceId);
-      await refetch();
-    },
-    [refetch],
+    [silentRefetch],
   );
 
   return {
@@ -79,7 +85,5 @@ export function useFolders() {
     create,
     rename,
     remove,
-    moveWorkspace,
-    unfileWorkspace,
   };
 }

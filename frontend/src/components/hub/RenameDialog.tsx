@@ -13,7 +13,7 @@ interface RenameDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentTitle: string;
-  onRename: (title: string) => Promise<void>;
+  onRename: (title: string) => void;
 }
 
 export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: RenameDialogProps) {
@@ -24,9 +24,9 @@ export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: Ren
     if (open) setTitle(currentTitle);
   }, [open, currentTitle]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    await onRename(title.trim());
+    onRename(title.trim());
   };
 
   return (

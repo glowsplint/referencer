@@ -20,15 +20,14 @@ export function HubPage({ navigate }: HubPageProps) {
     remove,
     duplicate,
     toggleFavorite,
-    refetch: refetchWorkspaces,
+    moveToFolder,
+    unfileWorkspace,
   } = useWorkspaces();
   const {
     folders,
     create: createFolder,
     rename: renameFolder,
     remove: removeFolder,
-    moveWorkspace,
-    unfileWorkspace,
   } = useFolders();
 
   const handleTryWithoutSignIn = () => {
@@ -96,9 +95,8 @@ export function HubPage({ navigate }: HubPageProps) {
               onCreateFolder={createFolder}
               onRenameFolder={renameFolder}
               onDeleteFolder={removeFolder}
-              onMoveWorkspaceToFolder={moveWorkspace}
+              onMoveWorkspaceToFolder={moveToFolder}
               onUnfileWorkspace={unfileWorkspace}
-              onRefetchWorkspaces={refetchWorkspaces}
               ownerName={user?.name}
               ownerAvatarUrl={user?.avatarUrl}
             />
