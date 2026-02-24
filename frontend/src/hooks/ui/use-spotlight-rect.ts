@@ -16,12 +16,9 @@ function padRect(rect: DOMRect): DOMRect {
 export function useSpotlightRect(selector: string | null): DOMRect | null {
   const [rect, setRect] = useState<DOMRect | null>(null);
 
-  const update = useCallback(
-    (el: Element) => {
-      setRect(padRect(el.getBoundingClientRect()));
-    },
-    [],
-  );
+  const update = useCallback((el: Element) => {
+    setRect(padRect(el.getBoundingClientRect()));
+  }, []);
 
   useEffect(() => {
     if (!selector) {

@@ -22,8 +22,12 @@ function TourConsumer() {
       <div data-testid="isCompleted">{String(isTourCompleted("editor"))}</div>
       <div data-testid="isRunning">{String(isTourRunning)}</div>
       <div data-testid="activeTourId">{activeTourId ?? "null"}</div>
-      <button data-testid="start" onClick={() => startTour("editor")}>Start</button>
-      <button data-testid="complete" onClick={() => completeTour("editor")}>Complete</button>
+      <button data-testid="start" onClick={() => startTour("editor")}>
+        Start
+      </button>
+      <button data-testid="complete" onClick={() => completeTour("editor")}>
+        Complete
+      </button>
     </div>
   );
 }

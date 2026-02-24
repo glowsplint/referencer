@@ -29,7 +29,12 @@ interface AnnotationPanelProps {
   onAddReply?: (layerId: string, highlightId: string, text: string) => void;
   onRemoveReply?: (layerId: string, highlightId: string, replyId: string) => void;
   onToggleReaction?: (layerId: string, highlightId: string, emoji: string) => void;
-  onToggleReplyReaction?: (layerId: string, highlightId: string, replyId: string, emoji: string) => void;
+  onToggleReplyReaction?: (
+    layerId: string,
+    highlightId: string,
+    replyId: string,
+    emoji: string,
+  ) => void;
 }
 
 const PANEL_WIDTH = 224; // w-56
@@ -214,7 +219,9 @@ export function AnnotationPanel({
           </svg>
 
           {/* Annotation cards */}
-          <div className={`absolute top-0 ${placement === "left" ? "left-0 right-4" : "left-4 right-0"} z-10 pointer-events-auto`}>
+          <div
+            className={`absolute top-0 ${placement === "left" ? "left-0 right-4" : "left-4 right-0"} z-10 pointer-events-auto`}
+          >
             {resolvedPositions.map((resolved) => {
               const color = highlightLookup.color.get(resolved.id) ?? "#888";
               const layerId = highlightLookup.layerId.get(resolved.id) ?? "";

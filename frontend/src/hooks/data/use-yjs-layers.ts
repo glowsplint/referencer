@@ -6,7 +6,14 @@ import { toast } from "sonner";
 import i18n from "@/i18n";
 import type * as Y from "yjs";
 import type { Editor } from "@tiptap/react";
-import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
+import type {
+  Layer,
+  Highlight,
+  Arrow,
+  LayerUnderline,
+  ArrowStyle,
+  CommentReply,
+} from "@/types/editor";
 import { TAILWIND_300_COLORS } from "@/constants/colors";
 import {
   readLayers,

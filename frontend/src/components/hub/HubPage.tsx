@@ -12,8 +12,24 @@ interface HubPageProps {
 
 export function HubPage({ navigate }: HubPageProps) {
   const { user, isAuthenticated, isLoading: authLoading, login } = useAuth();
-  const { workspaces, isLoading: wsLoading, create, rename, remove, duplicate, toggleFavorite, refetch: refetchWorkspaces } = useWorkspaces();
-  const { folders, create: createFolder, rename: renameFolder, remove: removeFolder, moveWorkspace, unfileWorkspace } = useFolders();
+  const {
+    workspaces,
+    isLoading: wsLoading,
+    create,
+    rename,
+    remove,
+    duplicate,
+    toggleFavorite,
+    refetch: refetchWorkspaces,
+  } = useWorkspaces();
+  const {
+    folders,
+    create: createFolder,
+    rename: renameFolder,
+    remove: removeFolder,
+    moveWorkspace,
+    unfileWorkspace,
+  } = useFolders();
 
   const handleTryWithoutSignIn = () => {
     const id = crypto.randomUUID();

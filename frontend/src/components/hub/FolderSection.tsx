@@ -80,7 +80,9 @@ export function FolderSection({
         ) : (
           <span className="text-sm font-medium truncate">{node.folder.name}</span>
         )}
-        <span className="text-xs text-muted-foreground ml-1 shrink-0">{folderWorkspaces.length}</span>
+        <span className="text-xs text-muted-foreground ml-1 shrink-0">
+          {folderWorkspaces.length}
+        </span>
         <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
           <FolderDropdownMenu
             depth={node.depth}
@@ -135,8 +137,8 @@ export function FolderSection({
           ))}
 
           {/* Workspaces inside this folder */}
-          {folderWorkspaces.length > 0 && (
-            viewMode === "grid" ? (
+          {folderWorkspaces.length > 0 &&
+            (viewMode === "grid" ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-6 py-2">
                 {folderWorkspaces.map((ws) => (
                   <WorkspaceCard
@@ -172,8 +174,7 @@ export function FolderSection({
                   />
                 ))}
               </div>
-            )
-          )}
+            ))}
         </div>
       )}
     </div>

@@ -37,20 +37,35 @@ export function WorkspaceListItem({
       data-testid={`workspaceListItem-${workspace.workspaceId}`}
     >
       <button
-        onClick={(e) => { e.stopPropagation(); onToggleFavorite?.(workspace.workspaceId, !workspace.isFavorite); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleFavorite?.(workspace.workspaceId, !workspace.isFavorite);
+        }}
         className="p-1 rounded-md hover:bg-accent transition-colors shrink-0"
         data-testid="favoriteToggle"
       >
-        <Star size={14} fill={workspace.isFavorite ? "currentColor" : "none"} className={workspace.isFavorite ? "text-yellow-500" : "text-muted-foreground"} />
+        <Star
+          size={14}
+          fill={workspace.isFavorite ? "currentColor" : "none"}
+          className={workspace.isFavorite ? "text-yellow-500" : "text-muted-foreground"}
+        />
       </button>
-      <span className="font-medium text-sm truncate flex-1 ml-1">{workspace.title || "Untitled"}</span>
-      <span className="text-xs text-muted-foreground w-[120px] shrink-0">{formatRelativeTime(workspace.createdAt)}</span>
-      <span className="text-xs text-muted-foreground w-[120px] shrink-0">{formatRelativeTime(workspace.updatedAt)}</span>
+      <span className="font-medium text-sm truncate flex-1 ml-1">
+        {workspace.title || "Untitled"}
+      </span>
+      <span className="text-xs text-muted-foreground w-[120px] shrink-0">
+        {formatRelativeTime(workspace.createdAt)}
+      </span>
+      <span className="text-xs text-muted-foreground w-[120px] shrink-0">
+        {formatRelativeTime(workspace.updatedAt)}
+      </span>
       <div className="flex items-center gap-1.5 w-[140px] shrink-0">
         {ownerAvatarUrl ? (
           <img src={ownerAvatarUrl} alt="" className="w-5 h-5 rounded-full" />
         ) : ownerName ? (
-          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium">{ownerName[0]}</div>
+          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium">
+            {ownerName[0]}
+          </div>
         ) : null}
         {ownerName && <span className="text-xs text-muted-foreground truncate">{ownerName}</span>}
       </div>

@@ -101,7 +101,10 @@ export function TitleBar({ navigate }: TitleBarProps) {
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={async () => { await pendingRenameRef.current; navigate("#/"); }}
+              onClick={async () => {
+                await pendingRenameRef.current;
+                navigate("#/");
+              }}
               className="p-1.5 mr-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
               data-testid="homeButton"
             >

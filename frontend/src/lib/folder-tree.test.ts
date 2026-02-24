@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { buildFolderTree, getFolderDepth, getWorkspacesForFolder, getUnfiledWorkspaces } from "./folder-tree";
+import {
+  buildFolderTree,
+  getFolderDepth,
+  getWorkspacesForFolder,
+  getUnfiledWorkspaces,
+} from "./folder-tree";
 import type { FolderItem } from "@/lib/folder-client";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 

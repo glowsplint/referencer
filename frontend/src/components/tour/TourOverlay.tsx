@@ -3,13 +3,7 @@
 // TourTooltip via @floating-ui/react.
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import {
-  useFloating,
-  offset,
-  flip,
-  shift,
-  autoUpdate,
-} from "@floating-ui/react";
+import { useFloating, offset, flip, shift, autoUpdate } from "@floating-ui/react";
 import type { TourStep } from "@/hooks/ui/use-tour-engine";
 import { useSpotlightRect } from "@/hooks/ui/use-spotlight-rect";
 import { TourTooltip } from "./TourTooltip";

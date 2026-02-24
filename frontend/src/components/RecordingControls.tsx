@@ -139,7 +139,6 @@ export function RecordingControls() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

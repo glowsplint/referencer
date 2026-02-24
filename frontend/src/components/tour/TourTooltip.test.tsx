@@ -19,14 +19,16 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-function renderTooltip(overrides: Partial<{
-  step: TourStep;
-  stepIndex: number;
-  totalSteps: number;
-  onNext: () => void;
-  onBack: () => void;
-  onSkip: () => void;
-}> = {}) {
+function renderTooltip(
+  overrides: Partial<{
+    step: TourStep;
+    stepIndex: number;
+    totalSteps: number;
+    onNext: () => void;
+    onBack: () => void;
+    onSkip: () => void;
+  }> = {},
+) {
   const defaultStep: TourStep = {
     target: "#test",
     title: "Test Title",

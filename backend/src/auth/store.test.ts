@@ -30,9 +30,7 @@ function createMockSupabase() {
                 eq(col2: string, val2: string) {
                   return {
                     single() {
-                      const found = getStore().find(
-                        (r) => r[col1] === val1 && r[col2] === val2,
-                      );
+                      const found = getStore().find((r) => r[col1] === val1 && r[col2] === val2);
                       return Promise.resolve({ data: found ?? null });
                     },
                   };

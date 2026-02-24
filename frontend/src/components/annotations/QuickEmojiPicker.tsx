@@ -6,10 +6,7 @@ interface QuickEmojiPickerProps {
 }
 
 /** Inline row of 8 quick-pick emoji buttons plus a "+" button to open the full picker. */
-export function QuickEmojiPicker({
-  onSelect,
-  onOpenFull,
-}: QuickEmojiPickerProps) {
+export function QuickEmojiPicker({ onSelect, onOpenFull }: QuickEmojiPickerProps) {
   return (
     <div className="inline-flex items-center gap-0.5 px-2 py-0.5">
       {QUICK_EMOJIS.map((emoji) => (
