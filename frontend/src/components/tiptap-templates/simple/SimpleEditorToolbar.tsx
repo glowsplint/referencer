@@ -18,6 +18,7 @@ import { BlockquoteButton } from "@/components/tiptap-ui/blockquote-button";
 import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button";
 import { LinkPopover, LinkContent, LinkButton } from "@/components/tiptap-ui/link-popover";
 import { MarkButton } from "@/components/tiptap-ui/mark-button";
+import { ClearFormattingButton } from "@/components/tiptap-ui/clear-formatting-button";
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 
@@ -71,6 +72,7 @@ const MainToolbarContent = ({
       <ToolbarGroup>
         <MarkButton type="superscript" />
         <MarkButton type="subscript" />
+        <ClearFormattingButton />
       </ToolbarGroup>
 
       <ToolbarSeparator />
