@@ -24,6 +24,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
   const [shareOpen, setShareOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dbSeededRef = useRef(false);
+  const pendingRenameRef = useRef<Promise<void>>(Promise.resolve());
 
   // Sync title with Yjs shared map for real-time collaboration
   useEffect(() => {
@@ -76,7 +77,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
 
     // Persist to database for authenticated users
     if (isAuthenticated && workspaceId) {
-      renameWorkspace(workspaceId, finalTitle).catch(() => {});
+      pendingRenameRef.current = renameWorkspace(workspaceId, finalTitle).catch(() => {});
     }
   }, [title, yjs.doc, isAuthenticated, workspaceId]);
 
@@ -100,7 +101,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
-              onClick={() => navigate("#/")}
+              onClick={async () => { await pendingRenameRef.current; navigate("#/"); }}
               className="p-1.5 mr-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
               data-testid="homeButton"
             >
