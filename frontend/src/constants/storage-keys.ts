@@ -15,4 +15,6 @@ export const STORAGE_KEYS = {
   SETTINGS: "referencer-settings",
   /** i18next language selection. */
   LANGUAGE: "referencer-language",
+  /** Prefix for tour completion status, suffixed with tourId. */
+  TOUR_STATUS: "referencer-tour-",
 } as const;

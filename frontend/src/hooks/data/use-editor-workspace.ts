@@ -15,7 +15,7 @@ import { useYjsOffline } from "./use-yjs-offline";
 import { seedDefaultLayers, type EditorViewMap } from "@/lib/yjs/annotations";
 import { createDefaultLayers } from "@/data/default-workspace";
 import type { Editor } from "@tiptap/react";
-import type { Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/types/editor";
+import type { Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
   const settingsHook = useSettings();
@@ -197,6 +197,38 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  const addReply = useCallback(
+    guarded((layerId: string, highlightId: string, reply: CommentReply) => {
+      yjsLayers.addReply(layerId, highlightId, reply);
+    }),
+    [readOnly, yjsLayers],
+  );
+
+  const removeReply = useCallback(
+    guarded((layerId: string, highlightId: string, replyId: string) => {
+      yjsLayers.removeReply(layerId, highlightId, replyId);
+    }),
+    [readOnly, yjsLayers],
+  );
+
+  const toggleReactionOnHighlight = useCallback(
+    guarded((layerId: string, highlightId: string, emoji: string, userName: string) => {
+      yjsLayers.toggleReactionOnHighlight(layerId, highlightId, emoji, userName);
+    }),
+    [readOnly, yjsLayers],
+  );
+
+  const toggleReactionOnReply = useCallback(
+    guarded((layerId: string, highlightId: string, replyId: string, emoji: string, userName: string) => {
+      yjsLayers.toggleReactionOnReply(layerId, highlightId, replyId, emoji, userName);
+    }),
+    [readOnly, yjsLayers],
+  );
+
+  const toggleCommentPlacement = useCallback(() => {
+    settingsHook.toggleCommentPlacement();
+  }, [settingsHook]);
+
   const addEditor = useCallback(
     guarded(() => {
       trackedEditorsHook.addEditor();
@@ -351,6 +383,11 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     updateArrowStyle,
     addUnderline,
     removeUnderline,
+    addReply,
+    removeReply,
+    toggleReactionOnHighlight,
+    toggleReactionOnReply,
+    toggleCommentPlacement,
     toggleHighlightVisibility: guarded((layerId: string, highlightId: string) =>
       yjsLayers.toggleHighlightVisibility(layerId, highlightId),
     ),

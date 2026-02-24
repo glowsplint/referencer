@@ -13,6 +13,7 @@ const DEFAULT_SETTINGS: EditorSettings = {
   overscrollEnabled: false,
   hideOffscreenArrows: false,
   showStatusBar: true,
+  commentPlacement: "right",
 };
 
 function loadSettings(): EditorSettings {
@@ -60,6 +61,14 @@ export function useSettings() {
   const toggleOverscrollEnabled = useToggle(setSettings, "overscrollEnabled");
   const toggleHideOffscreenArrows = useToggle(setSettings, "hideOffscreenArrows");
   const toggleShowStatusBar = useToggle(setSettings, "showStatusBar");
+  const toggleCommentPlacement = useCallback(
+    () =>
+      setSettings((prev) => ({
+        ...prev,
+        commentPlacement: prev.commentPlacement === "right" ? "left" : "right",
+      })),
+    [],
+  );
   const setActiveTool = useCallback((tool: ActiveTool) => setAnnotations({ activeTool: tool }), []);
 
   return {
@@ -78,6 +87,7 @@ export function useSettings() {
     toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
+    toggleCommentPlacement,
     setActiveTool,
   };
 }

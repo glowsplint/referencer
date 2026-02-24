@@ -26,13 +26,19 @@
     "helpFaq": "Help & FAQ",
     "settings": "Settings",
     "toggleEditorLayout": "Toggle editor layout",
-    "toggleEditorLock": "Toggle editor lock"
+    "toggleEditorLock": "Toggle editor lock",
+    "toggleCommentPlacement": "Toggle comment placement",
+    "startTour": "Guided tour"
   },
   "annotations": {
     "placeholder": "Add annotation...",
     "removeCustomColour": "Remove custom colour",
     "addCustomColour": "Add custom colour",
-    "addToCustomColours": "Add to custom colours"
+    "addToCustomColours": "Add to custom colours",
+    "replyPlaceholder": "Reply...",
+    "replies": "replies",
+    "addReaction": "Add reaction",
+    "removeReply": "Remove reply"
   },
   "actionConsole": {
     "title": "Action Console",

@@ -4,7 +4,7 @@
 // highlight's right edge to its card using blended colors.
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import type { Editor } from "@tiptap/react";
-import type { Layer, EditingAnnotation } from "@/types/editor";
+import type { Layer, EditingAnnotation, CommentReply, CommentReaction } from "@/types/editor";
 import { useAllHighlightPositions } from "@/hooks/annotations/use-all-highlight-positions";
 import { resolveAnnotationOverlaps } from "@/lib/resolve-annotation-overlaps";
 import { blendWithBackground } from "@/lib/color";
@@ -24,6 +24,12 @@ interface AnnotationPanelProps {
   onToggleCollapse?: (highlightId: string) => void;
   onCollapseAll?: () => void;
   onExpandAll?: () => void;
+  placement?: "left" | "right";
+  currentUserName?: string;
+  onAddReply?: (layerId: string, highlightId: string, text: string) => void;
+  onRemoveReply?: (layerId: string, highlightId: string, replyId: string) => void;
+  onToggleReaction?: (layerId: string, highlightId: string, emoji: string) => void;
+  onToggleReplyReaction?: (layerId: string, highlightId: string, replyId: string, emoji: string) => void;
 }
 
 const PANEL_WIDTH = 224; // w-56
@@ -46,6 +52,12 @@ export function AnnotationPanel({
   onToggleCollapse,
   onCollapseAll,
   onExpandAll,
+  placement = "right",
+  currentUserName,
+  onAddReply,
+  onRemoveReply,
+  onToggleReaction,
+  onToggleReplyReaction,
 }: AnnotationPanelProps) {
   const positions = useAllHighlightPositions(editorsRef, layers, containerRef, sectionVisibility);
 
@@ -97,21 +109,27 @@ export function AnnotationPanel({
     const layerId = new Map<string, string>();
     const annotation = new Map<string, string>();
     const lastEdited = new Map<string, number | undefined>();
+    const userName = new Map<string, string | undefined>();
+    const replies = new Map<string, CommentReply[]>();
+    const reactions = new Map<string, CommentReaction[]>();
     for (const layer of layers) {
       for (const h of layer.highlights) {
         color.set(h.id, layer.color);
         layerId.set(h.id, layer.id);
         lastEdited.set(h.id, h.lastEdited);
+        userName.set(h.id, h.userName);
+        replies.set(h.id, h.replies ?? []);
+        reactions.set(h.id, h.reactions ?? []);
         if (layer.visible) annotation.set(h.id, h.annotation);
       }
     }
-    return { color, layerId, annotation, lastEdited };
+    return { color, layerId, annotation, lastEdited, userName, replies, reactions };
   }, [layers]);
 
   const positionByHighlightId = useMemo(() => {
-    const map = new Map<string, { top: number; rightEdge: number }>();
+    const map = new Map<string, { top: number; rightEdge: number; leftEdge: number }>();
     for (const p of positions) {
-      map.set(p.highlightId, { top: p.top, rightEdge: p.rightEdge });
+      map.set(p.highlightId, { top: p.top, rightEdge: p.rightEdge, leftEdge: p.leftEdge });
     }
     return map;
   }, [positions]);
@@ -165,11 +183,20 @@ export function AnnotationPanel({
               const color = highlightLookup.color.get(resolved.id);
               if (!color) return null;
 
-              // x1 is relative to the panel - the rightEdge is relative to the container,
-              // so we need to negate it from the panel's perspective (panel is to the right of container)
-              const x1 = original.rightEdge - containerWidth - CONNECTOR_GAP;
+              let x1: number;
+              let x2: number;
+              if (placement === "left") {
+                // Panel is to the left of the container — connector goes from
+                // the panel's right edge to the highlight's left edge
+                x1 = PANEL_WIDTH - PANEL_LEFT_PAD;
+                x2 = PANEL_WIDTH + original.leftEdge + CONNECTOR_GAP;
+              } else {
+                // Panel is to the right of the container — connector goes from
+                // the highlight's right edge to the panel's left edge
+                x1 = original.rightEdge - containerWidth - CONNECTOR_GAP;
+                x2 = PANEL_LEFT_PAD;
+              }
               const y1 = original.top + CONNECTOR_Y_OFFSET;
-              const x2 = PANEL_LEFT_PAD;
               const y2 = resolved.top + CONNECTOR_Y_OFFSET;
 
               return (
@@ -187,7 +214,7 @@ export function AnnotationPanel({
           </svg>
 
           {/* Annotation cards */}
-          <div className="absolute top-0 left-4 right-0 z-10 pointer-events-auto">
+          <div className={`absolute top-0 ${placement === "left" ? "left-0 right-4" : "left-4 right-0"} z-10 pointer-events-auto`}>
             {resolvedPositions.map((resolved) => {
               const color = highlightLookup.color.get(resolved.id) ?? "#888";
               const layerId = highlightLookup.layerId.get(resolved.id) ?? "";
@@ -212,6 +239,14 @@ export function AnnotationPanel({
                   lastEdited={highlightLookup.lastEdited.get(resolved.id)}
                   isCollapsed={collapsedIds?.has(resolved.id)}
                   onToggleCollapse={onToggleCollapse}
+                  userName={highlightLookup.userName.get(resolved.id)}
+                  replies={highlightLookup.replies.get(resolved.id)}
+                  reactions={highlightLookup.reactions.get(resolved.id)}
+                  currentUserName={currentUserName}
+                  onAddReply={onAddReply}
+                  onRemoveReply={onRemoveReply}
+                  onToggleReaction={onToggleReaction}
+                  onToggleReplyReaction={onToggleReplyReaction}
                 />
               );
             })}

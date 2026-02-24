@@ -1,0 +1,28 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Paste your text",
+        "content": "Start by pasting or typing your text into the editor."
+      },
+      "lock": {
+        "title": "Lock the document",
+        "content": "Press K or click the lock button to switch to annotation mode."
+      },
+      "annotate": {
+        "title": "Annotate your text",
+        "content": "Select text to highlight (H), comment (C), underline (U), or draw arrows (A)."
+      },
+      "unlock": {
+        "title": "Unlock to edit",
+        "content": "Press K again to return to editing. Your annotations are preserved."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Next",
+    "back": "Back",
+    "skip": "Skip",
+    "finish": "Finish"
+  }
+}

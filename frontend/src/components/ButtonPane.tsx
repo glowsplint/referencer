@@ -19,7 +19,10 @@ import {
   Eraser,
   Keyboard,
   CircleHelp,
+  GraduationCap,
   Settings,
+  PanelRightClose,
+  PanelLeftClose,
 } from "lucide-react";
 import {
   Tooltip,
@@ -33,6 +36,7 @@ import { SettingsDialog } from "./SettingsDialog";
 import { ArrowStylePicker } from "./ArrowStylePicker";
 import { RecordingControls } from "./RecordingControls";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useTour } from "@/contexts/TourContext";
 import type { ActiveTool, ArrowStyle } from "@/types/editor";
 
 const TOOL_SHORTCUTS: Record<ActiveTool, string> = {
@@ -116,8 +120,10 @@ export function ButtonPane() {
     toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
+    toggleCommentPlacement,
   } = useWorkspace();
 
+  const { startTour } = useTour();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -228,6 +234,18 @@ export function ButtonPane() {
       <Tooltip placement="right">
         <TooltipTrigger asChild>
           <button
+            onClick={() => startTour("editor")}
+            className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            data-testid="tourButton"
+          >
+            <GraduationCap size={20} />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>{tm("tooltips.startTour")}</TooltipContent>
+      </Tooltip>
+      <Tooltip placement="right">
+        <TooltipTrigger asChild>
+          <button
             onClick={() => setSettingsOpen(true)}
             className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
             data-testid="settingsButton"
@@ -292,6 +310,20 @@ export function ButtonPane() {
         </TooltipTrigger>
         <TooltipContent>
           {tm("tooltips.toggleEditorLayout")} <kbd>R</kbd>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip placement="right">
+        <TooltipTrigger asChild>
+          <SwitchingButtonIcon
+            iconOne={<PanelRightClose size={20} />}
+            iconTwo={<PanelLeftClose size={20} />}
+            bool={settings.commentPlacement === "right"}
+            callback={toggleCommentPlacement}
+            buttonProps={{ "data-testid": "commentPlacementButton" }}
+          />
+        </TooltipTrigger>
+        <TooltipContent>
+          {tm("tooltips.toggleCommentPlacement")} <kbd>P</kbd>
         </TooltipContent>
       </Tooltip>
       <Tooltip placement="right">

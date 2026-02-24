@@ -20,6 +20,7 @@ describe("useSettings", () => {
       overscrollEnabled: false,
       hideOffscreenArrows: false,
       showStatusBar: true,
+      commentPlacement: "right",
     });
   });
 
@@ -165,6 +166,7 @@ describe("useSettings", () => {
       overscrollEnabled: false,
       hideOffscreenArrows: false,
       showStatusBar: true,
+      commentPlacement: "right",
     });
   });
 

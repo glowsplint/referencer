@@ -10,6 +10,7 @@ export interface EditorSettings {
   overscrollEnabled: boolean;
   hideOffscreenArrows: boolean;
   showStatusBar: boolean;
+  commentPlacement: "left" | "right";
 }
 
 export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline" | "eraser";
@@ -22,6 +23,19 @@ export interface AnnotationSettings {
 
 export type HighlightType = "highlight" | "comment";
 
+export interface CommentReaction {
+  emoji: string;
+  userName: string;
+}
+
+export interface CommentReply {
+  id: string;
+  text: string;
+  userName: string;
+  timestamp: number;
+  reactions: CommentReaction[];
+}
+
 export interface Highlight {
   id: string;
   editorIndex: number;
@@ -32,6 +46,9 @@ export interface Highlight {
   type: HighlightType;
   lastEdited?: number;
   visible: boolean;
+  userName?: string;
+  replies?: CommentReply[];
+  reactions?: CommentReaction[];
 }
 
 export interface LayerUnderline {

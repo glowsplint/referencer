@@ -4,13 +4,14 @@
 import { useEffect, useRef } from "react";
 import { isEditableElement } from "@/lib/dom";
 
-type ToggleAction = "darkMode" | "layout" | "lock" | "menu";
+type ToggleAction = "darkMode" | "layout" | "lock" | "menu" | "commentPlacement";
 
 const KEY_MAP: Record<string, ToggleAction> = {
   KeyD: "darkMode",
   KeyR: "layout",
   KeyK: "lock",
   KeyM: "menu",
+  KeyP: "commentPlacement",
 };
 
 interface UseToggleShortcutsOptions {
@@ -18,6 +19,7 @@ interface UseToggleShortcutsOptions {
   toggleMultipleRowsLayout: () => void;
   toggleLocked: () => void;
   toggleManagementPane: () => void;
+  toggleCommentPlacement: () => void;
 }
 
 export function useToggleShortcuts({
@@ -25,12 +27,14 @@ export function useToggleShortcuts({
   toggleMultipleRowsLayout,
   toggleLocked,
   toggleManagementPane,
+  toggleCommentPlacement,
 }: UseToggleShortcutsOptions) {
   const callbacksRef = useRef({
     toggleDarkMode,
     toggleMultipleRowsLayout,
     toggleLocked,
     toggleManagementPane,
+    toggleCommentPlacement,
   });
   useEffect(() => {
     callbacksRef.current = {
@@ -38,6 +42,7 @@ export function useToggleShortcuts({
       toggleMultipleRowsLayout,
       toggleLocked,
       toggleManagementPane,
+      toggleCommentPlacement,
     };
   });
 
@@ -58,8 +63,13 @@ export function useToggleShortcuts({
       if (isEditableElement(e.target)) return;
 
       e.preventDefault();
-      const { toggleDarkMode, toggleMultipleRowsLayout, toggleLocked, toggleManagementPane } =
-        callbacksRef.current;
+      const {
+        toggleDarkMode,
+        toggleMultipleRowsLayout,
+        toggleLocked,
+        toggleManagementPane,
+        toggleCommentPlacement,
+      } = callbacksRef.current;
       switch (action) {
         case "darkMode":
           toggleDarkMode();
@@ -73,6 +83,9 @@ export function useToggleShortcuts({
           break;
         case "menu":
           toggleManagementPane();
+          break;
+        case "commentPlacement":
+          toggleCommentPlacement();
           break;
       }
     };

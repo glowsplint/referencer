@@ -41,7 +41,9 @@ import { Toaster } from "./components/ui/sonner";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import { RecordingProvider } from "./contexts/RecordingContext";
 import { PlaybackBar } from "./components/PlaybackBar";
+import { EditorTour } from "./components/tour/EditorTour";
 import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annotations";
+import { useCurrentUserName } from "./hooks/data/use-current-user-name";
 
 interface AppProps {
   workspaceId: string;
@@ -64,6 +66,10 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
     addHighlight,
     removeHighlight,
     updateHighlightAnnotation,
+    addReply,
+    removeReply,
+    toggleReactionOnHighlight,
+    toggleReactionOnReply,
     addLayer,
     addArrow,
     removeArrow,
@@ -82,6 +88,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
     updateEditorContent,
   } = workspace;
 
+  const currentUserName = useCurrentUserName();
   const isMobile = useIsBreakpoint("max", 768);
   const effectiveReadOnly = readOnly || isMobile;
   const [mobileDialogDismissed, setMobileDialogDismissed] = useState(false);
@@ -92,6 +99,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
     toggleMultipleRowsLayout: workspace.toggleMultipleRowsLayout,
     toggleLocked: workspace.toggleLocked,
     toggleManagementPane: workspace.toggleManagementPane,
+    toggleCommentPlacement: workspace.toggleCommentPlacement,
   });
   useUndoRedoKeyboard(unifiedUndo);
 
@@ -261,10 +269,38 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
     collapseAll(allCommentIds);
   }, [layers, collapseAll]);
 
+  const handleAddReply = useCallback(
+    (layerId: string, highlightId: string, text: string) => {
+      addReply(layerId, highlightId, {
+        id: crypto.randomUUID(),
+        text,
+        userName: currentUserName,
+        timestamp: Date.now(),
+        reactions: [],
+      });
+    },
+    [addReply, currentUserName],
+  );
+
+  const handleToggleReaction = useCallback(
+    (layerId: string, highlightId: string, emoji: string) => {
+      toggleReactionOnHighlight(layerId, highlightId, emoji, currentUserName);
+    },
+    [toggleReactionOnHighlight, currentUserName],
+  );
+
+  const handleToggleReplyReaction = useCallback(
+    (layerId: string, highlightId: string, replyId: string, emoji: string) => {
+      toggleReactionOnReply(layerId, highlightId, replyId, emoji, currentUserName);
+    },
+    [toggleReactionOnReply, currentUserName],
+  );
+
   return (
     <WorkspaceProvider value={workspace}>
       <RecordingProvider value={recordingContextValue}>
         <Toaster />
+        <EditorTour />
         <div className="flex flex-col h-screen overflow-hidden">
           <div className="flex flex-1 min-h-0">
             {!isMobile && <ButtonPane />}
@@ -276,6 +312,31 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
                 <SimpleEditorToolbar isLocked={settings.isLocked} />
                 {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
                 <div className="flex flex-1 min-w-0 min-h-0">
+                  {!isMobile && settings.isLocked && hasAnyAnnotations && settings.commentPlacement === "left" && (
+                    <ErrorBoundary silent>
+                      <AnnotationPanel
+                        layers={layers}
+                        editorsRef={editorsRef}
+                        containerRef={containerRef}
+                        editingAnnotation={editingAnnotation}
+                        onAnnotationChange={updateHighlightAnnotation}
+                        onAnnotationBlur={handleAnnotationBlur}
+                        onAnnotationClick={handleAnnotationClick}
+                        isDarkMode={settings.isDarkMode}
+                        sectionVisibility={sectionVisibility}
+                        collapsedIds={collapsedIds}
+                        onToggleCollapse={toggleCollapse}
+                        onCollapseAll={handleCollapseAll}
+                        onExpandAll={expandAll}
+                        placement="left"
+                        currentUserName={currentUserName}
+                        onAddReply={handleAddReply}
+                        onRemoveReply={removeReply}
+                        onToggleReaction={handleToggleReaction}
+                        onToggleReplyReaction={handleToggleReplyReaction}
+                      />
+                    </ErrorBoundary>
+                  )}
                   <div
                     ref={containerRef}
                     data-testid="editorContainer"
@@ -370,7 +431,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
                       );
                     })}
                   </div>
-                  {!isMobile && settings.isLocked && hasAnyAnnotations && (
+                  {!isMobile && settings.isLocked && hasAnyAnnotations && settings.commentPlacement === "right" && (
                     <ErrorBoundary silent>
                       <AnnotationPanel
                         layers={layers}
@@ -386,6 +447,12 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
                         onToggleCollapse={toggleCollapse}
                         onCollapseAll={handleCollapseAll}
                         onExpandAll={expandAll}
+                        placement="right"
+                        currentUserName={currentUserName}
+                        onAddReply={handleAddReply}
+                        onRemoveReply={removeReply}
+                        onToggleReaction={handleToggleReaction}
+                        onToggleReplyReaction={handleToggleReplyReaction}
                       />
                     </ErrorBoundary>
                   )}

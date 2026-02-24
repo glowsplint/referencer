@@ -59,6 +59,7 @@ describe("useEditorWorkspace", () => {
       overscrollEnabled: false,
       hideOffscreenArrows: false,
       showStatusBar: true,
+      commentPlacement: "right",
     });
     expect(result.current.annotations).toEqual({ activeTool: "selection" });
     expect(result.current.layers).toEqual([]);
