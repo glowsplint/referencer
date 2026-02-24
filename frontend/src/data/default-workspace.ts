@@ -96,9 +96,9 @@ function hl(editorIndex: number, doc: any, text: string, occurrence = 0): Highli
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function cm(
   editorIndex: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   doc: any,
   text: string,
   annotation: string,
