@@ -205,6 +205,7 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
     selectionHidden,
     setStatus,
     setSelectedArrow: workspace.setSelectedArrow,
+    isRecording: recordingContextValue.recordings.isRecording,
   });
 
   useEffect(() => {

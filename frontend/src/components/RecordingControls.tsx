@@ -11,14 +11,12 @@ import {
 import { useRecordingContext } from "@/contexts/RecordingContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { RecordingListItem } from "./recording/RecordingListItem";
-import { RecordingEditorModal } from "./recording/RecordingEditorModal";
 
 export function RecordingControls() {
   const { t } = useTranslation("tools");
   const { recordings: rec, playback } = useRecordingContext();
   const { readOnly } = useWorkspace();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [editingRecordingId, setEditingRecordingId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click
@@ -59,10 +57,6 @@ export function RecordingControls() {
       setDropdownOpen(false);
     }
   }, [rec, t]);
-
-  const handleEdit = useCallback((id: string) => {
-    setEditingRecordingId(id);
-  }, []);
 
   const disabled = readOnly || playback.isPlaying;
 
@@ -125,7 +119,6 @@ export function RecordingControls() {
                   key={recording.id}
                   recording={recording}
                   onPlay={handlePlay}
-                  onEdit={handleEdit}
                   onRename={rec.renameRecording}
                   onDelete={rec.deleteRecording}
                   onDuplicate={rec.duplicateRecording}
@@ -147,13 +140,6 @@ export function RecordingControls() {
         </div>
       )}
 
-      {/* Recording Editor Modal */}
-      {editingRecordingId && (
-        <RecordingEditorModal
-          recordingId={editingRecordingId}
-          onClose={() => setEditingRecordingId(null)}
-        />
-      )}
     </div>
   );
 }

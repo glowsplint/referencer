@@ -11,7 +11,6 @@ import type { Recording } from "@/types/recording";
 interface RecordingListItemProps {
   recording: Recording;
   onPlay: (id: string) => void;
-  onEdit: (id: string) => void;
   onRename: (id: string, name: string) => void;
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
@@ -20,7 +19,6 @@ interface RecordingListItemProps {
 export function RecordingListItem({
   recording,
   onPlay,
-  onEdit,
   onRename,
   onDelete,
   onDuplicate,
@@ -99,18 +97,6 @@ export function RecordingListItem({
                 </button>
               </TooltipTrigger>
               <TooltipContent>{t("recording.play")}</TooltipContent>
-            </Tooltip>
-            <Tooltip placement="top">
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => onEdit(recording.id)}
-                  className="p-0.5 rounded hover:bg-accent"
-                  data-testid={`recordingEditBtn-${recording.id}`}
-                >
-                  <Pencil size={12} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>{t("recording.editRecording")}</TooltipContent>
             </Tooltip>
             <Tooltip placement="top">
               <TooltipTrigger asChild>
