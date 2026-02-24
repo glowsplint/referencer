@@ -7,11 +7,7 @@ interface ReactionBarProps {
 }
 
 /** Renders grouped reaction pills showing emoji + count, highlighted when the current user has reacted. */
-export function ReactionBar({
-  reactions,
-  currentUserName,
-  onToggleReaction,
-}: ReactionBarProps) {
+export function ReactionBar({ reactions, currentUserName, onToggleReaction }: ReactionBarProps) {
   if (reactions.length === 0) return null;
 
   // Group reactions by emoji
@@ -41,9 +37,7 @@ export function ReactionBar({
             title={users.join(", ")}
           >
             <span>{emoji}</span>
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">
-              {users.length}
-            </span>
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">{users.length}</span>
           </button>
         );
       })}

@@ -1,5 +1,14 @@
 import { useTranslation } from "react-i18next";
-import { Play, Pause, SkipBack, SkipForward, ChevronUp, ChevronDown, Trash2, X } from "lucide-react";
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  ChevronUp,
+  ChevronDown,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useRecordingContext } from "@/contexts/RecordingContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { describeDelta } from "@/lib/recording/describe-delta";
@@ -13,7 +22,11 @@ export function RecordingStepBrowser() {
   if (!playback.isPlaying || !recording) return null;
 
   const describe = (delta: Record<string, boolean>) =>
-    describeDelta(delta, layers, t as unknown as (key: string, opts?: Record<string, unknown>) => string);
+    describeDelta(
+      delta,
+      layers,
+      t as unknown as (key: string, opts?: Record<string, unknown>) => string,
+    );
 
   const handleMoveStep = (fromIdx: number, direction: "up" | "down") => {
     const toIdx = direction === "up" ? fromIdx - 1 : fromIdx + 1;
@@ -50,7 +63,9 @@ export function RecordingStepBrowser() {
           }`}
           data-testid="stepBrowserInitialState"
         >
-          <span className="text-[10px] font-medium text-muted-foreground w-4 text-center shrink-0">0</span>
+          <span className="text-[10px] font-medium text-muted-foreground w-4 text-center shrink-0">
+            0
+          </span>
           <span className="text-xs truncate">{t("recording.initialState")}</span>
         </button>
 
@@ -129,7 +144,10 @@ export function RecordingStepBrowser() {
             <SkipForward size={14} />
           </button>
         </div>
-        <span className="text-[10px] text-muted-foreground tabular-nums" data-testid="stepBrowserCounter">
+        <span
+          className="text-[10px] text-muted-foreground tabular-nums"
+          data-testid="stepBrowserCounter"
+        >
           {t("recording.stepOf", { current: displayCurrent, total: displayTotal })}
         </span>
       </div>
@@ -165,7 +183,9 @@ export function RecordingStepBrowser() {
           </label>
           <div className="flex gap-1">
             <button
-              onClick={() => rec.updateRecordingSettings(recording.id, { transitionType: "instant" })}
+              onClick={() =>
+                rec.updateRecordingSettings(recording.id, { transitionType: "instant" })
+              }
               className={`px-1.5 py-0.5 rounded text-[10px] ${
                 recording.transitionType === "instant"
                   ? "bg-accent text-accent-foreground"

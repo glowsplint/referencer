@@ -8,7 +8,12 @@ interface FolderDropdownMenuProps {
   onDelete: () => void;
 }
 
-export function FolderDropdownMenu({ depth, onRename, onNewSubfolder, onDelete }: FolderDropdownMenuProps) {
+export function FolderDropdownMenu({
+  depth,
+  onRename,
+  onNewSubfolder,
+  onDelete,
+}: FolderDropdownMenuProps) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>

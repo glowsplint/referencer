@@ -37,18 +37,12 @@ export function TourTooltip({
       className="w-[90vw] sm:w-[520px] bg-popover text-popover-foreground rounded-xl shadow-xl border border-border overflow-hidden"
     >
       {step.image && (
-        <img
-          src={step.image}
-          alt=""
-          className="w-full max-h-[300px] object-cover bg-muted"
-        />
+        <img src={step.image} alt="" className="w-full max-h-[300px] object-cover bg-muted" />
       )}
 
       <div className="p-5">
         <h3 className="font-semibold text-lg leading-tight">{step.title}</h3>
-        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
-          {step.content}
-        </p>
+        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{step.content}</p>
 
         <div className="mt-4 flex items-center justify-between">
           {/* Step dots */}
@@ -57,9 +51,7 @@ export function TourTooltip({
               <span
                 key={i}
                 className={`inline-block size-2 rounded-full ${
-                  i === stepIndex
-                    ? "bg-primary"
-                    : "bg-muted-foreground/30"
+                  i === stepIndex ? "bg-primary" : "bg-muted-foreground/30"
                 }`}
               />
             ))}

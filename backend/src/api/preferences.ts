@@ -1,9 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../env";
-import {
-  getUserPreferences,
-  upsertUserPreference,
-} from "../db/preference-queries";
+import { getUserPreferences, upsertUserPreference } from "../db/preference-queries";
 
 const preferences = new Hono<Env>();
 

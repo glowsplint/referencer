@@ -39,11 +39,18 @@ export function WorkspaceCard({
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
           <button
-            onClick={(e) => { e.stopPropagation(); onToggleFavorite?.(workspace.workspaceId, !workspace.isFavorite); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite?.(workspace.workspaceId, !workspace.isFavorite);
+            }}
             className="p-1 rounded-md hover:bg-accent transition-colors shrink-0"
             data-testid="favoriteToggle"
           >
-            <Star size={14} fill={workspace.isFavorite ? "currentColor" : "none"} className={workspace.isFavorite ? "text-yellow-500" : "text-muted-foreground"} />
+            <Star
+              size={14}
+              fill={workspace.isFavorite ? "currentColor" : "none"}
+              className={workspace.isFavorite ? "text-yellow-500" : "text-muted-foreground"}
+            />
           </button>
           <h3 className="font-medium text-sm truncate">{workspace.title || "Untitled"}</h3>
         </div>
@@ -100,14 +107,17 @@ export function WorkspaceCard({
         </DropdownMenu.Root>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        Modified {formatRelativeTime(workspace.updatedAt)} · Created {formatRelativeTime(workspace.createdAt)}
+        Modified {formatRelativeTime(workspace.updatedAt)} · Created{" "}
+        {formatRelativeTime(workspace.createdAt)}
       </p>
       {ownerName && (
         <div className="flex items-center gap-1.5 mt-2">
           {ownerAvatarUrl ? (
             <img src={ownerAvatarUrl} alt="" className="w-5 h-5 rounded-full" />
           ) : (
-            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium">{ownerName[0]}</div>
+            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium">
+              {ownerName[0]}
+            </div>
           )}
           <span className="text-xs text-muted-foreground truncate">{ownerName}</span>
         </div>

@@ -40,10 +40,7 @@ export function ReplyInput({ onSubmit, placeholder }: ReplyInputProps) {
   }
 
   return (
-    <div
-      className="flex items-end gap-1 px-1 pb-1"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <div className="flex items-end gap-1 px-1 pb-1" onClick={(e) => e.stopPropagation()}>
       <div className="flex-1 min-w-0">
         <MiniCommentEditor
           value={value}

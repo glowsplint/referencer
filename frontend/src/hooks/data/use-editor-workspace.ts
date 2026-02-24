@@ -219,9 +219,11 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   );
 
   const toggleReactionOnReply = useCallback(
-    guarded((layerId: string, highlightId: string, replyId: string, emoji: string, userName: string) => {
-      yjsLayers.toggleReactionOnReply(layerId, highlightId, replyId, emoji, userName);
-    }),
+    guarded(
+      (layerId: string, highlightId: string, replyId: string, emoji: string, userName: string) => {
+        yjsLayers.toggleReactionOnReply(layerId, highlightId, replyId, emoji, userName);
+      },
+    ),
     [readOnly, yjsLayers],
   );
 

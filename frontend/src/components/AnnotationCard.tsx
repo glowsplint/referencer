@@ -35,7 +35,12 @@ interface AnnotationCardProps {
   onAddReply?: (layerId: string, highlightId: string, text: string) => void;
   onRemoveReply?: (layerId: string, highlightId: string, replyId: string) => void;
   onToggleReaction?: (layerId: string, highlightId: string, emoji: string) => void;
-  onToggleReplyReaction?: (layerId: string, highlightId: string, replyId: string, emoji: string) => void;
+  onToggleReplyReaction?: (
+    layerId: string,
+    highlightId: string,
+    replyId: string,
+    emoji: string,
+  ) => void;
 }
 
 export function AnnotationCard({
@@ -204,9 +209,7 @@ export function AnnotationCard({
             />
           )}
           {/* Reply input */}
-          {onAddReply && (
-            <ReplyInput onSubmit={handleAddReply} />
-          )}
+          {onAddReply && <ReplyInput onSubmit={handleAddReply} />}
           {/* Timestamp fallback when no header */}
           {!userName && !lastEdited ? null : null}
         </>

@@ -74,7 +74,7 @@ export function useTourEngine(steps: TourStep[], options?: UseTourEngineOptions)
     }
   }, [isRunning, stepIndex, steps]);
 
-  const currentStep = isRunning ? steps[stepIndex] ?? null : null;
+  const currentStep = isRunning ? (steps[stepIndex] ?? null) : null;
 
   return {
     isRunning,

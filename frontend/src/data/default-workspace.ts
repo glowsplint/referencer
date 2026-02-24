@@ -97,7 +97,13 @@ function hl(editorIndex: number, doc: any, text: string, occurrence = 0): Highli
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function cm(editorIndex: number, doc: any, text: string, annotation: string, occurrence = 0): Highlight {
+function cm(
+  editorIndex: number,
+  doc: any,
+  text: string,
+  annotation: string,
+  occurrence = 0,
+): Highlight {
   const pos = findInDoc(doc, text, occurrence);
   return {
     id: nextId(),
@@ -190,19 +196,51 @@ function parallelsLayer(doc0: any, doc1: any): Layer {
     ],
     arrows: [
       // Heavens & earth → new heaven & new earth
-      arrow(0, doc0, "God created the heavens and the earth", 1, doc1, "a new heaven and a new earth", "solid"),
+      arrow(
+        0,
+        doc0,
+        "God created the heavens and the earth",
+        1,
+        doc1,
+        "a new heaven and a new earth",
+        "solid",
+      ),
       // Seas created → sea no more
       arrow(0, doc0, "he called Seas", 1, doc1, "the sea was no more", "solid"),
       // Let there be light → glory of God is its light
       arrow(0, doc0, "Let there be light", 1, doc1, "the glory of God gives it light", "solid"),
       // Sun & moon → no need of sun or moon
-      arrow(0, doc0, "the greater light to rule the day and the lesser light to rule the night", 1, doc1, "no need of sun or moon to shine on it", "solid"),
+      arrow(
+        0,
+        doc0,
+        "the greater light to rule the day and the lesser light to rule the night",
+        1,
+        doc1,
+        "no need of sun or moon to shine on it",
+        "solid",
+      ),
       // Evening & morning cycle → no night
-      arrow(0, doc0, "And there was evening and there was morning", 1, doc1, "there will be no night there", "solid"),
+      arrow(
+        0,
+        doc0,
+        "And there was evening and there was morning",
+        1,
+        doc1,
+        "there will be no night there",
+        "solid",
+      ),
       // Very good → all things new
       arrow(0, doc0, "it was very good", 1, doc1, "I am making all things new", "solid"),
       // Dominion mandate → kings bring glory
-      arrow(0, doc0, "let them have dominion", 1, doc1, "the kings of the earth will bring their glory into it", "dotted"),
+      arrow(
+        0,
+        doc0,
+        "let them have dominion",
+        1,
+        doc1,
+        "the kings of the earth will bring their glory into it",
+        "dotted",
+      ),
     ],
     underlines: [],
   };
@@ -385,22 +423,22 @@ function structuralPatternsLayer(doc0: any, doc1: any): Layer {
       ul(0, doc0, "And God said", 4), // v14 — luminaries
       ul(0, doc0, "And God said", 5), // v20 — sea creatures & birds
       ul(0, doc0, "And God said", 6), // v24 — land creatures
-      ul(0, doc0, "Then God said"),    // v26 — man (distinct "Then")
+      ul(0, doc0, "Then God said"), // v26 — man (distinct "Then")
 
       // Genesis 1 — "it was good" evaluation refrain
       ul(0, doc0, "And God saw that it was good", 0), // v10
       ul(0, doc0, "And God saw that it was good", 2), // v18
       ul(0, doc0, "And God saw that it was good", 4), // v25
-      ul(0, doc0, "it was very good"),                 // v31 — climactic
+      ul(0, doc0, "it was very good"), // v31 — climactic
 
       // Genesis 1 — day-closing refrain
       ul(0, doc0, "And there was evening and there was morning, the first day"),
       ul(0, doc0, "And there was evening and there was morning, the sixth day"),
 
       // Revelation 21 — visionary markers
-      ul(1, doc1, "Then I saw"),   // v1
+      ul(1, doc1, "Then I saw"), // v1
       ul(1, doc1, "And I saw", 0), // v2
-      ul(1, doc1, "And I heard"),  // v3
+      ul(1, doc1, "And I heard"), // v3
       ul(1, doc1, "And I saw", 1), // v22
 
       // Revelation 21 — "Behold" divine declarations

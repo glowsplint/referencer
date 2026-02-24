@@ -3,10 +3,7 @@ import type { WorkspaceFolder } from "../types";
 
 const MAX_FOLDER_DEPTH = 3;
 
-export async function getFolderDepth(
-  supabase: SupabaseClient,
-  folderId: string,
-): Promise<number> {
+export async function getFolderDepth(supabase: SupabaseClient, folderId: string): Promise<number> {
   let depth = 0;
   let currentId: string | null = folderId;
 

@@ -12,7 +12,11 @@ export async function fetchFolders(): Promise<FolderItem[]> {
   return apiFetch<FolderItem[]>("/api/folders");
 }
 
-export async function createFolder(id: string, parentId: string | null, name: string): Promise<void> {
+export async function createFolder(
+  id: string,
+  parentId: string | null,
+  name: string,
+): Promise<void> {
   await apiPost("/api/folders", { id, parentId, name });
 }
 

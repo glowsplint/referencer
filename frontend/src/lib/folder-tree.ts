@@ -34,7 +34,10 @@ export function getFolderDepth(folders: FolderItem[], folderId: string): number 
   return depth;
 }
 
-export function getWorkspacesForFolder(workspaces: WorkspaceItem[], folderId: string): WorkspaceItem[] {
+export function getWorkspacesForFolder(
+  workspaces: WorkspaceItem[],
+  folderId: string,
+): WorkspaceItem[] {
   return workspaces.filter((ws) => ws.folderId === folderId);
 }
 

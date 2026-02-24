@@ -15,7 +15,12 @@ interface DeleteFolderDialogProps {
   onDelete: () => Promise<void>;
 }
 
-export function DeleteFolderDialog({ open, onOpenChange, folderName, onDelete }: DeleteFolderDialogProps) {
+export function DeleteFolderDialog({
+  open,
+  onOpenChange,
+  folderName,
+  onDelete,
+}: DeleteFolderDialogProps) {
   const handleDelete = async () => {
     await onDelete();
   };
@@ -27,7 +32,8 @@ export function DeleteFolderDialog({ open, onOpenChange, folderName, onDelete }:
           <DialogTitle>Delete Folder</DialogTitle>
           <DialogDescription>
             Are you sure you want to delete &ldquo;{folderName}&rdquo;? All subfolders will also be
-            deleted. Workspaces inside will be moved out of the folder. This action cannot be undone.
+            deleted. Workspaces inside will be moved out of the folder. This action cannot be
+            undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

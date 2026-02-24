@@ -71,5 +71,15 @@ export function useFolders() {
     [refetch],
   );
 
-  return { folders, isLoading, error, refetch, create, rename, remove, moveWorkspace, unfileWorkspace };
+  return {
+    folders,
+    isLoading,
+    error,
+    refetch,
+    create,
+    rename,
+    remove,
+    moveWorkspace,
+    unfileWorkspace,
+  };
 }

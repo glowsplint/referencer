@@ -312,31 +312,34 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
                 <SimpleEditorToolbar isLocked={settings.isLocked} />
                 {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
                 <div className="flex flex-1 min-w-0 min-h-0">
-                  {!isMobile && settings.isLocked && hasAnyAnnotations && settings.commentPlacement === "left" && (
-                    <ErrorBoundary silent>
-                      <AnnotationPanel
-                        layers={layers}
-                        editorsRef={editorsRef}
-                        containerRef={containerRef}
-                        editingAnnotation={editingAnnotation}
-                        onAnnotationChange={updateHighlightAnnotation}
-                        onAnnotationBlur={handleAnnotationBlur}
-                        onAnnotationClick={handleAnnotationClick}
-                        isDarkMode={settings.isDarkMode}
-                        sectionVisibility={sectionVisibility}
-                        collapsedIds={collapsedIds}
-                        onToggleCollapse={toggleCollapse}
-                        onCollapseAll={handleCollapseAll}
-                        onExpandAll={expandAll}
-                        placement="left"
-                        currentUserName={currentUserName}
-                        onAddReply={handleAddReply}
-                        onRemoveReply={removeReply}
-                        onToggleReaction={handleToggleReaction}
-                        onToggleReplyReaction={handleToggleReplyReaction}
-                      />
-                    </ErrorBoundary>
-                  )}
+                  {!isMobile &&
+                    settings.isLocked &&
+                    hasAnyAnnotations &&
+                    settings.commentPlacement === "left" && (
+                      <ErrorBoundary silent>
+                        <AnnotationPanel
+                          layers={layers}
+                          editorsRef={editorsRef}
+                          containerRef={containerRef}
+                          editingAnnotation={editingAnnotation}
+                          onAnnotationChange={updateHighlightAnnotation}
+                          onAnnotationBlur={handleAnnotationBlur}
+                          onAnnotationClick={handleAnnotationClick}
+                          isDarkMode={settings.isDarkMode}
+                          sectionVisibility={sectionVisibility}
+                          collapsedIds={collapsedIds}
+                          onToggleCollapse={toggleCollapse}
+                          onCollapseAll={handleCollapseAll}
+                          onExpandAll={expandAll}
+                          placement="left"
+                          currentUserName={currentUserName}
+                          onAddReply={handleAddReply}
+                          onRemoveReply={removeReply}
+                          onToggleReaction={handleToggleReaction}
+                          onToggleReplyReaction={handleToggleReplyReaction}
+                        />
+                      </ErrorBoundary>
+                    )}
                   <div
                     ref={containerRef}
                     data-testid="editorContainer"
@@ -431,31 +434,34 @@ export function App({ workspaceId, readOnly, navigate }: AppProps) {
                       );
                     })}
                   </div>
-                  {!isMobile && settings.isLocked && hasAnyAnnotations && settings.commentPlacement === "right" && (
-                    <ErrorBoundary silent>
-                      <AnnotationPanel
-                        layers={layers}
-                        editorsRef={editorsRef}
-                        containerRef={containerRef}
-                        editingAnnotation={editingAnnotation}
-                        onAnnotationChange={updateHighlightAnnotation}
-                        onAnnotationBlur={handleAnnotationBlur}
-                        onAnnotationClick={handleAnnotationClick}
-                        isDarkMode={settings.isDarkMode}
-                        sectionVisibility={sectionVisibility}
-                        collapsedIds={collapsedIds}
-                        onToggleCollapse={toggleCollapse}
-                        onCollapseAll={handleCollapseAll}
-                        onExpandAll={expandAll}
-                        placement="right"
-                        currentUserName={currentUserName}
-                        onAddReply={handleAddReply}
-                        onRemoveReply={removeReply}
-                        onToggleReaction={handleToggleReaction}
-                        onToggleReplyReaction={handleToggleReplyReaction}
-                      />
-                    </ErrorBoundary>
-                  )}
+                  {!isMobile &&
+                    settings.isLocked &&
+                    hasAnyAnnotations &&
+                    settings.commentPlacement === "right" && (
+                      <ErrorBoundary silent>
+                        <AnnotationPanel
+                          layers={layers}
+                          editorsRef={editorsRef}
+                          containerRef={containerRef}
+                          editingAnnotation={editingAnnotation}
+                          onAnnotationChange={updateHighlightAnnotation}
+                          onAnnotationBlur={handleAnnotationBlur}
+                          onAnnotationClick={handleAnnotationClick}
+                          isDarkMode={settings.isDarkMode}
+                          sectionVisibility={sectionVisibility}
+                          collapsedIds={collapsedIds}
+                          onToggleCollapse={toggleCollapse}
+                          onCollapseAll={handleCollapseAll}
+                          onExpandAll={expandAll}
+                          placement="right"
+                          currentUserName={currentUserName}
+                          onAddReply={handleAddReply}
+                          onRemoveReply={removeReply}
+                          onToggleReaction={handleToggleReaction}
+                          onToggleReplyReaction={handleToggleReplyReaction}
+                        />
+                      </ErrorBoundary>
+                    )}
                   <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
                     <PrintAnnotations
                       layers={layers}

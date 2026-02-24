@@ -8,7 +8,14 @@ import {
   ySyncPluginKey,
 } from "@tiptap/y-tiptap";
 import type { EditorView } from "@tiptap/pm/view";
-import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
+import type {
+  Layer,
+  Highlight,
+  Arrow,
+  LayerUnderline,
+  ArrowStyle,
+  CommentReply,
+} from "@/types/editor";
 
 // ---------------------------------------------------------------------------
 // Y.Doc structure for annotations
@@ -220,7 +227,9 @@ export function readLayers(doc: Y.Doc, editorViews?: EditorViewMap): Layer[] {
   return layers;
 }
 
-function readReactions(yReactions: Y.Array<Y.Map<unknown>> | undefined): import("@/types/editor").CommentReaction[] {
+function readReactions(
+  yReactions: Y.Array<Y.Map<unknown>> | undefined,
+): import("@/types/editor").CommentReaction[] {
   if (!yReactions) return [];
   const reactions: import("@/types/editor").CommentReaction[] = [];
   for (let i = 0; i < yReactions.length; i++) {
@@ -500,11 +509,7 @@ export function removeHighlightFromDoc(doc: Y.Doc, layerId: string, highlightId:
   }
 }
 
-function findYHighlight(
-  doc: Y.Doc,
-  layerId: string,
-  highlightId: string,
-): Y.Map<unknown> | null {
+function findYHighlight(doc: Y.Doc, layerId: string, highlightId: string): Y.Map<unknown> | null {
   const result = findYLayer(doc, layerId);
   if (!result) return null;
   const yHighlights = result.yLayer.get("highlights") as Y.Array<Y.Map<unknown>>;

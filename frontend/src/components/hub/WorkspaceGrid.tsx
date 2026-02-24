@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { LayoutGrid, List, Plus, FolderPlus, ChevronUp, ChevronDown, Star, Folder } from "lucide-react";
+import {
+  LayoutGrid,
+  List,
+  Plus,
+  FolderPlus,
+  ChevronUp,
+  ChevronDown,
+  Star,
+  Folder,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
 import { useWorkspaceSort } from "@/hooks/data/use-workspace-sort";
@@ -116,7 +125,12 @@ export function WorkspaceGrid({
               <List size={16} />
             </button>
           </div>
-          <Button onClick={() => setCreatingFolder(true)} size="sm" variant="outline" data-testid="newFolderButton">
+          <Button
+            onClick={() => setCreatingFolder(true)}
+            size="sm"
+            variant="outline"
+            data-testid="newFolderButton"
+          >
             <FolderPlus size={16} />
             New Folder
           </Button>
@@ -147,9 +161,14 @@ export function WorkspaceGrid({
               Favorites
             </h3>
             {favorites.length === 0 ? (
-              <p className="text-sm text-muted-foreground/60 px-1">Star a workspace to pin it here</p>
+              <p className="text-sm text-muted-foreground/60 px-1">
+                Star a workspace to pin it here
+              </p>
             ) : viewMode === "grid" ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" data-testid="workspaceGrid">
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                data-testid="workspaceGrid"
+              >
                 {favorites.map((ws) => (
                   <WorkspaceCard
                     key={ws.workspaceId}
@@ -238,7 +257,10 @@ export function WorkspaceGrid({
           {others.length > 0 && (
             <section data-testid="workspacesSection">
               {viewMode === "grid" ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" data-testid="workspaceGrid">
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                  data-testid="workspaceGrid"
+                >
                   {others.map((ws) => (
                     <WorkspaceCard
                       key={ws.workspaceId}
@@ -259,14 +281,44 @@ export function WorkspaceGrid({
                 <div className="flex flex-col gap-1" data-testid="workspaceList">
                   <div className="flex items-center px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border mb-1">
                     <div className="w-8" /> {/* star column */}
-                    <button onClick={() => setSort("title")} className="flex items-center gap-1 flex-1" data-testid="sortByTitle">
-                      Name {sortConfig.field === "title" && (sortConfig.direction === "asc" ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+                    <button
+                      onClick={() => setSort("title")}
+                      className="flex items-center gap-1 flex-1"
+                      data-testid="sortByTitle"
+                    >
+                      Name{" "}
+                      {sortConfig.field === "title" &&
+                        (sortConfig.direction === "asc" ? (
+                          <ChevronUp size={12} />
+                        ) : (
+                          <ChevronDown size={12} />
+                        ))}
                     </button>
-                    <button onClick={() => setSort("createdAt")} className="flex items-center gap-1 w-[120px] shrink-0" data-testid="sortByCreated">
-                      Created {sortConfig.field === "createdAt" && (sortConfig.direction === "asc" ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+                    <button
+                      onClick={() => setSort("createdAt")}
+                      className="flex items-center gap-1 w-[120px] shrink-0"
+                      data-testid="sortByCreated"
+                    >
+                      Created{" "}
+                      {sortConfig.field === "createdAt" &&
+                        (sortConfig.direction === "asc" ? (
+                          <ChevronUp size={12} />
+                        ) : (
+                          <ChevronDown size={12} />
+                        ))}
                     </button>
-                    <button onClick={() => setSort("updatedAt")} className="flex items-center gap-1 w-[120px] shrink-0" data-testid="sortByModified">
-                      Modified {sortConfig.field === "updatedAt" && (sortConfig.direction === "asc" ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+                    <button
+                      onClick={() => setSort("updatedAt")}
+                      className="flex items-center gap-1 w-[120px] shrink-0"
+                      data-testid="sortByModified"
+                    >
+                      Modified{" "}
+                      {sortConfig.field === "updatedAt" &&
+                        (sortConfig.direction === "asc" ? (
+                          <ChevronUp size={12} />
+                        ) : (
+                          <ChevronDown size={12} />
+                        ))}
                     </button>
                     <div className="w-[140px] shrink-0">Owner</div>
                     <div className="w-8" /> {/* menu column */}

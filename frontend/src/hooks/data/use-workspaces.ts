@@ -71,5 +71,15 @@ export function useWorkspaces() {
     [refetch],
   );
 
-  return { workspaces, isLoading, error, refetch, create, rename, remove, duplicate, toggleFavorite };
+  return {
+    workspaces,
+    isLoading,
+    error,
+    refetch,
+    create,
+    rename,
+    remove,
+    duplicate,
+    toggleFavorite,
+  };
 }
