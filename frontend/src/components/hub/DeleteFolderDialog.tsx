@@ -12,7 +12,7 @@ interface DeleteFolderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   folderName: string;
-  onDelete: () => Promise<void>;
+  onDelete: () => void;
 }
 
 export function DeleteFolderDialog({
@@ -21,8 +21,8 @@ export function DeleteFolderDialog({
   folderName,
   onDelete,
 }: DeleteFolderDialogProps) {
-  const handleDelete = async () => {
-    await onDelete();
+  const handleDelete = () => {
+    onDelete();
   };
 
   return (

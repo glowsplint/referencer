@@ -30,17 +30,16 @@ interface WorkspaceGridProps {
   isLoading: boolean;
   navigate: (hash: string) => void;
   onNew: () => void;
-  onRename: (workspaceId: string, title: string) => Promise<void>;
-  onDelete: (workspaceId: string) => Promise<void>;
-  onDuplicate: (sourceId: string, newId: string) => Promise<void>;
-  onToggleFavorite: (workspaceId: string, isFavorite: boolean) => Promise<void>;
+  onRename: (workspaceId: string, title: string) => void;
+  onDelete: (workspaceId: string) => void;
+  onDuplicate: (sourceId: string, newId: string) => void;
+  onToggleFavorite: (workspaceId: string, isFavorite: boolean) => void;
   folders: FolderItem[];
-  onCreateFolder: (id: string, parentId: string | null, name: string) => Promise<void>;
-  onRenameFolder: (id: string, name: string) => Promise<void>;
-  onDeleteFolder: (id: string) => Promise<void>;
-  onMoveWorkspaceToFolder: (folderId: string, workspaceId: string) => Promise<void>;
-  onUnfileWorkspace: (workspaceId: string) => Promise<void>;
-  onRefetchWorkspaces: () => Promise<void>;
+  onCreateFolder: (id: string, parentId: string | null, name: string) => void;
+  onRenameFolder: (id: string, name: string) => void;
+  onDeleteFolder: (id: string) => void;
+  onMoveWorkspaceToFolder: (workspaceId: string, folderId: string) => void;
+  onUnfileWorkspace: (workspaceId: string) => void;
   ownerName?: string;
   ownerAvatarUrl?: string;
 }
@@ -60,7 +59,6 @@ export function WorkspaceGrid({
   onDeleteFolder,
   onMoveWorkspaceToFolder,
   onUnfileWorkspace,
-  onRefetchWorkspaces,
   ownerName,
   ownerAvatarUrl,
 }: WorkspaceGridProps) {
@@ -84,23 +82,22 @@ export function WorkspaceGrid({
 
   const handleOpen = (id: string) => navigate(`#/${id}`);
 
-  const handleDuplicate = async (sourceId: string) => {
+  const handleDuplicate = (sourceId: string) => {
     const newId = crypto.randomUUID();
-    await onDuplicate(sourceId, newId);
+    onDuplicate(sourceId, newId);
   };
 
-  const handleCreateFolder = async (parentId: string | null, name: string) => {
+  const handleCreateFolder = (parentId: string | null, name: string) => {
     const id = crypto.randomUUID();
-    await onCreateFolder(id, parentId, name);
+    onCreateFolder(id, parentId, name);
   };
 
-  const handleMoveToFolder = async (workspaceId: string, folderId: string | null) => {
+  const handleMoveToFolder = (workspaceId: string, folderId: string | null) => {
     if (folderId) {
-      await onMoveWorkspaceToFolder(folderId, workspaceId);
+      onMoveWorkspaceToFolder(workspaceId, folderId);
     } else {
-      await onUnfileWorkspace(workspaceId);
+      onUnfileWorkspace(workspaceId);
     }
-    await onRefetchWorkspaces();
   };
 
   return (
@@ -352,8 +349,8 @@ export function WorkspaceGrid({
           if (!open) setRenameTarget(null);
         }}
         currentTitle={renameTarget?.title ?? ""}
-        onRename={async (title) => {
-          if (renameTarget) await onRename(renameTarget.workspaceId, title);
+        onRename={(title) => {
+          if (renameTarget) onRename(renameTarget.workspaceId, title);
           setRenameTarget(null);
         }}
       />
@@ -363,8 +360,8 @@ export function WorkspaceGrid({
           if (!open) setDeleteTarget(null);
         }}
         workspaceTitle={deleteTarget?.title || "Untitled"}
-        onDelete={async () => {
-          if (deleteTarget) await onDelete(deleteTarget.workspaceId);
+        onDelete={() => {
+          if (deleteTarget) onDelete(deleteTarget.workspaceId);
           setDeleteTarget(null);
         }}
       />
@@ -374,8 +371,8 @@ export function WorkspaceGrid({
           if (!open) setDeleteFolderTarget(null);
         }}
         folderName={deleteFolderTarget?.name || ""}
-        onDelete={async () => {
-          if (deleteFolderTarget) await onDeleteFolder(deleteFolderTarget.id);
+        onDelete={() => {
+          if (deleteFolderTarget) onDeleteFolder(deleteFolderTarget.id);
           setDeleteFolderTarget(null);
         }}
       />
