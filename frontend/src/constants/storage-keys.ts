@@ -17,4 +17,6 @@ export const STORAGE_KEYS = {
   LANGUAGE: "referencer-language",
   /** Prefix for tour completion status, suffixed with tourId. */
   TOUR_STATUS: "referencer-tour-",
+  /** Prefix for folder collapsed state, suffixed with folderId. */
+  FOLDER_COLLAPSED_PREFIX: "referencer-folder-collapsed-",
 } as const;

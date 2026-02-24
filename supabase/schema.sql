@@ -70,6 +70,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE TABLE workspace_folder (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    parent_id TEXT REFERENCES workspace_folder(id) ON DELETE CASCADE,
+    name TEXT NOT NULL DEFAULT 'New Folder',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_workspace_folder_user_id ON workspace_folder(user_id);
+CREATE INDEX idx_workspace_folder_parent_id ON workspace_folder(parent_id);
+
 CREATE TABLE user_workspace (
     user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
     workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
@@ -77,8 +88,18 @@ CREATE TABLE user_workspace (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     is_favorite BOOLEAN NOT NULL DEFAULT FALSE,
+    folder_id TEXT REFERENCES workspace_folder(id) ON DELETE SET NULL,
     PRIMARY KEY (user_id, workspace_id)
 );
 CREATE INDEX idx_user_workspace_user_id ON user_workspace(user_id);
 CREATE INDEX idx_user_workspace_updated_at ON user_workspace(updated_at DESC);
 CREATE INDEX idx_user_workspace_favorite ON user_workspace(user_id, is_favorite DESC, updated_at DESC);
+CREATE INDEX idx_user_workspace_folder_id ON user_workspace(folder_id);
+
+CREATE TABLE user_preference (
+    user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    key TEXT NOT NULL,
+    value TEXT NOT NULL DEFAULT '',
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (user_id, key)
+);

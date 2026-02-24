@@ -4,9 +4,9 @@ import { useWorkspaceSort } from "./use-workspace-sort";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
 const mockWorkspaces: WorkspaceItem[] = [
-  { workspaceId: "ws-1", title: "Alpha", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-03T00:00:00Z", isFavorite: false },
-  { workspaceId: "ws-2", title: "Beta", createdAt: "2026-01-02T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z", isFavorite: false },
-  { workspaceId: "ws-3", title: "Charlie", createdAt: "2026-01-03T00:00:00Z", updatedAt: "2026-01-02T00:00:00Z", isFavorite: true },
+  { workspaceId: "ws-1", title: "Alpha", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-03T00:00:00Z", isFavorite: false, folderId: null },
+  { workspaceId: "ws-2", title: "Beta", createdAt: "2026-01-02T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z", isFavorite: false, folderId: null },
+  { workspaceId: "ws-3", title: "Charlie", createdAt: "2026-01-03T00:00:00Z", updatedAt: "2026-01-02T00:00:00Z", isFavorite: true, folderId: null },
 ];
 
 describe("useWorkspaceSort", () => {
@@ -19,10 +19,11 @@ describe("useWorkspaceSort", () => {
     expect(result.current.sortConfig).toEqual({ field: "updatedAt", direction: "desc" });
   });
 
-  it("sorts favorites first regardless of sort field", () => {
+  it("separates favorites from others", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
-    // Charlie (favorite) should be first
-    expect(result.current.sorted[0].workspaceId).toBe("ws-3");
+    expect(result.current.favorites).toHaveLength(1);
+    expect(result.current.favorites[0].workspaceId).toBe("ws-3");
+    expect(result.current.others).toHaveLength(2);
   });
 
   it("toggles direction when clicking same field", () => {
@@ -57,5 +58,27 @@ describe("useWorkspaceSort", () => {
     localStorage.setItem("hub-sort", JSON.stringify({ field: "title", direction: "desc" }));
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     expect(result.current.sortConfig).toEqual({ field: "title", direction: "desc" });
+  });
+
+  it("excludes workspaces with folderId from others", () => {
+    const workspacesWithFolders: WorkspaceItem[] = [
+      ...mockWorkspaces,
+      { workspaceId: "ws-4", title: "Filed", createdAt: "2026-01-04T00:00:00Z", updatedAt: "2026-01-04T00:00:00Z", isFavorite: false, folderId: "folder-1" },
+    ];
+    const { result } = renderHook(() => useWorkspaceSort(workspacesWithFolders));
+    // ws-4 has a folderId so it should NOT appear in others
+    expect(result.current.others.find((ws) => ws.workspaceId === "ws-4")).toBeUndefined();
+    // The other non-favorited, unfiled workspaces should still be there
+    expect(result.current.others).toHaveLength(2);
+  });
+
+  it("includes favorited workspaces even if they have a folderId", () => {
+    const workspacesWithFolders: WorkspaceItem[] = [
+      ...mockWorkspaces,
+      { workspaceId: "ws-5", title: "Fav+Filed", createdAt: "2026-01-05T00:00:00Z", updatedAt: "2026-01-05T00:00:00Z", isFavorite: true, folderId: "folder-1" },
+    ];
+    const { result } = renderHook(() => useWorkspaceSort(workspacesWithFolders));
+    // ws-5 is favorited so it should appear in favorites regardless of folderId
+    expect(result.current.favorites.find((ws) => ws.workspaceId === "ws-5")).toBeDefined();
   });
 });

@@ -39,12 +39,8 @@ export function useWorkspaceSort(workspaces: WorkspaceItem[]) {
     });
   }, []);
 
-  const sorted = useMemo(() => {
-    const arr = [...workspaces];
-    arr.sort((a, b) => {
-      // Favorites always first
-      if (a.isFavorite !== b.isFavorite) return a.isFavorite ? -1 : 1;
-
+  const compare = useCallback(
+    (a: WorkspaceItem, b: WorkspaceItem) => {
       const { field, direction } = sortConfig;
       let cmp = 0;
       if (field === "title") {
@@ -53,9 +49,19 @@ export function useWorkspaceSort(workspaces: WorkspaceItem[]) {
         cmp = a[field].localeCompare(b[field]);
       }
       return direction === "asc" ? cmp : -cmp;
-    });
-    return arr;
-  }, [workspaces, sortConfig]);
+    },
+    [sortConfig],
+  );
 
-  return { sorted, sortConfig, setSort };
+  const favorites = useMemo(
+    () => workspaces.filter((ws) => ws.isFavorite).sort(compare),
+    [workspaces, compare],
+  );
+
+  const others = useMemo(
+    () => workspaces.filter((ws) => !ws.isFavorite && !ws.folderId).sort(compare),
+    [workspaces, compare],
+  );
+
+  return { favorites, others, sortConfig, setSort };
 }

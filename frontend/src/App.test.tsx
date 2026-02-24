@@ -5,6 +5,18 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { TourProvider } from "./contexts/TourContext";
 import { App } from "./App";
 
+// Mock auth and tour API clients
+vi.mock("@/lib/auth-client", () => ({
+  fetchAuthStatus: vi.fn().mockResolvedValue({ authenticated: false }),
+  loginWith: vi.fn(),
+  logout: vi.fn(),
+}));
+
+vi.mock("@/lib/tour-client", () => ({
+  fetchTourPreferences: vi.fn().mockResolvedValue({}),
+  saveTourPreference: vi.fn().mockResolvedValue(undefined),
+}));
+
 // Mock the breakpoint hook for mobile detection
 let mockIsMobile = false;
 vi.mock("./hooks/ui/use-is-breakpoint", () => ({
