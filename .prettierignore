@@ -7,3 +7,5 @@ bun.lock
 .github
 .claude
 worktrees
+playwright-report
+test-results
