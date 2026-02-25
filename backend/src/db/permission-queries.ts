@@ -32,10 +32,12 @@ export async function setPermission(
   userId: string,
   role: PermissionRole,
 ): Promise<void> {
-  await supabase.from("workspace_permission").upsert(
-    { workspace_id: workspaceId, user_id: userId, role },
-    { onConflict: "workspace_id,user_id" },
-  );
+  await supabase
+    .from("workspace_permission")
+    .upsert(
+      { workspace_id: workspaceId, user_id: userId, role },
+      { onConflict: "workspace_id,user_id" },
+    );
 }
 
 export async function getWorkspacePermissions(

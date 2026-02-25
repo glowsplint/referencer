@@ -88,7 +88,12 @@ folders.patch("/:id/move", async (c) => {
   } catch (err) {
     console.error("PATCH /api/folders/:id/move error:", err);
     const message = err instanceof Error ? err.message : String(err);
-    const status = message.includes("depth limit") || message.includes("cycle") || message.includes("Cannot move") ? 400 : 500;
+    const status =
+      message.includes("depth limit") ||
+      message.includes("cycle") ||
+      message.includes("Cannot move")
+        ? 400
+        : 500;
     return c.json({ error: message }, status);
   }
 });

@@ -145,9 +145,7 @@ export function AnnotationPanel({
   const anyExpanded = useMemo(() => {
     const visibleCommentCount = layers.reduce(
       (count, layer) =>
-        layer.visible
-          ? count + layer.highlights.filter((h) => h.type === "comment").length
-          : count,
+        layer.visible ? count + layer.highlights.filter((h) => h.type === "comment").length : count,
       0,
     );
     return !collapsedIds || collapsedIds.size < visibleCommentCount;
