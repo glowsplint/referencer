@@ -44,7 +44,9 @@ async function drawArrowViaEnter(page: import("@playwright/test").Page) {
   await page.keyboard.press("Enter");
 }
 
-test("arrow endpoints are highlighted as inline decorations after drawing", async ({ page }) => {
+test.describe("arrow endpoint highlights", () => {
+
+test("when an arrow is drawn, then endpoints are highlighted as inline decorations", async ({ page }) => {
   await drawArrowViaEnter(page);
 
   // Arrow should be drawn
@@ -60,7 +62,7 @@ test("arrow endpoints are highlighted as inline decorations after drawing", asyn
   expect(count).toBeGreaterThanOrEqual(initialEndpointCount + 1);
 });
 
-test("within-editor arrow SVG uses mix-blend-mode multiply for text visibility", async ({
+test("when an arrow is drawn, then SVG uses mix-blend-mode multiply for text visibility", async ({
   page,
 }) => {
   await drawArrowViaEnter(page);
@@ -75,7 +77,7 @@ test("within-editor arrow SVG uses mix-blend-mode multiply for text visibility",
   expect(blendMode).toBe("multiply");
 });
 
-test("arrow endpoint decorations, line, and arrowhead share same base color", async ({ page }) => {
+test("when an arrow is drawn, then endpoint decorations, line, and arrowhead share same color", async ({ page }) => {
   await drawArrowViaEnter(page);
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
@@ -104,7 +106,7 @@ test("arrow endpoint decorations, line, and arrowhead share same base color", as
   expect(arrowheadFill).toBe(lineStroke);
 });
 
-test("arrow endpoint decorations disappear when unlocked", async ({ page }) => {
+test("when editor is unlocked, then arrow endpoint decorations disappear", async ({ page }) => {
   await drawArrowViaEnter(page);
 
   await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
@@ -124,3 +126,5 @@ test("arrow endpoint decorations disappear when unlocked", async ({ page }) => {
   const countAfter = await endpointDecorations.count();
   expect(countAfter).toBe(countBefore);
 });
+
+}); // end arrow endpoint highlights describe

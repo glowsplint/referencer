@@ -6,7 +6,9 @@ test.beforeEach(async ({ page }) => {
   // Editor starts locked — Cmd+Z goes to workspace undo
 });
 
-test("undo reverts adding a layer", async ({ page }) => {
+test.describe("undo/redo", () => {
+
+test("when a layer is added and Cmd+Z is pressed, then the layer is removed", async ({ page }) => {
   // Add a layer (appended after 3 default layers, at index 3)
   await page.getByTestId("addLayerButton").click();
   await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
@@ -16,7 +18,7 @@ test("undo reverts adding a layer", async ({ page }) => {
   await expect(page.getByTestId("layerName-3")).not.toBeVisible();
 });
 
-test("redo restores an undone layer", async ({ page }) => {
+test("when Cmd+Shift+Z is pressed after undo, then layer is restored", async ({ page }) => {
   await page.getByTestId("addLayerButton").click();
   await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
 
@@ -28,7 +30,7 @@ test("redo restores an undone layer", async ({ page }) => {
   await expect(page.getByTestId("layerName-3")).toBeVisible();
 });
 
-test("undo reverts renaming a layer", async ({ page }) => {
+test("when a layer is renamed and Cmd+Z is pressed, then rename is reverted", async ({ page }) => {
   // Add a layer
   await page.getByTestId("addLayerButton").click();
   await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
@@ -49,7 +51,7 @@ test("undo reverts renaming a layer", async ({ page }) => {
   await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
 });
 
-test("multiple undo/redo with layers", async ({ page }) => {
+test("when multiple layers are added, then multiple undo/redo steps work correctly", async ({ page }) => {
   // Add first layer
   await page.getByTestId("addLayerButton").click();
   await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
@@ -79,3 +81,5 @@ test("multiple undo/redo with layers", async ({ page }) => {
   await page.keyboard.press("Meta+Shift+z");
   await expect(page.getByTestId("layerName-4")).toBeVisible();
 });
+
+}); // end undo/redo describe

@@ -60,7 +60,7 @@ describe("useWordHover", () => {
     vi.clearAllMocks();
   });
 
-  it("attaches mousemove and mouseleave listeners when locked", () => {
+  it("when locked, then attaches mousemove and mouseleave listeners", () => {
     const { editor, dom } = createMockEditor();
     renderHook(() => useWordHover(editor, 0, true, false, null, "#ff0000", []));
 
@@ -68,19 +68,19 @@ describe("useWordHover", () => {
     expect(dom.addEventListener).toHaveBeenCalledWith("mouseleave", expect.any(Function));
   });
 
-  it("does not attach listeners when not locked", () => {
+  it("when not locked, then does not attach listeners", () => {
     const { editor, dom } = createMockEditor();
     renderHook(() => useWordHover(editor, 0, false, false, null, "#ff0000", []));
 
     expect(dom.addEventListener).not.toHaveBeenCalled();
   });
 
-  it("does not attach listeners when editor is null", () => {
+  it("when editor is null, then does not attach listeners", () => {
     renderHook(() => useWordHover(null, 0, true, false, null, "#ff0000", []));
     // No error thrown = pass
   });
 
-  it("dispatches decoration on mousemove over a word", async () => {
+  it("when mousemove occurs over a word, then dispatches decoration", async () => {
     const { getWordBoundaries } = await import("@/lib/tiptap/word-boundaries");
     const mockedGetWordBoundaries = vi.mocked(getWordBoundaries);
     mockedGetWordBoundaries.mockReturnValue({ from: 1, to: 5, text: "hello" });
@@ -96,7 +96,7 @@ describe("useWordHover", () => {
     expect(dispatch).toHaveBeenCalled();
   });
 
-  it("clears decoration on mouseleave", async () => {
+  it("when mouseleave occurs, then clears decoration", async () => {
     const { getWordBoundaries } = await import("@/lib/tiptap/word-boundaries");
     const mockedGetWordBoundaries = vi.mocked(getWordBoundaries);
     mockedGetWordBoundaries.mockReturnValue({ from: 1, to: 5, text: "hello" });
@@ -118,7 +118,7 @@ describe("useWordHover", () => {
     expect(dispatch).toHaveBeenCalled();
   });
 
-  it("does not apply decoration when hovered word matches selection", async () => {
+  it("when hovered word matches selection, then does not apply decoration", async () => {
     const { getWordBoundaries } = await import("@/lib/tiptap/word-boundaries");
     const mockedGetWordBoundaries = vi.mocked(getWordBoundaries);
     mockedGetWordBoundaries.mockReturnValue({ from: 1, to: 5, text: "hello" });
@@ -136,7 +136,7 @@ describe("useWordHover", () => {
     expect(dispatch).not.toHaveBeenCalled();
   });
 
-  it("does not apply decoration when hovered word overlaps a layer highlight", async () => {
+  it("when hovered word overlaps a layer highlight, then does not apply decoration", async () => {
     const { getWordBoundaries } = await import("@/lib/tiptap/word-boundaries");
     const mockedGetWordBoundaries = vi.mocked(getWordBoundaries);
     mockedGetWordBoundaries.mockReturnValue({ from: 1, to: 5, text: "hello" });
@@ -173,7 +173,7 @@ describe("useWordHover", () => {
     expect(dispatch).not.toHaveBeenCalled();
   });
 
-  it("removes listeners on cleanup", () => {
+  it("when cleanup runs, then removes listeners", () => {
     const { editor, dom } = createMockEditor();
     const { unmount } = renderHook(() => useWordHover(editor, 0, true, false, null, "#ff0000", []));
 

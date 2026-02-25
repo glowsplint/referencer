@@ -51,14 +51,14 @@ describe("WorkspaceListItem", () => {
   }
 
   describe("when rendered", () => {
-    it("shows the workspace title and relative time", () => {
+    it("then shows the workspace title and relative time", () => {
       renderListItem();
       expect(screen.getByText("List Workspace")).toBeInTheDocument();
       const dateElements = screen.getAllByText("3d ago");
       expect(dateElements.length).toBeGreaterThanOrEqual(1);
     });
 
-    it("shows created and modified dates", () => {
+    it("then shows created and modified dates", () => {
       renderListItem();
       const dateElements = screen.getAllByText("3d ago");
       expect(dateElements.length).toBeGreaterThanOrEqual(2);
@@ -66,7 +66,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when workspace has an owner", () => {
-    it("shows the owner name and avatar", () => {
+    it("then shows the owner name and avatar", () => {
       renderListItem();
       expect(screen.getByText("Test User")).toBeInTheDocument();
       const avatar = document.querySelector("img[src='https://example.com/avatar.jpg']");
@@ -75,7 +75,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when the list item is clicked", () => {
-    it("calls onOpen", async () => {
+    it("then calls onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
@@ -86,7 +86,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when the menu trigger is clicked", () => {
-    it("does not call onOpen", async () => {
+    it("then does not call onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
@@ -97,7 +97,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when Open is selected from the dropdown menu", () => {
-    it("calls onOpen", async () => {
+    it("then calls onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
@@ -113,7 +113,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when Rename is selected from the dropdown menu", () => {
-    it("calls onRename without calling onOpen", async () => {
+    it("then calls onRename without calling onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
@@ -127,7 +127,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when Duplicate is selected from the dropdown menu", () => {
-    it("calls onDuplicate without calling onOpen", async () => {
+    it("then calls onDuplicate without calling onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
@@ -141,7 +141,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when Delete is selected from the dropdown menu", () => {
-    it("calls onDelete without calling onOpen", async () => {
+    it("then calls onDelete without calling onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
@@ -155,7 +155,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when favorite toggle is clicked", () => {
-    it("calls onToggleFavorite with the workspace ID and new state", async () => {
+    it("then calls onToggleFavorite with the workspace ID and new state", async () => {
       const user = userEvent.setup();
       renderListItem();
 
@@ -164,7 +164,7 @@ describe("WorkspaceListItem", () => {
       expect(onToggleFavorite).toHaveBeenCalledWith("ws-2", true);
     });
 
-    it("does not call onOpen", async () => {
+    it("then does not call onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
@@ -175,7 +175,7 @@ describe("WorkspaceListItem", () => {
   });
 
   describe("when workspace title is empty", () => {
-    it("renders 'Untitled' as the title", () => {
+    it("then renders 'Untitled' as the title", () => {
       render(
         <DndProvider>
           <WorkspaceListItem

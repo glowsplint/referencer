@@ -9,13 +9,13 @@ vi.mock("@/lib/api-client", () => ({
 import { apiFetch } from "@/lib/api-client";
 const mockApiFetch = vi.mocked(apiFetch);
 
-describe("auth-client", () => {
+describe("when using auth-client", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe("fetchAuthStatus", () => {
-    it("calls /auth/me and returns status when ok", async () => {
+  describe("when using fetchAuthStatus", () => {
+    it("then calls /auth/me and returns status when ok", async () => {
       const mockResponse = {
         authenticated: true,
         user: { id: "1", email: "test@test.com", name: "Test", avatarUrl: "" },
@@ -27,7 +27,7 @@ describe("auth-client", () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it("returns unauthenticated when fetch fails", async () => {
+    it("then returns unauthenticated when fetch fails", async () => {
       mockApiFetch.mockRejectedValue(new Error("fail"));
 
       const result = await fetchAuthStatus();
@@ -35,8 +35,8 @@ describe("auth-client", () => {
     });
   });
 
-  describe("loginWith", () => {
-    it("sets window.location.href for google", () => {
+  describe("when using loginWith", () => {
+    it("then sets window.location.href for google", () => {
       Object.defineProperty(window, "location", {
         value: { href: "" },
         writable: true,
@@ -47,7 +47,7 @@ describe("auth-client", () => {
       expect(window.location.href).toBe("/auth/google");
     });
 
-    it("sets window.location.href for github", () => {
+    it("then sets window.location.href for github", () => {
       Object.defineProperty(window, "location", {
         value: { href: "" },
         writable: true,
@@ -59,8 +59,8 @@ describe("auth-client", () => {
     });
   });
 
-  describe("logout", () => {
-    it("calls POST /auth/logout", async () => {
+  describe("when using logout", () => {
+    it("then calls POST /auth/logout", async () => {
       mockApiFetch.mockResolvedValue(undefined);
 
       await logout();

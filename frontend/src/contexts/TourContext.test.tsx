@@ -48,76 +48,86 @@ describe("TourContext", () => {
     localStorage.clear();
   });
 
-  it("starts with tour not completed (fresh localStorage)", async () => {
-    renderWithProviders();
-    expect(screen.getByTestId("isCompleted")).toHaveTextContent("false");
+  describe("when localStorage is fresh", () => {
+    it("then starts with tour not completed", async () => {
+      renderWithProviders();
+      expect(screen.getByTestId("isCompleted")).toHaveTextContent("false");
+    });
   });
 
-  it("detects completed tour from localStorage", async () => {
-    localStorage.setItem(`${STORAGE_KEYS.TOUR_STATUS}editor`, "completed");
-    renderWithProviders();
-    expect(screen.getByTestId("isCompleted")).toHaveTextContent("true");
+  describe("when localStorage has a completed tour", () => {
+    it("then detects the completed tour", async () => {
+      localStorage.setItem(`${STORAGE_KEYS.TOUR_STATUS}editor`, "completed");
+      renderWithProviders();
+      expect(screen.getByTestId("isCompleted")).toHaveTextContent("true");
+    });
   });
 
-  it("completeTour saves to localStorage", async () => {
-    renderWithProviders();
-    expect(screen.getByTestId("isCompleted")).toHaveTextContent("false");
+  describe("when completeTour is called", () => {
+    it("then saves to localStorage", async () => {
+      renderWithProviders();
+      expect(screen.getByTestId("isCompleted")).toHaveTextContent("false");
 
-    act(() => {
-      screen.getByTestId("complete").click();
+      act(() => {
+        screen.getByTestId("complete").click();
+      });
+
+      expect(screen.getByTestId("isCompleted")).toHaveTextContent("true");
+      expect(localStorage.getItem(`${STORAGE_KEYS.TOUR_STATUS}editor`)).toBe("completed");
     });
 
-    expect(screen.getByTestId("isCompleted")).toHaveTextContent("true");
-    expect(localStorage.getItem(`${STORAGE_KEYS.TOUR_STATUS}editor`)).toBe("completed");
-  });
+    it("then clears active tour", async () => {
+      renderWithProviders();
 
-  it("startTour triggers tour running state", async () => {
-    renderWithProviders();
-    expect(screen.getByTestId("isRunning")).toHaveTextContent("false");
-    expect(screen.getByTestId("activeTourId")).toHaveTextContent("null");
+      act(() => {
+        screen.getByTestId("start").click();
+      });
+      expect(screen.getByTestId("activeTourId")).toHaveTextContent("editor");
 
-    act(() => {
-      screen.getByTestId("start").click();
+      act(() => {
+        screen.getByTestId("complete").click();
+      });
+      expect(screen.getByTestId("activeTourId")).toHaveTextContent("null");
+      expect(screen.getByTestId("isRunning")).toHaveTextContent("false");
     });
 
-    expect(screen.getByTestId("isRunning")).toHaveTextContent("true");
-    expect(screen.getByTestId("activeTourId")).toHaveTextContent("editor");
+    it("then isTourCompleted returns true", async () => {
+      renderWithProviders();
+      expect(screen.getByTestId("isCompleted")).toHaveTextContent("false");
+
+      act(() => {
+        screen.getByTestId("complete").click();
+      });
+      expect(screen.getByTestId("isCompleted")).toHaveTextContent("true");
+    });
   });
 
-  it("completeTour clears active tour", async () => {
-    renderWithProviders();
+  describe("when startTour is called", () => {
+    it("then triggers tour running state", async () => {
+      renderWithProviders();
+      expect(screen.getByTestId("isRunning")).toHaveTextContent("false");
+      expect(screen.getByTestId("activeTourId")).toHaveTextContent("null");
 
-    act(() => {
-      screen.getByTestId("start").click();
-    });
-    expect(screen.getByTestId("activeTourId")).toHaveTextContent("editor");
+      act(() => {
+        screen.getByTestId("start").click();
+      });
 
-    act(() => {
-      screen.getByTestId("complete").click();
+      expect(screen.getByTestId("isRunning")).toHaveTextContent("true");
+      expect(screen.getByTestId("activeTourId")).toHaveTextContent("editor");
     });
-    expect(screen.getByTestId("activeTourId")).toHaveTextContent("null");
-    expect(screen.getByTestId("isRunning")).toHaveTextContent("false");
   });
 
-  it("isTourCompleted returns correct boolean", async () => {
-    renderWithProviders();
-    expect(screen.getByTestId("isCompleted")).toHaveTextContent("false");
-
-    act(() => {
-      screen.getByTestId("complete").click();
+  describe("when useTour is used outside TourProvider", () => {
+    it("then throws an error", () => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+      expect(() =>
+        render(
+          <AuthProvider>
+            <TourConsumer />
+          </AuthProvider>,
+        ),
+      ).toThrow("useTour must be used within TourProvider");
+      consoleError.mockRestore();
     });
-    expect(screen.getByTestId("isCompleted")).toHaveTextContent("true");
-  });
-
-  it("throws when useTour is used outside TourProvider", () => {
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
-    expect(() =>
-      render(
-        <AuthProvider>
-          <TourConsumer />
-        </AuthProvider>,
-      ),
-    ).toThrow("useTour must be used within TourProvider");
-    consoleError.mockRestore();
   });
 });

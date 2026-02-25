@@ -36,13 +36,13 @@ function createTestStep(id: string, delta: Record<string, boolean>): RecordingSt
   return { id, delta };
 }
 
-describe("recordings Yjs storage", () => {
-  it("returns empty array for a fresh doc", () => {
+describe("when using recordings Yjs storage", () => {
+  it("then returns empty array for a fresh doc", () => {
     const doc = new Y.Doc();
     expect(readRecordings(doc)).toEqual([]);
   });
 
-  it("addRecordingToDoc stores a recording that readRecordings returns", () => {
+  it("then addRecordingToDoc stores a recording that readRecordings returns", () => {
     const doc = new Y.Doc();
     const rec = createTestRecording();
     addRecordingToDoc(doc, rec);
@@ -57,7 +57,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].steps).toEqual([]);
   });
 
-  it("addRecordingToDoc preserves steps", () => {
+  it("then addRecordingToDoc preserves steps", () => {
     const doc = new Y.Doc();
     const rec = createTestRecording({
       steps: [
@@ -75,7 +75,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].steps[1].delta).toEqual({ "layer:layer-2": true });
   });
 
-  it("removeRecordingFromDoc removes the recording", () => {
+  it("then removeRecordingFromDoc removes the recording", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording());
     expect(readRecordings(doc)).toHaveLength(1);
@@ -84,14 +84,14 @@ describe("recordings Yjs storage", () => {
     expect(readRecordings(doc)).toHaveLength(0);
   });
 
-  it("removeRecordingFromDoc is a no-op for unknown id", () => {
+  it("then removeRecordingFromDoc is a no-op for unknown id", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording());
     removeRecordingFromDoc(doc, "does-not-exist");
     expect(readRecordings(doc)).toHaveLength(1);
   });
 
-  it("updateRecordingNameInDoc changes the name and updatedAt", () => {
+  it("then updateRecordingNameInDoc changes the name and updatedAt", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording({ updatedAt: 1000 }));
 
@@ -102,7 +102,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].updatedAt).toBeGreaterThan(1000);
   });
 
-  it("updateRecordingSettingsInDoc updates globalDelayMs", () => {
+  it("then updateRecordingSettingsInDoc updates globalDelayMs", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording());
 
@@ -113,7 +113,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].transitionType).toBe("instant"); // unchanged
   });
 
-  it("updateRecordingSettingsInDoc updates transitionType", () => {
+  it("then updateRecordingSettingsInDoc updates transitionType", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording());
 
@@ -124,7 +124,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].globalDelayMs).toBe(2000); // unchanged
   });
 
-  it("updateRecordingSettingsInDoc updates both settings at once", () => {
+  it("then updateRecordingSettingsInDoc updates both settings at once", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording({ updatedAt: 1000 }));
 
@@ -139,7 +139,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].updatedAt).toBeGreaterThan(1000);
   });
 
-  it("addStepToRecordingInDoc appends a step", () => {
+  it("then addStepToRecordingInDoc appends a step", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording());
 
@@ -152,7 +152,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].steps[0].delta).toEqual({ "layer:layer-1": false });
   });
 
-  it("addStepToRecordingInDoc appends multiple steps in order", () => {
+  it("then addStepToRecordingInDoc appends multiple steps in order", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording());
 
@@ -165,7 +165,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].steps.map((s) => s.id)).toEqual(["s1", "s2", "s3"]);
   });
 
-  it("removeStepFromRecordingInDoc removes a specific step", () => {
+  it("then removeStepFromRecordingInDoc removes a specific step", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording());
     addStepToRecordingInDoc(doc, "rec-1", createTestStep("s1", { "layer:layer-1": false }));
@@ -178,7 +178,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].steps[0].id).toBe("s2");
   });
 
-  it("reorderStepsInRecordingInDoc reorders steps", () => {
+  it("then reorderStepsInRecordingInDoc reorders steps", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording());
     addStepToRecordingInDoc(doc, "rec-1", createTestStep("s1", { "layer:layer-1": false }));
@@ -195,7 +195,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].steps[2].delta).toEqual({ "layer:layer-2": true });
   });
 
-  it("updateRecordingInitialStateInDoc changes the initial state", () => {
+  it("then updateRecordingInitialStateInDoc changes the initial state", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording({ updatedAt: 1000 }));
 
@@ -211,7 +211,7 @@ describe("recordings Yjs storage", () => {
     expect(result[0].updatedAt).toBeGreaterThan(1000);
   });
 
-  it("handles multiple recordings: add 3, delete middle, verify", () => {
+  it("then handles multiple recordings: add 3, delete middle, verify", () => {
     const doc = new Y.Doc();
     addRecordingToDoc(doc, createTestRecording({ id: "rec-1", name: "First" }));
     addRecordingToDoc(doc, createTestRecording({ id: "rec-2", name: "Second" }));
@@ -229,7 +229,7 @@ describe("recordings Yjs storage", () => {
     expect(result[1].name).toBe("Third");
   });
 
-  it("getRecordingsArray returns the Y.Array from the doc", () => {
+  it("then getRecordingsArray returns the Y.Array from the doc", () => {
     const doc = new Y.Doc();
     const arr = getRecordingsArray(doc);
     expect(arr).toBeInstanceOf(Y.Array);

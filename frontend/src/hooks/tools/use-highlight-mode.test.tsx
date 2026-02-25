@@ -38,14 +38,14 @@ describe("useHighlightMode", () => {
     vi.clearAllMocks();
   });
 
-  it("shows entry status when highlight tool is activated", () => {
+  it("when highlight tool is activated, then shows entry status", () => {
     const setStatus = vi.fn();
     renderHook(() => useHighlightMode(createOptions({ setStatus })));
 
     expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("clears status when exiting highlight tool", () => {
+  it("when exiting highlight tool, then clears status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
@@ -57,7 +57,7 @@ describe("useHighlightMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("does not clear status when switching to another annotation tool", () => {
+  it("when switching to another annotation tool, then does not clear status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
@@ -69,7 +69,7 @@ describe("useHighlightMode", () => {
     expect(clearStatus).not.toHaveBeenCalled();
   });
 
-  it("clears status when unlocking while highlight tool is active", () => {
+  it("when unlocking while highlight tool is active, then clears status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { isLocked: boolean }) =>
@@ -81,7 +81,7 @@ describe("useHighlightMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("does nothing when activeTool is not highlight", () => {
+  it("when activeTool is not highlight, then does nothing", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 });
     const { result } = renderHook(() => useHighlightMode(opts));
 
@@ -92,7 +92,7 @@ describe("useHighlightMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("does nothing when isLocked is false", () => {
+  it("when isLocked is false, then does nothing", () => {
     const opts = createOptions({ isLocked: false, selection: word1 });
     const { result } = renderHook(() => useHighlightMode(opts));
 
@@ -103,7 +103,7 @@ describe("useHighlightMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("does nothing when there is no selection", () => {
+  it("when there is no selection, then does nothing", () => {
     const opts = createOptions({ selection: null });
     const { result } = renderHook(() => useHighlightMode(opts));
 
@@ -114,7 +114,7 @@ describe("useHighlightMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("auto-creates a layer when no active layer", () => {
+  it("when no active layer exists, then auto-creates one", () => {
     const addLayer = vi.fn(() => "auto-layer-1");
     const addHighlight = vi.fn().mockReturnValue("h-1");
     const opts = createOptions({ activeLayerId: null, addLayer, addHighlight, selection: word1 });
@@ -135,7 +135,7 @@ describe("useHighlightMode", () => {
     });
   });
 
-  it("does nothing when addLayer fails (all colors used)", () => {
+  it("when addLayer fails (all colors used), then does nothing", () => {
     const addLayer = vi.fn(() => "");
     const opts = createOptions({ activeLayerId: null, addLayer, selection: word1 });
     const { result } = renderHook(() => useHighlightMode(opts));
@@ -148,7 +148,7 @@ describe("useHighlightMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("creates highlight with empty annotation", () => {
+  it("when a selection is confirmed, then creates highlight with empty annotation", () => {
     const opts = createOptions({ selection: word1 });
     const { result } = renderHook(() => useHighlightMode(opts));
 
@@ -166,7 +166,7 @@ describe("useHighlightMode", () => {
     });
   });
 
-  it("toggles off existing annotation-less highlight when same range selected", () => {
+  it("when same range is selected for annotation-less highlight, then toggles it off", () => {
     const opts = createOptions({
       selection: word1,
       layers: [
@@ -196,7 +196,7 @@ describe("useHighlightMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("does NOT toggle off annotated highlight at same range", () => {
+  it("when same range is selected for annotated highlight, then does NOT toggle it off", () => {
     const opts = createOptions({
       selection: word1,
       layers: [
@@ -226,7 +226,7 @@ describe("useHighlightMode", () => {
     expect(opts.addHighlight).toHaveBeenCalled();
   });
 
-  it("always shows success status when highlight is created", () => {
+  it("when highlight is created, then always shows success status", () => {
     const flashStatus = vi.fn();
     const opts = createOptions({ selection: word1, flashStatus });
     const { result } = renderHook(() => useHighlightMode(opts));
@@ -239,7 +239,7 @@ describe("useHighlightMode", () => {
     expect(flashStatus).toHaveBeenCalledWith({ text: "Highlight added.", type: "success" }, 3000);
   });
 
-  it("shows removed status when toggling off highlight", () => {
+  it("when toggling off highlight, then shows removed status", () => {
     const flashStatus = vi.fn();
     const opts = createOptions({
       selection: word1,

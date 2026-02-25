@@ -27,14 +27,14 @@ describe("useUnderlineMode", () => {
     vi.clearAllMocks();
   });
 
-  it("shows entry status when underline tool is activated", () => {
+  it("when underline tool is activated, then shows entry status", () => {
     const setStatus = vi.fn();
     renderHook(() => useUnderlineMode(createOptions({ setStatus })));
 
     expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("clears status when exiting underline tool to selection", () => {
+  it("when exiting underline tool to selection, then clears status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
@@ -46,7 +46,7 @@ describe("useUnderlineMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("does not clear status when switching to another annotation tool", () => {
+  it("when switching to another annotation tool, then does not clear status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
@@ -58,7 +58,7 @@ describe("useUnderlineMode", () => {
     expect(clearStatus).not.toHaveBeenCalled();
   });
 
-  it("clears status when unlocking while underline tool is active", () => {
+  it("when unlocking while underline tool is active, then clears status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { isLocked: boolean }) =>
@@ -70,14 +70,14 @@ describe("useUnderlineMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("always shows entry status", () => {
+  it("when underline tool is active, then always shows entry status", () => {
     const setStatus = vi.fn();
     renderHook(() => useUnderlineMode(createOptions({ setStatus })));
 
     expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("does nothing when activeTool is not underline", () => {
+  it("when activeTool is not underline, then does nothing", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 });
     const { result } = renderHook(() => useUnderlineMode(opts));
 
@@ -88,7 +88,7 @@ describe("useUnderlineMode", () => {
     expect(opts.addUnderline).not.toHaveBeenCalled();
   });
 
-  it("does nothing when isLocked is false", () => {
+  it("when isLocked is false, then does nothing", () => {
     const opts = createOptions({ isLocked: false, selection: word1 });
     const { result } = renderHook(() => useUnderlineMode(opts));
 
@@ -99,7 +99,7 @@ describe("useUnderlineMode", () => {
     expect(opts.addUnderline).not.toHaveBeenCalled();
   });
 
-  it("does nothing when there is no selection", () => {
+  it("when there is no selection, then does nothing", () => {
     const opts = createOptions({ selection: null });
     const { result } = renderHook(() => useUnderlineMode(opts));
 
@@ -110,7 +110,7 @@ describe("useUnderlineMode", () => {
     expect(opts.addUnderline).not.toHaveBeenCalled();
   });
 
-  it("creates underline on confirm", () => {
+  it("when a selection is confirmed, then creates underline", () => {
     const opts = createOptions({ selection: word1 });
     const { result } = renderHook(() => useUnderlineMode(opts));
 
@@ -126,7 +126,7 @@ describe("useUnderlineMode", () => {
     });
   });
 
-  it("shows success status when underline is created", () => {
+  it("when underline is created, then shows success status", () => {
     const flashStatus = vi.fn();
     const opts = createOptions({ selection: word1, flashStatus });
     const { result } = renderHook(() => useUnderlineMode(opts));
@@ -138,7 +138,7 @@ describe("useUnderlineMode", () => {
     expect(flashStatus).toHaveBeenCalledWith({ text: "Underline added.", type: "success" }, 3000);
   });
 
-  it("always shows success status when underline is created", () => {
+  it("when underline is created, then always shows success status", () => {
     const flashStatus = vi.fn();
     const opts = createOptions({ selection: word1, flashStatus });
     const { result } = renderHook(() => useUnderlineMode(opts));
@@ -151,7 +151,7 @@ describe("useUnderlineMode", () => {
     expect(flashStatus).toHaveBeenCalledWith({ text: "Underline added.", type: "success" }, 3000);
   });
 
-  it("auto-creates a layer when no active layer", () => {
+  it("when no active layer exists, then auto-creates one", () => {
     const addLayer = vi.fn(() => "auto-layer-1");
     const addUnderline = vi.fn().mockReturnValue("u-1");
     const opts = createOptions({ activeLayerId: null, addLayer, addUnderline, selection: word1 });
@@ -170,7 +170,7 @@ describe("useUnderlineMode", () => {
     });
   });
 
-  it("does nothing when addLayer fails (all colors used)", () => {
+  it("when addLayer fails (all colors used), then does nothing", () => {
     const addLayer = vi.fn(() => "");
     const opts = createOptions({ activeLayerId: null, addLayer, selection: word1 });
     const { result } = renderHook(() => useUnderlineMode(opts));
@@ -183,7 +183,7 @@ describe("useUnderlineMode", () => {
     expect(opts.addUnderline).not.toHaveBeenCalled();
   });
 
-  it("toggles off existing underline when same range selected", () => {
+  it("when same range is selected for existing underline, then toggles it off", () => {
     const opts = createOptions({
       selection: word1,
       layers: [

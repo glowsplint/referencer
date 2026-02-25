@@ -38,14 +38,14 @@ function renderDividerWithMockedRect(onResize = vi.fn(), direction?: "horizontal
 
 describe("Divider", () => {
   describe("when rendered in horizontal mode (default)", () => {
-    it("displays the divider element with a drag handle icon", () => {
+    it("then displays the divider element with a drag handle icon", () => {
       renderDivider();
       const divider = screen.getByTestId("divider");
       expect(divider).toBeInTheDocument();
       expect(divider.querySelector("svg")).toBeInTheDocument();
     });
 
-    it("renders visual separator lines on both sides of the handle", () => {
+    it("then renders visual separator lines on both sides of the handle", () => {
       renderDivider();
       const divider = screen.getByTestId("divider");
       // The divider has 3 children: line, icon, line
@@ -55,14 +55,14 @@ describe("Divider", () => {
   });
 
   describe("when rendered in vertical mode", () => {
-    it("displays the divider element with a drag handle icon", () => {
+    it("then displays the divider element with a drag handle icon", () => {
       renderDivider(vi.fn(), "vertical");
       const divider = screen.getByTestId("divider");
       expect(divider).toBeInTheDocument();
       expect(divider.querySelector("svg")).toBeInTheDocument();
     });
 
-    it("renders visual separator lines on both sides of the handle", () => {
+    it("then renders visual separator lines on both sides of the handle", () => {
       renderDivider(vi.fn(), "vertical");
       const divider = screen.getByTestId("divider");
       const children = divider.children;
@@ -71,7 +71,7 @@ describe("Divider", () => {
   });
 
   describe("when dragged horizontally", () => {
-    it("reports the drag position as a percentage of the container width", () => {
+    it("then reports the drag position as a percentage of the container width", () => {
       const { onResize } = renderDividerWithMockedRect();
       const divider = screen.getByTestId("divider");
 
@@ -84,7 +84,7 @@ describe("Divider", () => {
   });
 
   describe("when dragged vertically", () => {
-    it("reports the drag position as a percentage of the container height", () => {
+    it("then reports the drag position as a percentage of the container height", () => {
       const { onResize } = renderDividerWithMockedRect(vi.fn(), "vertical");
       const divider = screen.getByTestId("divider");
 
@@ -97,7 +97,7 @@ describe("Divider", () => {
   });
 
   describe("when dragged beyond the allowed range", () => {
-    it("clamps horizontal resize to 20-80%", () => {
+    it("then clamps horizontal resize to 20-80%", () => {
       const { onResize } = renderDividerWithMockedRect();
       const divider = screen.getByTestId("divider");
 
@@ -112,7 +112,7 @@ describe("Divider", () => {
       fireEvent.mouseUp(document);
     });
 
-    it("clamps vertical resize to 20-80%", () => {
+    it("then clamps vertical resize to 20-80%", () => {
       const { onResize } = renderDividerWithMockedRect(vi.fn(), "vertical");
       const divider = screen.getByTestId("divider");
 
@@ -129,7 +129,7 @@ describe("Divider", () => {
   });
 
   describe("when drag ends", () => {
-    it("restores text selection ability", () => {
+    it("then restores text selection ability", () => {
       renderDivider();
       const divider = screen.getByTestId("divider");
 

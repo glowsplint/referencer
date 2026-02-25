@@ -3,7 +3,7 @@ import { renderHook, act } from "@testing-library/react";
 import * as Y from "yjs";
 import { useYjsLayers } from "./use-yjs-layers";
 import { TAILWIND_300_COLORS } from "@/constants/colors";
-import { addLayerToDoc, getLayersArray } from "@/lib/yjs/annotations";
+import { addLayerToDoc } from "@/lib/yjs/annotations";
 
 vi.mock("sonner", () => ({
   toast: {
@@ -23,7 +23,7 @@ beforeEach(() => {
 });
 
 describe("useYjsLayers", () => {
-  it("reads layers on mount from a pre-seeded doc", async () => {
+  it("when mounted with a pre-seeded doc, then reads layers", async () => {
     const doc = new Y.Doc();
     addLayerToDoc(doc, { id: "l1", name: "Layer 1", color: "#fca5a5" });
 
@@ -37,7 +37,7 @@ describe("useYjsLayers", () => {
     expect(result.current.layers[0].color).toBe("#fca5a5");
   });
 
-  it("addLayer picks the first unused color from TAILWIND_300_COLORS", async () => {
+  it("when addLayer is called, then picks the first unused color from TAILWIND_300_COLORS", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -51,7 +51,7 @@ describe("useYjsLayers", () => {
     expect(result.current.layers[0].color).toBe(TAILWIND_300_COLORS[0]);
   });
 
-  it("addLayer returns null and shows toast when all colors are used", async () => {
+  it("when all colors are used, then addLayer returns null and shows toast", async () => {
     const { toast } = await import("sonner");
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
@@ -76,7 +76,7 @@ describe("useYjsLayers", () => {
     expect(toast.warning).toHaveBeenCalled();
   });
 
-  it("removeLayer clears activeLayerId if removed layer was active", async () => {
+  it("when the active layer is removed, then clears activeLayerId", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -99,7 +99,7 @@ describe("useYjsLayers", () => {
     expect(result.current.activeLayerId).toBeNull();
   });
 
-  it("removeLayer keeps activeLayerId when a different layer is removed", async () => {
+  it("when a non-active layer is removed, then keeps activeLayerId", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -127,7 +127,7 @@ describe("useYjsLayers", () => {
     expect(result.current.activeLayerId).toBe("l2");
   });
 
-  it("setActiveLayer updates activeLayerId", async () => {
+  it("when setActiveLayer is called, then updates activeLayerId", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -149,7 +149,7 @@ describe("useYjsLayers", () => {
     expect(result.current.activeLayerId).toBe("l1");
   });
 
-  it("auto-selects first layer when layers exist but activeLayerId is null", async () => {
+  it("when layers exist but activeLayerId is null, then auto-selects first layer", async () => {
     const doc = new Y.Doc();
     // Pre-seed a layer before hook mounts
     addLayerToDoc(doc, { id: "l1", name: "Layer 1", color: "#fca5a5" });
@@ -162,7 +162,7 @@ describe("useYjsLayers", () => {
     });
   });
 
-  it("reacts to external Y.Doc mutations", async () => {
+  it("when external Y.Doc mutations occur, then reacts to them", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -181,7 +181,7 @@ describe("useYjsLayers", () => {
     expect(result.current.layers[0].name).toBe("External Layer");
   });
 
-  it("all mutation methods are no-ops when doc is null", () => {
+  it("when doc is null, then all mutation methods are no-ops", () => {
     const { result } = renderHook(() => useYjsLayers(null));
 
     // These should not throw
@@ -248,7 +248,7 @@ describe("useYjsLayers", () => {
     expect(result.current.layers).toEqual([]);
   });
 
-  it("addLayer returns id and name", async () => {
+  it("when addLayer is called, then returns id and name", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -262,7 +262,7 @@ describe("useYjsLayers", () => {
     expect(ret!.name).toBe("Layer 1");
   });
 
-  it("addLayer with explicit id and name uses them", async () => {
+  it("when addLayer is called with explicit id and name, then uses them", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -277,7 +277,7 @@ describe("useYjsLayers", () => {
     expect(result.current.layers[0].name).toBe("Custom Name");
   });
 
-  it("addLayer with explicit name does not increment counter", async () => {
+  it("when addLayer is called with explicit name, then does not increment counter", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -295,7 +295,7 @@ describe("useYjsLayers", () => {
     expect(result.current.layers[1].name).toBe("Layer 1");
   });
 
-  it("addLayer sets the new layer as active", async () => {
+  it("when addLayer is called, then sets the new layer as active", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -309,7 +309,7 @@ describe("useYjsLayers", () => {
     expect(result.current.activeLayerId).toBe("l2");
   });
 
-  it("addLayer picks next unused color when first colors are taken", async () => {
+  it("when first colors are taken, then addLayer picks next unused color", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -326,7 +326,7 @@ describe("useYjsLayers", () => {
     expect(result.current.layers[1].color).toBe(TAILWIND_300_COLORS[1]);
   });
 
-  it("updateLayerName changes a layer's name in the doc", async () => {
+  it("when updateLayerName is called, then changes the layer's name in the doc", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -347,7 +347,7 @@ describe("useYjsLayers", () => {
     });
   });
 
-  it("updateLayerColor changes a layer's color in the doc", async () => {
+  it("when updateLayerColor is called, then changes the layer's color in the doc", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -368,7 +368,7 @@ describe("useYjsLayers", () => {
     });
   });
 
-  it("toggleLayerVisibility toggles a layer's visibility", async () => {
+  it("when toggleLayerVisibility is called, then toggles the layer's visibility", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -397,7 +397,7 @@ describe("useYjsLayers", () => {
     });
   });
 
-  it("toggleAllLayerVisibility hides all layers when any are visible", async () => {
+  it("when toggleAllLayerVisibility is called and any are visible, then hides all", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -420,7 +420,7 @@ describe("useYjsLayers", () => {
     });
   });
 
-  it("toggleAllLayerVisibility shows all layers when none are visible", async () => {
+  it("when toggleAllLayerVisibility is called and none are visible, then shows all", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -455,7 +455,7 @@ describe("useYjsLayers", () => {
     });
   });
 
-  it("addLayer with extraColors extends the palette", async () => {
+  it("when addLayer is called with extraColors, then extends the palette", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 
@@ -481,13 +481,13 @@ describe("useYjsLayers", () => {
     expect(result.current.layers[result.current.layers.length - 1].color).toBe("#custom1");
   });
 
-  it("returns empty layers array when doc is null", () => {
+  it("when doc is null, then returns empty layers array", () => {
     const { result } = renderHook(() => useYjsLayers(null));
     expect(result.current.layers).toEqual([]);
     expect(result.current.activeLayerId).toBeNull();
   });
 
-  it("layer name counter increments across multiple adds", async () => {
+  it("when addLayer is called multiple times, then name counter increments", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));
 

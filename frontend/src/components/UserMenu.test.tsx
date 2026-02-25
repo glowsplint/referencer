@@ -27,7 +27,7 @@ describe("UserMenu", () => {
   });
 
   describe("when authenticated", () => {
-    it("shows the user avatar with the first initial", () => {
+    it("then shows the user avatar with the first initial", () => {
       render(<UserMenu />);
       const button = screen.getByTestId("userMenuButton");
       expect(button).toBeInTheDocument();
@@ -36,7 +36,7 @@ describe("UserMenu", () => {
   });
 
   describe("when avatar is clicked", () => {
-    it("shows user name, email, and sign out option", async () => {
+    it("then shows user name, email, and sign out option", async () => {
       const user = userEvent.setup();
       render(<UserMenu />);
 
@@ -50,7 +50,7 @@ describe("UserMenu", () => {
   });
 
   describe("when sign out is clicked", () => {
-    it("calls the logout function", async () => {
+    it("then calls the logout function", async () => {
       const user = userEvent.setup();
       render(<UserMenu />);
 

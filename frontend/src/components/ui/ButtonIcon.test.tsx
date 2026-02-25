@@ -4,14 +4,14 @@ import { ButtonIcon } from "./ButtonIcon";
 
 describe("ButtonIcon", () => {
   describe("when rendered with an icon", () => {
-    it("displays the provided icon", () => {
+    it("then displays the provided icon", () => {
       render(<ButtonIcon icon={<span data-testid="icon">X</span>} callback={() => {}} />);
       expect(screen.getByTestId("icon")).toBeInTheDocument();
     });
   });
 
   describe("when clicked", () => {
-    it("triggers the provided action", () => {
+    it("then triggers the provided action", () => {
       const cb = vi.fn();
       render(<ButtonIcon icon={<span>X</span>} callback={cb} />);
       fireEvent.click(screen.getByRole("button"));
@@ -20,21 +20,21 @@ describe("ButtonIcon", () => {
   });
 
   describe("when a title is set", () => {
-    it("shows it as a tooltip", () => {
+    it("then shows it as a tooltip", () => {
       render(<ButtonIcon icon={<span>X</span>} callback={() => {}} title="My title" />);
       expect(screen.getByTitle("My title")).toBeInTheDocument();
     });
   });
 
   describe("when disabled", () => {
-    it("disables the button element", () => {
+    it("then disables the button element", () => {
       render(<ButtonIcon icon={<span>X</span>} callback={() => {}} disabled />);
       expect(screen.getByRole("button")).toBeDisabled();
     });
   });
 
   describe("when extra button props are provided", () => {
-    it("spreads them onto the underlying button element", () => {
+    it("then spreads them onto the underlying button element", () => {
       render(
         <ButtonIcon
           icon={<span>X</span>}

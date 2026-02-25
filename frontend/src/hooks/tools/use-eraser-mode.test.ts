@@ -39,14 +39,14 @@ describe("useEraserMode", () => {
     vi.clearAllMocks();
   });
 
-  it("shows status when eraser tool is active and locked", () => {
+  it("when eraser tool is active and locked, then shows status", () => {
     const setStatus = vi.fn();
     renderHook(() => useEraserMode(createOptions({ setStatus })));
 
     expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("clears status when switching away from eraser tool", () => {
+  it("when switching away from eraser tool, then clears status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
@@ -58,7 +58,7 @@ describe("useEraserMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("clears status when unlocking while eraser is active", () => {
+  it("when unlocking while eraser is active, then clears status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { isLocked: boolean }) =>
@@ -70,7 +70,7 @@ describe("useEraserMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("does nothing when activeTool is not eraser", () => {
+  it("when activeTool is not eraser, then does nothing", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 });
     const { result } = renderHook(() => useEraserMode(opts));
 
@@ -82,7 +82,7 @@ describe("useEraserMode", () => {
     expect(opts.removeUnderline).not.toHaveBeenCalled();
   });
 
-  it("does nothing when isLocked is false", () => {
+  it("when isLocked is false, then does nothing", () => {
     const opts = createOptions({ isLocked: false, selection: word1 });
     const { result } = renderHook(() => useEraserMode(opts));
 
@@ -94,7 +94,7 @@ describe("useEraserMode", () => {
     expect(opts.removeUnderline).not.toHaveBeenCalled();
   });
 
-  it("does nothing when there is no selection", () => {
+  it("when there is no selection, then does nothing", () => {
     const opts = createOptions({ selection: null });
     const { result } = renderHook(() => useEraserMode(opts));
 
@@ -106,7 +106,7 @@ describe("useEraserMode", () => {
     expect(opts.removeUnderline).not.toHaveBeenCalled();
   });
 
-  it("erases overlapping highlight on visible layer", () => {
+  it("when a highlight overlaps on a visible layer, then erases it", () => {
     const layer = makeLayer({
       highlights: [
         {
@@ -130,7 +130,7 @@ describe("useEraserMode", () => {
     expect(opts.removeHighlight).toHaveBeenCalledWith("layer-1", "h-1");
   });
 
-  it("erases overlapping underline on visible layer", () => {
+  it("when an underline overlaps on a visible layer, then erases it", () => {
     const layer = makeLayer({
       underlines: [{ id: "u-1", editorIndex: 0, from: 6, to: 12, text: "ello w" }],
     });
@@ -144,7 +144,7 @@ describe("useEraserMode", () => {
     expect(opts.removeUnderline).toHaveBeenCalledWith("layer-1", "u-1");
   });
 
-  it("erases both highlight and underline when overlapping", () => {
+  it("when both highlight and underline overlap, then erases both", () => {
     const layer = makeLayer({
       highlights: [
         {
@@ -170,7 +170,7 @@ describe("useEraserMode", () => {
     expect(opts.removeUnderline).toHaveBeenCalledWith("layer-1", "u-1");
   });
 
-  it("skips decorations on hidden layers", () => {
+  it("when decorations are on hidden layers, then skips them", () => {
     const layer = makeLayer({
       visible: false,
       highlights: [
@@ -195,7 +195,7 @@ describe("useEraserMode", () => {
     expect(opts.removeHighlight).not.toHaveBeenCalled();
   });
 
-  it("skips decorations on different editor index", () => {
+  it("when decorations are on a different editor index, then skips them", () => {
     const layer = makeLayer({
       highlights: [
         {
@@ -219,7 +219,7 @@ describe("useEraserMode", () => {
     expect(opts.removeHighlight).not.toHaveBeenCalled();
   });
 
-  it("skips non-overlapping decorations", () => {
+  it("when decorations do not overlap, then skips them", () => {
     const layer = makeLayer({
       highlights: [
         {
@@ -243,7 +243,7 @@ describe("useEraserMode", () => {
     expect(opts.removeHighlight).not.toHaveBeenCalled();
   });
 
-  it("shows success status when something was erased", () => {
+  it("when something was erased, then shows success status", () => {
     const flashStatus = vi.fn();
     const layer = makeLayer({
       highlights: [
@@ -268,7 +268,7 @@ describe("useEraserMode", () => {
     expect(flashStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "success" }), 3000);
   });
 
-  it("does not show success status when nothing was erased", () => {
+  it("when nothing was erased, then does not show success status", () => {
     const setStatus = vi.fn();
     const layer = makeLayer();
     const opts = createOptions({ selection: word1, layers: [layer], setStatus });
@@ -289,7 +289,7 @@ describe("useEraserMode", () => {
 
   // --- eraseAtPosition tests ---
 
-  it("eraseAtPosition erases overlapping highlight at given position", () => {
+  it("when eraseAtPosition is called on overlapping highlight, then erases it", () => {
     const layer = makeLayer({
       highlights: [
         {
@@ -313,7 +313,7 @@ describe("useEraserMode", () => {
     expect(opts.removeHighlight).toHaveBeenCalledWith("layer-1", "h-1");
   });
 
-  it("eraseAtPosition erases overlapping underline at given position", () => {
+  it("when eraseAtPosition is called on overlapping underline, then erases it", () => {
     const layer = makeLayer({
       underlines: [{ id: "u-1", editorIndex: 0, from: 6, to: 12, text: "ello w" }],
     });
@@ -327,7 +327,7 @@ describe("useEraserMode", () => {
     expect(opts.removeUnderline).toHaveBeenCalledWith("layer-1", "u-1");
   });
 
-  it("eraseAtPosition does nothing when not in eraser mode", () => {
+  it("when eraseAtPosition is called outside eraser mode, then does nothing", () => {
     const layer = makeLayer({
       highlights: [
         {
@@ -351,7 +351,7 @@ describe("useEraserMode", () => {
     expect(opts.removeHighlight).not.toHaveBeenCalled();
   });
 
-  it("eraseAtPosition skips hidden layers", () => {
+  it("when eraseAtPosition encounters hidden layers, then skips them", () => {
     const layer = makeLayer({
       visible: false,
       highlights: [
@@ -376,7 +376,7 @@ describe("useEraserMode", () => {
     expect(opts.removeHighlight).not.toHaveBeenCalled();
   });
 
-  it("erases decorations across multiple visible layers", () => {
+  it("when decorations span multiple visible layers, then erases all", () => {
     const layer1 = makeLayer({
       id: "layer-1",
       highlights: [

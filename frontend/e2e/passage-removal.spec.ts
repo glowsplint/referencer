@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByTestId("managementPane")).toBeVisible();
 });
 
-test("removing first passage twice does not crash toolbar", async ({ page }) => {
+test("when first passage is removed twice, then toolbar does not crash", async ({ page }) => {
   // Start with 2 default passages, add 1 more for a total of 3
   await page.getByTestId("addPassageButton").click();
   await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);

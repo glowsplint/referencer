@@ -50,20 +50,20 @@ function renderTooltip(
 
 describe("TourTooltip", () => {
   describe("when rendered", () => {
-    it("shows the step title and content", () => {
+    it("then shows the step title and content", () => {
       renderTooltip();
       expect(screen.getByText("Test Title")).toBeInTheDocument();
       expect(screen.getByText("Test Content")).toBeInTheDocument();
     });
 
-    it("has the correct testid", () => {
+    it("then has the correct testid", () => {
       renderTooltip();
       expect(screen.getByTestId("tourTooltip")).toBeInTheDocument();
     });
   });
 
   describe("when the step has an image", () => {
-    it("shows the image", () => {
+    it("then shows the image", () => {
       renderTooltip({
         step: {
           target: "#test",
@@ -79,7 +79,7 @@ describe("TourTooltip", () => {
   });
 
   describe("when the step has no image", () => {
-    it("does not render an image element", () => {
+    it("then does not render an image element", () => {
       renderTooltip({
         step: {
           target: "#test",
@@ -92,12 +92,12 @@ describe("TourTooltip", () => {
   });
 
   describe("when on the first step", () => {
-    it("hides the Back button", () => {
+    it("then hides the Back button", () => {
       renderTooltip({ stepIndex: 0 });
       expect(screen.queryByText("Back")).not.toBeInTheDocument();
     });
 
-    it("shows the Next button", () => {
+    it("then shows the Next button", () => {
       renderTooltip({ stepIndex: 0, totalSteps: 3 });
       expect(screen.getByText("Next")).toBeInTheDocument();
       expect(screen.queryByText("Finish")).not.toBeInTheDocument();
@@ -105,14 +105,14 @@ describe("TourTooltip", () => {
   });
 
   describe("when on a middle step", () => {
-    it("shows the Back button", () => {
+    it("then shows the Back button", () => {
       renderTooltip({ stepIndex: 1 });
       expect(screen.getByText("Back")).toBeInTheDocument();
     });
   });
 
   describe("when on the last step", () => {
-    it("shows Finish instead of Next", () => {
+    it("then shows Finish instead of Next", () => {
       renderTooltip({ stepIndex: 2, totalSteps: 3 });
       expect(screen.getByText("Finish")).toBeInTheDocument();
       expect(screen.queryByText("Next")).not.toBeInTheDocument();
@@ -120,7 +120,7 @@ describe("TourTooltip", () => {
   });
 
   describe("when Next button is clicked", () => {
-    it("calls onNext", () => {
+    it("then calls onNext", () => {
       const onNext = vi.fn();
       renderTooltip({ onNext, stepIndex: 0, totalSteps: 3 });
       fireEvent.click(screen.getByText("Next"));
@@ -129,7 +129,7 @@ describe("TourTooltip", () => {
   });
 
   describe("when Back button is clicked", () => {
-    it("calls onBack", () => {
+    it("then calls onBack", () => {
       const onBack = vi.fn();
       renderTooltip({ onBack, stepIndex: 1 });
       fireEvent.click(screen.getByText("Back"));
@@ -138,7 +138,7 @@ describe("TourTooltip", () => {
   });
 
   describe("when Skip button is clicked", () => {
-    it("calls onSkip", () => {
+    it("then calls onSkip", () => {
       const onSkip = vi.fn();
       renderTooltip({ onSkip });
       fireEvent.click(screen.getByText("Skip"));
@@ -147,7 +147,7 @@ describe("TourTooltip", () => {
   });
 
   describe("when Finish button is clicked on the last step", () => {
-    it("calls onNext", () => {
+    it("then calls onNext", () => {
       const onNext = vi.fn();
       renderTooltip({ onNext, stepIndex: 2, totalSteps: 3 });
       fireEvent.click(screen.getByText("Finish"));

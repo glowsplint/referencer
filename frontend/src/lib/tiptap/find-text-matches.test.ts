@@ -19,15 +19,15 @@ function mockDoc(blocks: string[]) {
   } as any;
 }
 
-describe("findTextMatches", () => {
-  it("finds a single word match in one paragraph", () => {
+describe("when using findTextMatches", () => {
+  it("then finds a single word match in one paragraph", () => {
     const doc = mockDoc(["hello world"]);
     const matches = findTextMatches(doc, "hello");
 
     expect(matches).toEqual([{ from: 1, to: 6 }]);
   });
 
-  it("finds multiple matches in one paragraph", () => {
+  it("then finds multiple matches in one paragraph", () => {
     const doc = mockDoc(["the cat and the dog"]);
     const matches = findTextMatches(doc, "the");
 
@@ -37,7 +37,7 @@ describe("findTextMatches", () => {
     ]);
   });
 
-  it("finds matches across multiple paragraphs", () => {
+  it("then finds matches across multiple paragraphs", () => {
     const doc = mockDoc(["hello world", "hello again"]);
     const matches = findTextMatches(doc, "hello");
 
@@ -47,35 +47,35 @@ describe("findTextMatches", () => {
     ]);
   });
 
-  it("finds multi-word phrase match", () => {
+  it("then finds multi-word phrase match", () => {
     const doc = mockDoc(["the quick brown fox"]);
     const matches = findTextMatches(doc, "quick brown");
 
     expect(matches).toEqual([{ from: 5, to: 16 }]);
   });
 
-  it("returns empty array when no match", () => {
+  it("then returns empty array when no match", () => {
     const doc = mockDoc(["hello world"]);
     const matches = findTextMatches(doc, "xyz");
 
     expect(matches).toEqual([]);
   });
 
-  it("returns empty array for empty search text", () => {
+  it("then returns empty array for empty search text", () => {
     const doc = mockDoc(["hello world"]);
     const matches = findTextMatches(doc, "");
 
     expect(matches).toEqual([]);
   });
 
-  it("is case-sensitive", () => {
+  it("then is case-sensitive", () => {
     const doc = mockDoc(["Hello hello HELLO"]);
     const matches = findTextMatches(doc, "hello");
 
     expect(matches).toEqual([{ from: 7, to: 12 }]);
   });
 
-  it("computes correct positions across multiple textblocks", () => {
+  it("then computes correct positions across multiple textblocks", () => {
     // Block 0: pos=0, opening=1, "foo"=3, closing=1 → next pos=5
     // Block 1: pos=5, opening=1, "bar foo baz"=11, closing=1 → next pos=17
     const doc = mockDoc(["foo", "bar foo baz"]);
@@ -87,7 +87,7 @@ describe("findTextMatches", () => {
     ]);
   });
 
-  it("handles non-overlapping matches correctly", () => {
+  it("then handles non-overlapping matches correctly", () => {
     const doc = mockDoc(["aaa"]);
     const matches = findTextMatches(doc, "aa");
 

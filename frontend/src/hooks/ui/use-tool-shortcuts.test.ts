@@ -12,7 +12,7 @@ describe("useToolShortcuts", () => {
     vi.clearAllMocks();
   });
 
-  it("pressing S sets selection tool", () => {
+  it("when S is pressed, then sets selection tool", () => {
     const setActiveTool = vi.fn();
     renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
 
@@ -22,7 +22,7 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).toHaveBeenCalledWith("selection");
   });
 
-  it("pressing A sets arrow tool", () => {
+  it("when A is pressed, then sets arrow tool", () => {
     const setActiveTool = vi.fn();
     renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
 
@@ -32,7 +32,7 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).toHaveBeenCalledWith("arrow");
   });
 
-  it("pressing C sets comments tool", () => {
+  it("when C is pressed, then sets comments tool", () => {
     const setActiveTool = vi.fn();
     renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
 
@@ -42,7 +42,7 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).toHaveBeenCalledWith("comments");
   });
 
-  it("does nothing when isLocked is false", () => {
+  it("when isLocked is false, then does nothing", () => {
     const setActiveTool = vi.fn();
     renderHook(() => useToolShortcuts({ isLocked: false, setActiveTool }));
 
@@ -52,7 +52,7 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).not.toHaveBeenCalled();
   });
 
-  it("ignores repeat keydown events", () => {
+  it("when a repeat keydown event fires, then ignores it", () => {
     const setActiveTool = vi.fn();
     renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
 
@@ -62,7 +62,7 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).not.toHaveBeenCalled();
   });
 
-  it("ignores unrelated keys", () => {
+  it("when an unrelated key is pressed, then ignores it", () => {
     const setActiveTool = vi.fn();
     renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
 
@@ -90,7 +90,7 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).not.toHaveBeenCalled();
   });
 
-  it("ignores keys when target is editable element", () => {
+  it("when key is pressed on an editable element, then ignores it", () => {
     const setActiveTool = vi.fn();
     renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
 
@@ -102,7 +102,7 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).not.toHaveBeenCalled();
   });
 
-  it("starts listening when isLocked changes to true", () => {
+  it("when isLocked changes to true, then starts listening", () => {
     const setActiveTool = vi.fn();
     const { rerender } = renderHook(
       (props: { isLocked: boolean }) =>

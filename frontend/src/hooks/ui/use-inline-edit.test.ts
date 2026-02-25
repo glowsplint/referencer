@@ -9,12 +9,12 @@ function setup(currentName = "Layer 1") {
 }
 
 describe("useInlineEdit", () => {
-  it("starts not editing", () => {
+  it("when initialized, then starts not editing", () => {
     const { result } = setup();
     expect(result.current.isEditing).toBe(false);
   });
 
-  it("startEditing enters edit mode with current name", () => {
+  it("when startEditing is called, then enters edit mode with current name", () => {
     const { result } = setup("Layer 1");
     act(() => {
       result.current.startEditing();
@@ -23,7 +23,7 @@ describe("useInlineEdit", () => {
     expect(result.current.editingValue).toBe("Layer 1");
   });
 
-  it("startEditing with nameOverride uses override", () => {
+  it("when startEditing is called with nameOverride, then uses the override", () => {
     const { result } = setup("Layer 1");
     act(() => {
       result.current.startEditing("Custom");
@@ -31,7 +31,7 @@ describe("useInlineEdit", () => {
     expect(result.current.editingValue).toBe("Custom");
   });
 
-  it("commitEdit calls onCommit with trimmed value and exits editing", () => {
+  it("when commitEdit is called, then calls onCommit with trimmed value and exits editing", () => {
     const { result, onCommit } = setup("Layer 1");
     act(() => {
       result.current.startEditing();
@@ -46,7 +46,7 @@ describe("useInlineEdit", () => {
     expect(result.current.isEditing).toBe(false);
   });
 
-  it("commitEdit with empty value falls back to currentName", () => {
+  it("when commitEdit is called with empty value, then falls back to currentName", () => {
     const { result, onCommit } = setup("Layer 1");
     act(() => {
       result.current.startEditing();
@@ -60,7 +60,7 @@ describe("useInlineEdit", () => {
     expect(onCommit).toHaveBeenCalledWith("Layer 1");
   });
 
-  it("cancelEdit exits editing without calling onCommit", () => {
+  it("when cancelEdit is called, then exits editing without calling onCommit", () => {
     const { result, onCommit } = setup();
     act(() => {
       result.current.startEditing();
@@ -75,7 +75,7 @@ describe("useInlineEdit", () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
-  it("inputProps.onKeyDown Enter commits", () => {
+  it("when Enter is pressed via inputProps, then commits", () => {
     const { result, onCommit } = setup("Layer 1");
     act(() => {
       result.current.startEditing();
@@ -91,7 +91,7 @@ describe("useInlineEdit", () => {
     expect(onCommit).toHaveBeenCalledWith("Renamed");
   });
 
-  it("inputProps.onKeyDown Escape cancels", () => {
+  it("when Escape is pressed via inputProps, then cancels", () => {
     const { result, onCommit } = setup();
     act(() => {
       result.current.startEditing();
@@ -105,7 +105,7 @@ describe("useInlineEdit", () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
-  it("inputProps.onBlur commits", () => {
+  it("when blur occurs via inputProps, then commits", () => {
     const { result, onCommit } = setup("Layer 1");
     act(() => {
       result.current.startEditing();
@@ -119,7 +119,7 @@ describe("useInlineEdit", () => {
     expect(onCommit).toHaveBeenCalledWith("Blurred");
   });
 
-  it("inputProps.onChange updates editingValue", () => {
+  it("when change occurs via inputProps, then updates editingValue", () => {
     const { result } = setup();
     act(() => {
       result.current.startEditing();

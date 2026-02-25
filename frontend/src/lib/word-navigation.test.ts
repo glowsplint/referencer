@@ -57,8 +57,8 @@ function makeFakeContainerRect(): DOMRect {
 
 // ── collectCandidates ────────────────────────────────────────────────
 
-describe("collectCandidates", () => {
-  it("returns empty array when no editors are available", () => {
+describe("when using collectCandidates", () => {
+  it("then returns empty array when no editors are available", () => {
     const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>;
     const result = collectCandidates({
       editorsRef,
@@ -68,7 +68,7 @@ describe("collectCandidates", () => {
     expect(result).toEqual([]);
   });
 
-  it("collects words from all editors and returns their centers", () => {
+  it("then collects words from all editors and returns their centers", () => {
     const editor0 = {} as Editor;
     const editor1 = {} as Editor;
     const editorsRef = {
@@ -106,7 +106,7 @@ describe("collectCandidates", () => {
     expect(result[1].cx).toBe(400);
   });
 
-  it("skips words whose center cannot be computed", () => {
+  it("then skips words whose center cannot be computed", () => {
     const editor0 = {} as Editor;
     const editorsRef = { current: new Map<number, Editor>([[0, editor0]]) } as React.RefObject<
       Map<number, Editor>
@@ -134,7 +134,7 @@ describe("collectCandidates", () => {
 
 // ── findHorizontalTarget ─────────────────────────────────────────────
 
-describe("findHorizontalTarget", () => {
+describe("when using findHorizontalTarget", () => {
   // Layout:  "the"(50,100)  "quick"(120,100)  "brown"(200,100)
   //          "fox"(60,130)
   const the = makeWord(0, 1, 4, "the");
@@ -149,31 +149,31 @@ describe("findHorizontalTarget", () => {
     makeCenter(fox, 60, 130),
   ];
 
-  it("finds next word to the right on the same line", () => {
+  it("then finds next word to the right on the same line", () => {
     const result = findHorizontalTarget("ArrowRight", { cx: 50, cy: 100 }, candidates);
     expect(result.target?.text).toBe("quick");
     expect(result.stickyX).toBeNull();
   });
 
-  it("finds next word to the left on the same line", () => {
+  it("then finds next word to the left on the same line", () => {
     const result = findHorizontalTarget("ArrowLeft", { cx: 200, cy: 100 }, candidates);
     expect(result.target?.text).toBe("quick");
     expect(result.stickyX).toBeNull();
   });
 
-  it("wraps to next line when no more words in direction", () => {
+  it("then wraps to next line when no more words in direction", () => {
     const result = findHorizontalTarget("ArrowRight", { cx: 200, cy: 100 }, candidates);
     // No word to the right on cy=100, wraps to next line => "fox" (leftmost on line below)
     expect(result.target?.text).toBe("fox");
     expect(result.stickyX).toBeNull();
   });
 
-  it("always returns stickyX as null", () => {
+  it("then always returns stickyX as null", () => {
     const result = findHorizontalTarget("ArrowLeft", { cx: 50, cy: 100 }, candidates);
     expect(result.stickyX).toBeNull();
   });
 
-  it("returns null target when no candidate exists in the direction", () => {
+  it("then returns null target when no candidate exists in the direction", () => {
     const result = findHorizontalTarget("ArrowLeft", { cx: 60, cy: 130 }, [
       makeCenter(fox, 60, 130),
     ]);
@@ -183,7 +183,7 @@ describe("findHorizontalTarget", () => {
 
 // ── findVerticalTarget ───────────────────────────────────────────────
 
-describe("findVerticalTarget", () => {
+describe("when using findVerticalTarget", () => {
   // Two-editor layout:
   // Editor 0: "and"(100,100) "pro"(80,130) "place"(90,160)
   // Editor 1: "Integrate"(400,100) "stuff"(420,130)
@@ -202,18 +202,18 @@ describe("findVerticalTarget", () => {
     makeCenter(stuff, 420, 130),
   ];
 
-  it("prefers same-editor candidate over cross-editor", () => {
+  it("then prefers same-editor candidate over cross-editor", () => {
     const result = findVerticalTarget("ArrowDown", { cx: 100, cy: 100 }, candidates, and_, null);
     expect(result.target?.text).toBe("pro");
     expect(result.target?.editorIndex).toBe(0);
   });
 
-  it("initializes stickyX from currentCenter.cx when stickyX is null", () => {
+  it("then initializes stickyX from currentCenter.cx when stickyX is null", () => {
     const result = findVerticalTarget("ArrowDown", { cx: 100, cy: 100 }, candidates, and_, null);
     expect(result.stickyX).toBe(100);
   });
 
-  it("preserves an existing stickyX value", () => {
+  it("then preserves an existing stickyX value", () => {
     const result = findVerticalTarget(
       "ArrowDown",
       { cx: 80, cy: 130 }, // "pro" center
@@ -225,14 +225,14 @@ describe("findVerticalTarget", () => {
     expect(result.target?.text).toBe("place");
   });
 
-  it("falls back to cross-editor spatial when same editor is exhausted", () => {
+  it("then falls back to cross-editor spatial when same editor is exhausted", () => {
     const result = findVerticalTarget("ArrowDown", { cx: 90, cy: 160 }, candidates, place, null);
     // No more lines below in editor 0, so cross-editor or reading order
     expect(result.target).not.toBeNull();
     expect(result.target?.editorIndex).toBe(1);
   });
 
-  it("ArrowUp finds word on previous line in same editor", () => {
+  it("then ArrowUp finds word on previous line in same editor", () => {
     const result = findVerticalTarget("ArrowUp", { cx: 80, cy: 130 }, candidates, pro, null);
     expect(result.target?.text).toBe("and");
     expect(result.target?.editorIndex).toBe(0);
@@ -241,7 +241,7 @@ describe("findVerticalTarget", () => {
 
 // ── resolveNavigationTarget ──────────────────────────────────────────
 
-describe("resolveNavigationTarget", () => {
+describe("when using resolveNavigationTarget", () => {
   const the = makeWord(0, 1, 4, "the");
   const quick = makeWord(0, 5, 10, "quick");
   const fox = makeWord(0, 20, 23, "fox");
@@ -252,13 +252,13 @@ describe("resolveNavigationTarget", () => {
     makeCenter(fox, 60, 130),
   ];
 
-  it("delegates ArrowRight to findHorizontalTarget", () => {
+  it("then delegates ArrowRight to findHorizontalTarget", () => {
     const result = resolveNavigationTarget("ArrowRight", { cx: 50, cy: 100 }, candidates, the, 42);
     expect(result.target?.text).toBe("quick");
     expect(result.stickyX).toBeNull(); // horizontal always clears
   });
 
-  it("delegates ArrowDown to findVerticalTarget", () => {
+  it("then delegates ArrowDown to findVerticalTarget", () => {
     const result = resolveNavigationTarget("ArrowDown", { cx: 50, cy: 100 }, candidates, the, null);
     expect(result.target?.text).toBe("fox");
     expect(result.stickyX).toBe(50);
@@ -267,8 +267,8 @@ describe("resolveNavigationTarget", () => {
 
 // ── computeRangeSelection ────────────────────────────────────────────
 
-describe("computeRangeSelection", () => {
-  it("computes a merged range within the same editor", () => {
+describe("when using computeRangeSelection", () => {
+  it("then computes a merged range within the same editor", () => {
     const anchor: WordSelection = { editorIndex: 0, from: 1, to: 4, text: "the" };
     const target = makeWord(0, 5, 10, "quick");
     const fakeEditor = {
@@ -291,7 +291,7 @@ describe("computeRangeSelection", () => {
     });
   });
 
-  it("returns null when target is in a different editor", () => {
+  it("then returns null when target is in a different editor", () => {
     const anchor: WordSelection = { editorIndex: 0, from: 1, to: 4, text: "the" };
     const target = makeWord(1, 1, 5, "over");
     const fakeEditor = {} as Editor;
@@ -300,7 +300,7 @@ describe("computeRangeSelection", () => {
     expect(result).toBeNull();
   });
 
-  it("handles backward ranges (target.from < anchor.from)", () => {
+  it("then handles backward ranges (target.from < anchor.from)", () => {
     const anchor: WordSelection = { editorIndex: 0, from: 11, to: 16, text: "brown" };
     const target = makeWord(0, 5, 10, "quick");
     const fakeEditor = {
@@ -326,7 +326,7 @@ describe("computeRangeSelection", () => {
 
 // ── findFirstWordInPassage / findLastWordInPassage ───────────────
 
-describe("findFirstWordInPassage", () => {
+describe("when using findFirstWordInPassage", () => {
   const a = makeWord(0, 10, 15, "alpha");
   const b = makeWord(0, 1, 5, "beta");
   const c = makeWord(1, 3, 8, "gamma");
@@ -337,23 +337,23 @@ describe("findFirstWordInPassage", () => {
     makeCenter(c, 400, 100),
   ];
 
-  it("returns word with smallest from in the passage", () => {
+  it("then returns word with smallest from in the passage", () => {
     const result = findFirstWordInPassage(0, candidates);
     expect(result?.text).toBe("beta");
     expect(result?.from).toBe(1);
   });
 
-  it("filters by editorIndex", () => {
+  it("then filters by editorIndex", () => {
     const result = findFirstWordInPassage(1, candidates);
     expect(result?.text).toBe("gamma");
   });
 
-  it("returns null for empty passage", () => {
+  it("then returns null for empty passage", () => {
     expect(findFirstWordInPassage(2, candidates)).toBeNull();
   });
 });
 
-describe("findLastWordInPassage", () => {
+describe("when using findLastWordInPassage", () => {
   const a = makeWord(0, 1, 5, "alpha");
   const b = makeWord(0, 10, 20, "beta");
   const c = makeWord(1, 3, 8, "gamma");
@@ -364,26 +364,26 @@ describe("findLastWordInPassage", () => {
     makeCenter(c, 400, 100),
   ];
 
-  it("returns word with largest to in the passage", () => {
+  it("then returns word with largest to in the passage", () => {
     const result = findLastWordInPassage(0, candidates);
     expect(result?.text).toBe("beta");
     expect(result?.to).toBe(20);
   });
 
-  it("filters by editorIndex", () => {
+  it("then filters by editorIndex", () => {
     const result = findLastWordInPassage(1, candidates);
     expect(result?.text).toBe("gamma");
   });
 
-  it("returns null for empty passage", () => {
+  it("then returns null for empty passage", () => {
     expect(findLastWordInPassage(2, candidates)).toBeNull();
   });
 });
 
 // ── computeSelectAllInPassage ───────────────────────────────────
 
-describe("computeSelectAllInPassage", () => {
-  it("spans from first to last word in passage", () => {
+describe("when using computeSelectAllInPassage", () => {
+  it("then spans from first to last word in passage", () => {
     const a = makeWord(0, 1, 5, "alpha");
     const b = makeWord(0, 6, 12, "bravo");
     const c = makeWord(0, 13, 20, "charlie");
@@ -414,7 +414,7 @@ describe("computeSelectAllInPassage", () => {
     });
   });
 
-  it("handles a single word", () => {
+  it("then handles a single word", () => {
     const a = makeWord(0, 5, 10, "alone");
     const candidates: WordCenter[] = [makeCenter(a, 100, 100)];
 
@@ -438,7 +438,7 @@ describe("computeSelectAllInPassage", () => {
     });
   });
 
-  it("returns null for empty passage", () => {
+  it("then returns null for empty passage", () => {
     const fakeEditor = {} as Editor;
     expect(computeSelectAllInPassage(2, [], fakeEditor)).toBeNull();
   });

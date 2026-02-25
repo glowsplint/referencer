@@ -7,7 +7,9 @@ test.beforeEach(async ({ page }) => {
   // Editor starts locked — no need to click lockButton
 });
 
-test("clicking a word in locked mode shows word-selection decoration", async ({ page }) => {
+test.describe("word selection in locked mode", () => {
+
+test("when a word is clicked in locked mode, then word-selection decoration appears", async ({ page }) => {
   // Click on a specific word in the first paragraph
   const firstParagraph = page.locator(".simple-editor p").first();
   // Get the bounding box and click in the middle of the text
@@ -20,7 +22,7 @@ test("clicking a word in locked mode shows word-selection decoration", async ({ 
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 });
 
-test("clicking whitespace clears word-selection", async ({ page }) => {
+test("when Escape is pressed after selecting, then word-selection is cleared", async ({ page }) => {
   // First click a word
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
@@ -34,7 +36,7 @@ test("clicking whitespace clears word-selection", async ({ page }) => {
   await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 });
 
-test("arrow keys navigate between words", async ({ page }) => {
+test("when arrow keys are pressed, then selection navigates between words", async ({ page }) => {
   // Click a word first
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
@@ -56,7 +58,7 @@ test("arrow keys navigate between words", async ({ page }) => {
   expect(nextBox!.x).not.toBe(firstBox!.x);
 });
 
-test("unlocking clears word selection", async ({ page }) => {
+test("when editor is unlocked, then word selection is cleared", async ({ page }) => {
   // Click a word while locked
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
@@ -71,3 +73,5 @@ test("unlocking clears word selection", async ({ page }) => {
   // Word selection should be gone
   await expect(page.locator(".word-selection")).toHaveCount(0, { timeout: 2000 });
 });
+
+}); // end word selection describe

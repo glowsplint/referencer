@@ -7,22 +7,22 @@ function freshWorkspaceUrl(): string {
   return `/#/${uuid}`;
 }
 
-test.describe("Tour feature", () => {
-  test("tour auto-starts on first visit", async ({ page }) => {
+test.describe("when interacting with the tour", () => {
+  test("when visiting for the first time, then tour auto-starts", async ({ page }) => {
     await page.goto(freshWorkspaceUrl());
     // Wait for the tour overlay (auto-starts with 500ms delay)
     await expect(page.getByTestId("tourOverlay")).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId("tourTooltip")).toBeVisible();
   });
 
-  test("tour overlay and tooltip show correct first step", async ({ page }) => {
+  test("when tour starts, then first step content is displayed correctly", async ({ page }) => {
     await page.goto(freshWorkspaceUrl());
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });
     // First step title
     await expect(page.getByText("Paste your text")).toBeVisible();
   });
 
-  test("step navigation: Next advances, Back goes back", async ({ page }) => {
+  test("when Next is clicked, then tour advances; when Back is clicked, then tour goes back", async ({ page }) => {
     await page.goto(freshWorkspaceUrl());
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });
 
@@ -38,7 +38,7 @@ test.describe("Tour feature", () => {
     await expect(page.getByText("Paste your text")).toBeVisible();
   });
 
-  test("skip dismisses tour", async ({ page }) => {
+  test("when Skip is clicked, then tour is dismissed", async ({ page }) => {
     await page.goto(freshWorkspaceUrl());
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });
 
@@ -49,7 +49,7 @@ test.describe("Tour feature", () => {
     await expect(page.getByTestId("tourOverlay")).not.toBeVisible();
   });
 
-  test("tour does not show again after completion", async ({ page }) => {
+  test("when tour is completed and page reloads, then tour does not show again", async ({ page }) => {
     const url = freshWorkspaceUrl();
     await page.goto(url);
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });
@@ -66,7 +66,7 @@ test.describe("Tour feature", () => {
     await expect(page.getByTestId("tourOverlay")).not.toBeVisible();
   });
 
-  test("tour re-triggerable from ButtonPane help icon", async ({ page }) => {
+  test("when tour button is clicked after completion, then tour restarts", async ({ page }) => {
     await page.goto(freshWorkspaceUrl());
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });
 
@@ -82,14 +82,14 @@ test.describe("Tour feature", () => {
     await expect(page.getByTestId("tourTooltip")).toBeVisible();
   });
 
-  test("Back button is hidden on first step", async ({ page }) => {
+  test("when tour is on first step, then Back button is hidden", async ({ page }) => {
     await page.goto(freshWorkspaceUrl());
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });
     // Back button should not exist on the first step
     await expect(page.getByRole("button", { name: "Back" })).not.toBeVisible();
   });
 
-  test("Escape key dismisses tour", async ({ page }) => {
+  test("when Escape key is pressed during tour, then tour is dismissed", async ({ page }) => {
     await page.goto(freshWorkspaceUrl());
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });
 

@@ -21,7 +21,9 @@ test.beforeEach(async ({ page }) => {
   await page.keyboard.press("a");
 });
 
-test("selecting two different words and pressing Enter draws an arrow", async ({ page }) => {
+test.describe("arrow drawing", () => {
+
+test("when two different words are selected and Enter is pressed, then an arrow is drawn", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
@@ -50,7 +52,7 @@ test("selecting two different words and pressing Enter draws an arrow", async ({
   await expect(page.getByTestId("preview-arrow")).toHaveCount(0, { timeout: 2000 });
 });
 
-test("no arrow created when confirming same word twice", async ({ page }) => {
+test("when the same word is confirmed twice, then no arrow is created", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
@@ -73,7 +75,7 @@ test("no arrow created when confirming same word twice", async ({ page }) => {
   await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount, { timeout: 2000 });
 });
 
-test("click on arrow line selects it and activates arrow tool", async ({ page }) => {
+test("when arrow line is clicked, then it is selected and arrow tool is activated", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
@@ -101,7 +103,7 @@ test("click on arrow line selects it and activates arrow tool", async ({ page })
   await expect(page.getByTestId("arrowToolButton")).toHaveClass(/bg-accent/, { timeout: 2000 });
 });
 
-test("clicking selected arrow X icon deletes it, hover alone does not show X", async ({ page }) => {
+test("when selected arrow X icon is clicked, then arrow is deleted; hover alone does not show X", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
@@ -145,7 +147,7 @@ test("clicking selected arrow X icon deletes it, hover alone does not show X", a
   await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount, { timeout: 2000 });
 });
 
-test("arrow key navigation works after confirming anchor", async ({ page }) => {
+test("when anchor is confirmed and arrow keys are used, then target can be navigated to", async ({ page }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
   expect(box).not.toBeNull();
@@ -172,7 +174,7 @@ test("arrow key navigation works after confirming anchor", async ({ page }) => {
   });
 });
 
-test("selection is preserved when activating arrow tool, allowing arrow key navigation", async ({
+test("when arrow tool is activated with existing selection, then selection is preserved for navigation", async ({
   page,
 }) => {
   // This test starts fresh: lock, select a word, then activate arrow tool
@@ -212,7 +214,9 @@ test("selection is preserved when activating arrow tool, allowing arrow key navi
   });
 });
 
-test("arrow tool button shows depressed state when active", async ({ page }) => {
+test("when arrow tool is active, then button shows depressed state", async ({ page }) => {
   const arrowBtn = page.getByTestId("arrowToolButton");
   await expect(arrowBtn).toHaveClass(/bg-accent/, { timeout: 2000 });
 });
+
+}); // end arrow drawing describe

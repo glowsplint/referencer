@@ -6,7 +6,9 @@ test.beforeEach(async ({ page }) => {
   // Editor starts locked by default — no need to click lockButton
 });
 
-test("backtick toggles action console", async ({ page }) => {
+test.describe("action console", () => {
+
+test("when backtick is pressed, then action console toggles visibility", async ({ page }) => {
   await expect(page.getByTestId("actionConsole")).not.toBeVisible();
 
   await page.keyboard.press("`");
@@ -17,7 +19,7 @@ test("backtick toggles action console", async ({ page }) => {
   await expect(page.getByTestId("actionConsole")).not.toBeVisible();
 });
 
-test("action console shows log entries with details after actions", async ({ page }) => {
+test("when an action is performed and console is opened, then log entries with details are shown", async ({ page }) => {
   // Add a layer (appended after 3 default layers)
   await page.getByTestId("addLayerButton").click();
   await expect(page.getByTestId("layerName-3")).toHaveText("Layer 1");
@@ -37,7 +39,7 @@ test("action console shows log entries with details after actions", async ({ pag
   await expect(details).toHaveCount(2);
 });
 
-test("close button closes the console", async ({ page }) => {
+test("when close button is clicked, then console is dismissed", async ({ page }) => {
   await page.keyboard.press("`");
   await expect(page.getByTestId("actionConsole")).toBeVisible();
 
@@ -45,7 +47,7 @@ test("close button closes the console", async ({ page }) => {
   await expect(page.getByTestId("actionConsole")).not.toBeVisible();
 });
 
-test("undone entries appear with strikethrough", async ({ page }) => {
+test("when an action is undone, then its console entry appears with strikethrough", async ({ page }) => {
   // Add a layer, then undo
   await page.getByTestId("addLayerButton").click();
   await page.keyboard.press("Meta+z");
@@ -59,3 +61,5 @@ test("undone entries appear with strikethrough", async ({ page }) => {
   const entry = page.getByText(/Created layer/).locator("../..");
   await expect(entry).toHaveClass(/line-through/);
 });
+
+}); // end action console describe

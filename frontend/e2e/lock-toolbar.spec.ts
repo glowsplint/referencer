@@ -4,12 +4,14 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("toolbar is hidden when locked (default state)", async ({ page }) => {
+test.describe("lock toolbar", () => {
+
+test("when editor is in default locked state, then toolbar is hidden", async ({ page }) => {
   // Editor starts locked — toolbar should not be visible
   await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 });
 
-test("clicking lock button unlocks and shows toolbar", async ({ page }) => {
+test("when lock button is clicked, then editor unlocks and shows toolbar", async ({ page }) => {
   // Editor starts locked
   await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 
@@ -19,7 +21,7 @@ test("clicking lock button unlocks and shows toolbar", async ({ page }) => {
   await expect(page.getByTestId("editorToolbar")).toHaveCSS("opacity", "1");
 });
 
-test("clicking lock button again re-locks and removes toolbar", async ({ page }) => {
+test("when lock button is clicked again, then editor re-locks and toolbar is removed", async ({ page }) => {
   const lockButton = page.getByTestId("lockButton");
 
   // Unlock
@@ -30,3 +32,5 @@ test("clicking lock button again re-locks and removes toolbar", async ({ page })
   await lockButton.click();
   await expect(page.getByTestId("editorToolbar")).toHaveCount(0);
 });
+
+}); // end lock toolbar describe

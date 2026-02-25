@@ -66,31 +66,31 @@ describe("endpointTextMatches", () => {
     textBetween: (from: number, to: number) => "hello world testing".slice(from - 1, to - 1),
   };
 
-  it("returns true when text matches", () => {
+  it("when text matches the range, then returns true", () => {
     expect(endpointTextMatches(doc, 20, 1, 6, "hello")).toBe(true);
   });
 
-  it("returns false when text does not match", () => {
+  it("when text does not match the range, then returns false", () => {
     expect(endpointTextMatches(doc, 20, 1, 6, "world")).toBe(false);
   });
 
-  it("returns false when from >= to (collapsed range)", () => {
+  it("when from >= to (collapsed range), then returns false", () => {
     expect(endpointTextMatches(doc, 20, 5, 5, "hello")).toBe(false);
   });
 
-  it("returns false when from is negative", () => {
+  it("when from is negative, then returns false", () => {
     expect(endpointTextMatches(doc, 20, -1, 5, "hello")).toBe(false);
   });
 
-  it("returns false when to exceeds doc size", () => {
+  it("when to exceeds doc size, then returns false", () => {
     expect(endpointTextMatches(doc, 20, 1, 25, "hello")).toBe(false);
   });
 
-  it("returns false when from >= docSize", () => {
+  it("when from >= docSize, then returns false", () => {
     expect(endpointTextMatches(doc, 20, 20, 22, "hello")).toBe(false);
   });
 
-  it("returns false when textBetween throws", () => {
+  it("when textBetween throws, then returns false", () => {
     const throwingDoc = {
       content: { size: 20 },
       textBetween: () => {
@@ -106,7 +106,7 @@ describe("endpointTextMatches", () => {
 // ---------------------------------------------------------------------------
 
 describe("checkArrowEndpoints", () => {
-  it("removes arrow when from-endpoint text does not match", () => {
+  it("when from-endpoint text does not match, then removes arrow", () => {
     const editor = createMockEditor("XXXXX world testing");
     const removeArrow = vi.fn();
     const arrow = createArrow(); // expects "hello" at 1..6
@@ -116,7 +116,7 @@ describe("checkArrowEndpoints", () => {
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "arrow-1");
   });
 
-  it("removes arrow when to-endpoint text does not match", () => {
+  it("when to-endpoint text does not match, then removes arrow", () => {
     const editor = createMockEditor("hello XXXXX testing");
     const removeArrow = vi.fn();
     const arrow = createArrow(); // expects "world" at 7..12
@@ -126,7 +126,7 @@ describe("checkArrowEndpoints", () => {
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "arrow-1");
   });
 
-  it("does not remove arrow when both endpoints match", () => {
+  it("when both endpoints match, then does not remove arrow", () => {
     const editor = createMockEditor("hello world testing");
     const removeArrow = vi.fn();
     const arrow = createArrow();
@@ -136,7 +136,7 @@ describe("checkArrowEndpoints", () => {
     expect(removeArrow).not.toHaveBeenCalled();
   });
 
-  it("skips endpoints from other editors", () => {
+  it("when endpoints belong to other editors, then skips them", () => {
     const editor = createMockEditor("XXXXX XXXXX testing");
     const removeArrow = vi.fn();
     const arrow = createArrow({
@@ -150,7 +150,7 @@ describe("checkArrowEndpoints", () => {
     expect(removeArrow).not.toHaveBeenCalled();
   });
 
-  it("removes arrow when cross-editor from-endpoint is in this editor and mismatches", () => {
+  it("when cross-editor from-endpoint is in this editor and mismatches, then removes arrow", () => {
     const editor = createMockEditor("XXXXX world testing");
     const removeArrow = vi.fn();
     const arrow = createArrow({
@@ -163,7 +163,7 @@ describe("checkArrowEndpoints", () => {
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "arrow-1");
   });
 
-  it("does not remove when destroyed editor", () => {
+  it("when editor is destroyed, then does not remove arrows", () => {
     const editor = createMockEditor("XXXXX world testing");
     editor.isDestroyed = true;
     const removeArrow = vi.fn();
@@ -174,7 +174,7 @@ describe("checkArrowEndpoints", () => {
     expect(removeArrow).not.toHaveBeenCalled();
   });
 
-  it("checks arrows across multiple layers", () => {
+  it("when checking multiple layers, then validates arrows in each layer", () => {
     const editor = createMockEditor("XXXXX XXXXX testing");
     const removeArrow = vi.fn();
     const arrow1 = createArrow({ id: "a1" });
@@ -206,7 +206,7 @@ describe("useArrowCleanup", () => {
     vi.useRealTimers();
   });
 
-  it("calls removeArrow after debounced transaction with mismatched text", () => {
+  it("when a transaction fires with mismatched text, then calls removeArrow after debounce", () => {
     const editor = createMockEditor("XXXXX world testing");
     const removeArrow = vi.fn();
     const arrow = createArrow(); // expects "hello" at 1..6
@@ -237,7 +237,7 @@ describe("useArrowCleanup", () => {
     expect(removeArrow).toHaveBeenCalledWith("layer-1", "arrow-1");
   });
 
-  it("does not call removeArrow when text still matches", () => {
+  it("when text still matches after transaction, then does not call removeArrow", () => {
     const editor = createMockEditor("hello world testing");
     const removeArrow = vi.fn();
     const arrow = createArrow();
@@ -263,7 +263,7 @@ describe("useArrowCleanup", () => {
     expect(removeArrow).not.toHaveBeenCalled();
   });
 
-  it("debounces multiple transactions", () => {
+  it("when multiple transactions fire rapidly, then debounces to a single check", () => {
     const editor = createMockEditor("XXXXX world testing");
     const removeArrow = vi.fn();
     const arrow = createArrow();
@@ -307,7 +307,7 @@ describe("useArrowCleanup", () => {
     expect(removeArrow).toHaveBeenCalledTimes(1);
   });
 
-  it("ignores non-docChanged transactions", () => {
+  it("when transaction has docChanged=false, then ignores it", () => {
     const editor = createMockEditor("XXXXX world testing");
     const removeArrow = vi.fn();
     const arrow = createArrow();
@@ -333,7 +333,7 @@ describe("useArrowCleanup", () => {
     expect(removeArrow).not.toHaveBeenCalled();
   });
 
-  it("cleans up timer on unmount", () => {
+  it("when unmounted during pending debounce, then cancels the timer", () => {
     const editor = createMockEditor("XXXXX world testing");
     const removeArrow = vi.fn();
     const arrow = createArrow();
@@ -362,7 +362,7 @@ describe("useArrowCleanup", () => {
     expect(removeArrow).not.toHaveBeenCalled();
   });
 
-  it("does nothing when editor is null", () => {
+  it("when editor is null, then does nothing", () => {
     const removeArrow = vi.fn();
     const arrow = createArrow();
     const layer = createLayer({ arrows: [arrow] });

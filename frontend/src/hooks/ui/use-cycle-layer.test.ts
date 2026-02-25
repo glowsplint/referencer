@@ -20,7 +20,7 @@ function pressKey(key: string, options: Partial<KeyboardEvent> = {}) {
 }
 
 describe("useCycleLayer", () => {
-  it("cycles to next layer on Tab key press", () => {
+  it("when Tab key is pressed, then cycles to next layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -35,7 +35,7 @@ describe("useCycleLayer", () => {
     expect(setActiveLayer).toHaveBeenCalledWith("layer-1");
   });
 
-  it("wraps around to first layer when at last", () => {
+  it("when at last layer and Tab is pressed, then wraps to first layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -50,7 +50,7 @@ describe("useCycleLayer", () => {
     expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
   });
 
-  it("selects first layer when no active layer", () => {
+  it("when no active layer and Tab is pressed, then selects first layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -65,7 +65,7 @@ describe("useCycleLayer", () => {
     expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
   });
 
-  it("cycles to previous layer on Shift+Tab", () => {
+  it("when Shift+Tab is pressed, then cycles to previous layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -80,7 +80,7 @@ describe("useCycleLayer", () => {
     expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
   });
 
-  it("wraps around to last layer on Shift+Tab from first", () => {
+  it("when at first layer and Shift+Tab is pressed, then wraps to last layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -95,7 +95,7 @@ describe("useCycleLayer", () => {
     expect(setActiveLayer).toHaveBeenCalledWith("layer-2");
   });
 
-  it("does nothing when there are no layers", () => {
+  it("when there are no layers, then does nothing", () => {
     const setActiveLayer = vi.fn();
     renderHook(() =>
       useCycleLayer({
@@ -109,7 +109,7 @@ describe("useCycleLayer", () => {
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
-  it("ignores repeat keydown events", () => {
+  it("when a repeat keydown event fires, then ignores it", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -124,7 +124,7 @@ describe("useCycleLayer", () => {
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
-  it("ignores non-Tab key presses", () => {
+  it("when a non-Tab key is pressed, then ignores it", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -157,7 +157,7 @@ describe("useCycleLayer", () => {
     },
   );
 
-  it("ignores Tab when target is contentEditable", () => {
+  it("when Tab is pressed on a contentEditable target, then ignores it", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>

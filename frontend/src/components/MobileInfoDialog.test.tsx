@@ -5,7 +5,7 @@ import { MobileInfoDialog } from "./MobileInfoDialog";
 
 describe("MobileInfoDialog", () => {
   describe("when opened", () => {
-    it("shows the desktop recommendation message", () => {
+    it("then shows the desktop recommendation message", () => {
       render(<MobileInfoDialog open={true} onOpenChange={() => {}} />);
 
       expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument();
@@ -15,7 +15,7 @@ describe("MobileInfoDialog", () => {
   });
 
   describe("when closed", () => {
-    it("renders nothing", () => {
+    it("then renders nothing", () => {
       render(<MobileInfoDialog open={false} onOpenChange={() => {}} />);
 
       expect(screen.queryByTestId("mobileInfoDialog")).not.toBeInTheDocument();
@@ -23,7 +23,7 @@ describe("MobileInfoDialog", () => {
   });
 
   describe("when close button is clicked", () => {
-    it("calls onOpenChange with false", async () => {
+    it("then calls onOpenChange with false", async () => {
       const user = userEvent.setup();
       const onOpenChange = vi.fn();
 

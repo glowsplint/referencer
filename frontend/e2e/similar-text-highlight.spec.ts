@@ -6,7 +6,9 @@ test.beforeEach(async ({ page }) => {
   // Editor starts locked — no need to click lockButton
 });
 
-test("clicking a word shows similar-text-highlight decorations for matching words", async ({
+test.describe("similar text highlighting", () => {
+
+test("when a word is clicked, then similar-text-highlight decorations appear for matching words", async ({
   page,
 }) => {
   // Click on a word in the first editor
@@ -37,7 +39,7 @@ test("clicking a word shows similar-text-highlight decorations for matching word
   }
 });
 
-test("primary selected word has word-selection class, not similar-text-highlight", async ({
+test("when a word is selected, then primary word has word-selection class without similar-text-highlight", async ({
   page,
 }) => {
   const firstParagraph = page.locator(".simple-editor p").first();
@@ -52,7 +54,7 @@ test("primary selected word has word-selection class, not similar-text-highlight
   await expect(primaryElement).not.toHaveClass(/similar-text-highlight/);
 });
 
-test("unlocking clears similar-text-highlight decorations", async ({ page }) => {
+test("when editor is unlocked, then similar-text-highlight decorations are cleared", async ({ page }) => {
   // Click a word to trigger highlights
   const firstParagraph = page.locator(".simple-editor p").first();
   const box = await firstParagraph.boundingBox();
@@ -68,3 +70,5 @@ test("unlocking clears similar-text-highlight decorations", async ({ page }) => 
   // Similar text highlights should be gone
   await expect(page.locator(".similar-text-highlight")).toHaveCount(0, { timeout: 2000 });
 });
+
+}); // end similar text highlighting describe

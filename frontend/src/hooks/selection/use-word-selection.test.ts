@@ -36,12 +36,12 @@ function fireKey(key: string, opts: KeyboardEventInit = {}) {
 }
 
 describe("useWordSelection", () => {
-  it("starts with null selection", () => {
+  it("when initialized, then starts with null selection", () => {
     const { result } = renderHook(() => useWordSelection(createOptions()));
     expect(result.current.selection).toBeNull();
   });
 
-  it("selectWord sets selection", () => {
+  it("when selectWord is called, then sets selection", () => {
     const { result } = renderHook(() => useWordSelection(createOptions()));
 
     act(() => {
@@ -56,7 +56,7 @@ describe("useWordSelection", () => {
     });
   });
 
-  it("clearSelection resets to null", () => {
+  it("when clearSelection is called, then resets to null", () => {
     const { result } = renderHook(() => useWordSelection(createOptions()));
 
     act(() => {
@@ -70,7 +70,7 @@ describe("useWordSelection", () => {
     expect(result.current.selection).toBeNull();
   });
 
-  it("clears selection when isLocked becomes false", () => {
+  it("when isLocked becomes false, then clears selection", () => {
     const { result, rerender } = renderHook(
       (props: { isLocked: boolean }) =>
         useWordSelection(createOptions({ isLocked: props.isLocked })),
@@ -86,7 +86,7 @@ describe("useWordSelection", () => {
     expect(result.current.selection).toBeNull();
   });
 
-  it("rejects non-alphanumeric text", () => {
+  it("when text is non-alphanumeric, then rejects it", () => {
     const { result } = renderHook(() => useWordSelection(createOptions()));
 
     act(() => {
@@ -95,7 +95,7 @@ describe("useWordSelection", () => {
     expect(result.current.selection).toBeNull();
   });
 
-  it("accepts text with alphanumeric characters", () => {
+  it("when text has alphanumeric characters, then accepts it", () => {
     const { result } = renderHook(() => useWordSelection(createOptions()));
 
     act(() => {
@@ -111,7 +111,7 @@ describe("useWordSelection", () => {
 });
 
 describe("useWordSelection Enter key", () => {
-  it("calls onEnter when Enter pressed with a selection", () => {
+  it("when Enter is pressed with a selection, then calls onEnter", () => {
     const onEnter = vi.fn();
     const { result } = renderHook(() => useWordSelection(createOptions({ onEnter })));
 
@@ -125,7 +125,7 @@ describe("useWordSelection Enter key", () => {
     expect(onEnter).toHaveBeenCalledTimes(1);
   });
 
-  it("does not call onEnter when no selection exists", () => {
+  it("when Enter is pressed without a selection, then does not call onEnter", () => {
     const onEnter = vi.fn();
     renderHook(() => useWordSelection(createOptions({ onEnter })));
 
@@ -136,7 +136,7 @@ describe("useWordSelection Enter key", () => {
     expect(onEnter).not.toHaveBeenCalled();
   });
 
-  it("does not throw when onEnter is not provided", () => {
+  it("when Enter is pressed and onEnter is not provided, then does not throw", () => {
     const { result } = renderHook(() => useWordSelection(createOptions()));
 
     act(() => {
@@ -217,7 +217,7 @@ describe("useWordSelection keyboard navigation", () => {
     vi.clearAllMocks();
   });
 
-  it("ArrowDown stays within same editor when more lines exist", () => {
+  it("when ArrowDown is pressed and more lines exist, then stays within same editor", () => {
     const { editorsRef, containerRef } = setupMocks(2);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -237,7 +237,7 @@ describe("useWordSelection keyboard navigation", () => {
     expect(result.current.selection?.editorIndex).toBe(0);
   });
 
-  it("ArrowDown crosses to other editor after exhausting current editor", () => {
+  it("when ArrowDown is pressed at bottom of editor, then crosses to other editor", () => {
     const { editorsRef, containerRef } = setupMocks(2);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -255,7 +255,7 @@ describe("useWordSelection keyboard navigation", () => {
     expect(result.current.selection?.editorIndex).toBe(1);
   });
 
-  it("sticky X: pressing Down repeatedly maintains original horizontal position", () => {
+  it("when Down is pressed repeatedly, then maintains sticky X position", () => {
     const { editorsRef, containerRef } = setupMocks(2);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -281,7 +281,7 @@ describe("useWordSelection keyboard navigation", () => {
     expect(result.current.selection?.editorIndex).toBe(0);
   });
 
-  it("Left/Right resets sticky X", () => {
+  it("when Left/Right is pressed, then resets sticky X", () => {
     const { editorsRef, containerRef } = setupMocks(2);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -370,7 +370,7 @@ describe("useWordSelection navigates through images", () => {
     vi.clearAllMocks();
   });
 
-  it("ArrowDown navigates from text through image to text below", () => {
+  it("when ArrowDown is pressed near an image, then navigates from text through image", () => {
     const { editorsRef, containerRef } = setupImageMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -404,7 +404,7 @@ describe("useWordSelection navigates through images", () => {
     expect(result.current.selection?.editorIndex).toBe(0);
   });
 
-  it("ArrowUp navigates back through image", () => {
+  it("when ArrowUp is pressed near an image, then navigates back through image", () => {
     const { editorsRef, containerRef } = setupImageMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -434,7 +434,7 @@ describe("useWordSelection navigates through images", () => {
     expect(result.current.selection?.text).toBe("and");
   });
 
-  it("maintains sticky X when navigating through images", () => {
+  it("when navigating through images, then maintains sticky X", () => {
     const { editorsRef, containerRef } = setupImageMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -545,7 +545,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     vi.clearAllMocks();
   });
 
-  it("Shift+ArrowRight extends selection to the next word", () => {
+  it("when Shift+ArrowRight is pressed, then extends selection to the next word", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -567,7 +567,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     });
   });
 
-  it("Shift+ArrowLeft extends selection in the other direction", () => {
+  it("when Shift+ArrowLeft is pressed, then extends selection in the other direction", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -588,7 +588,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     });
   });
 
-  it("Shift+ArrowDown extends selection to word on next line", () => {
+  it("when Shift+ArrowDown is pressed, then extends selection to word on next line", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -610,7 +610,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     });
   });
 
-  it("multiple shift+arrows accumulate the range", () => {
+  it("when multiple shift+arrows are pressed, then accumulate the range", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -639,7 +639,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     });
   });
 
-  it("arrow without shift after shift+arrow collapses to single word", () => {
+  it("when arrow without shift is pressed after shift+arrow, then collapses to single word", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -669,7 +669,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     });
   });
 
-  it("selectRange preserves anchor/head for shift+arrow after drag", () => {
+  it("when shift+arrow is pressed after drag, then selectRange preserves anchor/head", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -703,7 +703,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     });
   });
 
-  it("selectRange allows shift+arrow to shrink selection back", () => {
+  it("when shift+arrow is pressed on selectRange, then allows shrinking selection", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -731,7 +731,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     });
   });
 
-  it("selectWord resets the anchor for next shift+arrow", () => {
+  it("when selectWord is called, then resets the anchor for next shift+arrow", () => {
     const { editorsRef, containerRef } = setupShiftMocks(1);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -763,7 +763,7 @@ describe("useWordSelection shift+arrow range selection", () => {
     });
   });
 
-  it("shift+arrow does not extend across editors", () => {
+  it("when shift+arrow reaches editor boundary, then does not extend across editors", () => {
     const { editorsRef, containerRef } = setupShiftMocks(2);
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -790,7 +790,7 @@ describe("useWordSelection shift+arrow range selection", () => {
 // ── Enhanced keyboard navigation ──────────────────────────────────
 
 describe("useWordSelection Escape key", () => {
-  it("Escape clears visible selection", () => {
+  it("when Escape is pressed with visible selection, then clears it", () => {
     const { result } = renderHook(() => useWordSelection(createOptions()));
 
     act(() => {
@@ -805,7 +805,7 @@ describe("useWordSelection Escape key", () => {
     expect(result.current.selection).toBeNull();
   });
 
-  it("second Escape calls onEscape", () => {
+  it("when Escape is pressed a second time, then calls onEscape", () => {
     const onEscape = vi.fn();
     const { result } = renderHook(() => useWordSelection(createOptions({ onEscape })));
 
@@ -865,7 +865,7 @@ describe("useWordSelection double-escape reset", () => {
     vi.clearAllMocks();
   });
 
-  it("double Escape resets selection to first word, hidden", () => {
+  it("when Escape is pressed twice, then resets selection to first word hidden", () => {
     const { editorsRef, containerRef } = setupEscapeMocks();
     const onEscape = vi.fn();
     const { result } = renderHook(() =>
@@ -894,7 +894,7 @@ describe("useWordSelection double-escape reset", () => {
     expect(onEscape).toHaveBeenCalledTimes(1);
   });
 
-  it("initial seed on lock is hidden", () => {
+  it("when locked for the first time, then initial seed is hidden", () => {
     const { editorsRef, containerRef } = setupEscapeMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -904,7 +904,7 @@ describe("useWordSelection double-escape reset", () => {
     expect(result.current.selectionHidden).toBe(true);
   });
 
-  it("arrow key navigation unhides selection", () => {
+  it("when arrow key is pressed, then unhides selection", () => {
     const { editorsRef, containerRef } = setupEscapeMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -920,7 +920,7 @@ describe("useWordSelection double-escape reset", () => {
     expect(result.current.selectionHidden).toBe(false);
   });
 
-  it("selectWord unhides selection", () => {
+  it("when selectWord is called on hidden selection, then unhides it", () => {
     const { editorsRef, containerRef } = setupEscapeMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -934,7 +934,7 @@ describe("useWordSelection double-escape reset", () => {
     expect(result.current.selectionHidden).toBe(false);
   });
 
-  it("hideSelection hides without changing position", () => {
+  it("when hideSelection is called, then hides without changing position", () => {
     const { editorsRef, containerRef } = setupEscapeMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1016,7 +1016,7 @@ describe("useWordSelection Home/End keys", () => {
     vi.clearAllMocks();
   });
 
-  it("Home jumps to first word in passage", () => {
+  it("when Home is pressed, then jumps to first word in passage", () => {
     const { editorsRef, containerRef } = setupHomeEndMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1032,7 +1032,7 @@ describe("useWordSelection Home/End keys", () => {
     expect(result.current.selection?.from).toBe(1);
   });
 
-  it("End jumps to last word in passage", () => {
+  it("when End is pressed, then jumps to last word in passage", () => {
     const { editorsRef, containerRef } = setupHomeEndMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1048,7 +1048,7 @@ describe("useWordSelection Home/End keys", () => {
     expect(result.current.selection?.to).toBe(29);
   });
 
-  it("Shift+End progressively extends: first to line end, then to passage end", () => {
+  it("when Shift+End is pressed, then progressively extends to line end then passage end", () => {
     const { editorsRef, containerRef } = setupHomeEndMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1072,7 +1072,7 @@ describe("useWordSelection Home/End keys", () => {
     expect(result.current.selection?.to).toBe(29); // "jumps" ends at 29
   });
 
-  it("Shift+Home progressively extends: first to line start, then to passage start", () => {
+  it("when Shift+Home is pressed, then progressively extends to line start then passage start", () => {
     const { editorsRef, containerRef } = setupHomeEndMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1148,7 +1148,7 @@ describe("useWordSelection Cmd+Arrow keys", () => {
     vi.clearAllMocks();
   });
 
-  it("Cmd+ArrowDown stays in same passage (does not cross editors)", () => {
+  it("when Cmd+ArrowDown is pressed, then stays in same passage", () => {
     const { editorsRef, containerRef } = setupCmdMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -1165,7 +1165,7 @@ describe("useWordSelection Cmd+Arrow keys", () => {
     expect(result.current.selection?.editorIndex).toBe(0);
   });
 
-  it("Cmd+ArrowDown at bottom of passage stays put (returns null target)", () => {
+  it("when Cmd+ArrowDown is pressed at bottom of passage, then stays put", () => {
     const { editorsRef, containerRef } = setupCmdMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -1240,7 +1240,7 @@ describe("useWordSelection Cmd+Shift+Arrow keys", () => {
     vi.clearAllMocks();
   });
 
-  it("Cmd+Shift+ArrowRight extends to last word on line", () => {
+  it("when Cmd+Shift+ArrowRight is pressed, then extends to last word on line", () => {
     const { editorsRef, containerRef } = setupCmdShiftMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1260,7 +1260,7 @@ describe("useWordSelection Cmd+Shift+Arrow keys", () => {
     });
   });
 
-  it("Cmd+Shift+ArrowLeft extends to first word on line", () => {
+  it("when Cmd+Shift+ArrowLeft is pressed, then extends to first word on line", () => {
     const { editorsRef, containerRef } = setupCmdShiftMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1280,7 +1280,7 @@ describe("useWordSelection Cmd+Shift+Arrow keys", () => {
     });
   });
 
-  it("Cmd+Shift+ArrowDown extends to last word in passage", () => {
+  it("when Cmd+Shift+ArrowDown is pressed, then extends to last word in passage", () => {
     const { editorsRef, containerRef } = setupCmdShiftMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1300,7 +1300,7 @@ describe("useWordSelection Cmd+Shift+Arrow keys", () => {
     });
   });
 
-  it("Cmd+Shift+ArrowUp extends to first word in passage", () => {
+  it("when Cmd+Shift+ArrowUp is pressed, then extends to first word in passage", () => {
     const { editorsRef, containerRef } = setupCmdShiftMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1375,7 +1375,7 @@ describe("useWordSelection Cmd+A", () => {
     vi.clearAllMocks();
   });
 
-  it("Cmd+A selects all words in active passage", () => {
+  it("when Cmd+A is pressed, then selects all words in active passage", () => {
     const { editorsRef, containerRef } = setupCmdAMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1395,7 +1395,7 @@ describe("useWordSelection Cmd+A", () => {
     });
   });
 
-  it("Cmd+A works without explicit selection (uses seeded first word)", () => {
+  it("when Cmd+A is pressed without explicit selection, then uses seeded first word", () => {
     const { editorsRef, containerRef } = setupCmdAMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),

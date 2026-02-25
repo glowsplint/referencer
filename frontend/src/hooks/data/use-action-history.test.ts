@@ -3,14 +3,14 @@ import { renderHook, act } from "@testing-library/react";
 import { useActionHistory } from "./use-action-history";
 
 describe("useActionHistory", () => {
-  it("returns initial state", () => {
+  it("when initialized, then returns empty state", () => {
     const { result } = renderHook(() => useActionHistory());
     expect(result.current.canUndo).toBe(false);
     expect(result.current.canRedo).toBe(false);
     expect(result.current.log).toEqual([]);
   });
 
-  it("record adds to undo stack and log", () => {
+  it("when an action is recorded, then adds it to undo stack and log", () => {
     const { result } = renderHook(() => useActionHistory());
     const undo = vi.fn();
     const redo = vi.fn();
@@ -32,7 +32,7 @@ describe("useActionHistory", () => {
     expect(result.current.log[0].undone).toBe(false);
   });
 
-  it("undo calls the undo function and marks log entry as undone", () => {
+  it("when undo is called, then calls the undo function and marks log entry as undone", () => {
     const { result } = renderHook(() => useActionHistory());
     const undo = vi.fn();
     const redo = vi.fn();
@@ -51,7 +51,7 @@ describe("useActionHistory", () => {
     expect(result.current.log[0].undone).toBe(true);
   });
 
-  it("redo calls the redo function and marks log entry as not undone", () => {
+  it("when redo is called, then calls the redo function and marks log entry as not undone", () => {
     const { result } = renderHook(() => useActionHistory());
     const undo = vi.fn();
     const redo = vi.fn();
@@ -74,7 +74,7 @@ describe("useActionHistory", () => {
     expect(result.current.log[0].undone).toBe(false);
   });
 
-  it("undo with empty stack does nothing", () => {
+  it("when undo is called with empty stack, then does nothing", () => {
     const { result } = renderHook(() => useActionHistory());
 
     act(() => {
@@ -85,7 +85,7 @@ describe("useActionHistory", () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it("redo with empty stack does nothing", () => {
+  it("when redo is called with empty stack, then does nothing", () => {
     const { result } = renderHook(() => useActionHistory());
 
     act(() => {
@@ -96,7 +96,7 @@ describe("useActionHistory", () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it("recording a new action clears the redo stack", () => {
+  it("when a new action is recorded after undo, then clears the redo stack", () => {
     const { result } = renderHook(() => useActionHistory());
 
     act(() => {
@@ -116,7 +116,7 @@ describe("useActionHistory", () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it("multiple undo/redo in sequence", () => {
+  it("when multiple undo/redo operations run in sequence, then processes them correctly", () => {
     const { result } = renderHook(() => useActionHistory());
     const undoA = vi.fn();
     const redoA = vi.fn();
@@ -160,7 +160,7 @@ describe("useActionHistory", () => {
     expect(result.current.log[1].undone).toBe(false);
   });
 
-  it("logOnly adds to log without affecting undo/redo stacks", () => {
+  it("when logOnly is called, then adds to log without affecting undo/redo stacks", () => {
     const { result } = renderHook(() => useActionHistory());
 
     act(() => {
@@ -175,7 +175,7 @@ describe("useActionHistory", () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it("log entries have unique ids and timestamps", () => {
+  it("when multiple actions are recorded, then log entries have unique ids and timestamps", () => {
     const { result } = renderHook(() => useActionHistory());
 
     act(() => {
@@ -187,7 +187,7 @@ describe("useActionHistory", () => {
     expect(result.current.log[0].timestamp).toBeLessThanOrEqual(result.current.log[1].timestamp);
   });
 
-  it("record passes details into log entries", () => {
+  it("when record is called with details, then passes them into log entries", () => {
     const { result } = renderHook(() => useActionHistory());
     const details = [
       { label: "name", after: "Layer 1" },
@@ -207,7 +207,7 @@ describe("useActionHistory", () => {
     expect(result.current.log[0].details).toEqual(details);
   });
 
-  it("record without details leaves details undefined", () => {
+  it("when record is called without details, then leaves details undefined", () => {
     const { result } = renderHook(() => useActionHistory());
 
     act(() => {

@@ -176,14 +176,14 @@ beforeEach(() => {
 
 describe("SimpleEditorToolbar", () => {
   describe("when unlocked", () => {
-    it("shows the formatting toolbar", () => {
+    it("then shows the formatting toolbar", () => {
       render(<SimpleEditorToolbar isLocked={false} />);
       expect(screen.getByTestId("editorToolbar")).toBeInTheDocument();
     });
   });
 
   describe("when locked", () => {
-    it("removes the toolbar from the DOM", () => {
+    it("then removes the toolbar from the DOM", () => {
       render(<SimpleEditorToolbar isLocked={true} />);
       expect(screen.queryByTestId("editorToolbar")).not.toBeInTheDocument();
     });
@@ -192,7 +192,7 @@ describe("SimpleEditorToolbar", () => {
 
 describe("EditorPane", () => {
   describe("when unlocked", () => {
-    it("sets the editor to editable", () => {
+    it("then sets the editor to editable", () => {
       render(
         <EditorPane
           isLocked={false}
@@ -205,7 +205,7 @@ describe("EditorPane", () => {
       expect(mockEditor.setEditable).toHaveBeenCalledWith(true);
     });
 
-    it("emits selectionUpdate", () => {
+    it("then emits selectionUpdate", () => {
       render(
         <EditorPane
           isLocked={false}
@@ -223,7 +223,7 @@ describe("EditorPane", () => {
   });
 
   describe("when locked", () => {
-    it("sets the editor to non-editable", () => {
+    it("then sets the editor to non-editable", () => {
       render(
         <EditorPane
           isLocked={true}
@@ -236,7 +236,7 @@ describe("EditorPane", () => {
       expect(mockEditor.setEditable).toHaveBeenCalledWith(false);
     });
 
-    it("does not emit selectionUpdate", () => {
+    it("then does not emit selectionUpdate", () => {
       render(
         <EditorPane
           isLocked={true}
@@ -251,7 +251,7 @@ describe("EditorPane", () => {
   });
 
   describe("when mounted", () => {
-    it("calls onEditorMount with the pane index and editor instance", () => {
+    it("then calls onEditorMount with the pane index and editor instance", () => {
       const onEditorMount = vi.fn();
       render(
         <EditorPane
@@ -267,7 +267,7 @@ describe("EditorPane", () => {
   });
 
   describe("when the editor content receives focus", () => {
-    it("calls onFocus with the pane index", () => {
+    it("then calls onFocus with the pane index", () => {
       const onFocus = vi.fn();
       render(
         <EditorPane

@@ -9,7 +9,7 @@ function renderButtonPane(overrides = {}) {
 
 describe("ButtonPane", () => {
   describe("when rendered", () => {
-    it("shows all toolbar buttons", () => {
+    it("then shows all toolbar buttons", () => {
       renderButtonPane();
       expect(screen.getByTestId("keyboardShortcutsButton")).toBeInTheDocument();
       expect(screen.getByTestId("faqButton")).toBeInTheDocument();
@@ -22,7 +22,7 @@ describe("ButtonPane", () => {
       expect(screen.getByTestId("lockButton")).toBeInTheDocument();
     });
 
-    it("separates button groups with dividers", () => {
+    it("then separates button groups with dividers", () => {
       renderButtonPane();
       const pane = screen.getByTestId("menuButton").parentElement!;
       const separators = pane.querySelectorAll('[role="separator"]');
@@ -31,7 +31,7 @@ describe("ButtonPane", () => {
   });
 
   describe("when the editor is not locked", () => {
-    it("disables tool buttons", () => {
+    it("then disables tool buttons", () => {
       renderButtonPane({
         settings: {
           isDarkMode: false,
@@ -56,7 +56,7 @@ describe("ButtonPane", () => {
       },
     };
 
-    it("enables tool buttons", () => {
+    it("then enables tool buttons", () => {
       renderButtonPane(lockedSettings);
       expect(screen.getByTestId("selectionToolButton")).toBeEnabled();
       expect(screen.getByTestId("arrowToolButton")).toBeEnabled();
@@ -64,7 +64,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when the selection button is clicked", () => {
-      it("calls setActiveTool with selection", () => {
+      it("then calls setActiveTool with selection", () => {
         const { workspace } = renderButtonPane(lockedSettings);
         fireEvent.click(screen.getByTestId("selectionToolButton"));
         expect(workspace.setActiveTool).toHaveBeenCalledWith("selection");
@@ -72,7 +72,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when the arrow button is clicked", () => {
-      it("calls setActiveTool with arrow", () => {
+      it("then calls setActiveTool with arrow", () => {
         const { workspace } = renderButtonPane(lockedSettings);
         fireEvent.click(screen.getByTestId("arrowToolButton"));
         expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
@@ -80,7 +80,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when the comments button is clicked", () => {
-      it("calls setActiveTool with comments", () => {
+      it("then calls setActiveTool with comments", () => {
         const { workspace } = renderButtonPane(lockedSettings);
         fireEvent.click(screen.getByTestId("commentsToolButton"));
         expect(workspace.setActiveTool).toHaveBeenCalledWith("comments");
@@ -89,7 +89,7 @@ describe("ButtonPane", () => {
   });
 
   describe("when the menu button is clicked", () => {
-    it("calls toggleManagementPane", () => {
+    it("then calls toggleManagementPane", () => {
       const { workspace } = renderButtonPane();
       fireEvent.click(screen.getByTestId("menuButton"));
       expect(workspace.toggleManagementPane).toHaveBeenCalledOnce();
@@ -97,7 +97,7 @@ describe("ButtonPane", () => {
   });
 
   describe("when the layout button is clicked", () => {
-    it("calls toggleMultipleRowsLayout", () => {
+    it("then calls toggleMultipleRowsLayout", () => {
       const { workspace } = renderButtonPane();
       fireEvent.click(screen.getByTestId("editorLayoutButton"));
       expect(workspace.toggleMultipleRowsLayout).toHaveBeenCalledOnce();
@@ -105,7 +105,7 @@ describe("ButtonPane", () => {
   });
 
   describe("when the lock button is clicked", () => {
-    it("calls toggleLocked", () => {
+    it("then calls toggleLocked", () => {
       const { workspace } = renderButtonPane();
       fireEvent.click(screen.getByTestId("lockButton"));
       expect(workspace.toggleLocked).toHaveBeenCalledOnce();
@@ -113,7 +113,7 @@ describe("ButtonPane", () => {
   });
 
   describe("when the keyboard shortcuts button is clicked", () => {
-    it("opens the keyboard shortcuts dialog", () => {
+    it("then opens the keyboard shortcuts dialog", () => {
       renderButtonPane();
       fireEvent.click(screen.getByTestId("keyboardShortcutsButton"));
       expect(screen.getByTestId("keyboardShortcutsDialog")).toBeInTheDocument();
@@ -122,7 +122,7 @@ describe("ButtonPane", () => {
   });
 
   describe("when the FAQ button is clicked", () => {
-    it("opens the FAQ dialog", () => {
+    it("then opens the FAQ dialog", () => {
       renderButtonPane();
       fireEvent.click(screen.getByTestId("faqButton"));
       expect(screen.getByTestId("faqDialog")).toBeInTheDocument();
@@ -131,7 +131,7 @@ describe("ButtonPane", () => {
   });
 
   describe("when the settings button is clicked", () => {
-    it("opens the settings dialog", () => {
+    it("then opens the settings dialog", () => {
       renderButtonPane();
       fireEvent.click(screen.getByTestId("settingsButton"));
       expect(screen.getByTestId("settingsDialog")).toBeInTheDocument();
@@ -141,7 +141,7 @@ describe("ButtonPane", () => {
 
   describe("tooltips", () => {
     describe("when the selection tool button receives focus", () => {
-      it("shows a tooltip with the shortcut key", async () => {
+      it("then shows a tooltip with the shortcut key", async () => {
         renderButtonPane({
           settings: {
             isDarkMode: false,
@@ -163,7 +163,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when the arrow tool button receives focus", () => {
-      it("shows a tooltip with the shortcut key", async () => {
+      it("then shows a tooltip with the shortcut key", async () => {
         renderButtonPane({
           settings: {
             isDarkMode: false,
@@ -185,7 +185,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when the lock button receives focus", () => {
-      it("shows a tooltip with the shortcut key", async () => {
+      it("then shows a tooltip with the shortcut key", async () => {
         renderButtonPane();
         const btn = screen.getByTestId("lockButton");
 
@@ -200,7 +200,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when the menu button receives focus", () => {
-      it("shows a tooltip with the shortcut key", async () => {
+      it("then shows a tooltip with the shortcut key", async () => {
         renderButtonPane();
         const btn = screen.getByTestId("menuButton");
 
@@ -215,7 +215,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when the keyboard shortcuts button receives focus", () => {
-      it("shows a tooltip without a shortcut key", async () => {
+      it("then shows a tooltip without a shortcut key", async () => {
         renderButtonPane();
         const btn = screen.getByTestId("keyboardShortcutsButton");
 
@@ -241,7 +241,7 @@ describe("ButtonPane", () => {
     };
 
     describe("when activeTool is arrow", () => {
-      it("opens the arrow style picker", () => {
+      it("then opens the arrow style picker", () => {
         const { workspace } = renderButtonPane({
           ...lockedSettings,
           annotations: { activeTool: "arrow" },
@@ -251,7 +251,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when activeTool is not arrow", () => {
-      it("closes the arrow style picker", () => {
+      it("then closes the arrow style picker", () => {
         const { workspace } = renderButtonPane({
           ...lockedSettings,
           annotations: { activeTool: "selection" },
@@ -261,7 +261,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when an arrow is selected", () => {
-      it("activates the arrow tool", () => {
+      it("then activates the arrow tool", () => {
         const { workspace } = renderButtonPane({
           ...lockedSettings,
           selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
@@ -271,7 +271,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when arrowStylePickerOpen is true", () => {
-      it("shows the arrow style popover", () => {
+      it("then shows the arrow style popover", () => {
         renderButtonPane({
           ...lockedSettings,
           arrowStylePickerOpen: true,
@@ -282,7 +282,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when arrowStylePickerOpen is false", () => {
-      it("does not show the arrow style popover", () => {
+      it("then does not show the arrow style popover", () => {
         renderButtonPane({
           ...lockedSettings,
           arrowStylePickerOpen: false,
@@ -292,7 +292,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when a style is selected", () => {
-      it("calls setActiveArrowStyle", () => {
+      it("then calls setActiveArrowStyle", () => {
         const { workspace } = renderButtonPane({
           ...lockedSettings,
           arrowStylePickerOpen: true,
@@ -305,7 +305,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when a style is selected and an arrow is selected", () => {
-      it("calls updateArrowStyle for the selected arrow", () => {
+      it("then calls updateArrowStyle for the selected arrow", () => {
         const { workspace } = renderButtonPane({
           ...lockedSettings,
           arrowStylePickerOpen: true,
@@ -320,7 +320,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when a style is selected and no arrow is selected", () => {
-      it("does not call updateArrowStyle", () => {
+      it("then does not call updateArrowStyle", () => {
         const { workspace } = renderButtonPane({
           ...lockedSettings,
           arrowStylePickerOpen: true,
@@ -335,7 +335,7 @@ describe("ButtonPane", () => {
     });
 
     describe("when activeArrowStyle is dashed", () => {
-      it("renders the arrow button icon with dashed stroke", () => {
+      it("then renders the arrow button icon with dashed stroke", () => {
         renderButtonPane({
           ...lockedSettings,
           activeArrowStyle: "dashed",

@@ -11,12 +11,12 @@ describe("useStatusMessage", () => {
     vi.useRealTimers();
   });
 
-  it("starts with null message", () => {
+  it("when initialized, then starts with null message", () => {
     const { result } = renderHook(() => useStatusMessage());
     expect(result.current.message).toBeNull();
   });
 
-  it("setStatus sets base message", () => {
+  it("when setStatus is called, then sets base message", () => {
     const { result } = renderHook(() => useStatusMessage());
 
     act(() => {
@@ -26,7 +26,7 @@ describe("useStatusMessage", () => {
     expect(result.current.message).toEqual({ text: "Hello", type: "info" });
   });
 
-  it("clearStatus clears both base and flash messages", () => {
+  it("when clearStatus is called, then clears both base and flash messages", () => {
     const { result } = renderHook(() => useStatusMessage());
 
     act(() => {
@@ -39,7 +39,7 @@ describe("useStatusMessage", () => {
     expect(result.current.message).toBeNull();
   });
 
-  it("flashStatus temporarily overrides base message", () => {
+  it("when flashStatus is called, then temporarily overrides base message", () => {
     const { result } = renderHook(() => useStatusMessage());
 
     act(() => {
@@ -60,7 +60,7 @@ describe("useStatusMessage", () => {
     expect(result.current.message).toEqual({ text: "Base", type: "info" });
   });
 
-  it("flashStatus auto-clears when no base message set", () => {
+  it("when flashStatus is called with no base message, then auto-clears", () => {
     const { result } = renderHook(() => useStatusMessage());
 
     act(() => {
@@ -76,7 +76,7 @@ describe("useStatusMessage", () => {
     expect(result.current.message).toBeNull();
   });
 
-  it("new flashStatus cancels previous flash timer", () => {
+  it("when a new flashStatus is called, then cancels previous flash timer", () => {
     const { result } = renderHook(() => useStatusMessage());
 
     act(() => {
@@ -101,7 +101,7 @@ describe("useStatusMessage", () => {
     expect(result.current.message).toBeNull();
   });
 
-  it("setStatus does not clear active flash", () => {
+  it("when setStatus is called during active flash, then does not clear it", () => {
     const { result } = renderHook(() => useStatusMessage());
 
     act(() => {
@@ -122,7 +122,7 @@ describe("useStatusMessage", () => {
     expect(result.current.message).toEqual({ text: "New base", type: "info" });
   });
 
-  it("clearStatus cancels pending flash timer", () => {
+  it("when clearStatus is called during pending flash, then cancels timer", () => {
     const { result } = renderHook(() => useStatusMessage());
 
     act(() => {

@@ -25,7 +25,7 @@ describe("AuthContext", () => {
   });
 
   describe("when used outside AuthProvider", () => {
-    it("throws an error", () => {
+    it("then throws an error", () => {
       const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
       expect(() => render(<AuthConsumer />)).toThrow("useAuth must be used within AuthProvider");
       consoleError.mockRestore();
@@ -33,7 +33,7 @@ describe("AuthContext", () => {
   });
 
   describe("when auth succeeds", () => {
-    it("transitions from loading to showing the user's name", async () => {
+    it("then transitions from loading to showing the user's name", async () => {
       vi.mocked(fetchAuthStatus).mockResolvedValue({
         authenticated: true,
         user: { id: "1", email: "test@test.com", name: "Test User", avatarUrl: "" },
@@ -54,7 +54,7 @@ describe("AuthContext", () => {
   });
 
   describe("when user is not authenticated", () => {
-    it("shows the anonymous state", async () => {
+    it("then shows the anonymous state", async () => {
       vi.mocked(fetchAuthStatus).mockResolvedValue({
         authenticated: false,
       });
@@ -72,7 +72,7 @@ describe("AuthContext", () => {
   });
 
   describe("when auth check fails with a network error", () => {
-    it("falls back to the anonymous state", async () => {
+    it("then falls back to the anonymous state", async () => {
       vi.mocked(fetchAuthStatus).mockRejectedValue(new Error("Network error"));
 
       render(

@@ -23,7 +23,7 @@ function createWrapper(opts: {
 
 describe("scrollToKeepInView", () => {
   describe("vertical scrolling", () => {
-    it("scrolls down when word is below visible area", () => {
+    it("when word is below visible area, then scrolls down", () => {
       const wrapper = createWrapper({ scrollTop: 0, clientHeight: 500 });
       scrollToKeepInView(wrapper, 600, 100, 20, 50, 40);
       // word bottom = 620, visible bottom = 500 - 40 = 460
@@ -31,7 +31,7 @@ describe("scrollToKeepInView", () => {
       expect(wrapper.scrollTop).toBe(160);
     });
 
-    it("scrolls up when word is above visible area", () => {
+    it("when word is above visible area, then scrolls up", () => {
       const wrapper = createWrapper({ scrollTop: 300, clientHeight: 500 });
       scrollToKeepInView(wrapper, 200, 100, 20, 50, 40);
       // word top = 200, visible top = 300 + 40 = 340
@@ -39,13 +39,13 @@ describe("scrollToKeepInView", () => {
       expect(wrapper.scrollTop).toBe(160);
     });
 
-    it("does not scroll when word is within visible area", () => {
+    it("when word is within visible area, then does not scroll", () => {
       const wrapper = createWrapper({ scrollTop: 100, clientHeight: 500 });
       scrollToKeepInView(wrapper, 300, 100, 20, 50, 40);
       expect(wrapper.scrollTop).toBe(100);
     });
 
-    it("clamps scrollTop to 0 when word is near the top", () => {
+    it("when word is near the top, then clamps scrollTop to 0", () => {
       const wrapper = createWrapper({ scrollTop: 50, clientHeight: 500 });
       scrollToKeepInView(wrapper, 10, 100, 20, 50, 40);
       // max(0, 10 - 40) = 0
@@ -54,7 +54,7 @@ describe("scrollToKeepInView", () => {
   });
 
   describe("horizontal scrolling", () => {
-    it("scrolls right when word is past the right edge", () => {
+    it("when word is past the right edge, then scrolls right", () => {
       const wrapper = createWrapper({ scrollLeft: 0, clientWidth: 800 });
       scrollToKeepInView(wrapper, 100, 900, 20, 60, 40);
       // word right = 960, visible right = 800 - 40 = 760
@@ -62,7 +62,7 @@ describe("scrollToKeepInView", () => {
       expect(wrapper.scrollLeft).toBe(200);
     });
 
-    it("scrolls left when word is past the left edge", () => {
+    it("when word is past the left edge, then scrolls left", () => {
       const wrapper = createWrapper({ scrollLeft: 400, clientWidth: 800 });
       scrollToKeepInView(wrapper, 100, 300, 20, 60, 40);
       // word left = 300, visible left = 400 + 40 = 440
@@ -70,7 +70,7 @@ describe("scrollToKeepInView", () => {
       expect(wrapper.scrollLeft).toBe(260);
     });
 
-    it("does not scroll horizontally when word is visible", () => {
+    it("when word is horizontally visible, then does not scroll", () => {
       const wrapper = createWrapper({ scrollLeft: 0, clientWidth: 800 });
       scrollToKeepInView(wrapper, 100, 200, 20, 60, 40);
       expect(wrapper.scrollLeft).toBe(0);
