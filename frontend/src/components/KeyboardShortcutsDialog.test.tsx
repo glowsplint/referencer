@@ -7,124 +7,132 @@ function renderDialog(open = true, onOpenChange = () => {}) {
 }
 
 describe("KeyboardShortcutsDialog", () => {
-  it("renders when open", () => {
-    renderDialog();
-    expect(screen.getByTestId("keyboardShortcutsDialog")).toBeInTheDocument();
-    expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument();
+  describe("when opened", () => {
+    it("shows the keyboard shortcuts dialog", () => {
+      renderDialog();
+      expect(screen.getByTestId("keyboardShortcutsDialog")).toBeInTheDocument();
+      expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument();
+    });
+
+    it("displays all section headers", () => {
+      renderDialog();
+      expect(screen.getByText("Workspace")).toBeInTheDocument();
+      expect(screen.getByText("Text Formatting")).toBeInTheDocument();
+      expect(screen.getByText("Headings")).toBeInTheDocument();
+      expect(screen.getByText("Lists & Blocks")).toBeInTheDocument();
+      expect(screen.getByText("Text Alignment")).toBeInTheDocument();
+      expect(screen.getByText("General")).toBeInTheDocument();
+    });
+
+    it("shows a close button", () => {
+      renderDialog();
+      expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
+    });
   });
 
-  it("does not render when closed", () => {
-    renderDialog(false);
-    expect(screen.queryByTestId("keyboardShortcutsDialog")).not.toBeInTheDocument();
+  describe("when closed", () => {
+    it("renders nothing", () => {
+      renderDialog(false);
+      expect(screen.queryByTestId("keyboardShortcutsDialog")).not.toBeInTheDocument();
+    });
   });
 
-  it("displays section headers", () => {
-    renderDialog();
-    expect(screen.getByText("Workspace")).toBeInTheDocument();
-    expect(screen.getByText("Text Formatting")).toBeInTheDocument();
-    expect(screen.getByText("Headings")).toBeInTheDocument();
-    expect(screen.getByText("Lists & Blocks")).toBeInTheDocument();
-    expect(screen.getByText("Text Alignment")).toBeInTheDocument();
-    expect(screen.getByText("General")).toBeInTheDocument();
+  describe("workspace shortcuts section", () => {
+    it("lists all workspace shortcuts", () => {
+      renderDialog();
+      expect(screen.getByText("Cycle to next layer")).toBeInTheDocument();
+      expect(screen.getByText("Cycle to previous layer")).toBeInTheDocument();
+      expect(screen.getByText("Selection tool")).toBeInTheDocument();
+      expect(screen.getByText("Arrow tool")).toBeInTheDocument();
+      expect(screen.getByText("Comments tool")).toBeInTheDocument();
+      expect(screen.getByText("Navigate between words")).toBeInTheDocument();
+      expect(screen.getByText("Toggle dark mode")).toBeInTheDocument();
+      expect(screen.getByText("Toggle editor layout")).toBeInTheDocument();
+      expect(screen.getByText("Toggle editor lock")).toBeInTheDocument();
+      expect(screen.getByText("Toggle management pane")).toBeInTheDocument();
+      expect(screen.getByText("Eraser tool")).toBeInTheDocument();
+    });
   });
 
-  it("displays workspace shortcuts", () => {
-    renderDialog();
-    expect(screen.getByText("Cycle to next layer")).toBeInTheDocument();
-    expect(screen.getByText("Selection tool")).toBeInTheDocument();
-    expect(screen.getByText("Arrow tool")).toBeInTheDocument();
-    expect(screen.getByText("Comments tool")).toBeInTheDocument();
-    expect(screen.getByText("Navigate between words")).toBeInTheDocument();
-    expect(screen.getByText("Toggle dark mode")).toBeInTheDocument();
-    expect(screen.getByText("Toggle editor layout")).toBeInTheDocument();
-    expect(screen.getByText("Toggle editor lock")).toBeInTheDocument();
-    expect(screen.getByText("Toggle management pane")).toBeInTheDocument();
+  describe("text formatting shortcuts section", () => {
+    it("lists all text formatting shortcuts", () => {
+      renderDialog();
+      expect(screen.getByText("Bold")).toBeInTheDocument();
+      expect(screen.getByText("Italic")).toBeInTheDocument();
+      expect(screen.getByText("Underline")).toBeInTheDocument();
+      expect(screen.getByText("Strikethrough")).toBeInTheDocument();
+      expect(screen.getByText("Inline code")).toBeInTheDocument();
+      expect(screen.getByText("Superscript")).toBeInTheDocument();
+      expect(screen.getByText("Subscript")).toBeInTheDocument();
+      expect(screen.getByText("Color highlight")).toBeInTheDocument();
+    });
   });
 
-  it("displays text formatting shortcuts", () => {
-    renderDialog();
-    expect(screen.getByText("Bold")).toBeInTheDocument();
-    expect(screen.getByText("Italic")).toBeInTheDocument();
-    expect(screen.getByText("Underline")).toBeInTheDocument();
-    expect(screen.getByText("Strikethrough")).toBeInTheDocument();
-    expect(screen.getByText("Inline code")).toBeInTheDocument();
-    expect(screen.getByText("Superscript")).toBeInTheDocument();
-    expect(screen.getByText("Subscript")).toBeInTheDocument();
-    expect(screen.getByText("Color highlight")).toBeInTheDocument();
+  describe("headings shortcuts section", () => {
+    it("lists heading levels 1 through 6", () => {
+      renderDialog();
+      for (let i = 1; i <= 6; i++) {
+        expect(screen.getByText(`Heading ${i}`)).toBeInTheDocument();
+      }
+    });
+
+    it("uses literal Ctrl for heading shortcuts regardless of platform", () => {
+      renderDialog();
+      const heading1Row = screen.getByText("Heading 1").closest("div");
+      const kbdElements = heading1Row!.querySelectorAll("kbd");
+      const kbdTexts = Array.from(kbdElements).map((el) => el.textContent);
+      expect(kbdTexts).toContain("Ctrl");
+    });
   });
 
-  it("displays heading shortcuts", () => {
-    renderDialog();
-    for (let i = 1; i <= 6; i++) {
-      expect(screen.getByText(`Heading ${i}`)).toBeInTheDocument();
-    }
+  describe("lists and blocks shortcuts section", () => {
+    it("lists all list and block shortcuts", () => {
+      renderDialog();
+      expect(screen.getByText("Bullet list")).toBeInTheDocument();
+      expect(screen.getByText("Ordered list")).toBeInTheDocument();
+      expect(screen.getByText("Task list")).toBeInTheDocument();
+      expect(screen.getByText("Blockquote")).toBeInTheDocument();
+      expect(screen.getByText("Code block")).toBeInTheDocument();
+    });
   });
 
-  it("displays list and block shortcuts", () => {
-    renderDialog();
-    expect(screen.getByText("Bullet list")).toBeInTheDocument();
-    expect(screen.getByText("Ordered list")).toBeInTheDocument();
-    expect(screen.getByText("Task list")).toBeInTheDocument();
-    expect(screen.getByText("Blockquote")).toBeInTheDocument();
-    expect(screen.getByText("Code block")).toBeInTheDocument();
+  describe("text alignment shortcuts section", () => {
+    it("lists all alignment shortcuts", () => {
+      renderDialog();
+      expect(screen.getByText("Align left")).toBeInTheDocument();
+      expect(screen.getByText("Align center")).toBeInTheDocument();
+      expect(screen.getByText("Align right")).toBeInTheDocument();
+      expect(screen.getByText("Align justify")).toBeInTheDocument();
+    });
   });
 
-  it("displays text alignment shortcuts", () => {
-    renderDialog();
-    expect(screen.getByText("Align left")).toBeInTheDocument();
-    expect(screen.getByText("Align center")).toBeInTheDocument();
-    expect(screen.getByText("Align right")).toBeInTheDocument();
-    expect(screen.getByText("Align justify")).toBeInTheDocument();
+  describe("general shortcuts section", () => {
+    it("lists undo and redo shortcuts", () => {
+      renderDialog();
+      expect(screen.getByText("Undo (workspace when locked)")).toBeInTheDocument();
+      expect(screen.getByText("Redo (workspace when locked)")).toBeInTheDocument();
+    });
   });
 
-  it("displays undo/redo shortcuts", () => {
-    renderDialog();
-    expect(screen.getByText("Undo (workspace when locked)")).toBeInTheDocument();
-    expect(screen.getByText("Redo (workspace when locked)")).toBeInTheDocument();
+  describe("modifier key display", () => {
+    it("uses OS-appropriate modifier key label for formatting shortcuts", () => {
+      renderDialog();
+      const isMac = navigator.platform?.includes("Mac");
+      const expected = isMac ? "\u2318" : "Ctrl";
+
+      const boldRow = screen.getByText("Bold").closest("div");
+      const kbdElements = boldRow!.querySelectorAll("kbd");
+      const kbdTexts = Array.from(kbdElements).map((el) => el.textContent);
+      expect(kbdTexts).toContain(expected);
+    });
   });
 
-  it("has a close button (X) in the top-right", () => {
-    renderDialog();
-    expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
-  });
-
-  it("calls onOpenChange when close button is clicked", () => {
-    const onOpenChange = vi.fn();
-    renderDialog(true, onOpenChange);
-    fireEvent.click(screen.getByRole("button", { name: "Close" }));
-    expect(onOpenChange).toHaveBeenCalledWith(false);
-  });
-
-  it("shows Tab and Shift+Tab for layer cycling", () => {
-    renderDialog();
-    expect(screen.getByText("Cycle to next layer")).toBeInTheDocument();
-    expect(screen.getByText("Cycle to previous layer")).toBeInTheDocument();
-  });
-
-  it("shows eraser tool shortcut", () => {
-    renderDialog();
-    expect(screen.getByText("Eraser tool")).toBeInTheDocument();
-  });
-
-  it("uses OS-appropriate modifier key label for formatting shortcuts", () => {
-    renderDialog();
-    const isMac = navigator.platform?.includes("Mac");
-    const expected = isMac ? "\u2318" : "Ctrl";
-
-    // Find the Bold shortcut row and check modifier key
-    const boldRow = screen.getByText("Bold").closest("div");
-    expect(boldRow).toBeInTheDocument();
-    const kbdElements = boldRow!.querySelectorAll("kbd");
-    const kbdTexts = Array.from(kbdElements).map((el) => el.textContent);
-    expect(kbdTexts).toContain(expected);
-  });
-
-  it("renders heading shortcuts with literal Ctrl regardless of platform", () => {
-    renderDialog();
-    // Heading shortcuts always use "Ctrl" (Tiptap uses Ctrl-Alt-NUMBER directly)
-    const heading1Row = screen.getByText("Heading 1").closest("div");
-    const kbdElements = heading1Row!.querySelectorAll("kbd");
-    const kbdTexts = Array.from(kbdElements).map((el) => el.textContent);
-    expect(kbdTexts).toContain("Ctrl");
+  describe("when close button is clicked", () => {
+    it("calls onOpenChange with false", () => {
+      const onOpenChange = vi.fn();
+      renderDialog(true, onOpenChange);
+      fireEvent.click(screen.getByRole("button", { name: "Close" }));
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
   });
 });

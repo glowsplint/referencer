@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { WorkspaceProvider, useWorkspace } from "./WorkspaceContext";
 import type { WorkspaceContextValue } from "./WorkspaceContext";
 
-function makeMockWorkspace(): WorkspaceContextValue {
+function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}): WorkspaceContextValue {
   return {
     settings: {
       isDarkMode: false,
@@ -36,44 +36,90 @@ function makeMockWorkspace(): WorkspaceContextValue {
     handleDividerResize: vi.fn(),
     handleEditorMount: vi.fn(),
     handlePaneFocus: vi.fn(),
+    ...overrides,
   } as unknown as WorkspaceContextValue;
 }
 
 describe("WorkspaceContext", () => {
-  it("useWorkspace throws when used outside WorkspaceProvider", () => {
-    expect(() => {
-      renderHook(() => useWorkspace());
-    }).toThrow("useWorkspace must be used within a WorkspaceProvider");
+  describe("when used outside WorkspaceProvider", () => {
+    it("throws an error", () => {
+      expect(() => {
+        renderHook(() => useWorkspace());
+      }).toThrow("useWorkspace must be used within a WorkspaceProvider");
+    });
   });
 
-  it("useWorkspace returns the provided value inside WorkspaceProvider", () => {
-    const mockValue = makeMockWorkspace();
-    const { result } = renderHook(() => useWorkspace(), {
-      wrapper: ({ children }) => (
-        <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
-      ),
-    });
-    expect(result.current).toBe(mockValue);
-  });
+  describe("when used inside WorkspaceProvider", () => {
+    it("provides the workspace settings", () => {
+      const mockValue = makeMockWorkspace({
+        settings: {
+          isDarkMode: true,
+          isLayersOn: true,
+          isMultipleRowsLayout: false,
+          isLocked: false,
+        },
+      });
 
-  it("useWorkspace returns updated value when provider re-renders", () => {
-    const value1 = makeMockWorkspace();
-    const value2 = { ...value1, isManagementPaneOpen: true };
+      const { result } = renderHook(() => useWorkspace(), {
+        wrapper: ({ children }) => (
+          <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
+        ),
+      });
 
-    const { result, rerender } = renderHook(() => useWorkspace(), {
-      wrapper: ({ children }) => <WorkspaceProvider value={value1}>{children}</WorkspaceProvider>,
+      expect(result.current.settings.isDarkMode).toBe(true);
+      expect(result.current.settings.isLayersOn).toBe(true);
+      expect(result.current.settings.isMultipleRowsLayout).toBe(false);
     });
-    expect(result.current.isManagementPaneOpen).toBe(false);
 
-    rerender({
-      wrapper: ({ children }: { children: React.ReactNode }) => (
-        <WorkspaceProvider value={value2 as unknown as WorkspaceContextValue}>
-          {children}
-        </WorkspaceProvider>
-      ),
+    it("provides the layers array and active layer", () => {
+      const mockValue = makeMockWorkspace({
+        layers: [
+          { id: "layer-1", name: "Notes", color: "#ff0000" },
+        ] as WorkspaceContextValue["layers"],
+        activeLayerId: "layer-1",
+      });
+
+      const { result } = renderHook(() => useWorkspace(), {
+        wrapper: ({ children }) => (
+          <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
+        ),
+      });
+
+      expect(result.current.layers).toHaveLength(1);
+      expect(result.current.activeLayerId).toBe("layer-1");
     });
-    // After rerender with new wrapper, the hook returns the new value
-    // Note: renderHook rerender doesn't update the wrapper, so we test the initial case
-    expect(result.current).toBe(value1);
+
+    it("provides annotation actions as callable functions", () => {
+      const mockValue = makeMockWorkspace();
+
+      const { result } = renderHook(() => useWorkspace(), {
+        wrapper: ({ children }) => (
+          <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
+        ),
+      });
+
+      expect(result.current.addLayer).toEqual(expect.any(Function));
+      expect(result.current.removeLayer).toEqual(expect.any(Function));
+      expect(result.current.addHighlight).toEqual(expect.any(Function));
+      expect(result.current.removeHighlight).toEqual(expect.any(Function));
+    });
+
+    it("provides the editor state", () => {
+      const mockValue = makeMockWorkspace({
+        editorCount: 2,
+        editorWidths: [50, 50],
+        isManagementPaneOpen: true,
+      });
+
+      const { result } = renderHook(() => useWorkspace(), {
+        wrapper: ({ children }) => (
+          <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
+        ),
+      });
+
+      expect(result.current.editorCount).toBe(2);
+      expect(result.current.editorWidths).toEqual([50, 50]);
+      expect(result.current.isManagementPaneOpen).toBe(true);
+    });
   });
 });

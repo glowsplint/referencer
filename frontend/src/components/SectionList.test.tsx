@@ -19,155 +19,187 @@ function renderList(overrides = {}) {
 }
 
 describe("SectionList", () => {
-  it("renders passage rows with labels", () => {
-    renderList({
-      editorCount: 3,
-      sectionVisibility: [true, true, true],
-      sectionNames: ["Passage 1", "Passage 2", "Passage 3"],
+  describe("when rendered", () => {
+    it("shows the Passages heading", () => {
+      renderList();
+      expect(screen.getByText("Passages")).toBeInTheDocument();
     });
-    expect(screen.getByText("Passage 1")).toBeInTheDocument();
-    expect(screen.getByText("Passage 2")).toBeInTheDocument();
-    expect(screen.getByText("Passage 3")).toBeInTheDocument();
-  });
 
-  it("renders the Passages heading", () => {
-    renderList();
-    expect(screen.getByText("Passages")).toBeInTheDocument();
-  });
-
-  it("renders eye icon for each passage", () => {
-    renderList({
-      editorCount: 2,
-      sectionVisibility: [true, true],
-      sectionNames: ["Passage 1", "Passage 2"],
+    it("shows the add passage button", () => {
+      renderList();
+      expect(screen.getByTestId("addPassageButton")).toBeInTheDocument();
     });
-    expect(screen.getByTestId("sectionVisibility-0")).toBeInTheDocument();
-    expect(screen.getByTestId("sectionVisibility-1")).toBeInTheDocument();
-  });
 
-  it("calls toggleSectionVisibility when eye button is clicked", () => {
-    const { props } = renderList({
-      editorCount: 2,
-      sectionVisibility: [true, true],
-      sectionNames: ["Passage 1", "Passage 2"],
+    it("shows the master visibility toggle", () => {
+      renderList();
+      expect(screen.getByTestId("toggleAllSectionVisibility")).toBeInTheDocument();
     });
-    fireEvent.click(screen.getByTestId("sectionVisibility-1"));
-    expect(props.toggleSectionVisibility).toHaveBeenCalledWith(1);
   });
 
-  it("shows 'Hide passage' title when passage is visible", () => {
-    renderList({ editorCount: 1, sectionVisibility: [true] });
-    expect(screen.getByTestId("sectionVisibility-0")).toHaveAttribute("title", "Hide passage");
-  });
-
-  it("shows 'Show passage' title when passage is hidden", () => {
-    renderList({ editorCount: 1, sectionVisibility: [false] });
-    expect(screen.getByTestId("sectionVisibility-0")).toHaveAttribute("title", "Show passage");
-  });
-
-  it("passage rows are draggable when multiple passages exist", () => {
-    renderList({
-      editorCount: 2,
-      sectionVisibility: [true, true],
-      sectionNames: ["Passage 1", "Passage 2"],
+  describe("when passages exist", () => {
+    it("shows passage labels", () => {
+      renderList({
+        editorCount: 3,
+        sectionVisibility: [true, true, true],
+        sectionNames: ["Passage 1", "Passage 2", "Passage 3"],
+      });
+      expect(screen.getByText("Passage 1")).toBeInTheDocument();
+      expect(screen.getByText("Passage 2")).toBeInTheDocument();
+      expect(screen.getByText("Passage 3")).toBeInTheDocument();
     });
-    const row = screen.getByTestId("passageName-0").closest("[draggable]");
-    expect(row).toHaveAttribute("draggable", "true");
-  });
 
-  it("passage rows are not draggable when only one passage exists", () => {
-    renderList();
-    const row = screen.getByTestId("passageName-0").parentElement;
-    expect(row).not.toHaveAttribute("draggable", "true");
-  });
-
-  it("sets section index in dataTransfer on drag start", () => {
-    renderList({
-      editorCount: 2,
-      sectionVisibility: [true, true],
-      sectionNames: ["Passage 1", "Passage 2"],
+    it("shows a visibility toggle for each passage", () => {
+      renderList({
+        editorCount: 2,
+        sectionVisibility: [true, true],
+        sectionNames: ["Passage 1", "Passage 2"],
+      });
+      expect(screen.getByTestId("sectionVisibility-0")).toBeInTheDocument();
+      expect(screen.getByTestId("sectionVisibility-1")).toBeInTheDocument();
     });
-    const row = screen.getByTestId("passageName-1").closest("[draggable]")!;
-    const setData = vi.fn();
-    fireEvent.dragStart(row, { dataTransfer: { setData } });
-    expect(setData).toHaveBeenCalledWith("application/x-section-index", "1");
-  });
 
-  // --- Master passage visibility ---
-
-  it("renders master passage visibility button", () => {
-    renderList();
-    expect(screen.getByTestId("toggleAllSectionVisibility")).toBeInTheDocument();
-  });
-
-  it("calls toggleAllSectionVisibility when master passage visibility button is clicked", () => {
-    const { props } = renderList();
-    fireEvent.click(screen.getByTestId("toggleAllSectionVisibility"));
-    expect(props.toggleAllSectionVisibility).toHaveBeenCalled();
-  });
-
-  // --- Add passage button ---
-
-  it("renders add passage button beside the Passages header", () => {
-    renderList();
-    expect(screen.getByTestId("addPassageButton")).toBeInTheDocument();
-  });
-
-  it("calls addEditor when add passage button is clicked", () => {
-    const { props } = renderList();
-    fireEvent.click(screen.getByTestId("addPassageButton"));
-    expect(props.addEditor).toHaveBeenCalled();
-  });
-
-  // --- Inline editing ---
-
-  it("renders custom passage names from props", () => {
-    renderList({
-      editorCount: 2,
-      sectionVisibility: [true, true],
-      sectionNames: ["Intro", "Body"],
+    it("renders custom passage names from props", () => {
+      renderList({
+        editorCount: 2,
+        sectionVisibility: [true, true],
+        sectionNames: ["Intro", "Body"],
+      });
+      expect(screen.getByText("Intro")).toBeInTheDocument();
+      expect(screen.getByText("Body")).toBeInTheDocument();
     });
-    expect(screen.getByText("Intro")).toBeInTheDocument();
-    expect(screen.getByText("Body")).toBeInTheDocument();
   });
 
-  it("double-click enters edit mode", () => {
-    renderList();
-    fireEvent.doubleClick(screen.getByTestId("passageName-0"));
-    expect(screen.getByTestId("passageNameInput-0")).toBeInTheDocument();
-    expect(screen.getByTestId("passageNameInput-0")).toHaveValue("Passage 1");
+  describe("when a visibility toggle is clicked", () => {
+    it("calls toggleSectionVisibility with the passage index", () => {
+      const { props } = renderList({
+        editorCount: 2,
+        sectionVisibility: [true, true],
+        sectionNames: ["Passage 1", "Passage 2"],
+      });
+      fireEvent.click(screen.getByTestId("sectionVisibility-1"));
+      expect(props.toggleSectionVisibility).toHaveBeenCalledWith(1);
+    });
   });
 
-  it("Enter commits new name", () => {
-    const { props } = renderList();
-    fireEvent.doubleClick(screen.getByTestId("passageName-0"));
-    fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } });
-    fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" });
-    expect(props.onUpdateName).toHaveBeenCalledWith(0, "Renamed");
+  describe("when a passage is visible", () => {
+    it("shows Hide passage as the toggle title", () => {
+      renderList({ editorCount: 1, sectionVisibility: [true] });
+      expect(screen.getByTestId("sectionVisibility-0")).toHaveAttribute("title", "Hide passage");
+    });
   });
 
-  it("Escape cancels edit", () => {
-    const { props } = renderList();
-    fireEvent.doubleClick(screen.getByTestId("passageName-0"));
-    fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } });
-    fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Escape" });
-    expect(props.onUpdateName).not.toHaveBeenCalled();
-    expect(screen.getByTestId("passageName-0")).toBeInTheDocument();
+  describe("when a passage is hidden", () => {
+    it("shows Show passage as the toggle title", () => {
+      renderList({ editorCount: 1, sectionVisibility: [false] });
+      expect(screen.getByTestId("sectionVisibility-0")).toHaveAttribute("title", "Show passage");
+    });
   });
 
-  it("blur commits new name", () => {
-    const { props } = renderList();
-    fireEvent.doubleClick(screen.getByTestId("passageName-0"));
-    fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Blurred" } });
-    fireEvent.blur(screen.getByTestId("passageNameInput-0"));
-    expect(props.onUpdateName).toHaveBeenCalledWith(0, "Blurred");
+  describe("when multiple passages exist", () => {
+    it("allows reordering passages via drag", () => {
+      renderList({
+        editorCount: 2,
+        sectionVisibility: [true, true],
+        sectionNames: ["Passage 1", "Passage 2"],
+      });
+      const row = screen.getByTestId("passageName-0").closest("[draggable]");
+      expect(row).toHaveAttribute("draggable", "true");
+    });
+
+    it("sets section index in dataTransfer on drag start", () => {
+      renderList({
+        editorCount: 2,
+        sectionVisibility: [true, true],
+        sectionNames: ["Passage 1", "Passage 2"],
+      });
+      const row = screen.getByTestId("passageName-1").closest("[draggable]")!;
+      const setData = vi.fn();
+      fireEvent.dragStart(row, { dataTransfer: { setData } });
+      expect(setData).toHaveBeenCalledWith("application/x-section-index", "1");
+    });
   });
 
-  it("empty name reverts to original", () => {
-    const { props } = renderList();
-    fireEvent.doubleClick(screen.getByTestId("passageName-0"));
-    fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "   " } });
-    fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" });
-    expect(props.onUpdateName).toHaveBeenCalledWith(0, "Passage 1");
+  describe("when only one passage exists", () => {
+    it("does not allow dragging", () => {
+      renderList();
+      const row = screen.getByTestId("passageName-0").parentElement;
+      expect(row).not.toHaveAttribute("draggable", "true");
+    });
+  });
+
+  describe("when the master visibility button is clicked", () => {
+    it("calls toggleAllSectionVisibility", () => {
+      const { props } = renderList();
+      fireEvent.click(screen.getByTestId("toggleAllSectionVisibility"));
+      expect(props.toggleAllSectionVisibility).toHaveBeenCalled();
+    });
+  });
+
+  describe("when the add passage button is clicked", () => {
+    it("calls addEditor", () => {
+      const { props } = renderList();
+      fireEvent.click(screen.getByTestId("addPassageButton"));
+      expect(props.addEditor).toHaveBeenCalled();
+    });
+  });
+
+  describe("inline editing", () => {
+    describe("when a passage name is double-clicked", () => {
+      it("enters edit mode with the current name", () => {
+        renderList();
+        fireEvent.doubleClick(screen.getByTestId("passageName-0"));
+        expect(screen.getByTestId("passageNameInput-0")).toBeInTheDocument();
+        expect(screen.getByTestId("passageNameInput-0")).toHaveValue("Passage 1");
+      });
+    });
+
+    describe("when Enter is pressed during editing", () => {
+      it("commits the new name", () => {
+        const { props } = renderList();
+        fireEvent.doubleClick(screen.getByTestId("passageName-0"));
+        fireEvent.change(screen.getByTestId("passageNameInput-0"), {
+          target: { value: "Renamed" },
+        });
+        fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" });
+        expect(props.onUpdateName).toHaveBeenCalledWith(0, "Renamed");
+      });
+    });
+
+    describe("when Escape is pressed during editing", () => {
+      it("cancels the edit without committing", () => {
+        const { props } = renderList();
+        fireEvent.doubleClick(screen.getByTestId("passageName-0"));
+        fireEvent.change(screen.getByTestId("passageNameInput-0"), {
+          target: { value: "Renamed" },
+        });
+        fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Escape" });
+        expect(props.onUpdateName).not.toHaveBeenCalled();
+        expect(screen.getByTestId("passageName-0")).toBeInTheDocument();
+      });
+    });
+
+    describe("when the input loses focus", () => {
+      it("commits the new name", () => {
+        const { props } = renderList();
+        fireEvent.doubleClick(screen.getByTestId("passageName-0"));
+        fireEvent.change(screen.getByTestId("passageNameInput-0"), {
+          target: { value: "Blurred" },
+        });
+        fireEvent.blur(screen.getByTestId("passageNameInput-0"));
+        expect(props.onUpdateName).toHaveBeenCalledWith(0, "Blurred");
+      });
+    });
+
+    describe("when an empty name is submitted", () => {
+      it("reverts to the original name", () => {
+        const { props } = renderList();
+        fireEvent.doubleClick(screen.getByTestId("passageName-0"));
+        fireEvent.change(screen.getByTestId("passageNameInput-0"), {
+          target: { value: "   " },
+        });
+        fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" });
+        expect(props.onUpdateName).toHaveBeenCalledWith(0, "Passage 1");
+      });
+    });
   });
 });

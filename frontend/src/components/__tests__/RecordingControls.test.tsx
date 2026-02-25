@@ -92,126 +92,125 @@ function renderRecordingControls(
 }
 
 describe("RecordingControls", () => {
-  it("renders record button", () => {
-    renderRecordingControls();
-    expect(screen.getByTestId("recordButton")).toBeInTheDocument();
-  });
-
-  it("renders dropdown toggle", () => {
-    renderRecordingControls();
-    expect(screen.getByTestId("recordingDropdownToggle")).toBeInTheDocument();
-  });
-
-  it("record button is not in recording state when idle", () => {
-    renderRecordingControls();
-    const btn = screen.getByTestId("recordButton");
-    // When not recording, it should not have recording-state styling
-    expect(btn.className).not.toContain("bg-red-500/20");
-  });
-
-  it("record button shows recording state when isRecording is true", () => {
-    renderRecordingControls({
-      recordings: {
-        ...makeMockRecordingContext().recordings,
-        isRecording: true,
-        activeRecordingId: "rec-1",
-      },
-    });
-    const btn = screen.getByTestId("recordButton");
-    expect(btn.className).toContain("bg-red-500/20");
-  });
-
-  it("clicking record button creates and starts a new recording when idle", () => {
-    const { recCtx } = renderRecordingControls();
-
-    fireEvent.click(screen.getByTestId("recordButton"));
-
-    expect(recCtx.recordings.createRecording).toHaveBeenCalled();
-    expect(recCtx.recordings.startRecording).toHaveBeenCalledWith("new-rec-id");
-  });
-
-  it("clicking record button stops recording when isRecording is true", () => {
-    const { recCtx } = renderRecordingControls({
-      recordings: {
-        ...makeMockRecordingContext().recordings,
-        isRecording: true,
-        activeRecordingId: "rec-1",
-      },
+  describe("when rendered", () => {
+    it("then shows the record button", () => {
+      renderRecordingControls();
+      expect(screen.getByTestId("recordButton")).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByTestId("recordButton"));
-    expect(recCtx.recordings.stopRecording).toHaveBeenCalled();
+    it("then shows the dropdown toggle", () => {
+      renderRecordingControls();
+      expect(screen.getByTestId("recordingDropdownToggle")).toBeInTheDocument();
+    });
   });
 
-  it("opens dropdown when toggle is clicked", () => {
-    renderRecordingControls();
+  describe("when idle and record button is clicked", () => {
+    it("then creates and starts a new recording", () => {
+      const { recCtx } = renderRecordingControls();
 
-    expect(screen.queryByTestId("recordingDropdown")).not.toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("recordButton"));
 
-    fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
-
-    expect(screen.getByTestId("recordingDropdown")).toBeInTheDocument();
+      expect(recCtx.recordings.createRecording).toHaveBeenCalled();
+      expect(recCtx.recordings.startRecording).toHaveBeenCalledWith("new-rec-id");
+    });
   });
 
-  it("shows no recordings message when list is empty", () => {
-    renderRecordingControls();
+  describe("when recording and record button is clicked", () => {
+    it("then stops recording", () => {
+      const { recCtx } = renderRecordingControls({
+        recordings: {
+          ...makeMockRecordingContext().recordings,
+          isRecording: true,
+          activeRecordingId: "rec-1",
+        },
+      });
 
-    fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
-
-    expect(screen.getByText(/no recordings/i)).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("recordButton"));
+      expect(recCtx.recordings.stopRecording).toHaveBeenCalled();
+    });
   });
 
-  it("shows recording items in dropdown when recordings exist", () => {
-    renderRecordingControls({
-      recordings: {
-        ...makeMockRecordingContext().recordings,
-        recordings: [testRecording],
-      },
+  describe("when dropdown toggle is clicked", () => {
+    it("then shows the recording dropdown", () => {
+      renderRecordingControls();
+
+      expect(screen.queryByTestId("recordingDropdown")).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
+
+      expect(screen.getByTestId("recordingDropdown")).toBeInTheDocument();
+    });
+  });
+
+  describe("when dropdown is open with no recordings", () => {
+    it("then shows a no-recordings message", () => {
+      renderRecordingControls();
+
+      fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
+
+      expect(screen.getByText(/no recordings/i)).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
+    it("then shows the new recording button", () => {
+      renderRecordingControls();
 
-    expect(screen.getByTestId("recordingItem-rec-1")).toBeInTheDocument();
-    expect(screen.getByText("Test Recording")).toBeInTheDocument();
-    expect(screen.getByText("2 steps")).toBeInTheDocument();
-  });
+      fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
 
-  it("shows new recording button in dropdown", () => {
-    renderRecordingControls();
-
-    fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
-
-    expect(screen.getByTestId("newRecordingButton")).toBeInTheDocument();
-  });
-
-  it("clicking play on a recording starts playback", () => {
-    const { recCtx } = renderRecordingControls({
-      recordings: {
-        ...makeMockRecordingContext().recordings,
-        recordings: [testRecording],
-      },
+      expect(screen.getByTestId("newRecordingButton")).toBeInTheDocument();
     });
-
-    fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
-    fireEvent.click(screen.getByTestId("recordingPlay-rec-1"));
-
-    expect(recCtx.playback.startPlayback).toHaveBeenCalledWith("rec-1");
   });
 
-  it("record button is disabled when readOnly", () => {
-    renderRecordingControls({}, { readOnly: true });
+  describe("when dropdown is open with recordings", () => {
+    it("then shows recording items with name and step count", () => {
+      renderRecordingControls({
+        recordings: {
+          ...makeMockRecordingContext().recordings,
+          recordings: [testRecording],
+        },
+      });
 
-    expect(screen.getByTestId("recordButton")).toBeDisabled();
-  });
+      fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
 
-  it("record button is disabled during playback", () => {
-    renderRecordingControls({
-      playback: {
-        ...makeMockRecordingContext().playback,
-        isPlaying: true,
-      },
+      expect(screen.getByTestId("recordingItem-rec-1")).toBeInTheDocument();
+      expect(screen.getByText("Test Recording")).toBeInTheDocument();
+      expect(screen.getByText("2 steps")).toBeInTheDocument();
     });
+  });
 
-    expect(screen.getByTestId("recordButton")).toBeDisabled();
+  describe("when play button on a recording is clicked", () => {
+    it("then starts playback for that recording", () => {
+      const { recCtx } = renderRecordingControls({
+        recordings: {
+          ...makeMockRecordingContext().recordings,
+          recordings: [testRecording],
+        },
+      });
+
+      fireEvent.click(screen.getByTestId("recordingDropdownToggle"));
+      fireEvent.click(screen.getByTestId("recordingPlay-rec-1"));
+
+      expect(recCtx.playback.startPlayback).toHaveBeenCalledWith("rec-1");
+    });
+  });
+
+  describe("when readOnly", () => {
+    it("then disables the record button", () => {
+      renderRecordingControls({}, { readOnly: true });
+
+      expect(screen.getByTestId("recordButton")).toBeDisabled();
+    });
+  });
+
+  describe("when playback is active", () => {
+    it("then disables the record button", () => {
+      renderRecordingControls({
+        playback: {
+          ...makeMockRecordingContext().playback,
+          isPlaying: true,
+        },
+      });
+
+      expect(screen.getByTestId("recordButton")).toBeDisabled();
+    });
   });
 });

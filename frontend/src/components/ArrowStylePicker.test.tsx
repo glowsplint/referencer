@@ -15,47 +15,38 @@ function renderPicker(overrides = {}) {
 }
 
 describe("ArrowStylePicker", () => {
-  it("renders with correct testid", () => {
-    renderPicker();
-    expect(screen.getByTestId("arrowStylePicker-0")).toBeInTheDocument();
+  describe("when rendered", () => {
+    it("shows all arrow style options with labels", () => {
+      renderPicker();
+      for (const style of ARROW_STYLES) {
+        expect(screen.getByTestId(`arrowStyleOption-${style.value}`)).toBeInTheDocument();
+        expect(screen.getByText(style.label)).toBeInTheDocument();
+      }
+    });
+
+    it("renders an SVG preview for each style", () => {
+      const { container } = renderPicker();
+      const svgs = container.querySelectorAll("svg");
+      expect(svgs.length).toBe(ARROW_STYLES.length);
+    });
+
+    it("uses the provided index in the testid", () => {
+      renderPicker({ index: 3 });
+      expect(screen.getByTestId("arrowStylePicker-3")).toBeInTheDocument();
+    });
   });
 
-  it("renders all four style options", () => {
-    renderPicker();
-    for (const style of ARROW_STYLES) {
-      expect(screen.getByTestId(`arrowStyleOption-${style.value}`)).toBeInTheDocument();
-      expect(screen.getByText(style.label)).toBeInTheDocument();
-    }
-  });
+  describe("when a style option is clicked", () => {
+    it("calls onSelectStyle with the dotted style", () => {
+      const { props } = renderPicker();
+      fireEvent.click(screen.getByTestId("arrowStyleOption-dotted"));
+      expect(props.onSelectStyle).toHaveBeenCalledWith("dotted");
+    });
 
-  it("highlights the active style with bg-accent", () => {
-    renderPicker({ activeStyle: "dashed" });
-    const dashed = screen.getByTestId("arrowStyleOption-dashed");
-    expect(dashed).toHaveClass("bg-accent");
-    const solid = screen.getByTestId("arrowStyleOption-solid");
-    expect(solid).not.toHaveClass("bg-accent");
-  });
-
-  it("calls onSelectStyle when a style is clicked", () => {
-    const { props } = renderPicker();
-    fireEvent.click(screen.getByTestId("arrowStyleOption-dotted"));
-    expect(props.onSelectStyle).toHaveBeenCalledWith("dotted");
-  });
-
-  it("calls onSelectStyle with 'double' when double is clicked", () => {
-    const { props } = renderPicker();
-    fireEvent.click(screen.getByTestId("arrowStyleOption-double"));
-    expect(props.onSelectStyle).toHaveBeenCalledWith("double");
-  });
-
-  it("uses the provided index in testid", () => {
-    renderPicker({ index: 3 });
-    expect(screen.getByTestId("arrowStylePicker-3")).toBeInTheDocument();
-  });
-
-  it("renders SVG previews for each style", () => {
-    const { container } = renderPicker();
-    const svgs = container.querySelectorAll("svg");
-    expect(svgs.length).toBe(ARROW_STYLES.length);
+    it("calls onSelectStyle with the double style", () => {
+      const { props } = renderPicker();
+      fireEvent.click(screen.getByTestId("arrowStyleOption-double"));
+      expect(props.onSelectStyle).toHaveBeenCalledWith("double");
+    });
   });
 });

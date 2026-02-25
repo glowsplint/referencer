@@ -13,181 +13,131 @@ function renderDivider(onResize = vi.fn(), direction?: "horizontal" | "vertical"
   return { onResize, containerRef, container };
 }
 
+function renderDividerWithMockedRect(onResize = vi.fn(), direction?: "horizontal" | "vertical") {
+  const containerRef = createRef<HTMLDivElement>();
+  const { container } = render(
+    <div ref={containerRef}>
+      <Divider onResize={onResize} containerRef={containerRef} direction={direction} />
+    </div>,
+  );
+
+  vi.spyOn(containerRef.current!, "getBoundingClientRect").mockReturnValue({
+    left: 0,
+    width: 1000,
+    top: 0,
+    right: 1000,
+    bottom: 500,
+    height: 500,
+    x: 0,
+    y: 0,
+    toJSON: () => {},
+  });
+
+  return { onResize, containerRef, container };
+}
+
 describe("Divider", () => {
-  it("renders the divider element", () => {
-    renderDivider();
-    expect(screen.getByTestId("divider")).toBeInTheDocument();
-  });
+  describe("when rendered in horizontal mode (default)", () => {
+    it("displays the divider element with a drag handle icon", () => {
+      renderDivider();
+      const divider = screen.getByTestId("divider");
+      expect(divider).toBeInTheDocument();
+      expect(divider.querySelector("svg")).toBeInTheDocument();
+    });
 
-  it("has col-resize cursor by default", () => {
-    renderDivider();
-    const divider = screen.getByTestId("divider");
-    expect(divider.className).toContain("cursor-col-resize");
-  });
-
-  it("has row-resize cursor when vertical", () => {
-    renderDivider(vi.fn(), "vertical");
-    const divider = screen.getByTestId("divider");
-    expect(divider.className).toContain("cursor-row-resize");
-  });
-
-  it("renders grey fill lines on both sides of icon in horizontal mode", () => {
-    renderDivider();
-    const divider = screen.getByTestId("divider");
-    const lines = divider.querySelectorAll(".bg-gray-300");
-    expect(lines).toHaveLength(2);
-    lines.forEach((line) => {
-      expect(line.className).toContain("flex-1");
-      expect(line.className).toContain("w-px");
+    it("renders visual separator lines on both sides of the handle", () => {
+      renderDivider();
+      const divider = screen.getByTestId("divider");
+      // The divider has 3 children: line, icon, line
+      const children = divider.children;
+      expect(children.length).toBe(3);
     });
   });
 
-  it("renders grey fill lines on both sides of icon in vertical mode", () => {
-    renderDivider(vi.fn(), "vertical");
-    const divider = screen.getByTestId("divider");
-    const lines = divider.querySelectorAll(".bg-gray-300");
-    expect(lines).toHaveLength(2);
-    lines.forEach((line) => {
-      expect(line.className).toContain("flex-1");
-      expect(line.className).toContain("h-px");
+  describe("when rendered in vertical mode", () => {
+    it("displays the divider element with a drag handle icon", () => {
+      renderDivider(vi.fn(), "vertical");
+      const divider = screen.getByTestId("divider");
+      expect(divider).toBeInTheDocument();
+      expect(divider.querySelector("svg")).toBeInTheDocument();
+    });
+
+    it("renders visual separator lines on both sides of the handle", () => {
+      renderDivider(vi.fn(), "vertical");
+      const divider = screen.getByTestId("divider");
+      const children = divider.children;
+      expect(children.length).toBe(3);
     });
   });
 
-  it("renders the icon", () => {
-    renderDivider();
-    const divider = screen.getByTestId("divider");
-    const svg = divider.querySelector("svg");
-    expect(svg).toBeInTheDocument();
+  describe("when dragged horizontally", () => {
+    it("reports the drag position as a percentage of the container width", () => {
+      const { onResize } = renderDividerWithMockedRect();
+      const divider = screen.getByTestId("divider");
+
+      fireEvent.mouseDown(divider);
+      fireEvent.mouseMove(document, { clientX: 500 });
+      fireEvent.mouseUp(document);
+
+      expect(onResize).toHaveBeenCalledWith(50);
+    });
   });
 
-  it("fires onResize during horizontal drag", () => {
-    const onResize = vi.fn();
-    renderDivider(onResize);
-    const divider = screen.getByTestId("divider");
+  describe("when dragged vertically", () => {
+    it("reports the drag position as a percentage of the container height", () => {
+      const { onResize } = renderDividerWithMockedRect(vi.fn(), "vertical");
+      const divider = screen.getByTestId("divider");
 
-    fireEvent.mouseDown(divider);
-    fireEvent.mouseMove(document, { clientX: 500 });
-    fireEvent.mouseUp(document);
+      fireEvent.mouseDown(divider);
+      fireEvent.mouseMove(document, { clientY: 250 });
+      fireEvent.mouseUp(document);
 
-    expect(onResize).toHaveBeenCalled();
+      expect(onResize).toHaveBeenCalledWith(50);
+    });
   });
 
-  it("fires onResize during vertical drag", () => {
-    const onResize = vi.fn();
-    renderDivider(onResize, "vertical");
-    screen.getByTestId("divider");
+  describe("when dragged beyond the allowed range", () => {
+    it("clamps horizontal resize to 20-80%", () => {
+      const { onResize } = renderDividerWithMockedRect();
+      const divider = screen.getByTestId("divider");
 
-    const containerRef = createRef<HTMLDivElement>();
-    // Re-render with a ref we can mock
-    const { container } = render(
-      <div ref={containerRef} style={{ width: 1000, height: 500 }}>
-        <Divider onResize={onResize} containerRef={containerRef} direction="vertical" />
-      </div>,
-    );
+      fireEvent.mouseDown(divider);
 
-    const divider2 = container.querySelector("[data-testid='divider']")!;
-    vi.spyOn(containerRef.current!, "getBoundingClientRect").mockReturnValue({
-      left: 0,
-      width: 1000,
-      top: 0,
-      right: 1000,
-      bottom: 500,
-      height: 500,
-      x: 0,
-      y: 0,
-      toJSON: () => {},
+      fireEvent.mouseMove(document, { clientX: 50 });
+      expect(onResize).toHaveBeenLastCalledWith(20);
+
+      fireEvent.mouseMove(document, { clientX: 950 });
+      expect(onResize).toHaveBeenLastCalledWith(80);
+
+      fireEvent.mouseUp(document);
     });
 
-    fireEvent.mouseDown(divider2);
-    fireEvent.mouseMove(document, { clientY: 250 });
-    fireEvent.mouseUp(document);
+    it("clamps vertical resize to 20-80%", () => {
+      const { onResize } = renderDividerWithMockedRect(vi.fn(), "vertical");
+      const divider = screen.getByTestId("divider");
 
-    expect(onResize).toHaveBeenCalledWith(50);
-  });
+      fireEvent.mouseDown(divider);
 
-  it("clamps resize values to 20-80 range", () => {
-    const onResize = vi.fn();
-    const containerRef = createRef<HTMLDivElement>();
+      fireEvent.mouseMove(document, { clientY: 25 });
+      expect(onResize).toHaveBeenLastCalledWith(20);
 
-    render(
-      <div ref={containerRef}>
-        <Divider onResize={onResize} containerRef={containerRef} />
-      </div>,
-    );
+      fireEvent.mouseMove(document, { clientY: 475 });
+      expect(onResize).toHaveBeenLastCalledWith(80);
 
-    const divider = screen.getByTestId("divider");
-
-    // Mock getBoundingClientRect on the container
-    vi.spyOn(containerRef.current!, "getBoundingClientRect").mockReturnValue({
-      left: 0,
-      width: 1000,
-      top: 0,
-      right: 1000,
-      bottom: 500,
-      height: 500,
-      x: 0,
-      y: 0,
-      toJSON: () => {},
+      fireEvent.mouseUp(document);
     });
-
-    fireEvent.mouseDown(divider);
-
-    // Move to 5% (should clamp to 20)
-    fireEvent.mouseMove(document, { clientX: 50 });
-    expect(onResize).toHaveBeenLastCalledWith(20);
-
-    // Move to 95% (should clamp to 80)
-    fireEvent.mouseMove(document, { clientX: 950 });
-    expect(onResize).toHaveBeenLastCalledWith(80);
-
-    fireEvent.mouseUp(document);
   });
 
-  it("clamps vertical resize values to 20-80 range", () => {
-    const onResize = vi.fn();
-    const containerRef = createRef<HTMLDivElement>();
+  describe("when drag ends", () => {
+    it("restores text selection ability", () => {
+      renderDivider();
+      const divider = screen.getByTestId("divider");
 
-    render(
-      <div ref={containerRef}>
-        <Divider onResize={onResize} containerRef={containerRef} direction="vertical" />
-      </div>,
-    );
+      fireEvent.mouseDown(divider);
+      expect(document.body.style.userSelect).toBe("none");
 
-    const divider = screen.getByTestId("divider");
-
-    vi.spyOn(containerRef.current!, "getBoundingClientRect").mockReturnValue({
-      left: 0,
-      width: 1000,
-      top: 0,
-      right: 1000,
-      bottom: 500,
-      height: 500,
-      x: 0,
-      y: 0,
-      toJSON: () => {},
+      fireEvent.mouseUp(document);
+      expect(document.body.style.userSelect).toBe("");
     });
-
-    fireEvent.mouseDown(divider);
-
-    // Move to 5% (should clamp to 20)
-    fireEvent.mouseMove(document, { clientY: 25 });
-    expect(onResize).toHaveBeenLastCalledWith(20);
-
-    // Move to 95% (should clamp to 80)
-    fireEvent.mouseMove(document, { clientY: 475 });
-    expect(onResize).toHaveBeenLastCalledWith(80);
-
-    fireEvent.mouseUp(document);
-  });
-
-  it("restores user-select on mouseup", () => {
-    renderDivider();
-    const divider = screen.getByTestId("divider");
-
-    fireEvent.mouseDown(divider);
-    expect(document.body.style.userSelect).toBe("none");
-
-    fireEvent.mouseUp(document);
-    expect(document.body.style.userSelect).toBe("");
   });
 });

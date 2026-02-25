@@ -24,58 +24,66 @@ describe("AuthContext", () => {
     vi.restoreAllMocks();
   });
 
-  it("shows loading initially then resolves to authenticated", async () => {
-    vi.mocked(fetchAuthStatus).mockResolvedValue({
-      authenticated: true,
-      user: { id: "1", email: "test@test.com", name: "Test User", avatarUrl: "" },
-    });
-
-    render(
-      <AuthProvider>
-        <AuthConsumer />
-      </AuthProvider>,
-    );
-
-    expect(screen.getByTestId("loading")).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.getByTestId("user")).toHaveTextContent("Test User");
+  describe("when used outside AuthProvider", () => {
+    it("throws an error", () => {
+      const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+      expect(() => render(<AuthConsumer />)).toThrow("useAuth must be used within AuthProvider");
+      consoleError.mockRestore();
     });
   });
 
-  it("shows anonymous when not authenticated", async () => {
-    vi.mocked(fetchAuthStatus).mockResolvedValue({
-      authenticated: false,
-    });
+  describe("when auth succeeds", () => {
+    it("transitions from loading to showing the user's name", async () => {
+      vi.mocked(fetchAuthStatus).mockResolvedValue({
+        authenticated: true,
+        user: { id: "1", email: "test@test.com", name: "Test User", avatarUrl: "" },
+      });
 
-    render(
-      <AuthProvider>
-        <AuthConsumer />
-      </AuthProvider>,
-    );
+      render(
+        <AuthProvider>
+          <AuthConsumer />
+        </AuthProvider>,
+      );
 
-    await waitFor(() => {
-      expect(screen.getByTestId("anonymous")).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByTestId("loading")).toBeInTheDocument();
 
-  it("shows anonymous when fetch fails", async () => {
-    vi.mocked(fetchAuthStatus).mockRejectedValue(new Error("Network error"));
-
-    render(
-      <AuthProvider>
-        <AuthConsumer />
-      </AuthProvider>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("anonymous")).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId("user")).toHaveTextContent("Test User");
+      });
     });
   });
 
-  it("throws when useAuth is used outside AuthProvider", () => {
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
-    expect(() => render(<AuthConsumer />)).toThrow("useAuth must be used within AuthProvider");
-    consoleError.mockRestore();
+  describe("when user is not authenticated", () => {
+    it("shows the anonymous state", async () => {
+      vi.mocked(fetchAuthStatus).mockResolvedValue({
+        authenticated: false,
+      });
+
+      render(
+        <AuthProvider>
+          <AuthConsumer />
+        </AuthProvider>,
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("anonymous")).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("when auth check fails with a network error", () => {
+    it("falls back to the anonymous state", async () => {
+      vi.mocked(fetchAuthStatus).mockRejectedValue(new Error("Network error"));
+
+      render(
+        <AuthProvider>
+          <AuthConsumer />
+        </AuthProvider>,
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("anonymous")).toBeInTheDocument();
+      });
+    });
   });
 });
