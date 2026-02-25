@@ -5,6 +5,8 @@ import {
   createFolder as createApi,
   renameFolder as renameApi,
   deleteFolder as deleteApi,
+  toggleFolderFavorite as toggleFavoriteApi,
+  moveFolderToFolder as moveFolderApi,
   type FolderItem,
 } from "@/lib/folder-client";
 
@@ -44,7 +46,7 @@ export function useFolders() {
   const create = useCallback(
     (id: string, parentId: string | null, name: string) => {
       const now = new Date().toISOString();
-      setFolders((prev) => [...prev, { id, parentId, name, createdAt: now, updatedAt: now }]);
+      setFolders((prev) => [...prev, { id, parentId, name, isFavorite: false, createdAt: now, updatedAt: now }]);
       createApi(id, parentId, name).catch(() => {
         toast.error("Failed to create folder");
         silentRefetch();
@@ -77,6 +79,32 @@ export function useFolders() {
     [silentRefetch],
   );
 
+  const toggleFavorite = useCallback(
+    (id: string, isFavorite: boolean) => {
+      setFolders((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, isFavorite, updatedAt: new Date().toISOString() } : f)),
+      );
+      toggleFavoriteApi(id, isFavorite).catch(() => {
+        toast.error("Failed to update folder favorite");
+        silentRefetch();
+      });
+    },
+    [silentRefetch],
+  );
+
+  const moveFolder = useCallback(
+    (folderId: string, parentId: string | null) => {
+      setFolders((prev) =>
+        prev.map((f) => (f.id === folderId ? { ...f, parentId, updatedAt: new Date().toISOString() } : f)),
+      );
+      moveFolderApi(folderId, parentId).catch(() => {
+        toast.error("Failed to move folder");
+        silentRefetch();
+      });
+    },
+    [silentRefetch],
+  );
+
   return {
     folders,
     isLoading,
@@ -85,5 +113,7 @@ export function useFolders() {
     create,
     rename,
     remove,
+    toggleFavorite,
+    moveFolder,
   };
 }

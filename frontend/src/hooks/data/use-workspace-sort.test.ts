@@ -126,4 +126,18 @@ describe("useWorkspaceSort", () => {
     // ws-5 is favorited so it should appear in favorites regardless of folderId
     expect(result.current.favorites.find((ws) => ws.workspaceId === "ws-5")).toBeDefined();
   });
+
+  it("returns a compare function", () => {
+    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    expect(typeof result.current.compare).toBe("function");
+  });
+
+  it("compare sorts by the current sort field", () => {
+    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    // Default is updatedAt desc
+    const a = mockWorkspaces[0]; // updatedAt: 2026-01-03
+    const b = mockWorkspaces[1]; // updatedAt: 2026-01-01
+    // desc => newer first => a should come before b => compare(a, b) < 0
+    expect(result.current.compare(a, b)).toBeLessThan(0);
+  });
 });

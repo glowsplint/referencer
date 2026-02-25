@@ -2,17 +2,17 @@ import { useCallback } from "react";
 import { Folder, ChevronRight, ChevronDown, Star } from "lucide-react";
 import { useFolderCollapse } from "@/hooks/ui/use-folder-collapse";
 import { useDndContext } from "@/contexts/DndContext";
-import { useDropTarget, type DragData } from "@/hooks/ui/use-hub-dnd";
+import { useDraggable, useDropTarget, type DragData } from "@/hooks/ui/use-hub-dnd";
 import { getWorkspacesForFolder, canMoveFolderTo } from "@/lib/folder-tree";
 import type { FolderNode } from "@/lib/folder-tree";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { InlineNameInput } from "./InlineNameInput";
 import { FolderDropdownMenu } from "./FolderDropdownMenu";
-import { WorkspaceCard } from "./WorkspaceCard";
+import { FolderSection } from "./FolderSection";
 import { WorkspaceListItem } from "./WorkspaceListItem";
 
-interface FolderSectionProps {
+interface FolderListItemProps {
   node: FolderNode;
   workspaces: WorkspaceItem[];
   folders: FolderItem[];
@@ -36,7 +36,7 @@ interface FolderSectionProps {
   ownerAvatarUrl?: string;
 }
 
-export function FolderSection({
+export function FolderListItem({
   node,
   workspaces,
   folders,
@@ -58,13 +58,14 @@ export function FolderSection({
   onMoveFolder,
   ownerName,
   ownerAvatarUrl,
-}: FolderSectionProps) {
+}: FolderListItemProps) {
   const { isCollapsed, toggleCollapsed } = useFolderCollapse(node.folder.id);
-  const { overTargetId } = useDndContext();
+  const { dragId, overTargetId } = useDndContext();
   const folderWorkspaces = getWorkspacesForFolder(workspaces, node.folder.id);
   const isRenaming = renamingFolderId === node.folder.id;
   const isCreatingSubfolder = creatingSubfolderId === node.folder.id;
-  const isOver = overTargetId === node.folder.id;
+
+  const dragRef = useDraggable("folder", node.folder.id);
 
   const handleDrop = useCallback(
     (data: DragData) => {
@@ -92,12 +93,22 @@ export function FolderSection({
 
   const dropRef = useDropTarget(node.folder.id, handleDrop, handleCanDrop);
 
+  const combinedRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      (dragRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      (dropRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+    },
+    [dragRef, dropRef],
+  );
+
+  const isDragging = dragId === node.folder.id;
+  const isOver = overTargetId === node.folder.id;
+
   return (
-    <div className={node.depth > 0 ? "pl-6" : ""} data-testid={`folderSection-${node.folder.id}`}>
-      {/* Folder header */}
+    <div data-testid={`folderListItem-${node.folder.id}`}>
       <div
-        ref={dropRef}
-        className={`group/folder flex items-center gap-1.5 py-2 px-1 rounded-md hover:bg-accent/30 cursor-pointer transition-colors ${isOver ? "ring-2 ring-primary bg-primary/5" : ""}`}
+        ref={combinedRef}
+        className={`group/folder flex items-center px-4 py-3 rounded-md hover:bg-accent/30 transition-colors cursor-pointer ${isDragging ? "opacity-50" : ""} ${isOver ? "ring-2 ring-primary bg-primary/5" : ""}`}
         onClick={toggleCollapsed}
       >
         <button
@@ -114,26 +125,28 @@ export function FolderSection({
             className={node.folder.isFavorite ? "text-yellow-500" : "text-muted-foreground"}
           />
         </button>
-        <button className="p-0.5 shrink-0">
+        <button className="p-0.5 shrink-0 ml-1">
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
         </button>
-        <Folder size={14} className="text-muted-foreground shrink-0" />
+        <Folder size={14} className="text-muted-foreground shrink-0 ml-1" />
         {isRenaming ? (
-          <InlineNameInput
-            defaultValue={node.folder.name}
-            onSave={(name) => {
-              onRenameFolder(node.folder.id, name);
-              onSetRenamingFolder(null);
-            }}
-            onCancel={() => onSetRenamingFolder(null)}
-          />
+          <div className="flex-1 ml-1.5" onClick={(e) => e.stopPropagation()}>
+            <InlineNameInput
+              defaultValue={node.folder.name}
+              onSave={(name) => {
+                onRenameFolder(node.folder.id, name);
+                onSetRenamingFolder(null);
+              }}
+              onCancel={() => onSetRenamingFolder(null)}
+            />
+          </div>
         ) : (
-          <span className="text-sm font-medium truncate">{node.folder.name}</span>
+          <span className="font-medium text-sm truncate flex-1 ml-1.5">{node.folder.name}</span>
         )}
-        <span className="text-xs text-muted-foreground ml-1 shrink-0">
-          {folderWorkspaces.length}
+        <span className="text-xs text-muted-foreground mr-2 shrink-0">
+          {folderWorkspaces.length} items
         </span>
-        <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
+        <div onClick={(e) => e.stopPropagation()}>
           <FolderDropdownMenu
             depth={node.depth}
             onRename={() => onSetRenamingFolder(node.folder.id)}
@@ -143,12 +156,11 @@ export function FolderSection({
         </div>
       </div>
 
-      {/* Folder contents */}
+      {/* Expanded children */}
       {!isCollapsed && (
-        <div className="ml-2">
-          {/* Inline input for new subfolder */}
+        <div className="ml-6">
           {isCreatingSubfolder && (
-            <div className="pl-6 py-1 flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 py-2 px-1 mb-1">
               <Folder size={14} className="text-muted-foreground shrink-0" />
               <InlineNameInput
                 onSave={(name) => {
@@ -160,7 +172,6 @@ export function FolderSection({
             </div>
           )}
 
-          {/* Child folders */}
           {node.children.map((child) => (
             <FolderSection
               key={child.folder.id}
@@ -188,45 +199,25 @@ export function FolderSection({
             />
           ))}
 
-          {/* Workspaces inside this folder */}
-          {folderWorkspaces.length > 0 &&
-            (viewMode === "grid" ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-6 py-2">
-                {folderWorkspaces.map((ws) => (
-                  <WorkspaceCard
-                    key={ws.workspaceId}
-                    workspace={ws}
-                    onOpen={() => onOpenWorkspace(ws.workspaceId)}
-                    onRename={() => onRenameWorkspace(ws)}
-                    onDuplicate={() => onDuplicateWorkspace(ws.workspaceId)}
-                    onDelete={() => onDeleteWorkspace(ws)}
-                    onToggleFavorite={onToggleFavorite}
-                    folders={folders}
-                    onMoveToFolder={onMoveToFolder}
-                    ownerName={ownerName}
-                    ownerAvatarUrl={ownerAvatarUrl}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1 pl-6 py-1">
-                {folderWorkspaces.map((ws) => (
-                  <WorkspaceListItem
-                    key={ws.workspaceId}
-                    workspace={ws}
-                    onOpen={() => onOpenWorkspace(ws.workspaceId)}
-                    onRename={() => onRenameWorkspace(ws)}
-                    onDuplicate={() => onDuplicateWorkspace(ws.workspaceId)}
-                    onDelete={() => onDeleteWorkspace(ws)}
-                    onToggleFavorite={onToggleFavorite}
-                    folders={folders}
-                    onMoveToFolder={onMoveToFolder}
-                    ownerName={ownerName}
-                    ownerAvatarUrl={ownerAvatarUrl}
-                  />
-                ))}
-              </div>
-            ))}
+          {folderWorkspaces.length > 0 && (
+            <div className="flex flex-col gap-1 py-1">
+              {folderWorkspaces.map((ws) => (
+                <WorkspaceListItem
+                  key={ws.workspaceId}
+                  workspace={ws}
+                  onOpen={() => onOpenWorkspace(ws.workspaceId)}
+                  onRename={() => onRenameWorkspace(ws)}
+                  onDuplicate={() => onDuplicateWorkspace(ws.workspaceId)}
+                  onDelete={() => onDeleteWorkspace(ws)}
+                  onToggleFavorite={onToggleFavorite}
+                  folders={folders}
+                  onMoveToFolder={onMoveToFolder}
+                  ownerName={ownerName}
+                  ownerAvatarUrl={ownerAvatarUrl}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -1,6 +1,8 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2, Star } from "lucide-react";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
+import { useDraggable } from "@/hooks/ui/use-hub-dnd";
+import { useDndContext } from "@/contexts/DndContext";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { MoveToFolderMenu } from "./MoveToFolderMenu";
@@ -30,9 +32,14 @@ export function WorkspaceCard({
   ownerName,
   ownerAvatarUrl,
 }: WorkspaceCardProps) {
+  const dragRef = useDraggable("workspace", workspace.workspaceId);
+  const { dragId } = useDndContext();
+  const isDragging = dragId === workspace.workspaceId;
+
   return (
     <div
-      className="group relative flex flex-col p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer"
+      ref={dragRef}
+      className={`group relative flex flex-col p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer ${isDragging ? "opacity-50" : ""}`}
       onClick={onOpen}
       data-testid={`workspaceCard-${workspace.workspaceId}`}
     >

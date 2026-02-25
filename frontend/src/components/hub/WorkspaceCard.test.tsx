@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkspaceCard } from "./WorkspaceCard";
+import { DndProvider } from "@/contexts/DndContext";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
 vi.mock("@/lib/annotation/format-relative-time", () => ({
@@ -14,6 +15,7 @@ const workspace: WorkspaceItem = {
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-02T00:00:00Z",
   isFavorite: false,
+  folderId: null,
 };
 
 describe("WorkspaceCard", () => {
@@ -31,18 +33,20 @@ describe("WorkspaceCard", () => {
     onToggleFavorite = vi.fn();
   });
 
-  function renderCard() {
+  function renderCard(overrides?: Partial<WorkspaceItem>) {
     return render(
-      <WorkspaceCard
-        workspace={workspace}
-        onOpen={onOpen}
-        onRename={onRename}
-        onDuplicate={onDuplicate}
-        onDelete={onDelete}
-        onToggleFavorite={onToggleFavorite}
-        ownerName="Test User"
-        ownerAvatarUrl="https://example.com/avatar.jpg"
-      />,
+      <DndProvider>
+        <WorkspaceCard
+          workspace={{ ...workspace, ...overrides }}
+          onOpen={onOpen}
+          onRename={onRename}
+          onDuplicate={onDuplicate}
+          onDelete={onDelete}
+          onToggleFavorite={onToggleFavorite}
+          ownerName="Test User"
+          ownerAvatarUrl="https://example.com/avatar.jpg"
+        />
+      </DndProvider>,
     );
   }
 
@@ -157,13 +161,15 @@ describe("WorkspaceCard", () => {
 
   it("renders 'Untitled' when workspace title is empty", () => {
     render(
-      <WorkspaceCard
-        workspace={{ ...workspace, title: "" }}
-        onOpen={onOpen}
-        onRename={onRename}
-        onDuplicate={onDuplicate}
-        onDelete={onDelete}
-      />,
+      <DndProvider>
+        <WorkspaceCard
+          workspace={{ ...workspace, title: "" }}
+          onOpen={onOpen}
+          onRename={onRename}
+          onDuplicate={onDuplicate}
+          onDelete={onDelete}
+        />
+      </DndProvider>,
     );
     expect(screen.getByText("Untitled")).toBeInTheDocument();
   });

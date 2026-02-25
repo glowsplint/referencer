@@ -63,5 +63,5 @@ export function useWorkspaceSort(workspaces: WorkspaceItem[]) {
     [workspaces, compare],
   );
 
-  return { favorites, others, sortConfig, setSort };
+  return { favorites, others, sortConfig, setSort, compare };
 }

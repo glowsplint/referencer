@@ -34,4 +34,5 @@ export interface WorkspaceFolder {
   name: string;
   createdAt: string;
   updatedAt: string;
+  isFavorite: boolean;
 }

@@ -7,6 +7,8 @@ import {
   deleteFolder,
   moveWorkspaceToFolder,
   unfileWorkspace,
+  toggleFavoriteFolder,
+  moveFolderToFolder,
 } from "../db/folder-queries";
 
 const folders = new Hono<Env>();
@@ -47,6 +49,46 @@ folders.post("/", async (c) => {
     console.error("POST /api/folders error:", err);
     const message = err instanceof Error ? err.message : String(err);
     const status = message.includes("depth limit") ? 400 : 500;
+    return c.json({ error: message }, status);
+  }
+});
+
+// PATCH /:id/favorite - toggle folder favorite
+folders.patch("/:id/favorite", async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+
+  try {
+    const folderId = c.req.param("id");
+    const body = await c.req.json<{ isFavorite: boolean }>();
+    if (typeof body.isFavorite !== "boolean") {
+      return c.json({ error: "isFavorite is required" }, 400);
+    }
+
+    const supabase = c.get("supabase");
+    await toggleFavoriteFolder(supabase, user.id, folderId, body.isFavorite);
+    return c.json({ ok: true });
+  } catch (err) {
+    console.error("PATCH /api/folders/:id/favorite error:", err);
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+  }
+});
+
+// PATCH /:id/move - move folder to new parent
+folders.patch("/:id/move", async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+
+  try {
+    const folderId = c.req.param("id");
+    const body = await c.req.json<{ parentId: string | null }>();
+    const supabase = c.get("supabase");
+    await moveFolderToFolder(supabase, user.id, folderId, body.parentId);
+    return c.json({ ok: true });
+  } catch (err) {
+    console.error("PATCH /api/folders/:id/move error:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    const status = message.includes("depth limit") || message.includes("cycle") || message.includes("Cannot move") ? 400 : 500;
     return c.json({ error: message }, status);
   }
 });

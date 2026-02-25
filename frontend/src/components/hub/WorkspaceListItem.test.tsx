@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkspaceListItem } from "./WorkspaceListItem";
+import { DndProvider } from "@/contexts/DndContext";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
 vi.mock("@/lib/annotation/format-relative-time", () => ({
@@ -14,6 +15,7 @@ const workspace: WorkspaceItem = {
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-03T00:00:00Z",
   isFavorite: false,
+  folderId: null,
 };
 
 describe("WorkspaceListItem", () => {
@@ -33,16 +35,18 @@ describe("WorkspaceListItem", () => {
 
   function renderListItem() {
     return render(
-      <WorkspaceListItem
-        workspace={workspace}
-        onOpen={onOpen}
-        onRename={onRename}
-        onDuplicate={onDuplicate}
-        onDelete={onDelete}
-        onToggleFavorite={onToggleFavorite}
-        ownerName="Test User"
-        ownerAvatarUrl="https://example.com/avatar.jpg"
-      />,
+      <DndProvider>
+        <WorkspaceListItem
+          workspace={workspace}
+          onOpen={onOpen}
+          onRename={onRename}
+          onDuplicate={onDuplicate}
+          onDelete={onDelete}
+          onToggleFavorite={onToggleFavorite}
+          ownerName="Test User"
+          ownerAvatarUrl="https://example.com/avatar.jpg"
+        />
+      </DndProvider>,
     );
   }
 
@@ -158,13 +162,15 @@ describe("WorkspaceListItem", () => {
 
   it("renders 'Untitled' when workspace title is empty", () => {
     render(
-      <WorkspaceListItem
-        workspace={{ ...workspace, title: "" }}
-        onOpen={onOpen}
-        onRename={onRename}
-        onDuplicate={onDuplicate}
-        onDelete={onDelete}
-      />,
+      <DndProvider>
+        <WorkspaceListItem
+          workspace={{ ...workspace, title: "" }}
+          onOpen={onOpen}
+          onRename={onRename}
+          onDuplicate={onDuplicate}
+          onDelete={onDelete}
+        />
+      </DndProvider>,
     );
     expect(screen.getByText("Untitled")).toBeInTheDocument();
   });
