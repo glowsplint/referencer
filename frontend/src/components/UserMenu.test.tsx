@@ -26,32 +26,38 @@ describe("UserMenu", () => {
     mockLogout.mockClear();
   });
 
-  it("renders user avatar with initial", () => {
-    render(<UserMenu />);
-    const button = screen.getByTestId("userMenuButton");
-    expect(button).toBeInTheDocument();
-    expect(button).toHaveTextContent("T");
+  describe("when authenticated", () => {
+    it("shows the user avatar with the first initial", () => {
+      render(<UserMenu />);
+      const button = screen.getByTestId("userMenuButton");
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveTextContent("T");
+    });
   });
 
-  it("shows dropdown with name, email, and sign out on click", async () => {
-    const user = userEvent.setup();
-    render(<UserMenu />);
+  describe("when avatar is clicked", () => {
+    it("shows user name, email, and sign out option", async () => {
+      const user = userEvent.setup();
+      render(<UserMenu />);
 
-    await user.click(screen.getByTestId("userMenuButton"));
+      await user.click(screen.getByTestId("userMenuButton"));
 
-    expect(await screen.findByTestId("userMenuDropdown")).toBeInTheDocument();
-    expect(screen.getByText("Test User")).toBeInTheDocument();
-    expect(screen.getByText("test@example.com")).toBeInTheDocument();
-    expect(screen.getByTestId("signOutButton")).toHaveTextContent("Sign out");
+      expect(await screen.findByTestId("userMenuDropdown")).toBeInTheDocument();
+      expect(screen.getByText("Test User")).toBeInTheDocument();
+      expect(screen.getByText("test@example.com")).toBeInTheDocument();
+      expect(screen.getByTestId("signOutButton")).toHaveTextContent("Sign out");
+    });
   });
 
-  it("calls logout when sign out is clicked", async () => {
-    const user = userEvent.setup();
-    render(<UserMenu />);
+  describe("when sign out is clicked", () => {
+    it("calls the logout function", async () => {
+      const user = userEvent.setup();
+      render(<UserMenu />);
 
-    await user.click(screen.getByTestId("userMenuButton"));
-    await user.click(screen.getByTestId("signOutButton"));
+      await user.click(screen.getByTestId("userMenuButton"));
+      await user.click(screen.getByTestId("signOutButton"));
 
-    expect(mockLogout).toHaveBeenCalled();
+      expect(mockLogout).toHaveBeenCalled();
+    });
   });
 });

@@ -76,10 +76,12 @@ CREATE TABLE workspace_folder (
     parent_id TEXT REFERENCES workspace_folder(id) ON DELETE CASCADE,
     name TEXT NOT NULL DEFAULT 'New Folder',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    is_favorite BOOLEAN NOT NULL DEFAULT FALSE
 );
 CREATE INDEX idx_workspace_folder_user_id ON workspace_folder(user_id);
 CREATE INDEX idx_workspace_folder_parent_id ON workspace_folder(parent_id);
+CREATE INDEX idx_workspace_folder_favorite ON workspace_folder(user_id, is_favorite DESC, name);
 
 CREATE TABLE user_workspace (
     user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,

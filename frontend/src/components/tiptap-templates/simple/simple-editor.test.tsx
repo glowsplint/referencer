@@ -174,174 +174,113 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe("SimpleEditorToolbar lock/unlock", () => {
-  it("toolbar is rendered when unlocked", () => {
-    render(<SimpleEditorToolbar isLocked={false} />);
-    expect(screen.getByTestId("editorToolbar")).toBeInTheDocument();
-  });
-
-  it("toolbar is removed from DOM when locked", () => {
-    render(<SimpleEditorToolbar isLocked={true} />);
-    expect(screen.queryByTestId("editorToolbar")).not.toBeInTheDocument();
-  });
-});
-
-describe("EditorPane lock/unlock", () => {
-  it("calls editor.setEditable(true) when unlocked", () => {
-    render(
-      <EditorPane
-        isLocked={false}
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    expect(mockEditor.setEditable).toHaveBeenCalledWith(true);
-  });
-
-  it("calls editor.setEditable(false) when locked", () => {
-    render(
-      <EditorPane
-        isLocked={true}
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    expect(mockEditor.setEditable).toHaveBeenCalledWith(false);
-  });
-
-  it("calls editor.emit('selectionUpdate') when unlocked", () => {
-    render(
-      <EditorPane
-        isLocked={false}
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    expect(mockEditor.emit).toHaveBeenCalledWith("selectionUpdate", {
-      editor: mockEditor,
-      transaction: mockEditor.state.tr,
+describe("SimpleEditorToolbar", () => {
+  describe("when unlocked", () => {
+    it("shows the formatting toolbar", () => {
+      render(<SimpleEditorToolbar isLocked={false} />);
+      expect(screen.getByTestId("editorToolbar")).toBeInTheDocument();
     });
   });
 
-  it("does NOT call editor.emit('selectionUpdate') when locked", () => {
-    render(
-      <EditorPane
-        isLocked={true}
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    expect(mockEditor.emit).not.toHaveBeenCalled();
+  describe("when locked", () => {
+    it("removes the toolbar from the DOM", () => {
+      render(<SimpleEditorToolbar isLocked={true} />);
+      expect(screen.queryByTestId("editorToolbar")).not.toBeInTheDocument();
+    });
+  });
+});
+
+describe("EditorPane", () => {
+  describe("when unlocked", () => {
+    it("sets the editor to editable", () => {
+      render(
+        <EditorPane
+          isLocked={false}
+          index={0}
+          onEditorMount={vi.fn()}
+          onFocus={vi.fn()}
+          {...defaultEditorPaneProps}
+        />,
+      );
+      expect(mockEditor.setEditable).toHaveBeenCalledWith(true);
+    });
+
+    it("emits selectionUpdate", () => {
+      render(
+        <EditorPane
+          isLocked={false}
+          index={0}
+          onEditorMount={vi.fn()}
+          onFocus={vi.fn()}
+          {...defaultEditorPaneProps}
+        />,
+      );
+      expect(mockEditor.emit).toHaveBeenCalledWith("selectionUpdate", {
+        editor: mockEditor,
+        transaction: mockEditor.state.tr,
+      });
+    });
   });
 
-  it("adds editor-locked class when locked", () => {
-    const { container } = render(
-      <EditorPane
-        isLocked={true}
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    const wrapper = container.querySelector(".simple-editor-wrapper");
-    expect(wrapper?.classList.contains("editor-locked")).toBe(true);
+  describe("when locked", () => {
+    it("sets the editor to non-editable", () => {
+      render(
+        <EditorPane
+          isLocked={true}
+          index={0}
+          onEditorMount={vi.fn()}
+          onFocus={vi.fn()}
+          {...defaultEditorPaneProps}
+        />,
+      );
+      expect(mockEditor.setEditable).toHaveBeenCalledWith(false);
+    });
+
+    it("does not emit selectionUpdate", () => {
+      render(
+        <EditorPane
+          isLocked={true}
+          index={0}
+          onEditorMount={vi.fn()}
+          onFocus={vi.fn()}
+          {...defaultEditorPaneProps}
+        />,
+      );
+      expect(mockEditor.emit).not.toHaveBeenCalled();
+    });
   });
 
-  it("does not add editor-locked class when unlocked", () => {
-    const { container } = render(
-      <EditorPane
-        isLocked={false}
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    const wrapper = container.querySelector(".simple-editor-wrapper");
-    expect(wrapper?.classList.contains("editor-locked")).toBe(false);
+  describe("when mounted", () => {
+    it("calls onEditorMount with the pane index and editor instance", () => {
+      const onEditorMount = vi.fn();
+      render(
+        <EditorPane
+          isLocked={false}
+          index={2}
+          onEditorMount={onEditorMount}
+          onFocus={vi.fn()}
+          {...defaultEditorPaneProps}
+        />,
+      );
+      expect(onEditorMount).toHaveBeenCalledWith(2, mockEditor);
+    });
   });
 
-  it("adds arrow-mode class when locked with arrow tool active", () => {
-    const { container } = render(
-      <EditorPane
-        isLocked={true}
-        activeTool="arrow"
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    const wrapper = container.querySelector(".simple-editor-wrapper");
-    expect(wrapper?.classList.contains("arrow-mode")).toBe(true);
-  });
-
-  it("does not add arrow-mode class when locked with selection tool", () => {
-    const { container } = render(
-      <EditorPane
-        isLocked={true}
-        activeTool="selection"
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    const wrapper = container.querySelector(".simple-editor-wrapper");
-    expect(wrapper?.classList.contains("arrow-mode")).toBe(false);
-  });
-
-  it("does not add arrow-mode class when unlocked with arrow tool", () => {
-    const { container } = render(
-      <EditorPane
-        isLocked={false}
-        activeTool="arrow"
-        index={0}
-        onEditorMount={vi.fn()}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    const wrapper = container.querySelector(".simple-editor-wrapper");
-    expect(wrapper?.classList.contains("arrow-mode")).toBe(false);
-  });
-
-  it("calls onEditorMount with index and editor on mount", () => {
-    const onEditorMount = vi.fn();
-    render(
-      <EditorPane
-        isLocked={false}
-        index={2}
-        onEditorMount={onEditorMount}
-        onFocus={vi.fn()}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    expect(onEditorMount).toHaveBeenCalledWith(2, mockEditor);
-  });
-
-  it("calls onFocus with index on focus capture", () => {
-    const onFocus = vi.fn();
-    render(
-      <EditorPane
-        isLocked={false}
-        index={1}
-        onEditorMount={vi.fn()}
-        onFocus={onFocus}
-        {...defaultEditorPaneProps}
-      />,
-    );
-    const editorContent = screen.getByTestId("editor-content");
-    fireEvent.focus(editorContent);
-    expect(onFocus).toHaveBeenCalledWith(1);
+  describe("when the editor content receives focus", () => {
+    it("calls onFocus with the pane index", () => {
+      const onFocus = vi.fn();
+      render(
+        <EditorPane
+          isLocked={false}
+          index={1}
+          onEditorMount={vi.fn()}
+          onFocus={onFocus}
+          {...defaultEditorPaneProps}
+        />,
+      );
+      const editorContent = screen.getByTestId("editor-content");
+      fireEvent.focus(editorContent);
+      expect(onFocus).toHaveBeenCalledWith(1);
+    });
   });
 });

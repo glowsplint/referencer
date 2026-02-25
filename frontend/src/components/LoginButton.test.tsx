@@ -20,39 +20,47 @@ describe("LoginButton", () => {
     mockLogin.mockClear();
   });
 
-  it("renders the login button", () => {
-    render(<LoginButton />);
-    expect(screen.getByTestId("loginButton")).toBeInTheDocument();
+  describe("when rendered", () => {
+    it("shows the login button", () => {
+      render(<LoginButton />);
+      expect(screen.getByTestId("loginButton")).toBeInTheDocument();
+    });
   });
 
-  it("shows popover with provider buttons when clicked", async () => {
-    const user = userEvent.setup();
-    render(<LoginButton />);
+  describe("when the login button is clicked", () => {
+    it("shows the provider popover with Google and GitHub options", async () => {
+      const user = userEvent.setup();
+      render(<LoginButton />);
 
-    await user.click(screen.getByTestId("loginButton"));
+      await user.click(screen.getByTestId("loginButton"));
 
-    expect(await screen.findByTestId("loginPopover")).toBeInTheDocument();
-    expect(screen.getByTestId("login-google")).toHaveTextContent("Sign in with Google");
-    expect(screen.getByTestId("login-github")).toHaveTextContent("Sign in with GitHub");
+      expect(await screen.findByTestId("loginPopover")).toBeInTheDocument();
+      expect(screen.getByTestId("login-google")).toHaveTextContent("Sign in with Google");
+      expect(screen.getByTestId("login-github")).toHaveTextContent("Sign in with GitHub");
+    });
   });
 
-  it("calls login with correct provider on click", async () => {
-    const user = userEvent.setup();
-    render(<LoginButton />);
+  describe("when Google provider is clicked", () => {
+    it("initiates Google login", async () => {
+      const user = userEvent.setup();
+      render(<LoginButton />);
 
-    await user.click(screen.getByTestId("loginButton"));
-    await user.click(screen.getByTestId("login-google"));
+      await user.click(screen.getByTestId("loginButton"));
+      await user.click(screen.getByTestId("login-google"));
 
-    expect(mockLogin).toHaveBeenCalledWith("google");
+      expect(mockLogin).toHaveBeenCalledWith("google");
+    });
   });
 
-  it("calls login with github provider on click", async () => {
-    const user = userEvent.setup();
-    render(<LoginButton />);
+  describe("when GitHub provider is clicked", () => {
+    it("initiates GitHub login", async () => {
+      const user = userEvent.setup();
+      render(<LoginButton />);
 
-    await user.click(screen.getByTestId("loginButton"));
-    await user.click(screen.getByTestId("login-github"));
+      await user.click(screen.getByTestId("loginButton"));
+      await user.click(screen.getByTestId("login-github"));
 
-    expect(mockLogin).toHaveBeenCalledWith("github");
+      expect(mockLogin).toHaveBeenCalledWith("github");
+    });
   });
 });

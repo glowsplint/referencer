@@ -29,6 +29,8 @@ export function HubPage({ navigate }: HubPageProps) {
     create: createFolder,
     rename: renameFolder,
     remove: removeFolder,
+    toggleFavorite: toggleFolderFavorite,
+    moveFolder,
   } = useFolders();
 
   const handleTryWithoutSignIn = () => {
@@ -98,6 +100,8 @@ export function HubPage({ navigate }: HubPageProps) {
               onDeleteFolder={removeFolder}
               onMoveWorkspaceToFolder={moveToFolder}
               onUnfileWorkspace={unfileWorkspace}
+              onToggleFolderFavorite={toggleFolderFavorite}
+              onMoveFolder={moveFolder}
               ownerName={user?.name}
               ownerAvatarUrl={user?.avatarUrl}
             />

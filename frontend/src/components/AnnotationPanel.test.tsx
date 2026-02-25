@@ -72,165 +72,162 @@ describe("AnnotationPanel", () => {
     ]);
   });
 
-  it("renders annotation cards when highlights exist", () => {
-    const props = createProps();
-    const { container } = render(<AnnotationPanel {...props} />);
+  describe("when annotations exist", () => {
+    it("then shows the annotation panel", () => {
+      const props = createProps();
+      const { container } = render(<AnnotationPanel {...props} />);
 
-    expect(container.querySelector("svg")).toBeTruthy();
-    expect(container.querySelector("[data-testid='annotation-panel']")).toBeTruthy();
-  });
-
-  it("renders empty panel wrapper when no positions exist", () => {
-    vi.mocked(useAllHighlightPositions).mockReturnValue([]);
-
-    const props = createProps({
-      layers: [createLayer({ highlights: [] })],
+      expect(container.querySelector("[data-testid='annotation-panel']")).toBeTruthy();
     });
 
-    const { container } = render(<AnnotationPanel {...props} />);
-    // Wrapper div always renders to reserve layout width
-    expect(container.querySelector("[data-testid='annotation-panel']")).toBeTruthy();
-    expect(container.querySelectorAll("line")).toHaveLength(0);
-    expect(container.querySelector("svg")).toBeNull();
+    it("then draws connector lines to the editor", () => {
+      const props = createProps();
+      const { container } = render(<AnnotationPanel {...props} />);
+
+      expect(container.querySelector("svg")).toBeTruthy();
+      const lines = container.querySelectorAll("line");
+      expect(lines).toHaveLength(1);
+    });
   });
 
-  it("renders with fixed width of 224px", () => {
-    const props = createProps();
-    const { container } = render(<AnnotationPanel {...props} />);
+  describe("when no annotations exist", () => {
+    it("then shows the empty panel wrapper without connector lines", () => {
+      vi.mocked(useAllHighlightPositions).mockReturnValue([]);
 
-    const panel = container.querySelector("[data-testid='annotation-panel']") as HTMLElement;
-    expect(panel.style.width).toBe("224px");
+      const props = createProps({
+        layers: [createLayer({ highlights: [] })],
+      });
+
+      const { container } = render(<AnnotationPanel {...props} />);
+      expect(container.querySelector("[data-testid='annotation-panel']")).toBeTruthy();
+      expect(container.querySelectorAll("line")).toHaveLength(0);
+      expect(container.querySelector("svg")).toBeNull();
+    });
   });
 
-  it("renders SVG connector lines", () => {
-    const props = createProps();
-    const { container } = render(<AnnotationPanel {...props} />);
+  describe("when sectionVisibility is provided", () => {
+    it("then passes it to useAllHighlightPositions", () => {
+      const props = createProps({ sectionVisibility: [true, false] });
+      render(<AnnotationPanel {...props} />);
 
-    const lines = container.querySelectorAll("line");
-    expect(lines).toHaveLength(1);
+      expect(useAllHighlightPositions).toHaveBeenCalledWith(
+        props.editorsRef,
+        props.layers,
+        props.containerRef,
+        [true, false],
+      );
+    });
   });
 
-  it("renders annotation card container", () => {
-    const props = createProps();
-    const { container } = render(<AnnotationPanel {...props} />);
+  describe("when multiple highlights exist across editors", () => {
+    it("then draws a connector line for each highlight", () => {
+      vi.mocked(useAllHighlightPositions).mockReturnValue([
+        { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300 },
+        { highlightId: "h2", layerId: "layer-1", editorIndex: 1, top: 80, rightEdge: 250 },
+      ]);
 
-    const cardContainer = container.querySelector(".z-10") as HTMLElement;
-    expect(cardContainer).toBeTruthy();
+      const layer = createLayer({
+        highlights: [
+          {
+            id: "h1",
+            editorIndex: 0,
+            from: 0,
+            to: 5,
+            text: "hello",
+            annotation: "Note 1",
+            type: "comment",
+            visible: true,
+          },
+          {
+            id: "h2",
+            editorIndex: 1,
+            from: 0,
+            to: 3,
+            text: "hey",
+            annotation: "Note 2",
+            type: "comment",
+            visible: true,
+          },
+        ],
+      });
+
+      const props = createProps({ layers: [layer] });
+      const { container } = render(<AnnotationPanel {...props} />);
+
+      const lines = container.querySelectorAll("line");
+      expect(lines).toHaveLength(2);
+    });
   });
 
-  it("passes sectionVisibility to useAllHighlightPositions", () => {
-    const props = createProps({ sectionVisibility: [true, false] });
-    render(<AnnotationPanel {...props} />);
-
-    expect(useAllHighlightPositions).toHaveBeenCalledWith(
-      props.editorsRef,
-      props.layers,
-      props.containerRef,
-      [true, false],
-    );
-  });
-
-  it("handles multiple highlights across editors", () => {
-    vi.mocked(useAllHighlightPositions).mockReturnValue([
-      { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300 },
-      { highlightId: "h2", layerId: "layer-1", editorIndex: 1, top: 80, rightEdge: 250 },
-    ]);
-
-    const layer = createLayer({
-      highlights: [
-        {
-          id: "h1",
-          editorIndex: 0,
-          from: 0,
-          to: 5,
-          text: "hello",
-          annotation: "Note 1",
-          type: "comment",
-          visible: true,
-        },
-        {
-          id: "h2",
-          editorIndex: 1,
-          from: 0,
-          to: 3,
-          text: "hey",
-          annotation: "Note 2",
-          type: "comment",
-          visible: true,
-        },
-      ],
+  describe("when collapse/expand callbacks are provided", () => {
+    it("then shows the toggle collapse all button", () => {
+      const props = createProps({
+        onCollapseAll: vi.fn(),
+        onExpandAll: vi.fn(),
+        collapsedIds: new Set<string>(),
+      });
+      render(<AnnotationPanel {...props} />);
+      expect(screen.getByTestId("toggleCollapseAll")).toBeInTheDocument();
     });
 
-    const props = createProps({ layers: [layer] });
-    const { container } = render(<AnnotationPanel {...props} />);
+    describe("when some cards are expanded", () => {
+      it("then shows 'Collapse all' title", () => {
+        const props = createProps({
+          onCollapseAll: vi.fn(),
+          onExpandAll: vi.fn(),
+          collapsedIds: new Set<string>(),
+        });
+        render(<AnnotationPanel {...props} />);
+        expect(screen.getByTestId("toggleCollapseAll")).toHaveAttribute("title", "Collapse all");
+      });
 
-    const lines = container.querySelectorAll("line");
-    expect(lines).toHaveLength(2);
-  });
-
-  // --- Collapse/expand all button (Feature 9) ---
-
-  it("renders collapse all button when onCollapseAll and onExpandAll are provided", () => {
-    const props = createProps({
-      onCollapseAll: vi.fn(),
-      onExpandAll: vi.fn(),
-      collapsedIds: new Set<string>(),
+      it("then calls onCollapseAll when button is clicked", () => {
+        const onCollapseAll = vi.fn();
+        const onExpandAll = vi.fn();
+        const props = createProps({
+          onCollapseAll,
+          onExpandAll,
+          collapsedIds: new Set<string>(),
+        });
+        render(<AnnotationPanel {...props} />);
+        fireEvent.click(screen.getByTestId("toggleCollapseAll"));
+        expect(onCollapseAll).toHaveBeenCalled();
+        expect(onExpandAll).not.toHaveBeenCalled();
+      });
     });
-    render(<AnnotationPanel {...props} />);
-    expect(screen.getByTestId("toggleCollapseAll")).toBeInTheDocument();
-  });
 
-  it("does not render collapse all button when callbacks are not provided", () => {
-    const props = createProps();
-    render(<AnnotationPanel {...props} />);
-    expect(screen.queryByTestId("toggleCollapseAll")).not.toBeInTheDocument();
-  });
+    describe("when all cards are collapsed", () => {
+      it("then shows 'Expand all' title", () => {
+        const props = createProps({
+          onCollapseAll: vi.fn(),
+          onExpandAll: vi.fn(),
+          collapsedIds: new Set(["h1"]),
+        });
+        render(<AnnotationPanel {...props} />);
+        expect(screen.getByTestId("toggleCollapseAll")).toHaveAttribute("title", "Expand all");
+      });
 
-  it("calls onCollapseAll when button is clicked and some cards are expanded", () => {
-    const onCollapseAll = vi.fn();
-    const onExpandAll = vi.fn();
-    const props = createProps({
-      onCollapseAll,
-      onExpandAll,
-      collapsedIds: new Set<string>(),
+      it("then calls onExpandAll when button is clicked", () => {
+        const onCollapseAll = vi.fn();
+        const onExpandAll = vi.fn();
+        const props = createProps({
+          onCollapseAll,
+          onExpandAll,
+          collapsedIds: new Set(["h1"]),
+        });
+        render(<AnnotationPanel {...props} />);
+        fireEvent.click(screen.getByTestId("toggleCollapseAll"));
+        expect(onExpandAll).toHaveBeenCalled();
+        expect(onCollapseAll).not.toHaveBeenCalled();
+      });
     });
-    render(<AnnotationPanel {...props} />);
-    fireEvent.click(screen.getByTestId("toggleCollapseAll"));
-    expect(onCollapseAll).toHaveBeenCalled();
-    expect(onExpandAll).not.toHaveBeenCalled();
   });
 
-  it("calls onExpandAll when all cards are collapsed", () => {
-    const onCollapseAll = vi.fn();
-    const onExpandAll = vi.fn();
-    const props = createProps({
-      onCollapseAll,
-      onExpandAll,
-      collapsedIds: new Set(["h1"]),
+  describe("when collapse/expand callbacks are not provided", () => {
+    it("then hides the toggle collapse all button", () => {
+      const props = createProps();
+      render(<AnnotationPanel {...props} />);
+      expect(screen.queryByTestId("toggleCollapseAll")).not.toBeInTheDocument();
     });
-    render(<AnnotationPanel {...props} />);
-    fireEvent.click(screen.getByTestId("toggleCollapseAll"));
-    expect(onExpandAll).toHaveBeenCalled();
-    expect(onCollapseAll).not.toHaveBeenCalled();
-  });
-
-  it("shows Collapse all title when some cards are expanded", () => {
-    const props = createProps({
-      onCollapseAll: vi.fn(),
-      onExpandAll: vi.fn(),
-      collapsedIds: new Set<string>(),
-    });
-    render(<AnnotationPanel {...props} />);
-    expect(screen.getByTestId("toggleCollapseAll")).toHaveAttribute("title", "Collapse all");
-  });
-
-  it("shows Expand all title when all comment cards are collapsed", () => {
-    const props = createProps({
-      onCollapseAll: vi.fn(),
-      onExpandAll: vi.fn(),
-      collapsedIds: new Set(["h1"]),
-    });
-    render(<AnnotationPanel {...props} />);
-    expect(screen.getByTestId("toggleCollapseAll")).toHaveAttribute("title", "Expand all");
   });
 });

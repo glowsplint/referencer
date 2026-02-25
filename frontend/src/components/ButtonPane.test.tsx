@@ -8,382 +8,344 @@ function renderButtonPane(overrides = {}) {
 }
 
 describe("ButtonPane", () => {
-  it("renders all toggle buttons", () => {
-    renderButtonPane();
-    expect(screen.getByTestId("keyboardShortcutsButton")).toBeInTheDocument();
-    expect(screen.getByTestId("faqButton")).toBeInTheDocument();
-    expect(screen.getByTestId("settingsButton")).toBeInTheDocument();
-    expect(screen.getByTestId("selectionToolButton")).toBeInTheDocument();
-    expect(screen.getByTestId("arrowToolButton")).toBeInTheDocument();
-    expect(screen.getByTestId("commentsToolButton")).toBeInTheDocument();
-    expect(screen.getByTestId("menuButton")).toBeInTheDocument();
-    expect(screen.getByTestId("editorLayoutButton")).toBeInTheDocument();
-    expect(screen.getByTestId("lockButton")).toBeInTheDocument();
-  });
-
-  it("tool buttons are disabled when editor is not locked", () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: false,
-      },
+  describe("when rendered", () => {
+    it("shows all toolbar buttons", () => {
+      renderButtonPane();
+      expect(screen.getByTestId("keyboardShortcutsButton")).toBeInTheDocument();
+      expect(screen.getByTestId("faqButton")).toBeInTheDocument();
+      expect(screen.getByTestId("settingsButton")).toBeInTheDocument();
+      expect(screen.getByTestId("selectionToolButton")).toBeInTheDocument();
+      expect(screen.getByTestId("arrowToolButton")).toBeInTheDocument();
+      expect(screen.getByTestId("commentsToolButton")).toBeInTheDocument();
+      expect(screen.getByTestId("menuButton")).toBeInTheDocument();
+      expect(screen.getByTestId("editorLayoutButton")).toBeInTheDocument();
+      expect(screen.getByTestId("lockButton")).toBeInTheDocument();
     });
-    expect(screen.getByTestId("selectionToolButton")).toBeDisabled();
-    expect(screen.getByTestId("arrowToolButton")).toBeDisabled();
-    expect(screen.getByTestId("commentsToolButton")).toBeDisabled();
-  });
 
-  it("tool buttons are enabled when editor is locked", () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
+    it("separates button groups with dividers", () => {
+      renderButtonPane();
+      const pane = screen.getByTestId("menuButton").parentElement!;
+      const separators = pane.querySelectorAll('[role="separator"]');
+      expect(separators).toHaveLength(3);
     });
-    expect(screen.getByTestId("selectionToolButton")).toBeEnabled();
-    expect(screen.getByTestId("arrowToolButton")).toBeEnabled();
-    expect(screen.getByTestId("commentsToolButton")).toBeEnabled();
   });
 
-  it("calls setActiveTool('selection') when selection button is clicked", () => {
-    const { workspace } = renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
+  describe("when the editor is not locked", () => {
+    it("disables tool buttons", () => {
+      renderButtonPane({
+        settings: {
+          isDarkMode: false,
+          isLayersOn: false,
+          isMultipleRowsLayout: false,
+          isLocked: false,
+        },
+      });
+      expect(screen.getByTestId("selectionToolButton")).toBeDisabled();
+      expect(screen.getByTestId("arrowToolButton")).toBeDisabled();
+      expect(screen.getByTestId("commentsToolButton")).toBeDisabled();
     });
-    fireEvent.click(screen.getByTestId("selectionToolButton"));
-    expect(workspace.setActiveTool).toHaveBeenCalledWith("selection");
   });
 
-  it("calls setActiveTool('arrow') when arrow button is clicked", () => {
-    const { workspace } = renderButtonPane({
+  describe("when the editor is locked", () => {
+    const lockedSettings = {
       settings: {
         isDarkMode: false,
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
       },
+    };
+
+    it("enables tool buttons", () => {
+      renderButtonPane(lockedSettings);
+      expect(screen.getByTestId("selectionToolButton")).toBeEnabled();
+      expect(screen.getByTestId("arrowToolButton")).toBeEnabled();
+      expect(screen.getByTestId("commentsToolButton")).toBeEnabled();
     });
-    fireEvent.click(screen.getByTestId("arrowToolButton"));
-    expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
+
+    describe("when the selection button is clicked", () => {
+      it("calls setActiveTool with selection", () => {
+        const { workspace } = renderButtonPane(lockedSettings);
+        fireEvent.click(screen.getByTestId("selectionToolButton"));
+        expect(workspace.setActiveTool).toHaveBeenCalledWith("selection");
+      });
+    });
+
+    describe("when the arrow button is clicked", () => {
+      it("calls setActiveTool with arrow", () => {
+        const { workspace } = renderButtonPane(lockedSettings);
+        fireEvent.click(screen.getByTestId("arrowToolButton"));
+        expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
+      });
+    });
+
+    describe("when the comments button is clicked", () => {
+      it("calls setActiveTool with comments", () => {
+        const { workspace } = renderButtonPane(lockedSettings);
+        fireEvent.click(screen.getByTestId("commentsToolButton"));
+        expect(workspace.setActiveTool).toHaveBeenCalledWith("comments");
+      });
+    });
   });
 
-  it("calls setActiveTool('comments') when comments button is clicked", () => {
-    const { workspace } = renderButtonPane({
+  describe("when the menu button is clicked", () => {
+    it("calls toggleManagementPane", () => {
+      const { workspace } = renderButtonPane();
+      fireEvent.click(screen.getByTestId("menuButton"));
+      expect(workspace.toggleManagementPane).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("when the layout button is clicked", () => {
+    it("calls toggleMultipleRowsLayout", () => {
+      const { workspace } = renderButtonPane();
+      fireEvent.click(screen.getByTestId("editorLayoutButton"));
+      expect(workspace.toggleMultipleRowsLayout).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("when the lock button is clicked", () => {
+    it("calls toggleLocked", () => {
+      const { workspace } = renderButtonPane();
+      fireEvent.click(screen.getByTestId("lockButton"));
+      expect(workspace.toggleLocked).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("when the keyboard shortcuts button is clicked", () => {
+    it("opens the keyboard shortcuts dialog", () => {
+      renderButtonPane();
+      fireEvent.click(screen.getByTestId("keyboardShortcutsButton"));
+      expect(screen.getByTestId("keyboardShortcutsDialog")).toBeInTheDocument();
+      expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument();
+    });
+  });
+
+  describe("when the FAQ button is clicked", () => {
+    it("opens the FAQ dialog", () => {
+      renderButtonPane();
+      fireEvent.click(screen.getByTestId("faqButton"));
+      expect(screen.getByTestId("faqDialog")).toBeInTheDocument();
+      expect(screen.getByText("Frequently Asked Questions")).toBeInTheDocument();
+    });
+  });
+
+  describe("when the settings button is clicked", () => {
+    it("opens the settings dialog", () => {
+      renderButtonPane();
+      fireEvent.click(screen.getByTestId("settingsButton"));
+      expect(screen.getByTestId("settingsDialog")).toBeInTheDocument();
+      expect(screen.getByText("Settings")).toBeInTheDocument();
+    });
+  });
+
+  describe("tooltips", () => {
+    describe("when the selection tool button receives focus", () => {
+      it("shows a tooltip with the shortcut key", async () => {
+        renderButtonPane({
+          settings: {
+            isDarkMode: false,
+            isLayersOn: false,
+            isMultipleRowsLayout: false,
+            isLocked: true,
+          },
+        });
+        const btn = screen.getByTestId("selectionToolButton");
+
+        await act(async () => {
+          fireEvent.focus(btn);
+        });
+
+        const tooltip = await screen.findByRole("tooltip");
+        expect(tooltip).toHaveTextContent("Selection tool");
+        expect(tooltip.querySelector("kbd")).toHaveTextContent("S");
+      });
+    });
+
+    describe("when the arrow tool button receives focus", () => {
+      it("shows a tooltip with the shortcut key", async () => {
+        renderButtonPane({
+          settings: {
+            isDarkMode: false,
+            isLayersOn: false,
+            isMultipleRowsLayout: false,
+            isLocked: true,
+          },
+        });
+        const btn = screen.getByTestId("arrowToolButton");
+
+        await act(async () => {
+          fireEvent.focus(btn);
+        });
+
+        const tooltip = await screen.findByRole("tooltip");
+        expect(tooltip).toHaveTextContent("Arrow tool");
+        expect(tooltip.querySelector("kbd")).toHaveTextContent("A");
+      });
+    });
+
+    describe("when the lock button receives focus", () => {
+      it("shows a tooltip with the shortcut key", async () => {
+        renderButtonPane();
+        const btn = screen.getByTestId("lockButton");
+
+        await act(async () => {
+          fireEvent.focus(btn);
+        });
+
+        const tooltip = await screen.findByRole("tooltip");
+        expect(tooltip).toHaveTextContent("Toggle editor lock");
+        expect(tooltip.querySelector("kbd")).toHaveTextContent("K");
+      });
+    });
+
+    describe("when the menu button receives focus", () => {
+      it("shows a tooltip with the shortcut key", async () => {
+        renderButtonPane();
+        const btn = screen.getByTestId("menuButton");
+
+        await act(async () => {
+          fireEvent.focus(btn);
+        });
+
+        const tooltip = await screen.findByRole("tooltip");
+        expect(tooltip).toHaveTextContent("Toggle management pane");
+        expect(tooltip.querySelector("kbd")).toHaveTextContent("M");
+      });
+    });
+
+    describe("when the keyboard shortcuts button receives focus", () => {
+      it("shows a tooltip without a shortcut key", async () => {
+        renderButtonPane();
+        const btn = screen.getByTestId("keyboardShortcutsButton");
+
+        await act(async () => {
+          fireEvent.focus(btn);
+        });
+
+        const tooltip = await screen.findByRole("tooltip");
+        expect(tooltip).toHaveTextContent("Keyboard shortcuts");
+        expect(tooltip.querySelector("kbd")).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("arrow style picker", () => {
+    const lockedSettings = {
       settings: {
         isDarkMode: false,
         isLayersOn: false,
         isMultipleRowsLayout: false,
         isLocked: true,
       },
-    });
-    fireEvent.click(screen.getByTestId("commentsToolButton"));
-    expect(workspace.setActiveTool).toHaveBeenCalledWith("comments");
-  });
+    };
 
-  it("shows depressed state on the active tool button when locked", () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      annotations: { activeTool: "arrow" },
-    });
-    const arrowBtn = screen.getByTestId("arrowToolButton");
-    expect(arrowBtn.className.split(" ")).toContain("bg-accent");
-    // Non-active buttons should not have bare bg-accent class
-    const selBtn = screen.getByTestId("selectionToolButton");
-    expect(selBtn.className.split(" ")).not.toContain("bg-accent");
-  });
-
-  it("does not show depressed state on active tool button when unlocked", () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: false,
-      },
-      annotations: { activeTool: "arrow" },
-    });
-    const arrowBtn = screen.getByTestId("arrowToolButton");
-    expect(arrowBtn.className.split(" ")).not.toContain("bg-accent");
-  });
-
-  it("calls toggleManagementPane when menu button is clicked", () => {
-    const { workspace } = renderButtonPane();
-    fireEvent.click(screen.getByTestId("menuButton"));
-    expect(workspace.toggleManagementPane).toHaveBeenCalledOnce();
-  });
-
-  it("calls toggleMultipleRowsLayout when layout button is clicked", () => {
-    const { workspace } = renderButtonPane();
-    fireEvent.click(screen.getByTestId("editorLayoutButton"));
-    expect(workspace.toggleMultipleRowsLayout).toHaveBeenCalledOnce();
-  });
-
-  it("calls toggleLocked when lock button is clicked", () => {
-    const { workspace } = renderButtonPane();
-    fireEvent.click(screen.getByTestId("lockButton"));
-    expect(workspace.toggleLocked).toHaveBeenCalledOnce();
-  });
-
-  it("menu button is the first button in the pane", () => {
-    renderButtonPane();
-    const pane = screen.getByTestId("menuButton").parentElement!;
-    const buttons = pane.querySelectorAll("button");
-    expect(buttons[0]).toBe(screen.getByTestId("menuButton"));
-  });
-
-  it("renders dividers between button groups", () => {
-    renderButtonPane();
-    const pane = screen.getByTestId("menuButton").parentElement!;
-    const separators = pane.querySelectorAll('[role="separator"]');
-    expect(separators).toHaveLength(3);
-  });
-
-  it("opens keyboard shortcuts dialog when button is clicked", () => {
-    renderButtonPane();
-    fireEvent.click(screen.getByTestId("keyboardShortcutsButton"));
-    expect(screen.getByTestId("keyboardShortcutsDialog")).toBeInTheDocument();
-    expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument();
-  });
-
-  it("opens FAQ dialog when help button is clicked", () => {
-    renderButtonPane();
-    fireEvent.click(screen.getByTestId("faqButton"));
-    expect(screen.getByTestId("faqDialog")).toBeInTheDocument();
-    expect(screen.getByText("Frequently Asked Questions")).toBeInTheDocument();
-  });
-
-  it("opens settings dialog when settings button is clicked", () => {
-    renderButtonPane();
-    fireEvent.click(screen.getByTestId("settingsButton"));
-    expect(screen.getByTestId("settingsDialog")).toBeInTheDocument();
-    expect(screen.getByText("Settings")).toBeInTheDocument();
-  });
-
-  it("shows tooltip with shortcut key on focus for selection tool", async () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-    });
-    const btn = screen.getByTestId("selectionToolButton");
-
-    await act(async () => {
-      fireEvent.focus(btn);
+    describe("when activeTool is arrow", () => {
+      it("opens the arrow style picker", () => {
+        const { workspace } = renderButtonPane({
+          ...lockedSettings,
+          annotations: { activeTool: "arrow" },
+        });
+        expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(true);
+      });
     });
 
-    const tooltip = await screen.findByRole("tooltip");
-    expect(tooltip).toHaveTextContent("Selection tool");
-    expect(tooltip.querySelector("kbd")).toHaveTextContent("S");
-  });
-
-  it("shows tooltip with shortcut key on focus for arrow tool", async () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-    });
-    const btn = screen.getByTestId("arrowToolButton");
-
-    await act(async () => {
-      fireEvent.focus(btn);
+    describe("when activeTool is not arrow", () => {
+      it("closes the arrow style picker", () => {
+        const { workspace } = renderButtonPane({
+          ...lockedSettings,
+          annotations: { activeTool: "selection" },
+        });
+        expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(false);
+      });
     });
 
-    const tooltip = await screen.findByRole("tooltip");
-    expect(tooltip).toHaveTextContent("Arrow tool");
-    expect(tooltip.querySelector("kbd")).toHaveTextContent("A");
-  });
-
-  it("shows tooltip for lock toggle with shortcut", async () => {
-    renderButtonPane();
-    const btn = screen.getByTestId("lockButton");
-
-    await act(async () => {
-      fireEvent.focus(btn);
+    describe("when an arrow is selected", () => {
+      it("activates the arrow tool", () => {
+        const { workspace } = renderButtonPane({
+          ...lockedSettings,
+          selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
+        });
+        expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
+      });
     });
 
-    const tooltip = await screen.findByRole("tooltip");
-    expect(tooltip).toHaveTextContent("Toggle editor lock");
-    expect(tooltip.querySelector("kbd")).toHaveTextContent("K");
-  });
-
-  it("shows tooltip for menu button with shortcut", async () => {
-    renderButtonPane();
-    const btn = screen.getByTestId("menuButton");
-
-    await act(async () => {
-      fireEvent.focus(btn);
+    describe("when arrowStylePickerOpen is true", () => {
+      it("shows the arrow style popover", () => {
+        renderButtonPane({
+          ...lockedSettings,
+          arrowStylePickerOpen: true,
+        });
+        expect(screen.getByTestId("arrowStylePopover")).toBeInTheDocument();
+        expect(screen.getByTestId("arrowStylePicker--1")).toBeInTheDocument();
+      });
     });
 
-    const tooltip = await screen.findByRole("tooltip");
-    expect(tooltip).toHaveTextContent("Toggle management pane");
-    expect(tooltip.querySelector("kbd")).toHaveTextContent("M");
-  });
-
-  it("shows tooltip without shortcut for keyboard shortcuts button", async () => {
-    renderButtonPane();
-    const btn = screen.getByTestId("keyboardShortcutsButton");
-
-    await act(async () => {
-      fireEvent.focus(btn);
+    describe("when arrowStylePickerOpen is false", () => {
+      it("does not show the arrow style popover", () => {
+        renderButtonPane({
+          ...lockedSettings,
+          arrowStylePickerOpen: false,
+        });
+        expect(screen.queryByTestId("arrowStylePopover")).not.toBeInTheDocument();
+      });
     });
 
-    const tooltip = await screen.findByRole("tooltip");
-    expect(tooltip).toHaveTextContent("Keyboard shortcuts");
-    expect(tooltip.querySelector("kbd")).not.toBeInTheDocument();
-  });
+    describe("when a style is selected", () => {
+      it("calls setActiveArrowStyle", () => {
+        const { workspace } = renderButtonPane({
+          ...lockedSettings,
+          arrowStylePickerOpen: true,
+        });
 
-  it("auto-opens picker when activeTool is arrow", () => {
-    const { workspace } = renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      annotations: { activeTool: "arrow" },
-    });
-    expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(true);
-  });
+        fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
 
-  it("closes picker when activeTool is not arrow", () => {
-    const { workspace } = renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      annotations: { activeTool: "selection" },
-    });
-    expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(false);
-  });
-
-  it("activates arrow tool when an arrow is selected", () => {
-    const { workspace } = renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
-    });
-    expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
-  });
-
-  it("shows arrow style popover when arrowStylePickerOpen is true", () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      arrowStylePickerOpen: true,
-    });
-    expect(screen.getByTestId("arrowStylePopover")).toBeInTheDocument();
-    expect(screen.getByTestId("arrowStylePicker--1")).toBeInTheDocument();
-  });
-
-  it("does not show arrow style popover when arrowStylePickerOpen is false", () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      arrowStylePickerOpen: false,
-    });
-    expect(screen.queryByTestId("arrowStylePopover")).not.toBeInTheDocument();
-  });
-
-  it("selecting a style calls setActiveArrowStyle", () => {
-    const { workspace } = renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      arrowStylePickerOpen: true,
+        expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
+      });
     });
 
-    fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
+    describe("when a style is selected and an arrow is selected", () => {
+      it("calls updateArrowStyle for the selected arrow", () => {
+        const { workspace } = renderButtonPane({
+          ...lockedSettings,
+          arrowStylePickerOpen: true,
+          selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
+        });
 
-    expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
-  });
+        fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
 
-  it("calls updateArrowStyle when a style is selected and an arrow is selected", () => {
-    const { workspace } = renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      arrowStylePickerOpen: true,
-      selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
+        expect(workspace.updateArrowStyle).toHaveBeenCalledWith("layer-1", "arrow-1", "dashed");
+        expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
+      });
     });
 
-    fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
+    describe("when a style is selected and no arrow is selected", () => {
+      it("does not call updateArrowStyle", () => {
+        const { workspace } = renderButtonPane({
+          ...lockedSettings,
+          arrowStylePickerOpen: true,
+          selectedArrow: null,
+        });
 
-    expect(workspace.updateArrowStyle).toHaveBeenCalledWith("layer-1", "arrow-1", "dashed");
-    expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
-  });
+        fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
 
-  it("does not call updateArrowStyle when no arrow is selected", () => {
-    const { workspace } = renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      arrowStylePickerOpen: true,
-      selectedArrow: null,
+        expect(workspace.updateArrowStyle).not.toHaveBeenCalled();
+        expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
+      });
     });
 
-    fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
-
-    expect(workspace.updateArrowStyle).not.toHaveBeenCalled();
-    expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
-  });
-
-  it("renders arrow style icon matching activeArrowStyle", () => {
-    renderButtonPane({
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-      activeArrowStyle: "dashed",
+    describe("when activeArrowStyle is dashed", () => {
+      it("renders the arrow button icon with dashed stroke", () => {
+        renderButtonPane({
+          ...lockedSettings,
+          activeArrowStyle: "dashed",
+        });
+        const btn = screen.getByTestId("arrowToolButton");
+        const svg = btn.querySelector("svg");
+        expect(svg).toBeInTheDocument();
+        const line = svg!.querySelector("line");
+        expect(line).toHaveAttribute("stroke-dasharray", "4 2.5");
+      });
     });
-    const btn = screen.getByTestId("arrowToolButton");
-    const svg = btn.querySelector("svg");
-    expect(svg).toBeInTheDocument();
-    // Dashed style uses strokeDasharray
-    const line = svg!.querySelector("line");
-    expect(line).toHaveAttribute("stroke-dasharray", "4 2.5");
   });
 });

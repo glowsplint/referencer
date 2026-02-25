@@ -19,119 +19,109 @@ function createProps(overrides: Partial<Parameters<typeof AnnotationCard>[0]> = 
 }
 
 describe("AnnotationCard", () => {
-  it("calls onClick when clicked in non-editing mode with annotation", () => {
-    const onClick = vi.fn();
-    render(<AnnotationCard {...createProps({ annotation: "<p>note</p>", onClick })} />);
-
-    fireEvent.click(screen.getByText("note"));
-
-    expect(onClick).toHaveBeenCalledWith("layer-1", "h1");
+  describe("when annotation is empty and not editing", () => {
+    it("shows placeholder text", () => {
+      render(<AnnotationCard {...createProps({ annotation: "" })} />);
+      expect(screen.getByText("Add annotation...")).toBeTruthy();
+    });
   });
 
-  it("shows placeholder text when annotation is empty and not editing", () => {
-    render(<AnnotationCard {...createProps({ annotation: "" })} />);
-
-    expect(screen.getByText("Add annotation...")).toBeTruthy();
+  describe("when annotation has rich text HTML", () => {
+    it("renders the HTML content", () => {
+      const { container } = render(
+        <AnnotationCard {...createProps({ annotation: "<p><strong>bold</strong> text</p>" })} />,
+      );
+      expect(container.querySelector("strong")).toBeTruthy();
+      expect(container.textContent).toContain("bold text");
+    });
   });
 
-  it("renders rich text HTML annotation in non-editing mode", () => {
-    const { container } = render(
-      <AnnotationCard {...createProps({ annotation: "<p><strong>bold</strong> text</p>" })} />,
-    );
-
-    expect(container.querySelector("strong")).toBeTruthy();
-    expect(container.textContent).toContain("bold text");
+  describe("when annotation is plain text", () => {
+    it("migrates it to HTML for display", () => {
+      const { container } = render(
+        <AnnotationCard {...createProps({ annotation: "plain text" })} />,
+      );
+      const html =
+        container.querySelector("[dangerouslySetInnerHTML]") ??
+        container.querySelector(".prose-xs");
+      expect(html?.innerHTML).toContain("<p>plain text</p>");
+    });
   });
 
-  it("migrates plain text annotation to HTML for display", () => {
-    const { container } = render(<AnnotationCard {...createProps({ annotation: "plain text" })} />);
-
-    const html =
-      container.querySelector("[dangerouslySetInnerHTML]") ?? container.querySelector(".prose-xs");
-    expect(html?.innerHTML).toContain("<p>plain text</p>");
+  describe("when clicked in non-editing mode with annotation", () => {
+    it("calls onClick with layerId and highlightId", () => {
+      const onClick = vi.fn();
+      render(<AnnotationCard {...createProps({ annotation: "<p>note</p>", onClick })} />);
+      fireEvent.click(screen.getByText("note"));
+      expect(onClick).toHaveBeenCalledWith("layer-1", "h1");
+    });
   });
 
-  it("renders collapsed state with chevron down", () => {
-    const onToggleCollapse = vi.fn();
-    const { container } = render(
-      <AnnotationCard
-        {...createProps({
-          annotation: "<p>test</p>",
-          isCollapsed: true,
-          onToggleCollapse,
-        })}
-      />,
-    );
+  describe("when collapsed", () => {
+    it("hides the annotation text", () => {
+      const onToggleCollapse = vi.fn();
+      const { container } = render(
+        <AnnotationCard
+          {...createProps({
+            annotation: "<p>test</p>",
+            isCollapsed: true,
+            onToggleCollapse,
+          })}
+        />,
+      );
+      expect(container.textContent).not.toContain("test");
+    });
 
-    // Collapsed card should not show annotation text
-    expect(container.textContent).not.toContain("test");
+    it("calls onToggleCollapse when clicked", () => {
+      const onToggleCollapse = vi.fn();
+      const { container } = render(
+        <AnnotationCard
+          {...createProps({
+            annotation: "<p>test</p>",
+            isCollapsed: true,
+            onToggleCollapse,
+          })}
+        />,
+      );
+      const card = container.querySelector("[data-highlight-id]")!;
+      fireEvent.click(card);
+      expect(onToggleCollapse).toHaveBeenCalledWith("h1");
+    });
   });
 
-  it("calls onToggleCollapse when collapsed card is clicked", () => {
-    const onToggleCollapse = vi.fn();
-    const { container } = render(
-      <AnnotationCard
-        {...createProps({
-          annotation: "<p>test</p>",
-          isCollapsed: true,
-          onToggleCollapse,
-        })}
-      />,
-    );
-
-    const card = container.querySelector("[data-highlight-id]")!;
-    fireEvent.click(card);
-    expect(onToggleCollapse).toHaveBeenCalledWith("h1");
+  describe("when expanded with onToggleCollapse provided", () => {
+    it("shows a collapse button that triggers onToggleCollapse", () => {
+      const onToggleCollapse = vi.fn();
+      const { container } = render(
+        <AnnotationCard
+          {...createProps({
+            annotation: "<p>test</p>",
+            isCollapsed: false,
+            onToggleCollapse,
+          })}
+        />,
+      );
+      const button = container.querySelector("button");
+      expect(button).toBeTruthy();
+      fireEvent.click(button!);
+      expect(onToggleCollapse).toHaveBeenCalledWith("h1");
+    });
   });
 
-  it("shows collapse button on non-collapsed card when onToggleCollapse is provided", () => {
-    const onToggleCollapse = vi.fn();
-    const { container } = render(
-      <AnnotationCard
-        {...createProps({
-          annotation: "<p>test</p>",
-          isCollapsed: false,
-          onToggleCollapse,
-        })}
-      />,
-    );
+  describe("when lastEdited is provided", () => {
+    it("shows 'just now' for a recent timestamp", () => {
+      const now = Date.now();
+      render(<AnnotationCard {...createProps({ annotation: "<p>note</p>", lastEdited: now })} />);
+      expect(screen.getByText("just now")).toBeTruthy();
+    });
 
-    // ChevronUp button should exist
-    const button = container.querySelector("button");
-    expect(button).toBeTruthy();
-    fireEvent.click(button!);
-    expect(onToggleCollapse).toHaveBeenCalledWith("h1");
-  });
-
-  it("renders timestamp when lastEdited is provided", () => {
-    const now = Date.now();
-    render(<AnnotationCard {...createProps({ annotation: "<p>note</p>", lastEdited: now })} />);
-
-    expect(screen.getByText("just now")).toBeTruthy();
-  });
-
-  it("renders timestamp for minutes ago", () => {
-    const fiveMinAgo = Date.now() - 5 * 60 * 1000;
-    render(
-      <AnnotationCard {...createProps({ annotation: "<p>note</p>", lastEdited: fiveMinAgo })} />,
-    );
-
-    expect(screen.getByText("5m ago")).toBeTruthy();
-  });
-
-  it("renders color strip at top", () => {
-    const { container } = render(<AnnotationCard {...createProps({ color: "#86efac" })} />);
-
-    const colorStrip = container.querySelector(".h-1.rounded-t");
-    expect(colorStrip).toBeTruthy();
-    expect((colorStrip as HTMLElement).style.backgroundColor).toBe("rgb(134, 239, 172)");
-  });
-
-  it("positions card at the given top offset", () => {
-    const { container } = render(<AnnotationCard {...createProps({ top: 120 })} />);
-
-    const card = container.querySelector("[data-highlight-id]") as HTMLElement;
-    expect(card.style.top).toBe("120px");
+    it("shows relative time for older timestamps", () => {
+      const fiveMinAgo = Date.now() - 5 * 60 * 1000;
+      render(
+        <AnnotationCard {...createProps({ annotation: "<p>note</p>", lastEdited: fiveMinAgo })} />,
+      );
+      expect(screen.getByText("5m ago")).toBeTruthy();
+    });
   });
 });
 

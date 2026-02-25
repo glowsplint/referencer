@@ -8,32 +8,39 @@ function renderTitleBar(overrides = {}) {
 }
 
 describe("TitleBar", () => {
-  it("renders share button", () => {
-    renderTitleBar();
-    expect(screen.getByTestId("shareButton")).toBeInTheDocument();
+  describe("when rendered", () => {
+    it("shows the share button", () => {
+      renderTitleBar();
+      expect(screen.getByTestId("shareButton")).toBeInTheDocument();
+    });
+
+    it("shows the title text", () => {
+      renderTitleBar();
+      expect(screen.getByText("Title")).toBeInTheDocument();
+    });
   });
 
-  it("opens share dialog when share button is clicked", () => {
-    renderTitleBar();
-    fireEvent.click(screen.getByTestId("shareButton"));
-    expect(screen.getByTestId("shareDialog")).toBeInTheDocument();
+  describe("when the share button is clicked", () => {
+    it("opens the share dialog", () => {
+      renderTitleBar();
+      fireEvent.click(screen.getByTestId("shareButton"));
+      expect(screen.getByTestId("shareDialog")).toBeInTheDocument();
+    });
   });
 
-  it("renders title text", () => {
-    renderTitleBar();
-    expect(screen.getByText("Title")).toBeInTheDocument();
+  describe("when readOnly is true", () => {
+    it("does not enter editing mode on title click", () => {
+      renderTitleBar({ readOnly: true });
+      fireEvent.click(screen.getByText("Title"));
+      expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    });
   });
 
-  it("does not allow editing title when readOnly", () => {
-    renderTitleBar({ readOnly: true });
-    fireEvent.click(screen.getByText("Title"));
-    // Should not enter editing mode - no input should appear
-    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
-  });
-
-  it("allows editing title when not readOnly", () => {
-    renderTitleBar({ readOnly: false });
-    fireEvent.click(screen.getByText("Title"));
-    expect(screen.getByRole("textbox")).toBeInTheDocument();
+  describe("when readOnly is false", () => {
+    it("enters editing mode on title click", () => {
+      renderTitleBar({ readOnly: false });
+      fireEvent.click(screen.getByText("Title"));
+      expect(screen.getByRole("textbox")).toBeInTheDocument();
+    });
   });
 });
