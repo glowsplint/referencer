@@ -73,7 +73,7 @@ describe("useRecordingManager", () => {
     vi.mocked(usePlayback).mockReturnValue(mockPlaybackReturn);
   });
 
-  it("composes useRecordings and usePlayback into a single value", () => {
+  it("when accessed, then composes useRecordings and usePlayback into a single value", () => {
     const { result } = renderHook(() =>
       useRecordingManager({
         doc: null,
@@ -88,7 +88,7 @@ describe("useRecordingManager", () => {
     expect(result.current.playback).toBe(mockPlaybackReturn);
   });
 
-  it("passes applyVisibilitySnapshot to usePlayback", () => {
+  it("when rendering, then passes applyVisibilitySnapshot to usePlayback", () => {
     renderHook(() =>
       useRecordingManager({
         doc: null,
@@ -106,7 +106,7 @@ describe("useRecordingManager", () => {
     );
   });
 
-  it("applyVisibilitySnapshot toggles layer visibility to match snapshot", () => {
+  it("when applyVisibilitySnapshot is called, then toggles layer visibility to match snapshot", () => {
     const layers = [
       createLayer({ id: "layer-1", visible: true }),
       createLayer({ id: "layer-2", visible: false }),
@@ -140,7 +140,7 @@ describe("useRecordingManager", () => {
     expect(toggleLayerVisibility).toHaveBeenCalledTimes(2);
   });
 
-  it("applyVisibilitySnapshot does not toggle layers already matching", () => {
+  it("when layers already match the snapshot, then applyVisibilitySnapshot does not toggle them", () => {
     const layers = [createLayer({ id: "layer-1", visible: true })];
 
     renderHook(() =>
@@ -165,7 +165,7 @@ describe("useRecordingManager", () => {
     expect(toggleLayerVisibility).not.toHaveBeenCalled();
   });
 
-  it("applyVisibilitySnapshot applies annotation visibility via Yjs doc", () => {
+  it("when applyVisibilitySnapshot is called, then applies annotation visibility via Yjs doc", () => {
     const mockDoc = { transact: vi.fn((fn: () => void) => fn()) } as unknown as import("yjs").Doc;
     const layers = [createLayer({ id: "layer-1", visible: true })];
 
@@ -199,7 +199,7 @@ describe("useRecordingManager", () => {
     );
   });
 
-  it("applyVisibilitySnapshot toggles section visibility", () => {
+  it("when applyVisibilitySnapshot is called, then toggles section visibility", () => {
     const layers: Layer[] = [];
     const sectionVisibility = { 0: true, 1: false };
 
@@ -230,7 +230,7 @@ describe("useRecordingManager", () => {
     expect(toggleSectionVisibility).toHaveBeenCalledTimes(2);
   });
 
-  it("applyVisibilitySnapshot skips annotation doc updates when doc is null", () => {
+  it("when doc is null, then applyVisibilitySnapshot skips annotation doc updates", () => {
     renderHook(() =>
       useRecordingManager({
         doc: null,

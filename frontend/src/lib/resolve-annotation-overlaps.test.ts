@@ -1,17 +1,17 @@
 import { describe, it, expect } from "vitest";
 import { resolveAnnotationOverlaps } from "./resolve-annotation-overlaps";
 
-describe("resolveAnnotationOverlaps", () => {
-  it("returns empty array for empty input", () => {
+describe("when using resolveAnnotationOverlaps", () => {
+  it("then returns empty array for empty input", () => {
     expect(resolveAnnotationOverlaps([])).toEqual([]);
   });
 
-  it("preserves position for a single annotation", () => {
+  it("then preserves position for a single annotation", () => {
     const result = resolveAnnotationOverlaps([{ id: "a", desiredTop: 100 }]);
     expect(result).toEqual([{ id: "a", top: 100 }]);
   });
 
-  it("preserves positions when annotations are spaced far apart", () => {
+  it("then preserves positions when annotations are spaced far apart", () => {
     const result = resolveAnnotationOverlaps([
       { id: "a", desiredTop: 0 },
       { id: "b", desiredTop: 200 },
@@ -22,7 +22,7 @@ describe("resolveAnnotationOverlaps", () => {
     ]);
   });
 
-  it("pushes overlapping annotations down", () => {
+  it("then pushes overlapping annotations down", () => {
     const result = resolveAnnotationOverlaps([
       { id: "a", desiredTop: 100 },
       { id: "b", desiredTop: 110 },
@@ -32,7 +32,7 @@ describe("resolveAnnotationOverlaps", () => {
     expect(result[1].top).toBe(180);
   });
 
-  it("cascades pushes for multiple overlapping annotations", () => {
+  it("then cascades pushes for multiple overlapping annotations", () => {
     const result = resolveAnnotationOverlaps([
       { id: "a", desiredTop: 0 },
       { id: "b", desiredTop: 10 },
@@ -43,7 +43,7 @@ describe("resolveAnnotationOverlaps", () => {
     expect(result[2].top).toBe(160); // 80 + 72 + 8
   });
 
-  it("sorts by desiredTop regardless of input order", () => {
+  it("then sorts by desiredTop regardless of input order", () => {
     const result = resolveAnnotationOverlaps([
       { id: "b", desiredTop: 200 },
       { id: "a", desiredTop: 100 },
@@ -52,7 +52,7 @@ describe("resolveAnnotationOverlaps", () => {
     expect(result[1].id).toBe("b");
   });
 
-  it("uses measured heights when provided", () => {
+  it("then uses measured heights when provided", () => {
     const heights = new Map([["a", 120]]); // card "a" is taller than default 72px
     const result = resolveAnnotationOverlaps(
       [
@@ -66,7 +66,7 @@ describe("resolveAnnotationOverlaps", () => {
     expect(result[1].top).toBe(128);
   });
 
-  it("falls back to default height for unmeasured cards", () => {
+  it("then falls back to default height for unmeasured cards", () => {
     const heights = new Map([["a", 100]]);
     const result = resolveAnnotationOverlaps(
       [

@@ -26,7 +26,7 @@ function createRecording(overrides?: Partial<Recording>): Recording {
 }
 
 describe("applyDelta", () => {
-  it("applies layer visibility change", () => {
+  it("when a layer visibility change is in the delta, then applies it", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = { "layer:layer-1": false };
 
@@ -37,7 +37,7 @@ describe("applyDelta", () => {
     expect(warnings).toEqual([]);
   });
 
-  it("applies annotation visibility change", () => {
+  it("when an annotation visibility change is in the delta, then applies it", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = { "highlight:layer-1:h1": false };
 
@@ -48,7 +48,7 @@ describe("applyDelta", () => {
     expect(warnings).toEqual([]);
   });
 
-  it("applies section visibility change", () => {
+  it("when a section visibility change is in the delta, then applies it", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = { "section:1": true };
 
@@ -59,7 +59,7 @@ describe("applyDelta", () => {
     expect(warnings).toEqual([]);
   });
 
-  it("warns on missing layer", () => {
+  it("when a layer is missing, then warns", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = { "layer:nonexistent": true };
 
@@ -68,7 +68,7 @@ describe("applyDelta", () => {
     expect(warnings).toEqual(["Layer nonexistent not found"]);
   });
 
-  it("warns on missing annotation", () => {
+  it("when an annotation is missing, then warns", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = { "highlight:layer-1:missing": true };
 
@@ -77,7 +77,7 @@ describe("applyDelta", () => {
     expect(warnings).toEqual(["Annotation highlight:layer-1:missing not found"]);
   });
 
-  it("skips missing entries gracefully without crashing", () => {
+  it("when entries are missing, then skips them gracefully without crashing", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = {
       "layer:nonexistent": true,
@@ -93,7 +93,7 @@ describe("applyDelta", () => {
     expect(warnings).toContain("Annotation highlight:layer-1:missing not found");
   });
 
-  it("does not mutate the original snapshot", () => {
+  it("when applying changes, then does not mutate the original snapshot", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = { "layer:layer-1": false };
 
@@ -102,7 +102,7 @@ describe("applyDelta", () => {
     expect(snapshot.layers["layer-1"]).toBe(true); // original unchanged
   });
 
-  it("applies multiple changes in one delta", () => {
+  it("when multiple changes exist in one delta, then applies all of them", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = {
       "layer:layer-1": false,
@@ -120,7 +120,7 @@ describe("applyDelta", () => {
     expect(warnings).toEqual([]);
   });
 
-  it("creates new section entries for sections not in original snapshot", () => {
+  it("when sections are not in the original snapshot, then creates new entries", () => {
     const snapshot = createSnapshot();
     const delta: VisibilityDelta = { "section:5": true };
 
@@ -132,7 +132,7 @@ describe("applyDelta", () => {
 });
 
 describe("computeSnapshotAtStep", () => {
-  it("returns initial state for stepIndex -1", () => {
+  it("when stepIndex is -1, then returns initial state", () => {
     const recording = createRecording({
       steps: [{ id: "s1", delta: { "layer:layer-1": false } }],
     });
@@ -143,7 +143,7 @@ describe("computeSnapshotAtStep", () => {
     expect(warnings).toEqual([]);
   });
 
-  it("applies first delta for stepIndex 0", () => {
+  it("when stepIndex is 0, then applies first delta", () => {
     const recording = createRecording({
       steps: [{ id: "s1", delta: { "layer:layer-1": false } }],
     });
@@ -155,7 +155,7 @@ describe("computeSnapshotAtStep", () => {
     expect(warnings).toEqual([]);
   });
 
-  it("applies all deltas up to stepIndex N", () => {
+  it("when stepIndex is N, then applies all deltas up to N", () => {
     const recording = createRecording({
       steps: [
         { id: "s1", delta: { "layer:layer-1": false } },
@@ -172,7 +172,7 @@ describe("computeSnapshotAtStep", () => {
     expect(warnings).toEqual([]);
   });
 
-  it("applies only first two deltas for stepIndex 1", () => {
+  it("when stepIndex is 1, then applies only first two deltas", () => {
     const recording = createRecording({
       steps: [
         { id: "s1", delta: { "layer:layer-1": false } },
@@ -189,7 +189,7 @@ describe("computeSnapshotAtStep", () => {
     expect(snapshot.annotations["highlight:layer-1:h1"]).toBe(true);
   });
 
-  it("collects warnings from missing annotations across steps", () => {
+  it("when annotations are missing across steps, then collects warnings", () => {
     const recording = createRecording({
       initialState: createSnapshot({
         annotations: { "highlight:layer-1:h1": true },
@@ -207,7 +207,7 @@ describe("computeSnapshotAtStep", () => {
     expect(warnings).toContain("Annotation highlight:layer-1:missing2 not found");
   });
 
-  it("handles recording with no steps", () => {
+  it("when recording has no steps, then handles it gracefully", () => {
     const recording = createRecording({ steps: [] });
 
     const { snapshot, warnings } = computeSnapshotAtStep(recording, 0);
@@ -217,7 +217,7 @@ describe("computeSnapshotAtStep", () => {
     expect(warnings).toEqual([]);
   });
 
-  it("clamps to available steps when stepIndex exceeds step count", () => {
+  it("when stepIndex exceeds step count, then clamps to available steps", () => {
     const recording = createRecording({
       steps: [{ id: "s1", delta: { "layer:layer-1": false } }],
     });

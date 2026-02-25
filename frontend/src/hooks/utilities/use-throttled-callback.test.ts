@@ -11,7 +11,7 @@ describe("useThrottledCallback", () => {
     vi.useRealTimers();
   });
 
-  it("throttles rapid calls to the specified wait time", () => {
+  it("when called rapidly, then throttles to the specified wait time", () => {
     const fn = vi.fn();
     const { result } = renderHook(() =>
       useThrottledCallback(fn, 200, []),
@@ -31,7 +31,7 @@ describe("useThrottledCallback", () => {
     expect(fn).toHaveBeenCalledOnce();
   });
 
-  it("with leading=true calls immediately on first invocation", () => {
+  it("when leading=true, then calls immediately on first invocation", () => {
     const fn = vi.fn();
     const { result } = renderHook(() =>
       useThrottledCallback(fn, 200, [], { leading: true, trailing: true }),
@@ -50,7 +50,7 @@ describe("useThrottledCallback", () => {
     expect(fn).toHaveBeenCalledTimes(2);
   });
 
-  it("cancels on unmount", () => {
+  it("when unmounted, then cancels pending calls", () => {
     const fn = vi.fn();
     const { result, unmount } = renderHook(() =>
       useThrottledCallback(fn, 200, []),
@@ -64,7 +64,7 @@ describe("useThrottledCallback", () => {
     expect(fn).not.toHaveBeenCalled();
   });
 
-  it("exposes cancel and flush methods", () => {
+  it("when accessed, then exposes cancel and flush methods", () => {
     const fn = vi.fn();
     const { result } = renderHook(() =>
       useThrottledCallback(fn, 200, []),

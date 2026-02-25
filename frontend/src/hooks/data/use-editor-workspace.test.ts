@@ -48,7 +48,7 @@ beforeEach(() => {
 });
 
 describe("useEditorWorkspace", () => {
-  it("returns initial state", () => {
+  it("when initialized, then returns initial state", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.settings).toEqual({
@@ -69,7 +69,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.isManagementPaneOpen).toBe(true);
   });
 
-  it("toggleDarkMode toggles isDarkMode", () => {
+  it("when toggleDarkMode is called, then toggles isDarkMode", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -87,7 +87,7 @@ describe("useEditorWorkspace", () => {
     expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
 
-  it("toggleLocked toggles isLocked", () => {
+  it("when toggleLocked is called, then toggles isLocked", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -97,7 +97,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.settings.isLocked).toBe(false);
   });
 
-  it("setActiveTool changes the active tool", () => {
+  it("when setActiveTool is called, then changes the active tool", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -113,7 +113,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.annotations.activeTool).toBe("selection");
   });
 
-  it("addLayer adds a layer with the next colour in order and a default name", () => {
+  it("when addLayer is called, then adds a layer with the next colour and a default name", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -126,7 +126,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].name).toBe("Layer 1");
   });
 
-  it("addLayer assigns colours and names sequentially", () => {
+  it("when addLayer is called multiple times, then assigns colours and names sequentially", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -146,7 +146,7 @@ describe("useEditorWorkspace", () => {
     expect(new Set(ids).size).toBe(3);
   });
 
-  it("addLayer does not exceed the number of available colours", () => {
+  it("when all colours are used, then addLayer does not exceed the available colours", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -158,7 +158,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers).toHaveLength(TAILWIND_300_COLORS.length);
   });
 
-  it("addLayer after removeLayer assigns a different colour from existing layers", () => {
+  it("when addLayer is called after removeLayer, then assigns a different colour from existing layers", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -185,7 +185,7 @@ describe("useEditorWorkspace", () => {
     expect(remainingColors).not.toContain(newLayer.color);
   });
 
-  it("addLayer reuses freed colours from removed layers", () => {
+  it("when a layer is removed, then addLayer reuses its freed colour", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     // Fill all colour slots
@@ -217,7 +217,7 @@ describe("useEditorWorkspace", () => {
     expect(newLayer.color).toBe(removedColor);
   });
 
-  it("addLayer name counter never resets after removing layers", () => {
+  it("when layers are removed, then addLayer name counter never resets", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -239,7 +239,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[1].name).toBe("Layer 3");
   });
 
-  it("updateLayerName changes a layer's name", () => {
+  it("when updateLayerName is called, then changes the layer's name", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -256,7 +256,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].id).toBe(layerId);
   });
 
-  it("updateLayerName with non-existent id does nothing", () => {
+  it("when updateLayerName is called with non-existent id, then does nothing", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -270,7 +270,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].name).toBe("Layer 1");
   });
 
-  it("addEditor increments editor count up to 3", () => {
+  it("when addEditor is called, then increments editor count up to 3", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.editorCount).toBe(1);
@@ -294,7 +294,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.editorCount).toBe(3);
   });
 
-  it("editorWidths are evenly distributed after adding editors", () => {
+  it("when editors are added, then editorWidths are evenly distributed", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -315,7 +315,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.editorWidths[2]).toBeCloseTo(33.3, 0);
   });
 
-  it("handleDividerResize clamps within bounds", () => {
+  it("when handleDividerResize is called, then clamps within bounds", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     // Add a second editor to have a divider
@@ -348,7 +348,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.editorWidths[1]).toBe(90);
   });
 
-  it("handleEditorMount sets activeEditor for index 0", () => {
+  it("when handleEditorMount is called for index 0, then sets activeEditor", () => {
     const { result } = renderHook(() => useEditorWorkspace());
     const mockEditor = { id: "editor-0" } as any;
 
@@ -359,7 +359,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeEditor).toBe(mockEditor);
   });
 
-  it("handleEditorMount does not set activeEditor for non-zero index", () => {
+  it("when handleEditorMount is called for non-zero index, then does not set activeEditor", () => {
     const { result } = renderHook(() => useEditorWorkspace());
     const mockEditor = { id: "editor-1" } as any;
 
@@ -370,7 +370,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeEditor).toBeNull();
   });
 
-  it("handlePaneFocus switches activeEditor", () => {
+  it("when handlePaneFocus is called, then switches activeEditor", () => {
     const { result } = renderHook(() => useEditorWorkspace());
     const editor0 = { id: "editor-0" } as any;
     const editor1 = { id: "editor-1" } as any;
@@ -389,7 +389,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeEditor).toBe(editor1);
   });
 
-  it("toggleManagementPane toggles isManagementPaneOpen", () => {
+  it("when toggleManagementPane is called, then toggles isManagementPaneOpen", () => {
     const { result } = renderHook(() => useEditorWorkspace());
     expect(result.current.isManagementPaneOpen).toBe(true);
 
@@ -404,7 +404,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.isManagementPaneOpen).toBe(true);
   });
 
-  it("removeLayer removes a layer by id", () => {
+  it("when removeLayer is called, then removes the layer by id", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -422,7 +422,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].id).not.toBe(firstLayerId);
   });
 
-  it("removeLayer with non-existent id does nothing", () => {
+  it("when removeLayer is called with non-existent id, then does nothing", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -436,7 +436,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers).toHaveLength(1);
   });
 
-  it("updateLayerColor changes a layer's colour", () => {
+  it("when updateLayerColor is called, then changes the layer's colour", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -454,7 +454,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].id).toBe(layerId);
   });
 
-  it("removeEditor decrements editor count and redistributes widths", () => {
+  it("when removeEditor is called, then decrements editor count and redistributes widths", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -473,7 +473,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.editorWidths[1]).toBeCloseTo(50, 0);
   });
 
-  it("removeEditor does not go below 1 editor", () => {
+  it("when removeEditor is called with only 1 editor, then does not go below 1", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -483,7 +483,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.editorCount).toBe(1);
   });
 
-  it("addLayer auto-activates the first layer", () => {
+  it("when the first layer is added, then auto-activates it", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -493,7 +493,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeLayerId).toBe(result.current.layers[0].id);
   });
 
-  it("addLayer always sets the new layer as active", () => {
+  it("when a new layer is added, then always sets it as active", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -508,12 +508,12 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeLayerId).toBe(secondId);
   });
 
-  it("activeLayerId is initially null", () => {
+  it("when initialized, then activeLayerId is null", () => {
     const { result } = renderHook(() => useEditorWorkspace());
     expect(result.current.activeLayerId).toBeNull();
   });
 
-  it("setActiveLayer sets the active layer", () => {
+  it("when setActiveLayer is called, then sets the active layer", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -529,7 +529,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeLayerId).toBe(layerId);
   });
 
-  it("setActiveLayer switches between layers", () => {
+  it("when setActiveLayer is called on different layers, then switches between them", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -551,7 +551,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeLayerId).toBe(secondId);
   });
 
-  it("removeLayer auto-selects another layer when the active layer is removed", () => {
+  it("when the active layer is removed, then auto-selects another layer", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -574,7 +574,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeLayerId).toBe(secondId);
   });
 
-  it("removeLayer keeps activeLayerId when a different layer is removed", () => {
+  it("when a non-active layer is removed, then keeps activeLayerId", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -596,7 +596,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.activeLayerId).toBe(firstId);
   });
 
-  it("addLayer initializes highlights as empty array", () => {
+  it("when addLayer is called, then initializes highlights as empty array", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -606,7 +606,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].highlights).toEqual([]);
   });
 
-  it("addLayer initializes visible as true", () => {
+  it("when addLayer is called, then initializes visible as true", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -616,7 +616,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].visible).toBe(true);
   });
 
-  it("toggleLayerVisibility toggles a layer's visibility", () => {
+  it("when toggleLayerVisibility is called, then toggles the layer's visibility", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -639,7 +639,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].visible).toBe(true);
   });
 
-  it("addHighlight adds a highlight to the specified layer", () => {
+  it("when addHighlight is called, then adds a highlight to the specified layer", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -667,7 +667,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].highlights[0].id).toBeTruthy();
   });
 
-  it("addHighlight does not affect other layers", () => {
+  it("when addHighlight is called, then does not affect other layers", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -692,7 +692,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[1].highlights).toHaveLength(0);
   });
 
-  it("removeHighlight removes a highlight by id", () => {
+  it("when removeHighlight is called, then removes the highlight by id", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -732,7 +732,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].highlights[0].text).toBe("world");
   });
 
-  it("clearLayerHighlights removes all highlights from a layer", () => {
+  it("when clearLayerHighlights is called, then removes all highlights from the layer", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -769,7 +769,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].highlights).toEqual([]);
   });
 
-  it("editorsRef is exposed", () => {
+  it("when workspace is initialized, then editorsRef is exposed", () => {
     const { result } = renderHook(() => useEditorWorkspace());
     expect(result.current.editorsRef).toBeDefined();
     expect(result.current.editorsRef.current).toBeInstanceOf(Map);
@@ -779,7 +779,7 @@ describe("useEditorWorkspace", () => {
   // Note: Layer undo/redo now goes through the unified undo controller,
   // which delegates to Yjs UndoManager first, then falls back to action history.
 
-  it("unifiedUndo is exposed from the workspace", () => {
+  it("when workspace is initialized, then unifiedUndo is exposed", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.unifiedUndo).toBeDefined();
@@ -789,7 +789,7 @@ describe("useEditorWorkspace", () => {
     expect(typeof result.current.unifiedUndo.canRedo).toBe("boolean");
   });
 
-  it("undo/redo addEditor preserves the original passage name", () => {
+  it("when undo/redo is used on addEditor, then preserves the original passage name", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -808,7 +808,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"]);
   });
 
-  it("repeated undo/redo of addEditor does not increment passage name", () => {
+  it("when undo/redo of addEditor is repeated, then does not increment passage name", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -832,7 +832,7 @@ describe("useEditorWorkspace", () => {
   // toggleLayerVisibility is now handled via Yjs UndoManager, not action history.
   // The toggle behavior is tested in "toggleLayerVisibility toggles a layer's visibility" above.
 
-  it("toggleSectionVisibility is undoable", () => {
+  it("when toggleSectionVisibility is called, then it is undoable", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.sectionVisibility[0]).toBe(true);
@@ -854,7 +854,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.sectionVisibility[0]).toBe(false);
   });
 
-  it("toggleLocked is undoable", () => {
+  it("when toggleLocked is called, then it is undoable", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.settings.isLocked).toBe(true);
@@ -876,7 +876,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.settings.isLocked).toBe(false);
   });
 
-  it("toggleDarkMode is undoable", () => {
+  it("when toggleDarkMode is called, then it is undoable", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.settings.isDarkMode).toBe(false);
@@ -897,7 +897,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.settings.isDarkMode).toBe(true);
   });
 
-  it("toggleMultipleRowsLayout is undoable", () => {
+  it("when toggleMultipleRowsLayout is called, then it is undoable", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.settings.isMultipleRowsLayout).toBe(false);
@@ -918,7 +918,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.settings.isMultipleRowsLayout).toBe(true);
   });
 
-  it("setActiveTool no-ops when setting the same tool", () => {
+  it("when setActiveTool is called with the same tool, then no-ops", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.annotations.activeTool).toBe("selection");
@@ -931,7 +931,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.history.log).toHaveLength(0);
   });
 
-  it("setActiveTool is undoable and restores old tool", () => {
+  it("when setActiveTool is called, then it is undoable and restores old tool", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.annotations.activeTool).toBe("selection");
@@ -953,7 +953,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.annotations.activeTool).toBe("arrow");
   });
 
-  it("setActiveTool undo chain across multiple tool switches", () => {
+  it("when setActiveTool is undone across multiple tool switches, then restores each previous tool", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -976,7 +976,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.annotations.activeTool).toBe("selection");
   });
 
-  it("toggle actions use record() not logOnly()", () => {
+  it("when toggle actions are called, then they use record() not logOnly()", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     // addLayer and toggleLayerVisibility now go through Yjs, not action history

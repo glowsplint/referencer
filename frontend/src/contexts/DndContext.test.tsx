@@ -24,68 +24,74 @@ function DndConsumer() {
 }
 
 describe("DndContext", () => {
-  it("provides initial drag state to children", () => {
-    render(
-      <DndProvider>
-        <DndConsumer />
-      </DndProvider>,
-    );
+  describe("when rendered", () => {
+    it("then provides initial drag state to children", () => {
+      render(
+        <DndProvider>
+          <DndConsumer />
+        </DndProvider>,
+      );
 
-    expect(screen.getByTestId("isDragging")).toHaveTextContent("false");
-    expect(screen.getByTestId("dragType")).toHaveTextContent("null");
-    expect(screen.getByTestId("dragId")).toHaveTextContent("null");
-    expect(screen.getByTestId("overTargetId")).toHaveTextContent("null");
+      expect(screen.getByTestId("isDragging")).toHaveTextContent("false");
+      expect(screen.getByTestId("dragType")).toHaveTextContent("null");
+      expect(screen.getByTestId("dragId")).toHaveTextContent("null");
+      expect(screen.getByTestId("overTargetId")).toHaveTextContent("null");
+    });
   });
 
-  it("setDragState merges partial state", () => {
-    render(
-      <DndProvider>
-        <DndConsumer />
-      </DndProvider>,
-    );
+  describe("when setDragState is called with partial state", () => {
+    it("then merges the new state with existing state", () => {
+      render(
+        <DndProvider>
+          <DndConsumer />
+        </DndProvider>,
+      );
 
-    act(() => {
-      screen.getByTestId("setDragState").click();
+      act(() => {
+        screen.getByTestId("setDragState").click();
+      });
+
+      expect(screen.getByTestId("isDragging")).toHaveTextContent("true");
+      expect(screen.getByTestId("dragType")).toHaveTextContent("workspace");
+      expect(screen.getByTestId("dragId")).toHaveTextContent("ws-1");
+      // overTargetId was not set, should remain null
+      expect(screen.getByTestId("overTargetId")).toHaveTextContent("null");
+
+      // Now partially update just overTargetId
+      act(() => {
+        screen.getByTestId("setOverTarget").click();
+      });
+
+      // Previous state should be preserved
+      expect(screen.getByTestId("isDragging")).toHaveTextContent("true");
+      expect(screen.getByTestId("dragId")).toHaveTextContent("ws-1");
+      expect(screen.getByTestId("overTargetId")).toHaveTextContent("folder-2");
     });
-
-    expect(screen.getByTestId("isDragging")).toHaveTextContent("true");
-    expect(screen.getByTestId("dragType")).toHaveTextContent("workspace");
-    expect(screen.getByTestId("dragId")).toHaveTextContent("ws-1");
-    // overTargetId was not set, should remain null
-    expect(screen.getByTestId("overTargetId")).toHaveTextContent("null");
-
-    // Now partially update just overTargetId
-    act(() => {
-      screen.getByTestId("setOverTarget").click();
-    });
-
-    // Previous state should be preserved
-    expect(screen.getByTestId("isDragging")).toHaveTextContent("true");
-    expect(screen.getByTestId("dragId")).toHaveTextContent("ws-1");
-    expect(screen.getByTestId("overTargetId")).toHaveTextContent("folder-2");
   });
 
-  it("resetDrag returns to initial state", () => {
-    render(
-      <DndProvider>
-        <DndConsumer />
-      </DndProvider>,
-    );
+  describe("when resetDrag is called", () => {
+    it("then returns to initial state", () => {
+      render(
+        <DndProvider>
+          <DndConsumer />
+        </DndProvider>,
+      );
 
-    // Set some state
-    act(() => {
-      screen.getByTestId("setDragState").click();
+      // Set some state
+      act(() => {
+        screen.getByTestId("setDragState").click();
+      });
+      expect(screen.getByTestId("isDragging")).toHaveTextContent("true");
+
+      // Reset
+      act(() => {
+        screen.getByTestId("resetDrag").click();
+      });
+
+      expect(screen.getByTestId("isDragging")).toHaveTextContent("false");
+      expect(screen.getByTestId("dragType")).toHaveTextContent("null");
+      expect(screen.getByTestId("dragId")).toHaveTextContent("null");
+      expect(screen.getByTestId("overTargetId")).toHaveTextContent("null");
     });
-    expect(screen.getByTestId("isDragging")).toHaveTextContent("true");
-
-    // Reset
-    act(() => {
-      screen.getByTestId("resetDrag").click();
-    });
-
-    expect(screen.getByTestId("isDragging")).toHaveTextContent("false");
-    expect(screen.getByTestId("dragType")).toHaveTextContent("null");
-    expect(screen.getByTestId("dragId")).toHaveTextContent("null");
-    expect(screen.getByTestId("overTargetId")).toHaveTextContent("null");
   });
 });

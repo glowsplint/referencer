@@ -16,7 +16,7 @@ function makeContainerWithLayers(layers: Layer[]) {
 }
 
 describe("useAllHighlightPositions", () => {
-  it("skips invisible layers", () => {
+  it("when a layer is invisible, then skips it", () => {
     const { containerRef, editorsRef, cleanup } = makeContainerWithLayers([]);
     const layers: Layer[] = [
       {
@@ -40,7 +40,7 @@ describe("useAllHighlightPositions", () => {
     cleanup();
   });
 
-  it("skips highlights when editor is not found in the editors map", () => {
+  it("when editor is not found in the editors map, then skips highlights", () => {
     const { containerRef, editorsRef, cleanup } = makeContainerWithLayers([]);
     const layers: Layer[] = [
       {
@@ -64,7 +64,7 @@ describe("useAllHighlightPositions", () => {
     cleanup();
   });
 
-  it("skips non-comment highlights", () => {
+  it("when highlight type is not comment, then skips it", () => {
     const { containerRef, editorsRef, cleanup } = makeContainerWithLayers([]);
     const layers: Layer[] = [
       {
@@ -88,7 +88,7 @@ describe("useAllHighlightPositions", () => {
     cleanup();
   });
 
-  it("exports HighlightPosition type shape", () => {
+  it("when HighlightPosition type is used, then it has the expected shape", () => {
     // Verify the shape is exported and usable
     const pos: import("./use-all-highlight-positions").HighlightPosition = {
       highlightId: "h1",

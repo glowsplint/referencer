@@ -65,7 +65,7 @@ beforeEach(() => {
 });
 
 describe("useWorkspaces", () => {
-  it("fetches workspaces on mount", async () => {
+  it("when mounted, then fetches workspaces", async () => {
     const { result } = renderHook(() => useWorkspaces());
     expect(result.current.isLoading).toBe(true);
 
@@ -74,7 +74,7 @@ describe("useWorkspaces", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("sets error when fetch fails", async () => {
+  it("when fetch fails, then sets error", async () => {
     mockFetch.mockRejectedValue(new Error("Network error"));
 
     const { result } = renderHook(() => useWorkspaces());
@@ -82,7 +82,7 @@ describe("useWorkspaces", () => {
     expect(result.current.error?.message).toBe("Network error");
   });
 
-  it("rename updates title optimistically", async () => {
+  it("when rename is called, then updates title optimistically", async () => {
     const { result } = renderHook(() => useWorkspaces());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -96,7 +96,7 @@ describe("useWorkspaces", () => {
     expect(mockRename).toHaveBeenCalledWith("ws-1", "New Title");
   });
 
-  it("rename reverts on API failure", async () => {
+  it("when rename API call fails, then reverts the title", async () => {
     const { result } = renderHook(() => useWorkspaces());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -116,7 +116,7 @@ describe("useWorkspaces", () => {
     await waitFor(() => expect(result.current.workspaces[0].title).toBe("Workspace 1"));
   });
 
-  it("remove filters workspace optimistically", async () => {
+  it("when remove is called, then filters workspace optimistically", async () => {
     const { result } = renderHook(() => useWorkspaces());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -130,7 +130,7 @@ describe("useWorkspaces", () => {
     expect(result.current.workspaces[0].workspaceId).toBe("ws-2");
   });
 
-  it("remove reverts on failure with toast", async () => {
+  it("when remove API call fails, then reverts and shows toast", async () => {
     const { result } = renderHook(() => useWorkspaces());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -145,7 +145,7 @@ describe("useWorkspaces", () => {
     await waitFor(() => expect(result.current.workspaces).toHaveLength(2));
   });
 
-  it("duplicate clones source workspace optimistically", async () => {
+  it("when duplicate is called, then clones source workspace optimistically", async () => {
     const { result } = renderHook(() => useWorkspaces());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -162,7 +162,7 @@ describe("useWorkspaces", () => {
     expect(duped!.isFavorite).toBe(false);
   });
 
-  it("toggleFavorite updates isFavorite optimistically", async () => {
+  it("when toggleFavorite is called, then updates isFavorite optimistically", async () => {
     const { result } = renderHook(() => useWorkspaces());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -175,7 +175,7 @@ describe("useWorkspaces", () => {
     expect(result.current.workspaces[0].isFavorite).toBe(true);
   });
 
-  it("moveToFolder updates folderId optimistically", async () => {
+  it("when moveToFolder is called, then updates folderId optimistically", async () => {
     const { result } = renderHook(() => useWorkspaces());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -188,7 +188,7 @@ describe("useWorkspaces", () => {
     expect(result.current.workspaces[0].folderId).toBe("folder-1");
   });
 
-  it("unfileWorkspace sets folderId to null optimistically", async () => {
+  it("when unfileWorkspace is called, then sets folderId to null optimistically", async () => {
     // Start with workspace in a folder
     mockFetch.mockResolvedValue([{ ...ws1, folderId: "folder-1" }, ws2]);
     const { result } = renderHook(() => useWorkspaces());
@@ -203,7 +203,7 @@ describe("useWorkspaces", () => {
     expect(result.current.workspaces[0].folderId).toBeNull();
   });
 
-  it("create calls API and refetches", async () => {
+  it("when create is called, then calls API and refetches", async () => {
     const { result } = renderHook(() => useWorkspaces());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 

@@ -36,7 +36,7 @@ function createArgs(layersOverride?: Layer[]) {
 }
 
 describe("useAnnotationEdit", () => {
-  it("handleAnnotationClick sets editing state and caches pre-edit content", () => {
+  it("when handleAnnotationClick is called, then sets editing state and caches pre-edit content", () => {
     const args = createArgs();
     const { result } = renderHook(() => useAnnotationEdit(args));
 
@@ -50,7 +50,7 @@ describe("useAnnotationEdit", () => {
     });
   });
 
-  it("handleAnnotationBlur with empty annotation removes the highlight", () => {
+  it("when handleAnnotationBlur is called with empty annotation, then removes the highlight", () => {
     const args = createArgs();
     const { result } = renderHook(() => useAnnotationEdit(args));
 
@@ -68,7 +68,7 @@ describe("useAnnotationEdit", () => {
     expect(result.current.editingAnnotation).toBeNull();
   });
 
-  it("handleAnnotationBlur with HTML-only annotation removes the highlight", () => {
+  it("when handleAnnotationBlur is called with HTML-only annotation, then removes the highlight", () => {
     const args = createArgs();
     const { result } = renderHook(() => useAnnotationEdit(args));
 
@@ -83,7 +83,7 @@ describe("useAnnotationEdit", () => {
     expect(args.removeHighlight).toHaveBeenCalledWith("layer-1", "h1");
   });
 
-  it("handleAnnotationBlur with changed annotation records in history", () => {
+  it("when handleAnnotationBlur is called with changed annotation, then records in history", () => {
     const args = createArgs();
     const { result } = renderHook(() => useAnnotationEdit(args));
 
@@ -113,7 +113,7 @@ describe("useAnnotationEdit", () => {
     expect(args.updateHighlightAnnotation).toHaveBeenCalledWith("layer-1", "h1", "updated note");
   });
 
-  it("handleAnnotationBlur with unchanged text skips history", () => {
+  it("when handleAnnotationBlur is called with unchanged text, then skips history", () => {
     const args = createArgs();
     const { result } = renderHook(() => useAnnotationEdit(args));
 
@@ -132,7 +132,7 @@ describe("useAnnotationEdit", () => {
     expect(result.current.editingAnnotation).toBeNull();
   });
 
-  it("onHighlightAdded sets editing state with empty pre-edit cache", () => {
+  it("when onHighlightAdded is called, then sets editing state with empty pre-edit cache", () => {
     const args = createArgs();
     const { result } = renderHook(() => useAnnotationEdit(args));
 
@@ -153,7 +153,7 @@ describe("useAnnotationEdit", () => {
     expect(args.history.record).toHaveBeenCalled();
   });
 
-  it("handleAnnotationClick for missing highlight caches empty string", () => {
+  it("when handleAnnotationClick is called for a missing highlight, then caches empty string", () => {
     const args = createArgs();
     const { result } = renderHook(() => useAnnotationEdit(args));
 

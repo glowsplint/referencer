@@ -26,7 +26,7 @@ async function clickWordInEditorRaw(
   await page.mouse.click(box!.x + xOffset, box!.y + box!.height / 2);
 }
 
-test.describe("eraser tool", () => {
+test.describe("when using the eraser tool", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -39,14 +39,14 @@ test.describe("eraser tool", () => {
     await page.getByTestId("addLayerButton").click();
   });
 
-  test("E key activates eraser tool", async ({ page }) => {
+  test("when E key is pressed, then eraser tool is activated", async ({ page }) => {
     await page.keyboard.press("e");
     await expect(page.getByTestId("eraserToolButton")).toHaveClass(/bg-accent/, {
       timeout: 2000,
     });
   });
 
-  test("eraser removes a highlight when clicking on it", async ({ page }) => {
+  test("when eraser clicks on a highlight, then it is removed", async ({ page }) => {
     // Record initial highlight count from default layers
     const highlights = page.locator(
       '.simple-editor-wrapper .ProseMirror span[style*="background-color"]',
@@ -76,7 +76,7 @@ test.describe("eraser tool", () => {
     await expect(highlights).toHaveCount(afterCreate - 1, { timeout: 2000 });
   });
 
-  test("eraser removes an underline when clicking on it", async ({ page }) => {
+  test("when eraser clicks on an underline, then it is removed", async ({ page }) => {
     // Record initial underline count from default layers
     const underlines = page.locator(
       '.simple-editor-wrapper .ProseMirror span[style*="text-decoration"]',
@@ -102,7 +102,7 @@ test.describe("eraser tool", () => {
     await expect(underlines).toHaveCount(afterCreate - 1, { timeout: 2000 });
   });
 
-  test("eraser does not affect decorations on hidden layers", async ({ page }) => {
+  test("when eraser is used on a hidden layer's position, then decorations on that layer are not affected", async ({ page }) => {
     // Record initial highlight count from default layers
     const highlights = page.locator(
       '.simple-editor-wrapper .ProseMirror span[style*="background-color"]',
@@ -136,7 +136,7 @@ test.describe("eraser tool", () => {
     expect(afterShow).toBe(afterCreate);
   });
 
-  test("status bar shows eraser message when tool is active", async ({ page }) => {
+  test("when eraser tool is active, then status bar shows eraser message", async ({ page }) => {
     await page.keyboard.press("e");
     await expect(page.getByTestId("status-bar")).toContainText(
       "Click and drag to erase annotations.",

@@ -17,7 +17,7 @@ function createLayer(overrides?: Partial<Layer>): Layer {
 }
 
 describe("captureVisibilitySnapshot", () => {
-  it("creates correct snapshot from layers and section visibility", () => {
+  it("when layers and section visibility are provided, then creates correct snapshot", () => {
     const layers: Layer[] = [
       createLayer({
         id: "layer-1",
@@ -65,7 +65,7 @@ describe("captureVisibilitySnapshot", () => {
     expect(snapshot.sections).toEqual({ 0: true, 1: false });
   });
 
-  it("handles empty layers and sections", () => {
+  it("when layers and sections are empty, then handles gracefully", () => {
     const snapshot = captureVisibilitySnapshot([], {});
     expect(snapshot.layers).toEqual({});
     expect(snapshot.annotations).toEqual({});
@@ -74,7 +74,7 @@ describe("captureVisibilitySnapshot", () => {
 });
 
 describe("computeDelta", () => {
-  it("detects layer visibility change", () => {
+  it("when a layer visibility changes, then detects it", () => {
     const prev: VisibilitySnapshot = {
       layers: { "layer-1": true, "layer-2": false },
       annotations: {},
@@ -90,7 +90,7 @@ describe("computeDelta", () => {
     expect(delta).toEqual({ "layer:layer-1": false });
   });
 
-  it("detects annotation visibility change", () => {
+  it("when an annotation visibility changes, then detects it", () => {
     const prev: VisibilitySnapshot = {
       layers: {},
       annotations: { "highlight:layer-1:h1": true, "arrow:layer-1:a1": true },
@@ -106,7 +106,7 @@ describe("computeDelta", () => {
     expect(delta).toEqual({ "highlight:layer-1:h1": false });
   });
 
-  it("detects section visibility change", () => {
+  it("when a section visibility changes, then detects it", () => {
     const prev: VisibilitySnapshot = {
       layers: {},
       annotations: {},
@@ -122,7 +122,7 @@ describe("computeDelta", () => {
     expect(delta).toEqual({ "section:1": false });
   });
 
-  it("detects removed layers as hidden", () => {
+  it("when layers are removed, then detects them as hidden", () => {
     const prev: VisibilitySnapshot = {
       layers: { "layer-1": true, "layer-2": true },
       annotations: {},
@@ -138,7 +138,7 @@ describe("computeDelta", () => {
     expect(delta).toEqual({ "layer:layer-2": false });
   });
 
-  it("detects removed annotations as hidden", () => {
+  it("when annotations are removed, then detects them as hidden", () => {
     const prev: VisibilitySnapshot = {
       layers: {},
       annotations: { "highlight:layer-1:h1": true, "arrow:layer-1:a1": true },
@@ -154,7 +154,7 @@ describe("computeDelta", () => {
     expect(delta).toEqual({ "arrow:layer-1:a1": false });
   });
 
-  it("returns empty object when nothing changed", () => {
+  it("when nothing changed, then returns empty object", () => {
     const snapshot: VisibilitySnapshot = {
       layers: { "layer-1": true },
       annotations: { "highlight:layer-1:h1": true },
@@ -165,7 +165,7 @@ describe("computeDelta", () => {
     expect(delta).toEqual({});
   });
 
-  it("detects multiple changes at once", () => {
+  it("when multiple changes occur at once, then detects all of them", () => {
     const prev: VisibilitySnapshot = {
       layers: { "layer-1": true, "layer-2": false },
       annotations: { "highlight:layer-1:h1": true },
@@ -186,7 +186,7 @@ describe("computeDelta", () => {
     });
   });
 
-  it("detects new layers as changed", () => {
+  it("when new layers appear, then detects them as changed", () => {
     const prev: VisibilitySnapshot = {
       layers: {},
       annotations: {},

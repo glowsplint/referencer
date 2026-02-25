@@ -64,7 +64,7 @@ function parseArrowCoords(d: string): number[] {
   return d.match(/[\d.]+/g)!.map(Number);
 }
 
-test.describe("passage visibility with arrows (2 editors)", () => {
+test.describe("when toggling passage visibility with arrows (2 editors)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -81,7 +81,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("hiding source passage hides same-editor arrow, re-showing restores it", async ({
+  test("when source passage is hidden, then same-editor arrow is hidden and re-showing restores it", async ({
     page,
   }) => {
     await drawArrowInEditor(page, 0);
@@ -109,7 +109,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     }
   });
 
-  test("cross-editor arrow hides when source passage is hidden", async ({ page }) => {
+  test("when source passage is hidden, then cross-editor arrow hides", async ({ page }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -132,7 +132,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
   });
 
-  test("hiding both passages hides all arrows, re-showing restores them", async ({ page }) => {
+  test("when both passages are hidden, then all arrows hide and re-showing restores them", async ({ page }) => {
     // Draw cross-editor arrow E1→E2
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -158,7 +158,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
   });
 
-  test("combined layer hidden + section hidden restores correctly", async ({ page }) => {
+  test("when layer is hidden and section is hidden, then restoring both shows arrow correctly", async ({ page }) => {
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -188,7 +188,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
   });
 
-  test("rapid section toggle does not lose arrows", async ({ page }) => {
+  test("when section is toggled rapidly, then arrows are not lost", async ({ page }) => {
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -213,7 +213,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
   });
 
-  test("drawing arrow in visible editor while other passage is hidden", async ({ page }) => {
+  test("when arrow is drawn while other passage is hidden, then arrow persists after showing", async ({ page }) => {
     // Hide E2
     await page.getByTestId("menuButton").click();
     await page.getByTestId("sectionVisibility-1").click();
@@ -234,7 +234,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
     });
   });
 
-  test("highlights persist after hide/show cycle", async ({ page }) => {
+  test("when passage is hidden and shown again, then highlights persist", async ({ page }) => {
     await drawArrowInEditor(page, 0);
 
     const countBefore = await page
@@ -256,7 +256,7 @@ test.describe("passage visibility with arrows (2 editors)", () => {
   });
 });
 
-test.describe("passage visibility with arrows (3 editors)", () => {
+test.describe("when toggling passage visibility with arrows (3 editors)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -292,7 +292,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("hiding middle editor removes arrows to/from it, keeps E1-E3 arrow", async ({ page }) => {
+  test("when middle editor is hidden, then its arrows are removed but E1-E3 arrow remains", async ({ page }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -336,7 +336,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("hiding E1 removes arrows originating from it, keeps E2-E3 arrow", async ({ page }) => {
+  test("when E1 is hidden, then arrows originating from it are removed but E2-E3 arrow remains", async ({ page }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -364,7 +364,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("hiding E3 removes arrows targeting it, keeps E1-E2 arrow", async ({ page }) => {
+  test("when E3 is hidden, then arrows targeting it are removed but E1-E2 arrow remains", async ({ page }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -392,7 +392,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("hiding E1 and E3 removes all arrows", async ({ page }) => {
+  test("when E1 and E3 are hidden, then all arrows are removed", async ({ page }) => {
     // Draw E1→E2, E1→E3 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
     await drawArrowBetweenEditors(page, 0, 2, 60);
@@ -420,7 +420,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("hiding all 3 passages hides all arrows and editors", async ({ page }) => {
+  test("when all 3 passages are hidden, then all arrows and editors are hidden", async ({ page }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -453,7 +453,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     }
   });
 
-  test("layer + section visibility combined in 3-editor setup", async ({ page }) => {
+  test("when layer and section visibility are combined in 3-editor setup, then arrows respect both states", async ({ page }) => {
     // Draw E1→E2 on Layer 1, E2→E3 on Layer 2
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -490,7 +490,7 @@ test.describe("passage visibility with arrows (3 editors)", () => {
     });
   });
 
-  test("arrow coordinates remain valid after hide/show cycle", async ({ page }) => {
+  test("when passages are hidden and shown again, then arrow coordinates remain valid", async ({ page }) => {
     // Draw E1→E3 on Layer 1
     await drawArrowBetweenEditors(page, 0, 2);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {

@@ -4,7 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { DeleteDialog } from "./DeleteDialog";
 
 describe("DeleteDialog", () => {
-  it("renders the workspace title in the confirmation message", () => {
+  describe("when opened", () => {
+    it("then renders the workspace title in the confirmation message", () => {
     render(
       <DeleteDialog
         open={true}
@@ -15,9 +16,11 @@ describe("DeleteDialog", () => {
     );
     expect(screen.getByText(/My Workspace/)).toBeInTheDocument();
     expect(screen.getByText("Delete Workspace")).toBeInTheDocument();
+    });
   });
 
-  it("calls onDelete when the Delete button is clicked", async () => {
+  describe("when the Delete button is clicked", () => {
+    it("then calls onDelete", async () => {
     const user = userEvent.setup();
     const onDelete = vi.fn();
     render(
@@ -31,9 +34,11 @@ describe("DeleteDialog", () => {
 
     await user.click(screen.getByTestId("confirmDelete"));
     expect(onDelete).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it("calls onOpenChange(false) when Cancel is clicked", async () => {
+  describe("when Cancel is clicked", () => {
+    it("then calls onOpenChange with false", async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();
     render(
@@ -47,9 +52,11 @@ describe("DeleteDialog", () => {
 
     await user.click(screen.getByRole("button", { name: /cancel/i }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
   });
 
-  it("does not render content when closed", () => {
+  describe("when closed", () => {
+    it("then does not render content", () => {
     render(
       <DeleteDialog
         open={false}
@@ -59,5 +66,6 @@ describe("DeleteDialog", () => {
       />,
     );
     expect(screen.queryByTestId("deleteDialog")).not.toBeInTheDocument();
+    });
   });
 });

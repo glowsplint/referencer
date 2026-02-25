@@ -12,8 +12,8 @@ beforeEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("fetchTourPreferences", () => {
-  it("converts PreferenceItem array to record", async () => {
+describe("when using fetchTourPreferences", () => {
+  it("then converts PreferenceItem array to record", async () => {
     mockApiFetch.mockResolvedValue([
       { key: "welcome", value: "done", updatedAt: "2024-01-01" },
       { key: "editor", value: "skipped", updatedAt: "2024-01-02" },
@@ -25,8 +25,8 @@ describe("fetchTourPreferences", () => {
   });
 });
 
-describe("saveTourPreference", () => {
-  it("sends PUT with encoded key", async () => {
+describe("when using saveTourPreference", () => {
+  it("then sends PUT with encoded key", async () => {
     mockApiFetch.mockResolvedValue(undefined);
 
     await saveTourPreference("welcome tour", "done");

@@ -11,14 +11,14 @@ describe("useScrolling", () => {
     vi.useRealTimers();
   });
 
-  it("returns false initially", () => {
+  it("when initialized, then returns false", () => {
     const { result } = renderHook(() => useScrolling());
     expect(result.current).toBe(false);
   });
 
   // jsdom has `onscrollend` in window, so the hook uses the scrollend event path
   // for window targets. We need to fire scrollend to reset.
-  it("becomes true on scroll and false on scrollend (window target)", () => {
+  it("when scroll occurs on window, then becomes true; on scrollend becomes false", () => {
     const { result } = renderHook(() => useScrolling(undefined, { debounce: 100 }));
 
     act(() => {
@@ -32,7 +32,7 @@ describe("useScrolling", () => {
     expect(result.current).toBe(false);
   });
 
-  it("stays true between scroll events until scrollend fires", () => {
+  it("when multiple scroll events fire, then stays true until scrollend", () => {
     const { result } = renderHook(() => useScrolling());
 
     act(() => {
@@ -53,7 +53,7 @@ describe("useScrolling", () => {
     expect(result.current).toBe(false);
   });
 
-  it("uses debounce fallback for element ref targets (no scrollend)", () => {
+  it("when using element ref target without scrollend, then uses debounce fallback", () => {
     const div = document.createElement("div");
     document.body.appendChild(div);
     const ref = { current: div };
@@ -75,7 +75,7 @@ describe("useScrolling", () => {
     document.body.removeChild(div);
   });
 
-  it("resets debounce timer on subsequent scroll events for element targets", () => {
+  it("when subsequent scroll events fire on element target, then resets debounce timer", () => {
     const div = document.createElement("div");
     document.body.appendChild(div);
     const ref = { current: div };
@@ -110,7 +110,7 @@ describe("useScrolling", () => {
     document.body.removeChild(div);
   });
 
-  it("cleans up event listeners on unmount", () => {
+  it("when unmounted, then cleans up event listeners", () => {
     const removeEventListenerSpy = vi.spyOn(document, "removeEventListener");
 
     const { unmount } = renderHook(() => useScrolling());

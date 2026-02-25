@@ -6,14 +6,14 @@ function makeFile(size: number, name = "test.png", type = "image/png"): File {
   return new File([buffer], name, { type });
 }
 
-describe("handleImageUpload", () => {
-  it("reads a file and returns a data URL", async () => {
+describe("when using handleImageUpload", () => {
+  it("then reads a file and returns a data URL", async () => {
     const file = makeFile(100);
     const result = await handleImageUpload(file);
     expect(result).toMatch(/^data:/);
   });
 
-  it("calls onProgress with 0 at start and 100 at end", async () => {
+  it("then calls onProgress with 0 at start and 100 at end", async () => {
     const file = makeFile(100);
     const onProgress = vi.fn();
     await handleImageUpload(file, onProgress);
@@ -21,16 +21,16 @@ describe("handleImageUpload", () => {
     expect(onProgress).toHaveBeenCalledWith({ progress: 100 });
   });
 
-  it("throws when no file is provided", async () => {
+  it("then throws when no file is provided", async () => {
     await expect(handleImageUpload(null as unknown as File)).rejects.toThrow("No file provided");
   });
 
-  it("throws when file exceeds MAX_FILE_SIZE", async () => {
+  it("then throws when file exceeds MAX_FILE_SIZE", async () => {
     const file = makeFile(MAX_FILE_SIZE + 1);
     await expect(handleImageUpload(file)).rejects.toThrow("File size exceeds maximum allowed");
   });
 
-  it("rejects when abortSignal is already aborted", async () => {
+  it("then rejects when abortSignal is already aborted", async () => {
     const file = makeFile(100);
     const controller = new AbortController();
     controller.abort();
@@ -39,7 +39,7 @@ describe("handleImageUpload", () => {
     );
   });
 
-  it("rejects when abortSignal fires during read", async () => {
+  it("then rejects when abortSignal fires during read", async () => {
     const file = makeFile(100);
     const controller = new AbortController();
 
@@ -57,7 +57,7 @@ describe("handleImageUpload", () => {
     }
   });
 
-  it("MAX_FILE_SIZE is 5MB", () => {
+  it("then MAX_FILE_SIZE is 5MB", () => {
     expect(MAX_FILE_SIZE).toBe(5 * 1024 * 1024);
   });
 });

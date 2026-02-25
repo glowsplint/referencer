@@ -14,65 +14,75 @@ describe("ErrorBoundary", () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
-  it("renders children when no error is thrown", () => {
-    render(
-      <ErrorBoundary>
-        <ThrowingComponent shouldThrow={false} />
-      </ErrorBoundary>,
-    );
-    expect(screen.getByText("Content works")).toBeInTheDocument();
+  describe("when no error is thrown", () => {
+    it("then renders children", () => {
+      render(
+        <ErrorBoundary>
+          <ThrowingComponent shouldThrow={false} />
+        </ErrorBoundary>,
+      );
+      expect(screen.getByText("Content works")).toBeInTheDocument();
+    });
   });
 
-  it("renders the default fallback when an error is thrown", () => {
-    render(
-      <ErrorBoundary>
-        <ThrowingComponent shouldThrow={true} />
-      </ErrorBoundary>,
-    );
-    expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
-    expect(screen.getByText("Try again")).toBeInTheDocument();
+  describe("when an error is thrown", () => {
+    it("then renders the default fallback", () => {
+      render(
+        <ErrorBoundary>
+          <ThrowingComponent shouldThrow={true} />
+        </ErrorBoundary>,
+      );
+      expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
+      expect(screen.getByText("Try again")).toBeInTheDocument();
+    });
   });
 
-  it("renders a custom fallback when provided", () => {
-    render(
-      <ErrorBoundary fallback={<div>Custom error UI</div>}>
-        <ThrowingComponent shouldThrow={true} />
-      </ErrorBoundary>,
-    );
-    expect(screen.getByText("Custom error UI")).toBeInTheDocument();
-    expect(screen.queryByText("Something went wrong.")).not.toBeInTheDocument();
+  describe("when an error is thrown with a custom fallback", () => {
+    it("then renders the custom fallback", () => {
+      render(
+        <ErrorBoundary fallback={<div>Custom error UI</div>}>
+          <ThrowingComponent shouldThrow={true} />
+        </ErrorBoundary>,
+      );
+      expect(screen.getByText("Custom error UI")).toBeInTheDocument();
+      expect(screen.queryByText("Something went wrong.")).not.toBeInTheDocument();
+    });
   });
 
-  it("renders nothing when silent is true", () => {
-    const { container } = render(
-      <ErrorBoundary silent>
-        <ThrowingComponent shouldThrow={true} />
-      </ErrorBoundary>,
-    );
-    expect(container.innerHTML).toBe("");
+  describe("when an error is thrown with silent mode", () => {
+    it("then renders nothing", () => {
+      const { container } = render(
+        <ErrorBoundary silent>
+          <ThrowingComponent shouldThrow={true} />
+        </ErrorBoundary>,
+      );
+      expect(container.innerHTML).toBe("");
+    });
   });
 
-  it("resets the error state when Try again is clicked", async () => {
-    const user = userEvent.setup();
-    let shouldThrow = true;
+  describe("when Try again is clicked after an error", () => {
+    it("then resets the error state and re-renders children", async () => {
+      const user = userEvent.setup();
+      let shouldThrow = true;
 
-    function ConditionalThrower() {
-      if (shouldThrow) throw new Error("Test error");
-      return <div>Recovered</div>;
-    }
+      function ConditionalThrower() {
+        if (shouldThrow) throw new Error("Test error");
+        return <div>Recovered</div>;
+      }
 
-    render(
-      <ErrorBoundary>
-        <ConditionalThrower />
-      </ErrorBoundary>,
-    );
+      render(
+        <ErrorBoundary>
+          <ConditionalThrower />
+        </ErrorBoundary>,
+      );
 
-    expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
+      expect(screen.getByText("Something went wrong.")).toBeInTheDocument();
 
-    // Fix the error condition then click Try again
-    shouldThrow = false;
-    await user.click(screen.getByText("Try again"));
+      // Fix the error condition then click Try again
+      shouldThrow = false;
+      await user.click(screen.getByText("Try again"));
 
-    expect(screen.getByText("Recovered")).toBeInTheDocument();
+      expect(screen.getByText("Recovered")).toBeInTheDocument();
+    });
   });
 });

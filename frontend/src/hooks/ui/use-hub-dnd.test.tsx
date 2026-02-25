@@ -53,7 +53,7 @@ describe("useDraggable", () => {
     dropTargetSpy = vi.fn(() => vi.fn());
   });
 
-  it("calls draggable with the element when mounted", () => {
+  it("when mounted, then calls draggable with the element", () => {
     render(<DraggableComponent type="workspace" id="ws-1" />);
     expect(draggableSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -62,13 +62,13 @@ describe("useDraggable", () => {
     );
   });
 
-  it("provides getInitialData that returns type and id", () => {
+  it("when getInitialData is called, then returns type and id", () => {
     render(<DraggableComponent type="folder" id="f-1" />);
     const config = draggableSpy.mock.calls[0][0];
     expect(config.getInitialData()).toEqual({ type: "folder", id: "f-1" });
   });
 
-  it("onDragStart sets drag state", () => {
+  it("when onDragStart fires, then sets drag state", () => {
     render(<DraggableComponent type="workspace" id="ws-1" />);
     const config = draggableSpy.mock.calls[0][0];
     config.onDragStart();
@@ -79,7 +79,7 @@ describe("useDraggable", () => {
     });
   });
 
-  it("onDrop resets drag state", () => {
+  it("when onDrop fires, then resets drag state", () => {
     render(<DraggableComponent type="workspace" id="ws-1" />);
     const config = draggableSpy.mock.calls[0][0];
     config.onDrop();
@@ -94,7 +94,7 @@ describe("useDropTarget", () => {
     dropTargetSpy = vi.fn(() => vi.fn());
   });
 
-  it("calls dropTargetForElements with the element when mounted", () => {
+  it("when mounted, then calls dropTargetForElements with the element", () => {
     const onDrop = vi.fn();
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} />);
     expect(dropTargetSpy).toHaveBeenCalledWith(
@@ -104,21 +104,21 @@ describe("useDropTarget", () => {
     );
   });
 
-  it("canDrop returns false when source data has no type", () => {
+  it("when source data has no type, then canDrop returns false", () => {
     const onDrop = vi.fn();
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} />);
     const config = dropTargetSpy.mock.calls[0][0];
     expect(config.canDrop({ source: { data: {} } })).toBe(false);
   });
 
-  it("canDrop returns true when source data is valid and no custom canDrop", () => {
+  it("when source data is valid and no custom canDrop, then canDrop returns true", () => {
     const onDrop = vi.fn();
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} />);
     const config = dropTargetSpy.mock.calls[0][0];
     expect(config.canDrop({ source: { data: { type: "workspace", id: "ws-1" } } })).toBe(true);
   });
 
-  it("canDrop delegates to custom canDrop function", () => {
+  it("when custom canDrop function is provided, then delegates to it", () => {
     const onDrop = vi.fn();
     const canDrop = vi.fn(() => false);
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} canDrop={canDrop} />);
@@ -128,7 +128,7 @@ describe("useDropTarget", () => {
     expect(result).toBe(false);
   });
 
-  it("onDragEnter sets overTargetId", () => {
+  it("when onDragEnter fires, then sets overTargetId", () => {
     const onDrop = vi.fn();
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} />);
     const config = dropTargetSpy.mock.calls[0][0];
@@ -136,7 +136,7 @@ describe("useDropTarget", () => {
     expect(mockSetDragState).toHaveBeenCalledWith({ overTargetId: "target-1" });
   });
 
-  it("onDragLeave clears overTargetId", () => {
+  it("when onDragLeave fires, then clears overTargetId", () => {
     const onDrop = vi.fn();
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} />);
     const config = dropTargetSpy.mock.calls[0][0];
@@ -144,7 +144,7 @@ describe("useDropTarget", () => {
     expect(mockSetDragState).toHaveBeenCalledWith({ overTargetId: null });
   });
 
-  it("onDrop clears overTargetId and calls onDrop callback", () => {
+  it("when onDrop fires, then clears overTargetId and calls onDrop callback", () => {
     const onDropCallback = vi.fn();
     render(<DropTargetComponent targetId="target-1" onDrop={onDropCallback} />);
     const config = dropTargetSpy.mock.calls[0][0];
@@ -155,7 +155,7 @@ describe("useDropTarget", () => {
     expect(onDropCallback).toHaveBeenCalledWith({ type: "workspace", id: "ws-1" });
   });
 
-  it("getData returns the targetId", () => {
+  it("when getData is called, then returns the targetId", () => {
     const onDrop = vi.fn();
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} />);
     const config = dropTargetSpy.mock.calls[0][0];

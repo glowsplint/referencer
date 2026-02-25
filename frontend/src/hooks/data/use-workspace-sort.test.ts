@@ -35,19 +35,19 @@ describe("useWorkspaceSort", () => {
     localStorage.clear();
   });
 
-  it("defaults to updatedAt descending", () => {
+  it("when initialized, then defaults to updatedAt descending", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     expect(result.current.sortConfig).toEqual({ field: "updatedAt", direction: "desc" });
   });
 
-  it("separates favorites from others", () => {
+  it("when workspaces include favorites, then separates them from others", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     expect(result.current.favorites).toHaveLength(1);
     expect(result.current.favorites[0].workspaceId).toBe("ws-3");
     expect(result.current.others).toHaveLength(2);
   });
 
-  it("toggles direction when clicking same field", () => {
+  it("when the same field is clicked again, then toggles direction", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     act(() => {
       result.current.setSort("updatedAt");
@@ -56,7 +56,7 @@ describe("useWorkspaceSort", () => {
     expect(result.current.sortConfig.direction).toBe("asc");
   });
 
-  it("defaults title to ascending on first click", () => {
+  it("when title is clicked first time, then defaults to ascending", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     act(() => {
       result.current.setSort("title");
@@ -64,7 +64,7 @@ describe("useWorkspaceSort", () => {
     expect(result.current.sortConfig).toEqual({ field: "title", direction: "asc" });
   });
 
-  it("defaults date fields to descending on first click", () => {
+  it("when a date field is clicked first time, then defaults to descending", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     // Switch to title first, then switch to createdAt
     act(() => {
@@ -76,7 +76,7 @@ describe("useWorkspaceSort", () => {
     expect(result.current.sortConfig).toEqual({ field: "createdAt", direction: "desc" });
   });
 
-  it("persists sort preference to localStorage", () => {
+  it("when sort is changed, then persists preference to localStorage", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     act(() => {
       result.current.setSort("title");
@@ -85,13 +85,13 @@ describe("useWorkspaceSort", () => {
     expect(stored).toEqual({ field: "title", direction: "asc" });
   });
 
-  it("loads sort preference from localStorage", () => {
+  it("when localStorage has sort preference, then loads it", () => {
     localStorage.setItem("hub-sort", JSON.stringify({ field: "title", direction: "desc" }));
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     expect(result.current.sortConfig).toEqual({ field: "title", direction: "desc" });
   });
 
-  it("excludes workspaces with folderId from others", () => {
+  it("when workspaces have folderId, then excludes them from others", () => {
     const workspacesWithFolders: WorkspaceItem[] = [
       ...mockWorkspaces,
       {
@@ -110,7 +110,7 @@ describe("useWorkspaceSort", () => {
     expect(result.current.others).toHaveLength(2);
   });
 
-  it("includes favorited workspaces even if they have a folderId", () => {
+  it("when favorited workspaces have a folderId, then still includes them", () => {
     const workspacesWithFolders: WorkspaceItem[] = [
       ...mockWorkspaces,
       {
@@ -127,12 +127,12 @@ describe("useWorkspaceSort", () => {
     expect(result.current.favorites.find((ws) => ws.workspaceId === "ws-5")).toBeDefined();
   });
 
-  it("returns a compare function", () => {
+  it("when accessed, then returns a compare function", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     expect(typeof result.current.compare).toBe("function");
   });
 
-  it("compare sorts by the current sort field", () => {
+  it("when compare is used, then sorts by the current sort field", () => {
     const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
     // Default is updatedAt desc
     const a = mockWorkspaces[0]; // updatedAt: 2026-01-03

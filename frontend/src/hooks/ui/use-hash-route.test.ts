@@ -13,7 +13,7 @@ describe("useHashRoute", () => {
     window.location.hash = originalHash;
   });
 
-  it("returns hub route when hash is empty", () => {
+  it("when hash is empty, then returns hub route", () => {
     window.location.hash = "";
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({ type: "hub" });
@@ -25,7 +25,7 @@ describe("useHashRoute", () => {
     expect(result.current.route).toEqual({ type: "hub" });
   });
 
-  it("returns editor route with correct workspaceId for UUID hash", () => {
+  it("when hash is a UUID, then returns editor route with correct workspaceId", () => {
     const uuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
     window.location.hash = `#/${uuid}`;
     const { result } = renderHook(() => useHashRoute());
@@ -35,7 +35,7 @@ describe("useHashRoute", () => {
     });
   });
 
-  it("returns editor route for KSUID hash", () => {
+  it("when hash is a KSUID, then returns editor route", () => {
     const ksuid = "0ujtsYcgvSTl8PAuAdqWYSMnLOv";
     window.location.hash = `#/${ksuid}`;
     const { result } = renderHook(() => useHashRoute());
@@ -45,7 +45,7 @@ describe("useHashRoute", () => {
     });
   });
 
-  it("strips query params and still returns editor route", () => {
+  it("when hash has query params, then strips them and returns editor route", () => {
     const uuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
     window.location.hash = `#/${uuid}?access=readonly`;
     const { result } = renderHook(() => useHashRoute());
@@ -55,7 +55,7 @@ describe("useHashRoute", () => {
     });
   });
 
-  it("returns hub route for non-UUID/KSUID hash paths", () => {
+  it("when hash is a non-UUID/KSUID path, then returns hub route", () => {
     window.location.hash = "#/not-a-uuid";
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({ type: "hub" });
@@ -63,7 +63,7 @@ describe("useHashRoute", () => {
     expect(window.location.hash).toBe("#/");
   });
 
-  it("updates route on hashchange event", () => {
+  it("when hashchange event fires, then updates route", () => {
     window.location.hash = "#/";
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({ type: "hub" });
@@ -79,7 +79,7 @@ describe("useHashRoute", () => {
     });
   });
 
-  it("navigate function updates window.location.hash", () => {
+  it("when navigate is called, then updates window.location.hash", () => {
     window.location.hash = "#/";
     const { result } = renderHook(() => useHashRoute());
 

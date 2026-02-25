@@ -23,7 +23,7 @@ describe("BugReportDialog", () => {
   });
 
   describe("when opened", () => {
-    it("shows the bug report form", () => {
+    it("then shows the bug report form", () => {
       renderDialog();
       expect(screen.getByText("Report a Bug")).toBeInTheDocument();
       expect(screen.getByTestId("bugReportTitle")).toBeInTheDocument();
@@ -33,21 +33,21 @@ describe("BugReportDialog", () => {
   });
 
   describe("when closed", () => {
-    it("renders nothing", () => {
+    it("then renders nothing", () => {
       renderDialog({ open: false });
       expect(screen.queryByText("Report a Bug")).not.toBeInTheDocument();
     });
   });
 
   describe("when title is empty", () => {
-    it("disables the submit button", () => {
+    it("then disables the submit button", () => {
       renderDialog();
       expect(screen.getByTestId("bugReportSubmit")).toBeDisabled();
     });
   });
 
   describe("when title is only whitespace", () => {
-    it("disables the submit button", () => {
+    it("then disables the submit button", () => {
       renderDialog();
       fireEvent.change(screen.getByTestId("bugReportTitle"), { target: { value: "   " } });
       expect(screen.getByTestId("bugReportSubmit")).toBeDisabled();
@@ -55,7 +55,7 @@ describe("BugReportDialog", () => {
   });
 
   describe("when title has content", () => {
-    it("enables the submit button", () => {
+    it("then enables the submit button", () => {
       renderDialog();
       fireEvent.change(screen.getByTestId("bugReportTitle"), { target: { value: "A bug" } });
       expect(screen.getByTestId("bugReportSubmit")).not.toBeDisabled();
@@ -63,7 +63,7 @@ describe("BugReportDialog", () => {
   });
 
   describe("when form is submitted", () => {
-    it("sends the correct payload to the API", async () => {
+    it("then sends the correct payload to the API", async () => {
       const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200 });
       globalThis.fetch = mockFetch;
 
@@ -87,7 +87,7 @@ describe("BugReportDialog", () => {
       });
     });
 
-    it("trims whitespace from title and description before sending", async () => {
+    it("then trims whitespace from title and description before sending", async () => {
       const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200 });
       globalThis.fetch = mockFetch;
 
@@ -110,7 +110,7 @@ describe("BugReportDialog", () => {
   });
 
   describe("when submission succeeds", () => {
-    it("closes the dialog", async () => {
+    it("then closes the dialog", async () => {
       globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200 });
       const onOpenChange = vi.fn();
 
@@ -125,7 +125,7 @@ describe("BugReportDialog", () => {
   });
 
   describe("when submission fails", () => {
-    it("does not close the dialog", async () => {
+    it("then does not close the dialog", async () => {
       globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
       const onOpenChange = vi.fn();
 
@@ -147,7 +147,7 @@ describe("BugReportDialog", () => {
   });
 
   describe("when rate limited (429)", () => {
-    it("handles the rate limit response", async () => {
+    it("then handles the rate limit response", async () => {
       globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 429 });
       const onOpenChange = vi.fn();
 
@@ -162,7 +162,7 @@ describe("BugReportDialog", () => {
   });
 
   describe("when a network error occurs", () => {
-    it("handles the error gracefully", async () => {
+    it("then handles the error gracefully", async () => {
       globalThis.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
 
       renderDialog();

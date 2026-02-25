@@ -21,7 +21,7 @@ describe("useIsBreakpoint", () => {
     }));
   });
 
-  it("'max' mode returns true when viewport is below breakpoint", () => {
+  it("when viewport is below breakpoint in max mode, then returns true", () => {
     vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
       matches: true,
       media: query,
@@ -37,7 +37,7 @@ describe("useIsBreakpoint", () => {
     expect(result.current).toBe(true);
   });
 
-  it("'min' mode returns true when viewport is at or above breakpoint", () => {
+  it("when viewport is at or above breakpoint in min mode, then returns true", () => {
     vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
       matches: true,
       media: query,
@@ -53,12 +53,12 @@ describe("useIsBreakpoint", () => {
     expect(result.current).toBe(true);
   });
 
-  it("returns false when matchMedia does not match", () => {
+  it("when matchMedia does not match, then returns false", () => {
     const { result } = renderHook(() => useIsBreakpoint("max", 768));
     expect(result.current).toBe(false);
   });
 
-  it("updates when matchMedia fires a change event", () => {
+  it("when matchMedia fires a change event, then updates", () => {
     const { result } = renderHook(() => useIsBreakpoint("max", 768));
     expect(result.current).toBe(false);
 
@@ -68,12 +68,12 @@ describe("useIsBreakpoint", () => {
     expect(result.current).toBe(true);
   });
 
-  it("builds max-width query with breakpoint - 1", () => {
+  it("when max mode is used, then builds max-width query with breakpoint - 1", () => {
     renderHook(() => useIsBreakpoint("max", 768));
     expect(window.matchMedia).toHaveBeenCalledWith("(max-width: 767px)");
   });
 
-  it("builds min-width query with exact breakpoint", () => {
+  it("when min mode is used, then builds min-width query with exact breakpoint", () => {
     renderHook(() => useIsBreakpoint("min", 1024));
     expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 1024px)");
   });

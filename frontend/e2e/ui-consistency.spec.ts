@@ -95,7 +95,7 @@ async function drawArrowBetweenEditors(
   // Tool auto-switches to selection
 }
 
-test.describe("no dangling highlights when layer is hidden", () => {
+test.describe("when layer is hidden", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -112,7 +112,7 @@ test.describe("no dangling highlights when layer is hidden", () => {
     await page.keyboard.press("c");
   });
 
-  test("hiding layer removes all highlight decorations for that layer", async ({ page }) => {
+  test("when layer is hidden, then all highlight decorations for that layer are removed", async ({ page }) => {
     // Create annotation to persist the highlight
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Highlight test");
@@ -139,7 +139,7 @@ test.describe("no dangling highlights when layer is hidden", () => {
     });
   });
 
-  test("hiding layer removes arrow endpoint highlights too", async ({ page }) => {
+  test("when layer is hidden, then arrow endpoint highlights are also removed", async ({ page }) => {
     // Draw an arrow
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -161,7 +161,7 @@ test.describe("no dangling highlights when layer is hidden", () => {
   });
 });
 
-test.describe("no dangling elements when passage is hidden", () => {
+test.describe("when passage is hidden", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -182,7 +182,7 @@ test.describe("no dangling elements when passage is hidden", () => {
     await page.keyboard.press("c");
   });
 
-  test("hiding passage removes annotation panel when only annotation is in that passage", async ({
+  test("when passage is hidden and only annotation is in that passage, then annotation panel is removed", async ({
     page,
   }) => {
     await clickWordInEditor(page, 0, 30);
@@ -207,7 +207,7 @@ test.describe("no dangling elements when passage is hidden", () => {
     });
   });
 
-  test("cross-editor arrow disappears when destination passage hidden", async ({ page }) => {
+  test("when destination passage is hidden, then cross-editor arrow disappears", async ({ page }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -235,7 +235,7 @@ test.describe("no dangling elements when passage is hidden", () => {
   });
 });
 
-test.describe("no orphaned connector lines", () => {
+test.describe("when checking connector line consistency", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -252,7 +252,7 @@ test.describe("no orphaned connector lines", () => {
     await page.keyboard.press("c");
   });
 
-  test("connector line count matches annotation card count", async ({ page }) => {
+  test("when multiple annotations exist, then connector line count matches annotation card count", async ({ page }) => {
     // Create first annotation
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Note A");
@@ -278,7 +278,7 @@ test.describe("no orphaned connector lines", () => {
     expect(lineCount).toBe(2);
   });
 
-  test("hiding layer removes both connector lines and cards", async ({ page }) => {
+  test("when layer is hidden, then both connector lines and cards are removed", async ({ page }) => {
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Connector test");
 
@@ -296,7 +296,7 @@ test.describe("no orphaned connector lines", () => {
   });
 });
 
-test.describe("arrows + highlights + annotations sync during visibility changes", () => {
+test.describe("when toggling visibility with arrows, highlights, and annotations", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -322,7 +322,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await page.keyboard.press("c");
   });
 
-  test("all 3 element types appear and disappear together on layer toggle", async ({ page }) => {
+  test("when layer is toggled, then arrows, highlights, and annotations all appear and disappear together", async ({ page }) => {
     // Create annotation on Layer 1 first (comments-mode click clears arrows — known bug)
     await clickWordInEditor(page, 0, 100);
     await addAnnotation(page, "Synced note");
@@ -380,7 +380,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(endpointDecorations).toHaveCount(2, { timeout: 2000 });
   });
 
-  test("layer 2 elements unaffected when layer 1 is toggled", async ({ page }) => {
+  test("when layer 1 is toggled, then layer 2 elements are unaffected", async ({ page }) => {
     // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1 note");
@@ -431,7 +431,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(page.getByText("L2 note")).toBeVisible({ timeout: 2000 });
   });
 
-  test("rapid layer toggle does not leave dangling elements", async ({ page }) => {
+  test("when layer is toggled rapidly, then no dangling elements remain", async ({ page }) => {
     // Create annotation first (comments-mode click clears arrows — known bug)
     await clickWordInEditor(page, 0, 100);
     await addAnnotation(page, "Rapid test");
@@ -456,7 +456,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
     await expect(page.getByText("Rapid test")).toBeVisible({ timeout: 2000 });
   });
 
-  test("rapid passage toggle does not leave dangling elements", async ({ page }) => {
+  test("when passage is toggled rapidly, then no dangling elements remain", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Rapid passage test");
@@ -484,7 +484,7 @@ test.describe("arrows + highlights + annotations sync during visibility changes"
   });
 });
 
-test.describe("all elements hidden state", () => {
+test.describe("when all elements are hidden", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -501,7 +501,7 @@ test.describe("all elements hidden state", () => {
     await page.keyboard.press("c");
   });
 
-  test("no visible artifacts when all layers are hidden", async ({ page }) => {
+  test("when all layers are hidden, then no visible artifacts remain", async ({ page }) => {
     // Create arrow + annotation
     await drawArrowInEditor(page, 0);
     // Switch back to comments tool after drawing arrow
@@ -533,7 +533,7 @@ test.describe("all elements hidden state", () => {
     });
   });
 
-  test("arrow overlay SVG is empty when no visible arrows", async ({ page }) => {
+  test("when all layers are hidden, then arrow overlay SVG contains no arrow elements", async ({ page }) => {
     // Draw an arrow
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {

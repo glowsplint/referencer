@@ -30,60 +30,64 @@ const step: TourStep = {
 };
 
 describe("TourOverlay", () => {
-  it("renders the tour overlay portal with tooltip", () => {
-    render(
-      <TourOverlay
-        step={step}
-        stepIndex={0}
-        totalSteps={3}
-        onNext={vi.fn()}
-        onBack={vi.fn()}
-        onSkip={vi.fn()}
-      />,
-    );
+  describe("when rendered", () => {
+    it("then shows the overlay portal with tooltip", () => {
+      render(
+        <TourOverlay
+          step={step}
+          stepIndex={0}
+          totalSteps={3}
+          onNext={vi.fn()}
+          onBack={vi.fn()}
+          onSkip={vi.fn()}
+        />,
+      );
 
-    expect(screen.getByTestId("tourOverlay")).toBeInTheDocument();
-    expect(screen.getByTestId("tourTooltip")).toBeInTheDocument();
-    expect(screen.getByText("Welcome")).toBeInTheDocument();
-    expect(screen.getByText("This is the first step of the tour.")).toBeInTheDocument();
-  });
-
-  it("passes step data to the tooltip", () => {
-    render(
-      <TourOverlay
-        step={{ ...step, title: "Step Two", content: "Second content" }}
-        stepIndex={1}
-        totalSteps={3}
-        onNext={vi.fn()}
-        onBack={vi.fn()}
-        onSkip={vi.fn()}
-      />,
-    );
-
-    expect(screen.getByText("Step Two")).toBeInTheDocument();
-    expect(screen.getByText("Second content")).toBeInTheDocument();
-  });
-
-  it("calls onSkip when Escape key is pressed", () => {
-    const onSkip = vi.fn();
-    render(
-      <TourOverlay
-        step={step}
-        stepIndex={0}
-        totalSteps={3}
-        onNext={vi.fn()}
-        onBack={vi.fn()}
-        onSkip={onSkip}
-      />,
-    );
-
-    const event = new KeyboardEvent("keydown", {
-      key: "Escape",
-      bubbles: true,
-      cancelable: true,
+      expect(screen.getByTestId("tourOverlay")).toBeInTheDocument();
+      expect(screen.getByTestId("tourTooltip")).toBeInTheDocument();
+      expect(screen.getByText("Welcome")).toBeInTheDocument();
+      expect(screen.getByText("This is the first step of the tour.")).toBeInTheDocument();
     });
-    document.dispatchEvent(event);
 
-    expect(onSkip).toHaveBeenCalledTimes(1);
+    it("then passes step data to the tooltip", () => {
+      render(
+        <TourOverlay
+          step={{ ...step, title: "Step Two", content: "Second content" }}
+          stepIndex={1}
+          totalSteps={3}
+          onNext={vi.fn()}
+          onBack={vi.fn()}
+          onSkip={vi.fn()}
+        />,
+      );
+
+      expect(screen.getByText("Step Two")).toBeInTheDocument();
+      expect(screen.getByText("Second content")).toBeInTheDocument();
+    });
+  });
+
+  describe("when Escape key is pressed", () => {
+    it("then calls onSkip", () => {
+      const onSkip = vi.fn();
+      render(
+        <TourOverlay
+          step={step}
+          stepIndex={0}
+          totalSteps={3}
+          onNext={vi.fn()}
+          onBack={vi.fn()}
+          onSkip={onSkip}
+        />,
+      );
+
+      const event = new KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        cancelable: true,
+      });
+      document.dispatchEvent(event);
+
+      expect(onSkip).toHaveBeenCalledTimes(1);
+    });
   });
 });

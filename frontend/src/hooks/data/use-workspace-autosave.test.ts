@@ -31,7 +31,7 @@ afterEach(() => {
 });
 
 describe("useWorkspaceAutosave", () => {
-  it("creates workspace on first authenticated mount", () => {
+  it("when mounted with authentication, then creates workspace", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       user: { name: "Test" } as any,
@@ -46,7 +46,7 @@ describe("useWorkspaceAutosave", () => {
     expect(mockCreate).toHaveBeenCalledTimes(1);
   });
 
-  it("touches workspace every 60s", () => {
+  it("when mounted, then touches workspace every 60s", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       user: { name: "Test" } as any,
@@ -67,7 +67,7 @@ describe("useWorkspaceAutosave", () => {
     expect(mockTouch).toHaveBeenCalledTimes(2);
   });
 
-  it("does nothing when not authenticated", () => {
+  it("when not authenticated, then does nothing", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: false,
       user: null,
@@ -84,7 +84,7 @@ describe("useWorkspaceAutosave", () => {
     expect(mockTouch).not.toHaveBeenCalled();
   });
 
-  it("cleans up interval on unmount", () => {
+  it("when unmounted, then cleans up interval", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       user: { name: "Test" } as any,

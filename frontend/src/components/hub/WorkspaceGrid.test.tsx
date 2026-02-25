@@ -98,20 +98,20 @@ describe("WorkspaceGrid", () => {
   }
 
   describe("when loading", () => {
-    it("shows loading text", () => {
+    it("then shows loading text", () => {
       renderGrid([], [], true);
       expect(screen.getByText("Loading...")).toBeInTheDocument();
     });
   });
 
   describe("when there are no workspaces or folders", () => {
-    it("shows the empty state message", () => {
+    it("then shows the empty state message", () => {
       renderGrid([], [], false);
       expect(screen.getByText("No workspaces yet")).toBeInTheDocument();
       expect(screen.getByText("Create your first workspace")).toBeInTheDocument();
     });
 
-    it("calls onNew when the empty state button is clicked", async () => {
+    it("then calls onNew when the empty state button is clicked", async () => {
       const user = userEvent.setup();
       renderGrid([], [], false);
       await user.click(screen.getByText("Create your first workspace"));
@@ -120,29 +120,29 @@ describe("WorkspaceGrid", () => {
   });
 
   describe("when there are workspaces", () => {
-    it("shows the workspace title in grid view", () => {
+    it("then shows the workspace title in grid view", () => {
       renderGrid([makeWorkspace()]);
       expect(screen.getByText("Test Workspace")).toBeInTheDocument();
     });
 
-    it("shows the header with My Workspaces title", () => {
+    it("then shows the header with My Workspaces title", () => {
       renderGrid([makeWorkspace()]);
       expect(screen.getByText("My Workspaces")).toBeInTheDocument();
     });
 
-    it("shows the starred section", () => {
+    it("then shows the starred section", () => {
       renderGrid([makeWorkspace()]);
       expect(screen.getByTestId("starredSection")).toBeInTheDocument();
     });
 
-    it("shows 'Star an item to pin it here' when no items are starred", () => {
+    it("then shows 'Star an item to pin it here' when no items are starred", () => {
       renderGrid([makeWorkspace()]);
       expect(screen.getByText("Star an item to pin it here")).toBeInTheDocument();
     });
   });
 
-  describe("starred items", () => {
-    it("places starred workspaces in the starred section", () => {
+  describe("when starred items exist", () => {
+    it("then places starred workspaces in the starred section", () => {
       const starred = makeWorkspace({ workspaceId: "ws-starred", title: "Starred WS", isFavorite: true });
       const unstarred = makeWorkspace({ workspaceId: "ws-other", title: "Other WS", isFavorite: false });
       renderGrid([starred, unstarred]);
@@ -152,8 +152,8 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("view mode toggle", () => {
-    it("switches to list view when the list button is clicked", async () => {
+  describe("when view mode is toggled", () => {
+    it("then switches to list view when the list button is clicked", async () => {
       const user = userEvent.setup();
       const ws = makeWorkspace();
       renderGrid([ws]);
@@ -166,7 +166,7 @@ describe("WorkspaceGrid", () => {
       expect(screen.getByTestId("sortByModified")).toBeInTheDocument();
     });
 
-    it("persists view mode to localStorage", async () => {
+    it("then persists view mode to localStorage", async () => {
       const user = userEvent.setup();
       renderGrid([makeWorkspace()]);
 
@@ -178,8 +178,8 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("new workspace button", () => {
-    it("calls onNew when clicked", async () => {
+  describe("when new workspace button is clicked", () => {
+    it("then calls onNew", async () => {
       const user = userEvent.setup();
       renderGrid([makeWorkspace()]);
 
@@ -188,8 +188,8 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("new folder button", () => {
-    it("shows inline input when clicked", async () => {
+  describe("when new folder button is clicked", () => {
+    it("then shows inline input", async () => {
       const user = userEvent.setup();
       renderGrid([makeWorkspace()]);
 
@@ -198,8 +198,8 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("sort controls in list view", () => {
-    it("toggles sort direction when clicking the same column header", async () => {
+  describe("when sort controls are used in list view", () => {
+    it("then toggles sort direction when clicking the same column header", async () => {
       const user = userEvent.setup();
       const ws1 = makeWorkspace({ workspaceId: "ws-1", title: "Alpha" });
       const ws2 = makeWorkspace({ workspaceId: "ws-2", title: "Beta" });
@@ -217,8 +217,8 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("workspace actions via card menu", () => {
-    it("opens the workspace when a card is clicked", async () => {
+  describe("when a workspace card is clicked", () => {
+    it("then opens the workspace", async () => {
       const user = userEvent.setup();
       renderGrid([makeWorkspace({ workspaceId: "ws-open-test" })]);
 
@@ -227,15 +227,15 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("folders in grid", () => {
-    it("renders a folder in the all items section", () => {
+  describe("when folders exist in grid", () => {
+    it("then renders a folder in the all items section", () => {
       const folder = makeFolder({ id: "f1", name: "My Folder" });
       renderGrid([makeWorkspace({ folderId: "f1" })], [folder]);
 
       expect(screen.getByText("My Folder")).toBeInTheDocument();
     });
 
-    it("renders starred folders in the starred section", () => {
+    it("then renders starred folders in the starred section", () => {
       const folder = makeFolder({ id: "f-star", name: "Starred Folder", isFavorite: true });
       renderGrid([], [folder]);
 

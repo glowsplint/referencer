@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 describe("useCurrentUserName", () => {
-  it("returns OAuth user name when available", () => {
+  it("when OAuth user name is available, then returns it", () => {
     mockUseAuth.mockReturnValue({
       user: { name: "John Doe" } as any,
       isAuthenticated: true,
@@ -29,7 +29,7 @@ describe("useCurrentUserName", () => {
     expect(result.current).toBe("John Doe");
   });
 
-  it("falls back to localStorage USER_NAME", () => {
+  it("when no OAuth user exists, then falls back to localStorage USER_NAME", () => {
     mockUseAuth.mockReturnValue({
       user: null,
       isAuthenticated: false,
@@ -43,7 +43,7 @@ describe("useCurrentUserName", () => {
     expect(result.current).toBe("Stored User");
   });
 
-  it("falls back to 'You' when no auth and no localStorage", () => {
+  it("when no auth and no localStorage exist, then falls back to 'You'", () => {
     mockUseAuth.mockReturnValue({
       user: null,
       isAuthenticated: false,
@@ -56,7 +56,7 @@ describe("useCurrentUserName", () => {
     expect(result.current).toBe("You");
   });
 
-  it("prefers OAuth name over localStorage", () => {
+  it("when both OAuth name and localStorage exist, then prefers OAuth name", () => {
     mockUseAuth.mockReturnValue({
       user: { name: "OAuth User" } as any,
       isAuthenticated: true,

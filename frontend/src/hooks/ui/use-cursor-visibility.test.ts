@@ -25,7 +25,7 @@ describe("useCursorVisibility", () => {
     window.scrollTo = scrollToSpy;
   });
 
-  it("returns the body rect", () => {
+  it("when called, then returns the body rect", () => {
     const { result } = renderHook(() =>
       useCursorVisibility({ editor: null }),
     );
@@ -34,18 +34,18 @@ describe("useCursorVisibility", () => {
     );
   });
 
-  it("does not scroll when editor is null", () => {
+  it("when editor is null, then does not scroll", () => {
     renderHook(() => useCursorVisibility({ editor: null }));
     expect(scrollToSpy).not.toHaveBeenCalled();
   });
 
-  it("does not scroll when editor is destroyed", () => {
+  it("when editor is destroyed, then does not scroll", () => {
     const editor = { isDestroyed: true, isFocused: true, state: {}, view: {} } as any;
     renderHook(() => useCursorVisibility({ editor }));
     expect(scrollToSpy).not.toHaveBeenCalled();
   });
 
-  it("does not scroll when editor is not focused", () => {
+  it("when editor is not focused, then does not scroll", () => {
     const editor = {
       isDestroyed: false,
       isFocused: false,
@@ -56,7 +56,7 @@ describe("useCursorVisibility", () => {
     expect(scrollToSpy).not.toHaveBeenCalled();
   });
 
-  it("scrolls when cursor is behind the overlay", () => {
+  it("when cursor is behind the overlay, then scrolls", () => {
     // windowHeight (768) < body height (2000) -- passes first check
     // cursor at y=750, overlayHeight=100 => availableSpace = 768-750 = 18 < 100
     const editor = {
@@ -72,7 +72,7 @@ describe("useCursorVisibility", () => {
     );
   });
 
-  it("does not scroll when there is enough space", () => {
+  it("when there is enough space, then does not scroll", () => {
     // cursor at y=100, overlayHeight=50 => availableSpace = 768-100 = 668 > 50
     const editor = {
       isDestroyed: false,
@@ -85,7 +85,7 @@ describe("useCursorVisibility", () => {
     expect(scrollToSpy).not.toHaveBeenCalled();
   });
 
-  it("does not scroll when body fits in viewport", () => {
+  it("when body fits in viewport, then does not scroll", () => {
     // Make body height smaller than window
     vi.mocked(useBodyRect).mockReturnValue({
       x: 0, y: 0, width: 1024, height: 500, top: 0, right: 1024, bottom: 500, left: 0,

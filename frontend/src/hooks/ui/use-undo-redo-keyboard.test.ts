@@ -7,7 +7,7 @@ function fireKeyDown(key: string, options: Partial<KeyboardEvent> = {}) {
 }
 
 describe("useUndoRedoKeyboard", () => {
-  it("Cmd+Z calls undo", () => {
+  it("when Cmd+Z is pressed, then calls undo", () => {
     const undo = vi.fn();
     const redo = vi.fn();
     renderHook(() => useUndoRedoKeyboard({ undo, redo }));
@@ -17,7 +17,7 @@ describe("useUndoRedoKeyboard", () => {
     expect(redo).not.toHaveBeenCalled();
   });
 
-  it("Cmd+Shift+Z calls redo", () => {
+  it("when Cmd+Shift+Z is pressed, then calls redo", () => {
     const undo = vi.fn();
     const redo = vi.fn();
     renderHook(() => useUndoRedoKeyboard({ undo, redo }));
@@ -27,7 +27,7 @@ describe("useUndoRedoKeyboard", () => {
     expect(undo).not.toHaveBeenCalled();
   });
 
-  it("ignores Z without meta key", () => {
+  it("when Z is pressed without meta key, then ignores it", () => {
     const undo = vi.fn();
     const redo = vi.fn();
     renderHook(() => useUndoRedoKeyboard({ undo, redo }));
@@ -37,7 +37,7 @@ describe("useUndoRedoKeyboard", () => {
     expect(redo).not.toHaveBeenCalled();
   });
 
-  it("ignores when focus is in an editable element", () => {
+  it("when focus is in an editable element, then ignores the shortcut", () => {
     const undo = vi.fn();
     const redo = vi.fn();
     renderHook(() => useUndoRedoKeyboard({ undo, redo }));
@@ -50,7 +50,7 @@ describe("useUndoRedoKeyboard", () => {
     expect(undo).not.toHaveBeenCalled();
   });
 
-  it("ignores when focus is in a textarea", () => {
+  it("when focus is in a textarea, then ignores the shortcut", () => {
     const undo = vi.fn();
     const redo = vi.fn();
     renderHook(() => useUndoRedoKeyboard({ undo, redo }));

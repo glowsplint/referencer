@@ -16,7 +16,7 @@ function renderPicker(overrides = {}) {
 
 describe("ArrowStylePicker", () => {
   describe("when rendered", () => {
-    it("shows all arrow style options with labels", () => {
+    it("then shows all arrow style options with labels", () => {
       renderPicker();
       for (const style of ARROW_STYLES) {
         expect(screen.getByTestId(`arrowStyleOption-${style.value}`)).toBeInTheDocument();
@@ -24,26 +24,26 @@ describe("ArrowStylePicker", () => {
       }
     });
 
-    it("renders an SVG preview for each style", () => {
+    it("then renders an SVG preview for each style", () => {
       const { container } = renderPicker();
       const svgs = container.querySelectorAll("svg");
       expect(svgs.length).toBe(ARROW_STYLES.length);
     });
 
-    it("uses the provided index in the testid", () => {
+    it("then uses the provided index in the testid", () => {
       renderPicker({ index: 3 });
       expect(screen.getByTestId("arrowStylePicker-3")).toBeInTheDocument();
     });
   });
 
   describe("when a style option is clicked", () => {
-    it("calls onSelectStyle with the dotted style", () => {
+    it("then calls onSelectStyle with the dotted style", () => {
       const { props } = renderPicker();
       fireEvent.click(screen.getByTestId("arrowStyleOption-dotted"));
       expect(props.onSelectStyle).toHaveBeenCalledWith("dotted");
     });
 
-    it("calls onSelectStyle with the double style", () => {
+    it("then calls onSelectStyle with the double style", () => {
       const { props } = renderPicker();
       fireEvent.click(screen.getByTestId("arrowStyleOption-double"));
       expect(props.onSelectStyle).toHaveBeenCalledWith("double");

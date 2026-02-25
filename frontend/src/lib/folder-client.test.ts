@@ -23,13 +23,13 @@ const mockApiPost = vi.mocked(apiPost);
 const mockApiPatch = vi.mocked(apiPatch);
 const mockApiDelete = vi.mocked(apiDelete);
 
-describe("folder-client", () => {
+describe("when using folder-client", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe("fetchFolders", () => {
-    it("calls /api/folders and returns data", async () => {
+  describe("when using fetchFolders", () => {
+    it("then calls /api/folders and returns data", async () => {
       const mockData = [{ id: "f1", parentId: null, name: "Test", isFavorite: false }];
       mockApiFetch.mockResolvedValue(mockData);
 
@@ -39,8 +39,8 @@ describe("folder-client", () => {
     });
   });
 
-  describe("createFolder", () => {
-    it("sends POST with correct body", async () => {
+  describe("when using createFolder", () => {
+    it("then sends POST with correct body", async () => {
       mockApiPost.mockResolvedValue(undefined);
 
       await createFolder("f1", null, "My Folder");
@@ -51,7 +51,7 @@ describe("folder-client", () => {
       });
     });
 
-    it("sends POST with parentId when provided", async () => {
+    it("then sends POST with parentId when provided", async () => {
       mockApiPost.mockResolvedValue(undefined);
 
       await createFolder("f2", "f1", "Child Folder");
@@ -63,8 +63,8 @@ describe("folder-client", () => {
     });
   });
 
-  describe("renameFolder", () => {
-    it("sends PATCH with correct body", async () => {
+  describe("when using renameFolder", () => {
+    it("then sends PATCH with correct body", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
       await renameFolder("f1", "New Name");
@@ -72,8 +72,8 @@ describe("folder-client", () => {
     });
   });
 
-  describe("deleteFolder", () => {
-    it("sends DELETE to correct URL", async () => {
+  describe("when using deleteFolder", () => {
+    it("then sends DELETE to correct URL", async () => {
       mockApiDelete.mockResolvedValue(undefined);
 
       await deleteFolder("f1");
@@ -81,8 +81,8 @@ describe("folder-client", () => {
     });
   });
 
-  describe("moveWorkspaceToFolder", () => {
-    it("sends PATCH with workspaceId", async () => {
+  describe("when using moveWorkspaceToFolder", () => {
+    it("then sends PATCH with workspaceId", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
       await moveWorkspaceToFolder("f1", "ws-1");
@@ -92,8 +92,8 @@ describe("folder-client", () => {
     });
   });
 
-  describe("unfileWorkspace", () => {
-    it("sends POST with workspaceId", async () => {
+  describe("when using unfileWorkspace", () => {
+    it("then sends POST with workspaceId", async () => {
       mockApiPost.mockResolvedValue(undefined);
 
       await unfileWorkspace("ws-1");
@@ -103,15 +103,15 @@ describe("folder-client", () => {
     });
   });
 
-  describe("toggleFolderFavorite", () => {
-    it("sends PATCH to correct endpoint with isFavorite=true", async () => {
+  describe("when using toggleFolderFavorite", () => {
+    it("then sends PATCH to correct endpoint with isFavorite=true", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
       await toggleFolderFavorite("f1", true);
       expect(mockApiPatch).toHaveBeenCalledWith("/api/folders/f1/favorite", { isFavorite: true });
     });
 
-    it("sends PATCH with isFavorite=false", async () => {
+    it("then sends PATCH with isFavorite=false", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
       await toggleFolderFavorite("f1", false);
@@ -119,15 +119,15 @@ describe("folder-client", () => {
     });
   });
 
-  describe("moveFolderToFolder", () => {
-    it("sends PATCH with parentId", async () => {
+  describe("when using moveFolderToFolder", () => {
+    it("then sends PATCH with parentId", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
       await moveFolderToFolder("f2", "f1");
       expect(mockApiPatch).toHaveBeenCalledWith("/api/folders/f2/move", { parentId: "f1" });
     });
 
-    it("sends PATCH with null parentId to move to root", async () => {
+    it("then sends PATCH with null parentId to move to root", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
       await moveFolderToFolder("f2", null);

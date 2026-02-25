@@ -41,7 +41,7 @@ function createMockHistory(): History {
 }
 
 describe("useTrackedEditors", () => {
-  it("addEditor records in history with undo/redo", () => {
+  it("when addEditor is called, then records in history with undo/redo", () => {
     const raw = createMockEditors();
     const history = createMockHistory();
 
@@ -69,7 +69,7 @@ describe("useTrackedEditors", () => {
     expect(raw.addEditor).toHaveBeenCalledWith({ name: "Passage 3" });
   });
 
-  it("addEditor does nothing when at max (3 editors)", () => {
+  it("when addEditor is called at max (3 editors), then does nothing", () => {
     const raw = createMockEditors({ editorCount: 3 });
     const history = createMockHistory();
 
@@ -83,7 +83,7 @@ describe("useTrackedEditors", () => {
     expect(history.record).not.toHaveBeenCalled();
   });
 
-  it("removeEditor records with rollback", () => {
+  it("when removeEditor is called, then records with rollback", () => {
     const raw = createMockEditors();
     const history = createMockHistory();
 
@@ -108,7 +108,7 @@ describe("useTrackedEditors", () => {
     expect(raw.addEditor).toHaveBeenCalledWith({ name: "Passage 1" });
   });
 
-  it("removeEditor does nothing when only 1 editor", () => {
+  it("when removeEditor is called with only 1 editor, then does nothing", () => {
     const raw = createMockEditors({ editorCount: 1 });
     const history = createMockHistory();
 
@@ -122,7 +122,7 @@ describe("useTrackedEditors", () => {
     expect(history.record).not.toHaveBeenCalled();
   });
 
-  it("updateSectionName records old to new name change", () => {
+  it("when updateSectionName is called, then records old to new name change", () => {
     const raw = createMockEditors();
     const history = createMockHistory();
 
@@ -151,7 +151,7 @@ describe("useTrackedEditors", () => {
     expect(raw.updateSectionName).toHaveBeenCalledWith(0, "Intro");
   });
 
-  it("toggleAllSectionVisibility records inverse", () => {
+  it("when toggleAllSectionVisibility is called, then records the inverse", () => {
     const raw = createMockEditors({ sectionVisibility: [true, false] });
     const history = createMockHistory();
 
@@ -171,7 +171,7 @@ describe("useTrackedEditors", () => {
     );
   });
 
-  it("toggleAllSectionVisibility records showAllPassages when all hidden", () => {
+  it("when toggleAllSectionVisibility is called with all hidden, then records showAllPassages", () => {
     const raw = createMockEditors({ sectionVisibility: [false, false] });
     const history = createMockHistory();
 
@@ -189,7 +189,7 @@ describe("useTrackedEditors", () => {
     );
   });
 
-  it("spreads raw properties through to return value", () => {
+  it("when accessed, then spreads raw properties through to return value", () => {
     const raw = createMockEditors();
     const history = createMockHistory();
 

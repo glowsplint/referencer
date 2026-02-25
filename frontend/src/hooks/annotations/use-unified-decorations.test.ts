@@ -59,7 +59,7 @@ describe("useUnifiedDecorations", () => {
     capturedDecorations = [];
   });
 
-  it("dispatches empty decorations when not locked", () => {
+  it("when not locked, then dispatches empty decorations", () => {
     const editor = createMockEditor();
     renderHook(() => useUnifiedDecorations(editor as any, [], 0, false, false));
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(
@@ -68,7 +68,7 @@ describe("useUnifiedDecorations", () => {
     );
   });
 
-  it("creates decorations for highlights in matching editor", () => {
+  it("when highlights exist in matching editor, then creates decorations for them", () => {
     const editor = createMockEditor();
     const layer = createLayer({
       highlights: [
@@ -88,7 +88,7 @@ describe("useUnifiedDecorations", () => {
     expect(capturedDecorations[0]).toMatchObject({ from: 1, to: 5 });
   });
 
-  it("skips highlights from other editors", () => {
+  it("when highlights belong to other editors, then skips them", () => {
     const editor = createMockEditor();
     const layer = createLayer({
       highlights: [
@@ -107,7 +107,7 @@ describe("useUnifiedDecorations", () => {
     expect(capturedDecorations).toHaveLength(0);
   });
 
-  it("creates decorations for arrow endpoints", () => {
+  it("when arrows have endpoints in this editor, then creates decorations for them", () => {
     const editor = createMockEditor();
     const layer = createLayer({
       arrows: [
@@ -125,7 +125,7 @@ describe("useUnifiedDecorations", () => {
     expect((capturedDecorations[1] as any).attrs.class).toBe("arrow-endpoint");
   });
 
-  it("segments overlapping highlight and arrow into blended pieces", () => {
+  it("when highlight and arrow overlap, then segments them into blended pieces", () => {
     const editor = createMockEditor();
     const layer = createLayer({
       highlights: [
@@ -169,7 +169,7 @@ describe("useUnifiedDecorations", () => {
     expect(seg3.attrs.class).toBe("arrow-endpoint");
   });
 
-  it("blends overlapping highlights from different layers", () => {
+  it("when highlights from different layers overlap, then blends their colors", () => {
     const editor = createMockEditor();
     const layer1 = createLayer({
       id: "l1",
@@ -215,7 +215,7 @@ describe("useUnifiedDecorations", () => {
     expect(seg2.attrs.style).not.toBe(seg3.attrs.style);
   });
 
-  it("skips hidden layers", () => {
+  it("when a layer is hidden, then skips its decorations", () => {
     const editor = createMockEditor();
     const layer = createLayer({
       visible: false,

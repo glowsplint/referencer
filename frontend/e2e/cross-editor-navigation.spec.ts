@@ -12,7 +12,7 @@ async function editorOfSelection(page: import("@playwright/test").Page, editorCo
   return -1;
 }
 
-test.describe("cross-editor navigation (2 editors)", () => {
+test.describe("when navigating across 2 editors", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -26,7 +26,7 @@ test.describe("cross-editor navigation (2 editors)", () => {
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("ArrowRight crosses from editor 1 to editor 2 on same visual row", async ({ page }) => {
+  test("when ArrowRight is pressed repeatedly, then selection crosses from editor 1 to editor 2", async ({ page }) => {
     const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
     const box = await p.boundingBox();
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
@@ -41,7 +41,7 @@ test.describe("cross-editor navigation (2 editors)", () => {
     expect(await editorOfSelection(page, 2)).toBe(1);
   });
 
-  test("ArrowLeft crosses from editor 2 to editor 1 on same visual row", async ({ page }) => {
+  test("when ArrowLeft is pressed repeatedly, then selection crosses from editor 2 to editor 1", async ({ page }) => {
     const p = page.locator(".simple-editor-wrapper").nth(1).locator("p").first();
     const box = await p.boundingBox();
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
@@ -57,7 +57,7 @@ test.describe("cross-editor navigation (2 editors)", () => {
   });
 });
 
-test.describe("cross-editor navigation (3 editors)", () => {
+test.describe("when navigating across 3 editors", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -81,7 +81,7 @@ test.describe("cross-editor navigation (3 editors)", () => {
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("ArrowDown from E1 eventually reaches E2 and E3", async ({ page }) => {
+  test("when ArrowDown is pressed from E1, then selection eventually reaches E2 and E3", async ({ page }) => {
     // Click a word in E1
     const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
     const box = await p.boundingBox();
@@ -106,7 +106,7 @@ test.describe("cross-editor navigation (3 editors)", () => {
     expect(reachedE3).toBe(true);
   });
 
-  test("ArrowUp from E3 reaches E2", async ({ page }) => {
+  test("when ArrowUp is pressed from E3, then selection reaches E2", async ({ page }) => {
     // Click a word in E3
     const p = page.locator(".simple-editor-wrapper").nth(2).locator("p").first();
     const box = await p.boundingBox();
@@ -128,7 +128,7 @@ test.describe("cross-editor navigation (3 editors)", () => {
     expect(reachedE2).toBe(true);
   });
 
-  test("ArrowDown crosses editors and ArrowUp crosses back", async ({ page }) => {
+  test("when ArrowDown crosses editors, then ArrowUp crosses back", async ({ page }) => {
     const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
     const box = await p.boundingBox();
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);

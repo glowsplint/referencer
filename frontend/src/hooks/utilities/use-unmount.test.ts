@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { useUnmount } from "./use-unmount";
 
 describe("useUnmount", () => {
-  it("calls callback when component unmounts", () => {
+  it("when component unmounts, then calls callback", () => {
     const callback = vi.fn();
     const { unmount } = renderHook(() => useUnmount(callback));
 
@@ -13,7 +13,7 @@ describe("useUnmount", () => {
     expect(callback).toHaveBeenCalledOnce();
   });
 
-  it("always calls the latest callback version, not a stale closure", () => {
+  it("when callback is updated before unmount, then calls the latest version", () => {
     const firstCallback = vi.fn();
     const secondCallback = vi.fn();
 

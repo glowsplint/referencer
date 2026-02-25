@@ -4,81 +4,91 @@ import userEvent from "@testing-library/user-event";
 import { RenameDialog } from "./RenameDialog";
 
 describe("RenameDialog", () => {
-  it("renders the dialog with the current title in the input", () => {
-    render(
-      <RenameDialog
-        open={true}
-        onOpenChange={vi.fn()}
-        currentTitle="Old Name"
-        onRename={vi.fn()}
-      />,
-    );
-    expect(screen.getByText("Rename Workspace")).toBeInTheDocument();
-    expect(screen.getByTestId("renameInput")).toHaveValue("Old Name");
+  describe("when opened", () => {
+    it("then shows the dialog with the current title in the input", () => {
+      render(
+        <RenameDialog
+          open={true}
+          onOpenChange={vi.fn()}
+          currentTitle="Old Name"
+          onRename={vi.fn()}
+        />,
+      );
+      expect(screen.getByText("Rename Workspace")).toBeInTheDocument();
+      expect(screen.getByTestId("renameInput")).toHaveValue("Old Name");
+    });
   });
 
-  it("calls onRename with the trimmed input value on submit", async () => {
-    const user = userEvent.setup();
-    const onRename = vi.fn();
-    render(
-      <RenameDialog
-        open={true}
-        onOpenChange={vi.fn()}
-        currentTitle="Old Name"
-        onRename={onRename}
-      />,
-    );
+  describe("when a new name is submitted", () => {
+    it("then calls onRename with the trimmed input value", async () => {
+      const user = userEvent.setup();
+      const onRename = vi.fn();
+      render(
+        <RenameDialog
+          open={true}
+          onOpenChange={vi.fn()}
+          currentTitle="Old Name"
+          onRename={onRename}
+        />,
+      );
 
-    const input = screen.getByTestId("renameInput");
-    await user.clear(input);
-    await user.type(input, "  New Name  ");
-    await user.click(screen.getByRole("button", { name: /save/i }));
+      const input = screen.getByTestId("renameInput");
+      await user.clear(input);
+      await user.type(input, "  New Name  ");
+      await user.click(screen.getByRole("button", { name: /save/i }));
 
-    expect(onRename).toHaveBeenCalledWith("New Name");
+      expect(onRename).toHaveBeenCalledWith("New Name");
+    });
   });
 
-  it("disables the Save button when input is empty or whitespace", async () => {
-    const user = userEvent.setup();
-    render(
-      <RenameDialog
-        open={true}
-        onOpenChange={vi.fn()}
-        currentTitle="Old Name"
-        onRename={vi.fn()}
-      />,
-    );
+  describe("when the input is empty or whitespace", () => {
+    it("then disables the Save button", async () => {
+      const user = userEvent.setup();
+      render(
+        <RenameDialog
+          open={true}
+          onOpenChange={vi.fn()}
+          currentTitle="Old Name"
+          onRename={vi.fn()}
+        />,
+      );
 
-    const input = screen.getByTestId("renameInput");
-    await user.clear(input);
+      const input = screen.getByTestId("renameInput");
+      await user.clear(input);
 
-    expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
+      expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
+    });
   });
 
-  it("calls onOpenChange(false) when Cancel is clicked", async () => {
-    const user = userEvent.setup();
-    const onOpenChange = vi.fn();
-    render(
-      <RenameDialog
-        open={true}
-        onOpenChange={onOpenChange}
-        currentTitle="Old Name"
-        onRename={vi.fn()}
-      />,
-    );
+  describe("when Cancel is clicked", () => {
+    it("then calls onOpenChange with false", async () => {
+      const user = userEvent.setup();
+      const onOpenChange = vi.fn();
+      render(
+        <RenameDialog
+          open={true}
+          onOpenChange={onOpenChange}
+          currentTitle="Old Name"
+          onRename={vi.fn()}
+        />,
+      );
 
-    await user.click(screen.getByRole("button", { name: /cancel/i }));
-    expect(onOpenChange).toHaveBeenCalledWith(false);
+      await user.click(screen.getByRole("button", { name: /cancel/i }));
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
   });
 
-  it("does not render when closed", () => {
-    render(
-      <RenameDialog
-        open={false}
-        onOpenChange={vi.fn()}
-        currentTitle="Old Name"
-        onRename={vi.fn()}
-      />,
-    );
-    expect(screen.queryByTestId("renameDialog")).not.toBeInTheDocument();
+  describe("when closed", () => {
+    it("then does not render the dialog", () => {
+      render(
+        <RenameDialog
+          open={false}
+          onOpenChange={vi.fn()}
+          currentTitle="Old Name"
+          onRename={vi.fn()}
+        />,
+      );
+      expect(screen.queryByTestId("renameDialog")).not.toBeInTheDocument();
+    });
   });
 });

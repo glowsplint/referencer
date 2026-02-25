@@ -228,17 +228,17 @@ function renderApp() {
 
 describe("App (mobile)", () => {
   describe("when rendered on a mobile viewport", () => {
-    it("hides the sidebar button pane", () => {
+    it("then hides the sidebar button pane", () => {
       renderApp();
       expect(screen.queryByTestId("buttonPane")).not.toBeInTheDocument();
     });
 
-    it("hides the status bar", () => {
+    it("then hides the status bar", () => {
       renderApp();
       expect(screen.queryByTestId("status-bar")).not.toBeInTheDocument();
     });
 
-    it("shows the mobile info dialog", () => {
+    it("then shows the mobile info dialog", () => {
       renderApp();
       expect(screen.getByTestId("mobileInfoDialog")).toBeInTheDocument();
       expect(screen.getByText("Best on Desktop")).toBeInTheDocument();
@@ -246,7 +246,7 @@ describe("App (mobile)", () => {
   });
 
   describe("when the mobile info dialog is dismissed", () => {
-    it("hides the dialog after clicking close", async () => {
+    it("then hides the dialog after clicking close", async () => {
       const user = userEvent.setup();
       renderApp();
 
@@ -257,21 +257,21 @@ describe("App (mobile)", () => {
   });
 
   describe("when viewing editors on mobile (read-only)", () => {
-    it("renders editors as locked regardless of lock setting", () => {
+    it("then renders editors as locked regardless of lock setting", () => {
       mockWorkspace.settings.isLocked = false;
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-locked", "true");
     });
 
-    it("does not enable annotation mouse handlers even when locked", () => {
+    it("then does not enable annotation mouse handlers even when locked", () => {
       mockWorkspace.settings.isLocked = true;
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
     });
 
-    it("does not enable content editing", () => {
+    it("then does not enable content editing", () => {
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-content-update", "false");

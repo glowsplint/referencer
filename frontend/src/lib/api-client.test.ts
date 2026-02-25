@@ -9,15 +9,15 @@ beforeEach(() => {
   mockFetch.mockReset();
 });
 
-describe("apiUrl", () => {
-  it("prepends API base URL to path", () => {
+describe("when using apiUrl", () => {
+  it("then prepends API base URL to path", () => {
     // VITE_API_URL defaults to "" in test env
     expect(apiUrl("/api/test")).toBe("/api/test");
   });
 });
 
-describe("apiFetch", () => {
-  it("sends credentials include and returns parsed JSON", async () => {
+describe("when using apiFetch", () => {
+  it("then sends credentials include and returns parsed JSON", async () => {
     mockFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ data: "test" }),
@@ -32,7 +32,7 @@ describe("apiFetch", () => {
     expect(result).toEqual({ data: "test" });
   });
 
-  it("throws ApiError with status code on non-ok response", async () => {
+  it("then throws ApiError with status code on non-ok response", async () => {
     mockFetch.mockResolvedValue({
       ok: false,
       status: 404,
@@ -48,8 +48,8 @@ describe("apiFetch", () => {
   });
 });
 
-describe("apiPost", () => {
-  it("sends POST with JSON Content-Type header and stringified body", async () => {
+describe("when using apiPost", () => {
+  it("then sends POST with JSON Content-Type header and stringified body", async () => {
     mockFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ id: 1 }),
@@ -68,7 +68,7 @@ describe("apiPost", () => {
     );
   });
 
-  it("sends POST without body when body is undefined", async () => {
+  it("then sends POST without body when body is undefined", async () => {
     mockFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({}),
@@ -82,8 +82,8 @@ describe("apiPost", () => {
   });
 });
 
-describe("apiPatch", () => {
-  it("sends PATCH method", async () => {
+describe("when using apiPatch", () => {
+  it("then sends PATCH method", async () => {
     mockFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({}),
@@ -101,8 +101,8 @@ describe("apiPatch", () => {
   });
 });
 
-describe("apiDelete", () => {
-  it("sends DELETE method", async () => {
+describe("when using apiDelete", () => {
+  it("then sends DELETE method", async () => {
     mockFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({}),

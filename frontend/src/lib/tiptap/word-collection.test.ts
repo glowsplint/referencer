@@ -23,8 +23,8 @@ function mockEditor(blocks: string[]) {
   return { state: { doc } } as any;
 }
 
-describe("collectAllWords", () => {
-  it("extracts words from a single paragraph", () => {
+describe("when using collectAllWords", () => {
+  it("then extracts words from a single paragraph", () => {
     const editor = mockEditor(["hello world"]);
     const words = collectAllWords(editor, 0);
 
@@ -34,7 +34,7 @@ describe("collectAllWords", () => {
     ]);
   });
 
-  it("extracts words from multiple paragraphs", () => {
+  it("then extracts words from multiple paragraphs", () => {
     const editor = mockEditor(["foo", "bar baz"]);
     const words = collectAllWords(editor, 0);
 
@@ -45,12 +45,12 @@ describe("collectAllWords", () => {
     ]);
   });
 
-  it("returns empty array for empty doc", () => {
+  it("then returns empty array for empty doc", () => {
     const editor = mockEditor([]);
     expect(collectAllWords(editor, 0)).toEqual([]);
   });
 
-  it("skips non-word punctuation characters", () => {
+  it("then skips non-word punctuation characters", () => {
     const editor = mockEditor(["hello, world!"]);
     const words = collectAllWords(editor, 0);
 
@@ -60,7 +60,7 @@ describe("collectAllWords", () => {
     ]);
   });
 
-  it("includes apostrophes as part of words", () => {
+  it("then includes apostrophes as part of words", () => {
     const editor = mockEditor(["don't stop"]);
     const words = collectAllWords(editor, 0);
 
@@ -70,7 +70,7 @@ describe("collectAllWords", () => {
     ]);
   });
 
-  it("includes hyphens as part of words", () => {
+  it("then includes hyphens as part of words", () => {
     const editor = mockEditor(["well-known fact"]);
     const words = collectAllWords(editor, 0);
 
@@ -80,7 +80,7 @@ describe("collectAllWords", () => {
     ]);
   });
 
-  it("includes numbers as words", () => {
+  it("then includes numbers as words", () => {
     const editor = mockEditor(["test123 456"]);
     const words = collectAllWords(editor, 0);
 
@@ -90,7 +90,7 @@ describe("collectAllWords", () => {
     ]);
   });
 
-  it("does not match standalone hyphens or apostrophes", () => {
+  it("then does not match standalone hyphens or apostrophes", () => {
     const editor = mockEditor(["hello - world ' foo"]);
     const words = collectAllWords(editor, 0);
 
@@ -101,7 +101,7 @@ describe("collectAllWords", () => {
     ]);
   });
 
-  it("uses the provided editorIndex", () => {
+  it("then uses the provided editorIndex", () => {
     const editor = mockEditor(["hi"]);
     const words = collectAllWords(editor, 2);
 
@@ -149,8 +149,8 @@ function imageNode(alt: string): MockNode {
   };
 }
 
-describe("collectAllWords with images", () => {
-  it("collects image alt text as a word with isImage flag", () => {
+describe("when using collectAllWords with images", () => {
+  it("then collects image alt text as a word with isImage flag", () => {
     const editor = mockEditorWithNodes([imageNode("placeholder-image")]);
     const words = collectAllWords(editor, 0);
 
@@ -159,7 +159,7 @@ describe("collectAllWords with images", () => {
     ]);
   });
 
-  it("collects image words alongside text words with correct positions", () => {
+  it("then collects image words alongside text words with correct positions", () => {
     const editor = mockEditorWithNodes([
       textBlock("hello world"), // pos 0, size 13
       imageNode("placeholder-image"), // pos 13, size 1
@@ -176,7 +176,7 @@ describe("collectAllWords with images", () => {
     ]);
   });
 
-  it("skips images without alt text", () => {
+  it("then skips images without alt text", () => {
     const noAlt: MockNode = {
       isTextblock: false,
       textContent: "",
@@ -188,7 +188,7 @@ describe("collectAllWords with images", () => {
     expect(collectAllWords(editor, 0)).toEqual([]);
   });
 
-  it("skips images with non-alphanumeric alt text", () => {
+  it("then skips images with non-alphanumeric alt text", () => {
     const editor = mockEditorWithNodes([imageNode("---")]);
     expect(collectAllWords(editor, 0)).toEqual([]);
   });

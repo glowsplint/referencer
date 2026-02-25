@@ -3,12 +3,12 @@ import { describe, it, expect } from "vitest";
 import { useLatestRef } from "./use-latest-ref";
 
 describe("useLatestRef", () => {
-  it("initially holds the provided value", () => {
+  it("when initialized, then holds the provided value", () => {
     const { result } = renderHook(() => useLatestRef(42));
     expect(result.current.current).toBe(42);
   });
 
-  it("updates the ref when the value changes", () => {
+  it("when the value changes, then updates the ref", () => {
     const { result, rerender } = renderHook(({ val }) => useLatestRef(val), {
       initialProps: { val: "first" },
     });
@@ -18,7 +18,7 @@ describe("useLatestRef", () => {
     expect(result.current.current).toBe("second");
   });
 
-  it("returns a stable ref object across renders", () => {
+  it("when re-rendered, then returns a stable ref object", () => {
     const { result, rerender } = renderHook(({ val }) => useLatestRef(val), {
       initialProps: { val: 1 },
     });

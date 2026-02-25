@@ -27,14 +27,14 @@ describe("useDrawingMode", () => {
     vi.clearAllMocks();
   });
 
-  it("shows entry status when arrow tool is activated", () => {
+  it("when arrow tool is activated, then shows entry status", () => {
     const setStatus = vi.fn();
     renderHook(() => useDrawingMode(createOptions({ setStatus })));
 
     expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("does nothing when activeTool is not arrow", () => {
+  it("when activeTool is not arrow, then does nothing", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 });
     const { result } = renderHook(() => useDrawingMode(opts));
 
@@ -46,7 +46,7 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(false);
   });
 
-  it("does nothing when isLocked is false", () => {
+  it("when isLocked is false, then does nothing", () => {
     const { result } = renderHook(() =>
       useDrawingMode({ ...createOptions({ isLocked: false }), selection: word1 }),
     );
@@ -59,7 +59,7 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(false);
   });
 
-  it("confirmSelection with no selection does nothing", () => {
+  it("when confirmSelection is called with no selection, then does nothing", () => {
     const setStatus = vi.fn();
     const { result } = renderHook(() => useDrawingMode(createOptions({ setStatus })));
 
@@ -73,7 +73,7 @@ describe("useDrawingMode", () => {
     expect(setStatus).toHaveBeenCalledTimes(1);
   });
 
-  it("sets anchor on confirmSelection and shows target status", () => {
+  it("when confirmSelection is called, then sets anchor and shows target status", () => {
     const setStatus = vi.fn();
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
@@ -96,7 +96,7 @@ describe("useDrawingMode", () => {
     expect(setStatus).toHaveBeenCalledTimes(2);
   });
 
-  it("creates arrow on second confirm with different word", () => {
+  it("when second confirm is called with a different word, then creates arrow", () => {
     const addArrow = vi.fn();
     const setStatus = vi.fn();
     const flashStatus = vi.fn();
@@ -131,7 +131,7 @@ describe("useDrawingMode", () => {
     expect(flashStatus).toHaveBeenCalledWith({ text: "Arrow created.", type: "success" }, 3000);
   });
 
-  it("stays in arrow mode after arrow created (resets to selecting-anchor)", () => {
+  it("when arrow is created, then stays in arrow mode and resets to selecting-anchor", () => {
     const setStatus = vi.fn();
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
@@ -154,7 +154,7 @@ describe("useDrawingMode", () => {
     expect(setStatus).toHaveBeenLastCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("same selection as anchor reverts to selecting-anchor phase", () => {
+  it("when same selection as anchor is confirmed, then reverts to selecting-anchor phase", () => {
     const setStatus = vi.fn();
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
@@ -181,7 +181,7 @@ describe("useDrawingMode", () => {
     expect(setStatus).toHaveBeenCalledTimes(3);
   });
 
-  it("auto-creates a layer when no active layer on confirm", () => {
+  it("when no active layer exists on confirm, then auto-creates one", () => {
     const addLayer = vi.fn(() => "auto-layer-1");
     const addArrow = vi.fn();
     const { result, rerender } = renderHook(
@@ -214,7 +214,7 @@ describe("useDrawingMode", () => {
     });
   });
 
-  it("does nothing when addLayer fails (all colors used)", () => {
+  it("when addLayer fails (all colors used), then does nothing", () => {
     const addLayer = vi.fn(() => "");
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
@@ -234,7 +234,7 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(false);
   });
 
-  it("clears status when switching away from arrow tool", () => {
+  it("when switching away from arrow tool, then clears status", () => {
     const clearStatus = vi.fn();
     const { result, rerender } = renderHook(
       (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
@@ -261,7 +261,7 @@ describe("useDrawingMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("does not clear status when switching to another annotation tool", () => {
+  it("when switching to another annotation tool, then does not clear status", () => {
     const clearStatus = vi.fn();
     const { result, rerender } = renderHook(
       (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
@@ -288,7 +288,7 @@ describe("useDrawingMode", () => {
     expect(clearStatus).not.toHaveBeenCalled();
   });
 
-  it("clears status when unlocking while arrow tool is active", () => {
+  it("when unlocking while arrow tool is active, then clears status", () => {
     const clearStatus = vi.fn();
     const { result, rerender } = renderHook(
       (props: { isLocked: boolean; selection: WordSelection | null }) =>
@@ -308,7 +308,7 @@ describe("useDrawingMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("clears drawing state on unlock", () => {
+  it("when unlocking, then clears drawing state", () => {
     const { result, rerender } = renderHook(
       (props: { isLocked: boolean; selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ isLocked: props.isLocked, selection: props.selection })),
@@ -326,7 +326,7 @@ describe("useDrawingMode", () => {
     expect(result.current.isDrawing).toBe(false);
   });
 
-  it("preview only appears after anchor-confirmed (not during selecting-anchor)", () => {
+  it("when in selecting-anchor phase, then preview does not appear", () => {
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection })),
@@ -359,14 +359,14 @@ describe("useDrawingMode", () => {
     });
   });
 
-  it("always shows status messages for arrow tool", () => {
+  it("when arrow tool is active, then always shows status messages", () => {
     const setStatus = vi.fn();
     renderHook(() => useDrawingMode(createOptions({ setStatus })));
 
     expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("always shows success status when arrow is created", () => {
+  it("when arrow is created, then always shows success status", () => {
     const addArrow = vi.fn();
     const setStatus = vi.fn();
     const flashStatus = vi.fn();
@@ -396,7 +396,7 @@ describe("useDrawingMode", () => {
     expect(flashStatus).toHaveBeenCalledWith({ text: "Arrow created.", type: "success" }, 3000);
   });
 
-  it("selection is preserved after confirming anchor", () => {
+  it("when anchor is confirmed, then selection is preserved", () => {
     const { result } = renderHook(
       (props: { selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ selection: props.selection })),
@@ -414,7 +414,7 @@ describe("useDrawingMode", () => {
     // (the parent would still pass word1 as selection)
   });
 
-  it("selection is preserved after entering arrow mode", () => {
+  it("when entering arrow mode, then selection is preserved", () => {
     const { result, rerender } = renderHook(
       (props: { activeTool: ActiveTool; selection: WordSelection | null }) =>
         useDrawingMode(createOptions({ activeTool: props.activeTool, selection: props.selection })),
@@ -440,7 +440,7 @@ describe("useDrawingMode", () => {
     });
   });
 
-  it("does not clear status when exiting from idle phase", () => {
+  it("when exiting from idle phase, then does not clear status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
@@ -453,7 +453,7 @@ describe("useDrawingMode", () => {
     expect(clearStatus).not.toHaveBeenCalled();
   });
 
-  it("includes activeArrowStyle in created arrow", () => {
+  it("when arrow is created, then includes activeArrowStyle", () => {
     const addArrow = vi.fn();
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>
@@ -479,7 +479,7 @@ describe("useDrawingMode", () => {
     });
   });
 
-  it("uses default solid style when activeArrowStyle not specified", () => {
+  it("when activeArrowStyle is not specified, then uses default solid style", () => {
     const addArrow = vi.fn();
     const { result, rerender } = renderHook(
       (props: { selection: WordSelection | null }) =>

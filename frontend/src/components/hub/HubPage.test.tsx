@@ -51,19 +51,19 @@ vi.mock("@/hooks/data/use-folders", () => ({
 
 describe("HubPage", () => {
   describe("when user is not authenticated", () => {
-    it("renders the guest hero with app name and description", () => {
+    it("then renders the guest hero with app name and description", () => {
       render(<HubPage navigate={vi.fn()} />);
       // "Referencer" appears in header and hero — both present
       expect(screen.getAllByText("Referencer")).toHaveLength(2);
       expect(screen.getByText(/Annotate, highlight, and connect/)).toBeInTheDocument();
     });
 
-    it("renders the 'Try without signing in' button", () => {
+    it("then renders the 'Try without signing in' button", () => {
       render(<HubPage navigate={vi.fn()} />);
       expect(screen.getByTestId("tryWithoutSignIn")).toBeInTheDocument();
     });
 
-    it("navigates to a new workspace when 'Try without signing in' is clicked", async () => {
+    it("then navigates to a new workspace when 'Try without signing in' is clicked", async () => {
       const user = userEvent.setup();
       const navigate = vi.fn();
       render(<HubPage navigate={navigate} />);
@@ -72,7 +72,7 @@ describe("HubPage", () => {
       expect(navigate).toHaveBeenCalledWith("#/mock-ksuid-123");
     });
 
-    it("calls login with 'google' when Sign in is clicked", async () => {
+    it("then calls login with 'google' when Sign in is clicked", async () => {
       const user = userEvent.setup();
       render(<HubPage navigate={vi.fn()} />);
 

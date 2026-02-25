@@ -49,7 +49,7 @@ describe("useDragSelection", () => {
     vi.clearAllMocks();
   });
 
-  it("calls selectWord on mouseDown", () => {
+  it("when mouseDown occurs, then calls selectWord", () => {
     const opts = createOptions();
     const { result } = renderHook(() => useDragSelection(opts));
     const editor = createMockEditor();
@@ -61,7 +61,7 @@ describe("useDragSelection", () => {
     expect(opts.selectWord).toHaveBeenCalledWith(0, 1, 5, "hello");
   });
 
-  it("calls selectWord on mouseUp", () => {
+  it("when mouseUp occurs, then calls selectWord", () => {
     const opts = createOptions();
     const { result } = renderHook(() => useDragSelection(opts));
     const editor = createMockEditor();
@@ -76,7 +76,7 @@ describe("useDragSelection", () => {
     expect(opts.selectWord).toHaveBeenCalledWith(0, 1, 5, "hello");
   });
 
-  it("does not create highlights for any tool", () => {
+  it("when a tool is active, then does not create highlights", () => {
     for (const tool of ["selection", "arrow", "comments"] as ActiveTool[]) {
       const opts = createOptions({ activeTool: tool });
       const { result } = renderHook(() => useDragSelection(opts));
@@ -94,7 +94,7 @@ describe("useDragSelection", () => {
     }
   });
 
-  it("clears selection when clicking on empty space", () => {
+  it("when clicking on empty space, then clears selection", () => {
     const opts = createOptions();
     const editor = createMockEditor(null);
     const { result } = renderHook(() => useDragSelection(opts));
@@ -106,7 +106,7 @@ describe("useDragSelection", () => {
     expect(opts.clearSelection).toHaveBeenCalled();
   });
 
-  it("does nothing when not locked", () => {
+  it("when not locked, then does nothing", () => {
     const opts = createOptions({ isLocked: false });
     const { result } = renderHook(() => useDragSelection(opts));
     const editor = createMockEditor();
@@ -118,7 +118,7 @@ describe("useDragSelection", () => {
     expect(opts.selectWord).not.toHaveBeenCalled();
   });
 
-  it("calls selectRange on mouseUp after multi-word drag", () => {
+  it("when mouseUp occurs after multi-word drag, then calls selectRange", () => {
     const opts = createOptions();
     const { result } = renderHook(() => useDragSelection(opts));
     const editor = createMockEditor();
@@ -149,7 +149,7 @@ describe("useDragSelection", () => {
     expect(opts.selectWord).toHaveBeenCalledTimes(2);
   });
 
-  it("calls selectWord (not selectRange) on single-click mouseUp", () => {
+  it("when single-click mouseUp occurs, then calls selectWord not selectRange", () => {
     const opts = createOptions();
     const { result } = renderHook(() => useDragSelection(opts));
     const editor = createMockEditor();
@@ -165,7 +165,7 @@ describe("useDragSelection", () => {
     expect(opts.selectWord).toHaveBeenCalledWith(0, 1, 5, "hello");
   });
 
-  it("does not interfere with textarea clicks", () => {
+  it("when clicking on a textarea, then does not interfere", () => {
     const opts = createOptions();
     const { result } = renderHook(() => useDragSelection(opts));
     const editor = createMockEditor();

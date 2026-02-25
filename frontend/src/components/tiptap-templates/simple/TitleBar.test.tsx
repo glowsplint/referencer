@@ -9,19 +9,19 @@ function renderTitleBar(overrides = {}) {
 
 describe("TitleBar", () => {
   describe("when rendered", () => {
-    it("shows the share button", () => {
+    it("then shows the share button", () => {
       renderTitleBar();
       expect(screen.getByTestId("shareButton")).toBeInTheDocument();
     });
 
-    it("shows the title text", () => {
+    it("then shows the title text", () => {
       renderTitleBar();
       expect(screen.getByText("Title")).toBeInTheDocument();
     });
   });
 
   describe("when the share button is clicked", () => {
-    it("opens the share dialog", () => {
+    it("then opens the share dialog", () => {
       renderTitleBar();
       fireEvent.click(screen.getByTestId("shareButton"));
       expect(screen.getByTestId("shareDialog")).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe("TitleBar", () => {
   });
 
   describe("when readOnly is true", () => {
-    it("does not enter editing mode on title click", () => {
+    it("then does not enter editing mode on title click", () => {
       renderTitleBar({ readOnly: true });
       fireEvent.click(screen.getByText("Title"));
       expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("TitleBar", () => {
   });
 
   describe("when readOnly is false", () => {
-    it("enters editing mode on title click", () => {
+    it("then enters editing mode on title click", () => {
       renderTitleBar({ readOnly: false });
       fireEvent.click(screen.getByText("Title"));
       expect(screen.getByRole("textbox")).toBeInTheDocument();

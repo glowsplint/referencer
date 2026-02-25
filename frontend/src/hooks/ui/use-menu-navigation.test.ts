@@ -29,14 +29,14 @@ describe("useMenuNavigation", () => {
 
   const items = ["apple", "banana", "cherry"];
 
-  it("starts with selectedIndex 0 when autoSelectFirstItem is true (default)", () => {
+  it("when autoSelectFirstItem is true (default), then starts with selectedIndex 0", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
     expect(result.current.selectedIndex).toBe(0);
   });
 
-  it("starts with selectedIndex -1 when autoSelectFirstItem is false", () => {
+  it("when autoSelectFirstItem is false, then starts with selectedIndex -1", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items, autoSelectFirstItem: false }),
     );
@@ -44,14 +44,14 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(-1);
   });
 
-  it("returns undefined selectedIndex when items is empty", () => {
+  it("when items is empty, then returns undefined selectedIndex", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items: [] }),
     );
     expect(result.current.selectedIndex).toBeUndefined();
   });
 
-  it("ArrowDown moves to next item", () => {
+  it("when ArrowDown is pressed, then moves to next item", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
@@ -62,7 +62,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(1);
   });
 
-  it("ArrowDown wraps around to first item", () => {
+  it("when ArrowDown is pressed at last item, then wraps to first", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
@@ -75,7 +75,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(0);
   });
 
-  it("ArrowUp moves to previous item", () => {
+  it("when ArrowUp is pressed, then moves to previous item", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
@@ -88,7 +88,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(0);
   });
 
-  it("ArrowUp wraps around to last item", () => {
+  it("when ArrowUp is pressed at first item, then wraps to last", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
@@ -98,7 +98,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(2);
   });
 
-  it("Tab moves to next, Shift+Tab moves to previous", () => {
+  it("when Tab is pressed, then moves to next; Shift+Tab moves to previous", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
@@ -110,7 +110,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(0);
   });
 
-  it("Home sets selectedIndex to 0", () => {
+  it("when Home is pressed, then sets selectedIndex to 0", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
@@ -123,7 +123,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(0);
   });
 
-  it("End sets selectedIndex to last item", () => {
+  it("when End is pressed, then sets selectedIndex to last item", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
@@ -132,7 +132,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(2);
   });
 
-  it("Enter calls onSelect with the selected item", () => {
+  it("when Enter is pressed with a selected item, then calls onSelect", () => {
     const onSelect = vi.fn();
     renderHook(() =>
       useMenuNavigation({ containerRef, items, onSelect }),
@@ -142,7 +142,7 @@ describe("useMenuNavigation", () => {
     expect(onSelect).toHaveBeenCalledWith("apple");
   });
 
-  it("Enter does not call onSelect when selectedIndex is -1", () => {
+  it("when Enter is pressed with selectedIndex -1, then does not call onSelect", () => {
     const onSelect = vi.fn();
     renderHook(() =>
       useMenuNavigation({ containerRef, items, onSelect, autoSelectFirstItem: false }),
@@ -152,7 +152,7 @@ describe("useMenuNavigation", () => {
     expect(onSelect).not.toHaveBeenCalled();
   });
 
-  it("Escape calls onClose", () => {
+  it("when Escape is pressed, then calls onClose", () => {
     const onClose = vi.fn();
     renderHook(() =>
       useMenuNavigation({ containerRef, items, onClose }),
@@ -162,7 +162,7 @@ describe("useMenuNavigation", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("horizontal orientation ignores ArrowUp/ArrowDown", () => {
+  it("when orientation is horizontal, then ignores ArrowUp/ArrowDown", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items, orientation: "horizontal" }),
     );
@@ -178,7 +178,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(0);
   });
 
-  it("vertical orientation ignores ArrowLeft/ArrowRight", () => {
+  it("when orientation is vertical, then ignores ArrowLeft/ArrowRight", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items, orientation: "vertical" }),
     );
@@ -190,7 +190,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(1);
   });
 
-  it("both orientation responds to all arrow keys", () => {
+  it("when orientation is both, then responds to all arrow keys", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items, orientation: "both" }),
     );
@@ -208,7 +208,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(0);
   });
 
-  it("resets selectedIndex when query changes", () => {
+  it("when query changes, then resets selectedIndex", () => {
     const { result, rerender } = renderHook(
       ({ query }) => useMenuNavigation({ containerRef, items, query }),
       { initialProps: { query: "" } },
@@ -221,7 +221,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(0);
   });
 
-  it("setSelectedIndex allows manual index setting", () => {
+  it("when setSelectedIndex is called, then allows manual index setting", () => {
     const { result } = renderHook(() =>
       useMenuNavigation({ containerRef, items }),
     );
@@ -230,7 +230,7 @@ describe("useMenuNavigation", () => {
     expect(result.current.selectedIndex).toBe(2);
   });
 
-  it("Enter during IME composition does not trigger onSelect", () => {
+  it("when Enter is pressed during IME composition, then does not trigger onSelect", () => {
     const onSelect = vi.fn();
     renderHook(() =>
       useMenuNavigation({ containerRef, items, onSelect }),

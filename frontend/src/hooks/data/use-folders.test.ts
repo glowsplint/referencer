@@ -57,7 +57,7 @@ beforeEach(() => {
 });
 
 describe("useFolders", () => {
-  it("fetches folders on mount", async () => {
+  it("when mounted, then fetches folders", async () => {
     const { result } = renderHook(() => useFolders());
     expect(result.current.isLoading).toBe(true);
 
@@ -66,7 +66,7 @@ describe("useFolders", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("sets error when fetch fails", async () => {
+  it("when fetch fails, then sets error", async () => {
     mockFetchFolders.mockRejectedValue(new Error("Network error"));
 
     const { result } = renderHook(() => useFolders());
@@ -74,7 +74,7 @@ describe("useFolders", () => {
     expect(result.current.error?.message).toBe("Network error");
   });
 
-  it("create adds folder optimistically", async () => {
+  it("when create is called, then adds folder optimistically", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -91,7 +91,7 @@ describe("useFolders", () => {
     expect(added!.isFavorite).toBe(false);
   });
 
-  it("create reverts on API failure", async () => {
+  it("when create API call fails, then reverts the folder", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -106,7 +106,7 @@ describe("useFolders", () => {
     await waitFor(() => expect(result.current.folders).toHaveLength(2));
   });
 
-  it("rename updates name optimistically", async () => {
+  it("when rename is called, then updates name optimistically", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -119,7 +119,7 @@ describe("useFolders", () => {
     expect(result.current.folders[0].name).toBe("Renamed");
   });
 
-  it("rename reverts on API failure", async () => {
+  it("when rename API call fails, then reverts the name", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -134,7 +134,7 @@ describe("useFolders", () => {
     await waitFor(() => expect(result.current.folders[0].name).toBe("Folder 1"));
   });
 
-  it("remove filters folder optimistically", async () => {
+  it("when remove is called, then filters folder optimistically", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -148,7 +148,7 @@ describe("useFolders", () => {
     expect(result.current.folders[0].id).toBe("f2");
   });
 
-  it("remove reverts on failure with toast", async () => {
+  it("when remove API call fails, then reverts and shows toast", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -163,7 +163,7 @@ describe("useFolders", () => {
     await waitFor(() => expect(result.current.folders).toHaveLength(2));
   });
 
-  it("toggleFavorite updates isFavorite optimistically", async () => {
+  it("when toggleFavorite is called, then updates isFavorite optimistically", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -176,7 +176,7 @@ describe("useFolders", () => {
     expect(result.current.folders[0].isFavorite).toBe(true);
   });
 
-  it("toggleFavorite reverts on failure", async () => {
+  it("when toggleFavorite API call fails, then reverts", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -193,7 +193,7 @@ describe("useFolders", () => {
     await waitFor(() => expect(result.current.folders[0].isFavorite).toBe(false));
   });
 
-  it("moveFolder updates parentId optimistically", async () => {
+  it("when moveFolder is called, then updates parentId optimistically", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -206,7 +206,7 @@ describe("useFolders", () => {
     expect(result.current.folders[1].parentId).toBe("f1");
   });
 
-  it("moveFolder reverts on failure", async () => {
+  it("when moveFolder API call fails, then reverts", async () => {
     const { result } = renderHook(() => useFolders());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 

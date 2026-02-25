@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("PDF export", () => {
-  test("export PDF button exists in title bar", async ({ page }) => {
+test.describe("when exporting PDF", () => {
+  test("when workspace loads, then export PDF button is visible in title bar", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 
@@ -9,7 +9,7 @@ test.describe("PDF export", () => {
     await expect(exportButton).toBeVisible();
   });
 
-  test("clicking export PDF button triggers window.print", async ({ page }) => {
+  test("when export PDF button is clicked, then window.print is triggered", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
 

@@ -26,7 +26,7 @@ function makeMockHistory(overrides: Partial<{ canUndo: boolean; canRedo: boolean
 }
 
 describe("useUnifiedUndo", () => {
-  it("prefers Yjs undo when yjsUndo.canUndo is true", () => {
+  it("when yjsUndo.canUndo is true, then prefers Yjs undo", () => {
     const yjsUndo = makeMockYjsUndo({ canUndo: true });
     const history = makeMockHistory({ canUndo: true });
 
@@ -41,7 +41,7 @@ describe("useUnifiedUndo", () => {
     expect(history.undo).not.toHaveBeenCalled();
   });
 
-  it("falls back to action history undo when yjsUndo.canUndo is false", () => {
+  it("when yjsUndo.canUndo is false, then falls back to action history undo", () => {
     const yjsUndo = makeMockYjsUndo({ canUndo: false });
     const history = makeMockHistory({ canUndo: true });
 
@@ -55,7 +55,7 @@ describe("useUnifiedUndo", () => {
     expect(history.undo).toHaveBeenCalledOnce();
   });
 
-  it("does nothing when neither source can undo", () => {
+  it("when neither source can undo, then does nothing", () => {
     const yjsUndo = makeMockYjsUndo({ canUndo: false });
     const history = makeMockHistory({ canUndo: false });
 
@@ -69,7 +69,7 @@ describe("useUnifiedUndo", () => {
     expect(history.undo).not.toHaveBeenCalled();
   });
 
-  it("prefers Yjs redo when yjsUndo.canRedo is true", () => {
+  it("when yjsUndo.canRedo is true, then prefers Yjs redo", () => {
     const yjsUndo = makeMockYjsUndo({ canRedo: true });
     const history = makeMockHistory({ canRedo: true });
 
@@ -84,7 +84,7 @@ describe("useUnifiedUndo", () => {
     expect(history.redo).not.toHaveBeenCalled();
   });
 
-  it("falls back to action history redo when yjsUndo.canRedo is false", () => {
+  it("when yjsUndo.canRedo is false, then falls back to action history redo", () => {
     const yjsUndo = makeMockYjsUndo({ canRedo: false });
     const history = makeMockHistory({ canRedo: true });
 
@@ -98,7 +98,7 @@ describe("useUnifiedUndo", () => {
     expect(history.redo).toHaveBeenCalledOnce();
   });
 
-  it("canUndo is true when either source can undo", () => {
+  it("when either source can undo, then canUndo is true", () => {
     const yjsUndo = makeMockYjsUndo({ canUndo: true });
     const history = makeMockHistory({ canUndo: false });
 
@@ -106,7 +106,7 @@ describe("useUnifiedUndo", () => {
     expect(result.current.canUndo).toBe(true);
   });
 
-  it("canUndo is true when only history can undo", () => {
+  it("when only history can undo, then canUndo is true", () => {
     const yjsUndo = makeMockYjsUndo({ canUndo: false });
     const history = makeMockHistory({ canUndo: true });
 
@@ -114,7 +114,7 @@ describe("useUnifiedUndo", () => {
     expect(result.current.canUndo).toBe(true);
   });
 
-  it("canUndo is false when neither source can undo", () => {
+  it("when neither source can undo, then canUndo is false", () => {
     const yjsUndo = makeMockYjsUndo({ canUndo: false });
     const history = makeMockHistory({ canUndo: false });
 
@@ -122,7 +122,7 @@ describe("useUnifiedUndo", () => {
     expect(result.current.canUndo).toBe(false);
   });
 
-  it("canRedo reflects both sources", () => {
+  it("when either source can redo, then canRedo reflects it", () => {
     const yjsUndo = makeMockYjsUndo({ canRedo: false });
     const history = makeMockHistory({ canRedo: true });
 
@@ -130,7 +130,7 @@ describe("useUnifiedUndo", () => {
     expect(result.current.canRedo).toBe(true);
   });
 
-  it("canRedo is false when neither source can redo", () => {
+  it("when neither source can redo, then canRedo is false", () => {
     const yjsUndo = makeMockYjsUndo({ canRedo: false });
     const history = makeMockHistory({ canRedo: false });
 

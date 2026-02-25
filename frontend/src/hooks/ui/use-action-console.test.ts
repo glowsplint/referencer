@@ -7,7 +7,7 @@ function fireKey(key: string, options: Partial<KeyboardEvent> = {}) {
 }
 
 describe("useActionConsole", () => {
-  it("toggles isOpen on backtick key press", () => {
+  it("when backtick key is pressed, then toggles isOpen", () => {
     const { result } = renderHook(() => useActionConsole());
     expect(result.current.isOpen).toBe(false);
 
@@ -30,7 +30,7 @@ describe("useActionConsole", () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  it("ignores backtick when focus is in an editable element", () => {
+  it("when focus is in an editable element, then ignores backtick", () => {
     const { result } = renderHook(() => useActionConsole());
 
     const textarea = document.createElement("textarea");
@@ -41,7 +41,7 @@ describe("useActionConsole", () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  it("ignores backtick when focus is in contentEditable element", () => {
+  it("when focus is in a contentEditable element, then ignores backtick", () => {
     const { result } = renderHook(() => useActionConsole());
 
     const div = document.createElement("div");
@@ -53,7 +53,7 @@ describe("useActionConsole", () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  it("ignores backtick when focus is in an input element", () => {
+  it("when focus is in an input element, then ignores backtick", () => {
     const { result } = renderHook(() => useActionConsole());
 
     const input = document.createElement("input");

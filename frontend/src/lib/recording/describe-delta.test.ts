@@ -35,38 +35,38 @@ const t = (key: string, opts?: Record<string, unknown>) => {
   return map[key] ?? key;
 };
 
-describe("describeDelta", () => {
-  it("describes showing a layer", () => {
+describe("when using describeDelta", () => {
+  it("then describes showing a layer", () => {
     const result = describeDelta({ "layer:layer-1": true }, mockLayers, t);
     expect(result).toBe("Show layer 'Layer 1'");
   });
 
-  it("describes hiding a layer", () => {
+  it("then describes hiding a layer", () => {
     const result = describeDelta({ "layer:layer-2": false }, mockLayers, t);
     expect(result).toBe("Hide layer 'Layer 2'");
   });
 
-  it("describes showing a section", () => {
+  it("then describes showing a section", () => {
     const result = describeDelta({ "section:0": true }, mockLayers, t);
     expect(result).toBe("Show section 1");
   });
 
-  it("describes hiding a section", () => {
+  it("then describes hiding a section", () => {
     const result = describeDelta({ "section:1": false }, mockLayers, t);
     expect(result).toBe("Hide section 2");
   });
 
-  it("describes showing an annotation", () => {
+  it("then describes showing an annotation", () => {
     const result = describeDelta({ "highlight:layer-1:h1": true }, mockLayers, t);
     expect(result).toBe("Show annotation");
   });
 
-  it("describes hiding an annotation", () => {
+  it("then describes hiding an annotation", () => {
     const result = describeDelta({ "highlight:layer-1:h1": false }, mockLayers, t);
     expect(result).toBe("Hide annotation");
   });
 
-  it("joins multiple changes with commas", () => {
+  it("then joins multiple changes with commas", () => {
     const result = describeDelta(
       { "layer:layer-1": true, "section:0": false },
       mockLayers,
@@ -75,12 +75,12 @@ describe("describeDelta", () => {
     expect(result).toBe("Show layer 'Layer 1', Hide section 1");
   });
 
-  it("returns 'No changes' for empty delta", () => {
+  it("then returns 'No changes' for empty delta", () => {
     const result = describeDelta({}, mockLayers, t);
     expect(result).toBe("No changes");
   });
 
-  it("uses 'Unknown' for missing layer", () => {
+  it("then uses 'Unknown' for missing layer", () => {
     const result = describeDelta({ "layer:nonexistent": true }, mockLayers, t);
     expect(result).toBe("Show layer 'Unknown'");
   });

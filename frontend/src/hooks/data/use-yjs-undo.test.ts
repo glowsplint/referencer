@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 
 describe("useYjsUndo", () => {
-  it("canUndo and canRedo start as false", () => {
+  it("when initialized, then canUndo and canRedo are false", () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsUndo(doc));
 
@@ -17,7 +17,7 @@ describe("useYjsUndo", () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it("canUndo becomes true after a mutation", async () => {
+  it("when a mutation occurs, then canUndo becomes true", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsUndo(doc));
 
@@ -32,7 +32,7 @@ describe("useYjsUndo", () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it("undo reverses the last transaction", async () => {
+  it("when undo is called, then reverses the last transaction", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsUndo(doc));
 
@@ -55,7 +55,7 @@ describe("useYjsUndo", () => {
     });
   });
 
-  it("redo replays the undone transaction", async () => {
+  it("when redo is called, then replays the undone transaction", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsUndo(doc));
 
@@ -84,7 +84,7 @@ describe("useYjsUndo", () => {
     });
   });
 
-  it("cleanup destroys UndoManager on doc change", () => {
+  it("when doc changes, then cleanup destroys the UndoManager", () => {
     const doc1 = new Y.Doc();
     const doc2 = new Y.Doc();
 
@@ -105,7 +105,7 @@ describe("useYjsUndo", () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it("is a no-op when doc is null", () => {
+  it("when doc is null, then is a no-op", () => {
     const { result } = renderHook(() => useYjsUndo(null));
 
     expect(result.current.canUndo).toBe(false);
@@ -121,7 +121,7 @@ describe("useYjsUndo", () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it("after undo, canRedo becomes true", async () => {
+  it("when undo is called, then canRedo becomes true", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsUndo(doc));
 

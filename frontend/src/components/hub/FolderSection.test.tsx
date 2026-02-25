@@ -76,71 +76,87 @@ describe("FolderSection", () => {
     );
   }
 
-  it("renders the folder name", () => {
-    renderSection(makeNode({ folder: makeFolder({ name: "My Notes" }) }));
-    expect(screen.getByText("My Notes")).toBeInTheDocument();
+  describe("when rendered", () => {
+    it("then shows the folder name", () => {
+      renderSection(makeNode({ folder: makeFolder({ name: "My Notes" }) }));
+      expect(screen.getByText("My Notes")).toBeInTheDocument();
+    });
+
+    it("then shows the workspace count for the folder", () => {
+      const ws = makeWorkspace();
+      renderSection(makeNode(), { workspaces: [ws] });
+      expect(screen.getByText("1")).toBeInTheDocument();
+    });
   });
 
-  it("renders the workspace count for the folder", () => {
-    const ws = makeWorkspace();
-    renderSection(makeNode(), { workspaces: [ws] });
-    expect(screen.getByText("1")).toBeInTheDocument();
+  describe("when expanded with workspaces", () => {
+    it("then shows workspaces inside the folder", () => {
+      const ws = makeWorkspace({ title: "Inside WS" });
+      renderSection(makeNode(), { workspaces: [ws] });
+      expect(screen.getByText("Inside WS")).toBeInTheDocument();
+    });
   });
 
-  it("shows workspaces inside the folder when expanded", () => {
-    const ws = makeWorkspace({ title: "Inside WS" });
-    renderSection(makeNode(), { workspaces: [ws] });
-    expect(screen.getByText("Inside WS")).toBeInTheDocument();
+  describe("when the folder header is clicked", () => {
+    it("then toggles collapse", async () => {
+      const user = userEvent.setup();
+      const ws = makeWorkspace({ title: "Inside WS" });
+      renderSection(makeNode({ folder: makeFolder({ name: "My Folder" }) }), { workspaces: [ws] });
+
+      // Initially expanded, workspace visible
+      expect(screen.getByText("Inside WS")).toBeInTheDocument();
+
+      // Click the folder name text to trigger collapse (the header row onClick)
+      await user.click(screen.getByText("My Folder"));
+      expect(screen.queryByText("Inside WS")).not.toBeInTheDocument();
+    });
   });
 
-  it("toggles collapse when clicking the folder header", async () => {
-    const user = userEvent.setup();
-    const ws = makeWorkspace({ title: "Inside WS" });
-    renderSection(makeNode({ folder: makeFolder({ name: "My Folder" }) }), { workspaces: [ws] });
+  describe("when folder has child folders", () => {
+    it("then renders child folders recursively", () => {
+      const childFolder = makeFolder({ id: "child-1", parentId: "folder-1", name: "Child Folder" });
+      const childNode: FolderNode = {
+        folder: childFolder,
+        children: [],
+        depth: 1,
+      };
+      const parentNode = makeNode({ children: [childNode] });
 
-    // Initially expanded, workspace visible
-    expect(screen.getByText("Inside WS")).toBeInTheDocument();
-
-    // Click the folder name text to trigger collapse (the header row onClick)
-    await user.click(screen.getByText("My Folder"));
-    expect(screen.queryByText("Inside WS")).not.toBeInTheDocument();
+      renderSection(parentNode, { folders: [makeFolder(), childFolder] });
+      expect(screen.getByText("Child Folder")).toBeInTheDocument();
+    });
   });
 
-  it("renders child folders recursively", () => {
-    const childFolder = makeFolder({ id: "child-1", parentId: "folder-1", name: "Child Folder" });
-    const childNode: FolderNode = {
-      folder: childFolder,
-      children: [],
-      depth: 1,
-    };
-    const parentNode = makeNode({ children: [childNode] });
-
-    renderSection(parentNode, { folders: [makeFolder(), childFolder] });
-    expect(screen.getByText("Child Folder")).toBeInTheDocument();
+  describe("when the folder is being renamed", () => {
+    it("then shows inline rename input", () => {
+      renderSection(makeNode(), { renamingFolderId: "folder-1" });
+      expect(screen.getByTestId("inlineNameInput")).toBeInTheDocument();
+    });
   });
 
-  it("shows inline rename input when the folder is being renamed", () => {
-    renderSection(makeNode(), { renamingFolderId: "folder-1" });
-    expect(screen.getByTestId("inlineNameInput")).toBeInTheDocument();
+  describe("when creating a subfolder", () => {
+    it("then shows inline input", () => {
+      renderSection(makeNode(), { creatingSubfolderId: "folder-1" });
+      expect(screen.getByTestId("inlineNameInput")).toBeInTheDocument();
+    });
   });
 
-  it("shows inline input when creating a subfolder", () => {
-    renderSection(makeNode(), { creatingSubfolderId: "folder-1" });
-    expect(screen.getByTestId("inlineNameInput")).toBeInTheDocument();
+  describe("when the star button is clicked", () => {
+    it("then calls onToggleFolderFavorite", async () => {
+      const user = userEvent.setup();
+      const onToggleFolderFavorite = vi.fn();
+      renderSection(makeNode(), { onToggleFolderFavorite });
+
+      await user.click(screen.getByTestId("folderFavoriteToggle"));
+      expect(onToggleFolderFavorite).toHaveBeenCalledWith("folder-1", true);
+    });
   });
 
-  it("calls onToggleFolderFavorite when the star button is clicked", async () => {
-    const user = userEvent.setup();
-    const onToggleFolderFavorite = vi.fn();
-    renderSection(makeNode(), { onToggleFolderFavorite });
-
-    await user.click(screen.getByTestId("folderFavoriteToggle"));
-    expect(onToggleFolderFavorite).toHaveBeenCalledWith("folder-1", true);
-  });
-
-  it("renders workspaces in list view when viewMode is list", () => {
-    const ws = makeWorkspace({ title: "List WS" });
-    renderSection(makeNode(), { workspaces: [ws], viewMode: "list" });
-    expect(screen.getByText("List WS")).toBeInTheDocument();
+  describe("when viewMode is list", () => {
+    it("then renders workspaces in list view", () => {
+      const ws = makeWorkspace({ title: "List WS" });
+      renderSection(makeNode(), { workspaces: [ws], viewMode: "list" });
+      expect(screen.getByText("List WS")).toBeInTheDocument();
+    });
   });
 });

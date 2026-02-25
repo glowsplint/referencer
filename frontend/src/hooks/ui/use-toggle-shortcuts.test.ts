@@ -21,7 +21,7 @@ describe("useToggleShortcuts", () => {
     vi.clearAllMocks();
   });
 
-  it("pressing D toggles dark mode", () => {
+  it("when D is pressed, then toggles dark mode", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -31,7 +31,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleDarkMode).toHaveBeenCalledOnce();
   });
 
-  it("pressing R toggles layout", () => {
+  it("when R is pressed, then toggles layout", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -41,7 +41,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleMultipleRowsLayout).toHaveBeenCalledOnce();
   });
 
-  it("pressing K toggles lock", () => {
+  it("when K is pressed, then toggles lock", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -51,7 +51,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleLocked).toHaveBeenCalledOnce();
   });
 
-  it("pressing M toggles management pane", () => {
+  it("when M is pressed, then toggles management pane", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -61,7 +61,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleManagementPane).toHaveBeenCalledOnce();
   });
 
-  it("ignores repeat keydown events", () => {
+  it("when a repeat keydown event fires, then ignores it", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -71,7 +71,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleDarkMode).not.toHaveBeenCalled();
   });
 
-  it("ignores unrelated keys", () => {
+  it("when an unrelated key is pressed, then ignores it", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -102,7 +102,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleMultipleRowsLayout).not.toHaveBeenCalled();
   });
 
-  it("ignores non-lock keys when target is editable element", () => {
+  it("when non-lock key is pressed on an editable element, then ignores it", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -114,7 +114,7 @@ describe("useToggleShortcuts", () => {
     expect(callbacks.toggleDarkMode).not.toHaveBeenCalled();
   });
 
-  it("K does not toggle lock when target is contentEditable element", () => {
+  it("when K is pressed on a contentEditable element, then does not toggle lock", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -129,7 +129,7 @@ describe("useToggleShortcuts", () => {
     document.body.removeChild(editableDiv);
   });
 
-  it("Escape blurs editable element", () => {
+  it("when Escape is pressed on an editable element, then blurs it", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -147,7 +147,7 @@ describe("useToggleShortcuts", () => {
     document.body.removeChild(editableDiv);
   });
 
-  it("Escape does not blur non-editable elements", () => {
+  it("when Escape is pressed on a non-editable element, then does not blur it", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 
@@ -162,7 +162,7 @@ describe("useToggleShortcuts", () => {
     document.body.removeChild(div);
   });
 
-  it("D does not toggle dark mode from inside input element", () => {
+  it("when D is pressed from inside an input element, then does not toggle dark mode", () => {
     const callbacks = makeCallbacks();
     renderHook(() => useToggleShortcuts(callbacks));
 

@@ -41,7 +41,7 @@ describe("useWindowSize", () => {
     vi.useRealTimers();
   });
 
-  it("returns initial viewport dimensions after throttle fires", () => {
+  it("when throttle fires, then returns initial viewport dimensions", () => {
     const { result } = renderHook(() => useWindowSize());
 
     // The throttled callback uses trailing: true by default, so advance timers
@@ -56,7 +56,7 @@ describe("useWindowSize", () => {
     expect(result.current.scale).toBe(1);
   });
 
-  it("updates on visualViewport resize event", () => {
+  it("when visualViewport resize event fires, then updates dimensions", () => {
     const { result } = renderHook(() => useWindowSize());
 
     // Let initial read flush
@@ -79,7 +79,7 @@ describe("useWindowSize", () => {
     expect(result.current.height).toBe(600);
   });
 
-  it("does not update state when values are unchanged", () => {
+  it("when values are unchanged after resize, then does not update state", () => {
     const { result } = renderHook(() => useWindowSize());
 
     act(() => {

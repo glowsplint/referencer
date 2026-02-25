@@ -68,8 +68,8 @@ function addTestHighlight(
 // Layer operations
 // ---------------------------------------------------------------------------
 
-describe("layer operations", () => {
-  it("addLayerToDoc creates a layer with id, name, color, visible=true, and empty annotation arrays", () => {
+describe("when using layer operations", () => {
+  it("then addLayerToDoc creates a layer with id, name, color, visible=true, and empty annotation arrays", () => {
     const doc = createDoc();
     addTestLayer(doc, "L1", "My Layer", "#00ff00");
 
@@ -86,7 +86,7 @@ describe("layer operations", () => {
     expect(layers[0].underlines).toEqual([]);
   });
 
-  it("addLayerToDoc can add multiple layers", () => {
+  it("then addLayerToDoc can add multiple layers", () => {
     const doc = createDoc();
     addTestLayer(doc, "L1", "First", "#ff0000");
     addTestLayer(doc, "L2", "Second", "#00ff00");
@@ -97,7 +97,7 @@ describe("layer operations", () => {
     expect(layers.map((l) => l.id)).toEqual(["L1", "L2", "L3"]);
   });
 
-  it("removeLayerFromDoc deletes the correct layer", () => {
+  it("then removeLayerFromDoc deletes the correct layer", () => {
     const doc = createDoc();
     addTestLayer(doc, "L1", "First", "#ff0000");
     addTestLayer(doc, "L2", "Second", "#00ff00");
@@ -109,7 +109,7 @@ describe("layer operations", () => {
     expect(layers[0].id).toBe("L2");
   });
 
-  it("removeLayerFromDoc is a no-op for missing id", () => {
+  it("then removeLayerFromDoc is a no-op for missing id", () => {
     const doc = createDoc();
     addTestLayer(doc);
 
@@ -119,7 +119,7 @@ describe("layer operations", () => {
     expect(layers).toHaveLength(1);
   });
 
-  it("updateLayerNameInDoc updates the name", () => {
+  it("then updateLayerNameInDoc updates the name", () => {
     const doc = createDoc();
     addTestLayer(doc, "L1", "Original");
 
@@ -129,7 +129,7 @@ describe("layer operations", () => {
     expect(layers[0].name).toBe("Renamed");
   });
 
-  it("updateLayerColorInDoc updates the color", () => {
+  it("then updateLayerColorInDoc updates the color", () => {
     const doc = createDoc();
     addTestLayer(doc, "L1", "Layer", "#ff0000");
 
@@ -139,7 +139,7 @@ describe("layer operations", () => {
     expect(layers[0].color).toBe("#0000ff");
   });
 
-  it("toggleLayerVisibilityInDoc flips the visible boolean", () => {
+  it("then toggleLayerVisibilityInDoc flips the visible boolean", () => {
     const doc = createDoc();
     addTestLayer(doc);
 
@@ -155,7 +155,7 @@ describe("layer operations", () => {
     expect(layers[0].visible).toBe(true);
   });
 
-  it("toggleAllLayerVisibilityInDoc hides all when any are visible", () => {
+  it("then toggleAllLayerVisibilityInDoc hides all when any are visible", () => {
     const doc = createDoc();
     addTestLayer(doc, "L1");
     addTestLayer(doc, "L2");
@@ -169,7 +169,7 @@ describe("layer operations", () => {
     expect(layers.every((l) => l.visible === false)).toBe(true);
   });
 
-  it("toggleAllLayerVisibilityInDoc shows all when all are hidden", () => {
+  it("then toggleAllLayerVisibilityInDoc shows all when all are hidden", () => {
     const doc = createDoc();
     addTestLayer(doc, "L1");
     addTestLayer(doc, "L2");
@@ -189,8 +189,8 @@ describe("layer operations", () => {
 // Highlight operations
 // ---------------------------------------------------------------------------
 
-describe("highlight operations", () => {
-  it("addHighlightToDoc stores a highlight with visible=true and encoded positions", () => {
+describe("when using highlight operations", () => {
+  it("then addHighlightToDoc stores a highlight with visible=true and encoded positions", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc, "layer-1", "h1", { text: "world", annotation: "my note", type: "comment" });
@@ -210,7 +210,7 @@ describe("highlight operations", () => {
     expect(h.replies).toEqual([]);
   });
 
-  it("removeHighlightFromDoc removes by id", () => {
+  it("then removeHighlightFromDoc removes by id", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc, "layer-1", "h1");
@@ -223,7 +223,7 @@ describe("highlight operations", () => {
     expect(layers[0].highlights[0].id).toBe("h2");
   });
 
-  it("removeHighlightFromDoc is a no-op for missing id", () => {
+  it("then removeHighlightFromDoc is a no-op for missing id", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc);
@@ -233,7 +233,7 @@ describe("highlight operations", () => {
     expect(readLayers(doc)[0].highlights).toHaveLength(1);
   });
 
-  it("updateHighlightAnnotationInDoc updates annotation text and sets lastEdited", () => {
+  it("then updateHighlightAnnotationInDoc updates annotation text and sets lastEdited", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc);
@@ -248,7 +248,7 @@ describe("highlight operations", () => {
     expect(h.lastEdited).toBeLessThanOrEqual(after);
   });
 
-  it("clearLayerHighlightsInDoc removes all highlights from a layer", () => {
+  it("then clearLayerHighlightsInDoc removes all highlights from a layer", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc, "layer-1", "h1");
@@ -260,7 +260,7 @@ describe("highlight operations", () => {
     expect(readLayers(doc)[0].highlights).toHaveLength(0);
   });
 
-  it("clearLayerHighlightsInDoc is safe on empty highlights", () => {
+  it("then clearLayerHighlightsInDoc is safe on empty highlights", () => {
     const doc = createDoc();
     addTestLayer(doc);
 
@@ -274,7 +274,7 @@ describe("highlight operations", () => {
 // Arrow operations
 // ---------------------------------------------------------------------------
 
-describe("arrow operations", () => {
+describe("when using arrow operations", () => {
   function addTestArrow(
     doc: Y.Doc,
     layerId = "layer-1",
@@ -293,7 +293,7 @@ describe("arrow operations", () => {
     );
   }
 
-  it("addArrowToDoc stores from/to positions with default arrowStyle 'solid'", () => {
+  it("then addArrowToDoc stores from/to positions with default arrowStyle 'solid'", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestArrow(doc);
@@ -309,7 +309,7 @@ describe("arrow operations", () => {
     expect(a.visible).toBe(true);
   });
 
-  it("addArrowToDoc respects explicit arrowStyle", () => {
+  it("then addArrowToDoc respects explicit arrowStyle", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestArrow(doc, "layer-1", "a1", "dashed");
@@ -318,7 +318,7 @@ describe("arrow operations", () => {
     expect(a.arrowStyle).toBe("dashed");
   });
 
-  it("removeArrowFromDoc removes by id", () => {
+  it("then removeArrowFromDoc removes by id", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestArrow(doc, "layer-1", "a1");
@@ -331,7 +331,7 @@ describe("arrow operations", () => {
     expect(arrows[0].id).toBe("a2");
   });
 
-  it("removeArrowFromDoc is a no-op for missing id", () => {
+  it("then removeArrowFromDoc is a no-op for missing id", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestArrow(doc);
@@ -341,7 +341,7 @@ describe("arrow operations", () => {
     expect(readLayers(doc)[0].arrows).toHaveLength(1);
   });
 
-  it("updateArrowStyleInDoc changes the arrowStyle", () => {
+  it("then updateArrowStyleInDoc changes the arrowStyle", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestArrow(doc);
@@ -351,7 +351,7 @@ describe("arrow operations", () => {
     expect(readLayers(doc)[0].arrows[0].arrowStyle).toBe("dotted");
   });
 
-  it("clearLayerArrowsInDoc removes all arrows from a layer", () => {
+  it("then clearLayerArrowsInDoc removes all arrows from a layer", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestArrow(doc, "layer-1", "a1");
@@ -367,12 +367,12 @@ describe("arrow operations", () => {
 // Underline operations
 // ---------------------------------------------------------------------------
 
-describe("underline operations", () => {
+describe("when using underline operations", () => {
   function addTestUnderline(doc: Y.Doc, layerId = "layer-1", id = "u1") {
     addUnderlineToDoc(doc, layerId, { editorIndex: 0, from: 0, to: 5, text: "hello" }, id);
   }
 
-  it("addUnderlineToDoc stores underline with visible=true", () => {
+  it("then addUnderlineToDoc stores underline with visible=true", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestUnderline(doc);
@@ -386,7 +386,7 @@ describe("underline operations", () => {
     expect(typeof u.to).toBe("number");
   });
 
-  it("removeUnderlineFromDoc removes by id", () => {
+  it("then removeUnderlineFromDoc removes by id", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestUnderline(doc, "layer-1", "u1");
@@ -399,7 +399,7 @@ describe("underline operations", () => {
     expect(underlines[0].id).toBe("u2");
   });
 
-  it("removeUnderlineFromDoc is a no-op for missing id", () => {
+  it("then removeUnderlineFromDoc is a no-op for missing id", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestUnderline(doc);
@@ -409,7 +409,7 @@ describe("underline operations", () => {
     expect(readLayers(doc)[0].underlines).toHaveLength(1);
   });
 
-  it("clearLayerUnderlinesInDoc removes all underlines from a layer", () => {
+  it("then clearLayerUnderlinesInDoc removes all underlines from a layer", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestUnderline(doc, "layer-1", "u1");
@@ -425,7 +425,7 @@ describe("underline operations", () => {
 // Reply operations
 // ---------------------------------------------------------------------------
 
-describe("reply operations", () => {
+describe("when using reply operations", () => {
   function setupHighlightWithReply(doc: Y.Doc) {
     addTestLayer(doc);
     addTestHighlight(doc, "layer-1", "h1", { type: "comment" });
@@ -438,7 +438,7 @@ describe("reply operations", () => {
     });
   }
 
-  it("addReplyToDoc adds a reply to a highlight", () => {
+  it("then addReplyToDoc adds a reply to a highlight", () => {
     const doc = createDoc();
     setupHighlightWithReply(doc);
 
@@ -453,7 +453,7 @@ describe("reply operations", () => {
     expect(h.replies![0].reactions).toEqual([]);
   });
 
-  it("addReplyToDoc appends multiple replies", () => {
+  it("then addReplyToDoc appends multiple replies", () => {
     const doc = createDoc();
     setupHighlightWithReply(doc);
     addReplyToDoc(doc, "layer-1", "h1", {
@@ -469,7 +469,7 @@ describe("reply operations", () => {
     expect(replies[1].id).toBe("r2");
   });
 
-  it("updateReplyInDoc changes text and updates timestamp", () => {
+  it("then updateReplyInDoc changes text and updates timestamp", () => {
     const doc = createDoc();
     setupHighlightWithReply(doc);
 
@@ -483,7 +483,7 @@ describe("reply operations", () => {
     expect(reply.timestamp).toBeLessThanOrEqual(after);
   });
 
-  it("removeReplyFromDoc removes a reply by id", () => {
+  it("then removeReplyFromDoc removes a reply by id", () => {
     const doc = createDoc();
     setupHighlightWithReply(doc);
     addReplyToDoc(doc, "layer-1", "h1", {
@@ -501,7 +501,7 @@ describe("reply operations", () => {
     expect(replies[0].id).toBe("r2");
   });
 
-  it("removeReplyFromDoc is a no-op for missing reply id", () => {
+  it("then removeReplyFromDoc is a no-op for missing reply id", () => {
     const doc = createDoc();
     setupHighlightWithReply(doc);
 
@@ -515,8 +515,8 @@ describe("reply operations", () => {
 // Reaction operations
 // ---------------------------------------------------------------------------
 
-describe("reaction operations", () => {
-  it("toggleReactionOnHighlightInDoc adds a reaction on first call", () => {
+describe("when using reaction operations", () => {
+  it("then toggleReactionOnHighlightInDoc adds a reaction on first call", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc, "layer-1", "h1");
@@ -528,7 +528,7 @@ describe("reaction operations", () => {
     expect(reactions[0]).toEqual({ emoji: "👍", userName: "Alice" });
   });
 
-  it("toggleReactionOnHighlightInDoc removes the same reaction on second call", () => {
+  it("then toggleReactionOnHighlightInDoc removes the same reaction on second call", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc, "layer-1", "h1");
@@ -540,7 +540,7 @@ describe("reaction operations", () => {
     expect(reactions).toHaveLength(0);
   });
 
-  it("toggleReactionOnHighlightInDoc keeps different user reactions separate", () => {
+  it("then toggleReactionOnHighlightInDoc keeps different user reactions separate", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc, "layer-1", "h1");
@@ -552,7 +552,7 @@ describe("reaction operations", () => {
     expect(reactions).toHaveLength(2);
   });
 
-  it("toggleReactionOnReplyInDoc adds then removes reaction on a reply", () => {
+  it("then toggleReactionOnReplyInDoc adds then removes reaction on a reply", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc, "layer-1", "h1");
@@ -581,8 +581,8 @@ describe("reaction operations", () => {
 // Read operations (round-trips)
 // ---------------------------------------------------------------------------
 
-describe("read operations", () => {
-  it("readLayers returns correct plain objects after adding layers with annotations", () => {
+describe("when using read operations", () => {
+  it("then readLayers returns correct plain objects after adding layers with annotations", () => {
     const doc = createDoc();
     addTestLayer(doc, "L1", "Layer One", "#ff0000");
     addTestHighlight(doc, "L1", "h1", { text: "highlighted" });
@@ -605,12 +605,12 @@ describe("read operations", () => {
     expect(layers[0].underlines).toHaveLength(1);
   });
 
-  it("readLayers returns empty array for empty doc", () => {
+  it("then readLayers returns empty array for empty doc", () => {
     const doc = createDoc();
     expect(readLayers(doc)).toEqual([]);
   });
 
-  it("highlights with invalid position data (non-Uint8Array) are skipped", () => {
+  it("then highlights with invalid position data (non-Uint8Array) are skipped", () => {
     const doc = createDoc();
     addTestLayer(doc);
 
@@ -641,8 +641,8 @@ describe("read operations", () => {
 // seedDefaultLayers
 // ---------------------------------------------------------------------------
 
-describe("seedDefaultLayers", () => {
-  it("populates an empty doc with default layers", () => {
+describe("when using seedDefaultLayers", () => {
+  it("then populates an empty doc with default layers", () => {
     const doc = createDoc();
     seedDefaultLayers(doc, [
       {
@@ -662,7 +662,7 @@ describe("seedDefaultLayers", () => {
     expect(layers[0].name).toBe("Default");
   });
 
-  it("skips seeding if doc already has layers", () => {
+  it("then skips seeding if doc already has layers", () => {
     const doc = createDoc();
     addTestLayer(doc, "existing");
 
@@ -683,7 +683,7 @@ describe("seedDefaultLayers", () => {
     expect(layers[0].id).toBe("existing");
   });
 
-  it("seeds layers with highlights, arrows, and underlines", () => {
+  it("then seeds layers with highlights, arrows, and underlines", () => {
     const doc = createDoc();
     seedDefaultLayers(doc, [
       {
@@ -724,8 +724,8 @@ describe("seedDefaultLayers", () => {
 // setAnnotationVisibilityInDoc
 // ---------------------------------------------------------------------------
 
-describe("setAnnotationVisibilityInDoc", () => {
-  it("sets visibility for highlights", () => {
+describe("when using setAnnotationVisibilityInDoc", () => {
+  it("then sets visibility for highlights", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addTestHighlight(doc);
@@ -737,7 +737,7 @@ describe("setAnnotationVisibilityInDoc", () => {
     expect(readLayers(doc)[0].highlights[0].visible).toBe(true);
   });
 
-  it("sets visibility for arrows", () => {
+  it("then sets visibility for arrows", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addArrowToDoc(
@@ -754,7 +754,7 @@ describe("setAnnotationVisibilityInDoc", () => {
     expect(readLayers(doc)[0].arrows[0].visible).toBe(false);
   });
 
-  it("sets visibility for underlines", () => {
+  it("then sets visibility for underlines", () => {
     const doc = createDoc();
     addTestLayer(doc);
     addUnderlineToDoc(doc, "layer-1", { editorIndex: 0, from: 0, to: 5, text: "hello" }, "u1");
@@ -768,22 +768,22 @@ describe("setAnnotationVisibilityInDoc", () => {
 // Position encoding (fallback path - no EditorView)
 // ---------------------------------------------------------------------------
 
-describe("position encoding (fallback path)", () => {
-  it("encodeRelativePosition without EditorView produces a Uint8Array", () => {
+describe("when using position encoding (fallback path)", () => {
+  it("then encodeRelativePosition without EditorView produces a Uint8Array", () => {
     const doc = createDoc();
     const encoded = encodeRelativePosition(doc, 0, 5);
     expect(encoded).toBeInstanceOf(Uint8Array);
     expect(encoded.length).toBeGreaterThan(0);
   });
 
-  it("decodeRelativePosition without EditorView resolves back to a number", () => {
+  it("then decodeRelativePosition without EditorView resolves back to a number", () => {
     const doc = createDoc();
     const encoded = encodeRelativePosition(doc, 0, 5);
     const decoded = decodeRelativePosition(doc, encoded, 0);
     expect(typeof decoded).toBe("number");
   });
 
-  it("round-trip: encode then decode returns original position for position 0", () => {
+  it("then round-trip: encode then decode returns original position for position 0", () => {
     const doc = createDoc();
     // The fallback path uses createRelativePositionFromTypeIndex on an XmlFragment.
     // Without actual XmlText children, only position 0 round-trips reliably.
@@ -792,7 +792,7 @@ describe("position encoding (fallback path)", () => {
     expect(decoded).toBe(0);
   });
 
-  it("round-trip works with XmlText content in the fragment", () => {
+  it("then round-trip works with XmlText content in the fragment", () => {
     const doc = createDoc();
     const fragment = doc.getXmlFragment("editor-0");
     // Yjs XmlText positions are indexed within the text content.
