@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { randomKSUID } from "@/lib/ksuid";
 import {
   LayoutGrid,
   List,
@@ -83,12 +84,12 @@ export function WorkspaceGrid({
   const handleOpen = (id: string) => navigate(`#/${id}`);
 
   const handleDuplicate = (sourceId: string) => {
-    const newId = crypto.randomUUID();
+    const newId = randomKSUID();
     onDuplicate(sourceId, newId);
   };
 
   const handleCreateFolder = (parentId: string | null, name: string) => {
-    const id = crypto.randomUUID();
+    const id = randomKSUID();
     onCreateFolder(id, parentId, name);
   };
 

@@ -117,5 +117,19 @@
     "title": "Best on Desktop",
     "description": "Referencer is designed for desktop use with a keyboard and mouse. You can still read the content here, but editing and annotation tools are not available on mobile.",
     "continueReading": "Continue Reading"
+  },
+  "bugReport": {
+    "title": "Report a Bug",
+    "description": "Describe the issue you encountered. Your report will be submitted to our issue tracker.",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief summary of the issue",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Steps to reproduce, expected behavior, actual behavior...",
+    "submit": "Submit Report",
+    "submitting": "Submitting...",
+    "success": "Bug report submitted successfully. Thank you!",
+    "error": "Failed to submit bug report. Please try again.",
+    "rateLimited": "Too many reports. Please try again later.",
+    "reportBug": "Report a Bug"
   }
 }

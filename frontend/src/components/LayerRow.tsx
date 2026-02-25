@@ -33,6 +33,9 @@ interface LayerRowProps {
   onRemoveHighlight: (layerId: string, highlightId: string) => void;
   onRemoveArrow: (layerId: string, arrowId: string) => void;
   onRemoveUnderline: (layerId: string, underlineId: string) => void;
+  onToggleHighlightVisibility?: (layerId: string, highlightId: string) => void;
+  onToggleArrowVisibility?: (layerId: string, arrowId: string) => void;
+  onToggleUnderlineVisibility?: (layerId: string, underlineId: string) => void;
   customColors?: string[];
   onAddCustomColor?: (hex: string) => void;
   onRemoveCustomColor?: (hex: string) => void;
@@ -50,6 +53,9 @@ export function LayerRow({
   onRemoveHighlight,
   onRemoveArrow,
   onRemoveUnderline,
+  onToggleHighlightVisibility,
+  onToggleArrowVisibility,
+  onToggleUnderlineVisibility,
   customColors,
   onAddCustomColor,
   onRemoveCustomColor,
@@ -194,8 +200,18 @@ export function LayerRow({
                 <span className="truncate" title={fullTitle}>
                   {label}
                 </span>
+                {onToggleHighlightVisibility && (
+                  <button
+                    className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-muted-foreground"
+                    onClick={() => onToggleHighlightVisibility(layer.id, h.id)}
+                    title={h.visible ? t("layers.hideAnnotation") : t("layers.showAnnotation")}
+                    data-testid={`toggleHighlightVisibility-${h.id}`}
+                  >
+                    {h.visible ? <Eye size={12} /> : <EyeOff size={12} />}
+                  </button>
+                )}
                 <button
-                  className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                  className={`${onToggleHighlightVisibility ? "" : "ml-auto "}p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive`}
                   onClick={() => onRemoveHighlight(layer.id, h.id)}
                   title={t("layers.removeAnnotation")}
                   data-testid={`removeHighlight-${h.id}`}
@@ -224,8 +240,18 @@ export function LayerRow({
                 <span className="truncate" title={fullTitle}>
                   {label}
                 </span>
+                {onToggleArrowVisibility && (
+                  <button
+                    className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-muted-foreground"
+                    onClick={() => onToggleArrowVisibility(layer.id, a.id)}
+                    title={a.visible ? t("layers.hideArrow") : t("layers.showArrow")}
+                    data-testid={`toggleArrowVisibility-${a.id}`}
+                  >
+                    {a.visible ? <Eye size={12} /> : <EyeOff size={12} />}
+                  </button>
+                )}
                 <button
-                  className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                  className={`${onToggleArrowVisibility ? "" : "ml-auto "}p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive`}
                   onClick={() => onRemoveArrow(layer.id, a.id)}
                   title={t("layers.removeArrow")}
                   data-testid={`removeArrow-${a.id}`}
@@ -249,8 +275,18 @@ export function LayerRow({
                 <span className="truncate" title={fullTitle}>
                   {u.text}
                 </span>
+                {onToggleUnderlineVisibility && (
+                  <button
+                    className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-muted-foreground"
+                    onClick={() => onToggleUnderlineVisibility(layer.id, u.id)}
+                    title={u.visible ? t("layers.hideUnderline") : t("layers.showUnderline")}
+                    data-testid={`toggleUnderlineVisibility-${u.id}`}
+                  >
+                    {u.visible ? <Eye size={12} /> : <EyeOff size={12} />}
+                  </button>
+                )}
                 <button
-                  className="ml-auto p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                  className={`${onToggleUnderlineVisibility ? "" : "ml-auto "}p-0 shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive`}
                   onClick={() => onRemoveUnderline(layer.id, u.id)}
                   title={t("layers.removeUnderline")}
                   data-testid={`removeUnderline-${u.id}`}

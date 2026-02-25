@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AnnotationPanel } from "./AnnotationPanel";
 import type { Layer, EditingAnnotation } from "@/types/editor";
@@ -37,6 +37,7 @@ function createLayer(overrides: Partial<Layer> = {}): Layer {
         text: "hello",
         annotation: "Test note",
         type: "comment",
+        visible: true,
       },
     ],
     arrows: [],
@@ -145,6 +146,7 @@ describe("AnnotationPanel", () => {
           text: "hello",
           annotation: "Note 1",
           type: "comment",
+          visible: true,
         },
         {
           id: "h2",
@@ -154,6 +156,7 @@ describe("AnnotationPanel", () => {
           text: "hey",
           annotation: "Note 2",
           type: "comment",
+          visible: true,
         },
       ],
     });
@@ -163,5 +166,71 @@ describe("AnnotationPanel", () => {
 
     const lines = container.querySelectorAll("line");
     expect(lines).toHaveLength(2);
+  });
+
+  // --- Collapse/expand all button (Feature 9) ---
+
+  it("renders collapse all button when onCollapseAll and onExpandAll are provided", () => {
+    const props = createProps({
+      onCollapseAll: vi.fn(),
+      onExpandAll: vi.fn(),
+      collapsedIds: new Set<string>(),
+    });
+    render(<AnnotationPanel {...props} />);
+    expect(screen.getByTestId("toggleCollapseAll")).toBeInTheDocument();
+  });
+
+  it("does not render collapse all button when callbacks are not provided", () => {
+    const props = createProps();
+    render(<AnnotationPanel {...props} />);
+    expect(screen.queryByTestId("toggleCollapseAll")).not.toBeInTheDocument();
+  });
+
+  it("calls onCollapseAll when button is clicked and some cards are expanded", () => {
+    const onCollapseAll = vi.fn();
+    const onExpandAll = vi.fn();
+    const props = createProps({
+      onCollapseAll,
+      onExpandAll,
+      collapsedIds: new Set<string>(),
+    });
+    render(<AnnotationPanel {...props} />);
+    fireEvent.click(screen.getByTestId("toggleCollapseAll"));
+    expect(onCollapseAll).toHaveBeenCalled();
+    expect(onExpandAll).not.toHaveBeenCalled();
+  });
+
+  it("calls onExpandAll when all cards are collapsed", () => {
+    const onCollapseAll = vi.fn();
+    const onExpandAll = vi.fn();
+    const props = createProps({
+      onCollapseAll,
+      onExpandAll,
+      collapsedIds: new Set(["h1"]),
+    });
+    render(<AnnotationPanel {...props} />);
+    fireEvent.click(screen.getByTestId("toggleCollapseAll"));
+    expect(onExpandAll).toHaveBeenCalled();
+    expect(onCollapseAll).not.toHaveBeenCalled();
+  });
+
+  it("shows Collapse all title when some cards are expanded", () => {
+    const props = createProps({
+      onCollapseAll: vi.fn(),
+      onExpandAll: vi.fn(),
+      collapsedIds: new Set<string>(),
+    });
+    render(<AnnotationPanel {...props} />);
+    expect(screen.getByTestId("toggleCollapseAll")).toHaveAttribute("title", "Collapse all");
+  });
+
+  it("shows Expand all title when all comment cards are collapsed", () => {
+    const props = createProps({
+      onCollapseAll: vi.fn(),
+      onExpandAll: vi.fn(),
+      collapsedIds: new Set(["h1"]),
+    });
+    render(<AnnotationPanel {...props} />);
+    expect(screen.getByTestId("toggleCollapseAll")).toHaveAttribute("title", "Expand all");
   });
 });

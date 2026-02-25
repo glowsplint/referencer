@@ -96,6 +96,15 @@ CREATE INDEX idx_user_workspace_updated_at ON user_workspace(updated_at DESC);
 CREATE INDEX idx_user_workspace_favorite ON user_workspace(user_id, is_favorite DESC, updated_at DESC);
 CREATE INDEX idx_user_workspace_folder_id ON user_workspace(folder_id);
 
+CREATE TABLE workspace_permission (
+    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+    role TEXT NOT NULL CHECK (role IN ('owner', 'editor', 'viewer')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (workspace_id, user_id)
+);
+CREATE INDEX idx_workspace_permission_user ON workspace_permission(user_id);
+
 CREATE TABLE user_preference (
     user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
     key TEXT NOT NULL,

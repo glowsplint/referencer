@@ -1,3 +1,4 @@
+import KSUID from "ksuid";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "../types";
 
@@ -31,7 +32,7 @@ export async function upsertUser(
 
   if (byEmail) {
     // Link new provider to existing user.
-    const providerId = crypto.randomUUID();
+    const providerId = KSUID.randomSync().string;
     await supabase.from("user_provider").insert({
       id: providerId,
       user_id: byEmail.id,
@@ -46,8 +47,8 @@ export async function upsertUser(
   }
 
   // 3. Create new user via RPC (atomic).
-  const userId = crypto.randomUUID();
-  const providerId = crypto.randomUUID();
+  const userId = KSUID.randomSync().string;
+  const providerId = KSUID.randomSync().string;
 
   const { error } = await supabase.rpc("create_user_with_provider", {
     p_user_id: userId,

@@ -15,6 +15,8 @@ const defaultLayer: Layer = {
   underlines: [],
 };
 
+import type { LayerUnderline } from "@/types/editor";
+
 const makeHighlight = (id: string, text: string, annotation = "", editorIndex = 0): Highlight => ({
   id,
   editorIndex,
@@ -23,6 +25,7 @@ const makeHighlight = (id: string, text: string, annotation = "", editorIndex = 
   text,
   annotation,
   type: "comment",
+  visible: true,
 });
 
 const makeArrow = (
@@ -36,6 +39,16 @@ const makeArrow = (
   from: { editorIndex: fromEditor, from: 0, to: 5, text: fromText },
   to: { editorIndex: toEditor, from: 0, to: 5, text: toText },
   arrowStyle: "solid",
+  visible: true,
+});
+
+const makeUnderline = (id: string, text: string, editorIndex = 0): LayerUnderline => ({
+  id,
+  editorIndex,
+  from: 0,
+  to: 5,
+  text,
+  visible: true,
 });
 
 function renderRow(overrides = {}) {
@@ -375,5 +388,104 @@ describe("LayerRow", () => {
     fireEvent.click(screen.getByTestId("layerExpand-0"));
     const span = screen.getByText("foo (1) → bar (1)");
     expect(span).toHaveAttribute("title", "foo (Intro) → bar (Body)");
+  });
+
+  // --- Individual visibility toggles (Feature 10) ---
+
+  it("shows highlight visibility toggle when onToggleHighlightVisibility is provided", () => {
+    const layer = { ...defaultLayer, highlights: [makeHighlight("h1", "hello")] };
+    renderRow({ layer, onToggleHighlightVisibility: vi.fn() });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    expect(screen.getByTestId("toggleHighlightVisibility-h1")).toBeInTheDocument();
+  });
+
+  it("does not show highlight visibility toggle when onToggleHighlightVisibility is not provided", () => {
+    const layer = { ...defaultLayer, highlights: [makeHighlight("h1", "hello")] };
+    renderRow({ layer });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    expect(screen.queryByTestId("toggleHighlightVisibility-h1")).not.toBeInTheDocument();
+  });
+
+  it("calls onToggleHighlightVisibility with correct args when clicked", () => {
+    const onToggleHighlightVisibility = vi.fn();
+    const layer = { ...defaultLayer, highlights: [makeHighlight("h1", "hello")] };
+    renderRow({ layer, onToggleHighlightVisibility });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    fireEvent.click(screen.getByTestId("toggleHighlightVisibility-h1"));
+    expect(onToggleHighlightVisibility).toHaveBeenCalledWith("a", "h1");
+  });
+
+  it("shows eye icon for visible highlight and eye-off for hidden", () => {
+    const visibleHighlight = makeHighlight("h1", "hello");
+    const hiddenHighlight = { ...makeHighlight("h2", "world"), visible: false };
+    const layer = { ...defaultLayer, highlights: [visibleHighlight, hiddenHighlight] };
+    renderRow({ layer, onToggleHighlightVisibility: vi.fn() });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    expect(screen.getByTestId("toggleHighlightVisibility-h1")).toHaveAttribute("title", "Hide annotation");
+    expect(screen.getByTestId("toggleHighlightVisibility-h2")).toHaveAttribute("title", "Show annotation");
+  });
+
+  it("shows arrow visibility toggle when onToggleArrowVisibility is provided", () => {
+    const layer = { ...defaultLayer, arrows: [makeArrow("a1", "foo", "bar")] };
+    renderRow({ layer, onToggleArrowVisibility: vi.fn() });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    expect(screen.getByTestId("toggleArrowVisibility-a1")).toBeInTheDocument();
+  });
+
+  it("calls onToggleArrowVisibility with correct args when clicked", () => {
+    const onToggleArrowVisibility = vi.fn();
+    const layer = { ...defaultLayer, arrows: [makeArrow("a1", "foo", "bar")] };
+    renderRow({ layer, onToggleArrowVisibility });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    fireEvent.click(screen.getByTestId("toggleArrowVisibility-a1"));
+    expect(onToggleArrowVisibility).toHaveBeenCalledWith("a", "a1");
+  });
+
+  it("shows eye icon for visible arrow and eye-off for hidden", () => {
+    const hiddenArrow = { ...makeArrow("a1", "foo", "bar"), visible: false };
+    const layer = { ...defaultLayer, arrows: [hiddenArrow] };
+    renderRow({ layer, onToggleArrowVisibility: vi.fn() });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    expect(screen.getByTestId("toggleArrowVisibility-a1")).toHaveAttribute("title", "Show arrow");
+  });
+
+  it("shows underline visibility toggle when onToggleUnderlineVisibility is provided", () => {
+    const layer = { ...defaultLayer, underlines: [makeUnderline("u1", "text")] };
+    renderRow({ layer, onToggleUnderlineVisibility: vi.fn() });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    expect(screen.getByTestId("toggleUnderlineVisibility-u1")).toBeInTheDocument();
+  });
+
+  it("calls onToggleUnderlineVisibility with correct args when clicked", () => {
+    const onToggleUnderlineVisibility = vi.fn();
+    const layer = { ...defaultLayer, underlines: [makeUnderline("u1", "text")] };
+    renderRow({ layer, onToggleUnderlineVisibility });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    fireEvent.click(screen.getByTestId("toggleUnderlineVisibility-u1"));
+    expect(onToggleUnderlineVisibility).toHaveBeenCalledWith("a", "u1");
+  });
+
+  it("shows eye icon for visible underline and eye-off for hidden", () => {
+    const hiddenUnderline = { ...makeUnderline("u1", "text"), visible: false };
+    const layer = { ...defaultLayer, underlines: [hiddenUnderline] };
+    renderRow({ layer, onToggleUnderlineVisibility: vi.fn() });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    expect(screen.getByTestId("toggleUnderlineVisibility-u1")).toHaveAttribute("title", "Show underline");
+  });
+
+  it("renders underline items with text when expanded", () => {
+    const layer = { ...defaultLayer, underlines: [makeUnderline("u1", "underlined text")] };
+    renderRow({ layer });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    expect(screen.getByTestId("layerUnderline-u1")).toBeInTheDocument();
+    expect(screen.getByText("underlined text")).toBeInTheDocument();
+  });
+
+  it("calls onRemoveUnderline when underline delete button is clicked", () => {
+    const layer = { ...defaultLayer, underlines: [makeUnderline("u1", "text")] };
+    const { props } = renderRow({ layer });
+    fireEvent.click(screen.getByTestId("layerExpand-0"));
+    fireEvent.click(screen.getByTestId("removeUnderline-u1"));
+    expect(props.onRemoveUnderline).toHaveBeenCalledWith("a", "u1");
   });
 });

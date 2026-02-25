@@ -1,6 +1,5 @@
-// Dialog for sharing the workspace via URL. Generates either a read-only or
-// edit link using hash-based routing (e.g., #/<workspaceId>?access=readonly)
-// and copies it to the clipboard.
+// Dialog for sharing the workspace via URL. Creates a share link through the
+// backend API and copies the resulting URL to the clipboard.
 import { useTranslation } from "react-i18next";
 import { Link, Eye } from "lucide-react";
 import { toast } from "sonner";
@@ -19,15 +18,19 @@ interface ShareDialogProps {
   workspaceId: string;
 }
 
-const BASE_URL = import.meta.env.BASE_URL;
-
 export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProps) {
   const { t } = useTranslation("dialogs");
 
-  async function copyLink(access: "edit" | "readonly") {
-    const hash = access === "readonly" ? `#/${workspaceId}?access=readonly` : `#/${workspaceId}`;
-    const url = `${window.location.origin}${BASE_URL}${hash}`;
+  async function handleShare(access: "edit" | "readonly") {
     try {
+      const resp = await fetch("/api/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspaceId, access }),
+      });
+      if (!resp.ok) throw new Error("Failed to create share link");
+      const data = await resp.json();
+      const url = `${window.location.origin}${data.url}`;
       await navigator.clipboard.writeText(url);
       toast.success(t("share.linkCopied"));
       onOpenChange(false);
@@ -46,13 +49,17 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
         <div className="flex flex-col gap-2">
           <Button
             variant="outline"
-            onClick={() => copyLink("readonly")}
+            onClick={() => handleShare("readonly")}
             data-testid="shareReadonlyButton"
           >
             <Eye />
             {t("share.readonlyLink")}
           </Button>
-          <Button variant="outline" onClick={() => copyLink("edit")} data-testid="shareEditButton">
+          <Button
+            variant="outline"
+            onClick={() => handleShare("edit")}
+            data-testid="shareEditButton"
+          >
             <Link />
             {t("share.editLink")}
           </Button>

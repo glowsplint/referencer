@@ -31,6 +31,9 @@ export function ManagementPane() {
     removeHighlight,
     removeArrow,
     removeUnderline,
+    toggleHighlightVisibility,
+    toggleArrowVisibility,
+    toggleUnderlineVisibility,
     addEditor,
     removeEditor,
     reorderEditors,
@@ -95,6 +98,9 @@ export function ManagementPane() {
               onRemoveHighlight={removeHighlight}
               onRemoveArrow={removeArrow}
               onRemoveUnderline={removeUnderline}
+              onToggleHighlightVisibility={toggleHighlightVisibility}
+              onToggleArrowVisibility={toggleArrowVisibility}
+              onToggleUnderlineVisibility={toggleUnderlineVisibility}
               customColors={customColors}
               onAddCustomColor={addCustomColor}
               onRemoveCustomColor={removeCustomColor}

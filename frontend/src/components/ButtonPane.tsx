@@ -37,6 +37,7 @@ import { ArrowStylePicker } from "./ArrowStylePicker";
 import { RecordingControls } from "./RecordingControls";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { useTour } from "@/contexts/TourContext";
+import { useAuth } from "@/contexts/AuthContext";
 import type { ActiveTool, ArrowStyle } from "@/types/editor";
 
 const TOOL_SHORTCUTS: Record<ActiveTool, string> = {
@@ -124,6 +125,7 @@ export function ButtonPane() {
   } = useWorkspace();
 
   const { startTour } = useTour();
+  const { isAuthenticated } = useAuth();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -353,6 +355,7 @@ export function ButtonPane() {
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}
         toggleShowStatusBar={toggleShowStatusBar}
+        isAuthenticated={isAuthenticated}
       />
     </div>
   );

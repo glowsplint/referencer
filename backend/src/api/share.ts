@@ -1,10 +1,16 @@
 import type { Context } from "hono";
 import { createShareLink, resolveShareLink } from "../db/share-queries";
+import { getPermission, setPermission, hasMinimumRole } from "../db/permission-queries";
+import { createUserWorkspace } from "../db/workspace-queries";
 import type { ShareRequest, ShareResponse } from "../types";
 import type { Env } from "../env";
+import type { PermissionRole } from "../db/permission-queries";
 
 export function handleShare() {
   return async (c: Context<Env>) => {
+    const user = c.get("user");
+    if (!user) return c.json({ error: "Unauthorized" }, 401);
+
     const req = await c.req.json<ShareRequest>();
 
     if (req.access !== "edit" && req.access !== "readonly") {
@@ -13,6 +19,13 @@ export function handleShare() {
 
     try {
       const supabase = c.get("supabase");
+
+      // Require owner or editor permission to share
+      const role = await getPermission(supabase, req.workspaceId, user.id);
+      if (!role || !hasMinimumRole(role, "editor")) {
+        return c.json({ error: "Forbidden" }, 403);
+      }
+
       const code = await createShareLink(supabase, req.workspaceId, req.access);
       const resp: ShareResponse = {
         code,
@@ -40,9 +53,26 @@ export function handleResolveShare() {
       return c.redirect(frontendUrl, 302);
     }
 
-    if (result.access === "readonly") {
-      return c.redirect(`${frontendUrl}/#/${result.workspaceId}?access=readonly`, 302);
+    // Map share access to permission role
+    const shareRole: PermissionRole = result.access === "readonly" ? "viewer" : "editor";
+
+    // If user is logged in, grant permission and add to their hub
+    const user = c.get("user");
+    if (user) {
+      const existingRole = await getPermission(supabase, result.workspaceId, user.id);
+      // Only set permission if user doesn't already have a higher role
+      if (!existingRole || !hasMinimumRole(existingRole, shareRole)) {
+        await setPermission(supabase, result.workspaceId, user.id, shareRole);
+      }
+
+      // Add workspace to user's hub (ignore if already exists)
+      try {
+        await createUserWorkspace(supabase, user.id, result.workspaceId, "");
+      } catch {
+        // Already exists — ignore
+      }
     }
+
     return c.redirect(`${frontendUrl}/#/${result.workspaceId}`, 302);
   };
 }

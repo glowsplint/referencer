@@ -12,7 +12,7 @@ export function AppRouter() {
 
   return (
     <TourProvider>
-      <App workspaceId={route.workspaceId} readOnly={route.readOnly} navigate={navigate} />
+      <App workspaceId={route.workspaceId} navigate={navigate} />
     </TourProvider>
   );
 }

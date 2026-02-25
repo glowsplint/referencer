@@ -1,3 +1,4 @@
+import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspaces } from "@/hooks/data/use-workspaces";
 import { useFolders } from "@/hooks/data/use-folders";
@@ -31,12 +32,12 @@ export function HubPage({ navigate }: HubPageProps) {
   } = useFolders();
 
   const handleTryWithoutSignIn = () => {
-    const id = crypto.randomUUID();
+    const id = randomKSUID();
     navigate(`#/${id}`);
   };
 
   const handleNewWorkspace = async () => {
-    const id = crypto.randomUUID();
+    const id = randomKSUID();
     await create(id);
     navigate(`#/${id}`);
   };

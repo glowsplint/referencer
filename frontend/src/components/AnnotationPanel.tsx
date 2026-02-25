@@ -9,6 +9,7 @@ import { useAllHighlightPositions } from "@/hooks/annotations/use-all-highlight-
 import { resolveAnnotationOverlaps } from "@/lib/resolve-annotation-overlaps";
 import { blendWithBackground } from "@/lib/color";
 import { AnnotationCard } from "./AnnotationCard";
+import { ChevronsUp, ChevronsDown } from "lucide-react";
 
 interface AnnotationPanelProps {
   layers: Layer[];
@@ -141,6 +142,17 @@ export function AnnotationPanel({
 
   const containerWidth = containerRef.current?.offsetWidth ?? 0;
 
+  const anyExpanded = useMemo(() => {
+    const visibleCommentCount = layers.reduce(
+      (count, layer) =>
+        layer.visible
+          ? count + layer.highlights.filter((h) => h.type === "comment").length
+          : count,
+      0,
+    );
+    return !collapsedIds || collapsedIds.size < visibleCommentCount;
+  }, [layers, collapsedIds]);
+
   // Always render the wrapper div to reserve panel width in the flex layout.
   // This ensures useLayoutEffect computes highlight positions AFTER the editor
   // container has shrunk, preventing stale coordinates on the first annotation.
@@ -153,23 +165,15 @@ export function AnnotationPanel({
       {positions.length > 0 && (
         <>
           {(onCollapseAll || onExpandAll) && (
-            <div className="flex justify-end gap-1 px-1 py-0.5">
-              {onCollapseAll && (
-                <button
-                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={onCollapseAll}
-                >
-                  Collapse all
-                </button>
-              )}
-              {onExpandAll && (
-                <button
-                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={onExpandAll}
-                >
-                  Expand all
-                </button>
-              )}
+            <div className="flex justify-end px-1 py-0.5">
+              <button
+                className="p-0.5 rounded hover:bg-accent text-muted-foreground transition-colors"
+                onClick={anyExpanded ? onCollapseAll : onExpandAll}
+                title={anyExpanded ? "Collapse all" : "Expand all"}
+                data-testid="toggleCollapseAll"
+              >
+                {anyExpanded ? <ChevronsUp size={14} /> : <ChevronsDown size={14} />}
+              </button>
             </div>
           )}
           {/* SVG connector lines - overflow visible to extend into editor area */}

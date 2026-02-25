@@ -10,6 +10,12 @@
     "removeAnnotation": "Remove annotation",
     "removeArrow": "Remove arrow",
     "removeUnderline": "Remove underline",
+    "hideAnnotation": "Hide annotation",
+    "showAnnotation": "Show annotation",
+    "hideArrow": "Hide arrow",
+    "showArrow": "Show arrow",
+    "hideUnderline": "Hide underline",
+    "showUnderline": "Show underline",
     "allColorsInUse": "All colors are in use — remove a layer first."
   },
   "passages": {

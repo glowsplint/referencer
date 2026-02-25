@@ -10,6 +10,7 @@ import {
   deleteUserWorkspace,
   duplicateWorkspace,
 } from "../db/workspace-queries";
+import { getPermission, setPermission } from "../db/permission-queries";
 
 const workspaces = new Hono<Env>();
 
@@ -41,6 +42,7 @@ workspaces.post("/", async (c) => {
 
     const supabase = c.get("supabase");
     await createUserWorkspace(supabase, user.id, body.workspaceId, body.title ?? "");
+    await setPermission(supabase, body.workspaceId, user.id, "owner");
     return c.json({ ok: true }, 201);
   } catch (err) {
     console.error("POST /api/workspaces error:", err);
@@ -151,6 +153,23 @@ workspaces.post("/:id/duplicate", async (c) => {
     await duplicateWorkspace(supabase, user.id, sourceId, body.newWorkspaceId);
     return c.json({ ok: true }, 201);
   } catch (err) {
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+  }
+});
+
+// GET /:id/permission - get user's role for a workspace
+workspaces.get("/:id/permission", async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+
+  try {
+    const workspaceId = c.req.param("id");
+    const supabase = c.get("supabase");
+    const role = await getPermission(supabase, workspaceId, user.id);
+    if (!role) return c.json({ error: "No permission" }, 404);
+    return c.json({ role });
+  } catch (err) {
+    console.error("GET /api/workspaces/:id/permission error:", err);
     return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
   }
 });

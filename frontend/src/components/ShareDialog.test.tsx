@@ -1,5 +1,5 @@
 import { screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ShareDialog } from "./ShareDialog";
 import { renderWithWorkspace } from "@/test/render-with-workspace";
 
@@ -11,12 +11,15 @@ function renderShareDialog(overrides = {}) {
 }
 
 describe("ShareDialog", () => {
-  let writeText: ReturnType<typeof vi.fn>;
+  let originalFetch: typeof globalThis.fetch;
 
   beforeEach(() => {
     vi.restoreAllMocks();
-    writeText = vi.fn().mockResolvedValue(undefined);
-    Object.assign(navigator, { clipboard: { writeText } });
+    originalFetch = globalThis.fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
   });
 
   it("renders dialog with title and buttons", () => {
@@ -26,24 +29,55 @@ describe("ShareDialog", () => {
     expect(screen.getByTestId("shareEditButton")).toBeInTheDocument();
   });
 
-  it("copies read-only hash URL when read-only button clicked", async () => {
+  it("calls backend API when read-only button clicked", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ code: "ABC123", url: "/s/ABC123" }),
+    });
+
     renderShareDialog();
     fireEvent.click(screen.getByTestId("shareReadonlyButton"));
 
     await waitFor(() => {
-      expect(writeText).toHaveBeenCalledWith(
-        expect.stringContaining("#/test-workspace-123?access=readonly"),
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        "/api/share",
+        expect.objectContaining({
+          method: "POST",
+        }),
       );
+    });
+
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith(expect.stringContaining("/s/ABC123"));
     });
   });
 
-  it("copies edit hash URL when edit button clicked", async () => {
+  it("calls backend API when edit button clicked", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ code: "XYZ789", url: "/s/XYZ789" }),
+    });
+
     renderShareDialog();
     fireEvent.click(screen.getByTestId("shareEditButton"));
 
     await waitFor(() => {
-      expect(writeText).toHaveBeenCalledWith(expect.stringContaining("#/test-workspace-123"));
-      expect(writeText).toHaveBeenCalledWith(expect.not.stringContaining("access=readonly"));
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        "/api/share",
+        expect.objectContaining({
+          method: "POST",
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith(expect.stringContaining("/s/XYZ789"));
     });
   });
 

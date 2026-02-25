@@ -32,22 +32,30 @@ describe("useHashRoute", () => {
     expect(result.current.route).toEqual({
       type: "editor",
       workspaceId: uuid,
-      readOnly: false,
     });
   });
 
-  it("returns editor route with readOnly=true when access=readonly", () => {
+  it("returns editor route for KSUID hash", () => {
+    const ksuid = "0ujtsYcgvSTl8PAuAdqWYSMnLOv";
+    window.location.hash = `#/${ksuid}`;
+    const { result } = renderHook(() => useHashRoute());
+    expect(result.current.route).toEqual({
+      type: "editor",
+      workspaceId: ksuid,
+    });
+  });
+
+  it("strips query params and still returns editor route", () => {
     const uuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
     window.location.hash = `#/${uuid}?access=readonly`;
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({
       type: "editor",
       workspaceId: uuid,
-      readOnly: true,
     });
   });
 
-  it("returns hub route for non-UUID hash paths", () => {
+  it("returns hub route for non-UUID/KSUID hash paths", () => {
     window.location.hash = "#/not-a-uuid";
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({ type: "hub" });
@@ -68,7 +76,6 @@ describe("useHashRoute", () => {
     expect(result.current.route).toEqual({
       type: "editor",
       workspaceId: uuid,
-      readOnly: false,
     });
   });
 

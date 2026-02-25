@@ -47,11 +47,18 @@ import { useCurrentUserName } from "./hooks/data/use-current-user-name";
 
 interface AppProps {
   workspaceId: string;
-  readOnly: boolean;
   navigate: (hash: string) => void;
 }
 
-export function App({ workspaceId, readOnly, navigate }: AppProps) {
+export function App({ workspaceId, navigate }: AppProps) {
+  const [permissionRole, setPermissionRole] = useState<string | null>(null);
+  useEffect(() => {
+    fetch(`/api/workspaces/${workspaceId}/permission`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => setPermissionRole(data?.role ?? null))
+      .catch(() => setPermissionRole(null));
+  }, [workspaceId]);
+  const readOnly = permissionRole === "viewer";
   useWorkspaceAutosave(workspaceId);
   const workspace = useEditorWorkspace(workspaceId, readOnly);
   const {

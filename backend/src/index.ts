@@ -5,6 +5,7 @@ import { createAuthRoutes } from "./auth/handlers";
 import { loadAuthConfig } from "./auth/config";
 import { optionalAuth } from "./auth/middleware";
 import { handleShare, handleResolveShare } from "./api/share";
+import { handleFeedback } from "./api/feedback";
 import { workspaces } from "./api/workspaces";
 import { folders } from "./api/folders";
 import { preferences } from "./api/preferences";
@@ -52,6 +53,9 @@ app.post("/api/share", handleShare());
 
 // Share link resolution
 app.get("/s/:code", handleResolveShare());
+
+// Feedback API
+app.post("/api/feedback", handleFeedback());
 
 export default {
   fetch: app.fetch,

@@ -1,6 +1,8 @@
 // Workspace settings dialog with toggle switches for dark mode, overscroll
 // behavior, arrow visibility, and status bar.
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Bug } from "lucide-react";
 import i18n, { LANGUAGE_OPTIONS } from "@/i18n";
 import {
   Dialog,
@@ -10,6 +12,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { BugReportDialog } from "./BugReportDialog";
 
 interface SettingsRow {
   id: string;
@@ -49,6 +53,7 @@ interface SettingsDialogProps {
   toggleHideOffscreenArrows: () => void;
   showStatusBar: boolean;
   toggleShowStatusBar: () => void;
+  isAuthenticated?: boolean;
 }
 
 export function SettingsDialog({
@@ -62,8 +67,10 @@ export function SettingsDialog({
   toggleHideOffscreenArrows,
   showStatusBar,
   toggleShowStatusBar,
+  isAuthenticated,
 }: SettingsDialogProps) {
   const { t } = useTranslation("dialogs");
+  const [bugReportOpen, setBugReportOpen] = useState(false);
 
   const rows: SettingsRow[] = [
     {
@@ -128,8 +135,20 @@ export function SettingsDialog({
               ))}
             </select>
           </div>
+          {isAuthenticated && (
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setBugReportOpen(true)}
+              data-testid="reportBugButton"
+            >
+              <Bug size={16} />
+              {t("bugReport.reportBug")}
+            </Button>
+          )}
         </div>
       </DialogContent>
+      <BugReportDialog open={bugReportOpen} onOpenChange={setBugReportOpen} />
     </Dialog>
   );
 }
