@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useFolderCollapse } from "./use-folder-collapse";
 
-const PREFIX = "referencer-collapsed-folder-";
+const PREFIX = "referencer-folder-collapsed-";
 
 function makeStorageMock() {
   const store: Record<string, string> = {};

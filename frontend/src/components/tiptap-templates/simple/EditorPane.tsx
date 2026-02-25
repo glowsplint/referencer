@@ -19,7 +19,6 @@ import { useSelectionScroll } from "@/hooks/selection/use-selection-decoration";
 import { useWordHover } from "@/hooks/selection/use-word-hover";
 import { useEditorArrows } from "@/hooks/annotations/use-editor-arrows";
 import { useArrowCleanup } from "@/hooks/annotations/use-arrow-cleanup";
-import { usePositionMapping } from "@/hooks/annotations/use-position-mapping";
 import { SelectionRingOverlay } from "@/components/SelectionRingOverlay";
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor";
 
@@ -55,7 +54,6 @@ export function EditorPane({
   removeArrow,
   sectionVisibility,
   selectedArrowId,
-  setLayers,
   yjsSynced,
 }: {
   isLocked: boolean;
@@ -77,7 +75,6 @@ export function EditorPane({
   removeArrow: (layerId: string, arrowId: string) => void;
   sectionVisibility: boolean[];
   selectedArrowId: string | null;
-  setLayers?: React.Dispatch<React.SetStateAction<Layer[]>>;
   yjsSynced?: boolean;
 }) {
   const extensions = useMemo(
@@ -219,7 +216,6 @@ export function EditorPane({
   );
   useArrowCleanup({ editor, editorIndex: index, layers, removeArrow });
   useSelectionScroll(editor, visibleSelection, index, wrapperRef);
-  usePositionMapping({ editor, editorIndex: index, layers, setLayers });
 
   const handleFocus = useCallback(() => {
     onFocus(index);

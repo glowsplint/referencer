@@ -115,7 +115,7 @@ export function useCommentMode({
     activeLayerId,
     addLayer,
     layers,
-    addItem: addHighlight as never,
+    addItem: addHighlight,
     removeItem: removeHighlight,
     setStatus,
     flashStatus,

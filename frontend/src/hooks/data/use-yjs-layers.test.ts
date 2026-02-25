@@ -248,21 +248,6 @@ describe("useYjsLayers", () => {
     expect(result.current.layers).toEqual([]);
   });
 
-  it("setLayers is a no-op that logs a console warning", () => {
-    const doc = new Y.Doc();
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const { result } = renderHook(() => useYjsLayers(doc));
-
-    act(() => {
-      result.current.setLayers([]);
-    });
-
-    expect(warnSpy).toHaveBeenCalledWith(
-      "[yjs-layers] setLayers called but ignored in CRDT mode",
-    );
-    warnSpy.mockRestore();
-  });
-
   it("addLayer returns id and name", async () => {
     const doc = new Y.Doc();
     const { result } = renderHook(() => useYjsLayers(doc));

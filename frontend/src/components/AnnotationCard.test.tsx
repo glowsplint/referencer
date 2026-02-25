@@ -1,7 +1,7 @@
 import { render, fireEvent, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { AnnotationCard } from "./AnnotationCard";
-import { migrateAnnotation } from "../utils/migrateAnnotation";
+import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
 
 function createProps(overrides: Partial<Parameters<typeof AnnotationCard>[0]> = {}) {
   return {

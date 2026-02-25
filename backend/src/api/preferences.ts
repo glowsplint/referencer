@@ -15,7 +15,7 @@ preferences.get("/", async (c) => {
     return c.json(items);
   } catch (err) {
     console.error("GET /api/preferences error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -26,9 +26,15 @@ preferences.put("/:key", async (c) => {
 
   try {
     const key = c.req.param("key");
+    if (key.length > 100) {
+      return c.json({ error: "Preference key must be at most 100 characters" }, 400);
+    }
     const body = await c.req.json<{ value: string }>();
     if (typeof body.value !== "string") {
       return c.json({ error: "value is required" }, 400);
+    }
+    if (body.value.length > 10000) {
+      return c.json({ error: "Preference value must be at most 10000 characters" }, 400);
     }
 
     const supabase = c.get("supabase");
@@ -36,7 +42,7 @@ preferences.put("/:key", async (c) => {
     return c.json({ ok: true });
   } catch (err) {
     console.error("PUT /api/preferences/:key error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 

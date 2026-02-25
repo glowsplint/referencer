@@ -39,14 +39,3 @@ export async function setPermission(
       { onConflict: "workspace_id,user_id" },
     );
 }
-
-export async function getWorkspacePermissions(
-  supabase: SupabaseClient,
-  workspaceId: string,
-): Promise<Array<{ userId: string; role: PermissionRole }>> {
-  const { data } = await supabase
-    .from("workspace_permission")
-    .select("user_id, role")
-    .eq("workspace_id", workspaceId);
-  return (data ?? []).map((row) => ({ userId: row.user_id, role: row.role }));
-}

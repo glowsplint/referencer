@@ -33,7 +33,8 @@ export function handleShare() {
       };
       return c.json(resp);
     } catch (err) {
-      return c.text(err instanceof Error ? err.message : String(err), 500);
+      console.error("POST /api/share error:", err);
+      return c.json({ error: "Internal server error" }, 500);
     }
   };
 }

@@ -67,7 +67,7 @@ export function useUnderlineMode({
     activeLayerId,
     addLayer,
     layers,
-    addItem: addUnderline as never,
+    addItem: addUnderline,
     removeItem: removeUnderline,
     setStatus,
     flashStatus,

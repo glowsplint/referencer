@@ -599,4 +599,9 @@ i18n
     },
   });
 
+i18n.on("languageChanged", (lng) => {
+  const rtlLanguages = ["ar", "he", "fa", "ur"];
+  document.documentElement.dir = rtlLanguages.includes(lng) ? "rtl" : "ltr";
+});
+
 export default i18n;

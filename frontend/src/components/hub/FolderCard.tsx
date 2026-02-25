@@ -70,6 +70,8 @@ export function FolderCard({
   const handleDrop = useCallback(
     (data: DragData) => {
       if (data.type === "workspace") {
+        const ws = workspaces.find((w) => w.workspaceId === data.id);
+        if (ws?.folderId === node.folder.id) return;
         onMoveToFolder(data.id, node.folder.id);
       } else if (data.type === "folder") {
         if (canMoveFolderTo(folders, data.id, node.folder.id)) {
@@ -77,7 +79,7 @@ export function FolderCard({
         }
       }
     },
-    [folders, node.folder.id, onMoveToFolder, onMoveFolder],
+    [workspaces, folders, node.folder.id, onMoveToFolder, onMoveFolder],
   );
 
   const handleCanDrop = useCallback(

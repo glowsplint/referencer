@@ -42,7 +42,8 @@ export interface UseAnnotationToolModeOptions<TLayer> {
   activeLayerId: string | null;
   addLayer: () => string;
   layers: TLayer[];
-  addItem: (layerId: string, payload: never) => string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addItem: (layerId: string, payload: any) => string;
   removeItem: (layerId: string, itemId: string) => void;
   setStatus: (msg: StatusMessage) => void;
   flashStatus: (msg: StatusMessage, duration: number) => void;
@@ -162,10 +163,7 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
 
     // Create new item
     const payload = cfg.buildPayload(sel);
-    const itemId = (addItemRef.current as (layerId: string, payload: unknown) => string)(
-      layerId!,
-      payload,
-    );
+    const itemId = addItemRef.current(layerId!, payload);
     if (addedTextRef.current) {
       flashStatusRef.current({ text: addedTextRef.current, type: "success" }, FLASH_DURATION_MS);
     }

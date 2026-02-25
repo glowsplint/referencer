@@ -20,6 +20,7 @@ export class YjsRoom extends DurableObject<Env> {
   private doc: Y.Doc | null = null;
   private awareness: awarenessProtocol.Awareness | null = null;
   private roomName: string | null = null;
+  private saveTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -147,7 +148,7 @@ export class YjsRoom extends DurableObject<Env> {
       // Client sent missing updates (response to our SyncStep1)
       const update = decoding.readVarUint8Array(decoder);
       Y.applyUpdate(this.doc, update, ws);
-      this.saveToStorage();
+      this.debouncedSaveToStorage();
     } else if (syncType === syncProtocol.messageYjsUpdate) {
       // Client sent a document update -- apply and broadcast
       const update = decoding.readVarUint8Array(decoder);
@@ -155,7 +156,7 @@ export class YjsRoom extends DurableObject<Env> {
 
       // Broadcast the raw message to all other clients
       this.broadcastExcept(ws, rawMessage);
-      this.saveToStorage();
+      this.debouncedSaveToStorage();
     }
   }
 
@@ -210,18 +211,39 @@ export class YjsRoom extends DurableObject<Env> {
     }
   }
 
+  private debouncedSaveToStorage(): void {
+    if (this.saveTimer) clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => {
+      this.saveTimer = null;
+      this.saveToStorage();
+    }, 1000);
+  }
+
   private async saveToStorage(): Promise<void> {
     if (!this.doc) return;
     const state = Y.encodeStateAsUpdate(this.doc);
+    if (state.byteLength > 128 * 1024) {
+      console.warn(
+        `[collab-do] State exceeds 128KB (${state.byteLength} bytes), falling back to Supabase for ${this.roomName}`,
+      );
+      await this.saveToSupabase();
+      return;
+    }
     await this.ctx.storage.put("yjs-state", state.buffer);
   }
 
-  async webSocketClose(_ws: WebSocket): Promise<void> {
-    // If no more connections, save state and clean up
-    const remaining = this.ctx.getWebSockets();
+  async webSocketClose(ws: WebSocket): Promise<void> {
+    // Filter out the closing socket when checking remaining connections
+    const remaining = this.ctx.getWebSockets().filter((s) => s !== ws);
     if (remaining.length === 0 && this.doc) {
+      // Flush any pending debounced save
+      if (this.saveTimer) {
+        clearTimeout(this.saveTimer);
+        this.saveTimer = null;
+      }
       await this.saveToStorage();
       await this.saveToSupabase();
+      await this.ctx.storage.deleteAlarm();
       // Clean up to free memory (DO will be evicted after inactivity)
       this.doc.destroy();
       this.doc = null;
@@ -232,9 +254,9 @@ export class YjsRoom extends DurableObject<Env> {
     }
   }
 
-  async webSocketError(_ws: WebSocket): Promise<void> {
+  async webSocketError(ws: WebSocket): Promise<void> {
     // Delegate to close handler for cleanup
-    await this.webSocketClose(_ws);
+    await this.webSocketClose(ws);
   }
 
   async alarm(): Promise<void> {

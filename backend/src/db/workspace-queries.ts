@@ -34,7 +34,7 @@ export async function createUserWorkspace(
   // Ensure the workspace row exists
   await supabase.from("workspace").upsert({ id: workspaceId }, { onConflict: "id" });
 
-  // Upsert: insert the user_workspace row, on conflict update title only if non-empty
+  // Insert the user_workspace row, ignore if already exists to preserve favorites/folders
   const { error } = await supabase.from("user_workspace").upsert(
     {
       user_id: userId,
@@ -44,7 +44,7 @@ export async function createUserWorkspace(
       is_favorite: false,
       folder_id: null,
     },
-    { onConflict: "user_id,workspace_id" },
+    { onConflict: "user_id,workspace_id", ignoreDuplicates: true },
   );
 
   if (error) throw new Error(`Failed to create user workspace: ${error.message}`);
