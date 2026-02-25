@@ -5,6 +5,9 @@ node_modules/
 /output.txt
 nul
 
+# Test coverage
+coverage/
+
 # Bun
 bun.lockb
 
