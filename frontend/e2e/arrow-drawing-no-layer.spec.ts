@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 // Skipped: with default Bible study workspace, there are always 4 pre-populated layers
 // so the "no active layer" scenario can't be reached through normal UI interaction.
-test.skip("auto-creates a layer when drawing without an active layer", async ({ page }) => {
+test.skip("when drawing without an active layer, then a layer is auto-created", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".simple-editor p").first()).toBeVisible();
 

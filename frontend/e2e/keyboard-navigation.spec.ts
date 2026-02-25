@@ -16,7 +16,7 @@ async function clickWordInEditor(
 
 const cmdModifier = process.platform === "darwin" ? "Meta" : "Control";
 
-test.describe("keyboard navigation", () => {
+test.describe("when using keyboard navigation", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -27,7 +27,7 @@ test.describe("keyboard navigation", () => {
     // Editor starts locked — no need to click lockButton
   });
 
-  test("Escape clears word selection", async ({ page }) => {
+  test("when Escape is pressed, then word selection is cleared", async ({ page }) => {
     await clickWordInEditor(page, 0, 30);
     await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
 
@@ -37,7 +37,7 @@ test.describe("keyboard navigation", () => {
     });
   });
 
-  test("Home moves selection to first word in passage", async ({ page }) => {
+  test("when Home is pressed, then selection moves to first word in passage", async ({ page }) => {
     // Click a word that's not the first (offset further right)
     await clickWordInEditor(page, 0, 100);
 
@@ -54,7 +54,7 @@ test.describe("keyboard navigation", () => {
     expect(homeBox!.x).toBeLessThanOrEqual(initialBox!.x);
   });
 
-  test("End moves selection to last word in passage", async ({ page }) => {
+  test("when End is pressed, then selection moves to last word in passage", async ({ page }) => {
     await clickWordInEditor(page, 0, 30);
 
     const selection = page.locator(".word-selection");
@@ -70,7 +70,7 @@ test.describe("keyboard navigation", () => {
     expect(endBox!.y).toBeGreaterThanOrEqual(initialBox!.y);
   });
 
-  test("Cmd+A selects all words in active passage", async ({ page }) => {
+  test("when Cmd+A is pressed, then all words in active passage are selected", async ({ page }) => {
     await clickWordInEditor(page, 0, 30);
 
     const selection = page.locator(".word-selection");
@@ -88,8 +88,8 @@ test.describe("keyboard navigation", () => {
   });
 });
 
-test.describe("Tab layer cycling", () => {
-  test("Tab cycles the active layer", async ({ page }) => {
+test.describe("when pressing Tab", () => {
+  test("when Tab is pressed, then active layer cycles to the next one", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
     // Hide default layers so their arrows/highlights don't interfere with tests

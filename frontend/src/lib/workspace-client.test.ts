@@ -21,13 +21,13 @@ const mockApiPost = vi.mocked(apiPost);
 const mockApiPatch = vi.mocked(apiPatch);
 const mockApiDelete = vi.mocked(apiDelete);
 
-describe("workspace-client", () => {
+describe("when using workspace-client", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe("fetchWorkspaces", () => {
-    it("calls /api/workspaces and returns data", async () => {
+  describe("when using fetchWorkspaces", () => {
+    it("then calls /api/workspaces and returns data", async () => {
       const mockData = [
         { workspaceId: "id-1", title: "Test", createdAt: "2024-01-01", updatedAt: "2024-01-01" },
       ];
@@ -38,15 +38,15 @@ describe("workspace-client", () => {
       expect(result).toEqual(mockData);
     });
 
-    it("throws when apiFetch throws", async () => {
+    it("then throws when apiFetch throws", async () => {
       mockApiFetch.mockRejectedValue(new Error("Failed to fetch workspaces"));
 
       await expect(fetchWorkspaces()).rejects.toThrow("Failed to fetch workspaces");
     });
   });
 
-  describe("createWorkspace", () => {
-    it("sends POST with correct body", async () => {
+  describe("when using createWorkspace", () => {
+    it("then sends POST with correct body", async () => {
       mockApiPost.mockResolvedValue(undefined);
 
       await createWorkspace("ws-123", "My Workspace");
@@ -56,7 +56,7 @@ describe("workspace-client", () => {
       });
     });
 
-    it("sends POST without title when not provided", async () => {
+    it("then sends POST without title when not provided", async () => {
       mockApiPost.mockResolvedValue(undefined);
 
       await createWorkspace("ws-123");
@@ -67,8 +67,8 @@ describe("workspace-client", () => {
     });
   });
 
-  describe("renameWorkspace", () => {
-    it("sends PATCH with correct body", async () => {
+  describe("when using renameWorkspace", () => {
+    it("then sends PATCH with correct body", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
       await renameWorkspace("ws-123", "New Title");
@@ -76,8 +76,8 @@ describe("workspace-client", () => {
     });
   });
 
-  describe("touchWorkspace", () => {
-    it("sends PATCH to correct URL", async () => {
+  describe("when using touchWorkspace", () => {
+    it("then sends PATCH to correct URL", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
       await touchWorkspace("ws-123");
@@ -85,8 +85,8 @@ describe("workspace-client", () => {
     });
   });
 
-  describe("deleteWorkspace", () => {
-    it("sends DELETE to correct URL", async () => {
+  describe("when using deleteWorkspace", () => {
+    it("then sends DELETE to correct URL", async () => {
       mockApiDelete.mockResolvedValue(undefined);
 
       await deleteWorkspace("ws-123");
@@ -94,8 +94,8 @@ describe("workspace-client", () => {
     });
   });
 
-  describe("duplicateWorkspace", () => {
-    it("sends POST with correct body", async () => {
+  describe("when using duplicateWorkspace", () => {
+    it("then sends POST with correct body", async () => {
       mockApiPost.mockResolvedValue(undefined);
 
       await duplicateWorkspace("source-id", "new-id");

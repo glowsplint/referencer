@@ -10,7 +10,7 @@ beforeEach(() => {
 });
 
 describe("useSettings", () => {
-  it("returns initial settings state", () => {
+  it("when initialized, then returns default settings state", () => {
     const { result } = renderHook(() => useSettings());
     expect(result.current.settings).toEqual({
       isDarkMode: false,
@@ -24,12 +24,12 @@ describe("useSettings", () => {
     });
   });
 
-  it("returns initial annotations state", () => {
+  it("when initialized, then returns default annotations state", () => {
     const { result } = renderHook(() => useSettings());
     expect(result.current.annotations).toEqual({ activeTool: "selection" });
   });
 
-  it("toggleDarkMode toggles isDarkMode and updates classList", () => {
+  it("when toggleDarkMode is called, then toggles isDarkMode and updates classList", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
@@ -45,7 +45,7 @@ describe("useSettings", () => {
     expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
 
-  it("toggleLayersOn toggles isLayersOn", () => {
+  it("when toggleLayersOn is called, then toggles isLayersOn", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
@@ -54,7 +54,7 @@ describe("useSettings", () => {
     expect(result.current.settings.isLayersOn).toBe(true);
   });
 
-  it("toggleMultipleRowsLayout toggles isMultipleRowsLayout", () => {
+  it("when toggleMultipleRowsLayout is called, then toggles isMultipleRowsLayout", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
@@ -63,7 +63,7 @@ describe("useSettings", () => {
     expect(result.current.settings.isMultipleRowsLayout).toBe(true);
   });
 
-  it("toggleLocked toggles isLocked", () => {
+  it("when toggleLocked is called, then toggles isLocked", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
@@ -72,7 +72,7 @@ describe("useSettings", () => {
     expect(result.current.settings.isLocked).toBe(false);
   });
 
-  it("setActiveTool changes the active tool", () => {
+  it("when setActiveTool is called, then changes the active tool", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
@@ -91,7 +91,7 @@ describe("useSettings", () => {
     expect(result.current.annotations.activeTool).toBe("selection");
   });
 
-  it("toggling one setting does not affect others", () => {
+  it("when one setting is toggled, then does not affect other settings", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
@@ -105,7 +105,7 @@ describe("useSettings", () => {
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
   });
 
-  it("toggleOverscrollEnabled toggles overscrollEnabled and updates classList", () => {
+  it("when toggleOverscrollEnabled is called, then toggles overscrollEnabled and updates classList", () => {
     const { result } = renderHook(() => useSettings());
 
     expect(result.current.settings.overscrollEnabled).toBe(false);
@@ -124,7 +124,7 @@ describe("useSettings", () => {
     expect(document.documentElement.classList.contains("overscroll-enabled")).toBe(false);
   });
 
-  it("persists settings to localStorage when toggled", () => {
+  it("when a setting is toggled, then persists it to localStorage", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
@@ -135,7 +135,7 @@ describe("useSettings", () => {
     expect(stored.isDarkMode).toBe(true);
   });
 
-  it("restores settings from localStorage on init", () => {
+  it("when localStorage has saved settings, then restores them on init", () => {
     localStorage.setItem(
       "referencer-settings",
       JSON.stringify({
@@ -153,7 +153,7 @@ describe("useSettings", () => {
     expect(result.current.settings.isLayersOn).toBe(true);
   });
 
-  it("falls back to defaults when localStorage has invalid JSON", () => {
+  it("when localStorage has invalid JSON, then falls back to defaults", () => {
     localStorage.setItem("referencer-settings", "not-json{{{");
 
     const { result } = renderHook(() => useSettings());
@@ -170,7 +170,7 @@ describe("useSettings", () => {
     });
   });
 
-  it("fills missing keys with defaults when localStorage has partial data", () => {
+  it("when localStorage has partial data, then fills missing keys with defaults", () => {
     localStorage.setItem(
       "referencer-settings",
       JSON.stringify({
@@ -186,7 +186,7 @@ describe("useSettings", () => {
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
   });
 
-  it("toggleHideOffscreenArrows toggles hideOffscreenArrows", () => {
+  it("when toggleHideOffscreenArrows is called, then toggles hideOffscreenArrows", () => {
     const { result } = renderHook(() => useSettings());
 
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
@@ -202,7 +202,7 @@ describe("useSettings", () => {
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
   });
 
-  it("toggleShowStatusBar toggles showStatusBar", () => {
+  it("when toggleShowStatusBar is called, then toggles showStatusBar", () => {
     const { result } = renderHook(() => useSettings());
 
     expect(result.current.settings.showStatusBar).toBe(true);
@@ -218,7 +218,7 @@ describe("useSettings", () => {
     expect(result.current.settings.showStatusBar).toBe(true);
   });
 
-  it("applies dark mode class on mount from persisted settings", () => {
+  it("when persisted settings have dark mode enabled, then applies dark class on mount", () => {
     localStorage.setItem(
       "referencer-settings",
       JSON.stringify({

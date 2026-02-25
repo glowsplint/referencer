@@ -18,7 +18,7 @@ function makeLayer(overrides: Partial<Layer> = {}): Layer {
 
 describe("PrintAnnotations", () => {
   describe("when no visible comments exist", () => {
-    it("renders nothing", () => {
+    it("then renders nothing", () => {
       const { container } = render(
         <PrintAnnotations
           layers={[makeLayer()]}
@@ -31,7 +31,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("when layer is hidden", () => {
-    it("renders nothing even if comments exist", () => {
+    it("then renders nothing even if comments exist", () => {
       const layer = makeLayer({
         visible: false,
         highlights: [
@@ -58,7 +58,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("when highlights are type 'highlight' (not comments)", () => {
-    it("renders nothing", () => {
+    it("then renders nothing", () => {
       const layer = makeLayer({
         highlights: [
           {
@@ -84,7 +84,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("when comments exist across multiple passages", () => {
-    it("groups annotations by passage", () => {
+    it("then groups annotations by passage", () => {
       const layer = makeLayer({
         highlights: [
           {
@@ -123,7 +123,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("when a comment has quoted text and annotation", () => {
-    it("displays both the quoted text and the annotation content", () => {
+    it("then displays both the quoted text and the annotation content", () => {
       const layer = makeLayer({
         highlights: [
           {
@@ -152,7 +152,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("when a section is hidden", () => {
-    it("excludes comments from that section", () => {
+    it("then excludes comments from that section", () => {
       const layer = makeLayer({
         highlights: [
           {
@@ -190,7 +190,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("when annotation is plain text (not HTML)", () => {
-    it("migrates it to HTML for display", () => {
+    it("then migrates it to HTML for display", () => {
       const layer = makeLayer({
         highlights: [
           {

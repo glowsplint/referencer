@@ -8,13 +8,13 @@ function renderDialog(open = true, onOpenChange = () => {}) {
 
 describe("KeyboardShortcutsDialog", () => {
   describe("when opened", () => {
-    it("shows the keyboard shortcuts dialog", () => {
+    it("then shows the keyboard shortcuts dialog", () => {
       renderDialog();
       expect(screen.getByTestId("keyboardShortcutsDialog")).toBeInTheDocument();
       expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument();
     });
 
-    it("displays all section headers", () => {
+    it("then displays all section headers", () => {
       renderDialog();
       expect(screen.getByText("Workspace")).toBeInTheDocument();
       expect(screen.getByText("Text Formatting")).toBeInTheDocument();
@@ -24,21 +24,21 @@ describe("KeyboardShortcutsDialog", () => {
       expect(screen.getByText("General")).toBeInTheDocument();
     });
 
-    it("shows a close button", () => {
+    it("then shows a close button", () => {
       renderDialog();
       expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
     });
   });
 
   describe("when closed", () => {
-    it("renders nothing", () => {
+    it("then renders nothing", () => {
       renderDialog(false);
       expect(screen.queryByTestId("keyboardShortcutsDialog")).not.toBeInTheDocument();
     });
   });
 
-  describe("workspace shortcuts section", () => {
-    it("lists all workspace shortcuts", () => {
+  describe("when viewing workspace shortcuts section", () => {
+    it("then lists all workspace shortcuts", () => {
       renderDialog();
       expect(screen.getByText("Cycle to next layer")).toBeInTheDocument();
       expect(screen.getByText("Cycle to previous layer")).toBeInTheDocument();
@@ -54,8 +54,8 @@ describe("KeyboardShortcutsDialog", () => {
     });
   });
 
-  describe("text formatting shortcuts section", () => {
-    it("lists all text formatting shortcuts", () => {
+  describe("when viewing text formatting shortcuts section", () => {
+    it("then lists all text formatting shortcuts", () => {
       renderDialog();
       expect(screen.getByText("Bold")).toBeInTheDocument();
       expect(screen.getByText("Italic")).toBeInTheDocument();
@@ -68,15 +68,15 @@ describe("KeyboardShortcutsDialog", () => {
     });
   });
 
-  describe("headings shortcuts section", () => {
-    it("lists heading levels 1 through 6", () => {
+  describe("when viewing headings shortcuts section", () => {
+    it("then lists heading levels 1 through 6", () => {
       renderDialog();
       for (let i = 1; i <= 6; i++) {
         expect(screen.getByText(`Heading ${i}`)).toBeInTheDocument();
       }
     });
 
-    it("uses literal Ctrl for heading shortcuts regardless of platform", () => {
+    it("then uses literal Ctrl for heading shortcuts regardless of platform", () => {
       renderDialog();
       const heading1Row = screen.getByText("Heading 1").closest("div");
       const kbdElements = heading1Row!.querySelectorAll("kbd");
@@ -85,8 +85,8 @@ describe("KeyboardShortcutsDialog", () => {
     });
   });
 
-  describe("lists and blocks shortcuts section", () => {
-    it("lists all list and block shortcuts", () => {
+  describe("when viewing lists and blocks shortcuts section", () => {
+    it("then lists all list and block shortcuts", () => {
       renderDialog();
       expect(screen.getByText("Bullet list")).toBeInTheDocument();
       expect(screen.getByText("Ordered list")).toBeInTheDocument();
@@ -96,8 +96,8 @@ describe("KeyboardShortcutsDialog", () => {
     });
   });
 
-  describe("text alignment shortcuts section", () => {
-    it("lists all alignment shortcuts", () => {
+  describe("when viewing text alignment shortcuts section", () => {
+    it("then lists all alignment shortcuts", () => {
       renderDialog();
       expect(screen.getByText("Align left")).toBeInTheDocument();
       expect(screen.getByText("Align center")).toBeInTheDocument();
@@ -106,16 +106,16 @@ describe("KeyboardShortcutsDialog", () => {
     });
   });
 
-  describe("general shortcuts section", () => {
-    it("lists undo and redo shortcuts", () => {
+  describe("when viewing general shortcuts section", () => {
+    it("then lists undo and redo shortcuts", () => {
       renderDialog();
       expect(screen.getByText("Undo (workspace when locked)")).toBeInTheDocument();
       expect(screen.getByText("Redo (workspace when locked)")).toBeInTheDocument();
     });
   });
 
-  describe("modifier key display", () => {
-    it("uses OS-appropriate modifier key label for formatting shortcuts", () => {
+  describe("when displaying modifier keys", () => {
+    it("then uses OS-appropriate modifier key label for formatting shortcuts", () => {
       renderDialog();
       const isMac = navigator.platform?.includes("Mac");
       const expected = isMac ? "\u2318" : "Ctrl";
@@ -128,7 +128,7 @@ describe("KeyboardShortcutsDialog", () => {
   });
 
   describe("when close button is clicked", () => {
-    it("calls onOpenChange with false", () => {
+    it("then calls onOpenChange with false", () => {
       const onOpenChange = vi.fn();
       renderDialog(true, onOpenChange);
       fireEvent.click(screen.getByRole("button", { name: "Close" }));

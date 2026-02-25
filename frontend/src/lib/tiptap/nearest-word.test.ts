@@ -27,39 +27,39 @@ function makeCandidate(
   };
 }
 
-describe("findNearestWord", () => {
+describe("when using findNearestWord", () => {
   const center = { cx: 100, cy: 100 };
 
-  it("returns the word to the right", () => {
+  it("then returns the word to the right", () => {
     const candidates = [makeCandidate(150, 100, "right"), makeCandidate(200, 100, "far")];
     const result = findNearestWord(center, candidates, "ArrowRight");
     expect(result?.text).toBe("right");
   });
 
-  it("returns the word to the left", () => {
+  it("then returns the word to the left", () => {
     const candidates = [makeCandidate(50, 100, "left"), makeCandidate(10, 100, "far")];
     const result = findNearestWord(center, candidates, "ArrowLeft");
     expect(result?.text).toBe("left");
   });
 
-  it("returns the word above", () => {
+  it("then returns the word above", () => {
     const candidates = [makeCandidate(100, 50, "above"), makeCandidate(100, 10, "far")];
     const result = findNearestWord(center, candidates, "ArrowUp");
     expect(result?.text).toBe("above");
   });
 
-  it("returns the word below", () => {
+  it("then returns the word below", () => {
     const candidates = [makeCandidate(100, 150, "below"), makeCandidate(100, 200, "far")];
     const result = findNearestWord(center, candidates, "ArrowDown");
     expect(result?.text).toBe("below");
   });
 
-  it("returns null when no candidates in direction", () => {
+  it("then returns null when no candidates in direction", () => {
     const candidates = [makeCandidate(50, 100, "left")];
     expect(findNearestWord(center, candidates, "ArrowRight")).toBeNull();
   });
 
-  it("prefers same line for left/right (perpendicular penalty)", () => {
+  it("then prefers same line for left/right (perpendicular penalty)", () => {
     const candidates = [
       makeCandidate(120, 100, "sameLine"), // same y, close x
       makeCandidate(110, 150, "diffLine"), // closer x but different y
@@ -70,7 +70,7 @@ describe("findNearestWord", () => {
     expect(result?.text).toBe("sameLine");
   });
 
-  it("prefers same column for up/down (perpendicular penalty)", () => {
+  it("then prefers same column for up/down (perpendicular penalty)", () => {
     const candidates = [
       makeCandidate(100, 50, "sameCol"), // same x, close y
       makeCandidate(150, 80, "diffCol"), // closer y but different x
@@ -82,7 +82,7 @@ describe("findNearestWord", () => {
     expect(result?.text).toBe("diffCol");
   });
 
-  it("picks horizontally closest word on the nearest line below", () => {
+  it("then picks horizontally closest word on the nearest line below", () => {
     const candidates = [
       makeCandidate(200, 130, "nextFar"), // next line, far horizontally
       makeCandidate(105, 130, "nextClose"), // next line, close horizontally
@@ -92,7 +92,7 @@ describe("findNearestWord", () => {
     expect(result?.text).toBe("nextClose");
   });
 
-  it("does not skip lines even when a farther line has better column alignment", () => {
+  it("then does not skip lines even when a farther line has better column alignment", () => {
     const candidates = [
       makeCandidate(50, 130, "nextLine"), // next line, offset horizontally
       makeCandidate(100, 200, "farLine"), // two lines down, same column
@@ -101,11 +101,11 @@ describe("findNearestWord", () => {
     expect(result?.text).toBe("nextLine");
   });
 
-  it("returns null for empty candidates", () => {
+  it("then returns null for empty candidates", () => {
     expect(findNearestWord(center, [], "ArrowRight")).toBeNull();
   });
 
-  it("same-editor filtering: prefers same-editor word over closer cross-editor word", () => {
+  it("then same-editor filtering: prefers same-editor word over closer cross-editor word", () => {
     // Simulates side-by-side editors: "and" is selected in editor 0.
     // Editor 0 has "professional" on the next line (cy=130, cx=80).
     // Editor 1 has "Integrate" at a closer Y (cy=115, cx=400).
@@ -127,22 +127,22 @@ function makeCandidateAt(cx: number, cy: number, text: string, editorIndex = 0) 
   };
 }
 
-describe("findNearestWordOnSameLine", () => {
+describe("when using findNearestWordOnSameLine", () => {
   const center = { cx: 500, cy: 100 };
 
-  it("picks nearest word to the right on same line", () => {
+  it("then picks nearest word to the right on same line", () => {
     const candidates = [makeCandidateAt(600, 100, "near", 1), makeCandidateAt(800, 100, "far", 1)];
     const result = findNearestWordOnSameLine(center, candidates, "ArrowRight");
     expect(result?.text).toBe("near");
   });
 
-  it("picks nearest word to the left on same line", () => {
+  it("then picks nearest word to the left on same line", () => {
     const candidates = [makeCandidateAt(400, 100, "near", 0), makeCandidateAt(200, 100, "far", 0)];
     const result = findNearestWordOnSameLine(center, candidates, "ArrowLeft");
     expect(result?.text).toBe("near");
   });
 
-  it("ignores words on different lines", () => {
+  it("then ignores words on different lines", () => {
     const candidates = [
       makeCandidateAt(550, 130, "nextLine"), // different y, beyond tolerance
       makeCandidateAt(700, 100, "sameLine", 1),
@@ -151,7 +151,7 @@ describe("findNearestWordOnSameLine", () => {
     expect(result?.text).toBe("sameLine");
   });
 
-  it("prefers cross-editor same-line word over same-editor next-line word", () => {
+  it("then prefers cross-editor same-line word over same-editor next-line word", () => {
     // This is the key scenario: "under" at right edge of E1
     // "MIT" is next line in E1, "Getting" is same line in E2
     const candidates = [
@@ -163,7 +163,7 @@ describe("findNearestWordOnSameLine", () => {
     expect(result?.editorIndex).toBe(1);
   });
 
-  it("returns null when no words in direction on same line", () => {
+  it("then returns null when no words in direction on same line", () => {
     const candidates = [
       makeCandidateAt(300, 100, "left"), // wrong direction
       makeCandidateAt(600, 150, "below"), // different line
@@ -172,15 +172,15 @@ describe("findNearestWordOnSameLine", () => {
     expect(result).toBeNull();
   });
 
-  it("returns null for empty candidates", () => {
+  it("then returns null for empty candidates", () => {
     expect(findNearestWordOnSameLine(center, [], "ArrowRight")).toBeNull();
   });
 });
 
-describe("findFirstWordOnAdjacentLine", () => {
+describe("when using findFirstWordOnAdjacentLine", () => {
   const center = { cx: 500, cy: 100 };
 
-  it("ArrowRight wraps to leftmost word on next visual row", () => {
+  it("then ArrowRight wraps to leftmost word on next visual row", () => {
     const candidates = [
       makeCandidateAt(900, 100, "sameRow", 2), // same line, filtered out
       makeCandidateAt(100, 130, "leftE1", 0), // next row, leftmost
@@ -191,7 +191,7 @@ describe("findFirstWordOnAdjacentLine", () => {
     expect(result?.text).toBe("leftE1");
   });
 
-  it("ArrowLeft wraps to rightmost word on previous visual row", () => {
+  it("then ArrowLeft wraps to rightmost word on previous visual row", () => {
     const center2 = { cx: 100, cy: 130 };
     const candidates = [
       makeCandidateAt(100, 100, "leftE1", 0),
@@ -203,12 +203,12 @@ describe("findFirstWordOnAdjacentLine", () => {
     expect(result?.text).toBe("rightE3");
   });
 
-  it("returns null when no rows in direction", () => {
+  it("then returns null when no rows in direction", () => {
     const candidates = [makeCandidateAt(200, 100, "sameLine")];
     expect(findFirstWordOnAdjacentLine(center, candidates, "ArrowRight")).toBeNull();
   });
 
-  it("picks correct row when multiple rows below", () => {
+  it("then picks correct row when multiple rows below", () => {
     const candidates = [
       makeCandidateAt(100, 200, "row3"), // farther row
       makeCandidateAt(100, 130, "row2"), // nearest row
@@ -218,7 +218,7 @@ describe("findFirstWordOnAdjacentLine", () => {
   });
 });
 
-describe("getWordRect", () => {
+describe("when using getWordRect", () => {
   function createMockEditor(
     coordsMap: Record<number, { left: number; right: number; top: number; bottom: number }>,
   ) {
@@ -237,7 +237,7 @@ describe("getWordRect", () => {
 
   const containerRect = { left: 10, top: 20, width: 800, height: 600 } as DOMRect;
 
-  it("returns rect with SVG-relative coordinates", () => {
+  it("then returns rect with SVG-relative coordinates", () => {
     const editor = createMockEditor({
       5: { left: 60, right: 70, top: 120, bottom: 140 },
       10: { left: 100, right: 110, top: 120, bottom: 140 },
@@ -258,7 +258,7 @@ describe("getWordRect", () => {
     });
   });
 
-  it("returns null when editor not found", () => {
+  it("then returns null when editor not found", () => {
     const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>;
     const result = getWordRect(
       { editorIndex: 0, from: 5, to: 10, text: "hello" },
@@ -268,7 +268,7 @@ describe("getWordRect", () => {
     expect(result).toBeNull();
   });
 
-  it("returns null when coordsAtPos throws", () => {
+  it("then returns null when coordsAtPos throws", () => {
     const editor = {
       state: {
         doc: { nodeAt: vi.fn(() => ({ type: { name: "text" } })) },
@@ -295,7 +295,7 @@ function makeWord(editorIndex: number, from: number, to: number, text: string): 
   return { editorIndex, from, to, text };
 }
 
-describe("findWordInReadingOrder", () => {
+describe("when using findWordInReadingOrder", () => {
   const words: CollectedWord[] = [
     makeWord(0, 1, 5, "hello"),
     makeWord(0, 6, 11, "world"),
@@ -304,44 +304,44 @@ describe("findWordInReadingOrder", () => {
     makeWord(1, 9, 15, "editor"),
   ];
 
-  it("ArrowRight moves to the next word in same editor", () => {
+  it("then ArrowRight moves to the next word in same editor", () => {
     const result = findWordInReadingOrder(words[0], words, "ArrowRight");
     expect(result?.text).toBe("world");
   });
 
-  it("ArrowLeft moves to the previous word in same editor", () => {
+  it("then ArrowLeft moves to the previous word in same editor", () => {
     const result = findWordInReadingOrder(words[1], words, "ArrowLeft");
     expect(result?.text).toBe("hello");
   });
 
-  it("ArrowRight crosses from editor 0 to editor 1", () => {
+  it("then ArrowRight crosses from editor 0 to editor 1", () => {
     const result = findWordInReadingOrder(words[2], words, "ArrowRight");
     expect(result?.text).toBe("another");
     expect(result?.editorIndex).toBe(1);
   });
 
-  it("ArrowLeft crosses from editor 1 to editor 0", () => {
+  it("then ArrowLeft crosses from editor 1 to editor 0", () => {
     const result = findWordInReadingOrder(words[3], words, "ArrowLeft");
     expect(result?.text).toBe("from");
     expect(result?.editorIndex).toBe(0);
   });
 
-  it("ArrowRight at the last word returns null", () => {
+  it("then ArrowRight at the last word returns null", () => {
     const result = findWordInReadingOrder(words[4], words, "ArrowRight");
     expect(result).toBeNull();
   });
 
-  it("ArrowLeft at the first word returns null", () => {
+  it("then ArrowLeft at the first word returns null", () => {
     const result = findWordInReadingOrder(words[0], words, "ArrowLeft");
     expect(result).toBeNull();
   });
 
-  it("returns null when current word is not found", () => {
+  it("then returns null when current word is not found", () => {
     const unknown = makeWord(2, 1, 5, "ghost");
     expect(findWordInReadingOrder(unknown, words, "ArrowRight")).toBeNull();
   });
 
-  it("sorts words correctly when provided out of order", () => {
+  it("then sorts words correctly when provided out of order", () => {
     const shuffled = [words[3], words[0], words[4], words[2], words[1]];
     const result = findWordInReadingOrder(words[2], shuffled, "ArrowRight");
     expect(result?.text).toBe("another");
@@ -351,8 +351,8 @@ describe("findWordInReadingOrder", () => {
 
 // ── findFirstWordOnLine / findLastWordOnLine ──────────────────────
 
-describe("findFirstWordOnLine", () => {
-  it("returns leftmost word on the same visual line", () => {
+describe("when using findFirstWordOnLine", () => {
+  it("then returns leftmost word on the same visual line", () => {
     const candidates = [
       makeCandidateAt(200, 100, "middle"),
       makeCandidateAt(50, 100, "left"),
@@ -363,24 +363,24 @@ describe("findFirstWordOnLine", () => {
     expect(result?.text).toBe("left");
   });
 
-  it("returns the only word on a single-word line", () => {
+  it("then returns the only word on a single-word line", () => {
     const candidates = [makeCandidateAt(100, 100, "only")];
     const result = findFirstWordOnLine({ cx: 100, cy: 100 }, candidates);
     expect(result?.text).toBe("only");
   });
 
-  it("returns null for empty candidates", () => {
+  it("then returns null for empty candidates", () => {
     expect(findFirstWordOnLine({ cx: 100, cy: 100 }, [])).toBeNull();
   });
 
-  it("ignores words on different lines", () => {
+  it("then ignores words on different lines", () => {
     const candidates = [makeCandidateAt(50, 200, "far-below")];
     expect(findFirstWordOnLine({ cx: 100, cy: 100 }, candidates)).toBeNull();
   });
 });
 
-describe("findLastWordOnLine", () => {
-  it("returns rightmost word on the same visual line", () => {
+describe("when using findLastWordOnLine", () => {
+  it("then returns rightmost word on the same visual line", () => {
     const candidates = [
       makeCandidateAt(50, 100, "left"),
       makeCandidateAt(200, 100, "middle"),
@@ -391,21 +391,21 @@ describe("findLastWordOnLine", () => {
     expect(result?.text).toBe("right");
   });
 
-  it("returns the only word on a single-word line", () => {
+  it("then returns the only word on a single-word line", () => {
     const candidates = [makeCandidateAt(100, 100, "only")];
     const result = findLastWordOnLine({ cx: 100, cy: 100 }, candidates);
     expect(result?.text).toBe("only");
   });
 
-  it("returns null for empty candidates", () => {
+  it("then returns null for empty candidates", () => {
     expect(findLastWordOnLine({ cx: 100, cy: 100 }, [])).toBeNull();
   });
 });
 
 // ── isAtLineStart / isAtLineEnd ─────────────────────────────────
 
-describe("isAtLineStart", () => {
-  it("returns true when word is leftmost on its line", () => {
+describe("when using isAtLineStart", () => {
+  it("then returns true when word is leftmost on its line", () => {
     const candidates = [
       makeCandidateAt(50, 100, "first"),
       makeCandidateAt(150, 100, "second"),
@@ -414,18 +414,18 @@ describe("isAtLineStart", () => {
     expect(isAtLineStart({ cx: 50, cy: 100 }, candidates)).toBe(true);
   });
 
-  it("returns false when there are words to the left", () => {
+  it("then returns false when there are words to the left", () => {
     const candidates = [makeCandidateAt(50, 100, "first"), makeCandidateAt(150, 100, "second")];
     expect(isAtLineStart({ cx: 150, cy: 100 }, candidates)).toBe(false);
   });
 
-  it("returns true for empty candidates", () => {
+  it("then returns true for empty candidates", () => {
     expect(isAtLineStart({ cx: 100, cy: 100 }, [])).toBe(true);
   });
 });
 
-describe("isAtLineEnd", () => {
-  it("returns true when word is rightmost on its line", () => {
+describe("when using isAtLineEnd", () => {
+  it("then returns true when word is rightmost on its line", () => {
     const candidates = [
       makeCandidateAt(50, 100, "first"),
       makeCandidateAt(150, 100, "second"),
@@ -434,12 +434,12 @@ describe("isAtLineEnd", () => {
     expect(isAtLineEnd({ cx: 250, cy: 100 }, candidates)).toBe(true);
   });
 
-  it("returns false when there are words to the right", () => {
+  it("then returns false when there are words to the right", () => {
     const candidates = [makeCandidateAt(50, 100, "first"), makeCandidateAt(150, 100, "second")];
     expect(isAtLineEnd({ cx: 50, cy: 100 }, candidates)).toBe(false);
   });
 
-  it("returns true for empty candidates", () => {
+  it("then returns true for empty candidates", () => {
     expect(isAtLineEnd({ cx: 100, cy: 100 }, [])).toBe(true);
   });
 });
@@ -481,8 +481,8 @@ function createMockWrapper(
   } as unknown as HTMLElement;
 }
 
-describe("getWordCenterRelativeToWrapper", () => {
-  it("returns center relative to the target wrapper", () => {
+describe("when using getWordCenterRelativeToWrapper", () => {
+  it("then returns center relative to the target wrapper", () => {
     const editor = createMockEditorForWrapper({
       5: { left: 60, right: 70, top: 120, bottom: 140 },
       10: { left: 100, right: 110, top: 120, bottom: 140 },
@@ -501,7 +501,7 @@ describe("getWordCenterRelativeToWrapper", () => {
     expect(result).toEqual({ cx: 75, cy: 110 });
   });
 
-  it("accounts for wrapper scroll offset", () => {
+  it("then accounts for wrapper scroll offset", () => {
     const editor = createMockEditorForWrapper({
       5: { left: 60, right: 70, top: 120, bottom: 140 },
       10: { left: 100, right: 110, top: 120, bottom: 140 },
@@ -520,7 +520,7 @@ describe("getWordCenterRelativeToWrapper", () => {
     expect(result).toEqual({ cx: 105, cy: 160 });
   });
 
-  it("works for cross-editor endpoints (word in different editor than wrapper)", () => {
+  it("then works for cross-editor endpoints (word in different editor than wrapper)", () => {
     const editor0 = createMockEditorForWrapper({
       1: { left: 50, right: 80, top: 100, bottom: 120 },
       5: { left: 80, right: 90, top: 100, bottom: 120 },
@@ -550,7 +550,7 @@ describe("getWordCenterRelativeToWrapper", () => {
     expect(result).toEqual({ cx: 410, cy: 60 });
   });
 
-  it("returns null when editor not found", () => {
+  it("then returns null when editor not found", () => {
     const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>;
     const wrapper = createMockWrapper({ left: 0, top: 0, width: 800, height: 600 });
 
@@ -562,7 +562,7 @@ describe("getWordCenterRelativeToWrapper", () => {
     expect(result).toBeNull();
   });
 
-  it("returns null when coordsAtPos throws", () => {
+  it("then returns null when coordsAtPos throws", () => {
     const editor = {
       state: {
         doc: { nodeAt: vi.fn(() => ({ type: { name: "text" } })) },
@@ -585,7 +585,7 @@ describe("getWordCenterRelativeToWrapper", () => {
     expect(result).toBeNull();
   });
 
-  it("handles image nodes", () => {
+  it("then handles image nodes", () => {
     const imgEl = document.createElement("img");
     imgEl.getBoundingClientRect = () => ({
       left: 100,
@@ -622,8 +622,8 @@ describe("getWordCenterRelativeToWrapper", () => {
   });
 });
 
-describe("getWordRectRelativeToWrapper", () => {
-  it("returns rect relative to the target wrapper", () => {
+describe("when using getWordRectRelativeToWrapper", () => {
+  it("then returns rect relative to the target wrapper", () => {
     const editor = createMockEditorForWrapper({
       5: { left: 60, right: 70, top: 120, bottom: 140 },
       10: { left: 100, right: 110, top: 120, bottom: 140 },
@@ -645,7 +645,7 @@ describe("getWordRectRelativeToWrapper", () => {
     });
   });
 
-  it("accounts for wrapper scroll offset", () => {
+  it("then accounts for wrapper scroll offset", () => {
     const editor = createMockEditorForWrapper({
       5: { left: 60, right: 70, top: 120, bottom: 140 },
       10: { left: 100, right: 110, top: 120, bottom: 140 },
@@ -667,7 +667,7 @@ describe("getWordRectRelativeToWrapper", () => {
     });
   });
 
-  it("returns null when editor not found", () => {
+  it("then returns null when editor not found", () => {
     const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>;
     const wrapper = createMockWrapper({ left: 0, top: 0, width: 800, height: 600 });
 
@@ -679,7 +679,7 @@ describe("getWordRectRelativeToWrapper", () => {
     expect(result).toBeNull();
   });
 
-  it("handles image nodes", () => {
+  it("then handles image nodes", () => {
     const imgEl = document.createElement("img");
     imgEl.getBoundingClientRect = () => ({
       left: 100,

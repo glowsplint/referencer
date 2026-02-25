@@ -53,7 +53,7 @@ describe("useSimilarTextHighlight", () => {
     mockFindTextMatches.mockReset();
   });
 
-  it("dispatches empty decorations when not locked", () => {
+  it("when not locked, then dispatches empty decorations", () => {
     const editor = createMockEditor();
     const selection: WordSelection = { editorIndex: 0, from: 1, to: 6, text: "hello" };
 
@@ -62,7 +62,7 @@ describe("useSimilarTextHighlight", () => {
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(similarTextPluginKey, DecorationSet.empty);
   });
 
-  it("dispatches empty decorations when no selection", () => {
+  it("when there is no selection, then dispatches empty decorations", () => {
     const editor = createMockEditor();
 
     renderHook(() => useSimilarTextHighlight(editor as any, null, 0, true, null, false));
@@ -70,7 +70,7 @@ describe("useSimilarTextHighlight", () => {
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(similarTextPluginKey, DecorationSet.empty);
   });
 
-  it("creates decorations for matches", () => {
+  it("when text matches are found, then creates decorations for them", () => {
     const editor = createMockEditor();
     const selection: WordSelection = { editorIndex: 0, from: 1, to: 6, text: "hello" };
 
@@ -88,7 +88,7 @@ describe("useSimilarTextHighlight", () => {
     expect(capturedDecorations[1]).toMatchObject({ from: 40, to: 45 });
   });
 
-  it("skips primary selection range in same editor", () => {
+  it("when the only match is the primary selection in same editor, then dispatches empty", () => {
     const editor = createMockEditor();
     const selection: WordSelection = { editorIndex: 0, from: 10, to: 15, text: "world" };
 
@@ -100,7 +100,7 @@ describe("useSimilarTextHighlight", () => {
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(similarTextPluginKey, DecorationSet.empty);
   });
 
-  it("highlights all matches in a different editor", () => {
+  it("when selection is in a different editor, then highlights all matches", () => {
     const editor = createMockEditor();
     // Selection is in editor 1, but we're rendering editor 0
     const selection: WordSelection = { editorIndex: 1, from: 1, to: 6, text: "hello" };
@@ -116,7 +116,7 @@ describe("useSimilarTextHighlight", () => {
     expect(capturedDecorations).toHaveLength(2);
   });
 
-  it("uses 0.15 opacity for highlight color", () => {
+  it("when a highlight color is provided, then uses 0.15 opacity for blending", () => {
     const editor = createMockEditor();
     const selection: WordSelection = { editorIndex: 0, from: 1, to: 6, text: "hello" };
 

@@ -42,7 +42,7 @@ function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}): Work
 
 describe("WorkspaceContext", () => {
   describe("when used outside WorkspaceProvider", () => {
-    it("throws an error", () => {
+    it("then throws an error", () => {
       expect(() => {
         renderHook(() => useWorkspace());
       }).toThrow("useWorkspace must be used within a WorkspaceProvider");
@@ -50,7 +50,7 @@ describe("WorkspaceContext", () => {
   });
 
   describe("when used inside WorkspaceProvider", () => {
-    it("provides the workspace settings", () => {
+    it("then provides the workspace settings", () => {
       const mockValue = makeMockWorkspace({
         settings: {
           isDarkMode: true,
@@ -71,7 +71,7 @@ describe("WorkspaceContext", () => {
       expect(result.current.settings.isMultipleRowsLayout).toBe(false);
     });
 
-    it("provides the layers array and active layer", () => {
+    it("then provides the layers array and active layer", () => {
       const mockValue = makeMockWorkspace({
         layers: [
           { id: "layer-1", name: "Notes", color: "#ff0000" },
@@ -89,7 +89,7 @@ describe("WorkspaceContext", () => {
       expect(result.current.activeLayerId).toBe("layer-1");
     });
 
-    it("provides annotation actions as callable functions", () => {
+    it("then provides annotation actions as callable functions", () => {
       const mockValue = makeMockWorkspace();
 
       const { result } = renderHook(() => useWorkspace(), {
@@ -104,7 +104,7 @@ describe("WorkspaceContext", () => {
       expect(result.current.removeHighlight).toEqual(expect.any(Function));
     });
 
-    it("provides the editor state", () => {
+    it("then provides the editor state", () => {
       const mockValue = makeMockWorkspace({
         editorCount: 2,
         editorWidths: [50, 50],

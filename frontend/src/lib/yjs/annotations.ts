@@ -1,6 +1,7 @@
 // Yjs shared types for collaborative annotations.
 // Layers, highlights, arrows, and underlines are stored as Y.Array<Y.Map>
 // with RelativePosition anchors that survive concurrent text edits.
+import DOMPurify from "dompurify";
 import * as Y from "yjs";
 import {
   absolutePositionToRelativePosition,
@@ -249,7 +250,7 @@ function readReplies(yReplies: Y.Array<Y.Map<unknown>> | undefined): CommentRepl
     const yReply = yReplies.get(i);
     replies.push({
       id: yReply.get("id") as string,
-      text: yReply.get("text") as string,
+      text: DOMPurify.sanitize(yReply.get("text") as string),
       userName: yReply.get("userName") as string,
       timestamp: yReply.get("timestamp") as number,
       reactions: readReactions(yReply.get("reactions") as Y.Array<Y.Map<unknown>> | undefined),
@@ -284,8 +285,8 @@ function readHighlights(
       continue;
     }
 
-    const text = yH.get("text") as string;
-    const annotation = (yH.get("annotation") as string) ?? "";
+    const text = DOMPurify.sanitize(yH.get("text") as string);
+    const annotation = DOMPurify.sanitize((yH.get("annotation") as string) ?? "");
     const lastEdited = (yH.get("lastEdited") as number) ?? undefined;
     const userName = (yH.get("userName") as string) ?? undefined;
     highlights.push({
@@ -345,13 +346,13 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>, editorViews?: EditorView
         editorIndex: fromEditorIndex,
         from: fromFrom,
         to: fromTo,
-        text: yA.get("fromText") as string,
+        text: DOMPurify.sanitize(yA.get("fromText") as string),
       },
       to: {
         editorIndex: toEditorIndex,
         from: toFrom,
         to: toTo,
-        text: yA.get("toText") as string,
+        text: DOMPurify.sanitize(yA.get("toText") as string),
       },
       arrowStyle: (yA.get("arrowStyle") as ArrowStyle) ?? "solid",
       visible: (yA.get("visible") as boolean) ?? true,
@@ -392,7 +393,7 @@ function readUnderlines(
       editorIndex,
       from,
       to,
-      text: yU.get("text") as string,
+      text: DOMPurify.sanitize(yU.get("text") as string),
       visible: (yU.get("visible") as boolean) ?? true,
     });
   }
@@ -653,8 +654,10 @@ export function updateHighlightAnnotationInDoc(
   for (let i = 0; i < yHighlights.length; i++) {
     const yH = yHighlights.get(i);
     if (yH.get("id") === highlightId) {
-      yH.set("annotation", annotation);
-      yH.set("lastEdited", Date.now());
+      doc.transact(() => {
+        yH.set("annotation", annotation);
+        yH.set("lastEdited", Date.now());
+      });
       return;
     }
   }

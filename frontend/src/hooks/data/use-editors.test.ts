@@ -8,7 +8,7 @@ beforeEach(() => {
 });
 
 describe("useEditors", () => {
-  it("returns initial state with 2 editors at 50% width each", () => {
+  it("when initialized, then returns 2 editors at 50% width each", () => {
     const { result } = renderHook(() => useEditors());
     expect(result.current.editorCount).toBe(2);
     expect(result.current.editorWidths[0]).toBeCloseTo(50, 0);
@@ -16,7 +16,7 @@ describe("useEditors", () => {
     expect(result.current.activeEditor).toBeNull();
   });
 
-  it("addEditor increments editor count up to 3", () => {
+  it("when addEditor is called, then increments editor count up to 3", () => {
     const { result } = renderHook(() => useEditors());
 
     // starts at 2
@@ -33,7 +33,7 @@ describe("useEditors", () => {
     expect(result.current.editorCount).toBe(3);
   });
 
-  it("editorWidths are evenly distributed for 3 editors", () => {
+  it("when 3 editors exist, then editorWidths are evenly distributed", () => {
     const { result } = renderHook(() => useEditors());
 
     act(() => {
@@ -44,7 +44,7 @@ describe("useEditors", () => {
     expect(result.current.editorWidths[2]).toBeCloseTo(33.3, 0);
   });
 
-  it("removeEditor decrements editor count and redistributes widths", () => {
+  it("when removeEditor is called, then decrements editor count and redistributes widths", () => {
     const { result } = renderHook(() => useEditors());
 
     act(() => {
@@ -60,7 +60,7 @@ describe("useEditors", () => {
     expect(result.current.editorWidths[1]).toBeCloseTo(50, 0);
   });
 
-  it("removeEditor does not go below 1 editor", () => {
+  it("when removeEditor is called with only 1 editor, then does not go below 1", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.removeEditor(0);
@@ -72,7 +72,7 @@ describe("useEditors", () => {
     expect(result.current.editorCount).toBe(1);
   });
 
-  it("removeEditor sets activeEditor to first remaining editor", () => {
+  it("when removeEditor is called, then sets activeEditor to first remaining editor", () => {
     const { result } = renderHook(() => useEditors());
     const editor0 = { id: "e0" } as any;
     const editor1 = { id: "e1" } as any;
@@ -91,7 +91,7 @@ describe("useEditors", () => {
     expect(result.current.activeEditor).toBe(editor0);
   });
 
-  it("handleDividerResize clamps within bounds for 2 editors", () => {
+  it("when handleDividerResize is called with 2 editors, then clamps within bounds", () => {
     const { result } = renderHook(() => useEditors());
 
     act(() => {
@@ -113,7 +113,7 @@ describe("useEditors", () => {
     expect(result.current.editorWidths[0]).toBe(10);
   });
 
-  it("handleDividerResize clamps between adjacent dividers for 3 editors", () => {
+  it("when handleDividerResize is called with 3 editors, then clamps between adjacent dividers", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.addEditor();
@@ -146,7 +146,7 @@ describe("useEditors", () => {
     expect(result.current.editorWidths[1]).toBe(10);
   });
 
-  it("handleEditorMount sets activeEditor for index 0", () => {
+  it("when handleEditorMount is called for index 0, then sets activeEditor", () => {
     const { result } = renderHook(() => useEditors());
     const editor = { id: "e0" } as any;
 
@@ -156,7 +156,7 @@ describe("useEditors", () => {
     expect(result.current.activeEditor).toBe(editor);
   });
 
-  it("handleEditorMount does not set activeEditor for non-zero index", () => {
+  it("when handleEditorMount is called for non-zero index, then does not set activeEditor", () => {
     const { result } = renderHook(() => useEditors());
     const editor = { id: "e1" } as any;
 
@@ -166,7 +166,7 @@ describe("useEditors", () => {
     expect(result.current.activeEditor).toBeNull();
   });
 
-  it("handlePaneFocus switches activeEditor", () => {
+  it("when handlePaneFocus is called, then switches activeEditor", () => {
     const { result } = renderHook(() => useEditors());
     const editor0 = { id: "e0" } as any;
     const editor1 = { id: "e1" } as any;
@@ -183,7 +183,7 @@ describe("useEditors", () => {
     expect(result.current.activeEditor).toBe(editor1);
   });
 
-  it("handlePaneFocus with unmounted index does nothing", () => {
+  it("when handlePaneFocus is called with unmounted index, then does nothing", () => {
     const { result } = renderHook(() => useEditors());
     const editor = { id: "e0" } as any;
 
@@ -196,17 +196,17 @@ describe("useEditors", () => {
     expect(result.current.activeEditor).toBe(editor);
   });
 
-  it("editorsRef is exposed as a Map", () => {
+  it("when initialized, then editorsRef is exposed as a Map", () => {
     const { result } = renderHook(() => useEditors());
     expect(result.current.editorsRef.current).toBeInstanceOf(Map);
   });
 
-  it("sectionVisibility starts with two visible sections", () => {
+  it("when initialized, then sectionVisibility has two visible sections", () => {
     const { result } = renderHook(() => useEditors());
     expect(result.current.sectionVisibility).toEqual([true, true]);
   });
 
-  it("addEditor appends true to sectionVisibility", () => {
+  it("when addEditor is called, then appends true to sectionVisibility", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.addEditor();
@@ -214,7 +214,7 @@ describe("useEditors", () => {
     expect(result.current.sectionVisibility).toEqual([true, true, true]);
   });
 
-  it("removeEditor removes the entry from sectionVisibility", () => {
+  it("when removeEditor is called, then removes the entry from sectionVisibility", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.addEditor();
@@ -229,7 +229,7 @@ describe("useEditors", () => {
     expect(result.current.sectionVisibility).toEqual([true, true]);
   });
 
-  it("toggleAllSectionVisibility hides all sections when any are visible", () => {
+  it("when toggleAllSectionVisibility is called and any are visible, then hides all sections", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.toggleSectionVisibility(0);
@@ -243,7 +243,7 @@ describe("useEditors", () => {
     expect(result.current.sectionVisibility).toEqual([false, false]);
   });
 
-  it("toggleAllSectionVisibility shows all sections when none are visible", () => {
+  it("when toggleAllSectionVisibility is called and none are visible, then shows all sections", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.toggleSectionVisibility(0);
@@ -257,7 +257,7 @@ describe("useEditors", () => {
     expect(result.current.sectionVisibility).toEqual([true, true]);
   });
 
-  it("toggleSectionVisibility toggles visibility at index", () => {
+  it("when toggleSectionVisibility is called, then toggles visibility at the given index", () => {
     const { result } = renderHook(() => useEditors());
     expect(result.current.sectionVisibility).toEqual([true, true]);
 
@@ -274,12 +274,12 @@ describe("useEditors", () => {
 
   // --- Section names ---
 
-  it("sectionNames starts with DEFAULT_SECTION_NAMES", () => {
+  it("when initialized, then sectionNames starts with DEFAULT_SECTION_NAMES", () => {
     const { result } = renderHook(() => useEditors());
     expect(result.current.sectionNames).toEqual([...DEFAULT_SECTION_NAMES]);
   });
 
-  it("addEditor appends correct default name", () => {
+  it("when addEditor is called, then appends the correct default name", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.addEditor();
@@ -287,7 +287,7 @@ describe("useEditors", () => {
     expect(result.current.sectionNames).toEqual([...DEFAULT_SECTION_NAMES, "Passage 3"]);
   });
 
-  it("addEditor in quick succession assigns unique names", () => {
+  it("when addEditor is called in quick succession, then assigns unique names", () => {
     const { result } = renderHook(() => useEditors());
     // Already at 2 editors, can only add 1 more
     act(() => {
@@ -296,7 +296,7 @@ describe("useEditors", () => {
     expect(result.current.sectionNames).toEqual([...DEFAULT_SECTION_NAMES, "Passage 3"]);
   });
 
-  it("removeEditor removes name at index", () => {
+  it("when removeEditor is called, then removes the name at that index", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.addEditor();
@@ -311,14 +311,14 @@ describe("useEditors", () => {
     expect(result.current.sectionNames).toEqual([DEFAULT_SECTION_NAMES[0], "Passage 3"]);
   });
 
-  it("editorWidths is referentially stable when deps are unchanged", () => {
+  it("when deps are unchanged, then editorWidths is referentially stable", () => {
     const { result, rerender } = renderHook(() => useEditors());
     const first = result.current.editorWidths;
     rerender();
     expect(result.current.editorWidths).toBe(first);
   });
 
-  it("updateSectionName updates name at index", () => {
+  it("when updateSectionName is called, then updates name at the given index", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.updateSectionName(0, "Intro");
@@ -330,7 +330,7 @@ describe("useEditors", () => {
     expect(result.current.sectionNames).toEqual(["Intro", "Body"]);
   });
 
-  it("addEditor returns the generated name", () => {
+  it("when addEditor is called, then returns the generated name", () => {
     const { result } = renderHook(() => useEditors());
     let name = "";
     act(() => {
@@ -339,7 +339,7 @@ describe("useEditors", () => {
     expect(name).toBe("Passage 3");
   });
 
-  it("addEditor with explicit name does not increment counter", () => {
+  it("when addEditor is called with an explicit name, then does not increment counter", () => {
     const { result } = renderHook(() => useEditors());
     act(() => {
       result.current.addEditor({ name: "Custom" });
@@ -347,7 +347,7 @@ describe("useEditors", () => {
     expect(result.current.sectionNames).toEqual([...DEFAULT_SECTION_NAMES, "Custom"]);
   });
 
-  it("passage name counter never resets after removing editors", () => {
+  it("when editors are removed, then passage name counter never resets", () => {
     const { result } = renderHook(() => useEditors());
     // Start at 2, add 1 more to get to 3
     act(() => {

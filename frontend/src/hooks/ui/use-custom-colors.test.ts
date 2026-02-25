@@ -33,18 +33,18 @@ beforeEach(() => {
 });
 
 describe("useCustomColors", () => {
-  it("returns empty array initially", () => {
+  it("when initialized, then returns empty array", () => {
     const { result } = renderHook(() => useCustomColors());
     expect(result.current.customColors).toEqual([]);
   });
 
-  it("loads colors from localStorage on mount", () => {
+  it("when mounted with localStorage data, then loads colors", () => {
     storageMock._store[STORAGE_KEY] = JSON.stringify(["#ff0000", "#00ff00"]);
     const { result } = renderHook(() => useCustomColors());
     expect(result.current.customColors).toEqual(["#ff0000", "#00ff00"]);
   });
 
-  it("addCustomColor appends a new color", () => {
+  it("when addCustomColor is called, then appends a new color", () => {
     const { result } = renderHook(() => useCustomColors());
     act(() => {
       result.current.addCustomColor("#ff0000");
@@ -52,7 +52,7 @@ describe("useCustomColors", () => {
     expect(result.current.customColors).toEqual(["#ff0000"]);
   });
 
-  it("addCustomColor persists to localStorage", () => {
+  it("when addCustomColor is called, then persists to localStorage", () => {
     const { result } = renderHook(() => useCustomColors());
     act(() => {
       result.current.addCustomColor("#ff0000");
@@ -60,7 +60,7 @@ describe("useCustomColors", () => {
     expect(storageMock.setItem).toHaveBeenCalledWith(STORAGE_KEY, JSON.stringify(["#ff0000"]));
   });
 
-  it("addCustomColor does not add duplicates", () => {
+  it("when addCustomColor is called with an existing color, then does not add duplicates", () => {
     const { result } = renderHook(() => useCustomColors());
     act(() => {
       result.current.addCustomColor("#ff0000");
@@ -71,7 +71,7 @@ describe("useCustomColors", () => {
     expect(result.current.customColors).toEqual(["#ff0000"]);
   });
 
-  it("removeCustomColor removes a color", () => {
+  it("when removeCustomColor is called, then removes the color", () => {
     const { result } = renderHook(() => useCustomColors());
     act(() => {
       result.current.addCustomColor("#ff0000");
@@ -85,7 +85,7 @@ describe("useCustomColors", () => {
     expect(result.current.customColors).toEqual(["#00ff00"]);
   });
 
-  it("removeCustomColor persists to localStorage", () => {
+  it("when removeCustomColor is called, then persists to localStorage", () => {
     const { result } = renderHook(() => useCustomColors());
     act(() => {
       result.current.addCustomColor("#ff0000");
@@ -96,7 +96,7 @@ describe("useCustomColors", () => {
     expect(storageMock.setItem).toHaveBeenLastCalledWith(STORAGE_KEY, JSON.stringify([]));
   });
 
-  it("removeCustomColor with non-existent color is a no-op", () => {
+  it("when removeCustomColor is called with non-existent color, then is a no-op", () => {
     const { result } = renderHook(() => useCustomColors());
     act(() => {
       result.current.addCustomColor("#ff0000");
@@ -107,7 +107,7 @@ describe("useCustomColors", () => {
     expect(result.current.customColors).toEqual(["#ff0000"]);
   });
 
-  it("handles corrupted localStorage gracefully", () => {
+  it("when localStorage is corrupted, then handles gracefully", () => {
     storageMock._store[STORAGE_KEY] = "not-json";
     const { result } = renderHook(() => useCustomColors());
     expect(result.current.customColors).toEqual([]);

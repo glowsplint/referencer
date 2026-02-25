@@ -51,13 +51,13 @@ describe("WorkspaceCard", () => {
   }
 
   describe("when rendered", () => {
-    it("shows the workspace title and last modified time", () => {
+    it("then shows the workspace title and last modified time", () => {
       renderCard();
       expect(screen.getByText("Test Workspace")).toBeInTheDocument();
       expect(screen.getByText(/2h ago/)).toBeInTheDocument();
     });
 
-    it("shows both created and modified dates", () => {
+    it("then shows both created and modified dates", () => {
       renderCard();
       expect(screen.getByText(/Modified 2h ago/)).toBeInTheDocument();
       expect(screen.getByText(/Created 2h ago/)).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when workspace has an owner", () => {
-    it("shows the owner name and avatar", () => {
+    it("then shows the owner name and avatar", () => {
       renderCard();
       expect(screen.getByText("Test User")).toBeInTheDocument();
       const avatar = document.querySelector("img[src='https://example.com/avatar.jpg']");
@@ -74,7 +74,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when the card is clicked", () => {
-    it("calls onOpen", async () => {
+    it("then calls onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
@@ -85,7 +85,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when the menu trigger is clicked", () => {
-    it("does not call onOpen", async () => {
+    it("then does not call onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
@@ -96,7 +96,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when Open is selected from the dropdown menu", () => {
-    it("calls onOpen", async () => {
+    it("then calls onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
@@ -112,7 +112,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when Rename is selected from the dropdown menu", () => {
-    it("calls onRename without calling onOpen", async () => {
+    it("then calls onRename without calling onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
@@ -126,7 +126,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when Duplicate is selected from the dropdown menu", () => {
-    it("calls onDuplicate without calling onOpen", async () => {
+    it("then calls onDuplicate without calling onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
@@ -140,7 +140,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when Delete is selected from the dropdown menu", () => {
-    it("calls onDelete without calling onOpen", async () => {
+    it("then calls onDelete without calling onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
@@ -154,7 +154,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when favorite toggle is clicked", () => {
-    it("calls onToggleFavorite with the workspace ID and new state", async () => {
+    it("then calls onToggleFavorite with the workspace ID and new state", async () => {
       const user = userEvent.setup();
       renderCard();
 
@@ -163,7 +163,7 @@ describe("WorkspaceCard", () => {
       expect(onToggleFavorite).toHaveBeenCalledWith("ws-1", true);
     });
 
-    it("does not call onOpen", async () => {
+    it("then does not call onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
@@ -174,7 +174,7 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when workspace title is empty", () => {
-    it("renders 'Untitled' as the title", () => {
+    it("then renders 'Untitled' as the title", () => {
       render(
         <DndProvider>
           <WorkspaceCard

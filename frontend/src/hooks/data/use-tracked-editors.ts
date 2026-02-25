@@ -48,7 +48,8 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
           }
         },
         redo: () => {
-          raw.removeEditor(index);
+          const currentIndex = raw.sectionNames.indexOf(name);
+          if (currentIndex >= 0) raw.removeEditor(currentIndex);
         },
       });
     },

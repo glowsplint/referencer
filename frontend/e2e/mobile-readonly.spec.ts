@@ -6,14 +6,16 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("shows mobile info dialog on load", async ({ page }) => {
+test.describe("mobile readonly", () => {
+
+test("when page loads on mobile, then mobile info dialog is shown", async ({ page }) => {
   const dialog = page.getByTestId("mobileInfoDialog");
   await expect(dialog).toBeVisible();
   await expect(page.getByText("Best on Desktop")).toBeVisible();
   await expect(page.getByText(/designed for desktop use/)).toBeVisible();
 });
 
-test("dismisses mobile info dialog with button", async ({ page }) => {
+test("when dismiss button is clicked, then mobile info dialog is hidden", async ({ page }) => {
   const dialog = page.getByTestId("mobileInfoDialog");
   await expect(dialog).toBeVisible();
 
@@ -21,11 +23,11 @@ test("dismisses mobile info dialog with button", async ({ page }) => {
   await expect(dialog).not.toBeVisible();
 });
 
-test("hides ButtonPane on mobile", async ({ page }) => {
+test("when page loads on mobile, then ButtonPane is hidden", async ({ page }) => {
   await expect(page.getByTestId("buttonPane")).not.toBeVisible();
 });
 
-test("editor is visible and read-only on mobile", async ({ page }) => {
+test("when dialog is dismissed on mobile, then editor is visible and read-only", async ({ page }) => {
   // Dismiss dialog first
   await page.getByTestId("mobileInfoDismissButton").click();
 
@@ -37,3 +39,5 @@ test("editor is visible and read-only on mobile", async ({ page }) => {
   const prosemirror = page.locator(".tiptap");
   await expect(prosemirror.first()).toHaveAttribute("contenteditable", "false");
 });
+
+}); // end mobile readonly describe

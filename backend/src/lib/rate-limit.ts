@@ -9,7 +9,10 @@ interface RateLimitOptions {
 export function kvRateLimiter(options: RateLimitOptions): MiddlewareHandler {
   return async (c, next) => {
     const kv = (c.env as any).RATE_LIMIT_KV;
-    if (!kv) return next(); // Skip if KV not available (local dev)
+    if (!kv) {
+      console.warn("[rate-limit] KV not available, rejecting request");
+      return c.json({ error: "Service temporarily unavailable" }, 503);
+    }
 
     const key = `rl:${options.keyGenerator(c)}`;
     const now = Date.now();

@@ -15,28 +15,34 @@ vi.mock("@/hooks/data/use-auth", () => ({
 }));
 
 describe("UnsavedBanner", () => {
-  it("renders banner when user is not authenticated and not loading", () => {
-    mockAuth.isAuthenticated = false;
-    mockAuth.isLoading = false;
+  describe("when user is not authenticated and not loading", () => {
+    it("then renders the banner with sign-in message", () => {
+      mockAuth.isAuthenticated = false;
+      mockAuth.isLoading = false;
 
-    render(<UnsavedBanner />);
-    expect(screen.getByTestId("unsavedBanner")).toBeInTheDocument();
-    expect(screen.getByText("Sign in to save your work")).toBeInTheDocument();
+      render(<UnsavedBanner />);
+      expect(screen.getByTestId("unsavedBanner")).toBeInTheDocument();
+      expect(screen.getByText("Sign in to save your work")).toBeInTheDocument();
+    });
   });
 
-  it("does not render when user is authenticated", () => {
-    mockAuth.isAuthenticated = true;
-    mockAuth.isLoading = false;
+  describe("when user is authenticated", () => {
+    it("then does not render the banner", () => {
+      mockAuth.isAuthenticated = true;
+      mockAuth.isLoading = false;
 
-    render(<UnsavedBanner />);
-    expect(screen.queryByTestId("unsavedBanner")).not.toBeInTheDocument();
+      render(<UnsavedBanner />);
+      expect(screen.queryByTestId("unsavedBanner")).not.toBeInTheDocument();
+    });
   });
 
-  it("does not render while loading", () => {
-    mockAuth.isAuthenticated = false;
-    mockAuth.isLoading = true;
+  describe("when auth is loading", () => {
+    it("then does not render the banner", () => {
+      mockAuth.isAuthenticated = false;
+      mockAuth.isLoading = true;
 
-    render(<UnsavedBanner />);
-    expect(screen.queryByTestId("unsavedBanner")).not.toBeInTheDocument();
+      render(<UnsavedBanner />);
+      expect(screen.queryByTestId("unsavedBanner")).not.toBeInTheDocument();
+    });
   });
 });

@@ -80,63 +80,75 @@ describe("FolderListItem", () => {
     );
   }
 
-  it("renders the folder name", () => {
-    renderListItem();
-    expect(screen.getByText("Test Folder")).toBeInTheDocument();
+  describe("when rendered", () => {
+    it("then shows the folder name", () => {
+      renderListItem();
+      expect(screen.getByText("Test Folder")).toBeInTheDocument();
+    });
+
+    it("then renders the test id with folder id", () => {
+      renderListItem();
+      expect(screen.getByTestId("folderListItem-f1")).toBeInTheDocument();
+    });
   });
 
-  it("renders the test id with folder id", () => {
-    renderListItem();
-    expect(screen.getByTestId("folderListItem-f1")).toBeInTheDocument();
+  describe("when folder has no workspaces", () => {
+    it("then displays item count of 0", () => {
+      renderListItem();
+      expect(screen.getByText("0 items")).toBeInTheDocument();
+    });
   });
 
-  it("displays item count of 0 when folder has no workspaces", () => {
-    renderListItem();
-    expect(screen.getByText("0 items")).toBeInTheDocument();
+  describe("when folder has workspaces", () => {
+    it("then displays the item count", () => {
+      const workspaces = [
+        makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
+        makeWorkspace({ workspaceId: "ws-2", folderId: "f1" }),
+        makeWorkspace({ workspaceId: "ws-3", folderId: "f1" }),
+      ];
+      renderListItem({ workspaces });
+      expect(screen.getByText("3 items")).toBeInTheDocument();
+    });
   });
 
-  it("displays item count when folder has workspaces", () => {
-    const workspaces = [
-      makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
-      makeWorkspace({ workspaceId: "ws-2", folderId: "f1" }),
-      makeWorkspace({ workspaceId: "ws-3", folderId: "f1" }),
-    ];
-    renderListItem({ workspaces });
-    expect(screen.getByText("3 items")).toBeInTheDocument();
+  describe("when star is clicked on a non-favorite folder", () => {
+    it("then calls onToggleFolderFavorite with true", async () => {
+      const user = userEvent.setup();
+      renderListItem();
+
+      await user.click(screen.getByTestId("folderFavoriteToggle"));
+
+      expect(onToggleFolderFavorite).toHaveBeenCalledWith("f1", true);
+    });
   });
 
-  it("calls onToggleFolderFavorite when star is clicked", async () => {
-    const user = userEvent.setup();
-    renderListItem();
+  describe("when star is clicked on a favorited folder", () => {
+    it("then calls onToggleFolderFavorite with false", async () => {
+      const user = userEvent.setup();
+      const favFolder = makeFolder({ id: "f1", name: "Fav Folder", isFavorite: true });
+      const favNode: FolderNode = { folder: favFolder, children: [], depth: 0 };
+      renderListItem({ node: favNode, folders: [favFolder] });
 
-    await user.click(screen.getByTestId("folderFavoriteToggle"));
+      await user.click(screen.getByTestId("folderFavoriteToggle"));
 
-    expect(onToggleFolderFavorite).toHaveBeenCalledWith("f1", true);
+      expect(onToggleFolderFavorite).toHaveBeenCalledWith("f1", false);
+    });
   });
 
-  it("calls onToggleFolderFavorite with false when already favorited", async () => {
-    const user = userEvent.setup();
-    const favFolder = makeFolder({ id: "f1", name: "Fav Folder", isFavorite: true });
-    const favNode: FolderNode = { folder: favFolder, children: [], depth: 0 };
-    renderListItem({ node: favNode, folders: [favFolder] });
+  describe("when the folder header is clicked", () => {
+    it("then toggles expand/collapse", async () => {
+      const user = userEvent.setup();
+      const workspaces = [makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "Inside WS" })];
+      renderListItem({ workspaces });
 
-    await user.click(screen.getByTestId("folderFavoriteToggle"));
+      // Initially expanded, so workspace should be visible
+      expect(screen.getByText("Inside WS")).toBeInTheDocument();
 
-    expect(onToggleFolderFavorite).toHaveBeenCalledWith("f1", false);
-  });
+      // Click to collapse
+      await user.click(screen.getByTestId("folderListItem-f1").firstElementChild!);
 
-  it("toggles expand/collapse on click", async () => {
-    const user = userEvent.setup();
-    const workspaces = [makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "Inside WS" })];
-    renderListItem({ workspaces });
-
-    // Initially expanded, so workspace should be visible
-    expect(screen.getByText("Inside WS")).toBeInTheDocument();
-
-    // Click to collapse
-    await user.click(screen.getByTestId("folderListItem-f1").firstElementChild!);
-
-    // After collapse, workspace should be hidden
-    expect(screen.queryByText("Inside WS")).not.toBeInTheDocument();
+      // After collapse, workspace should be hidden
+      expect(screen.queryByText("Inside WS")).not.toBeInTheDocument();
+    });
   });
 });

@@ -7,7 +7,7 @@ describe("SwitchingButtonIcon", () => {
   const iconTwo = <span data-testid="icon-two">B</span>;
 
   describe("when toggled off", () => {
-    it("shows the inactive icon", () => {
+    it("then shows the inactive icon", () => {
       render(
         <SwitchingButtonIcon
           iconOne={iconOne}
@@ -22,7 +22,7 @@ describe("SwitchingButtonIcon", () => {
   });
 
   describe("when toggled on", () => {
-    it("shows the active icon", () => {
+    it("then shows the active icon", () => {
       render(
         <SwitchingButtonIcon iconOne={iconOne} iconTwo={iconTwo} bool={true} callback={() => {}} />,
       );
@@ -32,7 +32,7 @@ describe("SwitchingButtonIcon", () => {
   });
 
   describe("when clicked", () => {
-    it("triggers the toggle callback", () => {
+    it("then triggers the toggle callback", () => {
       const cb = vi.fn();
       render(
         <SwitchingButtonIcon iconOne={iconOne} iconTwo={iconTwo} bool={false} callback={cb} />,
@@ -43,7 +43,7 @@ describe("SwitchingButtonIcon", () => {
   });
 
   describe("when a title is set", () => {
-    it("shows it as a tooltip", () => {
+    it("then shows it as a tooltip", () => {
       render(
         <SwitchingButtonIcon
           iconOne={iconOne}
@@ -58,7 +58,7 @@ describe("SwitchingButtonIcon", () => {
   });
 
   describe("when extra button props are provided", () => {
-    it("spreads them onto the underlying button element", () => {
+    it("then spreads them onto the underlying button element", () => {
       render(
         <SwitchingButtonIcon
           iconOne={iconOne}

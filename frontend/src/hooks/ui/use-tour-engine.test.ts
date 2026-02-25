@@ -13,14 +13,14 @@ function setup(steps = STEPS, options?: Parameters<typeof useTourEngine>[1]) {
 }
 
 describe("useTourEngine", () => {
-  it("starts not running with stepIndex 0", () => {
+  it("when initialized, then starts not running with stepIndex 0", () => {
     const { result } = setup();
     expect(result.current.isRunning).toBe(false);
     expect(result.current.stepIndex).toBe(0);
     expect(result.current.currentStep).toBeNull();
   });
 
-  it("start() begins tour", () => {
+  it("when start() is called, then begins the tour", () => {
     // Add target elements so auto-skip doesn't fire
     const el = document.createElement("div");
     el.id = "step-1";
@@ -37,7 +37,7 @@ describe("useTourEngine", () => {
     document.body.removeChild(el);
   });
 
-  it("next() advances step", () => {
+  it("when next() is called, then advances to the next step", () => {
     const el1 = document.createElement("div");
     el1.id = "step-1";
     const el2 = document.createElement("div");
@@ -58,7 +58,7 @@ describe("useTourEngine", () => {
     el2.remove();
   });
 
-  it("back() goes back but not below 0", () => {
+  it("when back() is called, then goes back but not below 0", () => {
     const el1 = document.createElement("div");
     el1.id = "step-1";
     const el2 = document.createElement("div");
@@ -88,7 +88,7 @@ describe("useTourEngine", () => {
     el2.remove();
   });
 
-  it("next() on last step completes tour and calls onComplete", () => {
+  it("when next() is called on the last step, then completes tour and calls onComplete", () => {
     const el1 = document.createElement("div");
     el1.id = "step-1";
     const el2 = document.createElement("div");
@@ -122,7 +122,7 @@ describe("useTourEngine", () => {
     el3.remove();
   });
 
-  it("skip() stops tour and calls onSkip", () => {
+  it("when skip() is called, then stops tour and calls onSkip", () => {
     const el = document.createElement("div");
     el.id = "step-1";
     document.body.appendChild(el);
@@ -144,7 +144,7 @@ describe("useTourEngine", () => {
     el.remove();
   });
 
-  it("stop() stops tour without callbacks", () => {
+  it("when stop() is called, then stops tour without callbacks", () => {
     const el = document.createElement("div");
     el.id = "step-1";
     document.body.appendChild(el);
@@ -166,17 +166,17 @@ describe("useTourEngine", () => {
     el.remove();
   });
 
-  it("returns totalSteps equal to steps length", () => {
+  it("when accessed, then returns totalSteps equal to steps length", () => {
     const { result } = setup();
     expect(result.current.totalSteps).toBe(3);
   });
 
-  it("currentStep is null when not running", () => {
+  it("when not running, then currentStep is null", () => {
     const { result } = setup();
     expect(result.current.currentStep).toBeNull();
   });
 
-  it("auto-skips steps whose target is not in the DOM", () => {
+  it("when a step's target is not in the DOM, then auto-skips it", () => {
     // Only add step-2 element; step-1 is missing so should auto-skip to step-2
     const el2 = document.createElement("div");
     el2.id = "step-2";

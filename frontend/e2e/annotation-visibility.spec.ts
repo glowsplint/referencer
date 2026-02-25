@@ -21,7 +21,7 @@ async function addAnnotation(page: import("@playwright/test").Page, text: string
   await expect(page.getByText(text)).toBeVisible({ timeout: 2000 });
 }
 
-test.describe("annotation visibility with layers", () => {
+test.describe("when toggling layer visibility", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -41,7 +41,7 @@ test.describe("annotation visibility with layers", () => {
     await page.keyboard.press("c");
   });
 
-  test("hiding layer hides its annotations", async ({ page }) => {
+  test("when layer is hidden, then its annotations disappear", async ({ page }) => {
     // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Layer 1 note");
@@ -55,7 +55,7 @@ test.describe("annotation visibility with layers", () => {
     });
   });
 
-  test("showing layer restores its annotations", async ({ page }) => {
+  test("when layer is shown again, then its annotations are restored", async ({ page }) => {
     // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Restored note");
@@ -72,7 +72,7 @@ test.describe("annotation visibility with layers", () => {
     });
   });
 
-  test("annotations on different layers are independent", async ({ page }) => {
+  test("when one layer is hidden, then annotations on other layers remain visible", async ({ page }) => {
     // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1 annotation");
@@ -121,7 +121,7 @@ test.describe("annotation visibility with layers", () => {
     });
   });
 
-  test("annotation panel disappears when all layers hidden", async ({ page }) => {
+  test("when all layers are hidden, then annotation panel disappears", async ({ page }) => {
     // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Only note");
@@ -148,7 +148,7 @@ test.describe("annotation visibility with layers", () => {
   });
 });
 
-test.describe("annotation visibility with passages", () => {
+test.describe("when toggling passage visibility", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -161,7 +161,7 @@ test.describe("annotation visibility with passages", () => {
     await page.keyboard.press("c");
   });
 
-  test("hiding passage hides annotations from that passage", async ({ page }) => {
+  test("when passage is hidden, then its annotations disappear", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Passage 1 note");
@@ -179,7 +179,7 @@ test.describe("annotation visibility with passages", () => {
     });
   });
 
-  test("showing passage restores its annotations", async ({ page }) => {
+  test("when passage is shown again, then its annotations are restored", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Restored passage note");
@@ -196,7 +196,7 @@ test.describe("annotation visibility with passages", () => {
     });
   });
 
-  test("annotations in different passages are independent", async ({ page }) => {
+  test("when one passage is hidden, then annotations in other passages remain visible", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "P1 note");
@@ -221,7 +221,7 @@ test.describe("annotation visibility with passages", () => {
     await expect(page.getByText("P2 note")).toHaveCount(0, { timeout: 2000 });
   });
 
-  test("annotation panel disappears when all passages hidden", async ({ page }) => {
+  test("when all passages are hidden, then annotation panel disappears", async ({ page }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Only passage note");
@@ -247,7 +247,7 @@ test.describe("annotation visibility with passages", () => {
   });
 });
 
-test.describe("combined layer + passage annotation visibility", () => {
+test.describe("when combining layer and passage visibility toggles", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -265,7 +265,7 @@ test.describe("combined layer + passage annotation visibility", () => {
     await page.keyboard.press("c");
   });
 
-  test("hiding layer then passage, restoring in reverse order", async ({ page }) => {
+  test("when layer is hidden then passage is hidden and restored in reverse, then annotations reappear correctly", async ({ page }) => {
     // Create annotation on Layer 1 (index 3) in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Combined note");
@@ -292,7 +292,7 @@ test.describe("combined layer + passage annotation visibility", () => {
     });
   });
 
-  test("annotations across layers and passages all respect visibility", async ({ page }) => {
+  test("when layers and passages are toggled independently, then annotations respect both visibility states", async ({ page }) => {
     // Layer 1 (index 3), Passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1P1");

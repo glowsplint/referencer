@@ -102,7 +102,6 @@ const mockWorkspace = {
   toggleUnderlineVisibility: vi.fn(),
   updateEditorContent: vi.fn(),
   setActiveLayerId: vi.fn(),
-  setLayers: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
   sectionNames: ["Passage 1"],
@@ -260,7 +259,7 @@ const LAYER_WITH_COMMENT = {
 
 describe("App (desktop)", () => {
   describe("when rendered with default settings", () => {
-    it("shows the sidebar button pane", () => {
+    it("then shows the sidebar button pane", () => {
       renderApp();
       expect(screen.getByTestId("buttonPane")).toBeInTheDocument();
       expect(screen.getByTestId("menuButton")).toBeInTheDocument();
@@ -268,32 +267,32 @@ describe("App (desktop)", () => {
       expect(screen.getByTestId("lockButton")).toBeInTheDocument();
     });
 
-    it("shows the title bar and editor toolbar", () => {
+    it("then shows the title bar and editor toolbar", () => {
       renderApp();
       expect(screen.getByTestId("title-bar")).toBeInTheDocument();
       expect(screen.getByTestId("toolbar")).toBeInTheDocument();
     });
 
-    it("shows the status bar", () => {
+    it("then shows the status bar", () => {
       renderApp();
       expect(screen.getByTestId("status-bar")).toBeInTheDocument();
     });
 
-    it("renders one editor pane", () => {
+    it("then renders one editor pane", () => {
       renderApp();
       expect(screen.getAllByTestId("editor-pane")).toHaveLength(1);
     });
   });
 
   describe("when the management pane is closed", () => {
-    it("does not show the management pane", () => {
+    it("then does not show the management pane", () => {
       renderApp();
       expect(screen.queryByTestId("managementPane")).not.toBeInTheDocument();
     });
   });
 
   describe("when the management pane is open", () => {
-    it("shows the management pane", () => {
+    it("then shows the management pane", () => {
       mockWorkspace.isManagementPaneOpen = true;
       renderApp();
       expect(screen.getByTestId("managementPane")).toBeInTheDocument();
@@ -301,7 +300,7 @@ describe("App (desktop)", () => {
   });
 
   describe("when multiple editor panes are configured", () => {
-    it("renders one pane per editor width", () => {
+    it("then renders one pane per editor width", () => {
       mockWorkspace.editorWidths = [50, 50];
       mockWorkspace.editorKeys = [1, 2];
       mockWorkspace.sectionVisibility = [true, true];
@@ -311,21 +310,21 @@ describe("App (desktop)", () => {
   });
 
   describe("when unlocked (editing mode)", () => {
-    it("renders editors without annotation mouse handlers", () => {
+    it("then renders editors without annotation mouse handlers", () => {
       mockWorkspace.settings.isLocked = false;
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
     });
 
-    it("renders editors with content update enabled", () => {
+    it("then renders editors with content update enabled", () => {
       mockWorkspace.settings.isLocked = false;
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-content-update", "true");
     });
 
-    it("does not show the annotation panel even with comments", () => {
+    it("then does not show the annotation panel even with comments", () => {
       mockWorkspace.settings.isLocked = false;
       mockWorkspace.layers = [LAYER_WITH_COMMENT];
       renderApp();
@@ -338,19 +337,19 @@ describe("App (desktop)", () => {
       mockWorkspace.settings.isLocked = true;
     });
 
-    it("renders editors with annotation mouse handlers", () => {
+    it("then renders editors with annotation mouse handlers", () => {
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "true");
     });
 
-    it("renders editors as locked", () => {
+    it("then renders editors as locked", () => {
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-locked", "true");
     });
 
-    it("does not show annotation panel when there are no comment annotations", () => {
+    it("then does not show annotation panel when there are no comment annotations", () => {
       mockWorkspace.layers = [];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
@@ -363,37 +362,37 @@ describe("App (desktop)", () => {
       mockWorkspace.layers = [LAYER_WITH_COMMENT];
     });
 
-    it("shows the annotation panel", () => {
+    it("then shows the annotation panel", () => {
       renderApp();
       expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
     });
 
-    it("renders the annotation panel with editing handlers", () => {
+    it("then renders the annotation panel with editing handlers", () => {
       renderApp();
       const panel = screen.getByTestId("annotation-panel");
       expect(panel).toHaveAttribute("data-has-handlers", "true");
     });
 
-    it("places the annotation panel on the right by default", () => {
+    it("then places the annotation panel on the right by default", () => {
       renderApp();
       const panel = screen.getByTestId("annotation-panel");
       expect(panel).toHaveAttribute("data-placement", "right");
     });
 
-    it("places the annotation panel on the left when configured", () => {
+    it("then places the annotation panel on the left", () => {
       mockWorkspace.settings.commentPlacement = "left";
       renderApp();
       const panel = screen.getByTestId("annotation-panel");
       expect(panel).toHaveAttribute("data-placement", "left");
     });
 
-    it("hides annotation panel when all annotated passages are hidden", () => {
+    it("then hides annotation panel when all annotated passages are hidden", () => {
       mockWorkspace.sectionVisibility = [false];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     });
 
-    it("hides annotation panel when the layer is not visible", () => {
+    it("then hides annotation panel when the layer is not visible", () => {
       mockWorkspace.layers = [{ ...LAYER_WITH_COMMENT, visible: false }];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
@@ -405,28 +404,28 @@ describe("App (desktop)", () => {
       mockWorkspace.settings.isLocked = true;
     });
 
-    it("applies eraser cursor class to editor container", () => {
+    it("then applies eraser cursor class to editor container", () => {
       mockWorkspace.annotations = { activeTool: "eraser" as const };
       renderApp();
       const container = screen.getByTestId("editorContainer");
       expect(container.className).toContain("eraser-mode-container");
     });
 
-    it("applies highlight cursor class to editor container", () => {
+    it("then applies highlight cursor class to editor container", () => {
       mockWorkspace.annotations = { activeTool: "highlight" as const };
       renderApp();
       const container = screen.getByTestId("editorContainer");
       expect(container.className).toContain("highlight-mode-container");
     });
 
-    it("applies comment cursor class to editor container", () => {
+    it("then applies comment cursor class to editor container", () => {
       mockWorkspace.annotations = { activeTool: "comments" as const };
       renderApp();
       const container = screen.getByTestId("editorContainer");
       expect(container.className).toContain("comment-mode-container");
     });
 
-    it("does not apply tool cursor classes when using selection tool", () => {
+    it("then does not apply tool cursor classes when using selection tool", () => {
       mockWorkspace.annotations = { activeTool: "selection" as const };
       renderApp();
       const container = screen.getByTestId("editorContainer");
@@ -437,7 +436,7 @@ describe("App (desktop)", () => {
   });
 
   describe("when layers have data", () => {
-    it("passes layer count to editor panes", () => {
+    it("then passes layer count to editor panes", () => {
       mockWorkspace.layers = [LAYER_WITH_COMMENT];
       renderApp();
       const pane = screen.getByTestId("editor-pane");
@@ -446,7 +445,7 @@ describe("App (desktop)", () => {
   });
 
   describe("when status bar is disabled", () => {
-    it("does not show the status bar", () => {
+    it("then does not show the status bar", () => {
       mockWorkspace.settings.showStatusBar = false;
       renderApp();
       expect(screen.queryByTestId("status-bar")).not.toBeInTheDocument();

@@ -278,9 +278,6 @@ export function ArrowOverlay({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drawingState, drawingColor, editorsRef, containerRef, sectionVisibility, structuralTick]);
 
-  // Force a void read of structuralTick so the dependency is used
-  void structuralTick;
-
   return (
     <>
       {/* Visual layer: blend mode applied here for highlighter effect */}

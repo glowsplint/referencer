@@ -89,7 +89,9 @@ export function WorkspaceGrid({
 
   const toggleView = (mode: ViewMode) => {
     setViewMode(mode);
-    localStorage.setItem(STORAGE_KEYS.HUB_VIEW_MODE, mode);
+    try {
+      localStorage.setItem(STORAGE_KEYS.HUB_VIEW_MODE, mode);
+    } catch { /* quota exceeded or unavailable */ }
   };
 
   const handleOpen = (id: string) => navigate(`#/${id}`);

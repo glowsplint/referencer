@@ -2,6 +2,14 @@ import KSUID from "ksuid";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "../types";
 
+export async function hashToken(token: string): Promise<string> {
+  const data = new TextEncoder().encode(token);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 export async function upsertUser(
   supabase: SupabaseClient,
   provider: string,
@@ -9,6 +17,7 @@ export async function upsertUser(
   email: string,
   name: string,
   avatarUrl: string,
+  emailVerified: boolean = false,
 ): Promise<string> {
   // 1. Find by (provider, provider_user_id)
   const { data: existing } = await supabase
@@ -27,23 +36,29 @@ export async function upsertUser(
     return existing.user_id;
   }
 
-  // 2. Find by email (account linking).
-  const { data: byEmail } = await supabase.from("user").select("id").eq("email", email).single();
-
-  if (byEmail) {
-    // Link new provider to existing user.
-    const providerId = KSUID.randomSync().string;
-    await supabase.from("user_provider").insert({
-      id: providerId,
-      user_id: byEmail.id,
-      provider,
-      provider_user_id: providerUserId,
-    });
-    await supabase
+  // 2. Find by email (account linking) — only if the provider verified the email.
+  if (emailVerified) {
+    const { data: byEmail } = await supabase
       .from("user")
-      .update({ name, avatar_url: avatarUrl, updated_at: new Date().toISOString() })
-      .eq("id", byEmail.id);
-    return byEmail.id;
+      .select("id")
+      .eq("email", email)
+      .single();
+
+    if (byEmail) {
+      // Link new provider to existing user.
+      const providerId = KSUID.randomSync().string;
+      await supabase.from("user_provider").insert({
+        id: providerId,
+        user_id: byEmail.id,
+        provider,
+        provider_user_id: providerUserId,
+      });
+      await supabase
+        .from("user")
+        .update({ name, avatar_url: avatarUrl, updated_at: new Date().toISOString() })
+        .eq("id", byEmail.id);
+      return byEmail.id;
+    }
   }
 
   // 3. Create new user via RPC (atomic).
@@ -79,9 +94,10 @@ export async function createSession(
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 
+  const hashedToken = await hashToken(token);
   const expiresAt = new Date(Date.now() + maxAge * 1000).toISOString();
   await supabase.from("session").insert({
-    id: token,
+    id: hashedToken,
     user_id: userId,
     created_at: new Date().toISOString(),
     expires_at: expiresAt,
@@ -94,17 +110,18 @@ export async function getSessionUser(
   supabase: SupabaseClient,
   token: string,
 ): Promise<User | null> {
+  const hashedToken = await hashToken(token);
   const { data: session } = await supabase
     .from("session")
     .select("user_id, expires_at")
-    .eq("id", token)
+    .eq("id", hashedToken)
     .single();
 
   if (!session) return null;
 
   // Check expiry.
   if (new Date(session.expires_at) < new Date()) {
-    await supabase.from("session").delete().eq("id", token);
+    await supabase.from("session").delete().eq("id", hashedToken);
     return null;
   }
 
@@ -127,7 +144,8 @@ export async function getSessionUser(
 }
 
 export async function deleteSession(supabase: SupabaseClient, token: string): Promise<void> {
-  await supabase.from("session").delete().eq("id", token);
+  const hashedToken = await hashToken(token);
+  await supabase.from("session").delete().eq("id", hashedToken);
 }
 
 export async function maybeRefreshSession(
@@ -135,10 +153,11 @@ export async function maybeRefreshSession(
   token: string,
   maxAge: number,
 ): Promise<void> {
+  const hashedToken = await hashToken(token);
   const { data: session } = await supabase
     .from("session")
     .select("created_at")
-    .eq("id", token)
+    .eq("id", hashedToken)
     .single();
 
   if (!session) return;
@@ -151,7 +170,7 @@ export async function maybeRefreshSession(
     await supabase
       .from("session")
       .update({ created_at: new Date().toISOString(), expires_at: newExpiry })
-      .eq("id", token);
+      .eq("id", hashedToken);
   }
 }
 

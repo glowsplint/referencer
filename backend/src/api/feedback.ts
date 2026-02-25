@@ -21,19 +21,29 @@ export function handleFeedback() {
     if (!body.title?.trim()) {
       return c.json({ error: "Title is required" }, 400);
     }
+    if (body.title.length > 200) {
+      return c.json({ error: "Title must be at most 200 characters" }, 400);
+    }
+    if (body.description && body.description.length > 5000) {
+      return c.json({ error: "Description must be at most 5000 characters" }, 400);
+    }
 
     const ua = c.req.header("user-agent") || "unknown";
     const issueBody = [
       body.description || "",
       "",
       "---",
-      `**Reported by:** ${user.name} (${user.email})`,
+      `**Reported by:** (user ${user.id})`,
       `**User-Agent:** ${ua}`,
       `**Timestamp:** ${new Date().toISOString()}`,
     ].join("\n");
 
+    const githubIssuesUrl =
+      c.env.GITHUB_ISSUES_REPO ||
+      "https://api.github.com/repos/glowsplint/referencer/issues";
+
     try {
-      const resp = await fetch("https://api.github.com/repos/glowsplint/referencer/issues", {
+      const resp = await fetch(githubIssuesUrl, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

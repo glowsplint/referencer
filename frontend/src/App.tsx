@@ -44,6 +44,7 @@ import { PlaybackBar } from "./components/PlaybackBar";
 import { EditorTour } from "./components/tour/EditorTour";
 import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annotations";
 import { useCurrentUserName } from "./hooks/data/use-current-user-name";
+import { apiFetch } from "@/lib/api-client";
 
 interface AppProps {
   workspaceId: string;
@@ -53,8 +54,7 @@ interface AppProps {
 export function App({ workspaceId, navigate }: AppProps) {
   const [permissionRole, setPermissionRole] = useState<string | null>(null);
   useEffect(() => {
-    fetch(`/api/workspaces/${workspaceId}/permission`)
-      .then((r) => (r.ok ? r.json() : null))
+    apiFetch<{ role: string }>(`/api/workspaces/${workspaceId}/permission`)
       .then((data) => setPermissionRole(data?.role ?? null))
       .catch(() => setPermissionRole(null));
   }, [workspaceId]);
@@ -303,6 +303,27 @@ export function App({ workspaceId, navigate }: AppProps) {
     [toggleReactionOnReply, currentUserName],
   );
 
+  const annotationPanelProps = {
+    layers,
+    editorsRef,
+    containerRef,
+    editingAnnotation,
+    onAnnotationChange: updateHighlightAnnotation,
+    onAnnotationBlur: handleAnnotationBlur,
+    onAnnotationClick: handleAnnotationClick,
+    isDarkMode: settings.isDarkMode,
+    sectionVisibility,
+    collapsedIds,
+    onToggleCollapse: toggleCollapse,
+    onCollapseAll: handleCollapseAll,
+    onExpandAll: expandAll,
+    currentUserName,
+    onAddReply: handleAddReply,
+    onRemoveReply: removeReply,
+    onToggleReaction: handleToggleReaction,
+    onToggleReplyReaction: handleToggleReplyReaction,
+  };
+
   return (
     <WorkspaceProvider value={workspace}>
       <RecordingProvider value={recordingContextValue}>
@@ -324,27 +345,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                     hasAnyAnnotations &&
                     settings.commentPlacement === "left" && (
                       <ErrorBoundary silent>
-                        <AnnotationPanel
-                          layers={layers}
-                          editorsRef={editorsRef}
-                          containerRef={containerRef}
-                          editingAnnotation={editingAnnotation}
-                          onAnnotationChange={updateHighlightAnnotation}
-                          onAnnotationBlur={handleAnnotationBlur}
-                          onAnnotationClick={handleAnnotationClick}
-                          isDarkMode={settings.isDarkMode}
-                          sectionVisibility={sectionVisibility}
-                          collapsedIds={collapsedIds}
-                          onToggleCollapse={toggleCollapse}
-                          onCollapseAll={handleCollapseAll}
-                          onExpandAll={expandAll}
-                          placement="left"
-                          currentUserName={currentUserName}
-                          onAddReply={handleAddReply}
-                          onRemoveReply={removeReply}
-                          onToggleReaction={handleToggleReaction}
-                          onToggleReplyReaction={handleToggleReplyReaction}
-                        />
+                        <AnnotationPanel {...annotationPanelProps} placement="left" />
                       </ErrorBoundary>
                     )}
                   <div
@@ -431,7 +432,6 @@ export function App({ workspaceId, navigate }: AppProps) {
                                   removeArrow={removeArrow}
                                   sectionVisibility={sectionVisibility}
                                   selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-                                  setLayers={workspace.setLayers}
                                   yjsSynced={workspace.yjs.synced}
                                 />
                               </ErrorBoundary>
@@ -446,27 +446,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                     hasAnyAnnotations &&
                     settings.commentPlacement === "right" && (
                       <ErrorBoundary silent>
-                        <AnnotationPanel
-                          layers={layers}
-                          editorsRef={editorsRef}
-                          containerRef={containerRef}
-                          editingAnnotation={editingAnnotation}
-                          onAnnotationChange={updateHighlightAnnotation}
-                          onAnnotationBlur={handleAnnotationBlur}
-                          onAnnotationClick={handleAnnotationClick}
-                          isDarkMode={settings.isDarkMode}
-                          sectionVisibility={sectionVisibility}
-                          collapsedIds={collapsedIds}
-                          onToggleCollapse={toggleCollapse}
-                          onCollapseAll={handleCollapseAll}
-                          onExpandAll={expandAll}
-                          placement="right"
-                          currentUserName={currentUserName}
-                          onAddReply={handleAddReply}
-                          onRemoveReply={removeReply}
-                          onToggleReaction={handleToggleReaction}
-                          onToggleReplyReaction={handleToggleReplyReaction}
-                        />
+                        <AnnotationPanel {...annotationPanelProps} placement="right" />
                       </ErrorBoundary>
                     )}
                   <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">

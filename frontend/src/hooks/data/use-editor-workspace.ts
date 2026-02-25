@@ -45,6 +45,9 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // 2. EditorViews are available for proper ProseMirror<->Yjs position mapping
   // 3. Editor content is loaded (child content-seeding effects run before this parent effect)
   const seededRef = useRef(false);
+  useEffect(() => {
+    seededRef.current = false;
+  }, [workspaceId]);
   const allEditorsMounted = rawEditorsHook.mountedEditorCount >= rawEditorsHook.editorCount;
   useEffect(() => {
     if (!yjs.doc || seededRef.current || !yjs.synced || !allEditorsMounted) return;
@@ -66,10 +69,11 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   }, [yjs.doc, yjs.synced, allEditorsMounted, trackedEditorsHook.editorsRef]);
 
   // Wraps mutation callbacks to no-op when in read-only mode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function guarded<T extends (...args: any[]) => any>(fn: T, fallback?: ReturnType<T>): T {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return ((...args: any[]) => (readOnly ? fallback : fn(...args))) as T;
+  function guarded<TArgs extends unknown[], TReturn>(
+    fn: (...args: TArgs) => TReturn,
+    fallback?: TReturn,
+  ): (...args: TArgs) => TReturn {
+    return (...args: TArgs) => (readOnly ? (fallback as TReturn) : fn(...args));
   }
 
   // Layer mutations — all write to Y.Doc directly
@@ -259,6 +263,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
         type: "reorderEditors",
         description: "Reordered passages",
         undo: () => {
+          if (rawEditorsHook.editorCount !== permutation.length) return;
           const inverse = new Array<number>(permutation.length);
           for (let newIdx = 0; newIdx < permutation.length; newIdx++) {
             inverse[permutation[newIdx]] = newIdx;
@@ -266,6 +271,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
           rawEditorsHook.reorderEditors(inverse);
         },
         redo: () => {
+          if (rawEditorsHook.editorCount !== permutation.length) return;
           rawEditorsHook.reorderEditors(permutation);
         },
       });
@@ -367,7 +373,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     activeLayerId: yjsLayers.activeLayerId,
     setActiveLayer: yjsLayers.setActiveLayer,
     setActiveLayerId: yjsLayers.setActiveLayerId,
-    setLayers: yjsLayers.setLayers,
     toggleAllLayerVisibility: guarded(() => yjsLayers.toggleAllLayerVisibility()),
     clearLayerHighlights: guarded((layerId: string) => yjsLayers.clearLayerHighlights(layerId)),
     clearLayerArrows: guarded((layerId: string) => yjsLayers.clearLayerArrows(layerId)),

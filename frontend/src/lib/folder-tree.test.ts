@@ -33,12 +33,12 @@ function makeWorkspace(overrides: Partial<WorkspaceItem> & { workspaceId: string
   };
 }
 
-describe("buildFolderTree", () => {
-  it("returns empty array for empty input", () => {
+describe("when using buildFolderTree", () => {
+  it("then returns empty array for empty input", () => {
     expect(buildFolderTree([])).toEqual([]);
   });
 
-  it("builds a flat list of root folders", () => {
+  it("then builds a flat list of root folders", () => {
     const folders = [
       makeFolder({ id: "f1", name: "Beta" }),
       makeFolder({ id: "f2", name: "Alpha" }),
@@ -52,7 +52,7 @@ describe("buildFolderTree", () => {
     expect(tree[0].children).toEqual([]);
   });
 
-  it("builds a nested tree", () => {
+  it("then builds a nested tree", () => {
     const folders = [
       makeFolder({ id: "f1", name: "Parent" }),
       makeFolder({ id: "f2", name: "Child", parentId: "f1" }),
@@ -70,7 +70,7 @@ describe("buildFolderTree", () => {
     expect(tree[0].children[0].children[0].depth).toBe(2);
   });
 
-  it("sorts children by name case-insensitively", () => {
+  it("then sorts children by name case-insensitively", () => {
     const folders = [
       makeFolder({ id: "f1", name: "Parent" }),
       makeFolder({ id: "f2", name: "zebra", parentId: "f1" }),
@@ -82,27 +82,27 @@ describe("buildFolderTree", () => {
   });
 });
 
-describe("getFolderDepth", () => {
+describe("when using getFolderDepth", () => {
   const folders = [
     makeFolder({ id: "f1", name: "Root" }),
     makeFolder({ id: "f2", name: "Child", parentId: "f1" }),
     makeFolder({ id: "f3", name: "Grandchild", parentId: "f2" }),
   ];
 
-  it("returns 0 for a root folder", () => {
+  it("then returns 0 for a root folder", () => {
     expect(getFolderDepth(folders, "f1")).toBe(0);
   });
 
-  it("returns 1 for a direct child", () => {
+  it("then returns 1 for a direct child", () => {
     expect(getFolderDepth(folders, "f2")).toBe(1);
   });
 
-  it("returns 2 for a grandchild", () => {
+  it("then returns 2 for a grandchild", () => {
     expect(getFolderDepth(folders, "f3")).toBe(2);
   });
 });
 
-describe("getWorkspacesForFolder", () => {
+describe("when using getWorkspacesForFolder", () => {
   const workspaces = [
     makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
     makeWorkspace({ workspaceId: "ws-2", folderId: "f2" }),
@@ -110,19 +110,19 @@ describe("getWorkspacesForFolder", () => {
     makeWorkspace({ workspaceId: "ws-4", folderId: null }),
   ];
 
-  it("returns workspaces matching the folder id", () => {
+  it("then returns workspaces matching the folder id", () => {
     const result = getWorkspacesForFolder(workspaces, "f1");
     expect(result).toHaveLength(2);
     expect(result.map((ws) => ws.workspaceId)).toEqual(["ws-1", "ws-3"]);
   });
 
-  it("returns empty array when no workspaces match", () => {
+  it("then returns empty array when no workspaces match", () => {
     expect(getWorkspacesForFolder(workspaces, "f99")).toEqual([]);
   });
 });
 
-describe("getUnfiledWorkspaces", () => {
-  it("excludes workspaces with a folderId", () => {
+describe("when using getUnfiledWorkspaces", () => {
+  it("then excludes workspaces with a folderId", () => {
     const workspaces = [
       makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
       makeWorkspace({ workspaceId: "ws-2", folderId: null }),
@@ -132,7 +132,7 @@ describe("getUnfiledWorkspaces", () => {
     expect(result[0].workspaceId).toBe("ws-2");
   });
 
-  it("excludes favorited workspaces", () => {
+  it("then excludes favorited workspaces", () => {
     const workspaces = [
       makeWorkspace({ workspaceId: "ws-1", isFavorite: true }),
       makeWorkspace({ workspaceId: "ws-2", isFavorite: false }),
@@ -142,7 +142,7 @@ describe("getUnfiledWorkspaces", () => {
     expect(result[0].workspaceId).toBe("ws-2");
   });
 
-  it("excludes both filed and favorited workspaces", () => {
+  it("then excludes both filed and favorited workspaces", () => {
     const workspaces = [
       makeWorkspace({ workspaceId: "ws-1", folderId: "f1", isFavorite: true }),
       makeWorkspace({ workspaceId: "ws-2", folderId: "f1" }),
@@ -154,7 +154,7 @@ describe("getUnfiledWorkspaces", () => {
     expect(result[0].workspaceId).toBe("ws-4");
   });
 
-  it("returns empty array when all workspaces are filed or favorited", () => {
+  it("then returns empty array when all workspaces are filed or favorited", () => {
     const workspaces = [
       makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
       makeWorkspace({ workspaceId: "ws-2", isFavorite: true }),
@@ -163,7 +163,7 @@ describe("getUnfiledWorkspaces", () => {
   });
 });
 
-describe("getAllDescendantFolderIds", () => {
+describe("when using getAllDescendantFolderIds", () => {
   const folders = [
     makeFolder({ id: "f1", name: "Root" }),
     makeFolder({ id: "f2", name: "Child A", parentId: "f1" }),
@@ -171,7 +171,7 @@ describe("getAllDescendantFolderIds", () => {
     makeFolder({ id: "f4", name: "Grandchild", parentId: "f2" }),
   ];
 
-  it("returns all descendants for a folder with children", () => {
+  it("then returns all descendants for a folder with children", () => {
     const ids = getAllDescendantFolderIds(folders, "f1");
     expect(ids).toHaveLength(3);
     expect(ids).toContain("f2");
@@ -179,77 +179,77 @@ describe("getAllDescendantFolderIds", () => {
     expect(ids).toContain("f4");
   });
 
-  it("returns only direct children when no grandchildren", () => {
+  it("then returns only direct children when no grandchildren", () => {
     const ids = getAllDescendantFolderIds(folders, "f3");
     expect(ids).toEqual([]);
   });
 
-  it("returns grandchild for intermediate folder", () => {
+  it("then returns grandchild for intermediate folder", () => {
     const ids = getAllDescendantFolderIds(folders, "f2");
     expect(ids).toEqual(["f4"]);
   });
 
-  it("returns empty array for a leaf folder", () => {
+  it("then returns empty array for a leaf folder", () => {
     expect(getAllDescendantFolderIds(folders, "f4")).toEqual([]);
   });
 
-  it("returns empty array for nonexistent folder", () => {
+  it("then returns empty array for nonexistent folder", () => {
     expect(getAllDescendantFolderIds(folders, "f99")).toEqual([]);
   });
 });
 
-describe("getSubtreeDepth", () => {
+describe("when using getSubtreeDepth", () => {
   const folders = [
     makeFolder({ id: "f1", name: "Root" }),
     makeFolder({ id: "f2", name: "Child", parentId: "f1" }),
     makeFolder({ id: "f3", name: "Grandchild", parentId: "f2" }),
   ];
 
-  it("returns 0 for a leaf folder with no children", () => {
+  it("then returns 0 for a leaf folder with no children", () => {
     expect(getSubtreeDepth(folders, "f3")).toBe(0);
   });
 
-  it("returns 1 for a folder with only direct children", () => {
+  it("then returns 1 for a folder with only direct children", () => {
     expect(getSubtreeDepth(folders, "f2")).toBe(1);
   });
 
-  it("returns 2 for a folder with grandchildren", () => {
+  it("then returns 2 for a folder with grandchildren", () => {
     expect(getSubtreeDepth(folders, "f1")).toBe(2);
   });
 
-  it("returns 0 for nonexistent folder", () => {
+  it("then returns 0 for nonexistent folder", () => {
     expect(getSubtreeDepth(folders, "f99")).toBe(0);
   });
 });
 
-describe("canMoveFolderTo", () => {
+describe("when using canMoveFolderTo", () => {
   const folders = [
     makeFolder({ id: "f1", name: "Root A" }),
     makeFolder({ id: "f2", name: "Child", parentId: "f1" }),
     makeFolder({ id: "f3", name: "Root B" }),
   ];
 
-  it("returns false when moving to self", () => {
+  it("then returns false when moving to self", () => {
     expect(canMoveFolderTo(folders, "f1", "f1")).toBe(false);
   });
 
-  it("returns true when moving to root (null parent)", () => {
+  it("then returns true when moving to root (null parent)", () => {
     expect(canMoveFolderTo(folders, "f2", null)).toBe(true);
   });
 
-  it("returns false when moving to own descendant", () => {
+  it("then returns false when moving to own descendant", () => {
     expect(canMoveFolderTo(folders, "f1", "f2")).toBe(false);
   });
 
-  it("returns true when moving to a sibling root folder", () => {
+  it("then returns true when moving to a sibling root folder", () => {
     expect(canMoveFolderTo(folders, "f1", "f3")).toBe(true);
   });
 
-  it("returns true when moving a leaf to another root folder", () => {
+  it("then returns true when moving a leaf to another root folder", () => {
     expect(canMoveFolderTo(folders, "f2", "f3")).toBe(true);
   });
 
-  it("returns false when resulting depth exceeds max (3)", () => {
+  it("then returns false when resulting depth exceeds max (3)", () => {
     // Build a deep tree: f10 -> f11 -> f12 (subtree depth of f10 = 2)
     // Target parent at depth 1 => 1 + 1 + 2 = 4 > 3
     const deepFolders = [
@@ -263,7 +263,7 @@ describe("canMoveFolderTo", () => {
     expect(canMoveFolderTo(deepFolders, "f10", "f21")).toBe(false);
   });
 
-  it("returns true when resulting depth is exactly at the limit", () => {
+  it("then returns true when resulting depth is exactly at the limit", () => {
     // f10 has subtree depth 0, parent at depth 2 => 2 + 1 + 0 = 3 <= 3
     const limitFolders = [
       makeFolder({ id: "f10", name: "Leaf" }),

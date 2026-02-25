@@ -1,7 +1,7 @@
 import { render, fireEvent, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { AnnotationCard } from "./AnnotationCard";
-import { migrateAnnotation } from "../utils/migrateAnnotation";
+import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
 
 function createProps(overrides: Partial<Parameters<typeof AnnotationCard>[0]> = {}) {
   return {
@@ -20,14 +20,14 @@ function createProps(overrides: Partial<Parameters<typeof AnnotationCard>[0]> = 
 
 describe("AnnotationCard", () => {
   describe("when annotation is empty and not editing", () => {
-    it("shows placeholder text", () => {
+    it("then shows placeholder text", () => {
       render(<AnnotationCard {...createProps({ annotation: "" })} />);
       expect(screen.getByText("Add annotation...")).toBeTruthy();
     });
   });
 
   describe("when annotation has rich text HTML", () => {
-    it("renders the HTML content", () => {
+    it("then renders the HTML content", () => {
       const { container } = render(
         <AnnotationCard {...createProps({ annotation: "<p><strong>bold</strong> text</p>" })} />,
       );
@@ -37,7 +37,7 @@ describe("AnnotationCard", () => {
   });
 
   describe("when annotation is plain text", () => {
-    it("migrates it to HTML for display", () => {
+    it("then migrates it to HTML for display", () => {
       const { container } = render(
         <AnnotationCard {...createProps({ annotation: "plain text" })} />,
       );
@@ -49,7 +49,7 @@ describe("AnnotationCard", () => {
   });
 
   describe("when clicked in non-editing mode with annotation", () => {
-    it("calls onClick with layerId and highlightId", () => {
+    it("then calls onClick with layerId and highlightId", () => {
       const onClick = vi.fn();
       render(<AnnotationCard {...createProps({ annotation: "<p>note</p>", onClick })} />);
       fireEvent.click(screen.getByText("note"));
@@ -58,7 +58,7 @@ describe("AnnotationCard", () => {
   });
 
   describe("when collapsed", () => {
-    it("hides the annotation text", () => {
+    it("then hides the annotation text", () => {
       const onToggleCollapse = vi.fn();
       const { container } = render(
         <AnnotationCard
@@ -72,7 +72,7 @@ describe("AnnotationCard", () => {
       expect(container.textContent).not.toContain("test");
     });
 
-    it("calls onToggleCollapse when clicked", () => {
+    it("then calls onToggleCollapse when clicked", () => {
       const onToggleCollapse = vi.fn();
       const { container } = render(
         <AnnotationCard
@@ -90,7 +90,7 @@ describe("AnnotationCard", () => {
   });
 
   describe("when expanded with onToggleCollapse provided", () => {
-    it("shows a collapse button that triggers onToggleCollapse", () => {
+    it("then shows a collapse button that triggers onToggleCollapse", () => {
       const onToggleCollapse = vi.fn();
       const { container } = render(
         <AnnotationCard
@@ -109,13 +109,13 @@ describe("AnnotationCard", () => {
   });
 
   describe("when lastEdited is provided", () => {
-    it("shows 'just now' for a recent timestamp", () => {
+    it("then shows 'just now' for a recent timestamp", () => {
       const now = Date.now();
       render(<AnnotationCard {...createProps({ annotation: "<p>note</p>", lastEdited: now })} />);
       expect(screen.getByText("just now")).toBeTruthy();
     });
 
-    it("shows relative time for older timestamps", () => {
+    it("then shows relative time for older timestamps", () => {
       const fiveMinAgo = Date.now() - 5 * 60 * 1000;
       render(
         <AnnotationCard {...createProps({ annotation: "<p>note</p>", lastEdited: fiveMinAgo })} />,
@@ -126,27 +126,39 @@ describe("AnnotationCard", () => {
 });
 
 describe("migrateAnnotation", () => {
-  it("returns empty string for empty input", () => {
-    expect(migrateAnnotation("")).toBe("");
+  describe("when given empty input", () => {
+    it("then returns empty string", () => {
+      expect(migrateAnnotation("")).toBe("");
+    });
   });
 
-  it("returns HTML as-is when it starts with a tag", () => {
-    expect(migrateAnnotation("<p>hello</p>")).toBe("<p>hello</p>");
+  describe("when given HTML input starting with a tag", () => {
+    it("then returns HTML as-is", () => {
+      expect(migrateAnnotation("<p>hello</p>")).toBe("<p>hello</p>");
+    });
   });
 
-  it("wraps plain text in paragraph tags", () => {
-    expect(migrateAnnotation("hello")).toBe("<p>hello</p>");
+  describe("when given plain text", () => {
+    it("then wraps it in paragraph tags", () => {
+      expect(migrateAnnotation("hello")).toBe("<p>hello</p>");
+    });
   });
 
-  it("wraps multi-line text with each line in paragraph tags", () => {
-    expect(migrateAnnotation("line1\nline2")).toBe("<p>line1</p><p>line2</p>");
+  describe("when given multi-line text", () => {
+    it("then wraps each line in paragraph tags", () => {
+      expect(migrateAnnotation("line1\nline2")).toBe("<p>line1</p><p>line2</p>");
+    });
   });
 
-  it("converts empty lines to <p><br></p>", () => {
-    expect(migrateAnnotation("line1\n\nline2")).toBe("<p>line1</p><p><br></p><p>line2</p>");
+  describe("when given text with empty lines", () => {
+    it("then converts empty lines to <p><br></p>", () => {
+      expect(migrateAnnotation("line1\n\nline2")).toBe("<p>line1</p><p><br></p><p>line2</p>");
+    });
   });
 
-  it("returns HTML with leading whitespace before tag as-is", () => {
-    expect(migrateAnnotation("  <p>spaced</p>")).toBe("  <p>spaced</p>");
+  describe("when given HTML with leading whitespace before tag", () => {
+    it("then returns it as-is", () => {
+      expect(migrateAnnotation("  <p>spaced</p>")).toBe("  <p>spaced</p>");
+    });
   });
 });

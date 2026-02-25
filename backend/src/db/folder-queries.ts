@@ -3,7 +3,11 @@ import type { WorkspaceFolder } from "../types";
 
 const MAX_FOLDER_DEPTH = 3;
 
-export async function getFolderDepth(supabase: SupabaseClient, folderId: string): Promise<number> {
+export async function getFolderDepth(
+  supabase: SupabaseClient,
+  folderId: string,
+  userId: string,
+): Promise<number> {
   let depth = 0;
   let currentId: string | null = folderId;
 
@@ -12,6 +16,7 @@ export async function getFolderDepth(supabase: SupabaseClient, folderId: string)
       .from("workspace_folder")
       .select("parent_id")
       .eq("id", currentId)
+      .eq("user_id", userId)
       .single();
 
     if (error || !data) break;
@@ -54,7 +59,7 @@ export async function createFolder(
   name: string,
 ): Promise<void> {
   if (parentId) {
-    const depth = await getFolderDepth(supabase, parentId);
+    const depth = await getFolderDepth(supabase, parentId, userId);
     if (depth >= MAX_FOLDER_DEPTH) {
       throw new Error(`Folder depth limit of ${MAX_FOLDER_DEPTH} exceeded`);
     }
@@ -126,7 +131,7 @@ export async function moveFolderToFolder(
 
   if (newParentId !== null) {
     // Check depth limit
-    const parentDepth = await getFolderDepth(supabase, newParentId);
+    const parentDepth = await getFolderDepth(supabase, newParentId, userId);
     if (parentDepth >= MAX_FOLDER_DEPTH) {
       throw new Error(`Folder depth limit of ${MAX_FOLDER_DEPTH} exceeded`);
     }
@@ -141,6 +146,7 @@ export async function moveFolderToFolder(
         .from("workspace_folder")
         .select("parent_id")
         .eq("id", currentId)
+        .eq("user_id", userId)
         .single();
       if (error || !data) break;
       currentId = data.parent_id;

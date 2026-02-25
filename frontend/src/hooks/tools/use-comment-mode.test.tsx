@@ -45,14 +45,14 @@ describe("useCommentMode", () => {
     vi.clearAllMocks();
   });
 
-  it("shows entry status when comments tool is activated", () => {
+  it("when comments tool is activated, then shows entry status", () => {
     const setStatus = vi.fn();
     renderHook(() => useCommentMode(createOptions({ setStatus })), { wrapper });
 
     expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ type: "info" }));
   });
 
-  it("clears status when exiting comments tool", () => {
+  it("when exiting comments tool, then clears status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
@@ -64,7 +64,7 @@ describe("useCommentMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("does not clear status when switching to another annotation tool", () => {
+  it("when switching to another annotation tool, then does not clear status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { activeTool: ActiveTool }) =>
@@ -76,7 +76,7 @@ describe("useCommentMode", () => {
     expect(clearStatus).not.toHaveBeenCalled();
   });
 
-  it("clears status when unlocking while comments tool is active", () => {
+  it("when unlocking while comments tool is active, then clears status", () => {
     const clearStatus = vi.fn();
     const { rerender } = renderHook(
       (props: { isLocked: boolean }) =>
@@ -88,7 +88,7 @@ describe("useCommentMode", () => {
     expect(clearStatus).toHaveBeenCalled();
   });
 
-  it("does nothing when activeTool is not comments", () => {
+  it("when activeTool is not comments, then does nothing", () => {
     const opts = createOptions({ activeTool: "selection", selection: word1 });
     const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
@@ -99,7 +99,7 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("does nothing when isLocked is false", () => {
+  it("when isLocked is false, then does nothing", () => {
     const opts = createOptions({ isLocked: false, selection: word1 });
     const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
@@ -110,7 +110,7 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("does nothing when there is no selection", () => {
+  it("when there is no selection, then does nothing", () => {
     const opts = createOptions({ selection: null });
     const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
@@ -121,7 +121,7 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("auto-creates a layer when no active layer", () => {
+  it("when no active layer exists, then auto-creates one", () => {
     const addLayer = vi.fn(() => "auto-layer-1");
     const addHighlight = vi.fn().mockReturnValue("h-1");
     const onHighlightAdded = vi.fn();
@@ -150,7 +150,7 @@ describe("useCommentMode", () => {
     expect(onHighlightAdded).toHaveBeenCalledWith("auto-layer-1", "h-1");
   });
 
-  it("does nothing when addLayer fails (all colors used)", () => {
+  it("when addLayer fails (all colors used), then does nothing", () => {
     const addLayer = vi.fn(() => "");
     const opts = createOptions({ activeLayerId: null, addLayer, selection: word1 });
     const { result } = renderHook(() => useCommentMode(opts), { wrapper });
@@ -163,7 +163,7 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("creates highlight and calls onHighlightAdded", () => {
+  it("when a selection is confirmed, then creates highlight and calls onHighlightAdded", () => {
     const opts = createOptions({ selection: word1 });
     const { result } = renderHook(() => useCommentMode(opts), { wrapper });
 
@@ -182,7 +182,7 @@ describe("useCommentMode", () => {
     expect(opts.onHighlightAdded).toHaveBeenCalledWith("layer-1", "h-1");
   });
 
-  it("preserves selection after creating highlight for keyboard navigation", () => {
+  it("when creating a highlight, then preserves selection for keyboard navigation", () => {
     const clearSelection = vi.fn();
     const opts = createOptions({ selection: word1 });
     const { result } = renderHook(() => useCommentMode(opts), { wrapper });
@@ -195,7 +195,7 @@ describe("useCommentMode", () => {
     expect(clearSelection).not.toHaveBeenCalled();
   });
 
-  it("removes empty-annotation highlights before creating new one", () => {
+  it("when creating a new highlight, then removes empty-annotation highlights first", () => {
     const opts = createOptions({
       selection: word2,
       layers: [
@@ -235,7 +235,7 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).toHaveBeenCalled();
   });
 
-  it("toggles off highlight when same range selected", () => {
+  it("when the same range is selected again, then toggles off highlight", () => {
     const opts = createOptions({
       selection: word1,
       layers: [
@@ -265,7 +265,7 @@ describe("useCommentMode", () => {
     expect(opts.addHighlight).not.toHaveBeenCalled();
   });
 
-  it("always shows success status when comment is created", () => {
+  it("when a comment is created, then always shows success status", () => {
     const flashStatus = vi.fn();
     const opts = createOptions({ selection: word1, flashStatus });
     const { result } = renderHook(() => useCommentMode(opts), { wrapper });
@@ -278,7 +278,7 @@ describe("useCommentMode", () => {
     expect(flashStatus).toHaveBeenCalledWith({ text: "Comment added.", type: "success" }, 3000);
   });
 
-  it("stays in comments mode (does NOT switch to selection)", () => {
+  it("when a comment is created, then stays in comments mode", () => {
     const setActiveTool = vi.fn();
     const opts = createOptions({ selection: word1 });
     const { result } = renderHook(() => useCommentMode(opts), { wrapper });

@@ -33,9 +33,9 @@ function setupLayerWithAnnotations(doc: Y.Doc) {
   addUnderlineToDoc(doc, "layer-1", { editorIndex: 0, from: 0, to: 5, text: "hello" }, "u1");
 }
 
-describe("annotation visibility", () => {
-  describe("highlights", () => {
-    it("new highlights default to visible: true", () => {
+describe("when using annotation visibility", () => {
+  describe("when using highlights", () => {
+    it("then new highlights default to visible: true", () => {
       const doc = new Y.Doc();
       addLayerToDoc(doc, { id: "layer-1", name: "Layer 1", color: "#ff0000" });
       addHighlightToDoc(
@@ -49,7 +49,7 @@ describe("annotation visibility", () => {
       expect(layers[0].highlights[0].visible).toBe(true);
     });
 
-    it("toggleHighlightVisibilityInDoc toggles visibility", () => {
+    it("then toggleHighlightVisibilityInDoc toggles visibility", () => {
       const doc = new Y.Doc();
       setupLayerWithAnnotations(doc);
 
@@ -69,8 +69,8 @@ describe("annotation visibility", () => {
     });
   });
 
-  describe("arrows", () => {
-    it("new arrows default to visible: true", () => {
+  describe("when using arrows", () => {
+    it("then new arrows default to visible: true", () => {
       const doc = new Y.Doc();
       addLayerToDoc(doc, { id: "layer-1", name: "Layer 1", color: "#ff0000" });
       addArrowToDoc(
@@ -87,7 +87,7 @@ describe("annotation visibility", () => {
       expect(layers[0].arrows[0].visible).toBe(true);
     });
 
-    it("toggleArrowVisibilityInDoc toggles visibility", () => {
+    it("then toggleArrowVisibilityInDoc toggles visibility", () => {
       const doc = new Y.Doc();
       setupLayerWithAnnotations(doc);
 
@@ -104,8 +104,8 @@ describe("annotation visibility", () => {
     });
   });
 
-  describe("underlines", () => {
-    it("new underlines default to visible: true", () => {
+  describe("when using underlines", () => {
+    it("then new underlines default to visible: true", () => {
       const doc = new Y.Doc();
       addLayerToDoc(doc, { id: "layer-1", name: "Layer 1", color: "#ff0000" });
       addUnderlineToDoc(doc, "layer-1", { editorIndex: 0, from: 0, to: 5, text: "hello" }, "u1");
@@ -114,7 +114,7 @@ describe("annotation visibility", () => {
       expect(layers[0].underlines[0].visible).toBe(true);
     });
 
-    it("toggleUnderlineVisibilityInDoc toggles visibility", () => {
+    it("then toggleUnderlineVisibilityInDoc toggles visibility", () => {
       const doc = new Y.Doc();
       setupLayerWithAnnotations(doc);
 
@@ -131,8 +131,8 @@ describe("annotation visibility", () => {
     });
   });
 
-  describe("setAnnotationVisibilityInDoc", () => {
-    it("sets highlight visibility to a specific value", () => {
+  describe("when using setAnnotationVisibilityInDoc", () => {
+    it("then sets highlight visibility to a specific value", () => {
       const doc = new Y.Doc();
       setupLayerWithAnnotations(doc);
 
@@ -145,7 +145,7 @@ describe("annotation visibility", () => {
       expect(layers[0].highlights[0].visible).toBe(true);
     });
 
-    it("sets arrow visibility to a specific value", () => {
+    it("then sets arrow visibility to a specific value", () => {
       const doc = new Y.Doc();
       setupLayerWithAnnotations(doc);
 
@@ -154,7 +154,7 @@ describe("annotation visibility", () => {
       expect(layers[0].arrows[0].visible).toBe(false);
     });
 
-    it("sets underline visibility to a specific value", () => {
+    it("then sets underline visibility to a specific value", () => {
       const doc = new Y.Doc();
       setupLayerWithAnnotations(doc);
 
@@ -164,8 +164,8 @@ describe("annotation visibility", () => {
     });
   });
 
-  describe("backward compatibility", () => {
-    it("reading highlights without visible field defaults to true", () => {
+  describe("when using backward compatibility", () => {
+    it("then reading highlights without visible field defaults to true", () => {
       const doc = new Y.Doc();
       addLayerToDoc(doc, { id: "layer-1", name: "Layer 1", color: "#ff0000" });
 
@@ -195,7 +195,7 @@ describe("annotation visibility", () => {
       expect(highlight!.visible).toBe(true);
     });
 
-    it("reading arrows without visible field defaults to true", () => {
+    it("then reading arrows without visible field defaults to true", () => {
       const doc = new Y.Doc();
       addLayerToDoc(doc, { id: "layer-1", name: "Layer 1", color: "#ff0000" });
 
@@ -227,7 +227,7 @@ describe("annotation visibility", () => {
       expect(arrow!.visible).toBe(true);
     });
 
-    it("reading underlines without visible field defaults to true", () => {
+    it("then reading underlines without visible field defaults to true", () => {
       const doc = new Y.Doc();
       addLayerToDoc(doc, { id: "layer-1", name: "Layer 1", color: "#ff0000" });
 

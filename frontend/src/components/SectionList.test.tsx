@@ -20,24 +20,24 @@ function renderList(overrides = {}) {
 
 describe("SectionList", () => {
   describe("when rendered", () => {
-    it("shows the Passages heading", () => {
+    it("then shows the Passages heading", () => {
       renderList();
       expect(screen.getByText("Passages")).toBeInTheDocument();
     });
 
-    it("shows the add passage button", () => {
+    it("then shows the add passage button", () => {
       renderList();
       expect(screen.getByTestId("addPassageButton")).toBeInTheDocument();
     });
 
-    it("shows the master visibility toggle", () => {
+    it("then shows the master visibility toggle", () => {
       renderList();
       expect(screen.getByTestId("toggleAllSectionVisibility")).toBeInTheDocument();
     });
   });
 
   describe("when passages exist", () => {
-    it("shows passage labels", () => {
+    it("then shows passage labels", () => {
       renderList({
         editorCount: 3,
         sectionVisibility: [true, true, true],
@@ -48,7 +48,7 @@ describe("SectionList", () => {
       expect(screen.getByText("Passage 3")).toBeInTheDocument();
     });
 
-    it("shows a visibility toggle for each passage", () => {
+    it("then shows a visibility toggle for each passage", () => {
       renderList({
         editorCount: 2,
         sectionVisibility: [true, true],
@@ -58,7 +58,7 @@ describe("SectionList", () => {
       expect(screen.getByTestId("sectionVisibility-1")).toBeInTheDocument();
     });
 
-    it("renders custom passage names from props", () => {
+    it("then renders custom passage names from props", () => {
       renderList({
         editorCount: 2,
         sectionVisibility: [true, true],
@@ -70,7 +70,7 @@ describe("SectionList", () => {
   });
 
   describe("when a visibility toggle is clicked", () => {
-    it("calls toggleSectionVisibility with the passage index", () => {
+    it("then calls toggleSectionVisibility with the passage index", () => {
       const { props } = renderList({
         editorCount: 2,
         sectionVisibility: [true, true],
@@ -82,21 +82,21 @@ describe("SectionList", () => {
   });
 
   describe("when a passage is visible", () => {
-    it("shows Hide passage as the toggle title", () => {
+    it("then shows Hide passage as the toggle title", () => {
       renderList({ editorCount: 1, sectionVisibility: [true] });
       expect(screen.getByTestId("sectionVisibility-0")).toHaveAttribute("title", "Hide passage");
     });
   });
 
   describe("when a passage is hidden", () => {
-    it("shows Show passage as the toggle title", () => {
+    it("then shows Show passage as the toggle title", () => {
       renderList({ editorCount: 1, sectionVisibility: [false] });
       expect(screen.getByTestId("sectionVisibility-0")).toHaveAttribute("title", "Show passage");
     });
   });
 
   describe("when multiple passages exist", () => {
-    it("allows reordering passages via drag", () => {
+    it("then allows reordering passages via drag", () => {
       renderList({
         editorCount: 2,
         sectionVisibility: [true, true],
@@ -106,7 +106,7 @@ describe("SectionList", () => {
       expect(row).toHaveAttribute("draggable", "true");
     });
 
-    it("sets section index in dataTransfer on drag start", () => {
+    it("then sets section index in dataTransfer on drag start", () => {
       renderList({
         editorCount: 2,
         sectionVisibility: [true, true],
@@ -120,7 +120,7 @@ describe("SectionList", () => {
   });
 
   describe("when only one passage exists", () => {
-    it("does not allow dragging", () => {
+    it("then does not allow dragging", () => {
       renderList();
       const row = screen.getByTestId("passageName-0").parentElement;
       expect(row).not.toHaveAttribute("draggable", "true");
@@ -128,7 +128,7 @@ describe("SectionList", () => {
   });
 
   describe("when the master visibility button is clicked", () => {
-    it("calls toggleAllSectionVisibility", () => {
+    it("then calls toggleAllSectionVisibility", () => {
       const { props } = renderList();
       fireEvent.click(screen.getByTestId("toggleAllSectionVisibility"));
       expect(props.toggleAllSectionVisibility).toHaveBeenCalled();
@@ -136,16 +136,16 @@ describe("SectionList", () => {
   });
 
   describe("when the add passage button is clicked", () => {
-    it("calls addEditor", () => {
+    it("then calls addEditor", () => {
       const { props } = renderList();
       fireEvent.click(screen.getByTestId("addPassageButton"));
       expect(props.addEditor).toHaveBeenCalled();
     });
   });
 
-  describe("inline editing", () => {
+  describe("when inline editing", () => {
     describe("when a passage name is double-clicked", () => {
-      it("enters edit mode with the current name", () => {
+      it("then enters edit mode with the current name", () => {
         renderList();
         fireEvent.doubleClick(screen.getByTestId("passageName-0"));
         expect(screen.getByTestId("passageNameInput-0")).toBeInTheDocument();
@@ -154,7 +154,7 @@ describe("SectionList", () => {
     });
 
     describe("when Enter is pressed during editing", () => {
-      it("commits the new name", () => {
+      it("then commits the new name", () => {
         const { props } = renderList();
         fireEvent.doubleClick(screen.getByTestId("passageName-0"));
         fireEvent.change(screen.getByTestId("passageNameInput-0"), {
@@ -166,7 +166,7 @@ describe("SectionList", () => {
     });
 
     describe("when Escape is pressed during editing", () => {
-      it("cancels the edit without committing", () => {
+      it("then cancels the edit without committing", () => {
         const { props } = renderList();
         fireEvent.doubleClick(screen.getByTestId("passageName-0"));
         fireEvent.change(screen.getByTestId("passageNameInput-0"), {
@@ -179,7 +179,7 @@ describe("SectionList", () => {
     });
 
     describe("when the input loses focus", () => {
-      it("commits the new name", () => {
+      it("then commits the new name", () => {
         const { props } = renderList();
         fireEvent.doubleClick(screen.getByTestId("passageName-0"));
         fireEvent.change(screen.getByTestId("passageNameInput-0"), {
@@ -191,7 +191,7 @@ describe("SectionList", () => {
     });
 
     describe("when an empty name is submitted", () => {
-      it("reverts to the original name", () => {
+      it("then reverts to the original name", () => {
         const { props } = renderList();
         fireEvent.doubleClick(screen.getByTestId("passageName-0"));
         fireEvent.change(screen.getByTestId("passageNameInput-0"), {

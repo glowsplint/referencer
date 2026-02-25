@@ -27,21 +27,21 @@ vi.mock("react-colorful", () => ({
 
 describe("ColorPicker", () => {
   describe("when rendered", () => {
-    it("shows all preset color swatches", () => {
+    it("then shows all preset color swatches", () => {
       render(<ColorPicker index={0} onSelectColor={vi.fn()} />);
       for (const color of TAILWIND_300_COLORS) {
         expect(screen.getByTestId(`colorOption-${color}`)).toBeInTheDocument();
       }
     });
 
-    it("uses the index in its test id", () => {
+    it("then uses the index in its test id", () => {
       render(<ColorPicker index={2} onSelectColor={vi.fn()} />);
       expect(screen.getByTestId("colorPicker-2")).toBeInTheDocument();
     });
   });
 
   describe("when a preset color is clicked", () => {
-    it("calls onSelectColor with that color", () => {
+    it("then calls onSelectColor with that color", () => {
       const onSelectColor = vi.fn();
       render(<ColorPicker index={0} onSelectColor={onSelectColor} />);
       fireEvent.click(screen.getByTestId(`colorOption-${TAILWIND_300_COLORS[3]}`));
@@ -53,20 +53,20 @@ describe("ColorPicker", () => {
     const customColors = ["#ff0000", "#00ff00"];
 
     describe("when custom colors are provided", () => {
-      it("shows the custom color swatches", () => {
+      it("then shows the custom color swatches", () => {
         render(<ColorPicker index={0} onSelectColor={vi.fn()} customColors={customColors} />);
         expect(screen.getByTestId("customColor-#ff0000")).toBeInTheDocument();
         expect(screen.getByTestId("customColor-#00ff00")).toBeInTheDocument();
       });
 
-      it("shows the custom section separator", () => {
+      it("then shows the custom section separator", () => {
         render(<ColorPicker index={0} onSelectColor={vi.fn()} customColors={customColors} />);
         expect(screen.getByTestId("customColorSeparator-0")).toBeInTheDocument();
       });
     });
 
     describe("when a custom color is clicked", () => {
-      it("calls onSelectColor with that color", () => {
+      it("then calls onSelectColor with that color", () => {
         const onSelectColor = vi.fn();
         render(<ColorPicker index={0} onSelectColor={onSelectColor} customColors={customColors} />);
         fireEvent.click(screen.getByTestId("customColor-#ff0000"));
@@ -75,21 +75,21 @@ describe("ColorPicker", () => {
     });
 
     describe("when onAddCustomColor is provided", () => {
-      it("shows the add custom color button", () => {
+      it("then shows the add custom color button", () => {
         render(<ColorPicker index={0} onSelectColor={vi.fn()} onAddCustomColor={vi.fn()} />);
         expect(screen.getByTestId("addCustomColor-0")).toBeInTheDocument();
       });
     });
 
     describe("when onAddCustomColor is not provided", () => {
-      it("does not show the add custom color button", () => {
+      it("then does not show the add custom color button", () => {
         render(<ColorPicker index={0} onSelectColor={vi.fn()} customColors={customColors} />);
         expect(screen.queryByTestId("addCustomColor-0")).not.toBeInTheDocument();
       });
     });
 
     describe("when the add button is clicked and a color is confirmed", () => {
-      it("calls onAddCustomColor and onSelectColor with the entered color", () => {
+      it("then calls onAddCustomColor and onSelectColor with the entered color", () => {
         const onAddCustomColor = vi.fn();
         const onSelectColor = vi.fn();
         render(
@@ -112,7 +112,7 @@ describe("ColorPicker", () => {
     });
 
     describe("when onRemoveCustomColor is provided", () => {
-      it("shows remove buttons on custom color swatches", () => {
+      it("then shows remove buttons on custom color swatches", () => {
         render(
           <ColorPicker
             index={0}
@@ -127,7 +127,7 @@ describe("ColorPicker", () => {
     });
 
     describe("when a custom color remove button is clicked", () => {
-      it("calls onRemoveCustomColor with that color", () => {
+      it("then calls onRemoveCustomColor with that color", () => {
         const onRemoveCustomColor = vi.fn();
         render(
           <ColorPicker
@@ -143,7 +143,7 @@ describe("ColorPicker", () => {
     });
 
     describe("when no custom colors and no callback are provided", () => {
-      it("does not show the custom section", () => {
+      it("then does not show the custom section", () => {
         render(<ColorPicker index={0} onSelectColor={vi.fn()} />);
         expect(screen.queryByTestId("customColorSeparator-0")).not.toBeInTheDocument();
       });
@@ -152,7 +152,7 @@ describe("ColorPicker", () => {
 
   describe("advanced picker", () => {
     describe("when the add button is toggled", () => {
-      it("opens and closes the advanced picker", () => {
+      it("then opens and closes the advanced picker", () => {
         render(<ColorPicker index={0} onSelectColor={vi.fn()} onAddCustomColor={vi.fn()} />);
         expect(screen.queryByTestId("advancedPicker-0")).not.toBeInTheDocument();
 
@@ -165,7 +165,7 @@ describe("ColorPicker", () => {
     });
 
     describe("when a hex value is typed", () => {
-      it("updates the color preview without calling onSelectColor", () => {
+      it("then updates the color preview without calling onSelectColor", () => {
         const onSelectColor = vi.fn();
         render(<ColorPicker index={0} onSelectColor={onSelectColor} onAddCustomColor={vi.fn()} />);
         fireEvent.click(screen.getByTestId("addCustomColor-0"));
@@ -179,7 +179,7 @@ describe("ColorPicker", () => {
     });
 
     describe("when an RGB value is changed", () => {
-      it("updates the color preview without calling onSelectColor", () => {
+      it("then updates the color preview without calling onSelectColor", () => {
         const onSelectColor = vi.fn();
         render(<ColorPicker index={0} onSelectColor={onSelectColor} onAddCustomColor={vi.fn()} />);
         fireEvent.click(screen.getByTestId("addCustomColor-0"));
@@ -192,7 +192,7 @@ describe("ColorPicker", () => {
     });
 
     describe("when the confirm button is clicked", () => {
-      it("calls onAddCustomColor and closes the picker", () => {
+      it("then calls onAddCustomColor and closes the picker", () => {
         const onAddCustomColor = vi.fn();
         render(
           <ColorPicker index={0} onSelectColor={vi.fn()} onAddCustomColor={onAddCustomColor} />,

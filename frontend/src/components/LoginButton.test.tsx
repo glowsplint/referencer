@@ -21,14 +21,14 @@ describe("LoginButton", () => {
   });
 
   describe("when rendered", () => {
-    it("shows the login button", () => {
+    it("then shows the login button", () => {
       render(<LoginButton />);
       expect(screen.getByTestId("loginButton")).toBeInTheDocument();
     });
   });
 
   describe("when the login button is clicked", () => {
-    it("shows the provider popover with Google and GitHub options", async () => {
+    it("then shows the provider popover with Google and GitHub options", async () => {
       const user = userEvent.setup();
       render(<LoginButton />);
 
@@ -41,7 +41,7 @@ describe("LoginButton", () => {
   });
 
   describe("when Google provider is clicked", () => {
-    it("initiates Google login", async () => {
+    it("then initiates Google login", async () => {
       const user = userEvent.setup();
       render(<LoginButton />);
 
@@ -53,7 +53,7 @@ describe("LoginButton", () => {
   });
 
   describe("when GitHub provider is clicked", () => {
-    it("initiates GitHub login", async () => {
+    it("then initiates GitHub login", async () => {
       const user = userEvent.setup();
       render(<LoginButton />);
 

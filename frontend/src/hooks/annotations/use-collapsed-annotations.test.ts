@@ -7,12 +7,12 @@ beforeEach(() => {
 });
 
 describe("useCollapsedAnnotations", () => {
-  it("starts with empty collapsed set", () => {
+  it("when initialized, then starts with empty collapsed set", () => {
     const { result } = renderHook(() => useCollapsedAnnotations("ws-1"));
     expect(result.current.collapsedIds.size).toBe(0);
   });
 
-  it("toggleCollapse adds an id to the set", () => {
+  it("when toggleCollapse is called with a new id, then adds it to the set", () => {
     const { result } = renderHook(() => useCollapsedAnnotations("ws-1"));
 
     act(() => {
@@ -23,7 +23,7 @@ describe("useCollapsedAnnotations", () => {
     expect(result.current.collapsedIds.size).toBe(1);
   });
 
-  it("toggleCollapse removes an id if already present", () => {
+  it("when toggleCollapse is called with an existing id, then removes it", () => {
     const { result } = renderHook(() => useCollapsedAnnotations("ws-1"));
 
     act(() => {
@@ -38,7 +38,7 @@ describe("useCollapsedAnnotations", () => {
     expect(result.current.collapsedIds.size).toBe(0);
   });
 
-  it("collapseAll sets all provided IDs", () => {
+  it("when collapseAll is called with multiple IDs, then sets all of them", () => {
     const { result } = renderHook(() => useCollapsedAnnotations("ws-1"));
 
     act(() => {
@@ -51,7 +51,7 @@ describe("useCollapsedAnnotations", () => {
     expect(result.current.collapsedIds.has("h3")).toBe(true);
   });
 
-  it("expandAll clears all collapsed IDs", () => {
+  it("when expandAll is called, then clears all collapsed IDs", () => {
     const { result } = renderHook(() => useCollapsedAnnotations("ws-1"));
 
     act(() => {
@@ -65,7 +65,7 @@ describe("useCollapsedAnnotations", () => {
     expect(result.current.collapsedIds.size).toBe(0);
   });
 
-  it("persists collapsed state to localStorage", () => {
+  it("when an id is collapsed, then persists state to localStorage", () => {
     const { result } = renderHook(() => useCollapsedAnnotations("ws-1"));
 
     act(() => {
@@ -76,7 +76,7 @@ describe("useCollapsedAnnotations", () => {
     expect(stored).toEqual(["h1"]);
   });
 
-  it("restores collapsed state from localStorage on init", () => {
+  it("when localStorage has saved state, then restores it on init", () => {
     localStorage.setItem("referencer-collapsed-ws-1", JSON.stringify(["h1", "h2"]));
 
     const { result } = renderHook(() => useCollapsedAnnotations("ws-1"));
@@ -86,7 +86,7 @@ describe("useCollapsedAnnotations", () => {
     expect(result.current.collapsedIds.has("h2")).toBe(true);
   });
 
-  it("handles invalid localStorage gracefully", () => {
+  it("when localStorage contains invalid JSON, then handles it gracefully", () => {
     localStorage.setItem("referencer-collapsed-ws-1", "not-json{{{");
 
     const { result } = renderHook(() => useCollapsedAnnotations("ws-1"));
@@ -94,7 +94,7 @@ describe("useCollapsedAnnotations", () => {
     expect(result.current.collapsedIds.size).toBe(0);
   });
 
-  it("uses workspaceId-specific localStorage key", () => {
+  it("when different workspaceIds are used, then each has its own localStorage key", () => {
     const { result: r1 } = renderHook(() => useCollapsedAnnotations("ws-1"));
     const { result: r2 } = renderHook(() => useCollapsedAnnotations("ws-2"));
 

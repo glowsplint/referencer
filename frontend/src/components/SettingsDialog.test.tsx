@@ -22,14 +22,14 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
 
 describe("SettingsDialog", () => {
   describe("when opened", () => {
-    it("shows the settings title and description", () => {
+    it("then shows the settings title and description", () => {
       renderDialog();
       expect(screen.getByTestId("settingsDialog")).toBeInTheDocument();
       expect(screen.getByText("Settings")).toBeInTheDocument();
       expect(screen.getByText("Customize your workspace preferences.")).toBeInTheDocument();
     });
 
-    it("shows all setting rows", () => {
+    it("then shows all setting rows", () => {
       renderDialog();
       expect(screen.getByText("Dark mode")).toBeInTheDocument();
       expect(screen.getByText("Overscroll")).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("SettingsDialog", () => {
       expect(screen.getByText("Status bar")).toBeInTheDocument();
     });
 
-    it("does not show removed toast notification settings", () => {
+    it("then does not show removed toast notification settings", () => {
       renderDialog();
       expect(screen.queryByText("Drawing notifications")).not.toBeInTheDocument();
       expect(screen.queryByText("Comments notifications")).not.toBeInTheDocument();
@@ -46,14 +46,14 @@ describe("SettingsDialog", () => {
   });
 
   describe("when open is false", () => {
-    it("does not render the dialog", () => {
+    it("then does not render the dialog", () => {
       renderDialog({ open: false });
       expect(screen.queryByTestId("settingsDialog")).not.toBeInTheDocument();
     });
   });
 
   describe("when the dark mode switch is clicked", () => {
-    it("calls toggleDarkMode", () => {
+    it("then calls toggleDarkMode", () => {
       const props = renderDialog();
       fireEvent.click(screen.getByTestId("dark-mode-switch"));
       expect(props.toggleDarkMode).toHaveBeenCalledOnce();
@@ -61,7 +61,7 @@ describe("SettingsDialog", () => {
   });
 
   describe("when the overscroll switch is clicked", () => {
-    it("calls toggleOverscrollEnabled", () => {
+    it("then calls toggleOverscrollEnabled", () => {
       const props = renderDialog();
       fireEvent.click(screen.getByTestId("overscroll-switch"));
       expect(props.toggleOverscrollEnabled).toHaveBeenCalledOnce();
@@ -69,7 +69,7 @@ describe("SettingsDialog", () => {
   });
 
   describe("when the hide off-screen arrows switch is clicked", () => {
-    it("calls toggleHideOffscreenArrows", () => {
+    it("then calls toggleHideOffscreenArrows", () => {
       const props = renderDialog();
       fireEvent.click(screen.getByTestId("hide-offscreen-arrows-switch"));
       expect(props.toggleHideOffscreenArrows).toHaveBeenCalledOnce();
@@ -77,7 +77,7 @@ describe("SettingsDialog", () => {
   });
 
   describe("when the status bar switch is clicked", () => {
-    it("calls toggleShowStatusBar", () => {
+    it("then calls toggleShowStatusBar", () => {
       const props = renderDialog();
       fireEvent.click(screen.getByTestId("show-status-bar-switch"));
       expect(props.toggleShowStatusBar).toHaveBeenCalledOnce();
@@ -85,28 +85,28 @@ describe("SettingsDialog", () => {
   });
 
   describe("when isDarkMode is true", () => {
-    it("renders the dark mode switch as checked", () => {
+    it("then renders the dark mode switch as checked", () => {
       renderDialog({ isDarkMode: true });
       expect(screen.getByTestId("dark-mode-switch")).toHaveAttribute("aria-checked", "true");
     });
   });
 
   describe("when isDarkMode is false", () => {
-    it("renders the dark mode switch as unchecked", () => {
+    it("then renders the dark mode switch as unchecked", () => {
       renderDialog({ isDarkMode: false });
       expect(screen.getByTestId("dark-mode-switch")).toHaveAttribute("aria-checked", "false");
     });
   });
 
   describe("when overscrollEnabled is true", () => {
-    it("renders the overscroll switch as checked", () => {
+    it("then renders the overscroll switch as checked", () => {
       renderDialog({ overscrollEnabled: true });
       expect(screen.getByTestId("overscroll-switch")).toHaveAttribute("aria-checked", "true");
     });
   });
 
   describe("when hideOffscreenArrows is true", () => {
-    it("renders the hide off-screen arrows switch as checked", () => {
+    it("then renders the hide off-screen arrows switch as checked", () => {
       renderDialog({ hideOffscreenArrows: true });
       expect(screen.getByTestId("hide-offscreen-arrows-switch")).toHaveAttribute(
         "aria-checked",
@@ -116,14 +116,14 @@ describe("SettingsDialog", () => {
   });
 
   describe("when showStatusBar is true", () => {
-    it("renders the status bar switch as checked", () => {
+    it("then renders the status bar switch as checked", () => {
       renderDialog({ showStatusBar: true });
       expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute("aria-checked", "true");
     });
   });
 
   describe("when showStatusBar is false", () => {
-    it("renders the status bar switch as unchecked", () => {
+    it("then renders the status bar switch as unchecked", () => {
       renderDialog({ showStatusBar: false });
       expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute("aria-checked", "false");
     });

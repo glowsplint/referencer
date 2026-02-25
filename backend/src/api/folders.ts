@@ -24,7 +24,7 @@ folders.get("/", async (c) => {
     return c.json(items);
   } catch (err) {
     console.error("GET /api/folders error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -41,15 +41,20 @@ folders.post("/", async (c) => {
     if (typeof body.name !== "string") {
       return c.json({ error: "name is required" }, 400);
     }
+    if (body.name.length > 200) {
+      return c.json({ error: "Folder name must be at most 200 characters" }, 400);
+    }
 
     const supabase = c.get("supabase");
     await createFolder(supabase, body.id, user.id, body.parentId ?? null, body.name);
     return c.json({ ok: true }, 201);
   } catch (err) {
     console.error("POST /api/folders error:", err);
-    const message = err instanceof Error ? err.message : String(err);
-    const status = message.includes("depth limit") ? 400 : 500;
-    return c.json({ error: message }, status);
+    const message = err instanceof Error ? err.message : "";
+    if (message.includes("depth limit")) {
+      return c.json({ error: message }, 400);
+    }
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -70,7 +75,7 @@ folders.patch("/:id/favorite", async (c) => {
     return c.json({ ok: true });
   } catch (err) {
     console.error("PATCH /api/folders/:id/favorite error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -87,9 +92,15 @@ folders.patch("/:id/move", async (c) => {
     return c.json({ ok: true });
   } catch (err) {
     console.error("PATCH /api/folders/:id/move error:", err);
-    const message = err instanceof Error ? err.message : String(err);
-    const status = message.includes("depth limit") || message.includes("cycle") || message.includes("Cannot move") ? 400 : 500;
-    return c.json({ error: message }, status);
+    const message = err instanceof Error ? err.message : "";
+    if (
+      message.includes("depth limit") ||
+      message.includes("cycle") ||
+      message.includes("Cannot move")
+    ) {
+      return c.json({ error: message }, 400);
+    }
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -104,13 +115,16 @@ folders.patch("/:id", async (c) => {
     if (typeof body.name !== "string") {
       return c.json({ error: "name is required" }, 400);
     }
+    if (body.name.length > 200) {
+      return c.json({ error: "Folder name must be at most 200 characters" }, 400);
+    }
 
     const supabase = c.get("supabase");
     await renameFolder(supabase, user.id, folderId, body.name);
     return c.json({ ok: true });
   } catch (err) {
     console.error("PATCH /api/folders/:id error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -126,7 +140,7 @@ folders.delete("/:id", async (c) => {
     return c.json({ ok: true });
   } catch (err) {
     console.error("DELETE /api/folders/:id error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -147,7 +161,7 @@ folders.patch("/:id/move-workspace", async (c) => {
     return c.json({ ok: true });
   } catch (err) {
     console.error("PATCH /api/folders/:id/move-workspace error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -167,7 +181,7 @@ folders.post("/unfile-workspace", async (c) => {
     return c.json({ ok: true });
   } catch (err) {
     console.error("POST /api/folders/unfile-workspace error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 

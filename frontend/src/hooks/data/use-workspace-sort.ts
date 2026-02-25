@@ -34,7 +34,9 @@ export function useWorkspaceSort(workspaces: WorkspaceItem[]) {
             ? "asc"
             : "desc";
       const next: SortConfig = { field, direction };
-      localStorage.setItem(STORAGE_KEYS.HUB_SORT, JSON.stringify(next));
+      try {
+        localStorage.setItem(STORAGE_KEYS.HUB_SORT, JSON.stringify(next));
+      } catch { /* quota exceeded or unavailable */ }
       return next;
     });
   }, []);

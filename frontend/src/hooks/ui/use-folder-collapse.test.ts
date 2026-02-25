@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useFolderCollapse } from "./use-folder-collapse";
 
-const PREFIX = "referencer-collapsed-folder-";
+const PREFIX = "referencer-folder-collapsed-";
 
 function makeStorageMock() {
   const store: Record<string, string> = {};
@@ -33,12 +33,12 @@ beforeEach(() => {
 });
 
 describe("useFolderCollapse", () => {
-  it("defaults to expanded (not collapsed)", () => {
+  it("when initialized, then defaults to expanded", () => {
     const { result } = renderHook(() => useFolderCollapse("folder-1"));
     expect(result.current.isCollapsed).toBe(false);
   });
 
-  it("toggle changes state from expanded to collapsed", () => {
+  it("when toggle is called while expanded, then collapses", () => {
     const { result } = renderHook(() => useFolderCollapse("folder-1"));
     act(() => {
       result.current.toggleCollapsed();
@@ -46,7 +46,7 @@ describe("useFolderCollapse", () => {
     expect(result.current.isCollapsed).toBe(true);
   });
 
-  it("toggle changes state from collapsed back to expanded", () => {
+  it("when toggle is called while collapsed, then expands", () => {
     const { result } = renderHook(() => useFolderCollapse("folder-1"));
     act(() => {
       result.current.toggleCollapsed();
@@ -57,7 +57,7 @@ describe("useFolderCollapse", () => {
     expect(result.current.isCollapsed).toBe(false);
   });
 
-  it("persists collapsed state to localStorage", () => {
+  it("when collapsed, then persists state to localStorage", () => {
     const { result } = renderHook(() => useFolderCollapse("folder-1"));
     act(() => {
       result.current.toggleCollapsed();
@@ -65,7 +65,7 @@ describe("useFolderCollapse", () => {
     expect(storageMock.setItem).toHaveBeenCalledWith(PREFIX + "folder-1", "true");
   });
 
-  it("removes localStorage key when expanding", () => {
+  it("when expanded, then removes localStorage key", () => {
     const { result } = renderHook(() => useFolderCollapse("folder-1"));
     act(() => {
       result.current.toggleCollapsed();
@@ -76,13 +76,13 @@ describe("useFolderCollapse", () => {
     expect(storageMock.removeItem).toHaveBeenCalledWith(PREFIX + "folder-1");
   });
 
-  it("reads initial collapsed state from localStorage", () => {
+  it("when localStorage has collapsed state, then reads it on init", () => {
     storageMock._store[PREFIX + "folder-1"] = "true";
     const { result } = renderHook(() => useFolderCollapse("folder-1"));
     expect(result.current.isCollapsed).toBe(true);
   });
 
-  it("uses different storage keys for different folder IDs", () => {
+  it("when different folder IDs are used, then uses different storage keys", () => {
     storageMock._store[PREFIX + "folder-A"] = "true";
     const { result: resultA } = renderHook(() => useFolderCollapse("folder-A"));
     const { result: resultB } = renderHook(() => useFolderCollapse("folder-B"));

@@ -23,7 +23,7 @@ describe("ShareDialog", () => {
   });
 
   describe("when opened", () => {
-    it("shows sharing options", () => {
+    it("then shows sharing options", () => {
       renderShareDialog();
       expect(screen.getByText("Share workspace")).toBeInTheDocument();
       expect(screen.getByTestId("shareReadonlyButton")).toBeInTheDocument();
@@ -32,7 +32,7 @@ describe("ShareDialog", () => {
   });
 
   describe("when open is false", () => {
-    it("does not render the dialog", () => {
+    it("then does not render the dialog", () => {
       renderWithWorkspace(
         <ShareDialog open={false} onOpenChange={vi.fn()} workspaceId="test-workspace-123" />,
       );
@@ -41,7 +41,7 @@ describe("ShareDialog", () => {
   });
 
   describe("when read-only sharing is selected", () => {
-    it("creates a read-only share link and copies it to clipboard", async () => {
+    it("then creates a read-only share link and copies it to clipboard", async () => {
       const writeText = vi.fn().mockResolvedValue(undefined);
       Object.assign(navigator, { clipboard: { writeText } });
 
@@ -69,7 +69,7 @@ describe("ShareDialog", () => {
   });
 
   describe("when edit sharing is selected", () => {
-    it("creates an edit share link and copies it to clipboard", async () => {
+    it("then creates an edit share link and copies it to clipboard", async () => {
       const writeText = vi.fn().mockResolvedValue(undefined);
       Object.assign(navigator, { clipboard: { writeText } });
 

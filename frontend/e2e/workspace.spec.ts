@@ -4,7 +4,9 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("renders all button pane buttons", async ({ page }) => {
+test.describe("workspace", () => {
+
+test("when workspace loads, then all editing tool buttons are visible", async ({ page }) => {
   await expect(page.getByTestId("keyboardShortcutsButton")).toBeVisible();
   await expect(page.getByTestId("faqButton")).toBeVisible();
   await expect(page.getByTestId("settingsButton")).toBeVisible();
@@ -16,30 +18,30 @@ test("renders all button pane buttons", async ({ page }) => {
   await expect(page.getByTestId("lockButton")).toBeVisible();
 });
 
-test("renders title bar with default Title text", async ({ page }) => {
+test("when workspace loads, then title bar shows default Title text", async ({ page }) => {
   await expect(page.getByText("Title")).toBeVisible();
 });
 
-test("renders share button in title bar", async ({ page }) => {
+test("when workspace loads, then share button is visible in title bar", async ({ page }) => {
   await expect(page.getByTestId("shareButton")).toBeVisible();
 });
 
-test("share button opens share dialog", async ({ page }) => {
+test("when share button is clicked, then share dialog opens with share options", async ({ page }) => {
   await page.getByTestId("shareButton").click();
   await expect(page.getByTestId("shareDialog")).toBeVisible();
   await expect(page.getByTestId("shareReadonlyButton")).toBeVisible();
   await expect(page.getByTestId("shareEditButton")).toBeVisible();
 });
 
-test("renders at least one editor pane", async ({ page }) => {
+test("when workspace loads, then at least one editor pane is visible", async ({ page }) => {
   await expect(page.locator(".simple-editor-wrapper").first()).toBeVisible();
 });
 
-test("management pane is visible by default", async ({ page }) => {
+test("when workspace loads, then management pane is visible by default", async ({ page }) => {
   await expect(page.getByTestId("managementPane")).toBeVisible();
 });
 
-test("title bar inline rename", async ({ page }) => {
+test("when title is clicked and renamed, then new name is displayed", async ({ page }) => {
   // Click the title to enter edit mode
   await page.getByText("Title").click();
 
@@ -54,3 +56,5 @@ test("title bar inline rename", async ({ page }) => {
   // Should show new name
   await expect(page.getByText("My Study")).toBeVisible();
 });
+
+}); // end workspace describe

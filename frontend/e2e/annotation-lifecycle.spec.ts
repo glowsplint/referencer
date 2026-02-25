@@ -17,7 +17,7 @@ async function clickWordInEditor(
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 3000 });
 }
 
-test.describe("annotation lifecycle", () => {
+test.describe("when annotating in locked mode", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
@@ -30,7 +30,7 @@ test.describe("annotation lifecycle", () => {
     await page.keyboard.press("c");
   });
 
-  test("clicking a word and pressing Enter creates annotation card in panel", async ({ page }) => {
+  test("when a word is clicked and Enter is pressed, then annotation card appears in panel", async ({ page }) => {
     // Click a word to select it, then press Enter to confirm
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
@@ -44,7 +44,7 @@ test.describe("annotation lifecycle", () => {
     });
   });
 
-  test("typing annotation text and pressing Enter saves it", async ({ page }) => {
+  test("when annotation text is typed and Enter is pressed, then it is saved", async ({ page }) => {
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
 
@@ -61,7 +61,7 @@ test.describe("annotation lifecycle", () => {
     });
   });
 
-  test("clicking annotation card enters edit mode", async ({ page }) => {
+  test("when annotation card is clicked, then edit mode is entered", async ({ page }) => {
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
 
@@ -80,7 +80,7 @@ test.describe("annotation lifecycle", () => {
     await expect(textarea).toHaveValue("My note");
   });
 
-  test("pressing Escape blurs annotation textarea without saving empty", async ({ page }) => {
+  test("when Escape is pressed on empty annotation, then textarea blurs without saving", async ({ page }) => {
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
 
@@ -95,7 +95,7 @@ test.describe("annotation lifecycle", () => {
     });
   });
 
-  test("empty annotation is removed when textarea blurs", async ({ page }) => {
+  test("when empty annotation textarea blurs, then annotation is removed", async ({ page }) => {
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
 
@@ -113,7 +113,7 @@ test.describe("annotation lifecycle", () => {
     });
   });
 
-  test("clicking same word again removes its highlight", async ({ page }) => {
+  test("when the same word is clicked again, then its highlight is removed", async ({ page }) => {
     // Use a word further from the edge that won't shift when the annotation panel appears
     await clickWordInEditor(page, 0, 10);
     // Capture the selected word text so we can find it again after layout shift
@@ -179,7 +179,7 @@ test.describe("annotation lifecycle", () => {
     });
   });
 
-  test("multiple annotations from different words show in panel", async ({ page }) => {
+  test("when annotations are created from different words, then all show in panel", async ({ page }) => {
     // Click first word, confirm and add annotation
     await clickWordInEditor(page, 0, 30);
     await page.keyboard.press("Enter");
@@ -206,7 +206,7 @@ test.describe("annotation lifecycle", () => {
     await expect(page.getByText("Second note")).toBeVisible({ timeout: 2000 });
   });
 
-  test("annotation panel not visible when editor is unlocked", async ({ page }) => {
+  test("when editor is unlocked, then annotation panel is not visible", async ({ page }) => {
     // Create annotation
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
