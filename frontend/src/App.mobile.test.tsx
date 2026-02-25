@@ -103,7 +103,6 @@ const mockWorkspace = {
   toggleUnderlineVisibility: vi.fn(),
   updateEditorContent: vi.fn(),
   setActiveLayerId: vi.fn(),
-  setLayers: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
   sectionNames: ["Passage 1"],

@@ -167,6 +167,7 @@ async function handleCallback(c: any, config: AuthConfig) {
   let email: string;
   let name: string;
   let avatarUrl: string;
+  let emailVerified = false;
 
   if (provider instanceof Google) {
     const res = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
@@ -177,6 +178,7 @@ async function handleCallback(c: any, config: AuthConfig) {
     email = profile.email ?? "";
     name = profile.name ?? "";
     avatarUrl = profile.picture ?? "";
+    emailVerified = profile.email_verified === true;
   } else {
     // GitHub
     const res = await fetch("https://api.github.com/user", {
@@ -201,6 +203,7 @@ async function handleCallback(c: any, config: AuthConfig) {
       const emails = (await emailsRes.json()) as any[];
       const primary = emails.find((e: any) => e.primary && e.verified);
       email = primary?.email ?? "";
+      emailVerified = !!primary?.verified;
     }
   }
 
@@ -210,7 +213,15 @@ async function handleCallback(c: any, config: AuthConfig) {
 
   // Upsert user and create session.
   const supabase = c.get("supabase");
-  const userId = await upsertUser(supabase, providerName, providerUserId, email, name, avatarUrl);
+  const userId = await upsertUser(
+    supabase,
+    providerName,
+    providerUserId,
+    email,
+    name,
+    avatarUrl,
+    emailVerified,
+  );
   const sessionToken = await createSession(supabase, userId, config.sessionMaxAge);
 
   setCookie(c, "__session", sessionToken, {

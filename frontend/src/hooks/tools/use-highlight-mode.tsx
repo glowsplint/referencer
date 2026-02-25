@@ -97,7 +97,7 @@ export function useHighlightMode({
     activeLayerId,
     addLayer,
     layers,
-    addItem: addHighlight as never,
+    addItem: addHighlight,
     removeItem: removeHighlight,
     setStatus,
     flashStatus,

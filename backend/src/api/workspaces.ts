@@ -11,6 +11,7 @@ import {
   duplicateWorkspace,
 } from "../db/workspace-queries";
 import { getPermission, setPermission } from "../db/permission-queries";
+import { requirePermission } from "../middleware/require-permission";
 
 const workspaces = new Hono<Env>();
 
@@ -25,7 +26,7 @@ workspaces.get("/", async (c) => {
     return c.json(items);
   } catch (err) {
     console.error("GET /api/workspaces error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -39,6 +40,9 @@ workspaces.post("/", async (c) => {
     if (!body.workspaceId) {
       return c.json({ error: "workspaceId is required" }, 400);
     }
+    if (body.title && body.title.length > 500) {
+      return c.json({ error: "Title must be at most 500 characters" }, 400);
+    }
 
     const supabase = c.get("supabase");
     await createUserWorkspace(supabase, user.id, body.workspaceId, body.title ?? "");
@@ -46,7 +50,7 @@ workspaces.post("/", async (c) => {
     return c.json({ ok: true }, 201);
   } catch (err) {
     console.error("POST /api/workspaces error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -63,12 +67,12 @@ workspaces.get("/:id", async (c) => {
     return c.json(workspace);
   } catch (err) {
     console.error("GET /api/workspaces/:id error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
 // PATCH /:id - rename workspace
-workspaces.patch("/:id", async (c) => {
+workspaces.patch("/:id", requirePermission("editor"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
 
@@ -78,12 +82,16 @@ workspaces.patch("/:id", async (c) => {
     if (typeof body.title !== "string") {
       return c.json({ error: "title is required" }, 400);
     }
+    if (body.title.length > 500) {
+      return c.json({ error: "Title must be at most 500 characters" }, 400);
+    }
 
     const supabase = c.get("supabase");
     await renameUserWorkspace(supabase, user.id, workspaceId, body.title);
     return c.json({ ok: true });
   } catch (err) {
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    console.error("PATCH /api/workspaces/:id error:", err);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -98,7 +106,8 @@ workspaces.patch("/:id/touch", async (c) => {
     await touchUserWorkspace(supabase, user.id, workspaceId);
     return c.json({ ok: true });
   } catch (err) {
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    console.error("PATCH /api/workspaces/:id/touch error:", err);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -118,12 +127,13 @@ workspaces.patch("/:id/favorite", async (c) => {
     await toggleFavoriteWorkspace(supabase, user.id, workspaceId, body.isFavorite);
     return c.json({ ok: true });
   } catch (err) {
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    console.error("PATCH /api/workspaces/:id/favorite error:", err);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
 // DELETE /:id - delete workspace
-workspaces.delete("/:id", async (c) => {
+workspaces.delete("/:id", requirePermission("editor"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
 
@@ -133,12 +143,13 @@ workspaces.delete("/:id", async (c) => {
     await deleteUserWorkspace(supabase, user.id, workspaceId);
     return c.json({ ok: true });
   } catch (err) {
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    console.error("DELETE /api/workspaces/:id error:", err);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
 // POST /:id/duplicate - duplicate workspace
-workspaces.post("/:id/duplicate", async (c) => {
+workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
 
@@ -153,7 +164,8 @@ workspaces.post("/:id/duplicate", async (c) => {
     await duplicateWorkspace(supabase, user.id, sourceId, body.newWorkspaceId);
     return c.json({ ok: true }, 201);
   } catch (err) {
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    console.error("POST /api/workspaces/:id/duplicate error:", err);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -170,7 +182,7 @@ workspaces.get("/:id/permission", async (c) => {
     return c.json({ role });
   } catch (err) {
     console.error("GET /api/workspaces/:id/permission error:", err);
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 

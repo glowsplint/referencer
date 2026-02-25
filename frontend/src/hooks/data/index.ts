@@ -3,7 +3,6 @@ export { useAnnotationEdit } from "./use-annotation-edit";
 export { useAuth } from "./use-auth";
 export { useEditors } from "./use-editors";
 export { useEditorWorkspace } from "./use-editor-workspace";
-export { useLayers } from "./use-layers";
 export { useSettings } from "./use-settings";
 export { useTrackedEditors } from "./use-tracked-editors";
 export { useUnifiedUndo } from "./use-unified-undo";

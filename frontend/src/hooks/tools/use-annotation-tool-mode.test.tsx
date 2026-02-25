@@ -47,7 +47,7 @@ function createOptions(
     activeLayerId: "layer-1",
     addLayer: vi.fn(() => "auto-layer-1"),
     layers: [] as TestLayer[],
-    addItem: vi.fn().mockReturnValue("item-1") as never,
+    addItem: vi.fn().mockReturnValue("item-1") ,
     removeItem: vi.fn(),
     setStatus: vi.fn(),
     flashStatus: vi.fn(),
@@ -148,7 +148,7 @@ describe("useAnnotationToolMode", () => {
 
     it("then creates an item using the payload from buildPayload", () => {
       const addItem = vi.fn().mockReturnValue("item-1");
-      const opts = createOptions({ selection: word1, addItem: addItem as never });
+      const opts = createOptions({ selection: word1, addItem: addItem  });
       const { result } = renderHook(() => useAnnotationToolMode(opts));
 
       act(() => {
@@ -182,7 +182,7 @@ describe("useAnnotationToolMode", () => {
       const opts = createOptions({
         selection: word1,
         onItemAdded,
-        addItem: addItem as never,
+        addItem: addItem ,
       });
       const { result } = renderHook(() => useAnnotationToolMode(opts));
 
@@ -337,7 +337,7 @@ describe("useAnnotationToolMode", () => {
       const opts = createOptions({
         activeLayerId: null,
         addLayer,
-        addItem: addItem as never,
+        addItem: addItem ,
         selection: word1,
       });
       const { result } = renderHook(() => useAnnotationToolMode(opts));

@@ -1,5 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
 
+function base64ToUint8(b64: string): Uint8Array {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function uint8ToBase64(bytes: Uint8Array): string {
+  const CHUNK = 0x8000;
+  const parts: string[] = [];
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    parts.push(String.fromCharCode(...bytes.subarray(i, i + CHUNK)));
+  }
+  return btoa(parts.join(""));
+}
+
 export async function loadSnapshot(
   url: string,
   key: string,
@@ -13,12 +31,7 @@ export async function loadSnapshot(
     .single();
   if (error || !data?.state) return null;
   // Supabase stores bytea as base64
-  const binary = atob(data.state);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
+  return base64ToUint8(data.state);
 }
 
 export async function saveSnapshot(
@@ -28,12 +41,7 @@ export async function saveSnapshot(
   state: Uint8Array,
 ): Promise<void> {
   const supabase = createClient(url, key);
-  // Encode as base64 for Supabase bytea column
-  let binary = "";
-  for (let i = 0; i < state.length; i++) {
-    binary += String.fromCharCode(state[i]);
-  }
-  const encoded = btoa(binary);
+  const encoded = uint8ToBase64(state);
   await supabase.from("yjs_document").upsert(
     {
       room_name: roomName,
