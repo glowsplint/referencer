@@ -61,15 +61,24 @@ export function TourOverlay({
     }
   }, [rect, refs]);
 
-  // When no rect, center the tooltip manually
-  const resolvedStyles = rect
-    ? floatingStyles
-    : {
-        position: "fixed" as const,
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-      };
+  // When centered or no rect, center the tooltip within the spotlight area
+  const isCentered = step.centered && rect;
+  const resolvedStyles =
+    isCentered
+      ? {
+          position: "fixed" as const,
+          top: rect.y + rect.height / 2,
+          left: rect.x + rect.width / 2,
+          transform: "translate(-50%, -50%)",
+        }
+      : rect
+        ? floatingStyles
+        : {
+            position: "fixed" as const,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          };
 
   // Keyboard: Escape to skip, block other keys from reaching the page
   useEffect(() => {
@@ -108,10 +117,25 @@ export function TourOverlay({
         }}
       />
 
+      {/* Vignette inside spotlight for centered steps */}
+      {isCentered && rect && (
+        <div
+          className="absolute"
+          style={{
+            left: rect.x,
+            top: rect.y,
+            width: rect.width,
+            height: rect.height,
+            background:
+              "radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.55) 70%)",
+          }}
+        />
+      )}
+
       {/* Click shield — blocks clicks outside tooltip */}
       <div className="absolute inset-0" />
 
-      {/* Tooltip */}
+      {/* Tooltip — z-10 to stay above the vignette layer */}
       <TourTooltip
         step={step}
         stepIndex={stepIndex}
@@ -119,7 +143,7 @@ export function TourOverlay({
         onNext={onNext}
         onBack={onBack}
         onSkip={onSkip}
-        floatingStyles={resolvedStyles}
+        floatingStyles={{ ...resolvedStyles, zIndex: 10 }}
         floatingRef={refs.setFloating}
       />
     </div>,

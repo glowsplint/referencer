@@ -6,7 +6,7 @@ export const EDITOR_TOUR_STEPS: TourStep[] = [
     title: "steps.editor.paste.title",
     content: "steps.editor.paste.content",
     image: "/tour/editor-paste.gif",
-    placement: "bottom",
+    centered: true,
   },
   {
     target: '[data-testid="lockButton"]',
