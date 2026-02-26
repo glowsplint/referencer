@@ -10,6 +10,12 @@
     "removeAnnotation": "Usun adnotacje",
     "removeArrow": "Usun strzalke",
     "removeUnderline": "Usun podkreslenie",
+    "hideAnnotation": "Ukryj adnotacje",
+    "showAnnotation": "Pokaz adnotacje",
+    "hideArrow": "Ukryj strzalke",
+    "showArrow": "Pokaz strzalke",
+    "hideUnderline": "Ukryj podkreslenie",
+    "showUnderline": "Pokaz podkreslenie",
     "allColorsInUse": "Wszystkie kolory sa w uzyciu — najpierw usun warstwe."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Pomoc i FAQ",
     "settings": "Ustawienia",
     "toggleEditorLayout": "Przelacz uklad edytora",
-    "toggleEditorLock": "Przelacz blokade edytora"
+    "toggleEditorLock": "Przelacz blokade edytora",
+    "toggleCommentPlacement": "Przelacz rozmieszczenie komentarzy",
+    "startTour": "Przewodnik"
   },
   "annotations": {
     "placeholder": "Dodaj adnotacje...",
     "removeCustomColour": "Usun niestandardowy kolor",
     "addCustomColour": "Dodaj niestandardowy kolor",
-    "addToCustomColours": "Dodaj do niestandardowych kolorow"
+    "addToCustomColours": "Dodaj do niestandardowych kolorow",
+    "replyPlaceholder": "Odpowiedz...",
+    "replies": "odpowiedzi",
+    "addReaction": "Dodaj reakcje",
+    "removeReply": "Usun odpowiedz"
   },
   "actionConsole": {
     "title": "Konsola akcji",

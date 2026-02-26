@@ -10,6 +10,12 @@
     "removeAnnotation": "Remover anotação",
     "removeArrow": "Remover seta",
     "removeUnderline": "Remover sublinhado",
+    "hideAnnotation": "Ocultar anotação",
+    "showAnnotation": "Mostrar anotação",
+    "hideArrow": "Ocultar seta",
+    "showArrow": "Mostrar seta",
+    "hideUnderline": "Ocultar sublinhado",
+    "showUnderline": "Mostrar sublinhado",
     "allColorsInUse": "Todas as cores estão em uso — remova uma camada primeiro."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Ajuda e perguntas frequentes",
     "settings": "Configurações",
     "toggleEditorLayout": "Alternar layout do editor",
-    "toggleEditorLock": "Alternar bloqueio do editor"
+    "toggleEditorLock": "Alternar bloqueio do editor",
+    "toggleCommentPlacement": "Alternar posicionamento de comentários",
+    "startTour": "Tour guiado"
   },
   "annotations": {
     "placeholder": "Adicionar anotação...",
     "removeCustomColour": "Remover cor personalizada",
     "addCustomColour": "Adicionar cor personalizada",
-    "addToCustomColours": "Adicionar às cores personalizadas"
+    "addToCustomColours": "Adicionar às cores personalizadas",
+    "replyPlaceholder": "Responder...",
+    "replies": "respostas",
+    "addReaction": "Adicionar reação",
+    "removeReply": "Remover resposta"
   },
   "actionConsole": {
     "title": "Console de ações",

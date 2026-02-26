@@ -6,10 +6,6 @@
       "label": "Mode gelap",
       "description": "Beralih antara tema terang dan gelap"
     },
-    "overscroll": {
-      "label": "Gulir berlebih",
-      "description": "Izinkan efek pantulan saat menggulir melewati tepi"
-    },
     "hideOffscreenArrows": {
       "label": "Sembunyikan panah di luar layar",
       "description": "Sembunyikan panah sepenuhnya ketika salah satu titik ujung digulir keluar dari tampilan"

@@ -30,5 +30,36 @@
     "status": "एनोटेशन मिटाने के लिए क्लिक करें और खींचें।",
     "erased": "एनोटेशन मिटाया गया।"
   },
-  "lockHint": "सामग्री को अंतिम रूप देने के बाद संपादक को लॉक करने के लिए <kbd>Esc</kbd> <kbd>K</kbd> दबाएं।"
+  "lockHint": "सामग्री को अंतिम रूप देने के बाद संपादक को लॉक करने के लिए <kbd>Esc</kbd> <kbd>K</kbd> दबाएं।",
+  "recording": {
+    "label": "रिकॉर्डिंग",
+    "record": "रिकॉर्ड",
+    "stopRecording": "रिकॉर्डिंग बंद करें",
+    "play": "चलाएं",
+    "stop": "रोकें",
+    "pause": "विराम",
+    "next": "अगला चरण",
+    "previous": "पिछला चरण",
+    "newRecording": "नई रिकॉर्डिंग",
+    "editRecording": "रिकॉर्डिंग संपादित करें",
+    "deleteRecording": "रिकॉर्डिंग हटाएं",
+    "duplicateRecording": "रिकॉर्डिंग डुप्लिकेट करें",
+    "noRecordings": "अभी तक कोई रिकॉर्डिंग नहीं",
+    "recording": "रिकॉर्ड हो रहा है...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "प्रारंभिक स्थिति",
+    "speed": "गति",
+    "transition": "ट्रांज़िशन",
+    "instant": "तत्काल",
+    "fade": "फ़ेड",
+    "untitled": "शीर्षकहीन रिकॉर्डिंग",
+    "showLayer": "{{name}} दिखाएं",
+    "hideLayer": "{{name}} छिपाएं",
+    "showAnnotation": "टिप्पणी दिखाएं",
+    "hideAnnotation": "टिप्पणी छिपाएं",
+    "showSection": "अनुभाग {{index}} दिखाएं",
+    "hideSection": "अनुभाग {{index}} छिपाएं",
+    "deletedAnnotationWarning": "कुछ चरण हटाई गई टिप्पणियों का संदर्भ देते हैं",
+    "statusHint": "रिकॉर्ड हो रहा है… चरण कैप्चर करने के लिए परत/टिप्पणी दृश्यता टॉगल करें। रोकने के लिए ■ दबाएं।"
+  }
 }

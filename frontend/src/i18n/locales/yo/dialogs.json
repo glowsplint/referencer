@@ -6,10 +6,6 @@
       "label": "Ọ̀nà dúdú",
       "description": "Yí padà láàárín àwọn àwòrán ìmọ́lẹ̀ àti dúdú"
     },
-    "overscroll": {
-      "label": "Yíyí kọjá àlà",
-      "description": "Gba àyà yíyí padà nígbà tí o bá yí kọjá àwọn ẹ̀gbẹ́"
-    },
     "hideOffscreenArrows": {
       "label": "Ìbòmọ́lẹ̀ àwọn ọfà tí kò hàn",
       "description": "Ìbòmọ́lẹ̀ àwọn ọfà pátápátá nígbà tí ẹ̀gbẹ́ kan bá ti yí jáde kúrò nínú ìwòran"

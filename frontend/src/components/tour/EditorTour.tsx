@@ -120,11 +120,7 @@ export function EditorTour() {
         onSkip={engine.skip}
       />
       {workspaceId && (
-        <ShareDialog
-          open={shareOpen}
-          onOpenChange={setShareOpen}
-          workspaceId={workspaceId}
-        />
+        <ShareDialog open={shareOpen} onOpenChange={setShareOpen} workspaceId={workspaceId} />
       )}
     </>
   );

@@ -10,7 +10,6 @@ const DEFAULT_SETTINGS: EditorSettings = {
   isLayersOn: false,
   isMultipleRowsLayout: false,
   isLocked: true,
-  overscrollEnabled: false,
   hideOffscreenArrows: false,
   showStatusBar: true,
   commentPlacement: "right",
@@ -55,15 +54,10 @@ export function useSettings() {
     document.documentElement.classList.toggle("dark", settings.isDarkMode);
   }, [settings.isDarkMode]);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("overscroll-enabled", settings.overscrollEnabled);
-  }, [settings.overscrollEnabled]);
-
   const toggleDarkMode = useToggle(setSettings, "isDarkMode");
   const toggleLayersOn = useToggle(setSettings, "isLayersOn");
   const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout");
   const toggleLocked = useToggle(setSettings, "isLocked");
-  const toggleOverscrollEnabled = useToggle(setSettings, "overscrollEnabled");
   const toggleHideOffscreenArrows = useToggle(setSettings, "hideOffscreenArrows");
   const toggleShowStatusBar = useToggle(setSettings, "showStatusBar");
   const toggleCommentPlacement = useCallback(
@@ -95,7 +89,6 @@ export function useSettings() {
     toggleLayersOn,
     toggleMultipleRowsLayout,
     toggleLocked,
-    toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleCommentPlacement,

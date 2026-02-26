@@ -17,13 +17,15 @@ const folders = new Hono<Env>();
 folders.get("/", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const supabase = c.get("supabase");
     const items = await listUserFolders(supabase, user.id);
+    log.info("GET /api/folders", { userId: user.id, count: items.length });
     return c.json(items);
   } catch (err) {
-    console.error("GET /api/folders error:", err);
+    log.error("GET /api/folders failed", { userId: user.id });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -32,6 +34,7 @@ folders.get("/", async (c) => {
 folders.post("/", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const body = await c.req.json<{ id: string; parentId?: string; name: string }>();
@@ -47,9 +50,14 @@ folders.post("/", async (c) => {
 
     const supabase = c.get("supabase");
     await createFolder(supabase, body.id, user.id, body.parentId ?? null, body.name);
+    log.info("POST /api/folders", {
+      userId: user.id,
+      folderId: body.id,
+      parentId: body.parentId ?? null,
+    });
     return c.json({ ok: true }, 201);
   } catch (err) {
-    console.error("POST /api/folders error:", err);
+    log.error("POST /api/folders failed", { userId: user.id });
     const message = err instanceof Error ? err.message : "";
     if (message.includes("depth limit")) {
       return c.json({ error: "Folder nesting limit reached" }, 400);
@@ -62,6 +70,7 @@ folders.post("/", async (c) => {
 folders.patch("/:id/favorite", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const folderId = c.req.param("id");
@@ -72,9 +81,17 @@ folders.patch("/:id/favorite", async (c) => {
 
     const supabase = c.get("supabase");
     await toggleFavoriteFolder(supabase, user.id, folderId, body.isFavorite);
+    log.info("PATCH /api/folders/:id/favorite", {
+      userId: user.id,
+      folderId,
+      isFavorite: body.isFavorite,
+    });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("PATCH /api/folders/:id/favorite error:", err);
+    log.error("PATCH /api/folders/:id/favorite failed", {
+      userId: user.id,
+      folderId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -83,15 +100,20 @@ folders.patch("/:id/favorite", async (c) => {
 folders.patch("/:id/move", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const folderId = c.req.param("id");
     const body = await c.req.json<{ parentId: string | null }>();
     const supabase = c.get("supabase");
     await moveFolderToFolder(supabase, user.id, folderId, body.parentId);
+    log.info("PATCH /api/folders/:id/move", { userId: user.id, folderId, parentId: body.parentId });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("PATCH /api/folders/:id/move error:", err);
+    log.error("PATCH /api/folders/:id/move failed", {
+      userId: user.id,
+      folderId: c.req.param("id"),
+    });
     const message = err instanceof Error ? err.message : "";
     if (message.includes("depth limit")) {
       return c.json({ error: "Folder nesting limit reached" }, 400);
@@ -110,6 +132,7 @@ folders.patch("/:id/move", async (c) => {
 folders.patch("/:id", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const folderId = c.req.param("id");
@@ -123,9 +146,10 @@ folders.patch("/:id", async (c) => {
 
     const supabase = c.get("supabase");
     await renameFolder(supabase, user.id, folderId, body.name);
+    log.info("PATCH /api/folders/:id", { userId: user.id, folderId });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("PATCH /api/folders/:id error:", err);
+    log.error("PATCH /api/folders/:id failed", { userId: user.id, folderId: c.req.param("id") });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -134,14 +158,16 @@ folders.patch("/:id", async (c) => {
 folders.delete("/:id", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const folderId = c.req.param("id");
     const supabase = c.get("supabase");
     await deleteFolder(supabase, user.id, folderId);
+    log.info("DELETE /api/folders/:id", { userId: user.id, folderId });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("DELETE /api/folders/:id error:", err);
+    log.error("DELETE /api/folders/:id failed", { userId: user.id, folderId: c.req.param("id") });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -150,6 +176,7 @@ folders.delete("/:id", async (c) => {
 folders.patch("/:id/move-workspace", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const folderId = c.req.param("id");
@@ -160,9 +187,17 @@ folders.patch("/:id/move-workspace", async (c) => {
 
     const supabase = c.get("supabase");
     await moveWorkspaceToFolder(supabase, user.id, body.workspaceId, folderId);
+    log.info("PATCH /api/folders/:id/move-workspace", {
+      userId: user.id,
+      folderId,
+      workspaceId: body.workspaceId,
+    });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("PATCH /api/folders/:id/move-workspace error:", err);
+    log.error("PATCH /api/folders/:id/move-workspace failed", {
+      userId: user.id,
+      folderId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -171,6 +206,7 @@ folders.patch("/:id/move-workspace", async (c) => {
 folders.post("/unfile-workspace", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const body = await c.req.json<{ workspaceId: string }>();
@@ -180,9 +216,13 @@ folders.post("/unfile-workspace", async (c) => {
 
     const supabase = c.get("supabase");
     await unfileWorkspace(supabase, user.id, body.workspaceId);
+    log.info("POST /api/folders/unfile-workspace", {
+      userId: user.id,
+      workspaceId: body.workspaceId,
+    });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("POST /api/folders/unfile-workspace error:", err);
+    log.error("POST /api/folders/unfile-workspace failed", { userId: user.id });
     return c.json({ error: "Internal server error" }, 500);
   }
 });

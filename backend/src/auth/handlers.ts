@@ -13,6 +13,7 @@ import {
 } from "./store";
 import { signJwt } from "../lib/jwt";
 import type { Env } from "../env";
+import type { Logger } from "../lib/logger";
 
 interface AuthState {
   state: string;
@@ -48,6 +49,7 @@ export function createAuthRoutes() {
 
   // GET /auth/me
   auth.get("/me", async (c) => {
+    const log = c.get("logger");
     const token = getCookie(c, "__session");
     if (!token) {
       return c.json({ authenticated: false });
@@ -60,22 +62,26 @@ export function createAuthRoutes() {
       return c.json({ authenticated: false });
     }
 
+    log.info("GET /auth/me", { userId: user.id });
     return c.json({ authenticated: true, user });
   });
 
   // POST /auth/logout
   auth.post("/logout", authLogoutLimiter, async (c) => {
+    const log = c.get("logger");
     const token = getCookie(c, "__session");
     if (token) {
       const supabase = c.get("supabase");
       await deleteSession(supabase, token);
     }
     deleteCookie(c, "__session", { path: "/" });
+    log.info("POST /auth/logout");
     return c.json({ ok: true });
   });
 
   // POST /auth/logout-all — revoke all sessions for the current user
   auth.post("/logout-all", authLogoutLimiter, async (c) => {
+    const log = c.get("logger");
     const user = c.get("user");
     if (!user) {
       return c.json({ error: "Unauthorized" }, 401);
@@ -83,6 +89,7 @@ export function createAuthRoutes() {
     const supabase = c.get("supabase");
     await revokeAllUserSessions(supabase, user.id);
     deleteCookie(c, "__session", { path: "/" });
+    log.info("POST /auth/logout-all", { userId: user.id });
     return c.json({ success: true });
   });
 
@@ -94,6 +101,7 @@ export function createAuthRoutes() {
   });
 
   auth.post("/ws-ticket", wsTicketLimiter, async (c) => {
+    const log = c.get("logger");
     const user = c.get("user");
     if (!user) {
       return c.json({ error: "Unauthorized" }, 401);
@@ -115,11 +123,13 @@ export function createAuthRoutes() {
       c.env.WS_JWT_SECRET,
     );
 
+    log.info("POST /auth/ws-ticket", { userId: user.id, room: body.room });
     return c.json({ ticket });
   });
 
   // GET /auth/:provider — start OAuth flow
   auth.get("/:provider", authStartLimiter, (c) => {
+    const log = c.get("logger");
     const config = loadAuthConfig(c.env);
     const providerName = c.req.param("provider");
     const providers = createProviders(config);
@@ -153,19 +163,20 @@ export function createAuthRoutes() {
       maxAge: 600,
     });
 
+    log.info("GET /auth/:provider", { provider: providerName });
     return c.redirect(authUrl.toString());
   });
 
   // GET /auth/:provider/callback
   auth.get("/:provider/callback", authCallbackLimiter, async (c) => {
     const config = loadAuthConfig(c.env);
-    return handleCallback(c, config);
+    return handleCallback(c, config, c.get("logger"));
   });
 
   return auth;
 }
 
-async function handleCallback(c: any, config: AuthConfig) {
+async function handleCallback(c: any, config: AuthConfig, log: Logger) {
   const providerName = c.req.param("provider");
   const providers = createProviders(config);
   const provider = getProviderFromMap(providers, providerName);
@@ -210,7 +221,7 @@ async function handleCallback(c: any, config: AuthConfig) {
       tokens = await (provider as GitHub).validateAuthorizationCode(code);
     }
   } catch (err) {
-    console.error("auth_callback_token_exchange_failed");
+    log.error("GET /auth/:provider/callback token exchange failed", { provider: providerName });
     return c.json({ error: "Token exchange failed" }, 400);
   }
 
@@ -283,5 +294,6 @@ async function handleCallback(c: any, config: AuthConfig) {
     maxAge: config.sessionMaxAge,
   });
 
+  log.info("GET /auth/:provider/callback", { provider: providerName, userId });
   return c.redirect(frontendUrl);
 }

@@ -10,6 +10,12 @@
     "removeAnnotation": "ลบคำอธิบายประกอบ",
     "removeArrow": "ลบลูกศร",
     "removeUnderline": "ลบขีดเส้นใต้",
+    "hideAnnotation": "ซ่อนคำอธิบายประกอบ",
+    "showAnnotation": "แสดงคำอธิบายประกอบ",
+    "hideArrow": "ซ่อนลูกศร",
+    "showArrow": "แสดงลูกศร",
+    "hideUnderline": "ซ่อนขีดเส้นใต้",
+    "showUnderline": "แสดงขีดเส้นใต้",
     "allColorsInUse": "สีทั้งหมดถูกใช้งานแล้ว — กรุณาลบเลเยอร์ก่อน"
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "ช่วยเหลือและคำถามที่พบบ่อย",
     "settings": "การตั้งค่า",
     "toggleEditorLayout": "สลับรูปแบบตัวแก้ไข",
-    "toggleEditorLock": "สลับการล็อกตัวแก้ไข"
+    "toggleEditorLock": "สลับการล็อกตัวแก้ไข",
+    "toggleCommentPlacement": "สลับตำแหน่งความคิดเห็น",
+    "startTour": "ทัวร์แนะนำ"
   },
   "annotations": {
     "placeholder": "เพิ่มคำอธิบายประกอบ...",
     "removeCustomColour": "ลบสีที่กำหนดเอง",
     "addCustomColour": "เพิ่มสีที่กำหนดเอง",
-    "addToCustomColours": "เพิ่มไปยังสีที่กำหนดเอง"
+    "addToCustomColours": "เพิ่มไปยังสีที่กำหนดเอง",
+    "replyPlaceholder": "ตอบกลับ...",
+    "replies": "การตอบกลับ",
+    "addReaction": "เพิ่มรีแอคชัน",
+    "removeReply": "ลบการตอบกลับ"
   },
   "actionConsole": {
     "title": "คอนโซลการทำงาน",

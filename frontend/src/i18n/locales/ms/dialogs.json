@@ -6,10 +6,6 @@
       "label": "Mod gelap",
       "description": "Tukar antara tema cerah dan gelap"
     },
-    "overscroll": {
-      "label": "Tatal lampau",
-      "description": "Benarkan lantunan elastik apabila menatal melepasi tepi"
-    },
     "hideOffscreenArrows": {
       "label": "Sembunyikan anak panah luar skrin",
       "description": "Sembunyikan anak panah sepenuhnya apabila salah satu titik hujung ditatal keluar dari pandangan"

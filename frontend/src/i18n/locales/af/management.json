@@ -10,6 +10,12 @@
     "removeAnnotation": "Verwyder aantekening",
     "removeArrow": "Verwyder pyltjie",
     "removeUnderline": "Verwyder onderstreping",
+    "hideAnnotation": "Versteek aantekening",
+    "showAnnotation": "Wys aantekening",
+    "hideArrow": "Versteek pyltjie",
+    "showArrow": "Wys pyltjie",
+    "hideUnderline": "Versteek onderstreping",
+    "showUnderline": "Wys onderstreping",
     "allColorsInUse": "Alle kleure is in gebruik — verwyder eers 'n laag."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Hulp & Gereelde Vrae",
     "settings": "Instellings",
     "toggleEditorLayout": "Wissel redigeerder-uitleg",
-    "toggleEditorLock": "Wissel redigeerder-slot"
+    "toggleEditorLock": "Wissel redigeerder-slot",
+    "toggleCommentPlacement": "Wissel kommentaarplasing",
+    "startTour": "Begeleide toer"
   },
   "annotations": {
     "placeholder": "Voeg aantekening by...",
     "removeCustomColour": "Verwyder pasgemaakte kleur",
     "addCustomColour": "Voeg pasgemaakte kleur by",
-    "addToCustomColours": "Voeg by pasgemaakte kleure"
+    "addToCustomColours": "Voeg by pasgemaakte kleure",
+    "replyPlaceholder": "Antwoord...",
+    "replies": "antwoorde",
+    "addReaction": "Voeg reaksie by",
+    "removeReply": "Verwyder antwoord"
   },
   "actionConsole": {
     "title": "Aksiekonsole",

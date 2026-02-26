@@ -10,6 +10,12 @@
     "removeAnnotation": "Xóa chú thích",
     "removeArrow": "Xóa mũi tên",
     "removeUnderline": "Xóa gạch chân",
+    "hideAnnotation": "Ẩn chú thích",
+    "showAnnotation": "Hiện chú thích",
+    "hideArrow": "Ẩn mũi tên",
+    "showArrow": "Hiện mũi tên",
+    "hideUnderline": "Ẩn gạch chân",
+    "showUnderline": "Hiện gạch chân",
     "allColorsInUse": "Tất cả các màu đã được sử dụng — hãy xóa một lớp trước."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Trợ giúp & Câu hỏi thường gặp",
     "settings": "Cài đặt",
     "toggleEditorLayout": "Bật/tắt bố cục trình soạn thảo",
-    "toggleEditorLock": "Bật/tắt khóa trình soạn thảo"
+    "toggleEditorLock": "Bật/tắt khóa trình soạn thảo",
+    "toggleCommentPlacement": "Bật/tắt vị trí bình luận",
+    "startTour": "Hướng dẫn tham quan"
   },
   "annotations": {
     "placeholder": "Thêm chú thích...",
     "removeCustomColour": "Xóa màu tùy chỉnh",
     "addCustomColour": "Thêm màu tùy chỉnh",
-    "addToCustomColours": "Thêm vào màu tùy chỉnh"
+    "addToCustomColours": "Thêm vào màu tùy chỉnh",
+    "replyPlaceholder": "Trả lời...",
+    "replies": "phản hồi",
+    "addReaction": "Thêm biểu cảm",
+    "removeReply": "Xóa phản hồi"
   },
   "actionConsole": {
     "title": "Bảng điều khiển hành động",

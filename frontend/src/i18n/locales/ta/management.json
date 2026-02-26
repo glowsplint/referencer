@@ -10,6 +10,12 @@
     "removeAnnotation": "குறிப்பை நீக்கு",
     "removeArrow": "அம்பை நீக்கு",
     "removeUnderline": "அடிக்கோட்டை நீக்கு",
+    "hideAnnotation": "குறிப்பை மறை",
+    "showAnnotation": "குறிப்பைக் காட்டு",
+    "hideArrow": "அம்பை மறை",
+    "showArrow": "அம்பைக் காட்டு",
+    "hideUnderline": "அடிக்கோட்டை மறை",
+    "showUnderline": "அடிக்கோட்டைக் காட்டு",
     "allColorsInUse": "அனைத்து நிறங்களும் பயன்பாட்டில் உள்ளன — முதலில் ஒரு அடுக்கை நீக்கவும்."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "உதவி & கேள்விகள்",
     "settings": "அமைப்புகள்",
     "toggleEditorLayout": "திருத்தி அமைப்பை நிலைமாற்று",
-    "toggleEditorLock": "திருத்திப் பூட்டை நிலைமாற்று"
+    "toggleEditorLock": "திருத்திப் பூட்டை நிலைமாற்று",
+    "toggleCommentPlacement": "கருத்து இடத்தை நிலைமாற்று",
+    "startTour": "வழிகாட்டிச் சுற்றுலா"
   },
   "annotations": {
     "placeholder": "குறிப்பைச் சேர்...",
     "removeCustomColour": "தனிப்பயன் நிறத்தை நீக்கு",
     "addCustomColour": "தனிப்பயன் நிறத்தைச் சேர்",
-    "addToCustomColours": "தனிப்பயன் நிறங்களில் சேர்"
+    "addToCustomColours": "தனிப்பயன் நிறங்களில் சேர்",
+    "replyPlaceholder": "பதிலளி...",
+    "replies": "பதில்கள்",
+    "addReaction": "எதிர்வினை சேர்",
+    "removeReply": "பதிலை நீக்கு"
   },
   "actionConsole": {
     "title": "செயல் கன்சோல்",

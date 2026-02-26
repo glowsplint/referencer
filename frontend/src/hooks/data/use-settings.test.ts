@@ -6,7 +6,6 @@ beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
   document.documentElement.classList.remove("dark");
-  document.documentElement.classList.remove("overscroll-enabled");
 });
 
 describe("useSettings", () => {
@@ -17,7 +16,6 @@ describe("useSettings", () => {
       isLayersOn: false,
       isMultipleRowsLayout: false,
       isLocked: true,
-      overscrollEnabled: false,
       hideOffscreenArrows: false,
       showStatusBar: true,
       commentPlacement: "right",
@@ -102,27 +100,7 @@ describe("useSettings", () => {
     expect(result.current.settings.isLayersOn).toBe(false);
     expect(result.current.settings.isMultipleRowsLayout).toBe(false);
     expect(result.current.settings.isLocked).toBe(true);
-    expect(result.current.settings.overscrollEnabled).toBe(false);
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
-  });
-
-  it("when toggleOverscrollEnabled is called, then toggles overscrollEnabled and updates classList", () => {
-    const { result } = renderHook(() => useSettings());
-
-    expect(result.current.settings.overscrollEnabled).toBe(false);
-    expect(document.documentElement.classList.contains("overscroll-enabled")).toBe(false);
-
-    act(() => {
-      result.current.toggleOverscrollEnabled();
-    });
-    expect(result.current.settings.overscrollEnabled).toBe(true);
-    expect(document.documentElement.classList.contains("overscroll-enabled")).toBe(true);
-
-    act(() => {
-      result.current.toggleOverscrollEnabled();
-    });
-    expect(result.current.settings.overscrollEnabled).toBe(false);
-    expect(document.documentElement.classList.contains("overscroll-enabled")).toBe(false);
   });
 
   it("when a setting is toggled, then persists it to localStorage", () => {
@@ -144,7 +122,6 @@ describe("useSettings", () => {
         isLayersOn: true,
         isMultipleRowsLayout: false,
         isLocked: false,
-        overscrollEnabled: false,
       }),
     );
 
@@ -164,7 +141,6 @@ describe("useSettings", () => {
       isLayersOn: false,
       isMultipleRowsLayout: false,
       isLocked: true,
-      overscrollEnabled: false,
       hideOffscreenArrows: false,
       showStatusBar: true,
       commentPlacement: "right",
@@ -184,7 +160,6 @@ describe("useSettings", () => {
 
     expect(result.current.settings.isDarkMode).toBe(true);
     expect(result.current.settings.isLayersOn).toBe(false);
-    expect(result.current.settings.overscrollEnabled).toBe(false);
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
   });
 

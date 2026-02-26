@@ -6,10 +6,6 @@
       "label": "Dark mode",
       "description": "Magpalipat-lipat sa pagitan ng maliwanag at madilim na tema"
     },
-    "overscroll": {
-      "label": "Overscroll",
-      "description": "Payagan ang elastic bounce kapag nag-scroll na lampas sa mga gilid"
-    },
     "hideOffscreenArrows": {
       "label": "Itago ang mga palasos na wala sa screen",
       "description": "Ganap na itago ang mga palaso kapag ang alinmang dulo ay nai-scroll na palabas ng view"

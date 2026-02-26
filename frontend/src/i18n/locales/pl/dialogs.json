@@ -6,10 +6,6 @@
       "label": "Tryb ciemny",
       "description": "Przelaczaj miedzy jasnym a ciemnym motywem"
     },
-    "overscroll": {
-      "label": "Nadmierne przewijanie",
-      "description": "Pozwol na efekt sprezystosci przy przewijaniu poza krawedzie"
-    },
     "hideOffscreenArrows": {
       "label": "Ukryj strzalki poza ekranem",
       "description": "Calkowicie ukryj strzalki, gdy jeden z punktow koncowych jest przewiniety poza widoczny obszar"

@@ -6,10 +6,6 @@
       "label": "Dunkelmodus",
       "description": "Zwischen hellem und dunklem Design wechseln"
     },
-    "overscroll": {
-      "label": "Überscrollung",
-      "description": "Elastisches Zurückfedern beim Scrollen über den Rand hinaus erlauben"
-    },
     "hideOffscreenArrows": {
       "label": "Pfeile außerhalb des Bildschirms ausblenden",
       "description": "Pfeile vollständig ausblenden, wenn ein Endpunkt aus dem sichtbaren Bereich gescrollt wurde"

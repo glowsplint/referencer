@@ -8,8 +8,6 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
     onOpenChange: vi.fn(),
     isDarkMode: false,
     toggleDarkMode: vi.fn(),
-    overscrollEnabled: false,
-    toggleOverscrollEnabled: vi.fn(),
     hideOffscreenArrows: false,
     toggleHideOffscreenArrows: vi.fn(),
     showStatusBar: true,
@@ -32,7 +30,6 @@ describe("SettingsDialog", () => {
     it("then shows all setting rows", () => {
       renderDialog();
       expect(screen.getByText("Dark mode")).toBeInTheDocument();
-      expect(screen.getByText("Overscroll")).toBeInTheDocument();
       expect(screen.getByText("Hide off-screen arrows")).toBeInTheDocument();
       expect(screen.getByText("Status bar")).toBeInTheDocument();
     });
@@ -57,14 +54,6 @@ describe("SettingsDialog", () => {
       const props = renderDialog();
       fireEvent.click(screen.getByTestId("dark-mode-switch"));
       expect(props.toggleDarkMode).toHaveBeenCalledOnce();
-    });
-  });
-
-  describe("when the overscroll switch is clicked", () => {
-    it("then calls toggleOverscrollEnabled", () => {
-      const props = renderDialog();
-      fireEvent.click(screen.getByTestId("overscroll-switch"));
-      expect(props.toggleOverscrollEnabled).toHaveBeenCalledOnce();
     });
   });
 
@@ -95,13 +84,6 @@ describe("SettingsDialog", () => {
     it("then renders the dark mode switch as unchecked", () => {
       renderDialog({ isDarkMode: false });
       expect(screen.getByTestId("dark-mode-switch")).toHaveAttribute("aria-checked", "false");
-    });
-  });
-
-  describe("when overscrollEnabled is true", () => {
-    it("then renders the overscroll switch as checked", () => {
-      renderDialog({ overscrollEnabled: true });
-      expect(screen.getByTestId("overscroll-switch")).toHaveAttribute("aria-checked", "true");
     });
   });
 

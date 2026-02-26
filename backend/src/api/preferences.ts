@@ -8,13 +8,15 @@ const preferences = new Hono<Env>();
 preferences.get("/", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const supabase = c.get("supabase");
     const items = await getUserPreferences(supabase, user.id);
+    log.info("GET /api/preferences", { userId: user.id, count: items.length });
     return c.json(items);
   } catch (err) {
-    console.error("GET /api/preferences error:", err);
+    log.error("GET /api/preferences failed", { userId: user.id });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -23,6 +25,7 @@ preferences.get("/", async (c) => {
 preferences.put("/:key", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const key = c.req.param("key");
@@ -39,9 +42,10 @@ preferences.put("/:key", async (c) => {
 
     const supabase = c.get("supabase");
     await upsertUserPreference(supabase, user.id, key, body.value);
+    log.info("PUT /api/preferences/:key", { userId: user.id, key });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("PUT /api/preferences/:key error:", err);
+    log.error("PUT /api/preferences/:key failed", { userId: user.id, key: c.req.param("key") });
     return c.json({ error: "Internal server error" }, 500);
   }
 });

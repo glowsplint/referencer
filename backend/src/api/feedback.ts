@@ -5,6 +5,7 @@ export function handleFeedback() {
   return async (c: Context<Env>) => {
     const user = c.get("user");
     if (!user) return c.json({ error: "Unauthorized" }, 401);
+    const log = c.get("logger");
 
     const token = c.env.GITHUB_ISSUES_TOKEN;
     if (!token) return c.json({ error: "Feedback not configured" }, 503);
@@ -58,7 +59,7 @@ export function handleFeedback() {
       });
 
       if (!resp.ok) {
-        console.error("GitHub API error:", resp.status);
+        log.error("POST /api/feedback GitHub API error", { userId: user.id, status: resp.status });
         return c.json({ error: "Failed to create issue" }, 502);
       }
 
@@ -66,9 +67,10 @@ export function handleFeedback() {
       await kv.put(rateKey, String(current + 1), { expirationTtl: 3600 });
 
       const data = (await resp.json()) as { html_url: string };
+      log.info("POST /api/feedback", { userId: user.id });
       return c.json({ ok: true, url: data.html_url });
     } catch (err) {
-      console.error("Feedback error");
+      log.error("POST /api/feedback failed", { userId: user.id });
       return c.json({ error: "Failed to submit feedback" }, 500);
     }
   };

@@ -30,5 +30,36 @@
     "status": "Kliknij i przeciagnij, aby usunac adnotacje.",
     "erased": "Adnotacja usunieta."
   },
-  "lockHint": "Nacisnij <kbd>Esc</kbd> <kbd>K</kbd>, aby zablokowac edytor po zakonczeniu edycji tresci."
+  "lockHint": "Nacisnij <kbd>Esc</kbd> <kbd>K</kbd>, aby zablokowac edytor po zakonczeniu edycji tresci.",
+  "recording": {
+    "label": "Nagranie",
+    "record": "Nagrywaj",
+    "stopRecording": "Zatrzymaj nagrywanie",
+    "play": "Odtwarzaj",
+    "stop": "Zatrzymaj",
+    "pause": "Wstrzymaj",
+    "next": "Nastepny krok",
+    "previous": "Poprzedni krok",
+    "newRecording": "Nowe nagranie",
+    "editRecording": "Edytuj nagranie",
+    "deleteRecording": "Usun nagranie",
+    "duplicateRecording": "Duplikuj nagranie",
+    "noRecordings": "Brak nagran",
+    "recording": "Nagrywanie...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Stan poczatkowy",
+    "speed": "Szybkosc",
+    "transition": "Przejscie",
+    "instant": "Natychmiastowe",
+    "fade": "Zanikanie",
+    "untitled": "Nagranie bez tytulu",
+    "showLayer": "Pokaz {{name}}",
+    "hideLayer": "Ukryj {{name}}",
+    "showAnnotation": "Pokaz adnotacje",
+    "hideAnnotation": "Ukryj adnotacje",
+    "showSection": "Pokaz sekcje {{index}}",
+    "hideSection": "Ukryj sekcje {{index}}",
+    "deletedAnnotationWarning": "Niektore kroki odwoluja sie do usunietych adnotacji",
+    "statusHint": "Nagrywanie… Przelaczaj widocznosc warstw/adnotacji, aby rejestrowac kroki. Nacisnij ■, aby zatrzymac."
+  }
 }

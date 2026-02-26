@@ -1,4 +1,5 @@
 import type { Context, MiddlewareHandler } from "hono";
+import { log } from "./logger";
 
 interface RateLimitOptions {
   windowMs: number;
@@ -10,7 +11,7 @@ export function kvRateLimiter(options: RateLimitOptions): MiddlewareHandler {
   return async (c, next) => {
     const kv = (c.env as any).RATE_LIMIT_KV;
     if (!kv) {
-      console.warn("rate_limit_kv_unavailable");
+      log.warn("rate_limit_kv_unavailable");
       return c.json({ error: "Service temporarily unavailable" }, 503);
     }
 

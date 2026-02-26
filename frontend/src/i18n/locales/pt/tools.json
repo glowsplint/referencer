@@ -30,5 +30,36 @@
     "status": "Clique e arraste para apagar anotações.",
     "erased": "Anotação apagada."
   },
-  "lockHint": "Pressione <kbd>Esc</kbd> <kbd>K</kbd> para bloquear o editor após finalizar o conteúdo."
+  "lockHint": "Pressione <kbd>Esc</kbd> <kbd>K</kbd> para bloquear o editor após finalizar o conteúdo.",
+  "recording": {
+    "label": "Gravação",
+    "record": "Gravar",
+    "stopRecording": "Parar gravação",
+    "play": "Reproduzir",
+    "stop": "Parar",
+    "pause": "Pausar",
+    "next": "Próximo passo",
+    "previous": "Passo anterior",
+    "newRecording": "Nova gravação",
+    "editRecording": "Editar gravação",
+    "deleteRecording": "Excluir gravação",
+    "duplicateRecording": "Duplicar gravação",
+    "noRecordings": "Nenhuma gravação ainda",
+    "recording": "Gravando...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Estado inicial",
+    "speed": "Velocidade",
+    "transition": "Transição",
+    "instant": "Instantâneo",
+    "fade": "Desvanecer",
+    "untitled": "Gravação sem título",
+    "showLayer": "Mostrar {{name}}",
+    "hideLayer": "Ocultar {{name}}",
+    "showAnnotation": "Mostrar anotação",
+    "hideAnnotation": "Ocultar anotação",
+    "showSection": "Mostrar seção {{index}}",
+    "hideSection": "Ocultar seção {{index}}",
+    "deletedAnnotationWarning": "Alguns passos fazem referência a anotações excluídas",
+    "statusHint": "Gravando… Alterne a visibilidade das camadas/anotações para capturar passos. Pressione ■ para parar."
+  }
 }

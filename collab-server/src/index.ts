@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { createClient } from "@supabase/supabase-js";
 import { YjsRoom } from "./durable-object";
 import { verifyJwt } from "./jwt";
+import { createLogger, type Logger } from "./logger";
 
 type Env = {
   Bindings: {
@@ -13,9 +14,18 @@ type Env = {
     WS_JWT_SECRET_PREV?: string;
     ALLOWED_ORIGIN?: string;
   };
+  Variables: {
+    logger: Logger;
+  };
 };
 
 const app = new Hono<Env>();
+
+// Per-request logger with UUID trace ID
+app.use("*", async (c, next) => {
+  c.set("logger", createLogger());
+  await next();
+});
 
 app.use(
   "*",
@@ -33,10 +43,14 @@ app.use("*", async (c, next) => {
   c.res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 });
 
-app.get("/health", (c) => c.json({ status: "ok" }));
+app.get("/health", (c) => {
+  c.get("logger").info("GET /health");
+  return c.json({ status: "ok" });
+});
 
 // WebSocket upgrade for room connections
 app.get("/:roomName", async (c) => {
+  const log = c.get("logger");
   const roomName = c.req.param("roomName");
 
   const token = c.req.query("token");
@@ -47,16 +61,19 @@ app.get("/:roomName", async (c) => {
   // Verify JWT signature + expiry (no DB hit)
   const payload = await verifyJwt(token, c.env.WS_JWT_SECRET, c.env.WS_JWT_SECRET_PREV);
   if (!payload) {
+    log.warn("GET /:roomName JWT verification failed", { roomName });
     return c.json({ error: "Unauthorized" }, 401);
   }
 
   // Verify issuer and audience
   if (payload.iss !== "referencer" || payload.aud !== "collab") {
+    log.warn("GET /:roomName invalid JWT claims", { roomName });
     return c.json({ error: "Unauthorized" }, 401);
   }
 
   // Verify room binding
   if (payload.room !== roomName) {
+    log.warn("GET /:roomName room mismatch", { roomName, tokenRoom: payload.room });
     return c.json({ error: "Forbidden" }, 403);
   }
 
@@ -70,6 +87,7 @@ app.get("/:roomName", async (c) => {
     .single();
 
   if (!permission) {
+    log.warn("GET /:roomName no permission", { roomName, userId: payload.sub });
     return c.json({ error: "Forbidden" }, 403);
   }
 
@@ -80,6 +98,12 @@ app.get("/:roomName", async (c) => {
   const doUrl = new URL(c.req.url);
   doUrl.searchParams.set("role", permission.role);
   const doRequest = new Request(doUrl.toString(), c.req.raw);
+
+  log.info("GET /:roomName WebSocket upgrade", {
+    roomName,
+    userId: payload.sub,
+    role: permission.role,
+  });
   return stub.fetch(doRequest);
 });
 

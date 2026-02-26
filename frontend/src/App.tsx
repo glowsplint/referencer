@@ -17,6 +17,7 @@ import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
 import { StatusBar } from "./components/StatusBar";
 import { Divider } from "./components/ui/Divider";
+import { ManagementPaneDivider } from "./components/ui/ManagementPaneDivider";
 import { TitleBar, SimpleEditorToolbar, EditorPane } from "./components/tiptap-templates/simple";
 import { UnsavedBanner } from "./components/UnsavedBanner";
 import { PassageHeader } from "./components/PassageHeader";
@@ -54,6 +55,7 @@ import { EditorTour } from "./components/tour/EditorTour";
 import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annotations";
 import { useCurrentUserName } from "./hooks/data/use-current-user-name";
 import { apiFetch } from "@/lib/api-client";
+import { STORAGE_KEYS } from "@/constants/storage-keys";
 
 function getEditorColumns(editorCount: number): { left: number[]; right: number[] } {
   const left: number[] = [];
@@ -70,6 +72,14 @@ interface AppProps {
 }
 
 export function App({ workspaceId, navigate }: AppProps) {
+  const [managementPaneWidth, setManagementPaneWidth] = useState(() => {
+    const stored = localStorage.getItem(STORAGE_KEYS.MANAGEMENT_PANE_WIDTH);
+    return stored ? Number(stored) : 250;
+  });
+  const handleManagementPaneResizeEnd = useCallback((width: number) => {
+    localStorage.setItem(STORAGE_KEYS.MANAGEMENT_PANE_WIDTH, String(width));
+  }, []);
+
   const [permissionRole, setPermissionRole] = useState<string | null>(null);
   useEffect(() => {
     const controller = new AbortController();
@@ -425,7 +435,16 @@ export function App({ workspaceId, navigate }: AppProps) {
         <div className="flex flex-col h-screen overflow-hidden">
           <div className="flex flex-1 min-h-0">
             {!isMobile && <ButtonPane />}
-            {!isMobile && isManagementPaneOpen && <ManagementPane />}
+            {!isMobile && isManagementPaneOpen && (
+              <>
+                <ManagementPane width={managementPaneWidth} />
+                <ManagementPaneDivider
+                  width={managementPaneWidth}
+                  onResize={setManagementPaneWidth}
+                  onResizeEnd={handleManagementPaneResizeEnd}
+                />
+              </>
+            )}
             <EditorContext.Provider value={{ editor: activeEditor }}>
               <div className="flex flex-col flex-1 min-w-0">
                 <TitleBar navigate={navigate} />

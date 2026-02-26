@@ -30,5 +30,36 @@
     "status": "Klicka och dra för att radera anteckningar.",
     "erased": "Anteckning raderad."
   },
-  "lockHint": "Tryck på <kbd>Esc</kbd> <kbd>K</kbd> för att låsa redigeraren när du är klar med innehållet."
+  "lockHint": "Tryck på <kbd>Esc</kbd> <kbd>K</kbd> för att låsa redigeraren när du är klar med innehållet.",
+  "recording": {
+    "label": "Inspelning",
+    "record": "Spela in",
+    "stopRecording": "Stoppa inspelning",
+    "play": "Spela upp",
+    "stop": "Stoppa",
+    "pause": "Pausa",
+    "next": "Nästa steg",
+    "previous": "Föregående steg",
+    "newRecording": "Ny inspelning",
+    "editRecording": "Redigera inspelning",
+    "deleteRecording": "Ta bort inspelning",
+    "duplicateRecording": "Duplicera inspelning",
+    "noRecordings": "Inga inspelningar ännu",
+    "recording": "Spelar in...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Utgångsläge",
+    "speed": "Hastighet",
+    "transition": "Övergång",
+    "instant": "Omedelbar",
+    "fade": "Tona",
+    "untitled": "Namnlös inspelning",
+    "showLayer": "Visa {{name}}",
+    "hideLayer": "Dölj {{name}}",
+    "showAnnotation": "Visa anteckning",
+    "hideAnnotation": "Dölj anteckning",
+    "showSection": "Visa avsnitt {{index}}",
+    "hideSection": "Dölj avsnitt {{index}}",
+    "deletedAnnotationWarning": "Vissa steg refererar till borttagna anteckningar",
+    "statusHint": "Spelar in… Växla synligheten för lager/anteckningar för att fånga steg. Tryck ■ för att stoppa."
+  }
 }

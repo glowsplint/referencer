@@ -6,10 +6,6 @@
       "label": "Mörkt läge",
       "description": "Växla mellan ljust och mörkt tema"
     },
-    "overscroll": {
-      "label": "Överrullning",
-      "description": "Tillåt elastisk studs vid rullning förbi kanterna"
-    },
     "hideOffscreenArrows": {
       "label": "Dölj pilar utanför skärmen",
       "description": "Dölj pilar helt när någon ändpunkt har rullats utanför synfältet"
