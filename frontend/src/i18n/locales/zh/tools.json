@@ -30,5 +30,36 @@
     "status": "点击并拖动以擦除注释。",
     "erased": "已擦除注释。"
   },
-  "lockHint": "内容编辑完成后，按 <kbd>Esc</kbd> <kbd>K</kbd> 锁定编辑器。"
+  "lockHint": "内容编辑完成后，按 <kbd>Esc</kbd> <kbd>K</kbd> 锁定编辑器。",
+  "recording": {
+    "label": "录制",
+    "record": "录制",
+    "stopRecording": "停止录制",
+    "play": "播放",
+    "stop": "停止",
+    "pause": "暂停",
+    "next": "下一步",
+    "previous": "上一步",
+    "newRecording": "新建录制",
+    "editRecording": "编辑录制",
+    "deleteRecording": "删除录制",
+    "duplicateRecording": "复制录制",
+    "noRecordings": "暂无录制",
+    "recording": "录制中…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "初始状态",
+    "speed": "速度",
+    "transition": "过渡效果",
+    "instant": "即时",
+    "fade": "淡入淡出",
+    "untitled": "未命名录制",
+    "showLayer": "显示 {{name}}",
+    "hideLayer": "隐藏 {{name}}",
+    "showAnnotation": "显示标注",
+    "hideAnnotation": "隐藏标注",
+    "showSection": "显示第 {{index}} 节",
+    "hideSection": "隐藏第 {{index}} 节",
+    "deletedAnnotationWarning": "部分步骤引用了已删除的标注",
+    "statusHint": "录制中… 切换图层/标注的可见性以捕获步骤。按 ■ 停止。"
+  }
 }

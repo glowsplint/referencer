@@ -17,6 +17,10 @@
     "language": {
       "label": "Dil",
       "description": "Tercih ettiginiz dili secin"
+    },
+    "statusBar": {
+      "label": "Durum cubugu",
+      "description": "Arac cubugunun altinda durum cubugunu goster"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Salt okunur baglanti",
     "editLink": "Duzenleme baglantisi",
     "linkCopied": "Baglanti panoya kopyalandi.",
-    "copyFailed": "Baglanti kopyalanamadi."
+    "copyFailed": "Baglanti kopyalanamadi.",
+    "loginRequired": "Bu calisma alani icin paylasim baglantisi olusturmak icin oturum acin.",
+    "loginGoogle": "Google ile oturum ac",
+    "loginGithub": "GitHub ile oturum ac"
   },
   "mobile": {
     "title": "Masaustunde En Iyi",
     "description": "Referencer, klavye ve fare ile masaustu kullanimi icin tasarlanmistir. Icerigi burada okuyabilirsiniz, ancak duzenleme ve aciklama araclari mobil cihazlarda kullanilamaz.",
     "continueReading": "Okumaya Devam Et"
+  },
+  "bugReport": {
+    "title": "Hata Bildir",
+    "description": "Karsilastiginiz sorunu tanimlayin. Raporunuz sorun takip sistemimize gonderilecektir.",
+    "titleLabel": "Baslik",
+    "titlePlaceholder": "Sorunun kisa ozeti",
+    "descriptionLabel": "Aciklama",
+    "descriptionPlaceholder": "Yeniden olusturma adimlari, beklenen davranis, gerceklesen davranis…",
+    "submit": "Rapor Gonder",
+    "submitting": "Gonderiliyor…",
+    "success": "Hata raporu basariyla gonderildi. Tesekkurler!",
+    "error": "Hata raporu gonderilemedi. Lutfen tekrar deneyin.",
+    "rateLimited": "Cok fazla rapor. Lutfen daha sonra tekrar deneyin.",
+    "reportBug": "Hata Bildir"
   }
 }

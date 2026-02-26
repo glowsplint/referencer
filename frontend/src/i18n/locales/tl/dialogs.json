@@ -17,6 +17,10 @@
     "language": {
       "label": "Wika",
       "description": "Piliin ang iyong gustong wika"
+    },
+    "statusBar": {
+      "label": "Status bar",
+      "description": "Ipakita ang status bar sa ibaba ng toolbar"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Link na pang-basa lamang",
     "editLink": "Link na pang-edit",
     "linkCopied": "Nakopya ang link sa clipboard.",
-    "copyFailed": "Hindi nakopya ang link."
+    "copyFailed": "Hindi nakopya ang link.",
+    "loginRequired": "Mag-sign in upang makagawa ng share link para sa workspace na ito.",
+    "loginGoogle": "Mag-sign in gamit ang Google",
+    "loginGithub": "Mag-sign in gamit ang GitHub"
   },
   "mobile": {
     "title": "Pinakamahusay sa Desktop",
     "description": "Ang Referencer ay dinisenyo para sa paggamit sa desktop na may keyboard at mouse. Maaari mo pa ring basahin ang nilalaman dito, ngunit ang mga kasangkapang pang-edit at pang-anotasyon ay hindi available sa mobile.",
     "continueReading": "Magpatuloy sa Pagbabasa"
+  },
+  "bugReport": {
+    "title": "Mag-ulat ng Bug",
+    "description": "Ilarawan ang problemang naranasan mo. Ang iyong ulat ay ipapadala sa aming issue tracker.",
+    "titleLabel": "Pamagat",
+    "titlePlaceholder": "Maikling buod ng isyu",
+    "descriptionLabel": "Paglalarawan",
+    "descriptionPlaceholder": "Mga hakbang upang kopyahin, inaasahang pag-uugali, aktwal na pag-uugali…",
+    "submit": "Isumite ang Ulat",
+    "submitting": "Isinusumite…",
+    "success": "Matagumpay na naisumite ang ulat ng bug. Salamat!",
+    "error": "Hindi naisumite ang ulat ng bug. Pakisubukang muli.",
+    "rateLimited": "Masyadong maraming ulat. Pakisubukang muli mamaya.",
+    "reportBug": "Mag-ulat ng Bug"
   }
 }

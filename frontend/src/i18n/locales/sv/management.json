@@ -10,7 +10,13 @@
     "removeAnnotation": "Ta bort anteckning",
     "removeArrow": "Ta bort pil",
     "removeUnderline": "Ta bort understrykning",
-    "allColorsInUse": "Alla färger är i bruk — ta bort ett lager först."
+    "allColorsInUse": "Alla färger är i bruk — ta bort ett lager först.",
+    "hideAnnotation": "Dölj anteckning",
+    "showAnnotation": "Visa anteckning",
+    "hideArrow": "Dölj pil",
+    "showArrow": "Visa pil",
+    "hideUnderline": "Dölj understrykning",
+    "showUnderline": "Visa understrykning"
   },
   "passages": {
     "title": "Avsnitt",
@@ -26,13 +32,19 @@
     "helpFaq": "Hjälp & vanliga frågor",
     "settings": "Inställningar",
     "toggleEditorLayout": "Växla redigeringslayout",
-    "toggleEditorLock": "Växla redigeringslås"
+    "toggleEditorLock": "Växla redigeringslås",
+    "toggleCommentPlacement": "Växla kommentarplacering",
+    "startTour": "Guidad tur"
   },
   "annotations": {
     "placeholder": "Lägg till anteckning...",
     "removeCustomColour": "Ta bort anpassad färg",
     "addCustomColour": "Lägg till anpassad färg",
-    "addToCustomColours": "Lägg till bland anpassade färger"
+    "addToCustomColours": "Lägg till bland anpassade färger",
+    "replyPlaceholder": "Svara…",
+    "replies": "svar",
+    "addReaction": "Lägg till reaktion",
+    "removeReply": "Ta bort svar"
   },
   "actionConsole": {
     "title": "Åtgärdskonsol",

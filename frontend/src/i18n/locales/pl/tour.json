@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Wklej swoj tekst",
+        "content": "Zacznij od wklejenia lub wpisania tekstu w edytorze."
+      },
+      "lock": {
+        "title": "Zablokuj dokument",
+        "content": "Nacisnij K lub kliknij przycisk blokady, aby przelczyc sie w tryb adnotacji."
+      },
+      "annotate": {
+        "title": "Adnotuj tekst",
+        "content": "Zaznacz tekst, aby podswietlic (H), skomentowac (C), podkreslic (U) lub narysowac strzalki (A)."
+      },
+      "eraser": {
+        "title": "Usun adnotacje",
+        "content": "Nacisnij E lub kliknij gumke, aby usunac podswietlenia, podkreslenia i strzalki z zaznaczonego tekstu."
+      },
+      "unlock": {
+        "title": "Odblokuj, aby edytowac",
+        "content": "Nacisnij K ponownie, aby wrocic do edycji. Twoje adnotacje zostana zachowane."
+      },
+      "statusBar": {
+        "title": "Pasek stanu",
+        "content": "Obserwuj ten pasek, aby otrzymywac informacje zwrotne — wyniki eksportu, status synchronizacji i inne powiadomienia pojawiaja sie tutaj."
+      },
+      "share": {
+        "title": "Wspolpracuj z innymi",
+        "content": "Wygeneruj link tylko do odczytu lub edytowalny, aby udostepnic swoj dokument z adnotacjami innym."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Dalej",
+    "back": "Wstecz",
+    "skip": "Pomin",
+    "finish": "Zakoncz"
+  }
+}

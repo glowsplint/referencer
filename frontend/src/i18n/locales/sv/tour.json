@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Klistra in din text",
+        "content": "Borja med att klistra in eller skriva din text i redigeraren."
+      },
+      "lock": {
+        "title": "Las dokumentet",
+        "content": "Tryck pa K eller klicka pa lasknappen for att vaxla till anteckningslage."
+      },
+      "annotate": {
+        "title": "Anteckna din text",
+        "content": "Markera text for att fargmarkera (H), kommentera (C), stryka under (U) eller rita pilar (A)."
+      },
+      "eraser": {
+        "title": "Radera anteckningar",
+        "content": "Tryck pa E eller klicka pa suddet for att ta bort fargmarkeringar, understrykningar och pilar fran markerad text."
+      },
+      "unlock": {
+        "title": "Las upp for att redigera",
+        "content": "Tryck pa K igen for att atervanda till redigering. Dina anteckningar bevaras."
+      },
+      "statusBar": {
+        "title": "Statusfalt",
+        "content": "Hall ett oga har for feedback — exportresultat, synkroniseringsstatus och andra aviseringar visas i detta falt."
+      },
+      "share": {
+        "title": "Samarbeta med andra",
+        "content": "Skapa en skrivskyddad eller redigerbar lank for att dela ditt antecknade dokument med andra."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Nasta",
+    "back": "Tillbaka",
+    "skip": "Hoppa over",
+    "finish": "Avsluta"
+  }
+}

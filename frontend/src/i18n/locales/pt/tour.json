@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Cole seu texto",
+        "content": "Comece colando ou digitando seu texto no editor."
+      },
+      "lock": {
+        "title": "Bloqueie o documento",
+        "content": "Pressione K ou clique no botão de bloqueio para alternar para o modo de anotação."
+      },
+      "annotate": {
+        "title": "Anote seu texto",
+        "content": "Selecione texto para destacar (H), comentar (C), sublinhar (U) ou desenhar setas (A)."
+      },
+      "eraser": {
+        "title": "Apague anotações",
+        "content": "Pressione E ou clique na borracha para remover destaques, sublinhados e setas do texto selecionado."
+      },
+      "unlock": {
+        "title": "Desbloqueie para editar",
+        "content": "Pressione K novamente para voltar à edição. Suas anotações são preservadas."
+      },
+      "statusBar": {
+        "title": "Barra de status",
+        "content": "Fique de olho aqui para feedback — resultados de exportação, status de sincronização e outras notificações aparecem nesta barra."
+      },
+      "share": {
+        "title": "Colabore com outros",
+        "content": "Gere um link somente leitura ou editável para compartilhar seu documento anotado com outros."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Próximo",
+    "back": "Voltar",
+    "skip": "Pular",
+    "finish": "Concluir"
+  }
+}

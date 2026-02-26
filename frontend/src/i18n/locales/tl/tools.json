@@ -30,5 +30,36 @@
     "status": "Mag-click at mag-drag upang burahin ang mga anotasyon.",
     "erased": "Nabura ang anotasyon."
   },
-  "lockHint": "Pindutin ang <kbd>Esc</kbd> <kbd>K</kbd> upang i-lock ang editor kapag natapos mo na ang nilalaman."
+  "lockHint": "Pindutin ang <kbd>Esc</kbd> <kbd>K</kbd> upang i-lock ang editor kapag natapos mo na ang nilalaman.",
+  "recording": {
+    "label": "Pagre-record",
+    "record": "I-record",
+    "stopRecording": "Itigil ang pagre-record",
+    "play": "I-play",
+    "stop": "Itigil",
+    "pause": "I-pause",
+    "next": "Susunod na hakbang",
+    "previous": "Nakaraang hakbang",
+    "newRecording": "Bagong recording",
+    "editRecording": "I-edit ang recording",
+    "deleteRecording": "Burahin ang recording",
+    "duplicateRecording": "I-duplicate ang recording",
+    "noRecordings": "Wala pang mga recording",
+    "recording": "Nagre-record…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Paunang kalagayan",
+    "speed": "Bilis",
+    "transition": "Paglipat",
+    "instant": "Agaran",
+    "fade": "Fade",
+    "untitled": "Walang Pamagat na Recording",
+    "showLayer": "Ipakita ang {{name}}",
+    "hideLayer": "Itago ang {{name}}",
+    "showAnnotation": "Ipakita ang anotasyon",
+    "hideAnnotation": "Itago ang anotasyon",
+    "showSection": "Ipakita ang seksyon {{index}}",
+    "hideSection": "Itago ang seksyon {{index}}",
+    "deletedAnnotationWarning": "Ang ilang hakbang ay tumutukoy sa mga binurang anotasyon",
+    "statusHint": "Nagre-record… I-toggle ang visibility ng layer/anotasyon upang makuha ang mga hakbang. Pindutin ang ■ upang huminto."
+  }
 }

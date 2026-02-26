@@ -30,5 +30,36 @@
     "status": "Натисніть і перетягніть, щоб стерти анотації.",
     "erased": "Анотацію стерто."
   },
-  "lockHint": "Натисніть <kbd>Esc</kbd> <kbd>K</kbd>, щоб заблокувати редактор після завершення редагування вмісту."
+  "lockHint": "Натисніть <kbd>Esc</kbd> <kbd>K</kbd>, щоб заблокувати редактор після завершення редагування вмісту.",
+  "recording": {
+    "label": "Запис",
+    "record": "Записати",
+    "stopRecording": "Зупинити запис",
+    "play": "Відтворити",
+    "stop": "Зупинити",
+    "pause": "Пауза",
+    "next": "Наступний крок",
+    "previous": "Попередній крок",
+    "newRecording": "Новий запис",
+    "editRecording": "Редагувати запис",
+    "deleteRecording": "Видалити запис",
+    "duplicateRecording": "Дублювати запис",
+    "noRecordings": "Записів ще немає",
+    "recording": "Запис…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Початковий стан",
+    "speed": "Швидкість",
+    "transition": "Перехід",
+    "instant": "Миттєво",
+    "fade": "Згасання",
+    "untitled": "Запис без назви",
+    "showLayer": "Показати {{name}}",
+    "hideLayer": "Сховати {{name}}",
+    "showAnnotation": "Показати анотацію",
+    "hideAnnotation": "Сховати анотацію",
+    "showSection": "Показати розділ {{index}}",
+    "hideSection": "Сховати розділ {{index}}",
+    "deletedAnnotationWarning": "Деякі кроки посилаються на видалені анотації",
+    "statusHint": "Запис… Перемикайте видимість шарів/анотацій, щоб захопити кроки. Натисніть ■, щоб зупинити."
+  }
 }

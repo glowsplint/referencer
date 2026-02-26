@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "I-paste ang iyong teksto",
+        "content": "Magsimula sa pamamagitan ng pag-paste o pag-type ng iyong teksto sa editor."
+      },
+      "lock": {
+        "title": "I-lock ang dokumento",
+        "content": "Pindutin ang K o i-click ang lock button upang lumipat sa annotation mode."
+      },
+      "annotate": {
+        "title": "I-annotate ang iyong teksto",
+        "content": "Pumili ng teksto upang i-highlight (H), magkomento (C), magsalungguhit (U), o gumuhit ng palaso (A)."
+      },
+      "eraser": {
+        "title": "Burahin ang mga anotasyon",
+        "content": "Pindutin ang E o i-click ang pambura upang alisin ang mga highlight, salungguhit, at palaso mula sa napiling teksto."
+      },
+      "unlock": {
+        "title": "I-unlock upang mag-edit",
+        "content": "Pindutin muli ang K upang bumalik sa pag-edit. Ang iyong mga anotasyon ay mananatili."
+      },
+      "statusBar": {
+        "title": "Status bar",
+        "content": "Bantayan dito ang mga feedback — ang mga resulta ng export, status ng sync, at iba pang mga abiso ay lalabas sa bar na ito."
+      },
+      "share": {
+        "title": "Makipagtulungan sa iba",
+        "content": "Gumawa ng read-only o editable na link upang ibahagi ang iyong anotadong dokumento sa iba."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Susunod",
+    "back": "Bumalik",
+    "skip": "Laktawan",
+    "finish": "Tapusin"
+  }
+}

@@ -17,6 +17,10 @@
     "language": {
       "label": "Ngôn ngữ",
       "description": "Chọn ngôn ngữ ưa thích của bạn"
+    },
+    "statusBar": {
+      "label": "Thanh trạng thái",
+      "description": "Hiển thị thanh trạng thái bên dưới thanh công cụ"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Liên kết chỉ đọc",
     "editLink": "Liên kết chỉnh sửa",
     "linkCopied": "Đã sao chép liên kết vào bộ nhớ tạm.",
-    "copyFailed": "Không thể sao chép liên kết."
+    "copyFailed": "Không thể sao chép liên kết.",
+    "loginRequired": "Đăng nhập để tạo liên kết chia sẻ cho không gian làm việc này.",
+    "loginGoogle": "Đăng nhập bằng Google",
+    "loginGithub": "Đăng nhập bằng GitHub"
   },
   "mobile": {
     "title": "Tốt nhất trên máy tính",
     "description": "Referencer được thiết kế để sử dụng trên máy tính với bàn phím và chuột. Bạn vẫn có thể đọc nội dung ở đây, nhưng các công cụ chỉnh sửa và chú thích không khả dụng trên thiết bị di động.",
     "continueReading": "Tiếp tục đọc"
+  },
+  "bugReport": {
+    "title": "Báo lỗi",
+    "description": "Mô tả sự cố bạn gặp phải. Báo cáo của bạn sẽ được gửi đến trình theo dõi sự cố của chúng tôi.",
+    "titleLabel": "Tiêu đề",
+    "titlePlaceholder": "Tóm tắt ngắn gọn về sự cố",
+    "descriptionLabel": "Mô tả",
+    "descriptionPlaceholder": "Các bước tái hiện, hành vi mong đợi, hành vi thực tế…",
+    "submit": "Gửi báo cáo",
+    "submitting": "Đang gửi…",
+    "success": "Báo cáo lỗi đã được gửi thành công. Cảm ơn bạn!",
+    "error": "Không thể gửi báo cáo lỗi. Vui lòng thử lại.",
+    "rateLimited": "Quá nhiều báo cáo. Vui lòng thử lại sau.",
+    "reportBug": "Báo lỗi"
   }
 }

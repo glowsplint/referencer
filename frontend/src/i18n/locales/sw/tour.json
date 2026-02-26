@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Bandika maandishi yako",
+        "content": "Anza kwa kubandika au kuandika maandishi yako kwenye kihariri."
+      },
+      "lock": {
+        "title": "Funga hati",
+        "content": "Bonyeza K au bofya kitufe cha kufunga ili kubadilisha hadi hali ya vidokezo."
+      },
+      "annotate": {
+        "title": "Weka vidokezo kwenye maandishi yako",
+        "content": "Chagua maandishi ili kuangazia (H), kutoa maoni (C), kupigia mstari (U), au kuchora mishale (A)."
+      },
+      "eraser": {
+        "title": "Futa vidokezo",
+        "content": "Bonyeza E au bofya kifutio ili kuondoa uangaziaji, mistari na mishale kutoka maandishi yaliyochaguliwa."
+      },
+      "unlock": {
+        "title": "Fungua ili kuhariri",
+        "content": "Bonyeza K tena kurudi kwenye uhariri. Vidokezo vyako vinahifadhiwa."
+      },
+      "statusBar": {
+        "title": "Upau wa hali",
+        "content": "Fuatilia hapa kwa maoni — matokeo ya kuhamisha, hali ya usawazishaji, na arifa nyingine zinaonekana kwenye upau huu."
+      },
+      "share": {
+        "title": "Shirikiana na wengine",
+        "content": "Tengeneza kiungo cha kusoma tu au cha kuhariri ili kushiriki hati yako yenye vidokezo na wengine."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Ifuatayo",
+    "back": "Rudi",
+    "skip": "Ruka",
+    "finish": "Maliza"
+  }
+}

@@ -30,5 +30,36 @@
     "status": "Klik en sleep om aantekeninge uit te vee.",
     "erased": "Aantekening uitgevee."
   },
-  "lockHint": "Druk <kbd>Esc</kbd> <kbd>K</kbd> om die redigeerder te sluit nadat jy die inhoud voltooi het."
+  "lockHint": "Druk <kbd>Esc</kbd> <kbd>K</kbd> om die redigeerder te sluit nadat jy die inhoud voltooi het.",
+  "recording": {
+    "label": "Opname",
+    "record": "Neem op",
+    "stopRecording": "Stop opname",
+    "play": "Speel",
+    "stop": "Stop",
+    "pause": "Pouseer",
+    "next": "Volgende stap",
+    "previous": "Vorige stap",
+    "newRecording": "Nuwe opname",
+    "editRecording": "Wysig opname",
+    "deleteRecording": "Skrap opname",
+    "duplicateRecording": "Dupliseer opname",
+    "noRecordings": "Nog geen opnames nie",
+    "recording": "Neem op...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Aanvanklike toestand",
+    "speed": "Spoed",
+    "transition": "Oorgang",
+    "instant": "Onmiddellik",
+    "fade": "Vervaag",
+    "untitled": "Naamlose Opname",
+    "showLayer": "Wys {{name}}",
+    "hideLayer": "Versteek {{name}}",
+    "showAnnotation": "Wys aantekening",
+    "hideAnnotation": "Versteek aantekening",
+    "showSection": "Wys afdeling {{index}}",
+    "hideSection": "Versteek afdeling {{index}}",
+    "deletedAnnotationWarning": "Sommige stappe verwys na geskrapte aantekeninge",
+    "statusHint": "Neem op… Wissel laag-/aantekeninsigbaarheid om stappe vas te vang. Druk ■ om te stop."
+  }
 }

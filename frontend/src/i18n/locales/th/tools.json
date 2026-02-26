@@ -30,5 +30,36 @@
     "status": "คลิกแล้วลากเพื่อลบคำอธิบายประกอบ",
     "erased": "ลบคำอธิบายประกอบแล้ว"
   },
-  "lockHint": "กด <kbd>Esc</kbd> <kbd>K</kbd> เพื่อล็อกตัวแก้ไขหลังจากคุณจัดเนื้อหาเสร็จแล้ว"
+  "lockHint": "กด <kbd>Esc</kbd> <kbd>K</kbd> เพื่อล็อกตัวแก้ไขหลังจากคุณจัดเนื้อหาเสร็จแล้ว",
+  "recording": {
+    "label": "การบันทึก",
+    "record": "บันทึก",
+    "stopRecording": "หยุดบันทึก",
+    "play": "เล่น",
+    "stop": "หยุด",
+    "pause": "หยุดชั่วคราว",
+    "next": "ขั้นตอนถัดไป",
+    "previous": "ขั้นตอนก่อนหน้า",
+    "newRecording": "บันทึกใหม่",
+    "editRecording": "แก้ไขการบันทึก",
+    "deleteRecording": "ลบการบันทึก",
+    "duplicateRecording": "ทำสำเนาการบันทึก",
+    "noRecordings": "ยังไม่มีการบันทึก",
+    "recording": "กำลังบันทึก…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "สถานะเริ่มต้น",
+    "speed": "ความเร็ว",
+    "transition": "การเปลี่ยนผ่าน",
+    "instant": "ทันที",
+    "fade": "จางหาย",
+    "untitled": "การบันทึกไม่มีชื่อ",
+    "showLayer": "แสดง {{name}}",
+    "hideLayer": "ซ่อน {{name}}",
+    "showAnnotation": "แสดงคำอธิบายประกอบ",
+    "hideAnnotation": "ซ่อนคำอธิบายประกอบ",
+    "showSection": "แสดงส่วนที่ {{index}}",
+    "hideSection": "ซ่อนส่วนที่ {{index}}",
+    "deletedAnnotationWarning": "บางขั้นตอนอ้างอิงคำอธิบายประกอบที่ถูกลบแล้ว",
+    "statusHint": "กำลังบันทึก… สลับการมองเห็นของเลเยอร์/คำอธิบายประกอบเพื่อจับขั้นตอน กด ■ เพื่อหยุด"
+  }
 }

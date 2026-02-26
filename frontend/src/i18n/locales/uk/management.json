@@ -10,7 +10,13 @@
     "removeAnnotation": "Видалити анотацію",
     "removeArrow": "Видалити стрілку",
     "removeUnderline": "Видалити підкреслення",
-    "allColorsInUse": "Усі кольори використовуються — спочатку видаліть шар."
+    "allColorsInUse": "Усі кольори використовуються — спочатку видаліть шар.",
+    "hideAnnotation": "Сховати анотацію",
+    "showAnnotation": "Показати анотацію",
+    "hideArrow": "Сховати стрілку",
+    "showArrow": "Показати стрілку",
+    "hideUnderline": "Сховати підкреслення",
+    "showUnderline": "Показати підкреслення"
   },
   "passages": {
     "title": "Уривки",
@@ -26,13 +32,19 @@
     "helpFaq": "Довідка та FAQ",
     "settings": "Налаштування",
     "toggleEditorLayout": "Перемкнути макет редактора",
-    "toggleEditorLock": "Перемкнути блокування редактора"
+    "toggleEditorLock": "Перемкнути блокування редактора",
+    "toggleCommentPlacement": "Перемкнути розміщення коментарів",
+    "startTour": "Екскурсія з гідом"
   },
   "annotations": {
     "placeholder": "Додати анотацію...",
     "removeCustomColour": "Видалити власний колір",
     "addCustomColour": "Додати власний колір",
-    "addToCustomColours": "Додати до власних кольорів"
+    "addToCustomColours": "Додати до власних кольорів",
+    "replyPlaceholder": "Відповісти…",
+    "replies": "відповіді",
+    "addReaction": "Додати реакцію",
+    "removeReply": "Видалити відповідь"
   },
   "actionConsole": {
     "title": "Консоль дій",

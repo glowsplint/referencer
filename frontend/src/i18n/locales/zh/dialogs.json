@@ -17,6 +17,10 @@
     "language": {
       "label": "语言",
       "description": "选择您的首选语言"
+    },
+    "statusBar": {
+      "label": "状态栏",
+      "description": "在工具栏下方显示状态栏"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "只读链接",
     "editLink": "编辑链接",
     "linkCopied": "链接已复制到剪贴板。",
-    "copyFailed": "复制链接失败。"
+    "copyFailed": "复制链接失败。",
+    "loginRequired": "请登录以生成此工作区的共享链接。",
+    "loginGoogle": "使用 Google 登录",
+    "loginGithub": "使用 GitHub 登录"
   },
   "mobile": {
     "title": "桌面端体验最佳",
     "description": "Referencer 专为桌面端设计，需要键盘和鼠标操作。您仍然可以在此阅读内容，但编辑和标注工具在移动端不可用。",
     "continueReading": "继续阅读"
+  },
+  "bugReport": {
+    "title": "报告错误",
+    "description": "描述您遇到的问题。您的报告将提交到我们的问题追踪器。",
+    "titleLabel": "标题",
+    "titlePlaceholder": "问题简要概述",
+    "descriptionLabel": "描述",
+    "descriptionPlaceholder": "重现步骤、预期行为、实际行为…",
+    "submit": "提交报告",
+    "submitting": "正在提交…",
+    "success": "错误报告已成功提交。感谢您！",
+    "error": "提交错误报告失败。请重试。",
+    "rateLimited": "报告过于频繁。请稍后再试。",
+    "reportBug": "报告错误"
   }
 }

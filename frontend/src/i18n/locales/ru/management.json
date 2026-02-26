@@ -10,7 +10,13 @@
     "removeAnnotation": "Удалить аннотацию",
     "removeArrow": "Удалить стрелку",
     "removeUnderline": "Удалить подчёркивание",
-    "allColorsInUse": "Все цвета используются — сначала удалите слой."
+    "allColorsInUse": "Все цвета используются — сначала удалите слой.",
+    "hideAnnotation": "Скрыть аннотацию",
+    "showAnnotation": "Показать аннотацию",
+    "hideArrow": "Скрыть стрелку",
+    "showArrow": "Показать стрелку",
+    "hideUnderline": "Скрыть подчёркивание",
+    "showUnderline": "Показать подчёркивание"
   },
   "passages": {
     "title": "Отрывки",
@@ -26,13 +32,19 @@
     "helpFaq": "Помощь и FAQ",
     "settings": "Настройки",
     "toggleEditorLayout": "Переключить макет редактора",
-    "toggleEditorLock": "Переключить блокировку редактора"
+    "toggleEditorLock": "Переключить блокировку редактора",
+    "toggleCommentPlacement": "Переключить размещение комментариев",
+    "startTour": "Экскурсия с гидом"
   },
   "annotations": {
     "placeholder": "Добавить аннотацию...",
     "removeCustomColour": "Удалить пользовательский цвет",
     "addCustomColour": "Добавить пользовательский цвет",
-    "addToCustomColours": "Добавить в пользовательские цвета"
+    "addToCustomColours": "Добавить в пользовательские цвета",
+    "replyPlaceholder": "Ответить…",
+    "replies": "ответы",
+    "addReaction": "Добавить реакцию",
+    "removeReply": "Удалить ответ"
   },
   "actionConsole": {
     "title": "Консоль действий",

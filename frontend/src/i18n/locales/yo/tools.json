@@ -30,5 +30,36 @@
     "status": "Tẹ kí o sì fà láti pa àwọn àkọsílẹ̀ rẹ́.",
     "erased": "A ti pa àkọsílẹ̀ rẹ́."
   },
-  "lockHint": "Tẹ <kbd>Esc</kbd> <kbd>K</kbd> láti tìí olóòtú nígbà tí o bá ti parí àkóónú rẹ."
+  "lockHint": "Tẹ <kbd>Esc</kbd> <kbd>K</kbd> láti tìí olóòtú nígbà tí o bá ti parí àkóónú rẹ.",
+  "recording": {
+    "label": "Gbígbasílẹ̀",
+    "record": "Gbasílẹ̀",
+    "stopRecording": "Dá gbígbasílẹ̀ dúró",
+    "play": "Ṣíṣe",
+    "stop": "Dúró",
+    "pause": "Dákẹ́ fún ìgbà díẹ̀",
+    "next": "Ìgbésẹ̀ tó kàn",
+    "previous": "Ìgbésẹ̀ tí ó ṣáájú",
+    "newRecording": "Gbígbasílẹ̀ tuntun",
+    "editRecording": "Ṣàtúnṣe gbígbasílẹ̀",
+    "deleteRecording": "Pa gbígbasílẹ̀ rẹ́",
+    "duplicateRecording": "Ṣe àdàkọ gbígbasílẹ̀",
+    "noRecordings": "Kò sí gbígbasílẹ̀ kankan síbẹ̀",
+    "recording": "Ń gbasílẹ̀...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Ìpò ìbẹ̀rẹ̀",
+    "speed": "Ìyára",
+    "transition": "Ìyípadà",
+    "instant": "Lẹ́sẹ̀kẹsẹ̀",
+    "fade": "Ìpòòrò",
+    "untitled": "Gbígbasílẹ̀ Aláìlórúkọ",
+    "showLayer": "Fi {{name}} hàn",
+    "hideLayer": "Ìbòmọ́lẹ̀ {{name}}",
+    "showAnnotation": "Fi àkọsílẹ̀ hàn",
+    "hideAnnotation": "Ìbòmọ́lẹ̀ àkọsílẹ̀",
+    "showSection": "Fi apá {{index}} hàn",
+    "hideSection": "Ìbòmọ́lẹ̀ apá {{index}}",
+    "deletedAnnotationWarning": "Àwọn ìgbésẹ̀ kan tọ́ka sí àwọn àkọsílẹ̀ tí a ti pa rẹ́",
+    "statusHint": "Ń gbasílẹ̀… Yí ìhàn ìpele/àkọsílẹ̀ padà láti mú àwọn ìgbésẹ̀. Tẹ ■ láti dúró."
+  }
 }

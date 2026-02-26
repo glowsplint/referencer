@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Tampal teks anda",
+        "content": "Mulakan dengan menampal atau menaip teks ke dalam editor."
+      },
+      "lock": {
+        "title": "Kunci dokumen",
+        "content": "Tekan K atau klik butang kunci untuk bertukar ke mod anotasi."
+      },
+      "annotate": {
+        "title": "Anotasi teks anda",
+        "content": "Pilih teks untuk menyorot (H), mengulas (C), menggaris bawah (U), atau melukis anak panah (A)."
+      },
+      "eraser": {
+        "title": "Padam anotasi",
+        "content": "Tekan E atau klik pemadam untuk membuang sorotan, garis bawah, dan anak panah daripada teks yang dipilih."
+      },
+      "unlock": {
+        "title": "Buka kunci untuk menyunting",
+        "content": "Tekan K sekali lagi untuk kembali menyunting. Anotasi anda akan dikekalkan."
+      },
+      "statusBar": {
+        "title": "Bar status",
+        "content": "Perhatikan di sini untuk maklum balas — keputusan eksport, status penyegerakan, dan pemberitahuan lain dipaparkan di bar ini."
+      },
+      "share": {
+        "title": "Berkolaborasi dengan orang lain",
+        "content": "Jana pautan baca sahaja atau boleh disunting untuk berkongsi dokumen beranotasi anda dengan orang lain."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Seterusnya",
+    "back": "Kembali",
+    "skip": "Langkau",
+    "finish": "Selesai"
+  }
+}

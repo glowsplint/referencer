@@ -17,6 +17,10 @@
     "language": {
       "label": "Idioma",
       "description": "Escolha seu idioma preferido"
+    },
+    "statusBar": {
+      "label": "Barra de status",
+      "description": "Mostrar a barra de status abaixo da barra de ferramentas"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Link somente leitura",
     "editLink": "Link de edição",
     "linkCopied": "Link copiado para a área de transferência.",
-    "copyFailed": "Falha ao copiar o link."
+    "copyFailed": "Falha ao copiar o link.",
+    "loginRequired": "Faça login para gerar um link de compartilhamento para este espaço de trabalho.",
+    "loginGoogle": "Entrar com Google",
+    "loginGithub": "Entrar com GitHub"
   },
   "mobile": {
     "title": "Melhor no desktop",
     "description": "O Referencer foi projetado para uso em desktop com teclado e mouse. Você pode ler o conteúdo aqui, mas as ferramentas de edição e anotação não estão disponíveis no celular.",
     "continueReading": "Continuar lendo"
+  },
+  "bugReport": {
+    "title": "Reportar um bug",
+    "description": "Descreva o problema encontrado. Seu relatório será enviado ao nosso rastreador de problemas.",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Breve resumo do problema",
+    "descriptionLabel": "Descrição",
+    "descriptionPlaceholder": "Passos para reproduzir, comportamento esperado, comportamento real…",
+    "submit": "Enviar relatório",
+    "submitting": "Enviando…",
+    "success": "Relatório de bug enviado com sucesso. Obrigado!",
+    "error": "Falha ao enviar o relatório de bug. Tente novamente.",
+    "rateLimited": "Muitos relatórios. Tente novamente mais tarde.",
+    "reportBug": "Reportar um bug"
   }
 }

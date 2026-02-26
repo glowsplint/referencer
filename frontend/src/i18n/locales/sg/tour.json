@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Paste your text",
+        "content": "Start by pasting or typing your text into the editor. Don't paiseh, just dump in lah!"
+      },
+      "lock": {
+        "title": "Lock the document",
+        "content": "Press K or click the lock button to switch to annotation mode. Steady lah, now can mark up!"
+      },
+      "annotate": {
+        "title": "Annotate your text",
+        "content": "Select text to highlight (H), comment (C), underline (U), or draw arrows (A). Wah so many tools, power sia!"
+      },
+      "eraser": {
+        "title": "Erase annotations",
+        "content": "Press E or click the eraser to remove highlights, underlines, and arrows. Siao liao, wrong annotation? No worries, just erase!"
+      },
+      "unlock": {
+        "title": "Unlock to edit",
+        "content": "Press K again to go back to editing. Your annotations all safe one, don't worry!"
+      },
+      "statusBar": {
+        "title": "Status bar",
+        "content": "Keep an eye on this bar — it tell you what happening one. Like your kaypoh friend, always got update."
+      },
+      "share": {
+        "title": "Jio your friends",
+        "content": "Generate a read-only or editable link to share your annotated document. The more the merrier lah!"
+      }
+    }
+  },
+  "buttons": {
+    "next": "Next",
+    "back": "Go back",
+    "skip": "Skip lah",
+    "finish": "Swee, done!"
+  }
+}

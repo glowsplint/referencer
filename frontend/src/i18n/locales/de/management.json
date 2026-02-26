@@ -10,7 +10,13 @@
     "removeAnnotation": "Anmerkung entfernen",
     "removeArrow": "Pfeil entfernen",
     "removeUnderline": "Unterstreichung entfernen",
-    "allColorsInUse": "Alle Farben sind vergeben — entfernen Sie zuerst eine Ebene."
+    "allColorsInUse": "Alle Farben sind vergeben — entfernen Sie zuerst eine Ebene.",
+    "hideAnnotation": "Anmerkung ausblenden",
+    "showAnnotation": "Anmerkung anzeigen",
+    "hideArrow": "Pfeil ausblenden",
+    "showArrow": "Pfeil anzeigen",
+    "hideUnderline": "Unterstreichung ausblenden",
+    "showUnderline": "Unterstreichung anzeigen"
   },
   "passages": {
     "title": "Abschnitte",
@@ -26,13 +32,19 @@
     "helpFaq": "Hilfe & FAQ",
     "settings": "Einstellungen",
     "toggleEditorLayout": "Editorlayout umschalten",
-    "toggleEditorLock": "Editorsperre umschalten"
+    "toggleEditorLock": "Editorsperre umschalten",
+    "toggleCommentPlacement": "Kommentarplatzierung umschalten",
+    "startTour": "Geführte Tour"
   },
   "annotations": {
     "placeholder": "Anmerkung hinzufügen...",
     "removeCustomColour": "Benutzerdefinierte Farbe entfernen",
     "addCustomColour": "Benutzerdefinierte Farbe hinzufügen",
-    "addToCustomColours": "Zu benutzerdefinierten Farben hinzufügen"
+    "addToCustomColours": "Zu benutzerdefinierten Farben hinzufügen",
+    "replyPlaceholder": "Antworten…",
+    "replies": "Antworten",
+    "addReaction": "Reaktion hinzufügen",
+    "removeReply": "Antwort entfernen"
   },
   "actionConsole": {
     "title": "Aktionskonsole",

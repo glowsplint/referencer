@@ -17,6 +17,10 @@
     "language": {
       "label": "Idioma",
       "description": "Elige tu idioma preferido"
+    },
+    "statusBar": {
+      "label": "Barra de estado",
+      "description": "Mostrar la barra de estado debajo de la barra de herramientas"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Enlace de solo lectura",
     "editLink": "Enlace de edición",
     "linkCopied": "Enlace copiado al portapapeles.",
-    "copyFailed": "No se pudo copiar el enlace."
+    "copyFailed": "No se pudo copiar el enlace.",
+    "loginRequired": "Inicia sesión para generar un enlace de compartir para este espacio de trabajo.",
+    "loginGoogle": "Iniciar sesión con Google",
+    "loginGithub": "Iniciar sesión con GitHub"
   },
   "mobile": {
     "title": "Mejor en escritorio",
     "description": "Referencer está diseñado para uso en escritorio con teclado y ratón. Puedes leer el contenido aquí, pero las herramientas de edición y anotación no están disponibles en dispositivos móviles.",
     "continueReading": "Continuar leyendo"
+  },
+  "bugReport": {
+    "title": "Reportar un error",
+    "description": "Describe el problema que encontraste. Tu reporte será enviado a nuestro sistema de seguimiento de incidencias.",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Breve resumen del problema",
+    "descriptionLabel": "Descripción",
+    "descriptionPlaceholder": "Pasos para reproducir, comportamiento esperado, comportamiento real…",
+    "submit": "Enviar reporte",
+    "submitting": "Enviando…",
+    "success": "Reporte de error enviado con éxito. ¡Gracias!",
+    "error": "No se pudo enviar el reporte de error. Por favor, inténtalo de nuevo.",
+    "rateLimited": "Demasiados reportes. Por favor, inténtalo más tarde.",
+    "reportBug": "Reportar un error"
   }
 }

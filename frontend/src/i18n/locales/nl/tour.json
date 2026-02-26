@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Plak uw tekst",
+        "content": "Begin door uw tekst in de editor te plakken of te typen."
+      },
+      "lock": {
+        "title": "Vergrendel het document",
+        "content": "Druk op K of klik op de vergrendelknop om naar de annotatiemodus te schakelen."
+      },
+      "annotate": {
+        "title": "Annoteer uw tekst",
+        "content": "Selecteer tekst om te markeren (H), te becommentarieren (C), te onderstrepen (U) of pijlen te tekenen (A)."
+      },
+      "eraser": {
+        "title": "Wis annotaties",
+        "content": "Druk op E of klik op de gum om markeringen, onderstrepingen en pijlen van de geselecteerde tekst te verwijderen."
+      },
+      "unlock": {
+        "title": "Ontgrendel om te bewerken",
+        "content": "Druk opnieuw op K om terug te keren naar bewerken. Uw annotaties blijven behouden."
+      },
+      "statusBar": {
+        "title": "Statusbalk",
+        "content": "Houd deze balk in de gaten voor feedback — exportresultaten, synchronisatiestatus en andere meldingen verschijnen hier."
+      },
+      "share": {
+        "title": "Werk samen met anderen",
+        "content": "Genereer een alleen-lezen of bewerkbare link om uw geannoteerde document met anderen te delen."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Volgende",
+    "back": "Vorige",
+    "skip": "Overslaan",
+    "finish": "Voltooien"
+  }
+}

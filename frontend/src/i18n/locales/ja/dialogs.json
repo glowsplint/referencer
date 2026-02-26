@@ -17,6 +17,10 @@
     "language": {
       "label": "言語",
       "description": "お好みの言語を選択してください"
+    },
+    "statusBar": {
+      "label": "ステータスバー",
+      "description": "ツールバーの下にステータスバーを表示する"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "読み取り専用リンク",
     "editLink": "編集リンク",
     "linkCopied": "リンクをクリップボードにコピーしました。",
-    "copyFailed": "リンクのコピーに失敗しました。"
+    "copyFailed": "リンクのコピーに失敗しました。",
+    "loginRequired": "このワークスペースの共有リンクを生成するにはサインインしてください。",
+    "loginGoogle": "Google でサインイン",
+    "loginGithub": "GitHub でサインイン"
   },
   "mobile": {
     "title": "デスクトップ推奨",
     "description": "Referencerはキーボードとマウスを使うデスクトップ向けに設計されています。ここでもコンテンツを読むことはできますが、編集や注釈ツールはモバイルでは利用できません。",
     "continueReading": "読み続ける"
+  },
+  "bugReport": {
+    "title": "バグを報告",
+    "description": "発生した問題を説明してください。レポートは課題トラッカーに送信されます。",
+    "titleLabel": "タイトル",
+    "titlePlaceholder": "問題の簡単な概要",
+    "descriptionLabel": "説明",
+    "descriptionPlaceholder": "再現手順、期待される動作、実際の動作…",
+    "submit": "レポートを送信",
+    "submitting": "送信中…",
+    "success": "バグレポートが正常に送信されました。ありがとうございます！",
+    "error": "バグレポートの送信に失敗しました。もう一度お試しください。",
+    "rateLimited": "レポートが多すぎます。後でもう一度お試しください。",
+    "reportBug": "バグを報告"
   }
 }

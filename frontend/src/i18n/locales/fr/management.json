@@ -10,7 +10,13 @@
     "removeAnnotation": "Supprimer l'annotation",
     "removeArrow": "Supprimer la flèche",
     "removeUnderline": "Supprimer le soulignement",
-    "allColorsInUse": "Toutes les couleurs sont utilisées — supprimez d'abord un calque."
+    "allColorsInUse": "Toutes les couleurs sont utilisées — supprimez d'abord un calque.",
+    "hideAnnotation": "Masquer l'annotation",
+    "showAnnotation": "Afficher l'annotation",
+    "hideArrow": "Masquer la flèche",
+    "showArrow": "Afficher la flèche",
+    "hideUnderline": "Masquer le soulignement",
+    "showUnderline": "Afficher le soulignement"
   },
   "passages": {
     "title": "Passages",
@@ -26,13 +32,19 @@
     "helpFaq": "Aide et FAQ",
     "settings": "Paramètres",
     "toggleEditorLayout": "Basculer la disposition de l'éditeur",
-    "toggleEditorLock": "Basculer le verrouillage de l'éditeur"
+    "toggleEditorLock": "Basculer le verrouillage de l'éditeur",
+    "toggleCommentPlacement": "Basculer le placement des commentaires",
+    "startTour": "Visite guidée"
   },
   "annotations": {
     "placeholder": "Ajouter une annotation...",
     "removeCustomColour": "Supprimer la couleur personnalisée",
     "addCustomColour": "Ajouter une couleur personnalisée",
-    "addToCustomColours": "Ajouter aux couleurs personnalisées"
+    "addToCustomColours": "Ajouter aux couleurs personnalisées",
+    "replyPlaceholder": "Répondre…",
+    "replies": "réponses",
+    "addReaction": "Ajouter une réaction",
+    "removeReply": "Supprimer la réponse"
   },
   "actionConsole": {
     "title": "Console d'actions",

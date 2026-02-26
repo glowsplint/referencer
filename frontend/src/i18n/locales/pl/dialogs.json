@@ -17,6 +17,10 @@
     "language": {
       "label": "Jezyk",
       "description": "Wybierz preferowany jezyk"
+    },
+    "statusBar": {
+      "label": "Pasek stanu",
+      "description": "Wyswietl pasek stanu pod paskiem narzedzi"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Link tylko do odczytu",
     "editLink": "Link do edycji",
     "linkCopied": "Link skopiowany do schowka.",
-    "copyFailed": "Nie udalo sie skopiowac linku."
+    "copyFailed": "Nie udalo sie skopiowac linku.",
+    "loginRequired": "Zaloguj sie, aby wygenerowac link udostepniania dla tej przestrzeni roboczej.",
+    "loginGoogle": "Zaloguj sie przez Google",
+    "loginGithub": "Zaloguj sie przez GitHub"
   },
   "mobile": {
     "title": "Najlepiej na komputerze",
     "description": "Referencer jest zaprojektowany do uzytku na komputerze z klawiatura i mysza. Mozesz tu czytac tresc, ale narzedzia edycji i adnotacji nie sa dostepne na urzadzeniach mobilnych.",
     "continueReading": "Kontynuuj czytanie"
+  },
+  "bugReport": {
+    "title": "Zglos blad",
+    "description": "Opisz napotkany problem. Twoje zgloszenie zostanie wyslane do naszego systemu sledzenia problemow.",
+    "titleLabel": "Tytul",
+    "titlePlaceholder": "Krotkie podsumowanie problemu",
+    "descriptionLabel": "Opis",
+    "descriptionPlaceholder": "Kroki do odtworzenia, oczekiwane zachowanie, faktyczne zachowanie…",
+    "submit": "Wyslij zgloszenie",
+    "submitting": "Wysylanie…",
+    "success": "Zgloszenie bledu wyslane pomyslnie. Dziekujemy!",
+    "error": "Nie udalo sie wyslac zgloszenia bledu. Sprobuj ponownie.",
+    "rateLimited": "Zbyt wiele zgloszen. Sprobuj ponownie pozniej.",
+    "reportBug": "Zglos blad"
   }
 }

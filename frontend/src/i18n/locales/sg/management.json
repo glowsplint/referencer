@@ -1,0 +1,54 @@
+{
+  "layers": {
+    "title": "Layers",
+    "addLayer": "Add layer",
+    "hideAll": "Hide all layers",
+    "showAll": "Show all layers",
+    "hideLayer": "Hide layer",
+    "showLayer": "Show layer",
+    "changeColour": "Change colour",
+    "removeAnnotation": "Remove annotation",
+    "removeArrow": "Remove arrow",
+    "removeUnderline": "Remove underline",
+    "hideAnnotation": "Hide annotation",
+    "showAnnotation": "Show annotation",
+    "hideArrow": "Hide arrow",
+    "showArrow": "Show arrow",
+    "hideUnderline": "Hide underline",
+    "showUnderline": "Show underline",
+    "allColorsInUse": "All colors used up liao — remove a layer first can?"
+  },
+  "passages": {
+    "title": "Passages",
+    "addPassage": "Add passage",
+    "hideAll": "Hide all passages",
+    "showAll": "Show all passages",
+    "hidePassage": "Hide passage",
+    "showPassage": "Show passage"
+  },
+  "tooltips": {
+    "toggleManagementPane": "Toggle management pane",
+    "keyboardShortcuts": "Keyboard shortcuts",
+    "helpFaq": "Help & FAQ",
+    "settings": "Settings",
+    "toggleEditorLayout": "Toggle editor layout",
+    "toggleEditorLock": "Toggle editor lock",
+    "toggleCommentPlacement": "Toggle comment placement",
+    "startTour": "Take the guided tour lah!"
+  },
+  "annotations": {
+    "placeholder": "Write something lah...",
+    "removeCustomColour": "Remove custom colour",
+    "addCustomColour": "Add custom colour",
+    "addToCustomColours": "Add to custom colours",
+    "replyPlaceholder": "Reply...",
+    "replies": "replies",
+    "addReaction": "Add reaction",
+    "removeReply": "Remove reply"
+  },
+  "actionConsole": {
+    "title": "Action Console",
+    "close": "close",
+    "empty": "Nothing here yet leh. Go do something!"
+  }
+}

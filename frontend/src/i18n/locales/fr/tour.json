@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Collez votre texte",
+        "content": "Commencez par coller ou saisir votre texte dans l'éditeur."
+      },
+      "lock": {
+        "title": "Verrouillez le document",
+        "content": "Appuyez sur K ou cliquez sur le bouton de verrouillage pour passer en mode annotation."
+      },
+      "annotate": {
+        "title": "Annotez votre texte",
+        "content": "Sélectionnez du texte pour surligner (H), commenter (C), souligner (U) ou tracer des flèches (A)."
+      },
+      "eraser": {
+        "title": "Effacez les annotations",
+        "content": "Appuyez sur E ou cliquez sur la gomme pour supprimer les surlignages, soulignements et flèches du texte sélectionné."
+      },
+      "unlock": {
+        "title": "Déverrouillez pour éditer",
+        "content": "Appuyez à nouveau sur K pour revenir à l'édition. Vos annotations sont préservées."
+      },
+      "statusBar": {
+        "title": "Barre d'état",
+        "content": "Gardez un œil ici pour les retours — résultats d'exportation, état de synchronisation et autres notifications apparaissent dans cette barre."
+      },
+      "share": {
+        "title": "Collaborez avec d'autres",
+        "content": "Générez un lien en lecture seule ou modifiable pour partager votre document annoté avec d'autres."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Suivant",
+    "back": "Précédent",
+    "skip": "Passer",
+    "finish": "Terminer"
+  }
+}

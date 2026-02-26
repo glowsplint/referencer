@@ -17,6 +17,10 @@
     "language": {
       "label": "Limbă",
       "description": "Alegeți limba preferată"
+    },
+    "statusBar": {
+      "label": "Bara de stare",
+      "description": "Afișați bara de stare sub bara de instrumente"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Link doar pentru citire",
     "editLink": "Link de editare",
     "linkCopied": "Linkul a fost copiat în clipboard.",
-    "copyFailed": "Copierea linkului a eșuat."
+    "copyFailed": "Copierea linkului a eșuat.",
+    "loginRequired": "Conectați-vă pentru a genera un link de partajare pentru acest spațiu de lucru.",
+    "loginGoogle": "Conectare cu Google",
+    "loginGithub": "Conectare cu GitHub"
   },
   "mobile": {
     "title": "Cel mai bine pe desktop",
     "description": "Referencer este conceput pentru utilizare pe desktop cu tastatură și mouse. Puteți citi conținutul aici, dar instrumentele de editare și adnotare nu sunt disponibile pe mobil.",
     "continueReading": "Continuați lectura"
+  },
+  "bugReport": {
+    "title": "Raportați o eroare",
+    "description": "Descrieți problema întâmpinată. Raportul dumneavoastră va fi trimis la sistemul nostru de urmărire a problemelor.",
+    "titleLabel": "Titlu",
+    "titlePlaceholder": "Rezumat scurt al problemei",
+    "descriptionLabel": "Descriere",
+    "descriptionPlaceholder": "Pași pentru reproducere, comportament așteptat, comportament real…",
+    "submit": "Trimite raportul",
+    "submitting": "Se trimite…",
+    "success": "Raportul de eroare a fost trimis cu succes. Mulțumim!",
+    "error": "Nu s-a putut trimite raportul de eroare. Vă rugăm să încercați din nou.",
+    "rateLimited": "Prea multe rapoarte. Vă rugăm să încercați mai târziu.",
+    "reportBug": "Raportați o eroare"
   }
 }

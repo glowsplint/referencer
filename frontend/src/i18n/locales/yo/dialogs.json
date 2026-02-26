@@ -17,6 +17,10 @@
     "language": {
       "label": "Èdè",
       "description": "Yan èdè tí o fẹ́ràn jù lọ"
+    },
+    "statusBar": {
+      "label": "Ọ̀pá ìpò",
+      "description": "Fi ọ̀pá ìpò hàn ní ìsàlẹ̀ ọ̀pá irinṣẹ́"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Ìjápọ̀ kíkà nìkan",
     "editLink": "Ìjápọ̀ àtúnṣe",
     "linkCopied": "A ti dà ìjápọ̀ sí pátákó àkọsílẹ̀.",
-    "copyFailed": "Kò ṣeéṣe láti dà ìjápọ̀."
+    "copyFailed": "Kò ṣeéṣe láti dà ìjápọ̀.",
+    "loginRequired": "Wọlé láti ṣàgbéjáde ìjápọ̀ pínpín fún ibi iṣẹ́ yìí.",
+    "loginGoogle": "Wọlé pẹ̀lú Google",
+    "loginGithub": "Wọlé pẹ̀lú GitHub"
   },
   "mobile": {
     "title": "Ó Dára Jù Lórí Kọ̀mpútà",
     "description": "A ṣe Referencer fún lílo kọ̀mpútà pẹ̀lú bọ́tìnì àti eku. O ṣì lè ka àkóónú níbí, ṣùgbọ́n àwọn ohun èlò àtúnṣe àti àkọsílẹ̀ kò sí lórí fóònù.",
     "continueReading": "Tẹ̀síwájú Kíkà"
+  },
+  "bugReport": {
+    "title": "Ṣàròyé Àṣìṣe",
+    "description": "Ṣàpèjúwe ìṣòro tí o bá pàdé. A ó fi àròyé rẹ sílẹ̀ sí ètò ìtọpinpin àṣìṣe wa.",
+    "titleLabel": "Àkọlé",
+    "titlePlaceholder": "Àkópọ̀ kúkúrú ti ìṣòro náà",
+    "descriptionLabel": "Àpèjúwe",
+    "descriptionPlaceholder": "Àwọn ìgbésẹ̀ láti tún ṣe, ìhùwàsí tí a retí, ìhùwàsí gangan...",
+    "submit": "Fi Àròyé Sílẹ̀",
+    "submitting": "Ń fi sílẹ̀...",
+    "success": "A ti fi àròyé àṣìṣe sílẹ̀ dáadáa. A dúpẹ́!",
+    "error": "Kò ṣeéṣe láti fi àròyé àṣìṣe sílẹ̀. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan síi.",
+    "rateLimited": "Àròyé púpọ̀ jù. Jọ̀wọ́ gbìyànjú lẹ́yìn ìgbà díẹ̀.",
+    "reportBug": "Ṣàròyé Àṣìṣe"
   }
 }

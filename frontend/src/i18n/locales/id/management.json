@@ -10,7 +10,13 @@
     "removeAnnotation": "Hapus anotasi",
     "removeArrow": "Hapus panah",
     "removeUnderline": "Hapus garis bawah",
-    "allColorsInUse": "Semua warna sudah digunakan — hapus lapisan terlebih dahulu."
+    "allColorsInUse": "Semua warna sudah digunakan — hapus lapisan terlebih dahulu.",
+    "hideAnnotation": "Sembunyikan anotasi",
+    "showAnnotation": "Tampilkan anotasi",
+    "hideArrow": "Sembunyikan panah",
+    "showArrow": "Tampilkan panah",
+    "hideUnderline": "Sembunyikan garis bawah",
+    "showUnderline": "Tampilkan garis bawah"
   },
   "passages": {
     "title": "Bagian",
@@ -26,13 +32,19 @@
     "helpFaq": "Bantuan & FAQ",
     "settings": "Pengaturan",
     "toggleEditorLayout": "Alihkan tata letak editor",
-    "toggleEditorLock": "Alihkan kunci editor"
+    "toggleEditorLock": "Alihkan kunci editor",
+    "toggleCommentPlacement": "Alihkan penempatan komentar",
+    "startTour": "Tur panduan"
   },
   "annotations": {
     "placeholder": "Tambah anotasi...",
     "removeCustomColour": "Hapus warna kustom",
     "addCustomColour": "Tambah warna kustom",
-    "addToCustomColours": "Tambah ke warna kustom"
+    "addToCustomColours": "Tambah ke warna kustom",
+    "replyPlaceholder": "Balas…",
+    "replies": "balasan",
+    "addReaction": "Tambah reaksi",
+    "removeReply": "Hapus balasan"
   },
   "actionConsole": {
     "title": "Konsol Tindakan",

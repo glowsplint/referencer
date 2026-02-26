@@ -10,7 +10,13 @@
     "removeAnnotation": "주석 삭제",
     "removeArrow": "화살표 삭제",
     "removeUnderline": "밑줄 삭제",
-    "allColorsInUse": "모든 색상이 사용 중입니다. 먼저 레이어를 삭제하세요."
+    "allColorsInUse": "모든 색상이 사용 중입니다. 먼저 레이어를 삭제하세요.",
+    "hideAnnotation": "주석 숨기기",
+    "showAnnotation": "주석 표시",
+    "hideArrow": "화살표 숨기기",
+    "showArrow": "화살표 표시",
+    "hideUnderline": "밑줄 숨기기",
+    "showUnderline": "밑줄 표시"
   },
   "passages": {
     "title": "구절",
@@ -26,13 +32,19 @@
     "helpFaq": "도움말 및 FAQ",
     "settings": "설정",
     "toggleEditorLayout": "편집기 레이아웃 전환",
-    "toggleEditorLock": "편집기 잠금 전환"
+    "toggleEditorLock": "편집기 잠금 전환",
+    "toggleCommentPlacement": "댓글 위치 전환",
+    "startTour": "가이드 투어"
   },
   "annotations": {
     "placeholder": "주석 추가...",
     "removeCustomColour": "사용자 지정 색상 삭제",
     "addCustomColour": "사용자 지정 색상 추가",
-    "addToCustomColours": "사용자 지정 색상에 추가"
+    "addToCustomColours": "사용자 지정 색상에 추가",
+    "replyPlaceholder": "답글…",
+    "replies": "개의 답글",
+    "addReaction": "반응 추가",
+    "removeReply": "답글 삭제"
   },
   "actionConsole": {
     "title": "액션 콘솔",

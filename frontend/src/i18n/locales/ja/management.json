@@ -10,7 +10,13 @@
     "removeAnnotation": "注釈を削除",
     "removeArrow": "矢印を削除",
     "removeUnderline": "下線を削除",
-    "allColorsInUse": "すべての色が使用中です。先にレイヤーを削除してください。"
+    "allColorsInUse": "すべての色が使用中です。先にレイヤーを削除してください。",
+    "hideAnnotation": "注釈を非表示",
+    "showAnnotation": "注釈を表示",
+    "hideArrow": "矢印を非表示",
+    "showArrow": "矢印を表示",
+    "hideUnderline": "下線を非表示",
+    "showUnderline": "下線を表示"
   },
   "passages": {
     "title": "パッセージ",
@@ -26,13 +32,19 @@
     "helpFaq": "ヘルプとFAQ",
     "settings": "設定",
     "toggleEditorLayout": "エディターレイアウトの切り替え",
-    "toggleEditorLock": "エディターロックの切り替え"
+    "toggleEditorLock": "エディターロックの切り替え",
+    "toggleCommentPlacement": "コメント配置の切り替え",
+    "startTour": "ガイドツアー"
   },
   "annotations": {
     "placeholder": "注釈を追加...",
     "removeCustomColour": "カスタムカラーを削除",
     "addCustomColour": "カスタムカラーを追加",
-    "addToCustomColours": "カスタムカラーに追加"
+    "addToCustomColours": "カスタムカラーに追加",
+    "replyPlaceholder": "返信…",
+    "replies": "件の返信",
+    "addReaction": "リアクションを追加",
+    "removeReply": "返信を削除"
   },
   "actionConsole": {
     "title": "アクションコンソール",

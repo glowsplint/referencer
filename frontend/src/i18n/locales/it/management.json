@@ -10,7 +10,13 @@
     "removeAnnotation": "Rimuovi annotazione",
     "removeArrow": "Rimuovi freccia",
     "removeUnderline": "Rimuovi sottolineatura",
-    "allColorsInUse": "Tutti i colori sono in uso — rimuovi prima un livello."
+    "allColorsInUse": "Tutti i colori sono in uso — rimuovi prima un livello.",
+    "hideAnnotation": "Nascondi annotazione",
+    "showAnnotation": "Mostra annotazione",
+    "hideArrow": "Nascondi freccia",
+    "showArrow": "Mostra freccia",
+    "hideUnderline": "Nascondi sottolineatura",
+    "showUnderline": "Mostra sottolineatura"
   },
   "passages": {
     "title": "Brani",
@@ -26,13 +32,19 @@
     "helpFaq": "Aiuto e FAQ",
     "settings": "Impostazioni",
     "toggleEditorLayout": "Cambia layout editor",
-    "toggleEditorLock": "Attiva/disattiva blocco editor"
+    "toggleEditorLock": "Attiva/disattiva blocco editor",
+    "toggleCommentPlacement": "Cambia posizione commenti",
+    "startTour": "Visita guidata"
   },
   "annotations": {
     "placeholder": "Aggiungi annotazione...",
     "removeCustomColour": "Rimuovi colore personalizzato",
     "addCustomColour": "Aggiungi colore personalizzato",
-    "addToCustomColours": "Aggiungi ai colori personalizzati"
+    "addToCustomColours": "Aggiungi ai colori personalizzati",
+    "replyPlaceholder": "Rispondi…",
+    "replies": "risposte",
+    "addReaction": "Aggiungi reazione",
+    "removeReply": "Rimuovi risposta"
   },
   "actionConsole": {
     "title": "Console azioni",

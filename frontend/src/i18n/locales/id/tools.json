@@ -30,5 +30,36 @@
     "status": "Klik dan seret untuk menghapus anotasi.",
     "erased": "Anotasi dihapus."
   },
-  "lockHint": "Tekan <kbd>Esc</kbd> <kbd>K</kbd> untuk mengunci editor setelah Anda menyelesaikan konten."
+  "lockHint": "Tekan <kbd>Esc</kbd> <kbd>K</kbd> untuk mengunci editor setelah Anda menyelesaikan konten.",
+  "recording": {
+    "label": "Rekaman",
+    "record": "Rekam",
+    "stopRecording": "Hentikan rekaman",
+    "play": "Putar",
+    "stop": "Hentikan",
+    "pause": "Jeda",
+    "next": "Langkah berikutnya",
+    "previous": "Langkah sebelumnya",
+    "newRecording": "Rekaman baru",
+    "editRecording": "Edit rekaman",
+    "deleteRecording": "Hapus rekaman",
+    "duplicateRecording": "Duplikat rekaman",
+    "noRecordings": "Belum ada rekaman",
+    "recording": "Merekam…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Keadaan awal",
+    "speed": "Kecepatan",
+    "transition": "Transisi",
+    "instant": "Instan",
+    "fade": "Pudar",
+    "untitled": "Rekaman Tanpa Judul",
+    "showLayer": "Tampilkan {{name}}",
+    "hideLayer": "Sembunyikan {{name}}",
+    "showAnnotation": "Tampilkan anotasi",
+    "hideAnnotation": "Sembunyikan anotasi",
+    "showSection": "Tampilkan bagian {{index}}",
+    "hideSection": "Sembunyikan bagian {{index}}",
+    "deletedAnnotationWarning": "Beberapa langkah merujuk pada anotasi yang telah dihapus",
+    "statusHint": "Merekam… Alihkan visibilitas lapisan/anotasi untuk merekam langkah. Tekan ■ untuk menghentikan."
+  }
 }

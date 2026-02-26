@@ -17,6 +17,10 @@
     "language": {
       "label": "Bahasa",
       "description": "Pilih bahasa yang Anda inginkan"
+    },
+    "statusBar": {
+      "label": "Bilah status",
+      "description": "Tampilkan bilah status di bawah bilah alat"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Tautan baca-saja",
     "editLink": "Tautan edit",
     "linkCopied": "Tautan disalin ke papan klip.",
-    "copyFailed": "Gagal menyalin tautan."
+    "copyFailed": "Gagal menyalin tautan.",
+    "loginRequired": "Masuk untuk membuat tautan berbagi untuk ruang kerja ini.",
+    "loginGoogle": "Masuk dengan Google",
+    "loginGithub": "Masuk dengan GitHub"
   },
   "mobile": {
     "title": "Terbaik di Desktop",
     "description": "Referencer dirancang untuk penggunaan desktop dengan keyboard dan mouse. Anda masih dapat membaca konten di sini, tetapi alat pengeditan dan anotasi tidak tersedia di perangkat seluler.",
     "continueReading": "Lanjutkan Membaca"
+  },
+  "bugReport": {
+    "title": "Laporkan Bug",
+    "description": "Jelaskan masalah yang Anda temui. Laporan Anda akan dikirim ke pelacak masalah kami.",
+    "titleLabel": "Judul",
+    "titlePlaceholder": "Ringkasan singkat masalah",
+    "descriptionLabel": "Deskripsi",
+    "descriptionPlaceholder": "Langkah-langkah untuk mereproduksi, perilaku yang diharapkan, perilaku aktual…",
+    "submit": "Kirim Laporan",
+    "submitting": "Mengirim…",
+    "success": "Laporan bug berhasil dikirim. Terima kasih!",
+    "error": "Gagal mengirim laporan bug. Silakan coba lagi.",
+    "rateLimited": "Terlalu banyak laporan. Silakan coba lagi nanti.",
+    "reportBug": "Laporkan Bug"
   }
 }

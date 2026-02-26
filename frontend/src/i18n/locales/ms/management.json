@@ -10,7 +10,13 @@
     "removeAnnotation": "Buang anotasi",
     "removeArrow": "Buang anak panah",
     "removeUnderline": "Buang garis bawah",
-    "allColorsInUse": "Semua warna sedang digunakan — buang satu lapisan dahulu."
+    "allColorsInUse": "Semua warna sedang digunakan — buang satu lapisan dahulu.",
+    "hideAnnotation": "Sembunyikan anotasi",
+    "showAnnotation": "Tunjukkan anotasi",
+    "hideArrow": "Sembunyikan anak panah",
+    "showArrow": "Tunjukkan anak panah",
+    "hideUnderline": "Sembunyikan garis bawah",
+    "showUnderline": "Tunjukkan garis bawah"
   },
   "passages": {
     "title": "Petikan",
@@ -26,13 +32,19 @@
     "helpFaq": "Bantuan & Soalan Lazim",
     "settings": "Tetapan",
     "toggleEditorLayout": "Togol susun atur editor",
-    "toggleEditorLock": "Togol kunci editor"
+    "toggleEditorLock": "Togol kunci editor",
+    "toggleCommentPlacement": "Togol penempatan komen",
+    "startTour": "Lawatan berpandu"
   },
   "annotations": {
     "placeholder": "Tambah anotasi...",
     "removeCustomColour": "Buang warna tersuai",
     "addCustomColour": "Tambah warna tersuai",
-    "addToCustomColours": "Tambah ke warna tersuai"
+    "addToCustomColours": "Tambah ke warna tersuai",
+    "replyPlaceholder": "Balas…",
+    "replies": "balasan",
+    "addReaction": "Tambah reaksi",
+    "removeReply": "Buang balasan"
   },
   "actionConsole": {
     "title": "Konsol Tindakan",

@@ -10,7 +10,13 @@
     "removeAnnotation": "Annotatie verwijderen",
     "removeArrow": "Pijl verwijderen",
     "removeUnderline": "Onderstreping verwijderen",
-    "allColorsInUse": "Alle kleuren zijn in gebruik — verwijder eerst een laag."
+    "allColorsInUse": "Alle kleuren zijn in gebruik — verwijder eerst een laag.",
+    "hideAnnotation": "Annotatie verbergen",
+    "showAnnotation": "Annotatie tonen",
+    "hideArrow": "Pijl verbergen",
+    "showArrow": "Pijl tonen",
+    "hideUnderline": "Onderstreping verbergen",
+    "showUnderline": "Onderstreping tonen"
   },
   "passages": {
     "title": "Passages",
@@ -26,13 +32,19 @@
     "helpFaq": "Help en FAQ",
     "settings": "Instellingen",
     "toggleEditorLayout": "Editorindeling wisselen",
-    "toggleEditorLock": "Editorvergrendeling in-/uitschakelen"
+    "toggleEditorLock": "Editorvergrendeling in-/uitschakelen",
+    "toggleCommentPlacement": "Opmerkingsplaatsing wisselen",
+    "startTour": "Rondleiding"
   },
   "annotations": {
     "placeholder": "Annotatie toevoegen...",
     "removeCustomColour": "Aangepaste kleur verwijderen",
     "addCustomColour": "Aangepaste kleur toevoegen",
-    "addToCustomColours": "Aan aangepaste kleuren toevoegen"
+    "addToCustomColours": "Aan aangepaste kleuren toevoegen",
+    "replyPlaceholder": "Reageren…",
+    "replies": "reacties",
+    "addReaction": "Reactie toevoegen",
+    "removeReply": "Reactie verwijderen"
   },
   "actionConsole": {
     "title": "Actieconsole",

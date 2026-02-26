@@ -17,6 +17,10 @@
     "language": {
       "label": "ቋንቋ",
       "description": "የሚመርጡትን ቋንቋ ይምረጡ"
+    },
+    "statusBar": {
+      "label": "ሁኔታ አሞሌ",
+      "description": "ከመሣሪያ አሞሌው ስር ሁኔታ አሞሌውን አሳይ"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "ለንባብ ብቻ አገናኝ",
     "editLink": "ለአርትዖት አገናኝ",
     "linkCopied": "አገናኝ ወደ ቅንጥብ ሰሌዳ ተቀድቷል።",
-    "copyFailed": "አገናኝ መቅዳት አልተሳካም።"
+    "copyFailed": "አገናኝ መቅዳት አልተሳካም።",
+    "loginRequired": "ለዚህ የስራ ቦታ የማጋሪያ አገናኝ ለመፍጠር ይግቡ።",
+    "loginGoogle": "በGoogle ይግቡ",
+    "loginGithub": "በGitHub ይግቡ"
   },
   "mobile": {
     "title": "በዴስክቶፕ ላይ የተሻለ ነው",
     "description": "Referencer ለዴስክቶፕ አጠቃቀም ከቁልፍ ሰሌዳ እና መዳፊት ጋር የተዘጋጀ ነው። ይዘቱን እዚህ ማንበብ ይችላሉ፣ ነገር ግን የአርትዖት እና የማብራሪያ መሣሪያዎች በሞባይል ላይ አይገኙም።",
     "continueReading": "ማንበብ ቀጥል"
+  },
+  "bugReport": {
+    "title": "ስህተት ሪፖርት ያድርጉ",
+    "description": "ያጋጠመዎትን ችግር ይግለጹ። ሪፖርትዎ ወደ ስህተት መከታተያ ስርዓታችን ይቀርባል።",
+    "titleLabel": "ርዕስ",
+    "titlePlaceholder": "የችግሩ አጭር ማጠቃለያ",
+    "descriptionLabel": "ገለጻ",
+    "descriptionPlaceholder": "ለመድገም ደረጃዎች፣ የሚጠበቀው ባህሪ፣ ትክክለኛው ባህሪ...",
+    "submit": "ሪፖርት አስገባ",
+    "submitting": "በማስገባት ላይ...",
+    "success": "የስህተት ሪፖርት በተሳካ ሁኔታ ቀርቧል። አመሰግናለሁ!",
+    "error": "የስህተት ሪፖርት ማስገባት አልተሳካም። እባክዎ ዳግም ይሞክሩ።",
+    "rateLimited": "በጣም ብዙ ሪፖርቶች። እባክዎ ቆይተው ዳግም ይሞክሩ።",
+    "reportBug": "ስህተት ሪፖርት ያድርጉ"
   }
 }

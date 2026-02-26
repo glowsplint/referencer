@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Lẹ ọ̀rọ̀ rẹ",
+        "content": "Bẹ̀rẹ̀ nípa lílẹ tàbí títẹ ọ̀rọ̀ rẹ sínú olóòtú."
+      },
+      "lock": {
+        "title": "Tìí ìwé náà",
+        "content": "Tẹ K tàbí tẹ bọ́tìnì títìí láti yí padà sí ọ̀nà àkọsílẹ̀."
+      },
+      "annotate": {
+        "title": "Ṣàkọsílẹ̀ sí ọ̀rọ̀ rẹ",
+        "content": "Yan ọ̀rọ̀ láti fi àmì ìtànṣán sí (H), fi àlàyé kún (C), fa ìlà sí abẹ́ (U), tàbí fa ọfà (A)."
+      },
+      "eraser": {
+        "title": "Pa àwọn àkọsílẹ̀ rẹ́",
+        "content": "Tẹ E tàbí tẹ ohun èlò ìparẹ́ láti yọ àmì ìtànṣán, ìlà-ìsàlẹ̀, àti ọfà kúrò nínú ọ̀rọ̀ tí a yan."
+      },
+      "unlock": {
+        "title": "Ṣí sílẹ̀ láti ṣàtúnṣe",
+        "content": "Tẹ K lẹ́ẹ̀kan síi láti padà sí àtúnṣe. Àwọn àkọsílẹ̀ rẹ ni a tọ́jú."
+      },
+      "statusBar": {
+        "title": "Ọ̀pá ìpò",
+        "content": "Máa ṣọ́ ibí fún ìdáhùn — àwọn èsì ìkójáde, ìpò ìṣọ̀kan, àti àwọn ìfitónilétí mìíràn máa ń hàn nínú ọ̀pá yìí."
+      },
+      "share": {
+        "title": "Ṣàjọṣepọ̀ pẹ̀lú àwọn ẹlòmíì",
+        "content": "Ṣàgbéjáde ìjápọ̀ kíkà nìkan tàbí àtúnṣe láti pín ìwé rẹ tí ó ní àkọsílẹ̀ pẹ̀lú àwọn ẹlòmíì."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Tókàn",
+    "back": "Padà",
+    "skip": "Fò kọjá",
+    "finish": "Parí"
+  }
+}

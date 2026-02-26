@@ -17,6 +17,10 @@
     "language": {
       "label": "Taal",
       "description": "Kies jou voorkeur taal"
+    },
+    "statusBar": {
+      "label": "Statusbalk",
+      "description": "Wys die statusbalk onder die nutsbalk"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Leesalleen-skakel",
     "editLink": "Redigeerskakel",
     "linkCopied": "Skakel na knipbord gekopieer.",
-    "copyFailed": "Kon nie skakel kopieer nie."
+    "copyFailed": "Kon nie skakel kopieer nie.",
+    "loginRequired": "Meld aan om 'n deelskakel vir hierdie werkspasie te genereer.",
+    "loginGoogle": "Meld aan met Google",
+    "loginGithub": "Meld aan met GitHub"
   },
   "mobile": {
     "title": "Beste op rekenaar",
     "description": "Referencer is ontwerp vir rekenaargebruik met 'n sleutelbord en muis. Jy kan steeds die inhoud hier lees, maar redigeer- en aanteekeninstrumente is nie op selfone beskikbaar nie.",
     "continueReading": "Lees verder"
+  },
+  "bugReport": {
+    "title": "Rapporteer 'n Fout",
+    "description": "Beskryf die probleem wat jy ondervind het. Jou verslag sal by ons fouttopvolger ingedien word.",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Kort opsomming van die probleem",
+    "descriptionLabel": "Beskrywing",
+    "descriptionPlaceholder": "Stappe om te herhaal, verwagte gedrag, werklike gedrag...",
+    "submit": "Dien Verslag In",
+    "submitting": "Dien in...",
+    "success": "Foutverslag suksesvol ingedien. Dankie!",
+    "error": "Kon nie foutverslag indien nie. Probeer asseblief weer.",
+    "rateLimited": "Te veel verslae. Probeer asseblief later weer.",
+    "reportBug": "Rapporteer 'n Fout"
   }
 }

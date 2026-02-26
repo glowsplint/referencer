@@ -17,6 +17,10 @@
     "language": {
       "label": "Taal",
       "description": "Kies uw voorkeurstaal"
+    },
+    "statusBar": {
+      "label": "Statusbalk",
+      "description": "Toon de statusbalk onder de werkbalk"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Alleen-lezen link",
     "editLink": "Bewerkingslink",
     "linkCopied": "Link gekopieerd naar klembord.",
-    "copyFailed": "Kan link niet kopieren."
+    "copyFailed": "Kan link niet kopieren.",
+    "loginRequired": "Log in om een deellink voor deze werkruimte te genereren.",
+    "loginGoogle": "Inloggen met Google",
+    "loginGithub": "Inloggen met GitHub"
   },
   "mobile": {
     "title": "Het beste op desktop",
     "description": "Referencer is ontworpen voor desktopgebruik met toetsenbord en muis. U kunt de inhoud hier wel lezen, maar bewerkings- en annotatiegereedschappen zijn niet beschikbaar op mobiele apparaten.",
     "continueReading": "Verder lezen"
+  },
+  "bugReport": {
+    "title": "Bug melden",
+    "description": "Beschrijf het probleem dat u heeft ondervonden. Uw melding wordt naar ons issuetrackingsysteem verzonden.",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Korte samenvatting van het probleem",
+    "descriptionLabel": "Beschrijving",
+    "descriptionPlaceholder": "Stappen om te reproduceren, verwacht gedrag, werkelijk gedrag…",
+    "submit": "Melding verzenden",
+    "submitting": "Verzenden…",
+    "success": "Bugmelding succesvol verzonden. Bedankt!",
+    "error": "Kan bugmelding niet verzenden. Probeer het opnieuw.",
+    "rateLimited": "Te veel meldingen. Probeer het later opnieuw.",
+    "reportBug": "Bug melden"
   }
 }

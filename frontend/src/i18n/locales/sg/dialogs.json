@@ -1,0 +1,138 @@
+{
+  "settings": {
+    "title": "Settings",
+    "description": "Customize your workspace — make it yours lah.",
+    "darkMode": {
+      "label": "Dark mode",
+      "description": "Switch between light and dark themes. Night owl or morning bird?"
+    },
+    "overscroll": {
+      "label": "Overscroll",
+      "description": "Allow elastic bounce when scroll past the edge — boing boing!"
+    },
+    "hideOffscreenArrows": {
+      "label": "Hide off-screen arrows",
+      "description": "Completely hide arrows when either endpoint scroll out of view already"
+    },
+    "statusBar": {
+      "label": "Status bar",
+      "description": "Show the status bar below the toolbar"
+    },
+    "language": {
+      "label": "Language",
+      "description": "Choose your preferred language lah"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "description": "Everything you want to know about Referencer, all here lah.",
+    "items": {
+      "whatIsApp": {
+        "question": "Eh this app is what sia?",
+        "answer": "Referencer is a collaborative tool for inductive Bible study lah. It gives study groups a shared workspace where everyone can read, annotate, and discuss Scripture together in real time. Very shiok one!"
+      },
+      "inductiveStudy": {
+        "question": "Inductive Bible study — what's that ah?",
+        "answer": "It's a method where you read Scripture from observation (what the text say?) to interpretation (what it mean?) to application (how it apply to your life?). Instead of straightaway look at commentary, you let the text speak for itself first. Like that more power lah!"
+      },
+      "collaboration": {
+        "question": "How the collaboration work one?",
+        "answer": "Each workspace can share with others via a link. Everyone see the same text and can add their own annotations. Changes sync in real time so nobody blur blur one. Confirm plus chop everyone on the same page!"
+      },
+      "layers": {
+        "question": "What are layers ah?",
+        "answer": "Layers let you organize annotations into separate groups — for example, one layer for observations, another for interpretations. Press L to cycle between them. Damn neat one, like organizing your hawker centre tray."
+      },
+      "annotations": {
+        "question": "How the annotations work ah?",
+        "answer": "Lock the editor (press K), then select text to highlight it. Can choose colors, add comments, draw arrows between annotations to show connections. Click an existing annotation to remove it. Easy peasy lemon squeezy!"
+      },
+      "arrows": {
+        "question": "What the arrows for sia?",
+        "answer": "Arrows connect two annotations to show they got relationship — like linking a repeated word to where it first appear, or connecting a prophecy to its fulfillment. Press A, then click two annotations. Wah, very the connected!"
+      },
+      "sharing": {
+        "question": "How to share workspace leh?",
+        "answer": "Open the management pane (press M or click the menu icon) and use the share options to generate a link. Anyone with the link can join. Jio all your friends!"
+      },
+      "mobile": {
+        "question": "Can use on phone anot?",
+        "answer": "Can lah, the app works in mobile browsers. But the full annotation and arrow tools best on desktop with keyboard and mouse one. Phone screen too small, later eye pain!"
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "description": "All the keyboard shortcuts for the workspace. Memorize and become pro!",
+    "workspace": "Workspace",
+    "cycleNextLayer": "Cycle to next layer",
+    "cyclePrevLayer": "Cycle to previous layer",
+    "selectionTool": "Selection tool",
+    "arrowTool": "Arrow tool",
+    "commentsTool": "Comments tool",
+    "highlightTool": "Highlight tool",
+    "underlineTool": "Underline tool",
+    "eraserTool": "Eraser tool",
+    "navigateWords": "Navigate between words",
+    "toggleConsole": "Toggle action console",
+    "toggleDarkMode": "Toggle dark mode",
+    "toggleLayout": "Toggle editor layout",
+    "toggleLock": "Toggle editor lock",
+    "toggleManagement": "Toggle management pane",
+    "textFormatting": "Text Formatting",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strikethrough": "Strikethrough",
+    "inlineCode": "Inline code",
+    "superscript": "Superscript",
+    "subscript": "Subscript",
+    "colorHighlight": "Color highlight",
+    "general": "General",
+    "undo": "Undo (workspace when locked)",
+    "redo": "Redo (workspace when locked)",
+    "headings": "Headings",
+    "heading": "Heading {{level}}",
+    "listsAndBlocks": "Lists & Blocks",
+    "bulletList": "Bullet list",
+    "orderedList": "Ordered list",
+    "taskList": "Task list",
+    "blockquote": "Blockquote",
+    "codeBlock": "Code block",
+    "textAlignment": "Text Alignment",
+    "alignLeft": "Align left",
+    "alignCenter": "Align center",
+    "alignRight": "Align right",
+    "alignJustify": "Align justify"
+  },
+  "share": {
+    "title": "Share workspace",
+    "description": "Copy a link to jio your friends to this workspace.",
+    "readonlyLink": "Read-only link (can see, cannot touch)",
+    "editLink": "Edit link (can see, can touch)",
+    "linkCopied": "Link copied liao! Go share!",
+    "copyFailed": "Alamak, cannot copy link sia.",
+    "loginRequired": "Eh, sign in first then can generate share link lah.",
+    "loginGoogle": "Sign in with Google",
+    "loginGithub": "Sign in with GitHub"
+  },
+  "mobile": {
+    "title": "Eh, better use desktop lah",
+    "description": "Referencer is designed for desktop use with keyboard and mouse one. You can still read the content here, but annotation tools not available on phone. Sorry ah!",
+    "continueReading": "Okay lah, continue reading"
+  },
+  "bugReport": {
+    "title": "Report a Bug",
+    "description": "Describe the issue you kena. We'll fix it faster than you can say \"makan\"!",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief summary — what happened sia?",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Steps to reproduce, what you expected, what actually happened...",
+    "submit": "Submit Report",
+    "submitting": "Submitting...",
+    "success": "Bug report submitted! Terima kasih, you da best!",
+    "error": "Cannot submit leh. Try again can?",
+    "rateLimited": "Wah you report so many bugs! Relak lah, try again later.",
+    "reportBug": "Report a Bug"
+  }
+}

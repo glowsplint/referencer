@@ -17,6 +17,10 @@
     "language": {
       "label": "Lingua",
       "description": "Scegli la tua lingua preferita"
+    },
+    "statusBar": {
+      "label": "Barra di stato",
+      "description": "Mostra la barra di stato sotto la barra degli strumenti"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Link di sola lettura",
     "editLink": "Link di modifica",
     "linkCopied": "Link copiato negli appunti.",
-    "copyFailed": "Impossibile copiare il link."
+    "copyFailed": "Impossibile copiare il link.",
+    "loginRequired": "Accedi per generare un link di condivisione per questo spazio di lavoro.",
+    "loginGoogle": "Accedi con Google",
+    "loginGithub": "Accedi con GitHub"
   },
   "mobile": {
     "title": "Meglio su Desktop",
     "description": "Referencer e progettato per l'uso desktop con tastiera e mouse. Puoi comunque leggere il contenuto qui, ma gli strumenti di modifica e annotazione non sono disponibili su dispositivi mobili.",
     "continueReading": "Continua a leggere"
+  },
+  "bugReport": {
+    "title": "Segnala un bug",
+    "description": "Descrivi il problema riscontrato. La tua segnalazione verra inviata al nostro sistema di tracciamento.",
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "Breve riepilogo del problema",
+    "descriptionLabel": "Descrizione",
+    "descriptionPlaceholder": "Passaggi per riprodurre, comportamento previsto, comportamento effettivo…",
+    "submit": "Invia segnalazione",
+    "submitting": "Invio in corso…",
+    "success": "Segnalazione bug inviata con successo. Grazie!",
+    "error": "Impossibile inviare la segnalazione. Riprova.",
+    "rateLimited": "Troppe segnalazioni. Riprova piu tardi.",
+    "reportBug": "Segnala un bug"
   }
 }

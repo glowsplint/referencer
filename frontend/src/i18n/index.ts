@@ -190,6 +190,13 @@ import dialogsAf from "./locales/af/dialogs.json";
 import managementAf from "./locales/af/management.json";
 import editorAf from "./locales/af/editor.json";
 
+import commonSg from "./locales/sg/common.json";
+import toolsSg from "./locales/sg/tools.json";
+import dialogsSg from "./locales/sg/dialogs.json";
+import managementSg from "./locales/sg/management.json";
+import editorSg from "./locales/sg/editor.json";
+import tourSg from "./locales/sg/tour.json";
+
 import { STORAGE_KEYS } from "@/constants/storage-keys";
 
 export const LANGUAGE_OPTIONS = [
@@ -224,6 +231,7 @@ export const LANGUAGE_OPTIONS = [
   { code: "ta", label: "தமிழ்" },
   { code: "sv", label: "Svenska" },
   { code: "af", label: "Afrikaans" },
+  { code: "sg", label: "Singlish" },
 ] as const;
 
 type Namespaces = {
@@ -575,6 +583,17 @@ const localeData: [string, Namespaces][] = [
       management: managementAf,
       editor: editorAf,
       tour: tourEn,
+    },
+  ],
+  [
+    "sg",
+    {
+      common: commonSg,
+      tools: toolsSg,
+      dialogs: dialogsSg,
+      management: managementSg,
+      editor: editorSg,
+      tour: tourSg,
     },
   ],
 ];

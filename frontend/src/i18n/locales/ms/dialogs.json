@@ -17,6 +17,10 @@
     "language": {
       "label": "Bahasa",
       "description": "Pilih bahasa pilihan anda"
+    },
+    "statusBar": {
+      "label": "Bar status",
+      "description": "Paparkan bar status di bawah bar alat"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Pautan baca sahaja",
     "editLink": "Pautan suntingan",
     "linkCopied": "Pautan disalin ke papan keratan.",
-    "copyFailed": "Gagal menyalin pautan."
+    "copyFailed": "Gagal menyalin pautan.",
+    "loginRequired": "Log masuk untuk menjana pautan perkongsian bagi ruang kerja ini.",
+    "loginGoogle": "Log masuk dengan Google",
+    "loginGithub": "Log masuk dengan GitHub"
   },
   "mobile": {
     "title": "Terbaik di Desktop",
     "description": "Referencer direka untuk kegunaan desktop dengan papan kekunci dan tetikus. Anda masih boleh membaca kandungan di sini, tetapi alat penyuntingan dan anotasi tidak tersedia pada peranti mudah alih.",
     "continueReading": "Teruskan Membaca"
+  },
+  "bugReport": {
+    "title": "Laporkan Pepijat",
+    "description": "Huraikan masalah yang anda hadapi. Laporan anda akan dihantar ke penjejak isu kami.",
+    "titleLabel": "Tajuk",
+    "titlePlaceholder": "Ringkasan ringkas isu",
+    "descriptionLabel": "Huraian",
+    "descriptionPlaceholder": "Langkah untuk menghasilkan semula, tingkah laku yang dijangka, tingkah laku sebenar…",
+    "submit": "Hantar Laporan",
+    "submitting": "Menghantar…",
+    "success": "Laporan pepijat berjaya dihantar. Terima kasih!",
+    "error": "Gagal menghantar laporan pepijat. Sila cuba lagi.",
+    "rateLimited": "Terlalu banyak laporan. Sila cuba lagi kemudian.",
+    "reportBug": "Laporkan Pepijat"
   }
 }

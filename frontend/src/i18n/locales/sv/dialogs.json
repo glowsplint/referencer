@@ -17,6 +17,10 @@
     "language": {
       "label": "Språk",
       "description": "Välj ditt föredragna språk"
+    },
+    "statusBar": {
+      "label": "Statusfält",
+      "description": "Visa statusfältet under verktygsfältet"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Skrivskyddad länk",
     "editLink": "Redigeringslänk",
     "linkCopied": "Länk kopierad till urklipp.",
-    "copyFailed": "Kunde inte kopiera länken."
+    "copyFailed": "Kunde inte kopiera länken.",
+    "loginRequired": "Logga in för att skapa en delningslänk för denna arbetsyta.",
+    "loginGoogle": "Logga in med Google",
+    "loginGithub": "Logga in med GitHub"
   },
   "mobile": {
     "title": "Bäst på dator",
     "description": "Referencer är utformad för datoranvändning med tangentbord och mus. Du kan fortfarande läsa innehållet här, men redigerings- och anteckningsverktygen är inte tillgängliga på mobilen.",
     "continueReading": "Fortsätt läsa"
+  },
+  "bugReport": {
+    "title": "Rapportera en bugg",
+    "description": "Beskriv problemet du stötte på. Din rapport skickas till vårt ärendehanteringssystem.",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Kort sammanfattning av problemet",
+    "descriptionLabel": "Beskrivning",
+    "descriptionPlaceholder": "Steg för att återskapa, förväntat beteende, faktiskt beteende…",
+    "submit": "Skicka rapport",
+    "submitting": "Skickar…",
+    "success": "Buggrapport skickat. Tack!",
+    "error": "Kunde inte skicka buggrapporten. Försök igen.",
+    "rateLimited": "För många rapporter. Försök igen senare.",
+    "reportBug": "Rapportera en bugg"
   }
 }

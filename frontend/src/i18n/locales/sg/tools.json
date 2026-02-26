@@ -1,0 +1,65 @@
+{
+  "selection": {
+    "label": "Selection tool",
+    "defaultStatus": "Click one word or use arrow keys to jalan around lah."
+  },
+  "arrow": {
+    "label": "Arrow tool",
+    "selectAnchor": "Select words for the anchor, then whack <kbd>Enter</kbd>.",
+    "selectTarget": "Now select the target and whack <kbd>Enter</kbd> can already.",
+    "created": "Arrow created liao! Shiok."
+  },
+  "highlight": {
+    "label": "Highlight tool",
+    "selectWords": "Select words to highlight, then press <kbd>Enter</kbd> can liao.",
+    "added": "Wah highlight added!",
+    "removed": "Highlight gone liao."
+  },
+  "comments": {
+    "label": "Comments tool",
+    "selectWords": "Select words to comment on, then press <kbd>Enter</kbd> lah.",
+    "added": "Comment added liao! Very cheem."
+  },
+  "underline": {
+    "label": "Underline tool",
+    "selectWords": "Select words to underline, then press <kbd>Enter</kbd> can liao.",
+    "added": "Underline added liao."
+  },
+  "eraser": {
+    "label": "Eraser tool",
+    "status": "Click and drag to erase annotations — like magic lah.",
+    "erased": "Poof! Annotation gone liao."
+  },
+  "lockHint": "Press <kbd>Esc</kbd> <kbd>K</kbd> to lock the editor once you confirm everything steady pom pi pi.",
+  "recording": {
+    "label": "Recording",
+    "record": "Record",
+    "stopRecording": "Stop recording",
+    "play": "Play",
+    "stop": "Stop",
+    "pause": "Chope first",
+    "next": "Next step",
+    "previous": "Previous step",
+    "newRecording": "New recording",
+    "editRecording": "Edit recording",
+    "deleteRecording": "Delete recording",
+    "duplicateRecording": "Copy recording",
+    "noRecordings": "No recordings yet leh. Don't shy, just try!",
+    "recording": "Recording sia...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Starting position",
+    "speed": "Speed",
+    "transition": "Transition",
+    "instant": "Instant — like buying kopi",
+    "fade": "Fade — slow slow come",
+    "untitled": "Untitled Recording",
+    "showLayer": "Show {{name}}",
+    "hideLayer": "Hide {{name}}",
+    "showAnnotation": "Show annotation",
+    "hideAnnotation": "Hide annotation",
+    "showSection": "Show section {{index}}",
+    "hideSection": "Hide section {{index}}",
+    "deletedAnnotationWarning": "Eh some steps pointing to annotations that kena deleted already",
+    "statusHint": "Recording… Toggle layer/annotation visibility to capture steps. Press ■ to stop."
+  }
+}

@@ -17,6 +17,10 @@
     "language": {
       "label": "Lugha",
       "description": "Chagua lugha unayopendelea"
+    },
+    "statusBar": {
+      "label": "Upau wa hali",
+      "description": "Onyesha upau wa hali chini ya upau wa zana"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Kiungo cha kusoma tu",
     "editLink": "Kiungo cha kuhariri",
     "linkCopied": "Kiungo kimenakiliwa kwenye ubao wa kunakili.",
-    "copyFailed": "Imeshindwa kunakili kiungo."
+    "copyFailed": "Imeshindwa kunakili kiungo.",
+    "loginRequired": "Ingia ili kuunda kiungo cha kushiriki kwa eneo hili la kazi.",
+    "loginGoogle": "Ingia kwa Google",
+    "loginGithub": "Ingia kwa GitHub"
   },
   "mobile": {
     "title": "Bora zaidi kwenye Kompyuta",
     "description": "Referencer imeundwa kwa matumizi ya kompyuta yenye kibodi na kipanya. Bado unaweza kusoma maudhui hapa, lakini zana za kuhariri na vidokezo hazipatikani kwenye simu.",
     "continueReading": "Endelea Kusoma"
+  },
+  "bugReport": {
+    "title": "Ripoti Hitilafu",
+    "description": "Eleza tatizo ulilokutana nalo. Ripoti yako itatumwa kwenye mfumo wetu wa kufuatilia hitilafu.",
+    "titleLabel": "Kichwa",
+    "titlePlaceholder": "Muhtasari mfupi wa tatizo",
+    "descriptionLabel": "Maelezo",
+    "descriptionPlaceholder": "Hatua za kurudia, tabia inayotarajiwa, tabia halisi...",
+    "submit": "Tuma Ripoti",
+    "submitting": "Inatuma...",
+    "success": "Ripoti ya hitilafu imetumwa kwa mafanikio. Asante!",
+    "error": "Imeshindwa kutuma ripoti ya hitilafu. Tafadhali jaribu tena.",
+    "rateLimited": "Ripoti nyingi sana. Tafadhali jaribu tena baadaye.",
+    "reportBug": "Ripoti Hitilafu"
   }
 }

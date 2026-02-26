@@ -30,5 +30,36 @@
     "status": "Klik en sleep om annotaties te wissen.",
     "erased": "Annotatie gewist."
   },
-  "lockHint": "Druk op <kbd>Esc</kbd> <kbd>K</kbd> om de editor te vergrendelen zodra u de inhoud heeft afgerond."
+  "lockHint": "Druk op <kbd>Esc</kbd> <kbd>K</kbd> om de editor te vergrendelen zodra u de inhoud heeft afgerond.",
+  "recording": {
+    "label": "Opname",
+    "record": "Opnemen",
+    "stopRecording": "Opname stoppen",
+    "play": "Afspelen",
+    "stop": "Stoppen",
+    "pause": "Pauzeren",
+    "next": "Volgende stap",
+    "previous": "Vorige stap",
+    "newRecording": "Nieuwe opname",
+    "editRecording": "Opname bewerken",
+    "deleteRecording": "Opname verwijderen",
+    "duplicateRecording": "Opname dupliceren",
+    "noRecordings": "Nog geen opnames",
+    "recording": "Opname bezig…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Beginstatus",
+    "speed": "Snelheid",
+    "transition": "Overgang",
+    "instant": "Direct",
+    "fade": "Vervaging",
+    "untitled": "Naamloze opname",
+    "showLayer": "{{name}} tonen",
+    "hideLayer": "{{name}} verbergen",
+    "showAnnotation": "Annotatie tonen",
+    "hideAnnotation": "Annotatie verbergen",
+    "showSection": "Sectie {{index}} tonen",
+    "hideSection": "Sectie {{index}} verbergen",
+    "deletedAnnotationWarning": "Sommige stappen verwijzen naar verwijderde annotaties",
+    "statusHint": "Opname… Schakel de zichtbaarheid van lagen/annotaties om stappen vast te leggen. Druk op ■ om te stoppen."
+  }
 }

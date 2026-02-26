@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Fügen Sie Ihren Text ein",
+        "content": "Beginnen Sie, indem Sie Ihren Text in den Editor einfügen oder eingeben."
+      },
+      "lock": {
+        "title": "Dokument sperren",
+        "content": "Drücken Sie K oder klicken Sie auf die Sperrtaste, um in den Anmerkungsmodus zu wechseln."
+      },
+      "annotate": {
+        "title": "Text annotieren",
+        "content": "Wählen Sie Text zum Hervorheben (H), Kommentieren (C), Unterstreichen (U) oder Pfeilezeichnen (A) aus."
+      },
+      "eraser": {
+        "title": "Anmerkungen löschen",
+        "content": "Drücken Sie E oder klicken Sie auf den Radierer, um Hervorhebungen, Unterstreichungen und Pfeile vom markierten Text zu entfernen."
+      },
+      "unlock": {
+        "title": "Entsperren zum Bearbeiten",
+        "content": "Drücken Sie erneut K, um zur Bearbeitung zurückzukehren. Ihre Anmerkungen bleiben erhalten."
+      },
+      "statusBar": {
+        "title": "Statusleiste",
+        "content": "Behalten Sie diese Leiste im Auge — Exportergebnisse, Synchronisierungsstatus und andere Benachrichtigungen erscheinen hier."
+      },
+      "share": {
+        "title": "Mit anderen zusammenarbeiten",
+        "content": "Erstellen Sie einen Nur-Lese- oder Bearbeitungslink, um Ihr annotiertes Dokument mit anderen zu teilen."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Weiter",
+    "back": "Zurück",
+    "skip": "Überspringen",
+    "finish": "Fertig"
+  }
+}

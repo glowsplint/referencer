@@ -30,5 +30,36 @@
     "status": "주석을 지우려면 클릭하고 드래그하세요.",
     "erased": "주석이 지워졌습니다."
   },
-  "lockHint": "내용을 확정한 후 <kbd>Esc</kbd> <kbd>K</kbd>를 눌러 편집기를 잠그세요."
+  "lockHint": "내용을 확정한 후 <kbd>Esc</kbd> <kbd>K</kbd>를 눌러 편집기를 잠그세요.",
+  "recording": {
+    "label": "녹화",
+    "record": "녹화",
+    "stopRecording": "녹화 중지",
+    "play": "재생",
+    "stop": "정지",
+    "pause": "일시 정지",
+    "next": "다음 단계",
+    "previous": "이전 단계",
+    "newRecording": "새 녹화",
+    "editRecording": "녹화 편집",
+    "deleteRecording": "녹화 삭제",
+    "duplicateRecording": "녹화 복제",
+    "noRecordings": "녹화가 아직 없습니다",
+    "recording": "녹화 중…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "초기 상태",
+    "speed": "속도",
+    "transition": "전환 효과",
+    "instant": "즉시",
+    "fade": "페이드",
+    "untitled": "제목 없는 녹화",
+    "showLayer": "{{name}} 표시",
+    "hideLayer": "{{name}} 숨기기",
+    "showAnnotation": "주석 표시",
+    "hideAnnotation": "주석 숨기기",
+    "showSection": "섹션 {{index}} 표시",
+    "hideSection": "섹션 {{index}} 숨기기",
+    "deletedAnnotationWarning": "일부 단계가 삭제된 주석을 참조합니다",
+    "statusHint": "녹화 중… 레이어/주석의 가시성을 전환하여 단계를 캡처하세요. ■ 을 눌러 중지합니다."
+  }
 }

@@ -30,5 +30,36 @@
     "status": "クリックしてドラッグで注釈を消去します。",
     "erased": "注釈を消去しました。"
   },
-  "lockHint": "内容を確定したら、<kbd>Esc</kbd> <kbd>K</kbd> でエディターをロックしてください。"
+  "lockHint": "内容を確定したら、<kbd>Esc</kbd> <kbd>K</kbd> でエディターをロックしてください。",
+  "recording": {
+    "label": "レコーディング",
+    "record": "録画",
+    "stopRecording": "録画停止",
+    "play": "再生",
+    "stop": "停止",
+    "pause": "一時停止",
+    "next": "次のステップ",
+    "previous": "前のステップ",
+    "newRecording": "新規レコーディング",
+    "editRecording": "レコーディングを編集",
+    "deleteRecording": "レコーディングを削除",
+    "duplicateRecording": "レコーディングを複製",
+    "noRecordings": "レコーディングはまだありません",
+    "recording": "録画中…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "初期状態",
+    "speed": "速度",
+    "transition": "トランジション",
+    "instant": "即時",
+    "fade": "フェード",
+    "untitled": "無題のレコーディング",
+    "showLayer": "{{name}} を表示",
+    "hideLayer": "{{name}} を非表示",
+    "showAnnotation": "注釈を表示",
+    "hideAnnotation": "注釈を非表示",
+    "showSection": "セクション {{index}} を表示",
+    "hideSection": "セクション {{index}} を非表示",
+    "deletedAnnotationWarning": "一部のステップが削除された注釈を参照しています",
+    "statusHint": "録画中… レイヤー/注釈の表示を切り替えてステップをキャプチャします。■ を押して停止。"
+  }
 }

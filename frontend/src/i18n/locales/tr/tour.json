@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Metninizi yapistirin",
+        "content": "Duzenleyiciye metin yapistirarak veya yazarak baslayin."
+      },
+      "lock": {
+        "title": "Belgeyi kilitleyin",
+        "content": "Aciklama moduna gecmek icin K tusuna basin veya kilit dugmesine tiklayin."
+      },
+      "annotate": {
+        "title": "Metninizi aciklayin",
+        "content": "Vurgulamak (H), yorum yapmak (C), alti cizmek (U) veya ok cizmek (A) icin metin secin."
+      },
+      "eraser": {
+        "title": "Aciklamalari silin",
+        "content": "Secili metindeki vurgulari, alti cizgileri ve oklari kaldirmak icin E tusuna basin veya silgiye tiklayin."
+      },
+      "unlock": {
+        "title": "Duzenlemek icin kilidi acin",
+        "content": "Duzenlemeye donmek icin tekrar K tusuna basin. Aciklamalariniz korunur."
+      },
+      "statusBar": {
+        "title": "Durum cubugu",
+        "content": "Geri bildirim icin burayai izleyin — disari aktarma sonuclari, senkronizasyon durumu ve diger bildirimler bu cubukta gorunur."
+      },
+      "share": {
+        "title": "Baskalariyla isbirligi yapin",
+        "content": "Aciklamali belgenizi baskalariyla paylasmak icin salt okunur veya duzenlenebilir bir baglanti olusturun."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Sonraki",
+    "back": "Onceki",
+    "skip": "Atla",
+    "finish": "Bitir"
+  }
+}

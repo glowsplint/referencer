@@ -10,7 +10,13 @@
     "removeAnnotation": "ማብራሪያ አስወግድ",
     "removeArrow": "ቀስት አስወግድ",
     "removeUnderline": "ከስር መስመር አስወግድ",
-    "allColorsInUse": "ሁሉም ቀለሞች ጥቅም ላይ ናቸው — መጀመሪያ ንብርብር ያስወግዱ።"
+    "allColorsInUse": "ሁሉም ቀለሞች ጥቅም ላይ ናቸው — መጀመሪያ ንብርብር ያስወግዱ።",
+    "hideAnnotation": "ማብራሪያ ደብቅ",
+    "showAnnotation": "ማብራሪያ አሳይ",
+    "hideArrow": "ቀስት ደብቅ",
+    "showArrow": "ቀስት አሳይ",
+    "hideUnderline": "ከስር መስመር ደብቅ",
+    "showUnderline": "ከስር መስመር አሳይ"
   },
   "passages": {
     "title": "ክፍሎች",
@@ -26,13 +32,19 @@
     "helpFaq": "እርዳታ እና ጥያቄዎች",
     "settings": "ቅንብሮች",
     "toggleEditorLayout": "የአርታዒ አቀማመጥን ቀያይር",
-    "toggleEditorLock": "የአርታዒ መቆለፊያን ቀያይር"
+    "toggleEditorLock": "የአርታዒ መቆለፊያን ቀያይር",
+    "toggleCommentPlacement": "የአስተያየት አቀማመጥን ቀያይር",
+    "startTour": "የመመሪያ ጉብኝት"
   },
   "annotations": {
     "placeholder": "ማብራሪያ ጨምር...",
     "removeCustomColour": "ብጁ ቀለም አስወግድ",
     "addCustomColour": "ብጁ ቀለም ጨምር",
-    "addToCustomColours": "ወደ ብጁ ቀለሞች ጨምር"
+    "addToCustomColours": "ወደ ብጁ ቀለሞች ጨምር",
+    "replyPlaceholder": "መልስ...",
+    "replies": "መልሶች",
+    "addReaction": "ምላሽ ጨምር",
+    "removeReply": "መልስ አስወግድ"
   },
   "actionConsole": {
     "title": "የድርጊት ኮንሶል",

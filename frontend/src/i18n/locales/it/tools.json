@@ -30,5 +30,36 @@
     "status": "Clicca e trascina per cancellare le annotazioni.",
     "erased": "Annotazione cancellata."
   },
-  "lockHint": "Premi <kbd>Esc</kbd> <kbd>K</kbd> per bloccare l'editor dopo aver finalizzato i contenuti."
+  "lockHint": "Premi <kbd>Esc</kbd> <kbd>K</kbd> per bloccare l'editor dopo aver finalizzato i contenuti.",
+  "recording": {
+    "label": "Registrazione",
+    "record": "Registra",
+    "stopRecording": "Ferma registrazione",
+    "play": "Riproduci",
+    "stop": "Ferma",
+    "pause": "Pausa",
+    "next": "Passo successivo",
+    "previous": "Passo precedente",
+    "newRecording": "Nuova registrazione",
+    "editRecording": "Modifica registrazione",
+    "deleteRecording": "Elimina registrazione",
+    "duplicateRecording": "Duplica registrazione",
+    "noRecordings": "Nessuna registrazione",
+    "recording": "Registrazione in corso…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Stato iniziale",
+    "speed": "Velocita",
+    "transition": "Transizione",
+    "instant": "Istantaneo",
+    "fade": "Dissolvenza",
+    "untitled": "Registrazione senza titolo",
+    "showLayer": "Mostra {{name}}",
+    "hideLayer": "Nascondi {{name}}",
+    "showAnnotation": "Mostra annotazione",
+    "hideAnnotation": "Nascondi annotazione",
+    "showSection": "Mostra sezione {{index}}",
+    "hideSection": "Nascondi sezione {{index}}",
+    "deletedAnnotationWarning": "Alcuni passaggi fanno riferimento ad annotazioni eliminate",
+    "statusHint": "Registrazione… Attiva/disattiva la visibilita dei livelli/annotazioni per catturare i passaggi. Premi ■ per fermare."
+  }
 }

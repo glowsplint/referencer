@@ -10,7 +10,13 @@
     "removeAnnotation": "Alisin ang anotasyon",
     "removeArrow": "Alisin ang palaso",
     "removeUnderline": "Alisin ang salungguhit",
-    "allColorsInUse": "Lahat ng kulay ay ginagamit na — alisin muna ang isang layer."
+    "allColorsInUse": "Lahat ng kulay ay ginagamit na — alisin muna ang isang layer.",
+    "hideAnnotation": "Itago ang anotasyon",
+    "showAnnotation": "Ipakita ang anotasyon",
+    "hideArrow": "Itago ang palaso",
+    "showArrow": "Ipakita ang palaso",
+    "hideUnderline": "Itago ang salungguhit",
+    "showUnderline": "Ipakita ang salungguhit"
   },
   "passages": {
     "title": "Mga Sipi",
@@ -26,13 +32,19 @@
     "helpFaq": "Tulong at FAQ",
     "settings": "Mga Setting",
     "toggleEditorLayout": "I-toggle ang layout ng editor",
-    "toggleEditorLock": "I-toggle ang lock ng editor"
+    "toggleEditorLock": "I-toggle ang lock ng editor",
+    "toggleCommentPlacement": "I-toggle ang paglalagay ng komento",
+    "startTour": "Gabay na paglilibot"
   },
   "annotations": {
     "placeholder": "Magdagdag ng anotasyon...",
     "removeCustomColour": "Alisin ang custom na kulay",
     "addCustomColour": "Magdagdag ng custom na kulay",
-    "addToCustomColours": "Idagdag sa mga custom na kulay"
+    "addToCustomColours": "Idagdag sa mga custom na kulay",
+    "replyPlaceholder": "Tumugon…",
+    "replies": "mga tugon",
+    "addReaction": "Magdagdag ng reaksyon",
+    "removeReply": "Alisin ang tugon"
   },
   "actionConsole": {
     "title": "Action Console",

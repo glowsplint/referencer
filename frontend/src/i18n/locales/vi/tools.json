@@ -30,5 +30,36 @@
     "status": "Nhấp và kéo để xóa chú thích.",
     "erased": "Đã xóa chú thích."
   },
-  "lockHint": "Nhấn <kbd>Esc</kbd> <kbd>K</kbd> để khóa trình soạn thảo sau khi bạn đã hoàn tất nội dung."
+  "lockHint": "Nhấn <kbd>Esc</kbd> <kbd>K</kbd> để khóa trình soạn thảo sau khi bạn đã hoàn tất nội dung.",
+  "recording": {
+    "label": "Ghi hình",
+    "record": "Ghi",
+    "stopRecording": "Dừng ghi",
+    "play": "Phát",
+    "stop": "Dừng",
+    "pause": "Tạm dừng",
+    "next": "Bước tiếp theo",
+    "previous": "Bước trước",
+    "newRecording": "Ghi hình mới",
+    "editRecording": "Chỉnh sửa bản ghi",
+    "deleteRecording": "Xóa bản ghi",
+    "duplicateRecording": "Nhân đôi bản ghi",
+    "noRecordings": "Chưa có bản ghi nào",
+    "recording": "Đang ghi…",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Trạng thái ban đầu",
+    "speed": "Tốc độ",
+    "transition": "Chuyển cảnh",
+    "instant": "Tức thì",
+    "fade": "Mờ dần",
+    "untitled": "Bản ghi chưa đặt tên",
+    "showLayer": "Hiện {{name}}",
+    "hideLayer": "Ẩn {{name}}",
+    "showAnnotation": "Hiện chú thích",
+    "hideAnnotation": "Ẩn chú thích",
+    "showSection": "Hiện phần {{index}}",
+    "hideSection": "Ẩn phần {{index}}",
+    "deletedAnnotationWarning": "Một số bước tham chiếu đến chú thích đã bị xóa",
+    "statusHint": "Đang ghi… Bật/tắt hiển thị lớp/chú thích để ghi lại các bước. Nhấn ■ để dừng."
+  }
 }

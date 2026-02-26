@@ -30,5 +30,36 @@
     "status": "Bofya na uburute ili kufuta vidokezo.",
     "erased": "Kidokezo kimefutwa."
   },
-  "lockHint": "Bonyeza <kbd>Esc</kbd> <kbd>K</kbd> ili kufunga kihariri baada ya kukamilisha maudhui."
+  "lockHint": "Bonyeza <kbd>Esc</kbd> <kbd>K</kbd> ili kufunga kihariri baada ya kukamilisha maudhui.",
+  "recording": {
+    "label": "Kurekodi",
+    "record": "Rekodi",
+    "stopRecording": "Simamisha kurekodi",
+    "play": "Cheza",
+    "stop": "Simamisha",
+    "pause": "Sitisha",
+    "next": "Hatua inayofuata",
+    "previous": "Hatua iliyotangulia",
+    "newRecording": "Rekodi mpya",
+    "editRecording": "Hariri rekodi",
+    "deleteRecording": "Futa rekodi",
+    "duplicateRecording": "Nakili rekodi",
+    "noRecordings": "Hakuna rekodi bado",
+    "recording": "Inarekodi...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Hali ya awali",
+    "speed": "Kasi",
+    "transition": "Mpito",
+    "instant": "Papo hapo",
+    "fade": "Fifia",
+    "untitled": "Rekodi Isiyo na Jina",
+    "showLayer": "Onyesha {{name}}",
+    "hideLayer": "Ficha {{name}}",
+    "showAnnotation": "Onyesha kidokezo",
+    "hideAnnotation": "Ficha kidokezo",
+    "showSection": "Onyesha sehemu {{index}}",
+    "hideSection": "Ficha sehemu {{index}}",
+    "deletedAnnotationWarning": "Hatua zingine zinarejelea vidokezo vilivyofutwa",
+    "statusHint": "Inarekodi… Badilisha mwonekano wa tabaka/kidokezo ili kunasa hatua. Bonyeza ■ ili kusimamisha."
+  }
 }

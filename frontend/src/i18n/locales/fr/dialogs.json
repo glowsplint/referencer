@@ -17,6 +17,10 @@
     "language": {
       "label": "Langue",
       "description": "Choisissez votre langue préférée"
+    },
+    "statusBar": {
+      "label": "Barre d'état",
+      "description": "Afficher la barre d'état sous la barre d'outils"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Lien en lecture seule",
     "editLink": "Lien d'édition",
     "linkCopied": "Lien copié dans le presse-papiers.",
-    "copyFailed": "Échec de la copie du lien."
+    "copyFailed": "Échec de la copie du lien.",
+    "loginRequired": "Connectez-vous pour générer un lien de partage pour cet espace de travail.",
+    "loginGoogle": "Se connecter avec Google",
+    "loginGithub": "Se connecter avec GitHub"
   },
   "mobile": {
     "title": "Meilleur sur ordinateur",
     "description": "Referencer est conçu pour une utilisation sur ordinateur avec clavier et souris. Vous pouvez lire le contenu ici, mais les outils d'édition et d'annotation ne sont pas disponibles sur mobile.",
     "continueReading": "Continuer la lecture"
+  },
+  "bugReport": {
+    "title": "Signaler un bug",
+    "description": "Décrivez le problème rencontré. Votre rapport sera soumis à notre système de suivi des problèmes.",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Bref résumé du problème",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Étapes pour reproduire, comportement attendu, comportement réel…",
+    "submit": "Envoyer le rapport",
+    "submitting": "Envoi en cours…",
+    "success": "Rapport de bug envoyé avec succès. Merci !",
+    "error": "Échec de l'envoi du rapport de bug. Veuillez réessayer.",
+    "rateLimited": "Trop de rapports. Veuillez réessayer plus tard.",
+    "reportBug": "Signaler un bug"
   }
 }

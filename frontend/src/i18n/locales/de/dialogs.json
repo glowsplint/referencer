@@ -17,6 +17,10 @@
     "language": {
       "label": "Sprache",
       "description": "Wählen Sie Ihre bevorzugte Sprache"
+    },
+    "statusBar": {
+      "label": "Statusleiste",
+      "description": "Statusleiste unter der Symbolleiste anzeigen"
     }
   },
   "faq": {
@@ -107,11 +111,28 @@
     "readonlyLink": "Nur-Lese-Link",
     "editLink": "Bearbeitungslink",
     "linkCopied": "Link in die Zwischenablage kopiert.",
-    "copyFailed": "Link konnte nicht kopiert werden."
+    "copyFailed": "Link konnte nicht kopiert werden.",
+    "loginRequired": "Melden Sie sich an, um einen Freigabelink für diesen Arbeitsbereich zu erstellen.",
+    "loginGoogle": "Mit Google anmelden",
+    "loginGithub": "Mit GitHub anmelden"
   },
   "mobile": {
     "title": "Am besten auf dem Desktop",
     "description": "Referencer ist für die Verwendung auf dem Desktop mit Tastatur und Maus konzipiert. Sie können den Inhalt hier trotzdem lesen, aber Bearbeitungs- und Anmerkungswerkzeuge sind auf Mobilgeräten nicht verfügbar.",
     "continueReading": "Weiterlesen"
+  },
+  "bugReport": {
+    "title": "Fehler melden",
+    "description": "Beschreiben Sie das aufgetretene Problem. Ihr Bericht wird an unseren Issue-Tracker gesendet.",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Kurze Zusammenfassung des Problems",
+    "descriptionLabel": "Beschreibung",
+    "descriptionPlaceholder": "Schritte zur Reproduktion, erwartetes Verhalten, tatsächliches Verhalten…",
+    "submit": "Bericht senden",
+    "submitting": "Wird gesendet…",
+    "success": "Fehlerbericht erfolgreich gesendet. Vielen Dank!",
+    "error": "Fehlerbericht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    "rateLimited": "Zu viele Berichte. Bitte versuchen Sie es später erneut.",
+    "reportBug": "Fehler melden"
   }
 }

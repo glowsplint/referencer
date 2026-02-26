@@ -10,7 +10,13 @@
     "removeAnnotation": "Remover anotação",
     "removeArrow": "Remover seta",
     "removeUnderline": "Remover sublinhado",
-    "allColorsInUse": "Todas as cores estão em uso — remova uma camada primeiro."
+    "allColorsInUse": "Todas as cores estão em uso — remova uma camada primeiro.",
+    "hideAnnotation": "Ocultar anotação",
+    "showAnnotation": "Mostrar anotação",
+    "hideArrow": "Ocultar seta",
+    "showArrow": "Mostrar seta",
+    "hideUnderline": "Ocultar sublinhado",
+    "showUnderline": "Mostrar sublinhado"
   },
   "passages": {
     "title": "Passagens",
@@ -26,13 +32,19 @@
     "helpFaq": "Ajuda e perguntas frequentes",
     "settings": "Configurações",
     "toggleEditorLayout": "Alternar layout do editor",
-    "toggleEditorLock": "Alternar bloqueio do editor"
+    "toggleEditorLock": "Alternar bloqueio do editor",
+    "toggleCommentPlacement": "Alternar posição dos comentários",
+    "startTour": "Visita guiada"
   },
   "annotations": {
     "placeholder": "Adicionar anotação...",
     "removeCustomColour": "Remover cor personalizada",
     "addCustomColour": "Adicionar cor personalizada",
-    "addToCustomColours": "Adicionar às cores personalizadas"
+    "addToCustomColours": "Adicionar às cores personalizadas",
+    "replyPlaceholder": "Responder…",
+    "replies": "respostas",
+    "addReaction": "Adicionar reação",
+    "removeReply": "Remover resposta"
   },
   "actionConsole": {
     "title": "Console de ações",
