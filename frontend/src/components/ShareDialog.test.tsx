@@ -3,6 +3,19 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ShareDialog } from "./ShareDialog";
 import { renderWithWorkspace } from "@/test/render-with-workspace";
 
+const mockLogin = vi.fn();
+const mockAuth = {
+  user: null as { id: string; email: string; name: string; avatarUrl: string } | null,
+  isAuthenticated: false,
+  isLoading: false,
+  login: mockLogin,
+  logout: vi.fn(),
+};
+
+vi.mock("@/hooks/data/use-auth", () => ({
+  useAuth: () => mockAuth,
+}));
+
 function renderShareDialog(overrides = {}) {
   return renderWithWorkspace(
     <ShareDialog open={true} onOpenChange={vi.fn()} workspaceId="test-workspace-123" />,
@@ -16,13 +29,16 @@ describe("ShareDialog", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     originalFetch = globalThis.fetch;
+    mockAuth.isAuthenticated = true;
+    mockAuth.user = { id: "1", email: "test@test.com", name: "Test User", avatarUrl: "" };
+    mockAuth.login = mockLogin;
   });
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
   });
 
-  describe("when opened", () => {
+  describe("when opened and authenticated", () => {
     it("then shows sharing options", () => {
       renderShareDialog();
       expect(screen.getByText("Share workspace")).toBeInTheDocument();
@@ -93,6 +109,34 @@ describe("ShareDialog", () => {
       await waitFor(() => {
         expect(writeText).toHaveBeenCalledWith(expect.stringContaining("/s/XYZ789"));
       });
+    });
+  });
+
+  describe("when user is not authenticated", () => {
+    beforeEach(() => {
+      mockAuth.isAuthenticated = false;
+      mockAuth.user = null;
+    });
+
+    it("then shows login prompt instead of share options", () => {
+      renderShareDialog();
+      expect(screen.getByText("Share workspace")).toBeInTheDocument();
+      expect(screen.getByText("Sign in to generate a share link for this workspace.")).toBeInTheDocument();
+      expect(screen.getByTestId("shareLoginPrompt")).toBeInTheDocument();
+      expect(screen.queryByTestId("shareReadonlyButton")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("shareEditButton")).not.toBeInTheDocument();
+    });
+
+    it("then clicking Google login calls login with google", () => {
+      renderShareDialog();
+      fireEvent.click(screen.getByText("Sign in with Google"));
+      expect(mockLogin).toHaveBeenCalledWith("google");
+    });
+
+    it("then clicking GitHub login calls login with github", () => {
+      renderShareDialog();
+      fireEvent.click(screen.getByText("Sign in with GitHub"));
+      expect(mockLogin).toHaveBeenCalledWith("github");
     });
   });
 });
