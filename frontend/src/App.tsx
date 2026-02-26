@@ -409,7 +409,7 @@ export function App({ workspaceId, navigate }: AppProps) {
               removeArrow={removeArrow}
               sectionVisibility={sectionVisibility}
               selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-              yjsSynced={workspace.yjs.synced}
+              yjsSynced={workspace.readyForSeeding}
             />
           </ErrorBoundary>
         </div>
@@ -575,7 +575,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                                     removeArrow={removeArrow}
                                     sectionVisibility={sectionVisibility}
                                     selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-                                    yjsSynced={workspace.yjs.synced}
+                                    yjsSynced={workspace.readyForSeeding}
                                   />
                                 </ErrorBoundary>
                               </div>

@@ -25,7 +25,7 @@ vi.mock("./use-yjs", () => ({
 
 // Mock offline persistence (needs IndexedDB which isn't in test env)
 vi.mock("./use-yjs-offline", () => ({
-  useYjsOffline: () => {},
+  useYjsOffline: () => ({ idbSynced: true }),
 }));
 
 import { useEditorWorkspace } from "./use-editor-workspace";
