@@ -108,36 +108,20 @@ export function TourOverlay({
       className="fixed inset-0 z-[10000]"
       style={{ pointerEvents: "auto" }}
     >
-      {/* Dim layer with spotlight cutout — z-1 */}
+      {/* Dim layer with spotlight cutout */}
       <div
         className="absolute inset-0 bg-black/60"
         style={{
-          zIndex: 1,
           clipPath: clipPath === "none" ? undefined : clipPath,
           transition: "clip-path 300ms ease-in-out",
         }}
       />
 
-      {/* Vignette inside spotlight for centered steps — z-2 */}
-      {isCentered && rect && (
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            zIndex: 2,
-            left: rect.x,
-            top: rect.y,
-            width: rect.width,
-            height: rect.height,
-            background:
-              "radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.55) 70%)",
-          }}
-        />
-      )}
+      {/* Click shield — blocks clicks outside tooltip */}
+      <div className="absolute inset-0" />
 
-      {/* Click shield — blocks clicks outside tooltip — z-3 */}
-      <div className="absolute inset-0" style={{ zIndex: 3 }} />
-
-      {/* Tooltip — z-4, above all overlay layers */}
+      {/* Tooltip — box-shadow vignette darkens the spotlight area around it
+          without overlapping the card itself */}
       <TourTooltip
         step={step}
         stepIndex={stepIndex}
@@ -145,8 +129,9 @@ export function TourOverlay({
         onNext={onNext}
         onBack={onBack}
         onSkip={onSkip}
-        floatingStyles={{ ...resolvedStyles, zIndex: 4 }}
+        floatingStyles={resolvedStyles}
         floatingRef={refs.setFloating}
+        vignetteshadow={isCentered}
       />
     </div>,
     document.body,

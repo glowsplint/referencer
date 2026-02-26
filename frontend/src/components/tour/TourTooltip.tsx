@@ -13,6 +13,7 @@ interface TourTooltipProps {
   onSkip: () => void;
   floatingStyles: CSSProperties;
   floatingRef: RefCallback<HTMLElement>;
+  vignetteshadow?: boolean;
 }
 
 export function TourTooltip({
@@ -24,17 +25,23 @@ export function TourTooltip({
   onSkip,
   floatingStyles,
   floatingRef,
+  vignetteshadow,
 }: TourTooltipProps) {
   const { t } = useTranslation("tour");
   const isFirst = stepIndex === 0;
   const isLast = stepIndex === totalSteps - 1;
 
+  const styles: CSSProperties = {
+    ...floatingStyles,
+    ...(vignetteshadow ? { boxShadow: "0 0 400px 300px rgba(0,0,0,0.5), 0 0 120px 50px rgba(0,0,0,0.8)" } : {}),
+  };
+
   return (
     <div
       ref={floatingRef}
-      style={floatingStyles}
+      style={styles}
       data-testid="tourTooltip"
-      className="w-[90vw] sm:w-[520px] bg-popover text-popover-foreground rounded-xl shadow-xl border border-border overflow-hidden"
+      className="w-[90vw] sm:w-[520px] bg-popover text-popover-foreground rounded-xl shadow-xl border-2 border-foreground overflow-hidden"
     >
       {step.image && (
         <img src={step.image} alt="" className="w-full max-h-[300px] object-cover bg-muted" />
