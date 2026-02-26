@@ -29,4 +29,10 @@ export const EDITOR_TOUR_STEPS: TourStep[] = [
     image: "/tour/editor-unlock.gif",
     placement: "right",
   },
+  {
+    target: '[data-testid="status-bar"]',
+    title: "steps.editor.statusBar.title",
+    content: "steps.editor.statusBar.content",
+    placement: "bottom",
+  },
 ];

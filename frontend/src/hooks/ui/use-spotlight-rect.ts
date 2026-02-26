@@ -1,8 +1,8 @@
 // Computes and tracks the bounding rect of a DOM element matched by a CSS
-// selector, with 8px padding. Updates on resize (ResizeObserver) and scroll.
+// selector, with 4px padding. Updates on resize (ResizeObserver) and scroll.
 import { useState, useEffect, useCallback } from "react";
 
-const PADDING = 8;
+const PADDING = 4;
 
 function padRect(rect: DOMRect): DOMRect {
   return new DOMRect(
