@@ -30,5 +30,36 @@
     "status": "انقر واسحب لمسح التعليقات التوضيحية.",
     "erased": "تم مسح التعليق التوضيحي."
   },
-  "lockHint": "اضغط <kbd>Esc</kbd> <kbd>K</kbd> لقفل المحرر بعد الانتهاء من تحرير المحتوى."
+  "lockHint": "اضغط <kbd>Esc</kbd> <kbd>K</kbd> لقفل المحرر بعد الانتهاء من تحرير المحتوى.",
+  "recording": {
+    "label": "التسجيل",
+    "record": "تسجيل",
+    "stopRecording": "إيقاف التسجيل",
+    "play": "تشغيل",
+    "stop": "إيقاف",
+    "pause": "إيقاف مؤقت",
+    "next": "الخطوة التالية",
+    "previous": "الخطوة السابقة",
+    "newRecording": "تسجيل جديد",
+    "editRecording": "تعديل التسجيل",
+    "deleteRecording": "حذف التسجيل",
+    "duplicateRecording": "تكرار التسجيل",
+    "noRecordings": "لا توجد تسجيلات بعد",
+    "recording": "جارٍ التسجيل...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "الحالة الأولية",
+    "speed": "السرعة",
+    "transition": "الانتقال",
+    "instant": "فوري",
+    "fade": "تلاشي",
+    "untitled": "تسجيل بدون عنوان",
+    "showLayer": "إظهار {{name}}",
+    "hideLayer": "إخفاء {{name}}",
+    "showAnnotation": "إظهار التعليق",
+    "hideAnnotation": "إخفاء التعليق",
+    "showSection": "إظهار القسم {{index}}",
+    "hideSection": "إخفاء القسم {{index}}",
+    "deletedAnnotationWarning": "بعض الخطوات تشير إلى تعليقات محذوفة",
+    "statusHint": "جارٍ التسجيل… قم بتبديل رؤية الطبقة/التعليق لالتقاط الخطوات. اضغط ■ للإيقاف."
+  }
 }

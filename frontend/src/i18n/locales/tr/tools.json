@@ -30,5 +30,36 @@
     "status": "Aciklamalari silmek icin tiklayin ve surukleyin.",
     "erased": "Aciklama silindi."
   },
-  "lockHint": "Icerik duzenlemenizi tamamladiginizda duzenleyiciyi kilitlemek icin <kbd>Esc</kbd> <kbd>K</kbd> tusuna basin."
+  "lockHint": "Icerik duzenlemenizi tamamladiginizda duzenleyiciyi kilitlemek icin <kbd>Esc</kbd> <kbd>K</kbd> tusuna basin.",
+  "recording": {
+    "label": "Kayit",
+    "record": "Kaydet",
+    "stopRecording": "Kaydi durdur",
+    "play": "Oynat",
+    "stop": "Durdur",
+    "pause": "Duraklat",
+    "next": "Sonraki adim",
+    "previous": "Onceki adim",
+    "newRecording": "Yeni kayit",
+    "editRecording": "Kaydi duzenle",
+    "deleteRecording": "Kaydi sil",
+    "duplicateRecording": "Kaydi cogalt",
+    "noRecordings": "Henuz kayit yok",
+    "recording": "Kaydediliyor...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Baslangic durumu",
+    "speed": "Hiz",
+    "transition": "Gecis",
+    "instant": "Aninda",
+    "fade": "Solma",
+    "untitled": "Adsiz Kayit",
+    "showLayer": "{{name}} goster",
+    "hideLayer": "{{name}} gizle",
+    "showAnnotation": "Aciklamayi goster",
+    "hideAnnotation": "Aciklamayi gizle",
+    "showSection": "Bolum {{index}} goster",
+    "hideSection": "Bolum {{index}} gizle",
+    "deletedAnnotationWarning": "Bazi adimlar silinmis aciklamalara referans veriyor",
+    "statusHint": "Kaydediliyor… Adimlari yakalamak icin katman/aciklama gorunurlugunu degistirin. Durdurmak icin ■ tusuna basin."
+  }
 }

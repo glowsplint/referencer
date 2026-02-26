@@ -30,5 +30,36 @@
     "status": "Faceți clic și trageți pentru a șterge adnotările.",
     "erased": "Adnotare ștearsă."
   },
-  "lockHint": "Apăsați <kbd>Esc</kbd> <kbd>K</kbd> pentru a bloca editorul după ce ați finalizat conținutul."
+  "lockHint": "Apăsați <kbd>Esc</kbd> <kbd>K</kbd> pentru a bloca editorul după ce ați finalizat conținutul.",
+  "recording": {
+    "label": "Înregistrare",
+    "record": "Înregistrează",
+    "stopRecording": "Oprește înregistrarea",
+    "play": "Redare",
+    "stop": "Oprește",
+    "pause": "Pauză",
+    "next": "Pasul următor",
+    "previous": "Pasul anterior",
+    "newRecording": "Înregistrare nouă",
+    "editRecording": "Editează înregistrarea",
+    "deleteRecording": "Șterge înregistrarea",
+    "duplicateRecording": "Duplică înregistrarea",
+    "noRecordings": "Nu există înregistrări încă",
+    "recording": "Se înregistrează...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Stare inițială",
+    "speed": "Viteză",
+    "transition": "Tranziție",
+    "instant": "Instant",
+    "fade": "Estompare",
+    "untitled": "Înregistrare fără titlu",
+    "showLayer": "Afișează {{name}}",
+    "hideLayer": "Ascunde {{name}}",
+    "showAnnotation": "Afișează adnotarea",
+    "hideAnnotation": "Ascunde adnotarea",
+    "showSection": "Afișează secțiunea {{index}}",
+    "hideSection": "Ascunde secțiunea {{index}}",
+    "deletedAnnotationWarning": "Unii pași fac referire la adnotări șterse",
+    "statusHint": "Se înregistrează… Comutați vizibilitatea straturilor/adnotărilor pentru a captura pași. Apăsați ■ pentru a opri."
+  }
 }

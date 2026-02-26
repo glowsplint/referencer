@@ -10,6 +10,12 @@
     "removeAnnotation": "إزالة التعليق",
     "removeArrow": "إزالة السهم",
     "removeUnderline": "إزالة التسطير",
+    "hideAnnotation": "إخفاء التعليق",
+    "showAnnotation": "إظهار التعليق",
+    "hideArrow": "إخفاء السهم",
+    "showArrow": "إظهار السهم",
+    "hideUnderline": "إخفاء التسطير",
+    "showUnderline": "إظهار التسطير",
     "allColorsInUse": "جميع الألوان مستخدمة — أزل طبقة أولاً."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "المساعدة والأسئلة الشائعة",
     "settings": "الإعدادات",
     "toggleEditorLayout": "تبديل تخطيط المحرر",
-    "toggleEditorLock": "تبديل قفل المحرر"
+    "toggleEditorLock": "تبديل قفل المحرر",
+    "toggleCommentPlacement": "تبديل موضع التعليقات",
+    "startTour": "جولة إرشادية"
   },
   "annotations": {
     "placeholder": "إضافة تعليق...",
     "removeCustomColour": "إزالة اللون المخصص",
     "addCustomColour": "إضافة لون مخصص",
-    "addToCustomColours": "إضافة إلى الألوان المخصصة"
+    "addToCustomColours": "إضافة إلى الألوان المخصصة",
+    "replyPlaceholder": "رد...",
+    "replies": "ردود",
+    "addReaction": "إضافة تفاعل",
+    "removeReply": "إزالة الرد"
   },
   "actionConsole": {
     "title": "وحدة التحكم",

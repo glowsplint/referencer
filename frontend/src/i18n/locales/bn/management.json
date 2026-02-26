@@ -10,6 +10,12 @@
     "removeAnnotation": "টীকা সরান",
     "removeArrow": "তীর সরান",
     "removeUnderline": "আন্ডারলাইন সরান",
+    "hideAnnotation": "টীকা লুকান",
+    "showAnnotation": "টীকা দেখান",
+    "hideArrow": "তীর লুকান",
+    "showArrow": "তীর দেখান",
+    "hideUnderline": "আন্ডারলাইন লুকান",
+    "showUnderline": "আন্ডারলাইন দেখান",
     "allColorsInUse": "সমস্ত রং ব্যবহৃত হচ্ছে — আগে একটি স্তর সরান।"
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "সাহায্য ও প্রায়শই জিজ্ঞাসিত প্রশ্ন",
     "settings": "সেটিংস",
     "toggleEditorLayout": "সম্পাদক লেআউট টগল করুন",
-    "toggleEditorLock": "সম্পাদক লক টগল করুন"
+    "toggleEditorLock": "সম্পাদক লক টগল করুন",
+    "toggleCommentPlacement": "মন্তব্য স্থান টগল করুন",
+    "startTour": "গাইডেড ট্যুর"
   },
   "annotations": {
     "placeholder": "টীকা যোগ করুন...",
     "removeCustomColour": "কাস্টম রং সরান",
     "addCustomColour": "কাস্টম রং যোগ করুন",
-    "addToCustomColours": "কাস্টম রংগুলিতে যোগ করুন"
+    "addToCustomColours": "কাস্টম রংগুলিতে যোগ করুন",
+    "replyPlaceholder": "উত্তর...",
+    "replies": "উত্তর",
+    "addReaction": "প্রতিক্রিয়া যোগ করুন",
+    "removeReply": "উত্তর সরান"
   },
   "actionConsole": {
     "title": "অ্যাকশন কনসোল",

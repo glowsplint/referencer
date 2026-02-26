@@ -10,6 +10,12 @@
     "removeAnnotation": "Ondoa kidokezo",
     "removeArrow": "Ondoa mshale",
     "removeUnderline": "Ondoa mstari",
+    "hideAnnotation": "Ficha kidokezo",
+    "showAnnotation": "Onyesha kidokezo",
+    "hideArrow": "Ficha mshale",
+    "showArrow": "Onyesha mshale",
+    "hideUnderline": "Ficha mstari",
+    "showUnderline": "Onyesha mstari",
     "allColorsInUse": "Rangi zote zinatumika — ondoa tabaka kwanza."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Msaada na Maswali",
     "settings": "Mipangilio",
     "toggleEditorLayout": "Geuza mpangilio wa kihariri",
-    "toggleEditorLock": "Geuza kufuli ya kihariri"
+    "toggleEditorLock": "Geuza kufuli ya kihariri",
+    "toggleCommentPlacement": "Geuza uwekaji wa maoni",
+    "startTour": "Ziara ya mwongozo"
   },
   "annotations": {
     "placeholder": "Ongeza kidokezo...",
     "removeCustomColour": "Ondoa rangi maalum",
     "addCustomColour": "Ongeza rangi maalum",
-    "addToCustomColours": "Ongeza kwenye rangi maalum"
+    "addToCustomColours": "Ongeza kwenye rangi maalum",
+    "replyPlaceholder": "Jibu...",
+    "replies": "majibu",
+    "addReaction": "Ongeza hisia",
+    "removeReply": "Ondoa jibu"
   },
   "actionConsole": {
     "title": "Koni ya Vitendo",

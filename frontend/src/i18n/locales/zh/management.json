@@ -10,6 +10,12 @@
     "removeAnnotation": "移除标注",
     "removeArrow": "移除箭头",
     "removeUnderline": "移除下划线",
+    "hideAnnotation": "隐藏标注",
+    "showAnnotation": "显示标注",
+    "hideArrow": "隐藏箭头",
+    "showArrow": "显示箭头",
+    "hideUnderline": "隐藏下划线",
+    "showUnderline": "显示下划线",
     "allColorsInUse": "所有颜色都已被使用——请先移除一个图层。"
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "帮助与常见问题",
     "settings": "设置",
     "toggleEditorLayout": "切换编辑器布局",
-    "toggleEditorLock": "切换编辑器锁定"
+    "toggleEditorLock": "切换编辑器锁定",
+    "toggleCommentPlacement": "切换评论位置",
+    "startTour": "引导教程"
   },
   "annotations": {
     "placeholder": "添加标注...",
     "removeCustomColour": "移除自定义颜色",
     "addCustomColour": "添加自定义颜色",
-    "addToCustomColours": "添加到自定义颜色"
+    "addToCustomColours": "添加到自定义颜色",
+    "replyPlaceholder": "回复...",
+    "replies": "回复",
+    "addReaction": "添加表情",
+    "removeReply": "删除回复"
   },
   "actionConsole": {
     "title": "操作控制台",

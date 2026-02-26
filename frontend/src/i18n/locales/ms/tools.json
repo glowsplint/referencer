@@ -30,5 +30,36 @@
     "status": "Klik dan seret untuk memadam anotasi.",
     "erased": "Anotasi dipadam."
   },
-  "lockHint": "Tekan <kbd>Esc</kbd> <kbd>K</kbd> untuk mengunci editor setelah anda selesai memuktamadkan kandungan."
+  "lockHint": "Tekan <kbd>Esc</kbd> <kbd>K</kbd> untuk mengunci editor setelah anda selesai memuktamadkan kandungan.",
+  "recording": {
+    "label": "Rakaman",
+    "record": "Rakam",
+    "stopRecording": "Hentikan rakaman",
+    "play": "Main",
+    "stop": "Berhenti",
+    "pause": "Jeda",
+    "next": "Langkah seterusnya",
+    "previous": "Langkah sebelumnya",
+    "newRecording": "Rakaman baharu",
+    "editRecording": "Edit rakaman",
+    "deleteRecording": "Padam rakaman",
+    "duplicateRecording": "Salin rakaman",
+    "noRecordings": "Tiada rakaman lagi",
+    "recording": "Merakam...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Keadaan awal",
+    "speed": "Kelajuan",
+    "transition": "Peralihan",
+    "instant": "Serta-merta",
+    "fade": "Pudar",
+    "untitled": "Rakaman Tanpa Tajuk",
+    "showLayer": "Tunjukkan {{name}}",
+    "hideLayer": "Sembunyikan {{name}}",
+    "showAnnotation": "Tunjukkan anotasi",
+    "hideAnnotation": "Sembunyikan anotasi",
+    "showSection": "Tunjukkan bahagian {{index}}",
+    "hideSection": "Sembunyikan bahagian {{index}}",
+    "deletedAnnotationWarning": "Beberapa langkah merujuk anotasi yang telah dipadam",
+    "statusHint": "Merakam… Togol keterlihatan lapisan/anotasi untuk merakam langkah. Tekan ■ untuk berhenti."
+  }
 }

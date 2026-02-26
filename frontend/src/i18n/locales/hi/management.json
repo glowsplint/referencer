@@ -10,6 +10,12 @@
     "removeAnnotation": "टिप्पणी हटाएं",
     "removeArrow": "तीर हटाएं",
     "removeUnderline": "रेखांकन हटाएं",
+    "hideAnnotation": "टिप्पणी छिपाएं",
+    "showAnnotation": "टिप्पणी दिखाएं",
+    "hideArrow": "तीर छिपाएं",
+    "showArrow": "तीर दिखाएं",
+    "hideUnderline": "रेखांकन छिपाएं",
+    "showUnderline": "रेखांकन दिखाएं",
     "allColorsInUse": "सभी रंग उपयोग में हैं — पहले एक परत हटाएं।"
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "सहायता और अक्सर पूछे जाने वाले प्रश्न",
     "settings": "सेटिंग्स",
     "toggleEditorLayout": "संपादक लेआउट टॉगल करें",
-    "toggleEditorLock": "संपादक लॉक टॉगल करें"
+    "toggleEditorLock": "संपादक लॉक टॉगल करें",
+    "toggleCommentPlacement": "टिप्पणी स्थान टॉगल करें",
+    "startTour": "गाइडेड टूर"
   },
   "annotations": {
     "placeholder": "टिप्पणी जोड़ें...",
     "removeCustomColour": "कस्टम रंग हटाएं",
     "addCustomColour": "कस्टम रंग जोड़ें",
-    "addToCustomColours": "कस्टम रंगों में जोड़ें"
+    "addToCustomColours": "कस्टम रंगों में जोड़ें",
+    "replyPlaceholder": "जवाब दें...",
+    "replies": "जवाब",
+    "addReaction": "प्रतिक्रिया जोड़ें",
+    "removeReply": "जवाब हटाएं"
   },
   "actionConsole": {
     "title": "एक्शन कंसोल",

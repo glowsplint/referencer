@@ -10,6 +10,12 @@
     "removeAnnotation": "Elimină adnotarea",
     "removeArrow": "Elimină săgeata",
     "removeUnderline": "Elimină sublinierea",
+    "hideAnnotation": "Ascunde adnotarea",
+    "showAnnotation": "Afișează adnotarea",
+    "hideArrow": "Ascunde săgeata",
+    "showArrow": "Afișează săgeata",
+    "hideUnderline": "Ascunde sublinierea",
+    "showUnderline": "Afișează sublinierea",
     "allColorsInUse": "Toate culorile sunt utilizate — eliminați mai întâi un strat."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Ajutor și întrebări frecvente",
     "settings": "Setări",
     "toggleEditorLayout": "Comutați aspectul editorului",
-    "toggleEditorLock": "Comutați blocarea editorului"
+    "toggleEditorLock": "Comutați blocarea editorului",
+    "toggleCommentPlacement": "Comutați plasarea comentariilor",
+    "startTour": "Tur ghidat"
   },
   "annotations": {
     "placeholder": "Adaugă adnotare...",
     "removeCustomColour": "Elimină culoarea personalizată",
     "addCustomColour": "Adaugă culoare personalizată",
-    "addToCustomColours": "Adaugă la culorile personalizate"
+    "addToCustomColours": "Adaugă la culorile personalizate",
+    "replyPlaceholder": "Răspunde...",
+    "replies": "răspunsuri",
+    "addReaction": "Adaugă reacție",
+    "removeReply": "Elimină răspunsul"
   },
   "actionConsole": {
     "title": "Consola de acțiuni",
