@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Duzenleyici yerlesimini degistir",
     "toggleEditorLock": "Duzenleyici kilidini ac/kapat",
     "toggleCommentPlacement": "Yorum yerlesimini degistir",
-    "startTour": "Rehberli tur"
+    "startTour": "Rehberli tur",
+    "loadDemo": "Demo içeriği yükle"
   },
   "annotations": {
     "placeholder": "Aciklama ekle...",

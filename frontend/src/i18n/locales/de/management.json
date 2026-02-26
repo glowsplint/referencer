@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Editorlayout umschalten",
     "toggleEditorLock": "Editorsperre umschalten",
     "toggleCommentPlacement": "Kommentarplatzierung umschalten",
-    "startTour": "Geführte Tour"
+    "startTour": "Geführte Tour",
+    "loadDemo": "Demo-Inhalt laden"
   },
   "annotations": {
     "placeholder": "Anmerkung hinzufügen...",

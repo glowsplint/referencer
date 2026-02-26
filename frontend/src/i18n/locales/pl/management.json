@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Przelacz uklad edytora",
     "toggleEditorLock": "Przelacz blokade edytora",
     "toggleCommentPlacement": "Przelacz rozmieszczenie komentarzy",
-    "startTour": "Przewodnik"
+    "startTour": "Przewodnik",
+    "loadDemo": "Załaduj zawartość demo"
   },
   "annotations": {
     "placeholder": "Dodaj adnotacje...",

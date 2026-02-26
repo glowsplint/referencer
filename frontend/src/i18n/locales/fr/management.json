@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Basculer la disposition de l'éditeur",
     "toggleEditorLock": "Basculer le verrouillage de l'éditeur",
     "toggleCommentPlacement": "Basculer le placement des commentaires",
-    "startTour": "Visite guidée"
+    "startTour": "Visite guidée",
+    "loadDemo": "Charger le contenu de démonstration"
   },
   "annotations": {
     "placeholder": "Ajouter une annotation...",

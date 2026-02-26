@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Переключить макет редактора",
     "toggleEditorLock": "Переключить блокировку редактора",
     "toggleCommentPlacement": "Переключить размещение комментариев",
-    "startTour": "Обзорная экскурсия"
+    "startTour": "Обзорная экскурсия",
+    "loadDemo": "Загрузить демо-содержимое"
   },
   "annotations": {
     "placeholder": "Добавить аннотацию...",

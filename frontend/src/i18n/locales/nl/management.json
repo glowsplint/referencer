@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Editorindeling wisselen",
     "toggleEditorLock": "Editorvergrendeling in-/uitschakelen",
     "toggleCommentPlacement": "Opmerkingplaatsing in-/uitschakelen",
-    "startTour": "Rondleiding"
+    "startTour": "Rondleiding",
+    "loadDemo": "Demo-inhoud laden"
   },
   "annotations": {
     "placeholder": "Annotatie toevoegen...",

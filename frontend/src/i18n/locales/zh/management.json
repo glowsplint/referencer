@@ -34,7 +34,8 @@
     "toggleEditorLayout": "切换编辑器布局",
     "toggleEditorLock": "切换编辑器锁定",
     "toggleCommentPlacement": "切换评论位置",
-    "startTour": "引导教程"
+    "startTour": "引导教程",
+    "loadDemo": "加载演示内容"
   },
   "annotations": {
     "placeholder": "添加标注...",

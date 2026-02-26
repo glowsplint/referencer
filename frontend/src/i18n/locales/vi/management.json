@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Bật/tắt bố cục trình soạn thảo",
     "toggleEditorLock": "Bật/tắt khóa trình soạn thảo",
     "toggleCommentPlacement": "Bật/tắt vị trí bình luận",
-    "startTour": "Hướng dẫn tham quan"
+    "startTour": "Hướng dẫn tham quan",
+    "loadDemo": "Tải nội dung mẫu"
   },
   "annotations": {
     "placeholder": "Thêm chú thích...",

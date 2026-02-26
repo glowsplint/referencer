@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Wissel redigeerder-uitleg",
     "toggleEditorLock": "Wissel redigeerder-slot",
     "toggleCommentPlacement": "Wissel kommentaarplasing",
-    "startTour": "Begeleide toer"
+    "startTour": "Begeleide toer",
+    "loadDemo": "Laai demo-inhoud"
   },
   "annotations": {
     "placeholder": "Voeg aantekening by...",
