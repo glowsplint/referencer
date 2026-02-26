@@ -132,6 +132,7 @@ function createApp() {
   app.use("*", async (c, next) => {
     (c.env as any) = { ...testEnv, ...c.env };
     c.set("supabase", createMockSupabase());
+    c.set("logger", { info: () => {}, error: () => {}, warn: () => {} });
     await next();
   });
 
