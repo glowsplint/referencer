@@ -52,7 +52,7 @@ folders.post("/", async (c) => {
     console.error("POST /api/folders error:", err);
     const message = err instanceof Error ? err.message : "";
     if (message.includes("depth limit")) {
-      return c.json({ error: message }, 400);
+      return c.json({ error: "Folder nesting limit reached" }, 400);
     }
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -93,12 +93,14 @@ folders.patch("/:id/move", async (c) => {
   } catch (err) {
     console.error("PATCH /api/folders/:id/move error:", err);
     const message = err instanceof Error ? err.message : "";
-    if (
-      message.includes("depth limit") ||
-      message.includes("cycle") ||
-      message.includes("Cannot move")
-    ) {
-      return c.json({ error: message }, 400);
+    if (message.includes("depth limit")) {
+      return c.json({ error: "Folder nesting limit reached" }, 400);
+    }
+    if (message.includes("cycle")) {
+      return c.json({ error: "Cannot create circular folder structure" }, 400);
+    }
+    if (message.includes("Cannot move")) {
+      return c.json({ error: "Cannot move folder into itself" }, 400);
     }
     return c.json({ error: "Internal server error" }, 500);
   }

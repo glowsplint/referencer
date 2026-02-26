@@ -7,6 +7,10 @@ export function useWorkspaceAutosave(workspaceId: string) {
   const registeredRef = useRef(false);
 
   useEffect(() => {
+    registeredRef.current = false;
+  }, [workspaceId]);
+
+  useEffect(() => {
     if (!isAuthenticated || registeredRef.current) return;
     registeredRef.current = true;
     createWorkspace(workspaceId).catch(() => {});

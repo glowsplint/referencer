@@ -72,7 +72,6 @@ export function makeMockWorkspace(
     toggleHighlightVisibility: vi.fn(),
     toggleArrowVisibility: vi.fn(),
     toggleUnderlineVisibility: vi.fn(),
-    updateEditorContent: vi.fn(),
     setActiveLayerId: vi.fn(),
     editorKeys: [1],
     editorsRef: { current: new Map() },

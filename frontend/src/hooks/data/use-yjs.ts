@@ -29,7 +29,7 @@ export function useYjs(workspaceId: string) {
     const onConnectionError = () => {
       if (connectionAttempted) return;
       connectionAttempted = true;
-      setSynced((prev) => prev || true);
+      setSynced(true);
     };
     provider.wsProvider.on("connection-error", onConnectionError);
     provider.wsProvider.on("connection-close", onConnectionError);

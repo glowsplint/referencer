@@ -1,3 +1,7 @@
+// TODO: Add WebSocket authentication token
+// Currently the collab server rejects tokenless connections and the app falls back to offline mode.
+// A future PR should implement: /auth/ws-token endpoint, async provider initialization, hook refactor.
+
 // Yjs document and WebSocket provider management.
 // Creates a Y.Doc per workspace with named XmlFragments for each editor pane.
 // Connects to the collab server via y-websocket's WebsocketProvider.

@@ -8,13 +8,12 @@ import { useEditors } from "./use-editors";
 import { useActionHistory } from "./use-action-history";
 import { useTrackedEditors } from "./use-tracked-editors";
 import { useYjs } from "./use-yjs";
-import { useYjsLayers } from "./use-yjs-layers";
+import { useYjsLayers, buildEditorViewMap } from "./use-yjs-layers";
 import { useYjsUndo } from "./use-yjs-undo";
 import { useUnifiedUndo } from "./use-unified-undo";
 import { useYjsOffline } from "./use-yjs-offline";
-import { seedDefaultLayers, type EditorViewMap } from "@/lib/yjs/annotations";
+import { seedDefaultLayers } from "@/lib/yjs/annotations";
 import { createDefaultLayers } from "@/data/default-workspace";
-import type { Editor } from "@tiptap/react";
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
@@ -53,15 +52,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     if (!yjs.doc || seededRef.current || !yjs.synced || !allEditorsMounted) return;
     seededRef.current = true;
     try {
-      const views: EditorViewMap = new Map();
-      const editorsMap = trackedEditorsHook.editorsRef.current;
-      if (editorsMap) {
-        for (const [index, editor] of editorsMap as Map<number, Editor>) {
-          if (editor && !editor.isDestroyed && editor.view) {
-            views.set(index, editor.view);
-          }
-        }
-      }
+      const views = buildEditorViewMap(trackedEditorsHook.editorsRef);
       seedDefaultLayers(yjs.doc, createDefaultLayers(), views);
     } catch (err) {
       console.error("Failed to seed default layers:", err);
@@ -77,6 +68,15 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   }
 
   // Layer mutations — all write to Y.Doc directly
+  //
+  // Each useCallback below wraps its body with `guarded()`, which closes over
+  // the `readOnly` flag defined above. ESLint sees `guarded` as a missing
+  // dependency, but it is intentionally omitted: `guarded` is a pure wrapper
+  // that only reads `readOnly`, which is already listed in the deps array.
+  // Including `guarded` would defeat memoisation because it is re-created on
+  // every render.
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addLayer = useCallback(
     guarded((opts?: { id?: string; name?: string; color?: string; extraColors?: string[] }) => {
       const result = yjsLayers.addLayer(opts);
@@ -92,6 +92,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers, history],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const removeLayer = useCallback(
     guarded((id: string) => {
       const layer = yjsLayers.layers.find((l) => l.id === id);
@@ -107,6 +108,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers, history],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateLayerName = useCallback(
     guarded((id: string, name: string) => {
       yjsLayers.updateLayerName(id, name);
@@ -114,6 +116,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateLayerColor = useCallback(
     guarded((id: string, color: string) => {
       yjsLayers.updateLayerColor(id, color);
@@ -121,6 +124,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const toggleLayerVisibility = useCallback(
     guarded((id: string) => {
       yjsLayers.toggleLayerVisibility(id);
@@ -128,6 +132,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addHighlight = useCallback(
     guarded(
       (
@@ -142,6 +147,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const removeHighlight = useCallback(
     guarded((layerId: string, highlightId: string) => {
       yjsLayers.removeHighlight(layerId, highlightId);
@@ -149,6 +155,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateHighlightAnnotation = useCallback(
     guarded((layerId: string, highlightId: string, annotation: string) => {
       yjsLayers.updateHighlightAnnotation(layerId, highlightId, annotation);
@@ -156,6 +163,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addArrow = useCallback(
     guarded(
       (layerId: string, arrow: Omit<Arrow, "id" | "visible">, opts?: { id?: string }): string => {
@@ -166,6 +174,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const removeArrow = useCallback(
     guarded((layerId: string, arrowId: string) => {
       yjsLayers.removeArrow(layerId, arrowId);
@@ -173,6 +182,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateArrowStyle = useCallback(
     guarded((layerId: string, arrowId: string, arrowStyle: ArrowStyle) => {
       yjsLayers.updateArrowStyle(layerId, arrowId, arrowStyle);
@@ -180,6 +190,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addUnderline = useCallback(
     guarded(
       (
@@ -194,6 +205,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const removeUnderline = useCallback(
     guarded((layerId: string, underlineId: string) => {
       yjsLayers.removeUnderline(layerId, underlineId);
@@ -201,6 +213,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addReply = useCallback(
     guarded((layerId: string, highlightId: string, reply: CommentReply) => {
       yjsLayers.addReply(layerId, highlightId, reply);
@@ -208,6 +221,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const removeReply = useCallback(
     guarded((layerId: string, highlightId: string, replyId: string) => {
       yjsLayers.removeReply(layerId, highlightId, replyId);
@@ -215,6 +229,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const toggleReactionOnHighlight = useCallback(
     guarded((layerId: string, highlightId: string, emoji: string, userName: string) => {
       yjsLayers.toggleReactionOnHighlight(layerId, highlightId, emoji, userName);
@@ -222,6 +237,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, yjsLayers],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const toggleReactionOnReply = useCallback(
     guarded(
       (layerId: string, highlightId: string, replyId: string, emoji: string, userName: string) => {
@@ -235,6 +251,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     settingsHook.toggleCommentPlacement();
   }, [settingsHook]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addEditor = useCallback(
     guarded(() => {
       trackedEditorsHook.addEditor();
@@ -242,6 +259,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, trackedEditorsHook],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const removeEditor = useCallback(
     guarded((index: number) => {
       trackedEditorsHook.removeEditor(index);
@@ -249,6 +267,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, trackedEditorsHook],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateSectionName = useCallback(
     guarded((index: number, name: string) => {
       trackedEditorsHook.updateSectionName(index, name);
@@ -256,6 +275,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, trackedEditorsHook],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const reorderEditors = useCallback(
     guarded((permutation: number[]) => {
       rawEditorsHook.reorderEditors(permutation);
@@ -279,6 +299,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, rawEditorsHook, history],
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const toggleSectionVisibility = useCallback(
     guarded((index: number) => {
       const wasVisible = rawEditorsHook.sectionVisibility[index] ?? true;
@@ -293,14 +314,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       });
     }),
     [readOnly, rawEditorsHook, history],
-  );
-
-  // No-op: text content is synced via Yjs Collaboration extension
-  const updateEditorContent = useCallback(
-    guarded((_editorIndex: number, _contentJson: unknown) => {
-      /* no-op: synced via Yjs */
-    }),
-    [readOnly],
   );
 
   const toggleLocked = useCallback(() => {
@@ -362,6 +375,54 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
 
   const toggleManagementPane = useCallback(() => setIsManagementPaneOpen((v) => !v), []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const toggleAllLayerVisibility = useCallback(
+    guarded(() => yjsLayers.toggleAllLayerVisibility()),
+    [readOnly, yjsLayers],
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const clearLayerHighlights = useCallback(
+    guarded((layerId: string) => yjsLayers.clearLayerHighlights(layerId)),
+    [readOnly, yjsLayers],
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const clearLayerArrows = useCallback(
+    guarded((layerId: string) => yjsLayers.clearLayerArrows(layerId)),
+    [readOnly, yjsLayers],
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const clearLayerUnderlines = useCallback(
+    guarded((layerId: string) => yjsLayers.clearLayerUnderlines(layerId)),
+    [readOnly, yjsLayers],
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const toggleHighlightVisibility = useCallback(
+    guarded((layerId: string, highlightId: string) =>
+      yjsLayers.toggleHighlightVisibility(layerId, highlightId),
+    ),
+    [readOnly, yjsLayers],
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const toggleArrowVisibility = useCallback(
+    guarded((layerId: string, arrowId: string) =>
+      yjsLayers.toggleArrowVisibility(layerId, arrowId),
+    ),
+    [readOnly, yjsLayers],
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const toggleUnderlineVisibility = useCallback(
+    guarded((layerId: string, underlineId: string) =>
+      yjsLayers.toggleUnderlineVisibility(layerId, underlineId),
+    ),
+    [readOnly, yjsLayers],
+  );
+
   return {
     ...settingsHook,
     toggleLocked,
@@ -373,10 +434,10 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     activeLayerId: yjsLayers.activeLayerId,
     setActiveLayer: yjsLayers.setActiveLayer,
     setActiveLayerId: yjsLayers.setActiveLayerId,
-    toggleAllLayerVisibility: guarded(() => yjsLayers.toggleAllLayerVisibility()),
-    clearLayerHighlights: guarded((layerId: string) => yjsLayers.clearLayerHighlights(layerId)),
-    clearLayerArrows: guarded((layerId: string) => yjsLayers.clearLayerArrows(layerId)),
-    clearLayerUnderlines: guarded((layerId: string) => yjsLayers.clearLayerUnderlines(layerId)),
+    toggleAllLayerVisibility,
+    clearLayerHighlights,
+    clearLayerArrows,
+    clearLayerUnderlines,
     addLayer,
     removeLayer,
     updateLayerName,
@@ -395,15 +456,9 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     toggleReactionOnHighlight,
     toggleReactionOnReply,
     toggleCommentPlacement,
-    toggleHighlightVisibility: guarded((layerId: string, highlightId: string) =>
-      yjsLayers.toggleHighlightVisibility(layerId, highlightId),
-    ),
-    toggleArrowVisibility: guarded((layerId: string, arrowId: string) =>
-      yjsLayers.toggleArrowVisibility(layerId, arrowId),
-    ),
-    toggleUnderlineVisibility: guarded((layerId: string, underlineId: string) =>
-      yjsLayers.toggleUnderlineVisibility(layerId, underlineId),
-    ),
+    toggleHighlightVisibility,
+    toggleArrowVisibility,
+    toggleUnderlineVisibility,
     // Editors (still local state — not yet CRDT)
     editorCount: trackedEditorsHook.editorCount,
     activeEditor: trackedEditorsHook.activeEditor,
@@ -421,7 +476,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     reorderEditors,
     updateSectionName,
     toggleSectionVisibility,
-    updateEditorContent,
     workspaceId: workspaceId ?? null,
     readOnly,
     isManagementPaneOpen,

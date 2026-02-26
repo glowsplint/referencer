@@ -25,7 +25,7 @@ const app = new Hono<Env>();
 app.use(
   "*",
   cors({
-    origin: (origin, c) => c.env.ALLOWED_ORIGIN || origin,
+    origin: (origin, c) => c.env.ALLOWED_ORIGIN || "",
     credentials: true,
   }),
 );

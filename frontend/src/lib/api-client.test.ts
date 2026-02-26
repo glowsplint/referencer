@@ -4,6 +4,16 @@ import { apiFetch, apiPost, apiPatch, apiDelete, apiUrl, ApiError } from "./api-
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 
+function mockResponse(overrides: Record<string, unknown> = {}) {
+  return {
+    ok: true,
+    status: 200,
+    headers: new Headers({ "content-type": "application/json" }),
+    json: () => Promise.resolve({}),
+    ...overrides,
+  };
+}
+
 beforeEach(() => {
   vi.restoreAllMocks();
   mockFetch.mockReset();
@@ -18,10 +28,9 @@ describe("when using apiUrl", () => {
 
 describe("when using apiFetch", () => {
   it("then sends credentials include and returns parsed JSON", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ data: "test" }),
-    });
+    mockFetch.mockResolvedValue(
+      mockResponse({ json: () => Promise.resolve({ data: "test" }) }),
+    );
 
     const result = await apiFetch("/api/test");
 
@@ -50,10 +59,9 @@ describe("when using apiFetch", () => {
 
 describe("when using apiPost", () => {
   it("then sends POST with JSON Content-Type header and stringified body", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ id: 1 }),
-    });
+    mockFetch.mockResolvedValue(
+      mockResponse({ json: () => Promise.resolve({ id: 1 }) }),
+    );
 
     await apiPost("/api/items", { name: "test" });
 
@@ -69,10 +77,7 @@ describe("when using apiPost", () => {
   });
 
   it("then sends POST without body when body is undefined", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({}),
-    });
+    mockFetch.mockResolvedValue(mockResponse());
 
     await apiPost("/api/items");
 
@@ -84,10 +89,7 @@ describe("when using apiPost", () => {
 
 describe("when using apiPatch", () => {
   it("then sends PATCH method", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({}),
-    });
+    mockFetch.mockResolvedValue(mockResponse());
 
     await apiPatch("/api/items/1", { name: "updated" });
 
@@ -103,10 +105,7 @@ describe("when using apiPatch", () => {
 
 describe("when using apiDelete", () => {
   it("then sends DELETE method", async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({}),
-    });
+    mockFetch.mockResolvedValue(mockResponse());
 
     await apiDelete("/api/items/1");
 

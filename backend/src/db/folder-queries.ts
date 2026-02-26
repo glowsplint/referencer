@@ -11,13 +11,13 @@ export async function getFolderDepth(
   let depth = 0;
   let currentId: string | null = folderId;
 
-  while (currentId) {
-    const { data, error } = await supabase
+  while (currentId && depth < MAX_FOLDER_DEPTH + 1) {
+    const { data, error }: { data: { parent_id: string | null } | null; error: unknown } = await supabase
       .from("workspace_folder")
       .select("parent_id")
       .eq("id", currentId)
       .eq("user_id", userId)
-      .single();
+      .single<{ parent_id: string | null }>();
 
     if (error || !data) break;
     depth++;
@@ -142,12 +142,12 @@ export async function moveFolderToFolder(
       if (currentId === folderId) {
         throw new Error("Cannot move a folder into one of its descendants (cycle detected)");
       }
-      const { data, error } = await supabase
+      const { data, error }: { data: { parent_id: string | null } | null; error: unknown } = await supabase
         .from("workspace_folder")
         .select("parent_id")
         .eq("id", currentId)
         .eq("user_id", userId)
-        .single();
+        .single<{ parent_id: string | null }>();
       if (error || !data) break;
       currentId = data.parent_id;
     }

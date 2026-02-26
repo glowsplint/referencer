@@ -54,9 +54,16 @@ interface AppProps {
 export function App({ workspaceId, navigate }: AppProps) {
   const [permissionRole, setPermissionRole] = useState<string | null>(null);
   useEffect(() => {
-    apiFetch<{ role: string }>(`/api/workspaces/${workspaceId}/permission`)
+    const controller = new AbortController();
+    apiFetch<{ role: string }>(`/api/workspaces/${workspaceId}/permission`, {
+      signal: controller.signal,
+    })
       .then((data) => setPermissionRole(data?.role ?? null))
-      .catch(() => setPermissionRole(null));
+      .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setPermissionRole(null);
+      });
+    return () => controller.abort();
   }, [workspaceId]);
   const readOnly = permissionRole === "viewer";
   useWorkspaceAutosave(workspaceId);
@@ -92,7 +99,6 @@ export function App({ workspaceId, navigate }: AppProps) {
     setActiveTool,
     history,
     unifiedUndo,
-    updateEditorContent,
   } = workspace;
 
   const currentUserName = useCurrentUserName();
@@ -420,9 +426,6 @@ export function App({ workspaceId, navigate }: AppProps) {
                                     settings.isLocked && !effectiveReadOnly
                                       ? handleMouseUp
                                       : undefined
-                                  }
-                                  onContentUpdate={
-                                    effectiveReadOnly ? undefined : updateEditorContent
                                   }
                                   layers={layers}
                                   selection={selection}

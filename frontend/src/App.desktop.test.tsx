@@ -100,7 +100,6 @@ const mockWorkspace = {
   toggleHighlightVisibility: vi.fn(),
   toggleArrowVisibility: vi.fn(),
   toggleUnderlineVisibility: vi.fn(),
-  updateEditorContent: vi.fn(),
   setActiveLayerId: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
@@ -177,7 +176,6 @@ vi.mock("./components/tiptap-templates/simple", () => ({
           props.onMouseMove !== undefined &&
           props.onMouseUp !== undefined,
       )}
-      data-has-content-update={String(props.onContentUpdate !== undefined)}
       data-index={props.index}
       data-layer-count={Array.isArray(props.layers) ? (props.layers as unknown[]).length : 0}
     />
@@ -315,13 +313,6 @@ describe("App (desktop)", () => {
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
-    });
-
-    it("then renders editors with content update enabled", () => {
-      mockWorkspace.settings.isLocked = false;
-      renderApp();
-      const pane = screen.getByTestId("editor-pane");
-      expect(pane).toHaveAttribute("data-has-content-update", "true");
     });
 
     it("then does not show the annotation panel even with comments", () => {

@@ -47,7 +47,7 @@ import {
 } from "@/lib/yjs/annotations";
 
 /** Build a Map<number, EditorView> from the editorsRef for y-prosemirror position mapping */
-function buildEditorViewMap(editorsRef: React.RefObject<Map<number, Editor>>): EditorViewMap {
+export function buildEditorViewMap(editorsRef: React.RefObject<Map<number, Editor>>): EditorViewMap {
   const map: EditorViewMap = new Map();
   if (!editorsRef.current) return map;
   for (const [index, editor] of editorsRef.current) {
@@ -132,7 +132,7 @@ export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map
       setActiveLayerId(id);
       return { id, name };
     },
-    [doc],
+    [doc, editorsRef],
   );
 
   const removeLayer = useCallback(
