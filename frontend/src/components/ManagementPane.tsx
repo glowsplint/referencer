@@ -12,7 +12,11 @@ import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { useCustomColors } from "@/hooks/ui/use-custom-colors";
 
-export function ManagementPane() {
+interface ManagementPaneProps {
+  width?: number;
+}
+
+export function ManagementPane({ width }: ManagementPaneProps) {
   const { t } = useTranslation("management");
 
   const {
@@ -58,7 +62,8 @@ export function ManagementPane() {
 
   return (
     <div
-      className="shrink-0 h-full overflow-y-auto p-3 w-[250px] border-r border-border"
+      className="shrink-0 h-full overflow-y-auto p-3 border-r border-border"
+      style={{ width: width ?? 250 }}
       data-testid="managementPane"
     >
       <div className="mb-4">

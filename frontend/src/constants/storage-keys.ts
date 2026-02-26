@@ -19,4 +19,6 @@ export const STORAGE_KEYS = {
   TOUR_STATUS: "referencer-tour-",
   /** Prefix for folder collapsed state, suffixed with folderId. */
   FOLDER_COLLAPSED_PREFIX: "referencer-folder-collapsed-",
+  /** Persisted management pane width in pixels. */
+  MANAGEMENT_PANE_WIDTH: "referencer-management-pane-width",
 } as const;
