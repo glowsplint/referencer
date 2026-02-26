@@ -6,10 +6,6 @@
       "label": "Chế độ tối",
       "description": "Chuyển đổi giữa giao diện sáng và tối"
     },
-    "overscroll": {
-      "label": "Cuộn quá giới hạn",
-      "description": "Cho phép hiệu ứng nảy khi cuộn qua mép"
-    },
     "hideOffscreenArrows": {
       "label": "Ẩn mũi tên ngoài màn hình",
       "description": "Ẩn hoàn toàn mũi tên khi một trong hai điểm đầu cuối bị cuộn ra ngoài vùng hiển thị"

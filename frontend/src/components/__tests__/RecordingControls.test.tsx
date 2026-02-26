@@ -72,7 +72,6 @@ function renderRecordingControls(
       isLayersOn: false,
       isMultipleRowsLayout: false,
       isLocked: true,
-      overscrollEnabled: false,
       hideOffscreenArrows: false,
       showStatusBar: true,
     },

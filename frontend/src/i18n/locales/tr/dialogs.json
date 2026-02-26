@@ -6,10 +6,6 @@
       "label": "Karanlik mod",
       "description": "Acik ve karanlik temalar arasinda gecis yapin"
     },
-    "overscroll": {
-      "label": "Asiri kayma",
-      "description": "Kenarlari gectiginde esnek sekme efektine izin ver"
-    },
     "hideOffscreenArrows": {
       "label": "Ekran disi oklari gizle",
       "description": "Bir uc noktasi gorunur alandan disari kaydirildiginda oklari tamamen gizle"

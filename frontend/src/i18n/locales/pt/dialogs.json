@@ -6,10 +6,6 @@
       "label": "Modo escuro",
       "description": "Alternar entre temas claro e escuro"
     },
-    "overscroll": {
-      "label": "Rolagem elástica",
-      "description": "Permitir efeito elástico ao rolar além das bordas"
-    },
     "hideOffscreenArrows": {
       "label": "Ocultar setas fora da tela",
       "description": "Ocultar completamente as setas quando alguma extremidade estiver fora da visualização"

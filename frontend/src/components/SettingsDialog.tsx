@@ -1,5 +1,5 @@
-// Workspace settings dialog with toggle switches for dark mode, overscroll
-// behavior, arrow visibility, and status bar.
+// Workspace settings dialog with toggle switches for dark mode, arrow
+// visibility, and status bar.
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Bug } from "lucide-react";
@@ -47,8 +47,6 @@ interface SettingsDialogProps {
   onOpenChange: (open: boolean) => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
-  overscrollEnabled: boolean;
-  toggleOverscrollEnabled: () => void;
   hideOffscreenArrows: boolean;
   toggleHideOffscreenArrows: () => void;
   showStatusBar: boolean;
@@ -63,8 +61,6 @@ export function SettingsDialog({
   onOpenChange,
   isDarkMode,
   toggleDarkMode,
-  overscrollEnabled,
-  toggleOverscrollEnabled,
   hideOffscreenArrows,
   toggleHideOffscreenArrows,
   showStatusBar,
@@ -83,13 +79,6 @@ export function SettingsDialog({
       description: t("settings.darkMode.description"),
       checked: isDarkMode,
       onCheckedChange: toggleDarkMode,
-    },
-    {
-      id: "overscroll",
-      label: t("settings.overscroll.label"),
-      description: t("settings.overscroll.description"),
-      checked: overscrollEnabled,
-      onCheckedChange: toggleOverscrollEnabled,
     },
     {
       id: "hide-offscreen-arrows",

@@ -7,7 +7,6 @@ export interface EditorSettings {
   isLayersOn: boolean;
   isMultipleRowsLayout: boolean;
   isLocked: boolean;
-  overscrollEnabled: boolean;
   hideOffscreenArrows: boolean;
   showStatusBar: boolean;
   commentPlacement: "left" | "right" | "both";

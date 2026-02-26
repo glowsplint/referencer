@@ -436,8 +436,6 @@ export function ButtonPane() {
         onOpenChange={setSettingsOpen}
         isDarkMode={settings.isDarkMode}
         toggleDarkMode={toggleDarkMode}
-        overscrollEnabled={settings.overscrollEnabled}
-        toggleOverscrollEnabled={toggleOverscrollEnabled}
         hideOffscreenArrows={settings.hideOffscreenArrows}
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}

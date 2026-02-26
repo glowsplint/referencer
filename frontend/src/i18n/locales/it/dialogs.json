@@ -6,10 +6,6 @@
       "label": "Modalita scura",
       "description": "Passa dal tema chiaro a quello scuro"
     },
-    "overscroll": {
-      "label": "Scorrimento elastico",
-      "description": "Consenti il rimbalzo elastico quando si scorre oltre i bordi"
-    },
     "hideOffscreenArrows": {
       "label": "Nascondi frecce fuori schermo",
       "description": "Nascondere completamente le frecce quando uno dei punti di connessione è fuori dalla vista"

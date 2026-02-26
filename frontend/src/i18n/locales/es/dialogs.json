@@ -6,10 +6,6 @@
       "label": "Modo oscuro",
       "description": "Alternar entre temas claro y oscuro"
     },
-    "overscroll": {
-      "label": "Desplazamiento elástico",
-      "description": "Permitir rebote elástico al desplazarse más allá de los bordes"
-    },
     "hideOffscreenArrows": {
       "label": "Ocultar flechas fuera de pantalla",
       "description": "Ocultar completamente las flechas cuando algún extremo esté fuera de la vista"

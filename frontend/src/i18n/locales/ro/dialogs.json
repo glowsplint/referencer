@@ -6,10 +6,6 @@
       "label": "Mod întunecat",
       "description": "Comutați între temele luminoasă și întunecată"
     },
-    "overscroll": {
-      "label": "Derulare elastică",
-      "description": "Permiteți efectul elastic la derularea dincolo de margini"
-    },
     "hideOffscreenArrows": {
       "label": "Ascunde săgețile din afara ecranului",
       "description": "Ascundeți complet săgețile când oricare capăt este derulat în afara vizualizării"

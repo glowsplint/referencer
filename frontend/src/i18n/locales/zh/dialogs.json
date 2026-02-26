@@ -6,10 +6,6 @@
       "label": "深色模式",
       "description": "在浅色和深色主题之间切换"
     },
-    "overscroll": {
-      "label": "过度滚动",
-      "description": "允许滚动到边缘时的弹性回弹"
-    },
     "hideOffscreenArrows": {
       "label": "隐藏屏幕外箭头",
       "description": "当任一端点滚动到视图外时完全隐藏箭头"

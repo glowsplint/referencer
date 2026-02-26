@@ -6,10 +6,6 @@
       "label": "Donker modus",
       "description": "Wissel tussen lig en donker temas"
     },
-    "overscroll": {
-      "label": "Oorrolling",
-      "description": "Laat elastiese weerkaatsing toe wanneer verby rande gerol word"
-    },
     "hideOffscreenArrows": {
       "label": "Versteek pyltjies buite die skerm",
       "description": "Versteek pyltjies heeltemal wanneer enige eindpunt buite sig gerol is"
