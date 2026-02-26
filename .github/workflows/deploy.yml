@@ -1,3 +1,12 @@
+# GitHub Actions secrets — set in repo Settings → Secrets and variables → Actions
+#
+# CLOUDFLARE_API_TOKEN   — Cloudflare API token for deploying workers
+#                          Provider: Cloudflare Dashboard → API Tokens
+#                          Permissions: Workers Scripts (Edit), Account Settings (Read)
+#
+# CLOUDFLARE_ACCOUNT_ID  — Cloudflare account ID
+#                          Provider: Cloudflare Dashboard → Overview → right sidebar
+
 name: Deploy Workers
 
 on:
