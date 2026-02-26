@@ -21,6 +21,10 @@
     "language": {
       "label": "Language",
       "description": "Choose your preferred language lah"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Third editor full width",
+      "description": "On liao, the third editor take up the whole bottom row — very spacious one!"
     }
   },
   "faq": {

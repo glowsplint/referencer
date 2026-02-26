@@ -21,6 +21,10 @@
     "language": {
       "label": "Language",
       "description": "Choose your preferred language"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Third editor full width",
+      "description": "When enabled, the third editor spans the full bottom row width"
     }
   },
   "faq": {

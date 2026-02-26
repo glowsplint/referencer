@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Upau wa hali",
       "description": "Onyesha upau wa hali chini ya upau wa zana"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Kihariri cha tatu upana kamili",
+      "description": "Inapowezeshwa, kihariri cha tatu kitajaa upana kamili wa safu ya chini"
     }
   },
   "faq": {

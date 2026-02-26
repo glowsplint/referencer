@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Barra de status",
       "description": "Mostrar a barra de status abaixo da barra de ferramentas"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Terceiro editor em largura total",
+      "description": "Quando ativado, o terceiro editor ocupa toda a largura da linha inferior"
     }
   },
   "faq": {

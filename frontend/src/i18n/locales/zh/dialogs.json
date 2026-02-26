@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "状态栏",
       "description": "在工具栏下方显示状态栏"
+    },
+    "thirdEditorFullWidth": {
+      "label": "第三编辑器全宽",
+      "description": "启用后，第三个编辑器将占据底部行的全部宽度"
     }
   },
   "faq": {

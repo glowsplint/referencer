@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Pasek stanu",
       "description": "Wyswietl pasek stanu pod paskiem narzedzi"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Trzeci edytor na pełną szerokość",
+      "description": "Po włączeniu trzeci edytor rozciąga się na całą szerokość dolnego rzędu"
     }
   },
   "faq": {

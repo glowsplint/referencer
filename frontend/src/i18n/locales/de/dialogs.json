@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Statusleiste",
       "description": "Statusleiste unter der Symbolleiste anzeigen"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Dritter Editor volle Breite",
+      "description": "Wenn aktiviert, erstreckt sich der dritte Editor über die gesamte Breite der unteren Reihe"
     }
   },
   "faq": {

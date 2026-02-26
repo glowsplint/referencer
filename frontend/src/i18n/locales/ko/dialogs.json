@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "상태 표시줄",
       "description": "도구 모음 아래에 상태 표시줄 표시"
+    },
+    "thirdEditorFullWidth": {
+      "label": "세 번째 편집기 전체 너비",
+      "description": "활성화하면 세 번째 편집기가 하단 행의 전체 너비를 차지합니다"
     }
   },
   "faq": {

@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Durum cubugu",
       "description": "Arac cubugunun altinda durum cubugunu goster"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Üçüncü düzenleyici tam genişlik",
+      "description": "Etkinleştirildiğinde, üçüncü düzenleyici alt satırın tam genişliğini kaplar"
     }
   },
   "faq": {

@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Status bar",
       "description": "Ipakita ang status bar sa ibaba ng toolbar"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Ikatlong editor na buong lapad",
+      "description": "Kapag naka-enable, ang ikatlong editor ay sasakupin ang buong lapad ng ibabang hanay"
     }
   },
   "faq": {

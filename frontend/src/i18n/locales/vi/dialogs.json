@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Thanh trạng thái",
       "description": "Hiển thị thanh trạng thái bên dưới thanh công cụ"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Trình soạn thảo thứ ba toàn chiều rộng",
+      "description": "Khi bật, trình soạn thảo thứ ba sẽ trải rộng toàn bộ chiều rộng hàng dưới"
     }
   },
   "faq": {

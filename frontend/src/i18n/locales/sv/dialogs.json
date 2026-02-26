@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Statusfält",
       "description": "Visa statusfältet under verktygsfältet"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Tredje redigeraren i full bredd",
+      "description": "När aktiverat sträcker sig den tredje redigeraren över hela den nedre radens bredd"
     }
   },
   "faq": {

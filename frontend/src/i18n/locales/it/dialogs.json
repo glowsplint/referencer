@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Barra di stato",
       "description": "Mostra la barra di stato sotto la barra degli strumenti"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Terzo editor a larghezza piena",
+      "description": "Quando attivato, il terzo editor occupa l'intera larghezza della riga inferiore"
     }
   },
   "faq": {

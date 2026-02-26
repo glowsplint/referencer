@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Bar status",
       "description": "Paparkan bar status di bawah bar alat"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Editor ketiga lebar penuh",
+      "description": "Apabila diaktifkan, editor ketiga akan merentangi seluruh lebar baris bawah"
     }
   },
   "faq": {

@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "ሁኔታ አሞሌ",
       "description": "ከመሣሪያ አሞሌው ስር ሁኔታ አሞሌውን አሳይ"
+    },
+    "thirdEditorFullWidth": {
+      "label": "ሦስተኛው አርታዒ ሙሉ ስፋት",
+      "description": "ሲነቃ ሦስተኛው አርታዒ የታችኛውን ረድፍ ሙሉ ስፋት ይይዛል"
     }
   },
   "faq": {

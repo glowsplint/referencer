@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Statusbalk",
       "description": "Wys die statusbalk onder die nutsbalk"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Derde redigeerder volle breedte",
+      "description": "Wanneer geaktiveer, strek die derde redigeerder oor die volle breedte van die onderste ry"
     }
   },
   "faq": {

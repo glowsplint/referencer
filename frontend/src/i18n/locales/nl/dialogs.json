@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Statusbalk",
       "description": "Toon de statusbalk onder de werkbalk"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Derde editor volledige breedte",
+      "description": "Wanneer ingeschakeld, beslaat de derde editor de volledige breedte van de onderste rij"
     }
   },
   "faq": {

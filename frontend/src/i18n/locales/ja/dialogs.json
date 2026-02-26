@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "ステータスバー",
       "description": "ツールバーの下にステータスバーを表示する"
+    },
+    "thirdEditorFullWidth": {
+      "label": "3番目のエディター全幅表示",
+      "description": "有効にすると、3番目のエディターが下段の幅いっぱいに表示されます"
     }
   },
   "faq": {

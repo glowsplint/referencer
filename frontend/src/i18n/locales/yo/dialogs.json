@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Ọ̀pá ìpò",
       "description": "Fi ọ̀pá ìpò hàn ní ìsàlẹ̀ ọ̀pá irinṣẹ́"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Olóòtú kẹta ní fífẹ̀ kíkún",
+      "description": "Nígbà tí a bá mú ṣiṣẹ́, olóòtú kẹta yóò kún gbogbo fífẹ̀ ìlà ìsàlẹ̀"
     }
   },
   "faq": {

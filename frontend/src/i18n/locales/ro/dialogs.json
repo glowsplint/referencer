@@ -21,6 +21,10 @@
     "statusBar": {
       "label": "Bara de stare",
       "description": "Afișați bara de stare sub bara de instrumente"
+    },
+    "thirdEditorFullWidth": {
+      "label": "Al treilea editor pe lățime completă",
+      "description": "Când este activat, al treilea editor ocupă întreaga lățime a rândului de jos"
     }
   },
   "faq": {
