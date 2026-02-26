@@ -162,3 +162,18 @@
   width: 16px !important;
   height: 16px !important;
 }
+
+/* Tour: pulse animation for the share button */
+.tour-pulse {
+  animation: tour-pulse 1.5s ease-in-out infinite !important;
+}
+
+@keyframes tour-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.208 0.042 265.755 / 40%);
+  }
+  50% {
+    box-shadow: 0 0 0 6px oklch(0.208 0.042 265.755 / 0%);
+  }
+}

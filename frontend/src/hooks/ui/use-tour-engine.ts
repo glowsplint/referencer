@@ -10,6 +10,10 @@ export interface TourStep {
   image?: string;
   placement?: Placement;
   centered?: boolean;
+  /** Action name dispatched when this step becomes active. */
+  onEnter?: string;
+  /** Action name dispatched when leaving this step. */
+  onExit?: string;
 }
 
 interface UseTourEngineOptions {
