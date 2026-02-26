@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Tempel teks Anda",
+        "content": "Tempel atau ketik teks ke dalam editor untuk memulai."
+      },
+      "lock": {
+        "title": "Kunci dokumen",
+        "content": "Tekan K atau klik tombol kunci untuk beralih ke mode anotasi."
+      },
+      "annotate": {
+        "title": "Anotasi teks Anda",
+        "content": "Pilih teks dan tekan H untuk menyorot, C untuk mengomentari, U untuk menggarisbawahi, atau A untuk menggambar panah."
+      },
+      "eraser": {
+        "title": "Hapus anotasi",
+        "content": "Tekan E atau klik penghapus untuk menghapus sorotan, garis bawah, dan panah dari teks yang dipilih."
+      },
+      "unlock": {
+        "title": "Buka kunci untuk mengedit",
+        "content": "Tekan K lagi untuk kembali ke mode pengeditan. Anotasi Anda tetap tersimpan."
+      },
+      "statusBar": {
+        "title": "Periksa bilah status",
+        "content": "Hasil ekspor, status sinkronisasi, dan notifikasi lainnya muncul di sini."
+      },
+      "share": {
+        "title": "Bagikan dokumen Anda",
+        "content": "Buat tautan hanya-baca atau dapat diedit untuk membagikan dokumen beranotasi Anda dengan orang lain."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Berikutnya",
+    "back": "Kembali",
+    "skip": "Lewati",
+    "finish": "Selesai"
+  }
+}

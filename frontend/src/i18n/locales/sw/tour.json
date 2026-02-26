@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Bandika maandishi yako",
+        "content": "Bandika au andika maandishi kwenye kihariri ili kuanza."
+      },
+      "lock": {
+        "title": "Funga hati",
+        "content": "Bonyeza K au bofya kitufe cha kufunga ili kubadilisha hadi hali ya maelezo."
+      },
+      "annotate": {
+        "title": "Weka maelezo kwenye maandishi",
+        "content": "Chagua maandishi na ubonyeze H ili kuangazia, C ili kutoa maoni, U ili kupiga mstari chini, au A ili kuchora mishale."
+      },
+      "eraser": {
+        "title": "Futa maelezo",
+        "content": "Bonyeza E au bofya kifutio ili kuondoa uangaziaji, mistari ya chini, na mishale kutoka kwa maandishi yaliyochaguliwa."
+      },
+      "unlock": {
+        "title": "Fungua ili kuhariri",
+        "content": "Bonyeza K tena ili kurudi kwenye hali ya kuhariri. Maelezo yako yamehifadhiwa."
+      },
+      "statusBar": {
+        "title": "Angalia upau wa hali",
+        "content": "Matokeo ya usafirishaji, hali ya usawazishaji, na arifa nyingine zinaonekana hapa."
+      },
+      "share": {
+        "title": "Shiriki hati yako",
+        "content": "Tengeneza kiungo cha kusoma tu au kinachoweza kuhaririwa ili kushiriki hati yako yenye maelezo na wengine."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Ifuatayo",
+    "back": "Rudi",
+    "skip": "Ruka",
+    "finish": "Maliza"
+  }
+}

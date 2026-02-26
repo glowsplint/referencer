@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Lẹ ọ̀rọ̀ rẹ sí",
+        "content": "Lẹ tàbí tẹ ọ̀rọ̀ rẹ sínú olóòtú láti bẹ̀rẹ̀."
+      },
+      "lock": {
+        "title": "Ti ìwé náà pa",
+        "content": "Tẹ K tàbí tẹ bọ́tìnì tíipa láti yí padà sí ipo àkọsílẹ̀."
+      },
+      "annotate": {
+        "title": "Ṣe àkọsílẹ̀ ọ̀rọ̀ rẹ",
+        "content": "Yan ọ̀rọ̀ kí o sì tẹ H láti tan ìmọ́lẹ̀, C láti ṣàlàyé, U láti fa ìlà sí abẹ́, tàbí A láti fa ọfà."
+      },
+      "eraser": {
+        "title": "Pa àkọsílẹ̀ rẹ́",
+        "content": "Tẹ E tàbí tẹ páàrì láti yọ ìmọ́lẹ̀, ìlà abẹ́, àti ọfà kúrò nínú ọ̀rọ̀ tí o yàn."
+      },
+      "unlock": {
+        "title": "Ṣí fún àtúnṣe",
+        "content": "Tẹ K lẹ́ẹ̀kan sí i láti padà sí ipo àtúnṣe. Àkọsílẹ̀ rẹ wà láìfọwọ́kan."
+      },
+      "statusBar": {
+        "title": "Ṣàyẹ̀wò pẹpẹ ipo",
+        "content": "Àbájáde ìkójáde, ipo ìṣọ̀kan, àti àwọn ìfitónilétí míràn farahàn níbí."
+      },
+      "share": {
+        "title": "Pin ìwé rẹ",
+        "content": "Ṣe ìsopọ̀ kíka-nìkan tàbí tí a lè ṣàtúnṣe láti pin ìwé àkọsílẹ̀ rẹ pẹ̀lú àwọn ẹlòmíràn."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Tó kàn",
+    "back": "Padà sẹ́yìn",
+    "skip": "Fò",
+    "finish": "Parí"
+  }
+}

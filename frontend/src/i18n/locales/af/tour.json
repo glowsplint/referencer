@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Plak jou teks",
+        "content": "Plak of tik jou teks in die redigeerder om te begin."
+      },
+      "lock": {
+        "title": "Sluit die dokument",
+        "content": "Druk K of klik die sluitknoppie om na annotasiemodus oor te skakel."
+      },
+      "annotate": {
+        "title": "Annoteer jou teks",
+        "content": "Kies teks en druk H om te merk, C om kommentaar te lewer, U om te onderstreep, of A om pyle te teken."
+      },
+      "eraser": {
+        "title": "Vee annotasies uit",
+        "content": "Druk E of klik die uitveër om merkings, onderstrepings en pyle van geselekteerde teks te verwyder."
+      },
+      "unlock": {
+        "title": "Ontsluit om te redigeer",
+        "content": "Druk weer K om terug te keer na redigeermodus. Jou annotasies word behou."
+      },
+      "statusBar": {
+        "title": "Kontroleer die statusbalk",
+        "content": "Uitvoerresultate, sinkroniseringstatus en ander kennisgewings verskyn hier."
+      },
+      "share": {
+        "title": "Deel jou dokument",
+        "content": "Skep 'n leesalleen- of bewerkbare skakel om jou geannoteerde dokument met ander te deel."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Volgende",
+    "back": "Terug",
+    "skip": "Slaan oor",
+    "finish": "Voltooi"
+  }
+}

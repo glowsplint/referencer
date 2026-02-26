@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Dán văn bản của bạn",
+        "content": "Dán hoặc nhập văn bản vào trình soạn thảo để bắt đầu."
+      },
+      "lock": {
+        "title": "Khóa tài liệu",
+        "content": "Nhấn K hoặc nhấn nút khóa để chuyển sang chế độ chú thích."
+      },
+      "annotate": {
+        "title": "Chú thích văn bản",
+        "content": "Chọn văn bản và nhấn H để đánh dấu, C để bình luận, U để gạch chân hoặc A để vẽ mũi tên."
+      },
+      "eraser": {
+        "title": "Xóa chú thích",
+        "content": "Nhấn E hoặc nhấn vào cục tẩy để xóa các đánh dấu, gạch chân và mũi tên khỏi văn bản đã chọn."
+      },
+      "unlock": {
+        "title": "Mở khóa để chỉnh sửa",
+        "content": "Nhấn lại K để quay về chế độ chỉnh sửa. Các chú thích của bạn được bảo toàn."
+      },
+      "statusBar": {
+        "title": "Kiểm tra thanh trạng thái",
+        "content": "Kết quả xuất, trạng thái đồng bộ và các thông báo khác xuất hiện tại đây."
+      },
+      "share": {
+        "title": "Chia sẻ tài liệu",
+        "content": "Tạo liên kết chỉ đọc hoặc có thể chỉnh sửa để chia sẻ tài liệu chú thích của bạn với người khác."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Tiếp theo",
+    "back": "Quay lại",
+    "skip": "Bỏ qua",
+    "finish": "Hoàn thành"
+  }
+}

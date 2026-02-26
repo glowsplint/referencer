@@ -3,7 +3,7 @@
     "editor": {
       "paste": {
         "title": "Paste your text",
-        "content": "Start by pasting or typing your text into the editor."
+        "content": "Paste or type your text into the editor to get started."
       },
       "lock": {
         "title": "Lock the document",
@@ -11,7 +11,7 @@
       },
       "annotate": {
         "title": "Annotate your text",
-        "content": "Select text to highlight (H), comment (C), underline (U), or draw arrows (A)."
+        "content": "Select text and press H to highlight, C to comment, U to underline, or A to draw arrows."
       },
       "eraser": {
         "title": "Erase annotations",
@@ -19,14 +19,14 @@
       },
       "unlock": {
         "title": "Unlock to edit",
-        "content": "Press K again to return to editing. Your annotations are preserved."
+        "content": "Press K again to return to editing mode. Your annotations are preserved."
       },
       "statusBar": {
-        "title": "Status bar",
-        "content": "Keep an eye here for feedback — export results, sync status, and other notifications appear in this bar."
+        "title": "Check the status bar",
+        "content": "Export results, sync status, and other notifications appear here."
       },
       "share": {
-        "title": "Collaborate with others",
+        "title": "Share your document",
         "content": "Generate a read-only or editable link to share your annotated document with others."
       }
     }

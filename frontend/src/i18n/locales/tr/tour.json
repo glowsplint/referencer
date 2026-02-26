@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Metninizi yapıştırın",
+        "content": "Başlamak için metninizi düzenleyiciye yapıştırın veya yazın."
+      },
+      "lock": {
+        "title": "Belgeyi kilitleyin",
+        "content": "Açıklama moduna geçmek için K tuşuna basın veya kilit düğmesine tıklayın."
+      },
+      "annotate": {
+        "title": "Metninizi açıklayın",
+        "content": "Metni seçin ve vurgulamak için H, yorum yapmak için C, altını çizmek için U veya ok çizmek için A tuşuna basın."
+      },
+      "eraser": {
+        "title": "Açıklamaları silin",
+        "content": "Seçili metindeki vurgulamaları, alt çizgileri ve okları kaldırmak için E tuşuna basın veya silgiye tıklayın."
+      },
+      "unlock": {
+        "title": "Düzenlemek için kilidi açın",
+        "content": "Düzenleme moduna dönmek için tekrar K tuşuna basın. Açıklamalarınız korunur."
+      },
+      "statusBar": {
+        "title": "Durum çubuğunu kontrol edin",
+        "content": "Dışa aktarma sonuçları, senkronizasyon durumu ve diğer bildirimler burada görünür."
+      },
+      "share": {
+        "title": "Belgenizi paylaşın",
+        "content": "Açıklamalı belgenizi başkalarıyla paylaşmak için salt okunur veya düzenlenebilir bir bağlantı oluşturun."
+      }
+    }
+  },
+  "buttons": {
+    "next": "İleri",
+    "back": "Geri",
+    "skip": "Atla",
+    "finish": "Bitir"
+  }
+}

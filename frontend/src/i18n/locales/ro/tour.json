@@ -1,0 +1,40 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Lipește textul tău",
+        "content": "Lipește sau tastează textul tău în editor pentru a începe."
+      },
+      "lock": {
+        "title": "Blochează documentul",
+        "content": "Apasă K sau dă clic pe butonul de blocare pentru a comuta în modul de adnotare."
+      },
+      "annotate": {
+        "title": "Adnotează textul tău",
+        "content": "Selectează textul și apasă H pentru evidențiere, C pentru comentariu, U pentru subliniere sau A pentru a desena săgeți."
+      },
+      "eraser": {
+        "title": "Șterge adnotările",
+        "content": "Apasă E sau dă clic pe radieră pentru a elimina evidențierile, sublinierile și săgețile din textul selectat."
+      },
+      "unlock": {
+        "title": "Deblochează pentru editare",
+        "content": "Apasă K din nou pentru a reveni la modul de editare. Adnotările tale sunt păstrate."
+      },
+      "statusBar": {
+        "title": "Verifică bara de stare",
+        "content": "Rezultatele exportului, starea sincronizării și alte notificări apar aici."
+      },
+      "share": {
+        "title": "Partajează documentul tău",
+        "content": "Generează un link doar pentru citire sau editabil pentru a partaja documentul tău adnotat cu alții."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Următorul",
+    "back": "Înapoi",
+    "skip": "Omite",
+    "finish": "Termină"
+  }
+}
