@@ -35,7 +35,9 @@ export class YjsRoom extends DurableObject<Env> {
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
 
-    this.ctx.acceptWebSocket(server);
+    // Tag WebSocket with user's role for server-side write enforcement
+    const role = url.searchParams.get("role") ?? "viewer";
+    this.ctx.acceptWebSocket(server, [`role:${role}`]);
 
     // Store room name for persistence
     if (!this.roomName) {
@@ -118,6 +120,10 @@ export class YjsRoom extends DurableObject<Env> {
     }
   }
 
+  private isReadOnly(ws: WebSocket): boolean {
+    return this.ctx.getTags(ws).includes("role:viewer");
+  }
+
   private handleSyncMessage(
     ws: WebSocket,
     decoder: decoding.Decoder,
@@ -145,11 +151,17 @@ export class YjsRoom extends DurableObject<Env> {
       syncProtocol.writeSyncStep1(step1Encoder, this.doc);
       ws.send(encoding.toUint8Array(step1Encoder));
     } else if (syncType === syncProtocol.messageYjsSyncStep2) {
+      // Silently drop writes from viewers
+      if (this.isReadOnly(ws)) return;
+
       // Client sent missing updates (response to our SyncStep1)
       const update = decoding.readVarUint8Array(decoder);
       Y.applyUpdate(this.doc, update, ws);
       this.debouncedSaveToStorage();
     } else if (syncType === syncProtocol.messageYjsUpdate) {
+      // Silently drop writes from viewers
+      if (this.isReadOnly(ws)) return;
+
       // Client sent a document update -- apply and broadcast
       const update = decoding.readVarUint8Array(decoder);
       Y.applyUpdate(this.doc, update, ws);
