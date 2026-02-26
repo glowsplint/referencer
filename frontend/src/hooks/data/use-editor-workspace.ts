@@ -36,20 +36,26 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const unifiedUndo = useUnifiedUndo(yjsUndo, history);
 
   // Offline persistence via IndexedDB
-  useYjsOffline(yjs.doc, workspaceId ?? "default");
+  const { idbSynced } = useYjsOffline(yjs.doc, workspaceId ?? "default");
+
+  // True when both WebSocket (or connection-error fallback) AND IndexedDB have
+  // finished loading. Seeding must wait for both to avoid overwriting persisted
+  // data that hasn't been loaded yet (race between IDB async load and WS error).
+  const readyForSeeding = yjs.synced && idbSynced;
 
   // Seed default layers when Y.Doc is ready and empty.
-  // Wait for BOTH Yjs sync AND all editors to mount so that:
-  // 1. We don't overwrite layers already stored on the server (sync gate)
-  // 2. EditorViews are available for proper ProseMirror<->Yjs position mapping
-  // 3. Editor content is loaded (child content-seeding effects run before this parent effect)
+  // Wait for BOTH Yjs sync AND IndexedDB sync AND all editors to mount so that:
+  // 1. We don't overwrite layers already stored on the server (WS sync gate)
+  // 2. We don't overwrite layers persisted in IndexedDB (IDB sync gate)
+  // 3. EditorViews are available for proper ProseMirror<->Yjs position mapping
+  // 4. Editor content is loaded (child content-seeding effects run before this parent effect)
   const seededRef = useRef(false);
   useEffect(() => {
     seededRef.current = false;
   }, [workspaceId]);
   const allEditorsMounted = rawEditorsHook.mountedEditorCount >= rawEditorsHook.editorCount;
   useEffect(() => {
-    if (!yjs.doc || seededRef.current || !yjs.synced || !allEditorsMounted) return;
+    if (!yjs.doc || seededRef.current || !readyForSeeding || !allEditorsMounted) return;
     seededRef.current = true;
     try {
       const views = buildEditorViewMap(trackedEditorsHook.editorsRef);
@@ -57,7 +63,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     } catch (err) {
       console.error("Failed to seed default layers:", err);
     }
-  }, [yjs.doc, yjs.synced, allEditorsMounted, trackedEditorsHook.editorsRef]);
+  }, [yjs.doc, readyForSeeding, allEditorsMounted, trackedEditorsHook.editorsRef]);
 
   // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<TArgs extends unknown[], TReturn>(
@@ -489,6 +495,8 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     wsConnected: yjs.connected,
     // Yjs CRDT collaboration
     yjs,
+    // True when both WS + IndexedDB are synced (safe for content/layer seeding)
+    readyForSeeding,
     // Unified undo/redo (Yjs + action history)
     unifiedUndo,
   };

@@ -66,7 +66,12 @@ app.get("/:roomName", async (c) => {
 
   const id = c.env.YJS_ROOM.idFromName(roomName);
   const stub = c.env.YJS_ROOM.get(id);
-  return stub.fetch(c.req.raw);
+
+  // Forward role to the Durable Object so it can enforce read-only for viewers
+  const doUrl = new URL(c.req.url);
+  doUrl.searchParams.set("role", permission.role);
+  const doRequest = new Request(doUrl.toString(), c.req.raw);
+  return stub.fetch(doRequest);
 });
 
 export default app;
