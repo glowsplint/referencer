@@ -122,7 +122,6 @@ export function ButtonPane() {
     toggleMultipleRowsLayout,
     setActiveTool,
     toggleLocked,
-    toggleOverscrollEnabled,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleCommentPlacement,

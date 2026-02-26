@@ -71,7 +71,6 @@ const mockWorkspace = {
   updateArrowStyle: vi.fn(),
   readOnly: false,
   toggleManagementPane: vi.fn(),
-  toggleOverscrollEnabled: vi.fn(),
   toggleHideOffscreenArrows: vi.fn(),
   toggleShowStatusBar: vi.fn(),
   toggleCommentPlacement: vi.fn(),
