@@ -6,7 +6,7 @@ export const EDITOR_TOUR_STEPS: TourStep[] = [
     title: "steps.editor.paste.title",
     content: "steps.editor.paste.content",
     image: "/tour/editor-paste.gif",
-    placement: "bottom",
+    centered: true,
   },
   {
     target: '[data-testid="lockButton"]',
@@ -28,5 +28,11 @@ export const EDITOR_TOUR_STEPS: TourStep[] = [
     content: "steps.editor.unlock.content",
     image: "/tour/editor-unlock.gif",
     placement: "right",
+  },
+  {
+    target: '[data-testid="status-bar"]',
+    title: "steps.editor.statusBar.title",
+    content: "steps.editor.statusBar.content",
+    placement: "bottom",
   },
 ];

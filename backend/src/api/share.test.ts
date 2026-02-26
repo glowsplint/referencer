@@ -88,11 +88,25 @@ function createMockSupabase() {
             userWorkspaceRows.push(row);
             return Promise.resolve({ error: null });
           },
+          upsert(row: { user_id: string; workspace_id: string; title: string }, _opts?: any) {
+            const idx = userWorkspaceRows.findIndex(
+              (r) => r.user_id === row.user_id && r.workspace_id === row.workspace_id,
+            );
+            if (idx >= 0) {
+              userWorkspaceRows[idx] = { ...userWorkspaceRows[idx], ...row };
+            } else {
+              userWorkspaceRows.push(row);
+            }
+            return Promise.resolve({ error: null });
+          },
         };
       }
       if (table === "workspace") {
         return {
           insert(row: { id: string }) {
+            return Promise.resolve({ error: null });
+          },
+          upsert(row: { id: string }) {
             return Promise.resolve({ error: null });
           },
         };
@@ -158,7 +172,7 @@ describe("share API routes", () => {
       expect(res.status).toBe(200);
       const body = await res.json();
       expect(body.code).toBeDefined();
-      expect(body.code).toHaveLength(6);
+      expect(body.code).toHaveLength(12);
       expect(body.url).toBe(`/s/${body.code}`);
     });
 
@@ -171,7 +185,7 @@ describe("share API routes", () => {
 
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.code).toHaveLength(6);
+      expect(body.code).toHaveLength(12);
     });
 
     it("returns 400 for invalid access type", async () => {

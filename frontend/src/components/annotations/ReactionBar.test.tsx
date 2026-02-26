@@ -35,9 +35,7 @@ describe("ReactionBar", () => {
 
   describe("when the current user has reacted", () => {
     it("then highlights the reaction pill", () => {
-      const reactions: CommentReaction[] = [
-        { emoji: "👍", userName: "Alice" },
-      ];
+      const reactions: CommentReaction[] = [{ emoji: "👍", userName: "Alice" }];
       render(
         <ReactionBar reactions={reactions} currentUserName="Alice" onToggleReaction={vi.fn()} />,
       );
@@ -49,9 +47,7 @@ describe("ReactionBar", () => {
 
   describe("when the current user has not reacted", () => {
     it("then does not highlight the reaction pill", () => {
-      const reactions: CommentReaction[] = [
-        { emoji: "👍", userName: "Bob" },
-      ];
+      const reactions: CommentReaction[] = [{ emoji: "👍", userName: "Bob" }];
       render(
         <ReactionBar reactions={reactions} currentUserName="Alice" onToggleReaction={vi.fn()} />,
       );
@@ -65,9 +61,7 @@ describe("ReactionBar", () => {
     it("then calls onToggleReaction with the emoji", async () => {
       const user = userEvent.setup();
       const onToggleReaction = vi.fn();
-      const reactions: CommentReaction[] = [
-        { emoji: "👍", userName: "Alice" },
-      ];
+      const reactions: CommentReaction[] = [{ emoji: "👍", userName: "Alice" }];
       render(
         <ReactionBar
           reactions={reactions}

@@ -47,7 +47,14 @@ function addTestHighlight(
   doc: Y.Doc,
   layerId = "layer-1",
   highlightId = "h1",
-  opts?: Partial<{ editorIndex: number; from: number; to: number; text: string; annotation: string; type: "highlight" | "comment" }>,
+  opts?: Partial<{
+    editorIndex: number;
+    from: number;
+    to: number;
+    text: string;
+    annotation: string;
+    type: "highlight" | "comment";
+  }>,
 ) {
   addHighlightToDoc(
     doc,
@@ -193,7 +200,11 @@ describe("when using highlight operations", () => {
   it("then addHighlightToDoc stores a highlight with visible=true and encoded positions", () => {
     const doc = createDoc();
     addTestLayer(doc);
-    addTestHighlight(doc, "layer-1", "h1", { text: "world", annotation: "my note", type: "comment" });
+    addTestHighlight(doc, "layer-1", "h1", {
+      text: "world",
+      annotation: "my note",
+      type: "comment",
+    });
 
     const layers = readLayers(doc);
     const h = layers[0].highlights[0];
@@ -692,7 +703,16 @@ describe("when using seedDefaultLayers", () => {
         color: "#112233",
         visible: true,
         highlights: [
-          { id: "sh1", editorIndex: 0, from: 0, to: 2, text: "hi", annotation: "", type: "highlight", visible: true },
+          {
+            id: "sh1",
+            editorIndex: 0,
+            from: 0,
+            to: 2,
+            text: "hi",
+            annotation: "",
+            type: "highlight",
+            visible: true,
+          },
         ],
         arrows: [
           {
@@ -703,9 +723,7 @@ describe("when using seedDefaultLayers", () => {
             visible: true,
           },
         ],
-        underlines: [
-          { id: "su1", editorIndex: 0, from: 0, to: 3, text: "und", visible: true },
-        ],
+        underlines: [{ id: "su1", editorIndex: 0, from: 0, to: 3, text: "und", visible: true }],
       },
     ]);
 

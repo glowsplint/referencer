@@ -4,11 +4,12 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import type { Placement } from "@floating-ui/react";
 
 export interface TourStep {
-  target: string;
+  target?: string;
   title: string;
   content: string;
   image?: string;
   placement?: Placement;
+  centered?: boolean;
 }
 
 interface UseTourEngineOptions {

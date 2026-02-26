@@ -39,9 +39,7 @@ describe("useSelectionHighlight", () => {
   it("when editor exists but there is no selection, then clears decorations", () => {
     const editor = createMockEditor();
 
-    renderHook(() =>
-      useSelectionHighlight(editor, null, 0, true, "#ff0000", false),
-    );
+    renderHook(() => useSelectionHighlight(editor, null, 0, true, "#ff0000", false));
 
     expect(editor.view.dispatch).toHaveBeenCalled();
     expect(editor.state.tr.setMeta).toHaveBeenCalled();
@@ -51,9 +49,7 @@ describe("useSelectionHighlight", () => {
     const editor = createMockEditor();
     const selection = { from: 0, to: 5, editorIndex: 0 };
 
-    renderHook(() =>
-      useSelectionHighlight(editor, selection, 0, false, "#ff0000", false),
-    );
+    renderHook(() => useSelectionHighlight(editor, selection, 0, false, "#ff0000", false));
 
     expect(editor.view.dispatch).toHaveBeenCalled();
   });
@@ -62,26 +58,20 @@ describe("useSelectionHighlight", () => {
     const editor = createMockEditor();
     const selection = { from: 0, to: 5, editorIndex: 1 };
 
-    renderHook(() =>
-      useSelectionHighlight(editor, selection, 0, true, "#ff0000", false),
-    );
+    renderHook(() => useSelectionHighlight(editor, selection, 0, true, "#ff0000", false));
 
     expect(editor.view.dispatch).toHaveBeenCalled();
   });
 
   it("when editor is null, then does nothing", () => {
-    renderHook(() =>
-      useSelectionHighlight(null, null, 0, false, null, false),
-    );
+    renderHook(() => useSelectionHighlight(null, null, 0, false, null, false));
     // No error thrown
   });
 
   it("when editor is destroyed, then does nothing", () => {
     const editor = { isDestroyed: true } as any;
 
-    renderHook(() =>
-      useSelectionHighlight(editor, null, 0, false, null, false),
-    );
+    renderHook(() => useSelectionHighlight(editor, null, 0, false, null, false));
     // No error thrown - dispatch not called on destroyed editor
   });
 });

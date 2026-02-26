@@ -104,6 +104,100 @@ describe("ButtonPane", () => {
     });
   });
 
+  describe("layout toggle icon", () => {
+    function getLayoutIcon() {
+      return screen.getByTestId("editorLayoutButton").querySelector("svg")!;
+    }
+
+    // In grid mode (isMultipleRowsLayout=false), iconOne is shown (rows/stack icons).
+    // In stack mode (isMultipleRowsLayout=true), iconTwo is shown (grid icons).
+
+    describe("when in grid mode with 1 editor", () => {
+      it("then shows the square-round-corner icon", () => {
+        renderButtonPane({ editorCount: 1, settings: { isMultipleRowsLayout: false } });
+        expect(getLayoutIcon()).toHaveClass("lucide-square-round-corner");
+      });
+    });
+
+    describe("when in grid mode with 2 editors", () => {
+      it("then shows the rows-2 icon", () => {
+        renderButtonPane({ editorCount: 2, settings: { isMultipleRowsLayout: false } });
+        expect(getLayoutIcon()).toHaveClass("lucide-rows-2");
+      });
+    });
+
+    describe("when in grid mode with 3 editors", () => {
+      it("then shows the rows-3 icon", () => {
+        renderButtonPane({ editorCount: 3, settings: { isMultipleRowsLayout: false } });
+        expect(getLayoutIcon()).toHaveClass("lucide-rows-3");
+      });
+    });
+
+    describe("when in grid mode with 4 editors", () => {
+      it("then shows the rows-4 icon", () => {
+        renderButtonPane({ editorCount: 4, settings: { isMultipleRowsLayout: false } });
+        expect(getLayoutIcon()).toHaveClass("lucide-rows-4");
+      });
+    });
+
+    describe("when in stack mode with 1 editor", () => {
+      it("then shows the square-round-corner icon", () => {
+        renderButtonPane({ editorCount: 1, settings: { isMultipleRowsLayout: true } });
+        expect(getLayoutIcon()).toHaveClass("lucide-square-round-corner");
+      });
+    });
+
+    describe("when in stack mode with 2 editors", () => {
+      it("then shows the columns-2 icon", () => {
+        renderButtonPane({ editorCount: 2, settings: { isMultipleRowsLayout: true } });
+        expect(getLayoutIcon()).toHaveClass("lucide-columns-2");
+      });
+    });
+
+    describe("when in stack mode with 3 editors", () => {
+      it("then shows the layout-panel-top icon rotated", () => {
+        renderButtonPane({ editorCount: 3, settings: { isMultipleRowsLayout: true } });
+        const icon = getLayoutIcon();
+        expect(icon).toHaveClass("lucide-layout-panel-top");
+        expect(icon).toHaveClass("rotate-180");
+      });
+    });
+
+    describe("when in stack mode with 4 editors", () => {
+      it("then shows the layout-grid icon", () => {
+        renderButtonPane({ editorCount: 4, settings: { isMultipleRowsLayout: true } });
+        expect(getLayoutIcon()).toHaveClass("lucide-layout-grid");
+      });
+    });
+  });
+
+  describe("comment placement icon", () => {
+    function getCommentIcon() {
+      return screen.getByTestId("commentPlacementButton").querySelector("svg")!;
+    }
+
+    describe("when comment placement is right", () => {
+      it("then shows the panel-right-close icon", () => {
+        renderButtonPane({ settings: { commentPlacement: "right" } });
+        expect(getCommentIcon()).toHaveClass("lucide-panel-right-close");
+      });
+    });
+
+    describe("when comment placement is left", () => {
+      it("then shows the panel-left-close icon", () => {
+        renderButtonPane({ settings: { commentPlacement: "left" } });
+        expect(getCommentIcon()).toHaveClass("lucide-panel-left-close");
+      });
+    });
+
+    describe("when comment placement is both", () => {
+      it("then shows the columns-2 icon", () => {
+        renderButtonPane({ settings: { commentPlacement: "both" } });
+        expect(getCommentIcon()).toHaveClass("lucide-columns-2");
+      });
+    });
+  });
+
   describe("when the lock button is clicked", () => {
     it("then calls toggleLocked", () => {
       const { workspace } = renderButtonPane();

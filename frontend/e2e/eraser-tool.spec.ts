@@ -102,7 +102,9 @@ test.describe("when using the eraser tool", () => {
     await expect(underlines).toHaveCount(afterCreate - 1, { timeout: 2000 });
   });
 
-  test("when eraser is used on a hidden layer's position, then decorations on that layer are not affected", async ({ page }) => {
+  test("when eraser is used on a hidden layer's position, then decorations on that layer are not affected", async ({
+    page,
+  }) => {
     // Record initial highlight count from default layers
     const highlights = page.locator(
       '.simple-editor-wrapper .ProseMirror span[style*="background-color"]',

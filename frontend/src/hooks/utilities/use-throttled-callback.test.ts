@@ -13,9 +13,7 @@ describe("useThrottledCallback", () => {
 
   it("when called rapidly, then throttles to the specified wait time", () => {
     const fn = vi.fn();
-    const { result } = renderHook(() =>
-      useThrottledCallback(fn, 200, []),
-    );
+    const { result } = renderHook(() => useThrottledCallback(fn, 200, []));
 
     // Call multiple times rapidly
     result.current();
@@ -52,9 +50,7 @@ describe("useThrottledCallback", () => {
 
   it("when unmounted, then cancels pending calls", () => {
     const fn = vi.fn();
-    const { result, unmount } = renderHook(() =>
-      useThrottledCallback(fn, 200, []),
-    );
+    const { result, unmount } = renderHook(() => useThrottledCallback(fn, 200, []));
 
     result.current();
     unmount();
@@ -66,9 +62,7 @@ describe("useThrottledCallback", () => {
 
   it("when accessed, then exposes cancel and flush methods", () => {
     const fn = vi.fn();
-    const { result } = renderHook(() =>
-      useThrottledCallback(fn, 200, []),
-    );
+    const { result } = renderHook(() => useThrottledCallback(fn, 200, []));
 
     expect(typeof result.current.cancel).toBe("function");
     expect(typeof result.current.flush).toBe("function");

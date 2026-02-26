@@ -143,8 +143,16 @@ describe("WorkspaceGrid", () => {
 
   describe("when starred items exist", () => {
     it("then places starred workspaces in the starred section", () => {
-      const starred = makeWorkspace({ workspaceId: "ws-starred", title: "Starred WS", isFavorite: true });
-      const unstarred = makeWorkspace({ workspaceId: "ws-other", title: "Other WS", isFavorite: false });
+      const starred = makeWorkspace({
+        workspaceId: "ws-starred",
+        title: "Starred WS",
+        isFavorite: true,
+      });
+      const unstarred = makeWorkspace({
+        workspaceId: "ws-other",
+        title: "Other WS",
+        isFavorite: false,
+      });
       renderGrid([starred, unstarred]);
 
       const starredSection = screen.getByTestId("starredSection");

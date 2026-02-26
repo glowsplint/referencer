@@ -39,8 +39,7 @@ export function handleFeedback() {
     ].join("\n");
 
     const githubIssuesUrl =
-      c.env.GITHUB_ISSUES_REPO ||
-      "https://api.github.com/repos/glowsplint/referencer/issues";
+      c.env.GITHUB_ISSUES_REPO || "https://api.github.com/repos/glowsplint/referencer/issues";
 
     try {
       const resp = await fetch(githubIssuesUrl, {

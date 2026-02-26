@@ -16,6 +16,10 @@
       "unlock": {
         "title": "Unlock to edit",
         "content": "Press K again to return to editing. Your annotations are preserved."
+      },
+      "statusBar": {
+        "title": "Status bar",
+        "content": "Keep an eye here for feedback — export results, sync status, and other notifications appear in this bar."
       }
     }
   },

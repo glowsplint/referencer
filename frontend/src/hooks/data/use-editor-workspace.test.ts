@@ -38,7 +38,7 @@ beforeEach(() => {
 
   // Fresh Y.Doc with pre-populated XmlFragments for position resolution
   const doc = new Y.Doc();
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 4; i++) {
     const frag = doc.getXmlFragment(`editor-${i}`);
     for (let j = 0; j < 20; j++) {
       frag.insert(j, [new Y.XmlText("x")]);
@@ -60,6 +60,7 @@ describe("useEditorWorkspace", () => {
       hideOffscreenArrows: false,
       showStatusBar: true,
       commentPlacement: "right",
+      thirdEditorFullWidth: true,
     });
     expect(result.current.annotations).toEqual({ activeTool: "selection" });
     expect(result.current.layers).toEqual([]);
@@ -270,7 +271,7 @@ describe("useEditorWorkspace", () => {
     expect(result.current.layers[0].name).toBe("Layer 1");
   });
 
-  it("when addEditor is called, then increments editor count up to 3", () => {
+  it("when addEditor is called, then increments editor count up to 4", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     expect(result.current.editorCount).toBe(1);
@@ -287,11 +288,17 @@ describe("useEditorWorkspace", () => {
     expect(result.current.editorCount).toBe(3);
     expect(result.current.editorWidths).toHaveLength(3);
 
-    // Should not exceed 3
     act(() => {
       result.current.addEditor();
     });
-    expect(result.current.editorCount).toBe(3);
+    expect(result.current.editorCount).toBe(4);
+    expect(result.current.editorWidths).toHaveLength(4);
+
+    // Should not exceed 4
+    act(() => {
+      result.current.addEditor();
+    });
+    expect(result.current.editorCount).toBe(4);
   });
 
   it("when editors are added, then editorWidths are evenly distributed", () => {

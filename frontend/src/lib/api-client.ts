@@ -26,6 +26,13 @@ export async function apiFetch<T = unknown>(path: string, options: RequestInit =
   if (!res.ok) {
     throw new ApiError(res.status, `API ${options.method ?? "GET"} ${path} failed: ${res.status}`);
   }
+  if (res.status === 204 || res.headers.get("content-length") === "0") {
+    return null as T;
+  }
+  const contentType = res.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) {
+    return null as T;
+  }
   return res.json();
 }
 

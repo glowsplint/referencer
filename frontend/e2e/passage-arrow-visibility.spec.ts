@@ -132,7 +132,9 @@ test.describe("when toggling passage visibility with arrows (2 editors)", () => 
     });
   });
 
-  test("when both passages are hidden, then all arrows hide and re-showing restores them", async ({ page }) => {
+  test("when both passages are hidden, then all arrows hide and re-showing restores them", async ({
+    page,
+  }) => {
     // Draw cross-editor arrow E1→E2
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -158,7 +160,9 @@ test.describe("when toggling passage visibility with arrows (2 editors)", () => 
     });
   });
 
-  test("when layer is hidden and section is hidden, then restoring both shows arrow correctly", async ({ page }) => {
+  test("when layer is hidden and section is hidden, then restoring both shows arrow correctly", async ({
+    page,
+  }) => {
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -213,7 +217,9 @@ test.describe("when toggling passage visibility with arrows (2 editors)", () => 
     });
   });
 
-  test("when arrow is drawn while other passage is hidden, then arrow persists after showing", async ({ page }) => {
+  test("when arrow is drawn while other passage is hidden, then arrow persists after showing", async ({
+    page,
+  }) => {
     // Hide E2
     await page.getByTestId("menuButton").click();
     await page.getByTestId("sectionVisibility-1").click();
@@ -292,7 +298,9 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("when middle editor is hidden, then its arrows are removed but E1-E3 arrow remains", async ({ page }) => {
+  test("when middle editor is hidden, then its arrows are removed but E1-E3 arrow remains", async ({
+    page,
+  }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -336,7 +344,9 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     });
   });
 
-  test("when E1 is hidden, then arrows originating from it are removed but E2-E3 arrow remains", async ({ page }) => {
+  test("when E1 is hidden, then arrows originating from it are removed but E2-E3 arrow remains", async ({
+    page,
+  }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -364,7 +374,9 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     });
   });
 
-  test("when E3 is hidden, then arrows targeting it are removed but E1-E2 arrow remains", async ({ page }) => {
+  test("when E3 is hidden, then arrows targeting it are removed but E1-E2 arrow remains", async ({
+    page,
+  }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -420,7 +432,9 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     });
   });
 
-  test("when all 3 passages are hidden, then all arrows and editors are hidden", async ({ page }) => {
+  test("when all 3 passages are hidden, then all arrows and editors are hidden", async ({
+    page,
+  }) => {
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -453,7 +467,9 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     }
   });
 
-  test("when layer and section visibility are combined in 3-editor setup, then arrows respect both states", async ({ page }) => {
+  test("when layer and section visibility are combined in 3-editor setup, then arrows respect both states", async ({
+    page,
+  }) => {
     // Draw E1→E2 on Layer 1, E2→E3 on Layer 2
     await drawArrowBetweenEditors(page, 0, 1);
 
@@ -490,7 +506,9 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     });
   });
 
-  test("when passages are hidden and shown again, then arrow coordinates remain valid", async ({ page }) => {
+  test("when passages are hidden and shown again, then arrow coordinates remain valid", async ({
+    page,
+  }) => {
     // Draw E1→E3 on Layer 1
     await drawArrowBetweenEditors(page, 0, 2);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {

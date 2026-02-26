@@ -25,11 +25,12 @@ export interface WorkspaceProvider {
  *   - Array("layers") for annotation layers (Phase 2)
  *   - Map("editors-meta") for editor metadata (Phase 2)
  */
-export function createWorkspaceProvider(workspaceId: string): WorkspaceProvider {
+export function createWorkspaceProvider(workspaceId: string, token?: string): WorkspaceProvider {
   const doc = new Y.Doc();
 
   const wsProvider = new WebsocketProvider(WS_URL, workspaceId, doc, {
     connect: true,
+    params: token ? { token } : {},
   });
 
   const getFragment = (index: number): Y.XmlFragment => {

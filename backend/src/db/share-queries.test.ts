@@ -42,9 +42,9 @@ describe("share-queries", () => {
   });
 
   describe("createShareLink", () => {
-    it("generates a 6-character code", async () => {
+    it("generates a 12-character code", async () => {
       const code = await createShareLink(supabase, "ws-1", "edit");
-      expect(code).toHaveLength(6);
+      expect(code).toHaveLength(12);
       expect(typeof code).toBe("string");
     });
 

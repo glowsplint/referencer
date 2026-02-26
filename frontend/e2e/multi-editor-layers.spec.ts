@@ -99,7 +99,9 @@ test.describe("when drawing cross-editor arrows", () => {
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("when arrow is drawn from editor 1 to editor 2, then arrow line appears", async ({ page }) => {
+  test("when arrow is drawn from editor 1 to editor 2, then arrow line appears", async ({
+    page,
+  }) => {
     await drawArrowBetweenEditors(page, 0, 1);
 
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -110,7 +112,9 @@ test.describe("when drawing cross-editor arrows", () => {
     });
   });
 
-  test("when cross-editor arrow is drawn, then highlights appear as inline decorations", async ({ page }) => {
+  test("when cross-editor arrow is drawn, then highlights appear as inline decorations", async ({
+    page,
+  }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -121,7 +125,9 @@ test.describe("when drawing cross-editor arrows", () => {
     await expect(endpointDecorations).toHaveCount(2, { timeout: 2000 });
   });
 
-  test("when cross-editor arrow is selected and X is clicked, then it is deleted", async ({ page }) => {
+  test("when cross-editor arrow is selected and X is clicked, then it is deleted", async ({
+    page,
+  }) => {
     await drawArrowBetweenEditors(page, 0, 1);
 
     const arrowLine = page.getByTestId("arrow-line");
@@ -145,7 +151,9 @@ test.describe("when drawing cross-editor arrows", () => {
     });
   });
 
-  test("when layer is hidden, then cross-editor arrow and highlights are removed", async ({ page }) => {
+  test("when layer is hidden, then cross-editor arrow and highlights are removed", async ({
+    page,
+  }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -220,7 +228,9 @@ test.describe("when working with multiple layers across editors", () => {
     });
   });
 
-  test("when one layer visibility is toggled, then other layer's arrows are not affected", async ({ page }) => {
+  test("when one layer visibility is toggled, then other layer's arrows are not affected", async ({
+    page,
+  }) => {
     // Draw arrow on Layer 1 in E1
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -275,7 +285,9 @@ test.describe("when working with multiple layers across editors", () => {
     await expect(page.getByTestId("layerActiveTag-3")).toBeVisible();
   });
 
-  test("when highlights are created on different layers, then they coexist across editors", async ({ page }) => {
+  test("when highlights are created on different layers, then they coexist across editors", async ({
+    page,
+  }) => {
     // Switch to comments tool for annotation creation
     await page.keyboard.press("c");
     // Click word in E1 → highlight on Layer 1 (index 3)
@@ -360,7 +372,9 @@ test.describe("when toggling section visibility with layers", () => {
     await expect(page.locator(".simple-editor-wrapper").nth(1)).toBeVisible({ timeout: 2000 });
   });
 
-  test("when another passage is hidden, then arrows in visible editor persist", async ({ page }) => {
+  test("when another passage is hidden, then arrows in visible editor persist", async ({
+    page,
+  }) => {
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -379,7 +393,9 @@ test.describe("when toggling section visibility with layers", () => {
     });
   });
 
-  test("when destination passage is hidden, then cross-editor arrow disappears", async ({ page }) => {
+  test("when destination passage is hidden, then cross-editor arrow disappears", async ({
+    page,
+  }) => {
     // Close management pane for cross-editor click
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();

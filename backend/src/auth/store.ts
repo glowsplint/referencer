@@ -38,11 +38,7 @@ export async function upsertUser(
 
   // 2. Find by email (account linking) — only if the provider verified the email.
   if (emailVerified) {
-    const { data: byEmail } = await supabase
-      .from("user")
-      .select("id")
-      .eq("email", email)
-      .single();
+    const { data: byEmail } = await supabase.from("user").select("id").eq("email", email).single();
 
     if (byEmail) {
       // Link new provider to existing user.

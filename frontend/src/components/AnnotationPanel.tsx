@@ -25,6 +25,7 @@ interface AnnotationPanelProps {
   onToggleCollapse?: (highlightId: string) => void;
   onCollapseAll?: () => void;
   onExpandAll?: () => void;
+  editorIndices?: number[];
   placement?: "left" | "right";
   currentUserName?: string;
   onAddReply?: (layerId: string, highlightId: string, text: string) => void;
@@ -58,6 +59,7 @@ export function AnnotationPanel({
   onToggleCollapse,
   onCollapseAll,
   onExpandAll,
+  editorIndices,
   placement = "right",
   currentUserName,
   onAddReply,
@@ -65,7 +67,15 @@ export function AnnotationPanel({
   onToggleReaction,
   onToggleReplyReaction,
 }: AnnotationPanelProps) {
-  const positions = useAllHighlightPositions(editorsRef, layers, containerRef, sectionVisibility);
+  const allPositions = useAllHighlightPositions(
+    editorsRef,
+    layers,
+    containerRef,
+    sectionVisibility,
+  );
+  const positions = editorIndices
+    ? allPositions.filter((p) => editorIndices.includes(p.editorIndex))
+    : allPositions;
 
   // Track actual rendered card heights via ResizeObserver so the overlap
   // resolver uses real sizes instead of the fixed 72px fallback.
@@ -145,9 +155,7 @@ export function AnnotationPanel({
   const anyExpanded = useMemo(() => {
     const visibleCommentCount = layers.reduce(
       (count, layer) =>
-        layer.visible
-          ? count + layer.highlights.filter((h) => h.type === "comment").length
-          : count,
+        layer.visible ? count + layer.highlights.filter((h) => h.type === "comment").length : count,
       0,
     );
     return !collapsedIds || collapsedIds.size < visibleCommentCount;

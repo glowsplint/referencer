@@ -72,7 +72,9 @@ test.describe("when toggling layer visibility", () => {
     });
   });
 
-  test("when one layer is hidden, then annotations on other layers remain visible", async ({ page }) => {
+  test("when one layer is hidden, then annotations on other layers remain visible", async ({
+    page,
+  }) => {
     // Create annotation on Layer 1 (index 3)
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1 annotation");
@@ -196,7 +198,9 @@ test.describe("when toggling passage visibility", () => {
     });
   });
 
-  test("when one passage is hidden, then annotations in other passages remain visible", async ({ page }) => {
+  test("when one passage is hidden, then annotations in other passages remain visible", async ({
+    page,
+  }) => {
     // Create annotation in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "P1 note");
@@ -265,7 +269,9 @@ test.describe("when combining layer and passage visibility toggles", () => {
     await page.keyboard.press("c");
   });
 
-  test("when layer is hidden then passage is hidden and restored in reverse, then annotations reappear correctly", async ({ page }) => {
+  test("when layer is hidden then passage is hidden and restored in reverse, then annotations reappear correctly", async ({
+    page,
+  }) => {
     // Create annotation on Layer 1 (index 3) in passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Combined note");
@@ -292,7 +298,9 @@ test.describe("when combining layer and passage visibility toggles", () => {
     });
   });
 
-  test("when layers and passages are toggled independently, then annotations respect both visibility states", async ({ page }) => {
+  test("when layers and passages are toggled independently, then annotations respect both visibility states", async ({
+    page,
+  }) => {
     // Layer 1 (index 3), Passage 1
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "L1P1");

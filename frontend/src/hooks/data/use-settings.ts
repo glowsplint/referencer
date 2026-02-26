@@ -14,6 +14,7 @@ const DEFAULT_SETTINGS: EditorSettings = {
   hideOffscreenArrows: false,
   showStatusBar: true,
   commentPlacement: "right",
+  thirdEditorFullWidth: true,
 };
 
 function loadSettings(): EditorSettings {
@@ -45,7 +46,9 @@ export function useSettings() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
-    } catch { /* quota exceeded or unavailable */ }
+    } catch {
+      /* quota exceeded or unavailable */
+    }
   }, [settings]);
 
   useEffect(() => {
@@ -65,12 +68,18 @@ export function useSettings() {
   const toggleShowStatusBar = useToggle(setSettings, "showStatusBar");
   const toggleCommentPlacement = useCallback(
     () =>
-      setSettings((prev) => ({
-        ...prev,
-        commentPlacement: prev.commentPlacement === "right" ? "left" : "right",
-      })),
+      setSettings((prev) => {
+        const next =
+          prev.commentPlacement === "right"
+            ? "left"
+            : prev.commentPlacement === "left"
+              ? "both"
+              : "right";
+        return { ...prev, commentPlacement: next as EditorSettings["commentPlacement"] };
+      }),
     [],
   );
+  const toggleThirdEditorFullWidth = useToggle(setSettings, "thirdEditorFullWidth");
   const setActiveTool = useCallback((tool: ActiveTool) => setAnnotations({ activeTool: tool }), []);
 
   return {
@@ -90,6 +99,7 @@ export function useSettings() {
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleCommentPlacement,
+    toggleThirdEditorFullWidth,
     setActiveTool,
   };
 }

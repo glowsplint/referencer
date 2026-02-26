@@ -6,9 +6,12 @@ import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Columns2,
-  Columns3,
+  SquareRoundCorner,
+  LayoutGrid,
+  LayoutPanelTop,
   Rows2,
   Rows3,
+  Rows4,
   MousePointer2,
   Lock,
   LockOpen,
@@ -122,6 +125,7 @@ export function ButtonPane() {
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleCommentPlacement,
+    toggleThirdEditorFullWidth,
   } = useWorkspace();
 
   const { startTour } = useTour();
@@ -303,8 +307,28 @@ export function ButtonPane() {
       <Tooltip placement="right">
         <TooltipTrigger asChild>
           <SwitchingButtonIcon
-            iconTwo={editorCount >= 3 ? <Columns3 size={20} /> : <Columns2 size={20} />}
-            iconOne={editorCount >= 3 ? <Rows3 size={20} /> : <Rows2 size={20} />}
+            iconTwo={
+              editorCount >= 4 ? (
+                <LayoutGrid size={20} />
+              ) : editorCount === 3 ? (
+                <LayoutPanelTop size={20} className="rotate-180" />
+              ) : editorCount === 2 ? (
+                <Columns2 size={20} />
+              ) : (
+                <SquareRoundCorner size={20} />
+              )
+            }
+            iconOne={
+              editorCount >= 4 ? (
+                <Rows4 size={20} />
+              ) : editorCount === 3 ? (
+                <Rows3 size={20} />
+              ) : editorCount === 2 ? (
+                <Rows2 size={20} />
+              ) : (
+                <SquareRoundCorner size={20} />
+              )
+            }
             bool={settings.isMultipleRowsLayout}
             callback={toggleMultipleRowsLayout}
             buttonProps={{ "data-testid": "editorLayoutButton" }}
@@ -316,13 +340,19 @@ export function ButtonPane() {
       </Tooltip>
       <Tooltip placement="right">
         <TooltipTrigger asChild>
-          <SwitchingButtonIcon
-            iconOne={<PanelRightClose size={20} />}
-            iconTwo={<PanelLeftClose size={20} />}
-            bool={settings.commentPlacement === "right"}
-            callback={toggleCommentPlacement}
-            buttonProps={{ "data-testid": "commentPlacementButton" }}
-          />
+          <button
+            onClick={toggleCommentPlacement}
+            className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            data-testid="commentPlacementButton"
+          >
+            {settings.commentPlacement === "right" ? (
+              <PanelRightClose size={20} />
+            ) : settings.commentPlacement === "left" ? (
+              <PanelLeftClose size={20} />
+            ) : (
+              <Columns2 size={20} />
+            )}
+          </button>
         </TooltipTrigger>
         <TooltipContent>
           {tm("tooltips.toggleCommentPlacement")} <kbd>P</kbd>
@@ -355,6 +385,8 @@ export function ButtonPane() {
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}
         toggleShowStatusBar={toggleShowStatusBar}
+        thirdEditorFullWidth={settings.thirdEditorFullWidth}
+        toggleThirdEditorFullWidth={toggleThirdEditorFullWidth}
         isAuthenticated={isAuthenticated}
       />
     </div>

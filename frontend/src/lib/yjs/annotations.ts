@@ -237,7 +237,7 @@ function readReactions(
     const yR = yReactions.get(i);
     reactions.push({
       emoji: yR.get("emoji") as string,
-      userName: yR.get("userName") as string,
+      userName: DOMPurify.sanitize(yR.get("userName") as string),
     });
   }
   return reactions;
@@ -251,7 +251,7 @@ function readReplies(yReplies: Y.Array<Y.Map<unknown>> | undefined): CommentRepl
     replies.push({
       id: yReply.get("id") as string,
       text: DOMPurify.sanitize(yReply.get("text") as string),
-      userName: yReply.get("userName") as string,
+      userName: DOMPurify.sanitize(yReply.get("userName") as string),
       timestamp: yReply.get("timestamp") as number,
       reactions: readReactions(yReply.get("reactions") as Y.Array<Y.Map<unknown>> | undefined),
     });
@@ -288,7 +288,8 @@ function readHighlights(
     const text = DOMPurify.sanitize(yH.get("text") as string);
     const annotation = DOMPurify.sanitize((yH.get("annotation") as string) ?? "");
     const lastEdited = (yH.get("lastEdited") as number) ?? undefined;
-    const userName = (yH.get("userName") as string) ?? undefined;
+    const rawUserName = (yH.get("userName") as string) ?? undefined;
+    const userName = rawUserName ? DOMPurify.sanitize(rawUserName) : undefined;
     highlights.push({
       id,
       editorIndex,

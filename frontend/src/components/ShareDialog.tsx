@@ -1,7 +1,8 @@
 // Dialog for sharing the workspace via URL. Creates a share link through the
 // backend API and copies the resulting URL to the clipboard.
+// Unauthenticated users see a login prompt instead of share options.
 import { useTranslation } from "react-i18next";
-import { Link, Eye } from "lucide-react";
+import { Link, Eye, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -11,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/data/use-auth";
 
 interface ShareDialogProps {
   open: boolean;
@@ -20,6 +22,7 @@ interface ShareDialogProps {
 
 export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProps) {
   const { t } = useTranslation("dialogs");
+  const { isAuthenticated, login } = useAuth();
 
   async function handleShare(access: "edit" | "readonly") {
     try {
@@ -44,26 +47,41 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
       <DialogContent className="sm:max-w-sm" data-testid="shareDialog">
         <DialogHeader>
           <DialogTitle>{t("share.title")}</DialogTitle>
-          <DialogDescription>{t("share.description")}</DialogDescription>
+          <DialogDescription>
+            {isAuthenticated ? t("share.description") : t("share.loginRequired")}
+          </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-2">
-          <Button
-            variant="outline"
-            onClick={() => handleShare("readonly")}
-            data-testid="shareReadonlyButton"
-          >
-            <Eye />
-            {t("share.readonlyLink")}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleShare("edit")}
-            data-testid="shareEditButton"
-          >
-            <Link />
-            {t("share.editLink")}
-          </Button>
-        </div>
+        {isAuthenticated ? (
+          <div className="flex flex-col gap-2">
+            <Button
+              variant="outline"
+              onClick={() => handleShare("readonly")}
+              data-testid="shareReadonlyButton"
+            >
+              <Eye />
+              {t("share.readonlyLink")}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleShare("edit")}
+              data-testid="shareEditButton"
+            >
+              <Link />
+              {t("share.editLink")}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2" data-testid="shareLoginPrompt">
+            <Button variant="outline" onClick={() => login("google")}>
+              <LogIn className="size-4" />
+              {t("share.loginGoogle")}
+            </Button>
+            <Button variant="outline" onClick={() => login("github")}>
+              <LogIn className="size-4" />
+              {t("share.loginGithub")}
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

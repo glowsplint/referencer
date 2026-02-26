@@ -30,6 +30,14 @@ app.use(
   }),
 );
 
+// Security headers
+app.use("*", async (c, next) => {
+  await next();
+  c.res.headers.set("X-Content-Type-Options", "nosniff");
+  c.res.headers.set("X-Frame-Options", "DENY");
+  c.res.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
+});
+
 // Auth middleware
 app.use("*", (c, next) => {
   const config = loadAuthConfig(c.env);

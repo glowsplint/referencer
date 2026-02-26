@@ -101,7 +101,6 @@ const mockWorkspace = {
   toggleHighlightVisibility: vi.fn(),
   toggleArrowVisibility: vi.fn(),
   toggleUnderlineVisibility: vi.fn(),
-  updateEditorContent: vi.fn(),
   setActiveLayerId: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
@@ -178,7 +177,6 @@ vi.mock("./components/tiptap-templates/simple", () => ({
           props.onMouseMove !== undefined &&
           props.onMouseUp !== undefined,
       )}
-      data-has-content-update={String(props.onContentUpdate !== undefined)}
     />
   ),
   SIMPLE_EDITOR_CONTENT: {},
@@ -269,12 +267,6 @@ describe("App (mobile)", () => {
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
-    });
-
-    it("then does not enable content editing", () => {
-      renderApp();
-      const pane = screen.getByTestId("editor-pane");
-      expect(pane).toHaveAttribute("data-has-content-update", "false");
     });
   });
 });

@@ -32,6 +32,7 @@ const mockWorkspace = {
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
+    thirdEditorFullWidth: true,
   },
   annotations: { activeTool: "selection" as const },
   layers: [] as {
@@ -70,11 +71,16 @@ const mockWorkspace = {
   setSelectedArrow: vi.fn(),
   updateArrowStyle: vi.fn(),
   readOnly: false,
+  columnSplit: 50,
+  rowSplit: 50,
+  handleColumnResize: vi.fn(),
+  handleRowResize: vi.fn(),
   toggleManagementPane: vi.fn(),
   toggleOverscrollEnabled: vi.fn(),
   toggleHideOffscreenArrows: vi.fn(),
   toggleShowStatusBar: vi.fn(),
   toggleCommentPlacement: vi.fn(),
+  toggleThirdEditorFullWidth: vi.fn(),
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
   setActiveLayer: vi.fn(),
@@ -100,7 +106,6 @@ const mockWorkspace = {
   toggleHighlightVisibility: vi.fn(),
   toggleArrowVisibility: vi.fn(),
   toggleUnderlineVisibility: vi.fn(),
-  updateEditorContent: vi.fn(),
   setActiveLayerId: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
@@ -177,7 +182,6 @@ vi.mock("./components/tiptap-templates/simple", () => ({
           props.onMouseMove !== undefined &&
           props.onMouseUp !== undefined,
       )}
-      data-has-content-update={String(props.onContentUpdate !== undefined)}
       data-index={props.index}
       data-layer-count={Array.isArray(props.layers) ? (props.layers as unknown[]).length : 0}
     />
@@ -210,9 +214,11 @@ beforeEach(() => {
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
+    thirdEditorFullWidth: true,
   };
   mockWorkspace.layers = [];
   mockWorkspace.activeLayerId = null;
+  mockWorkspace.editorCount = 1;
   mockWorkspace.editorWidths = [100];
   mockWorkspace.editorKeys = [1];
   mockWorkspace.sectionVisibility = [true];
@@ -301,6 +307,7 @@ describe("App (desktop)", () => {
 
   describe("when multiple editor panes are configured", () => {
     it("then renders one pane per editor width", () => {
+      mockWorkspace.editorCount = 2;
       mockWorkspace.editorWidths = [50, 50];
       mockWorkspace.editorKeys = [1, 2];
       mockWorkspace.sectionVisibility = [true, true];
@@ -315,13 +322,6 @@ describe("App (desktop)", () => {
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
-    });
-
-    it("then renders editors with content update enabled", () => {
-      mockWorkspace.settings.isLocked = false;
-      renderApp();
-      const pane = screen.getByTestId("editor-pane");
-      expect(pane).toHaveAttribute("data-has-content-update", "true");
     });
 
     it("then does not show the annotation panel even with comments", () => {

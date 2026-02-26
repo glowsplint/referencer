@@ -112,7 +112,9 @@ test.describe("when layer is hidden", () => {
     await page.keyboard.press("c");
   });
 
-  test("when layer is hidden, then all highlight decorations for that layer are removed", async ({ page }) => {
+  test("when layer is hidden, then all highlight decorations for that layer are removed", async ({
+    page,
+  }) => {
     // Create annotation to persist the highlight
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Highlight test");
@@ -139,7 +141,9 @@ test.describe("when layer is hidden", () => {
     });
   });
 
-  test("when layer is hidden, then arrow endpoint highlights are also removed", async ({ page }) => {
+  test("when layer is hidden, then arrow endpoint highlights are also removed", async ({
+    page,
+  }) => {
     // Draw an arrow
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
@@ -207,7 +211,9 @@ test.describe("when passage is hidden", () => {
     });
   });
 
-  test("when destination passage is hidden, then cross-editor arrow disappears", async ({ page }) => {
+  test("when destination passage is hidden, then cross-editor arrow disappears", async ({
+    page,
+  }) => {
     await drawArrowBetweenEditors(page, 0, 1);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
@@ -252,7 +258,9 @@ test.describe("when checking connector line consistency", () => {
     await page.keyboard.press("c");
   });
 
-  test("when multiple annotations exist, then connector line count matches annotation card count", async ({ page }) => {
+  test("when multiple annotations exist, then connector line count matches annotation card count", async ({
+    page,
+  }) => {
     // Create first annotation
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Note A");
@@ -278,7 +286,9 @@ test.describe("when checking connector line consistency", () => {
     expect(lineCount).toBe(2);
   });
 
-  test("when layer is hidden, then both connector lines and cards are removed", async ({ page }) => {
+  test("when layer is hidden, then both connector lines and cards are removed", async ({
+    page,
+  }) => {
     await clickWordInEditor(page, 0, 30);
     await addAnnotation(page, "Connector test");
 
@@ -322,7 +332,9 @@ test.describe("when toggling visibility with arrows, highlights, and annotations
     await page.keyboard.press("c");
   });
 
-  test("when layer is toggled, then arrows, highlights, and annotations all appear and disappear together", async ({ page }) => {
+  test("when layer is toggled, then arrows, highlights, and annotations all appear and disappear together", async ({
+    page,
+  }) => {
     // Create annotation on Layer 1 first (comments-mode click clears arrows — known bug)
     await clickWordInEditor(page, 0, 100);
     await addAnnotation(page, "Synced note");
@@ -533,7 +545,9 @@ test.describe("when all elements are hidden", () => {
     });
   });
 
-  test("when all layers are hidden, then arrow overlay SVG contains no arrow elements", async ({ page }) => {
+  test("when all layers are hidden, then arrow overlay SVG contains no arrow elements", async ({
+    page,
+  }) => {
     // Draw an arrow
     await drawArrowInEditor(page, 0);
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {

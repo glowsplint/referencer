@@ -22,7 +22,9 @@ test.describe("when interacting with the tour", () => {
     await expect(page.getByText("Paste your text")).toBeVisible();
   });
 
-  test("when Next is clicked, then tour advances; when Back is clicked, then tour goes back", async ({ page }) => {
+  test("when Next is clicked, then tour advances; when Back is clicked, then tour goes back", async ({
+    page,
+  }) => {
     await page.goto(freshWorkspaceUrl());
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });
 
@@ -49,7 +51,9 @@ test.describe("when interacting with the tour", () => {
     await expect(page.getByTestId("tourOverlay")).not.toBeVisible();
   });
 
-  test("when tour is completed and page reloads, then tour does not show again", async ({ page }) => {
+  test("when tour is completed and page reloads, then tour does not show again", async ({
+    page,
+  }) => {
     const url = freshWorkspaceUrl();
     await page.goto(url);
     await expect(page.getByTestId("tourTooltip")).toBeVisible({ timeout: 10000 });

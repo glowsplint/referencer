@@ -67,11 +67,7 @@ describe("when using describeDelta", () => {
   });
 
   it("then joins multiple changes with commas", () => {
-    const result = describeDelta(
-      { "layer:layer-1": true, "section:0": false },
-      mockLayers,
-      t,
-    );
+    const result = describeDelta({ "layer:layer-1": true, "section:0": false }, mockLayers, t);
     expect(result).toBe("Show layer 'Layer 1', Hide section 1");
   });
 

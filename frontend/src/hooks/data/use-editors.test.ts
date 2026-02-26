@@ -16,7 +16,7 @@ describe("useEditors", () => {
     expect(result.current.activeEditor).toBeNull();
   });
 
-  it("when addEditor is called, then increments editor count up to 3", () => {
+  it("when addEditor is called, then increments editor count up to 4", () => {
     const { result } = renderHook(() => useEditors());
 
     // starts at 2
@@ -30,7 +30,12 @@ describe("useEditors", () => {
     act(() => {
       result.current.addEditor();
     });
-    expect(result.current.editorCount).toBe(3);
+    expect(result.current.editorCount).toBe(4);
+
+    act(() => {
+      result.current.addEditor();
+    });
+    expect(result.current.editorCount).toBe(4);
   });
 
   it("when 3 editors exist, then editorWidths are evenly distributed", () => {

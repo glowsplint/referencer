@@ -25,4 +25,12 @@ describe("when using migrateAnnotation", () => {
   it("then returns HTML with leading whitespace before tag as-is", () => {
     expect(migrateAnnotation("  <p>spaced</p>")).toBe("  <p>spaced</p>");
   });
+
+  it("then strips script tags from HTML input", () => {
+    expect(migrateAnnotation('<p>hello</p><script>alert("xss")</script>')).toBe("<p>hello</p>");
+  });
+
+  it("then strips script tags from plain-text input", () => {
+    expect(migrateAnnotation('hello<script>alert("xss")</script>')).toBe("<p>hello</p>");
+  });
 });

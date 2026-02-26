@@ -17,10 +17,9 @@ describe("useUnmount", () => {
     const firstCallback = vi.fn();
     const secondCallback = vi.fn();
 
-    const { rerender, unmount } = renderHook(
-      ({ cb }) => useUnmount(cb),
-      { initialProps: { cb: firstCallback } },
-    );
+    const { rerender, unmount } = renderHook(({ cb }) => useUnmount(cb), {
+      initialProps: { cb: firstCallback },
+    });
 
     // Update callback
     rerender({ cb: secondCallback });

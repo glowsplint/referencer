@@ -7,7 +7,9 @@ export function useFolderCollapse(folderId: string) {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     try {
       return localStorage.getItem(key) === "true";
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   });
 
   const toggleCollapsed = useCallback(() => {
@@ -19,7 +21,9 @@ export function useFolderCollapse(folderId: string) {
         } else {
           localStorage.removeItem(key);
         }
-      } catch { /* quota exceeded or unavailable */ }
+      } catch {
+        /* quota exceeded or unavailable */
+      }
       return next;
     });
   }, [key]);

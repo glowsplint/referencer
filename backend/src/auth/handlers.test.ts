@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "bun:test";
 import { Hono } from "hono";
 import { createAuthRoutes } from "./handlers";
 import { optionalAuth } from "./middleware";
+import { hashToken } from "./store";
 import type { AuthConfig } from "./config";
 import type { Env } from "../env";
 
@@ -13,12 +14,31 @@ const testConfig: AuthConfig = {
   github: null,
 };
 
+function createMockKV() {
+  const store = new Map<string, string>();
+  return {
+    get(key: string, _type?: string) {
+      const val = store.get(key);
+      return Promise.resolve(val ? JSON.parse(val) : null);
+    },
+    put(key: string, value: string, _opts?: any) {
+      store.set(key, value);
+      return Promise.resolve();
+    },
+    delete(key: string) {
+      store.delete(key);
+      return Promise.resolve();
+    },
+  };
+}
+
 // Minimal env bindings so loadAuthConfig(c.env) works.
 const testEnv = {
   SUPABASE_URL: "http://localhost:54321",
   SUPABASE_SERVICE_KEY: "test-key",
   FRONTEND_URL: "http://localhost:5173",
   BASE_URL: "http://localhost:5000",
+  RATE_LIMIT_KV: createMockKV(),
 } as Env["Bindings"];
 
 // In-memory stores for mock Supabase
@@ -84,9 +104,10 @@ function createMockSupabase() {
   } as any;
 }
 
-function seedUserAndSession() {
+async function seedUserAndSession() {
   const userId = "user-1";
   const token = "valid-session-token";
+  const hashedToken = await hashToken(token);
   users.push({
     id: userId,
     email: "test@example.com",
@@ -96,7 +117,7 @@ function seedUserAndSession() {
     updated_at: "2025-01-01T00:00:00.000Z",
   });
   sessions.push({
-    id: token,
+    id: hashedToken,
     user_id: userId,
     created_at: new Date().toISOString(),
     expires_at: new Date(Date.now() + 3600 * 1000).toISOString(),
@@ -210,7 +231,7 @@ describe("auth routes", () => {
     });
 
     it("returns authenticated user with valid session", async () => {
-      const { token } = seedUserAndSession();
+      const { token } = await seedUserAndSession();
 
       const app = createApp();
       const res = await request(app, "/auth/me", {
@@ -226,6 +247,7 @@ describe("auth routes", () => {
 
     it("returns unauthenticated for expired session", async () => {
       const userId = "user-1";
+      const hashedExpired = await hashToken("expired-token");
       users.push({
         id: userId,
         email: "test@example.com",
@@ -235,7 +257,7 @@ describe("auth routes", () => {
         updated_at: "2025-01-01T00:00:00.000Z",
       });
       sessions.push({
-        id: "expired-token",
+        id: hashedExpired,
         user_id: userId,
         created_at: new Date().toISOString(),
         expires_at: new Date(Date.now() - 3600 * 1000).toISOString(),
@@ -261,7 +283,7 @@ describe("auth routes", () => {
     });
 
     it("deletes session and returns ok", async () => {
-      const { token } = seedUserAndSession();
+      const { token } = await seedUserAndSession();
 
       const app = createApp();
       const res = await request(app, "/auth/logout", {
@@ -273,7 +295,8 @@ describe("auth routes", () => {
       expect(body.ok).toBe(true);
 
       // Verify the session is deleted from the in-memory store
-      const remaining = sessions.find((s) => s.id === token);
+      const hashedToken = await hashToken(token);
+      const remaining = sessions.find((s) => s.id === hashedToken);
       expect(remaining).toBeUndefined();
     });
 

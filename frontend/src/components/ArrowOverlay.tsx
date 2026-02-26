@@ -73,29 +73,6 @@ export function ArrowOverlay({
   const previewRectRef = useRef<SVGRectElement | null>(null);
   const previewMarkerPolygonRef = useRef<SVGPolygonElement | null>(null);
 
-  // Cross-editor arrows only (for visual rendering — within-editor visuals are in the plugin)
-  const crossEditorArrows = useMemo(() => {
-    if (!isLocked) return [];
-    const result: CrossEditorArrow[] = [];
-    for (const layer of layers) {
-      if (!layer.visible) continue;
-      for (const arrow of layer.arrows) {
-        if (arrow.visible === false) continue;
-        if (arrow.from.editorIndex === arrow.to.editorIndex) continue;
-        if (sectionVisibility[arrow.from.editorIndex] === false) continue;
-        if (sectionVisibility[arrow.to.editorIndex] === false) continue;
-        result.push({
-          layerId: layer.id,
-          arrowId: arrow.id,
-          color: layer.color,
-          arrowStyle: arrow.arrowStyle ?? "solid",
-          arrow,
-        });
-      }
-    }
-    return result;
-  }, [layers, sectionVisibility, isLocked]);
-
   // All visible arrows (for interaction layer — handles hit areas for ALL arrows)
   const allVisibleArrows = useMemo(() => {
     if (!isLocked) return [];
@@ -117,6 +94,12 @@ export function ArrowOverlay({
     }
     return result;
   }, [layers, sectionVisibility, isLocked]);
+
+  // Cross-editor arrows only (for visual rendering — within-editor visuals are in the plugin)
+  const crossEditorArrows = useMemo(
+    () => allVisibleArrows.filter((a) => a.arrow.from.editorIndex !== a.arrow.to.editorIndex),
+    [allVisibleArrows],
+  );
 
   // Track which editor is hovered via mouseenter/mouseleave on editor wrappers
   useEffect(() => {
@@ -150,7 +133,8 @@ export function ArrowOverlay({
 
   // Clean up all wrapper SVGs on unmount
   useEffect(() => {
-    return () => destroyWrapperSvgs(wrapperSvgState.current);
+    const state = wrapperSvgState.current;
+    return () => destroyWrapperSvgs(state);
   }, []);
 
   // Sync dark mode on wrapper SVGs

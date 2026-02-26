@@ -21,6 +21,7 @@ describe("useSettings", () => {
       hideOffscreenArrows: false,
       showStatusBar: true,
       commentPlacement: "right",
+      thirdEditorFullWidth: true,
     });
   });
 
@@ -167,6 +168,7 @@ describe("useSettings", () => {
       hideOffscreenArrows: false,
       showStatusBar: true,
       commentPlacement: "right",
+      thirdEditorFullWidth: true,
     });
   });
 

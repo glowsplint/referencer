@@ -12,7 +12,12 @@ function makeContainerWithLayers(_layers: Layer[]) {
   document.body.appendChild(container);
   const containerRef = { current: container } as React.RefObject<HTMLDivElement | null>;
   const editorsRef = { current: new Map() } as React.RefObject<Map<number, any>>;
-  return { container, containerRef, editorsRef, cleanup: () => document.body.removeChild(container) };
+  return {
+    container,
+    containerRef,
+    editorsRef,
+    cleanup: () => document.body.removeChild(container),
+  };
 }
 
 describe("useAllHighlightPositions", () => {
@@ -32,9 +37,7 @@ describe("useAllHighlightPositions", () => {
       } as any,
     ];
 
-    const { result } = renderHook(() =>
-      useAllHighlightPositions(editorsRef, layers, containerRef),
-    );
+    const { result } = renderHook(() => useAllHighlightPositions(editorsRef, layers, containerRef));
 
     expect(result.current).toEqual([]);
     cleanup();
@@ -56,9 +59,7 @@ describe("useAllHighlightPositions", () => {
       } as any,
     ];
 
-    const { result } = renderHook(() =>
-      useAllHighlightPositions(editorsRef, layers, containerRef),
-    );
+    const { result } = renderHook(() => useAllHighlightPositions(editorsRef, layers, containerRef));
 
     expect(result.current).toEqual([]);
     cleanup();
@@ -80,9 +81,7 @@ describe("useAllHighlightPositions", () => {
       } as any,
     ];
 
-    const { result } = renderHook(() =>
-      useAllHighlightPositions(editorsRef, layers, containerRef),
-    );
+    const { result } = renderHook(() => useAllHighlightPositions(editorsRef, layers, containerRef));
 
     expect(result.current).toEqual([]);
     cleanup();

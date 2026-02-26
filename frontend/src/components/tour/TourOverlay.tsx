@@ -61,15 +61,23 @@ export function TourOverlay({
     }
   }, [rect, refs]);
 
-  // When no rect, center the tooltip manually
-  const resolvedStyles = rect
-    ? floatingStyles
-    : {
+  // When centered or no rect, center the tooltip within the spotlight area
+  const isCentered = step.centered && rect;
+  const resolvedStyles = isCentered
+    ? {
         position: "fixed" as const,
-        top: "50%",
-        left: "50%",
+        top: rect.y + rect.height / 2,
+        left: rect.x + rect.width / 2,
         transform: "translate(-50%, -50%)",
-      };
+      }
+    : rect
+      ? floatingStyles
+      : {
+          position: "fixed" as const,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        };
 
   // Keyboard: Escape to skip, block other keys from reaching the page
   useEffect(() => {
@@ -111,7 +119,8 @@ export function TourOverlay({
       {/* Click shield — blocks clicks outside tooltip */}
       <div className="absolute inset-0" />
 
-      {/* Tooltip */}
+      {/* Tooltip — box-shadow vignette darkens the spotlight area around it
+          without overlapping the card itself */}
       <TourTooltip
         step={step}
         stepIndex={stepIndex}
@@ -121,6 +130,7 @@ export function TourOverlay({
         onSkip={onSkip}
         floatingStyles={resolvedStyles}
         floatingRef={refs.setFloating}
+        vignetteshadow={!!isCentered}
       />
     </div>,
     document.body,

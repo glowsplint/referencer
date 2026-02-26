@@ -45,7 +45,6 @@ export function EditorPane({
   onMouseDown,
   onMouseMove,
   onMouseUp,
-  onContentUpdate,
   layers,
   selection,
   selectionHidden,
@@ -66,7 +65,6 @@ export function EditorPane({
   onMouseDown?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void;
   onMouseMove?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void;
   onMouseUp?: (e: React.MouseEvent, editor: Editor, editorIndex: number) => void;
-  onContentUpdate?: (index: number, json: Record<string, unknown>) => void;
   layers: Layer[];
   selection: WordSelection | null;
   selectionHidden?: boolean;
@@ -84,11 +82,6 @@ export function EditorPane({
     [fragment],
   );
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  const onContentUpdateRef = useRef(onContentUpdate);
-  onContentUpdateRef.current = onContentUpdate;
-  const indexRef = useRef(index);
-  indexRef.current = index;
 
   // Track whether initial content has been seeded into the Yjs fragment.
   // Starts false; the seeding effect gates on fragment being available.
@@ -151,14 +144,6 @@ export function EditorPane({
       extensions,
       // Only provide content when NOT using Yjs (Yjs manages content via fragment)
       content: fragment ? undefined : content,
-      onUpdate: fragment
-        ? undefined
-        : ({ editor }) => {
-            onContentUpdateRef.current?.(
-              indexRef.current,
-              editor.getJSON() as Record<string, unknown>,
-            );
-          },
     },
     [extensions],
   );
