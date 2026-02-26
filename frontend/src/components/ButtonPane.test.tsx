@@ -17,6 +17,7 @@ describe("ButtonPane", () => {
       expect(screen.getByTestId("selectionToolButton")).toBeInTheDocument();
       expect(screen.getByTestId("arrowToolButton")).toBeInTheDocument();
       expect(screen.getByTestId("commentsToolButton")).toBeInTheDocument();
+      expect(screen.getByTestId("eraserToolButton")).toBeInTheDocument();
       expect(screen.getByTestId("menuButton")).toBeInTheDocument();
       expect(screen.getByTestId("editorLayoutButton")).toBeInTheDocument();
       expect(screen.getByTestId("lockButton")).toBeInTheDocument();
@@ -27,6 +28,36 @@ describe("ButtonPane", () => {
       const pane = screen.getByTestId("menuButton").parentElement!;
       const separators = pane.querySelectorAll('[role="separator"]');
       expect(separators).toHaveLength(3);
+    });
+  });
+
+  describe("annotationToolGroup", () => {
+    it("when rendered, then wraps arrow, highlight, comments, and underline buttons", () => {
+      renderButtonPane();
+      const group = screen.getByTestId("annotationToolGroup");
+      expect(group).toBeInTheDocument();
+      expect(group.querySelector('[data-testid="arrowToolButton"]')).toBeInTheDocument();
+      expect(group.querySelector('[data-testid="highlightToolButton"]')).toBeInTheDocument();
+      expect(group.querySelector('[data-testid="commentsToolButton"]')).toBeInTheDocument();
+      expect(group.querySelector('[data-testid="underlineToolButton"]')).toBeInTheDocument();
+    });
+
+    it("when rendered, then does not contain the selection button", () => {
+      renderButtonPane();
+      const group = screen.getByTestId("annotationToolGroup");
+      expect(group.querySelector('[data-testid="selectionToolButton"]')).not.toBeInTheDocument();
+    });
+
+    it("when rendered, then does not contain the eraser button", () => {
+      renderButtonPane();
+      const group = screen.getByTestId("annotationToolGroup");
+      expect(group.querySelector('[data-testid="eraserToolButton"]')).not.toBeInTheDocument();
+    });
+
+    it("when rendered, then has display:contents style", () => {
+      renderButtonPane();
+      const group = screen.getByTestId("annotationToolGroup");
+      expect(group.style.display).toBe("contents");
     });
   });
 

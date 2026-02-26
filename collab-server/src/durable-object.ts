@@ -86,7 +86,7 @@ export class YjsRoom extends DurableObject<Env> {
       } catch (err) {
         console.error(
           `[collab-do] failed to load snapshot from Supabase for ${this.roomName}:`,
-          err,
+          err instanceof Error ? err.message : "unknown",
         );
       }
     }
@@ -297,7 +297,7 @@ export class YjsRoom extends DurableObject<Env> {
         state,
       );
     } catch (err) {
-      console.error(`[collab-do] failed to save snapshot to Supabase for ${this.roomName}:`, err);
+      console.error(`[collab-do] failed to save snapshot to Supabase for ${this.roomName}:`, err instanceof Error ? err.message : "unknown");
     }
   }
 }

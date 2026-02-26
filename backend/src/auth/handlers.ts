@@ -4,7 +4,13 @@ import { generateState, generateCodeVerifier, Google, GitHub } from "arctic";
 import { kvRateLimiter } from "../lib/rate-limit";
 import { createProviders, getProviderFromMap, type OAuthProvider } from "./providers";
 import { loadAuthConfig, type AuthConfig } from "./config";
-import { upsertUser, createSession, getSessionUser, deleteSession } from "./store";
+import {
+  upsertUser,
+  createSession,
+  getSessionUser,
+  deleteSession,
+  revokeAllUserSessions,
+} from "./store";
 import { signJwt } from "../lib/jwt";
 import type { Env } from "../env";
 
@@ -66,6 +72,18 @@ export function createAuthRoutes() {
     }
     deleteCookie(c, "__session", { path: "/" });
     return c.json({ ok: true });
+  });
+
+  // POST /auth/logout-all — revoke all sessions for the current user
+  auth.post("/logout-all", authLogoutLimiter, async (c) => {
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+    const supabase = c.get("supabase");
+    await revokeAllUserSessions(supabase, user.id);
+    deleteCookie(c, "__session", { path: "/" });
+    return c.json({ success: true });
   });
 
   // POST /auth/ws-ticket — issue a short-lived JWT for WebSocket auth
@@ -192,7 +210,7 @@ async function handleCallback(c: any, config: AuthConfig) {
       tokens = await (provider as GitHub).validateAuthorizationCode(code);
     }
   } catch (err) {
-    console.error("Token exchange failed:", err);
+    console.error("auth_callback_token_exchange_failed");
     return c.json({ error: "Token exchange failed" }, 400);
   }
 

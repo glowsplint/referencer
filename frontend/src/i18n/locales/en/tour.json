@@ -13,6 +13,10 @@
         "title": "Annotate your text",
         "content": "Select text to highlight (H), comment (C), underline (U), or draw arrows (A)."
       },
+      "eraser": {
+        "title": "Erase annotations",
+        "content": "Press E or click the eraser to remove highlights, underlines, and arrows from selected text."
+      },
       "unlock": {
         "title": "Unlock to edit",
         "content": "Press K again to return to editing. Your annotations are preserved."
@@ -20,6 +24,10 @@
       "statusBar": {
         "title": "Status bar",
         "content": "Keep an eye here for feedback — export results, sync status, and other notifications appear in this bar."
+      },
+      "share": {
+        "title": "Collaborate with others",
+        "content": "Generate a read-only or editable link to share your annotated document with others."
       }
     }
   },

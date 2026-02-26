@@ -10,3 +10,6 @@ class_name = "YjsRoom"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["YjsRoom"]
+
+# Secrets (SUPABASE_URL, SUPABASE_SERVICE_KEY, WS_JWT_SECRET, ALLOWED_ORIGIN)
+# are managed via `wrangler secret put`

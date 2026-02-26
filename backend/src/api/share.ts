@@ -33,7 +33,7 @@ export function handleShare() {
       };
       return c.json(resp);
     } catch (err) {
-      console.error("POST /api/share error:", err);
+      console.error("POST /api/share error");
       return c.json({ error: "Internal server error" }, 500);
     }
   };
@@ -74,7 +74,7 @@ export function handleResolveShare() {
           err instanceof Error &&
           (err.message?.includes("23505") || err.message?.includes("unique"));
         if (!isDuplicate) {
-          console.error("Failed to add workspace to hub:", err);
+          console.error("Failed to add workspace to hub");
           return c.json({ error: "Internal server error" }, 500);
         }
       }

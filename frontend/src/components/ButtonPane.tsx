@@ -263,9 +263,9 @@ export function ButtonPane() {
       </Tooltip>
       <div className="w-6 border-t border-border" role="separator" />
       {/* Tools group */}
-      {toolButtons.map(({ tool, icon, label, testId }) => {
-        const isArrow = tool === "arrow";
-        return (
+      {toolButtons
+        .filter(({ tool }) => tool === "selection")
+        .map(({ tool, icon, label, testId }) => (
           <div key={tool} className="relative">
             <Tooltip placement="right">
               <TooltipTrigger asChild>
@@ -286,19 +286,76 @@ export function ButtonPane() {
                 {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
               </TooltipContent>
             </Tooltip>
-            {isArrow && arrowStylePickerOpen && (
-              <div className="absolute left-full top-0 ml-1 z-50" data-testid="arrowStylePopover">
-                <ArrowStylePicker
-                  index={-1}
-                  activeStyle={activeArrowStyle}
-                  color="currentColor"
-                  onSelectStyle={handleArrowStyleSelect}
-                />
-              </div>
-            )}
           </div>
-        );
-      })}
+        ))}
+      {/* Annotation tools — wrapped for tour spotlight targeting */}
+      <div style={{ display: "contents" }} data-testid="annotationToolGroup">
+        {toolButtons
+          .filter(({ tool }) =>
+            tool === "arrow" || tool === "highlight" || tool === "comments" || tool === "underline",
+          )
+          .map(({ tool, icon, label, testId }) => {
+            const isArrow = tool === "arrow";
+            return (
+              <div key={tool} className="relative">
+                <Tooltip placement="right">
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setActiveTool(tool)}
+                      disabled={!settings.isLocked || readOnly}
+                      className={`p-2 rounded-md transition-colors ${
+                        annotations.activeTool === tool && settings.isLocked
+                          ? "bg-accent text-accent-foreground"
+                          : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
+                      }`}
+                      data-testid={testId}
+                    >
+                      {icon}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
+                  </TooltipContent>
+                </Tooltip>
+                {isArrow && arrowStylePickerOpen && (
+                  <div className="absolute left-full top-0 ml-1 z-50" data-testid="arrowStylePopover">
+                    <ArrowStylePicker
+                      index={-1}
+                      activeStyle={activeArrowStyle}
+                      color="currentColor"
+                      onSelectStyle={handleArrowStyleSelect}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+      </div>
+      {toolButtons
+        .filter(({ tool }) => tool === "eraser")
+        .map(({ tool, icon, label, testId }) => (
+          <div key={tool} className="relative">
+            <Tooltip placement="right">
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setActiveTool(tool)}
+                  disabled={!settings.isLocked || readOnly}
+                  className={`p-2 rounded-md transition-colors ${
+                    annotations.activeTool === tool && settings.isLocked
+                      ? "bg-accent text-accent-foreground"
+                      : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
+                  }`}
+                  data-testid={testId}
+                >
+                  {icon}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        ))}
       <div className="w-6 border-t border-border" role="separator" />
       {/* Recording controls */}
       <RecordingControls />

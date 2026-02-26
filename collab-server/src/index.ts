@@ -10,6 +10,7 @@ type Env = {
     SUPABASE_URL: string;
     SUPABASE_SERVICE_KEY: string;
     WS_JWT_SECRET: string;
+    WS_JWT_SECRET_PREV?: string;
     ALLOWED_ORIGIN?: string;
   };
 };
@@ -24,6 +25,14 @@ app.use(
   }),
 );
 
+app.use("*", async (c, next) => {
+  await next();
+  c.res.headers.set("X-Content-Type-Options", "nosniff");
+  c.res.headers.set("X-Frame-Options", "DENY");
+  c.res.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
+  c.res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+});
+
 app.get("/health", (c) => c.json({ status: "ok" }));
 
 // WebSocket upgrade for room connections
@@ -36,7 +45,7 @@ app.get("/:roomName", async (c) => {
   }
 
   // Verify JWT signature + expiry (no DB hit)
-  const payload = await verifyJwt(token, c.env.WS_JWT_SECRET);
+  const payload = await verifyJwt(token, c.env.WS_JWT_SECRET, c.env.WS_JWT_SECRET_PREV);
   if (!payload) {
     return c.json({ error: "Unauthorized" }, 401);
   }

@@ -16,6 +16,7 @@ export type Env = {
     GITHUB_ISSUES_TOKEN?: string;
     GITHUB_ISSUES_REPO?: string;
     WS_JWT_SECRET: string;
+    WS_JWT_SECRET_PREV?: string;
   };
   Variables: {
     user: User | null;
