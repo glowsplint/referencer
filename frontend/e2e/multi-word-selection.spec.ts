@@ -24,7 +24,9 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
     }
   });
 
-  test("when Shift+ArrowRight is pressed, then selection expands to include next word", async ({ page }) => {
+  test("when Shift+ArrowRight is pressed, then selection expands to include next word", async ({
+    page,
+  }) => {
     await clickWordInEditor(page, 0, 30);
     // Dismiss auto-focused annotation so keyboard reaches word selection handler
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
@@ -44,7 +46,9 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
     expect(expandedBox!.width).toBeGreaterThan(initialWidth);
   });
 
-  test("when Shift+ArrowLeft is pressed, then selection expands to include previous word", async ({ page }) => {
+  test("when Shift+ArrowLeft is pressed, then selection expands to include previous word", async ({
+    page,
+  }) => {
     // Click a word that's not the first one (offset further right)
     await clickWordInEditor(page, 0, 100);
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
@@ -66,7 +70,9 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
     expect(expandedBox!.x).toBeLessThan(initialX);
   });
 
-  test("when Shift+ArrowRight is pressed multiple times, then selection keeps expanding", async ({ page }) => {
+  test("when Shift+ArrowRight is pressed multiple times, then selection keeps expanding", async ({
+    page,
+  }) => {
     await clickWordInEditor(page, 0, 30);
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
@@ -85,7 +91,9 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
     expect(box2!.width).toBeGreaterThan(box1!.width);
   });
 
-  test("when Shift+Arrow is pressed at editor boundary, then selection does not cross editors", async ({ page }) => {
+  test("when Shift+Arrow is pressed at editor boundary, then selection does not cross editors", async ({
+    page,
+  }) => {
     // Already have 2 passages by default
 
     // Click word in editor 1
@@ -107,7 +115,9 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
     expect(selectionInE0).toBeGreaterThan(0);
   });
 
-  test("when normal arrow key is pressed after Shift+Arrow, then selection resets to single word", async ({ page }) => {
+  test("when normal arrow key is pressed after Shift+Arrow, then selection resets to single word", async ({
+    page,
+  }) => {
     await clickWordInEditor(page, 0, 30);
     await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
 
@@ -146,7 +156,9 @@ test.describe("when dragging to select multiple words", () => {
     await page.keyboard.press("c");
   });
 
-  test("when mouse is dragged across words, then multi-word selection is created", async ({ page }) => {
+  test("when mouse is dragged across words, then multi-word selection is created", async ({
+    page,
+  }) => {
     const p = page.locator(".simple-editor p").first();
     const box = await p.boundingBox();
     expect(box).not.toBeNull();
@@ -178,7 +190,9 @@ test.describe("when dragging to select multiple words", () => {
     expect(totalWidth).toBeGreaterThan(50);
   });
 
-  test("when drag selection is confirmed with Enter, then annotation card is created", async ({ page }) => {
+  test("when drag selection is confirmed with Enter, then annotation card is created", async ({
+    page,
+  }) => {
     const p = page.locator(".simple-editor p").first();
     const box = await p.boundingBox();
     expect(box).not.toBeNull();
@@ -204,7 +218,9 @@ test.describe("when dragging to select multiple words", () => {
     });
   });
 
-  test("when drag selection annotation is saved, then highlight has background color", async ({ page }) => {
+  test("when drag selection annotation is saved, then highlight has background color", async ({
+    page,
+  }) => {
     const p = page.locator(".simple-editor p").first();
     const box = await p.boundingBox();
     expect(box).not.toBeNull();

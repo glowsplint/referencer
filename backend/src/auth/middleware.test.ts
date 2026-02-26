@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Hono } from "hono";
 import { optionalAuth } from "./middleware";
+import { hashToken } from "./store";
 import type { AuthConfig } from "./config";
 import type { Env } from "../env";
 
@@ -88,10 +89,15 @@ function seedUser() {
   return userId;
 }
 
-function seedSession(userId: string, token: string, opts?: { expired?: boolean; old?: boolean }) {
+async function seedSession(
+  userId: string,
+  token: string,
+  opts?: { expired?: boolean; old?: boolean },
+) {
   const now = new Date();
+  const hashedToken = await hashToken(token);
   sessions.push({
-    id: token,
+    id: hashedToken,
     user_id: userId,
     created_at: opts?.old
       ? new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString()
@@ -137,7 +143,7 @@ describe("optionalAuth middleware", () => {
 
   it("sets user when valid session cookie is present", async () => {
     const userId = seedUser();
-    seedSession(userId, "valid-token");
+    await seedSession(userId, "valid-token");
 
     const app = createApp();
 
@@ -164,7 +170,7 @@ describe("optionalAuth middleware", () => {
 
   it("sets user to null for expired session", async () => {
     const userId = seedUser();
-    seedSession(userId, "expired-token", { expired: true });
+    await seedSession(userId, "expired-token", { expired: true });
 
     const app = createApp();
 
@@ -178,7 +184,7 @@ describe("optionalAuth middleware", () => {
 
   it("refreshes session that is older than 24 hours", async () => {
     const userId = seedUser();
-    seedSession(userId, "old-token", { old: true });
+    await seedSession(userId, "old-token", { old: true });
 
     const oldCreatedAt = sessions[0].created_at;
 
@@ -188,7 +194,8 @@ describe("optionalAuth middleware", () => {
       headers: { Cookie: "__session=old-token" },
     });
 
-    const session = sessions.find((s) => s.id === "old-token");
+    const hashedOldToken = await hashToken("old-token");
+    const session = sessions.find((s) => s.id === hashedOldToken);
     expect(session).toBeDefined();
     // created_at should have been updated (refreshed)
     expect(session!.created_at).not.toBe(oldCreatedAt);

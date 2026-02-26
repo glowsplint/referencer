@@ -63,22 +63,21 @@ export function TourOverlay({
 
   // When centered or no rect, center the tooltip within the spotlight area
   const isCentered = step.centered && rect;
-  const resolvedStyles =
-    isCentered
-      ? {
+  const resolvedStyles = isCentered
+    ? {
+        position: "fixed" as const,
+        top: rect.y + rect.height / 2,
+        left: rect.x + rect.width / 2,
+        transform: "translate(-50%, -50%)",
+      }
+    : rect
+      ? floatingStyles
+      : {
           position: "fixed" as const,
-          top: rect.y + rect.height / 2,
-          left: rect.x + rect.width / 2,
+          top: "50%",
+          left: "50%",
           transform: "translate(-50%, -50%)",
-        }
-      : rect
-        ? floatingStyles
-        : {
-            position: "fixed" as const,
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          };
+        };
 
   // Keyboard: Escape to skip, block other keys from reaching the page
   useEffect(() => {
@@ -131,7 +130,7 @@ export function TourOverlay({
         onSkip={onSkip}
         floatingStyles={resolvedStyles}
         floatingRef={refs.setFloating}
-        vignetteshadow={isCentered}
+        vignetteshadow={!!isCentered}
       />
     </div>,
     document.body,

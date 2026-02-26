@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
-import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { useDndContext } from "@/contexts/DndContext";
 
 export type DragItemType = "workspace" | "folder";

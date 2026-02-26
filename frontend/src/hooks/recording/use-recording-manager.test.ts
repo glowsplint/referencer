@@ -100,10 +100,7 @@ describe("useRecordingManager", () => {
     );
 
     // usePlayback should have been called with recordings and a function
-    expect(usePlayback).toHaveBeenCalledWith(
-      mockRecordingsReturn.recordings,
-      expect.any(Function),
-    );
+    expect(usePlayback).toHaveBeenCalledWith(mockRecordingsReturn.recordings, expect.any(Function));
   });
 
   it("when applyVisibilitySnapshot is called, then toggles layer visibility to match snapshot", () => {

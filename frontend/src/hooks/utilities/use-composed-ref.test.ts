@@ -36,10 +36,11 @@ describe("useComposedRef", () => {
     const secondCallback = vi.fn();
     const element = document.createElement("div");
 
-    const { result, rerender } = renderHook(
-      ({ userRef }) => useComposedRef(libRef, userRef),
-      { initialProps: { userRef: firstCallback as ((instance: HTMLDivElement | null) => void) | null } },
-    );
+    const { result, rerender } = renderHook(({ userRef }) => useComposedRef(libRef, userRef), {
+      initialProps: {
+        userRef: firstCallback as ((instance: HTMLDivElement | null) => void) | null,
+      },
+    });
 
     // Attach with first callback
     result.current(element);

@@ -121,7 +121,9 @@ describe("ShareDialog", () => {
     it("then shows login prompt instead of share options", () => {
       renderShareDialog();
       expect(screen.getByText("Share workspace")).toBeInTheDocument();
-      expect(screen.getByText("Sign in to generate a share link for this workspace.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Sign in to generate a share link for this workspace."),
+      ).toBeInTheDocument();
       expect(screen.getByTestId("shareLoginPrompt")).toBeInTheDocument();
       expect(screen.queryByTestId("shareReadonlyButton")).not.toBeInTheDocument();
       expect(screen.queryByTestId("shareEditButton")).not.toBeInTheDocument();

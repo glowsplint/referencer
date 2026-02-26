@@ -268,6 +268,5 @@ describe("App (mobile)", () => {
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
     });
-
   });
 });

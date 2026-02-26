@@ -5,6 +5,7 @@ import {
   getSessionUser,
   deleteSession,
   cleanExpiredSessions,
+  hashToken,
 } from "./store";
 
 // In-memory stores to simulate Supabase tables
@@ -185,6 +186,7 @@ describe("upsertUser", () => {
       "test@example.com",
       "Test User",
       "",
+      true,
     );
     const userId2 = await upsertUser(
       supabase,
@@ -193,6 +195,7 @@ describe("upsertUser", () => {
       "test@example.com",
       "Test User",
       "",
+      true,
     );
     expect(userId1).toBe(userId2);
 
@@ -239,7 +242,8 @@ describe("createSession + getSessionUser", () => {
     const token = await createSession(supabase, userId, 3600);
 
     // Manually set expires_at to the past
-    const session = sessions.find((s) => s.id === token);
+    const hashedId = await hashToken(token);
+    const session = sessions.find((s) => s.id === hashedId);
     session!.expires_at = new Date(Date.now() - 3600 * 1000).toISOString();
 
     const user = await getSessionUser(supabase, token);
@@ -303,12 +307,13 @@ describe("cleanExpiredSessions", () => {
     const token = await createSession(supabase, userId, 3600);
 
     // Manually expire the session
-    const session = sessions.find((s) => s.id === token);
+    const hashedId = await hashToken(token);
+    const session = sessions.find((s) => s.id === hashedId);
     session!.expires_at = new Date(Date.now() - 3600 * 1000).toISOString();
 
     await cleanExpiredSessions(supabase);
 
-    const remaining = sessions.find((s) => s.id === token);
+    const remaining = sessions.find((s) => s.id === hashedId);
     expect(remaining).toBeUndefined();
   });
 
@@ -316,7 +321,8 @@ describe("cleanExpiredSessions", () => {
     const token = await createSession(supabase, userId, 3600);
     await cleanExpiredSessions(supabase);
 
-    const remaining = sessions.find((s) => s.id === token);
+    const hashedId = await hashToken(token);
+    const remaining = sessions.find((s) => s.id === hashedId);
     expect(remaining).toBeDefined();
   });
 });

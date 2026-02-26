@@ -28,9 +28,7 @@ describe("when using apiUrl", () => {
 
 describe("when using apiFetch", () => {
   it("then sends credentials include and returns parsed JSON", async () => {
-    mockFetch.mockResolvedValue(
-      mockResponse({ json: () => Promise.resolve({ data: "test" }) }),
-    );
+    mockFetch.mockResolvedValue(mockResponse({ json: () => Promise.resolve({ data: "test" }) }));
 
     const result = await apiFetch("/api/test");
 
@@ -59,9 +57,7 @@ describe("when using apiFetch", () => {
 
 describe("when using apiPost", () => {
   it("then sends POST with JSON Content-Type header and stringified body", async () => {
-    mockFetch.mockResolvedValue(
-      mockResponse({ json: () => Promise.resolve({ id: 1 }) }),
-    );
+    mockFetch.mockResolvedValue(mockResponse({ json: () => Promise.resolve({ id: 1 }) }));
 
     await apiPost("/api/items", { name: "test" });
 

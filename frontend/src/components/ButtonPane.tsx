@@ -307,8 +307,28 @@ export function ButtonPane() {
       <Tooltip placement="right">
         <TooltipTrigger asChild>
           <SwitchingButtonIcon
-            iconTwo={editorCount >= 4 ? <LayoutGrid size={20} /> : editorCount === 3 ? <LayoutPanelTop size={20} className="rotate-180" /> : editorCount === 2 ? <Columns2 size={20} /> : <SquareRoundCorner size={20} />}
-            iconOne={editorCount >= 4 ? <Rows4 size={20} /> : editorCount === 3 ? <Rows3 size={20} /> : editorCount === 2 ? <Rows2 size={20} /> : <SquareRoundCorner size={20} />}
+            iconTwo={
+              editorCount >= 4 ? (
+                <LayoutGrid size={20} />
+              ) : editorCount === 3 ? (
+                <LayoutPanelTop size={20} className="rotate-180" />
+              ) : editorCount === 2 ? (
+                <Columns2 size={20} />
+              ) : (
+                <SquareRoundCorner size={20} />
+              )
+            }
+            iconOne={
+              editorCount >= 4 ? (
+                <Rows4 size={20} />
+              ) : editorCount === 3 ? (
+                <Rows3 size={20} />
+              ) : editorCount === 2 ? (
+                <Rows2 size={20} />
+              ) : (
+                <SquareRoundCorner size={20} />
+              )
+            }
             bool={settings.isMultipleRowsLayout}
             callback={toggleMultipleRowsLayout}
             buttonProps={{ "data-testid": "editorLayoutButton" }}

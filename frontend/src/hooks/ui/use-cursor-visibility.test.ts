@@ -9,7 +9,14 @@ vi.mock("@/hooks/utilities/use-window-size", () => ({
 
 vi.mock("@/hooks/utilities/use-element-rect", () => ({
   useBodyRect: vi.fn(() => ({
-    x: 0, y: 0, width: 1024, height: 2000, top: 0, right: 1024, bottom: 2000, left: 0,
+    x: 0,
+    y: 0,
+    width: 1024,
+    height: 2000,
+    top: 0,
+    right: 1024,
+    bottom: 2000,
+    left: 0,
   })),
 }));
 
@@ -26,12 +33,8 @@ describe("useCursorVisibility", () => {
   });
 
   it("when called, then returns the body rect", () => {
-    const { result } = renderHook(() =>
-      useCursorVisibility({ editor: null }),
-    );
-    expect(result.current).toEqual(
-      expect.objectContaining({ width: 1024, height: 2000 }),
-    );
+    const { result } = renderHook(() => useCursorVisibility({ editor: null }));
+    expect(result.current).toEqual(expect.objectContaining({ width: 1024, height: 2000 }));
   });
 
   it("when editor is null, then does not scroll", () => {
@@ -67,9 +70,7 @@ describe("useCursorVisibility", () => {
     } as any;
 
     renderHook(() => useCursorVisibility({ editor, overlayHeight: 100 }));
-    expect(scrollToSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ behavior: "smooth" }),
-    );
+    expect(scrollToSpy).toHaveBeenCalledWith(expect.objectContaining({ behavior: "smooth" }));
   });
 
   it("when there is enough space, then does not scroll", () => {
@@ -88,7 +89,14 @@ describe("useCursorVisibility", () => {
   it("when body fits in viewport, then does not scroll", () => {
     // Make body height smaller than window
     vi.mocked(useBodyRect).mockReturnValue({
-      x: 0, y: 0, width: 1024, height: 500, top: 0, right: 1024, bottom: 500, left: 0,
+      x: 0,
+      y: 0,
+      width: 1024,
+      height: 500,
+      top: 0,
+      right: 1024,
+      bottom: 500,
+      left: 0,
     });
 
     const editor = {

@@ -46,7 +46,9 @@ export function useSettings() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
-    } catch { /* quota exceeded or unavailable */ }
+    } catch {
+      /* quota exceeded or unavailable */
+    }
   }, [settings]);
 
   useEffect(() => {

@@ -26,7 +26,9 @@ test.describe("when navigating across 2 editors", () => {
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("when ArrowRight is pressed repeatedly, then selection crosses from editor 1 to editor 2", async ({ page }) => {
+  test("when ArrowRight is pressed repeatedly, then selection crosses from editor 1 to editor 2", async ({
+    page,
+  }) => {
     const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
     const box = await p.boundingBox();
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
@@ -41,7 +43,9 @@ test.describe("when navigating across 2 editors", () => {
     expect(await editorOfSelection(page, 2)).toBe(1);
   });
 
-  test("when ArrowLeft is pressed repeatedly, then selection crosses from editor 2 to editor 1", async ({ page }) => {
+  test("when ArrowLeft is pressed repeatedly, then selection crosses from editor 2 to editor 1", async ({
+    page,
+  }) => {
     const p = page.locator(".simple-editor-wrapper").nth(1).locator("p").first();
     const box = await p.boundingBox();
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
@@ -81,7 +85,9 @@ test.describe("when navigating across 3 editors", () => {
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("when ArrowDown is pressed from E1, then selection eventually reaches E2 and E3", async ({ page }) => {
+  test("when ArrowDown is pressed from E1, then selection eventually reaches E2 and E3", async ({
+    page,
+  }) => {
     // Click a word in E1
     const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
     const box = await p.boundingBox();

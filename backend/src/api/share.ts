@@ -71,7 +71,8 @@ export function handleResolveShare() {
         await createUserWorkspace(supabase, user.id, result.workspaceId, "");
       } catch (err: unknown) {
         const isDuplicate =
-          err instanceof Error && (err.message?.includes("23505") || err.message?.includes("unique"));
+          err instanceof Error &&
+          (err.message?.includes("23505") || err.message?.includes("unique"));
         if (!isDuplicate) {
           console.error("Failed to add workspace to hub:", err);
           return c.json({ error: "Internal server error" }, 500);

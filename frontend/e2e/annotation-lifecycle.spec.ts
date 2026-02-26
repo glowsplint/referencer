@@ -30,7 +30,9 @@ test.describe("when annotating in locked mode", () => {
     await page.keyboard.press("c");
   });
 
-  test("when a word is clicked and Enter is pressed, then annotation card appears in panel", async ({ page }) => {
+  test("when a word is clicked and Enter is pressed, then annotation card appears in panel", async ({
+    page,
+  }) => {
     // Click a word to select it, then press Enter to confirm
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
@@ -80,7 +82,9 @@ test.describe("when annotating in locked mode", () => {
     await expect(textarea).toHaveValue("My note");
   });
 
-  test("when Escape is pressed on empty annotation, then textarea blurs without saving", async ({ page }) => {
+  test("when Escape is pressed on empty annotation, then textarea blurs without saving", async ({
+    page,
+  }) => {
     await clickWordInEditor(page, 0);
     await page.keyboard.press("Enter");
 
@@ -179,7 +183,9 @@ test.describe("when annotating in locked mode", () => {
     });
   });
 
-  test("when annotations are created from different words, then all show in panel", async ({ page }) => {
+  test("when annotations are created from different words, then all show in panel", async ({
+    page,
+  }) => {
     // Click first word, confirm and add annotation
     await clickWordInEditor(page, 0, 30);
     await page.keyboard.press("Enter");

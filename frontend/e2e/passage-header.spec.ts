@@ -6,7 +6,9 @@ test.describe("when interacting with passage headers", () => {
     await expect(page.locator(".simple-editor p").first()).toBeVisible();
   });
 
-  test("when workspace loads, then passage header shows passage name above editor", async ({ page }) => {
+  test("when workspace loads, then passage header shows passage name above editor", async ({
+    page,
+  }) => {
     const header = page.getByTestId("passageHeader-0");
     await expect(header).toBeVisible();
     // Default name is the Bible passage reference
@@ -33,7 +35,9 @@ test.describe("when interacting with passage headers", () => {
     await expect(page.getByTestId("passageHeader-0")).toHaveText("My Custom Passage");
   });
 
-  test("when passage header is renamed, then management pane reflects the change", async ({ page }) => {
+  test("when passage header is renamed, then management pane reflects the change", async ({
+    page,
+  }) => {
     // Rename via header
     const header = page.getByTestId("passageHeader-0");
     await header.dblclick();
@@ -59,7 +63,9 @@ test.describe("when interacting with passage headers", () => {
     await expect(page.getByTestId("passageHeader-2")).toHaveText("Passage 3");
   });
 
-  test("when Escape is pressed during rename, then passage header rename is cancelled", async ({ page }) => {
+  test("when Escape is pressed during rename, then passage header rename is cancelled", async ({
+    page,
+  }) => {
     const header = page.getByTestId("passageHeader-0");
     await header.dblclick();
 

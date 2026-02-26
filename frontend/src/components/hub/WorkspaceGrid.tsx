@@ -91,7 +91,9 @@ export function WorkspaceGrid({
     setViewMode(mode);
     try {
       localStorage.setItem(STORAGE_KEYS.HUB_VIEW_MODE, mode);
-    } catch { /* quota exceeded or unavailable */ }
+    } catch {
+      /* quota exceeded or unavailable */
+    }
   };
 
   const handleOpen = (id: string) => navigate(`#/${id}`);
@@ -134,8 +136,8 @@ export function WorkspaceGrid({
 
     // Sort by name (case-insensitive)
     items.sort((a, b) => {
-      const nameA = a.kind === "workspace" ? (a.workspace.title || "Untitled") : a.node.folder.name;
-      const nameB = b.kind === "workspace" ? (b.workspace.title || "Untitled") : b.node.folder.name;
+      const nameA = a.kind === "workspace" ? a.workspace.title || "Untitled" : a.node.folder.name;
+      const nameB = b.kind === "workspace" ? b.workspace.title || "Untitled" : b.node.folder.name;
       return nameA.localeCompare(nameB, undefined, { sensitivity: "base" });
     });
 
@@ -168,7 +170,7 @@ export function WorkspaceGrid({
 
       const { field, direction } = sortConfig;
       const getTitle = (item: MixedItem) =>
-        item.kind === "workspace" ? (item.workspace.title || "Untitled") : item.node.folder.name;
+        item.kind === "workspace" ? item.workspace.title || "Untitled" : item.node.folder.name;
       const getDate = (item: MixedItem, f: "createdAt" | "updatedAt") =>
         item.kind === "workspace" ? item.workspace[f] : item.node.folder[f];
 
@@ -309,9 +311,7 @@ export function WorkspaceGrid({
                 Starred
               </h3>
               {starredItems.length === 0 ? (
-                <p className="text-sm text-muted-foreground/60 px-1">
-                  Star an item to pin it here
-                </p>
+                <p className="text-sm text-muted-foreground/60 px-1">Star an item to pin it here</p>
               ) : viewMode === "grid" ? (
                 <div
                   className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
@@ -320,9 +320,7 @@ export function WorkspaceGrid({
                   {starredItems.map(renderItem)}
                 </div>
               ) : (
-                <div className="flex flex-col gap-1">
-                  {starredItems.map(renderItem)}
-                </div>
+                <div className="flex flex-col gap-1">{starredItems.map(renderItem)}</div>
               )}
             </section>
 

@@ -2,7 +2,16 @@
 // toolbar, management panel, editor panes with dividers, annotation panel,
 // arrow overlay, and action console. Wires together all annotation tools
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
-import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject, type ReactNode } from "react";
+import {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  Fragment,
+  type RefObject,
+  type ReactNode,
+} from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -432,7 +441,9 @@ export function App({ workspaceId, navigate }: AppProps) {
                         <AnnotationPanel
                           {...annotationPanelProps}
                           placement="left"
-                          editorIndices={settings.commentPlacement === "both" ? editorColumns.left : undefined}
+                          editorIndices={
+                            settings.commentPlacement === "both" ? editorColumns.left : undefined
+                          }
                         />
                       </ErrorBoundary>
                     )}
@@ -468,13 +479,21 @@ export function App({ workspaceId, navigate }: AppProps) {
                         >
                           {renderEditorCell(0)}
                           {editorCount >= 2 && sectionVisibility[0] && sectionVisibility[1] && (
-                            <Divider onResize={handleColumnResize} containerRef={topRowRef} direction="horizontal" />
+                            <Divider
+                              onResize={handleColumnResize}
+                              containerRef={topRowRef}
+                              direction="horizontal"
+                            />
                           )}
                           {editorCount >= 2 && renderEditorCell(1)}
                         </div>
                         {/* Row divider */}
                         {editorCount > 2 && (
-                          <Divider onResize={handleRowResize} containerRef={containerRef} direction="vertical" />
+                          <Divider
+                            onResize={handleRowResize}
+                            containerRef={containerRef}
+                            direction="vertical"
+                          />
                         )}
                         {/* Bottom row */}
                         {editorCount > 2 && (
@@ -483,9 +502,16 @@ export function App({ workspaceId, navigate }: AppProps) {
                             className="flex flex-row min-w-0 min-h-0"
                             style={{ flex: `${100 - rowSplit} 0 0%` }}
                           >
-                            {renderEditorCell(2, editorCount === 3 && settings.thirdEditorFullWidth)}
+                            {renderEditorCell(
+                              2,
+                              editorCount === 3 && settings.thirdEditorFullWidth,
+                            )}
                             {editorCount >= 4 && sectionVisibility[2] && sectionVisibility[3] && (
-                              <Divider onResize={handleColumnResize} containerRef={bottomRowRef} direction="horizontal" />
+                              <Divider
+                                onResize={handleColumnResize}
+                                containerRef={bottomRowRef}
+                                direction="horizontal"
+                              />
                             )}
                             {editorCount >= 4 && renderEditorCell(3)}
                           </div>
@@ -493,7 +519,8 @@ export function App({ workspaceId, navigate }: AppProps) {
                       </>
                     ) : (
                       editorWidths.map((width, i) => {
-                        const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
+                        const showDivider =
+                          i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
                         return (
                           <Fragment key={editorKeys[i]}>
                             {showDivider && (
@@ -566,7 +593,9 @@ export function App({ workspaceId, navigate }: AppProps) {
                         <AnnotationPanel
                           {...annotationPanelProps}
                           placement="right"
-                          editorIndices={settings.commentPlacement === "both" ? editorColumns.right : undefined}
+                          editorIndices={
+                            settings.commentPlacement === "both" ? editorColumns.right : undefined
+                          }
                         />
                       </ErrorBoundary>
                     )}

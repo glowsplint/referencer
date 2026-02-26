@@ -30,9 +30,7 @@ describe("useMenuNavigation", () => {
   const items = ["apple", "banana", "cherry"];
 
   it("when autoSelectFirstItem is true (default), then starts with selectedIndex 0", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
     expect(result.current.selectedIndex).toBe(0);
   });
 
@@ -45,16 +43,12 @@ describe("useMenuNavigation", () => {
   });
 
   it("when items is empty, then returns undefined selectedIndex", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items: [] }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items: [] }));
     expect(result.current.selectedIndex).toBeUndefined();
   });
 
   it("when ArrowDown is pressed, then moves to next item", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
 
     act(() => {
       fireKeyDown(container, "ArrowDown");
@@ -63,82 +57,94 @@ describe("useMenuNavigation", () => {
   });
 
   it("when ArrowDown is pressed at last item, then wraps to first", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
 
     // Move to index 2
-    act(() => { fireKeyDown(container, "ArrowDown"); });
-    act(() => { fireKeyDown(container, "ArrowDown"); });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
     // Now at 2, next should wrap to 0
-    act(() => { fireKeyDown(container, "ArrowDown"); });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
     expect(result.current.selectedIndex).toBe(0);
   });
 
   it("when ArrowUp is pressed, then moves to previous item", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
 
     // Move down first
-    act(() => { fireKeyDown(container, "ArrowDown"); });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
     expect(result.current.selectedIndex).toBe(1);
 
-    act(() => { fireKeyDown(container, "ArrowUp"); });
+    act(() => {
+      fireKeyDown(container, "ArrowUp");
+    });
     expect(result.current.selectedIndex).toBe(0);
   });
 
   it("when ArrowUp is pressed at first item, then wraps to last", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
 
     // At index 0, ArrowUp should wrap to last
-    act(() => { fireKeyDown(container, "ArrowUp"); });
+    act(() => {
+      fireKeyDown(container, "ArrowUp");
+    });
     expect(result.current.selectedIndex).toBe(2);
   });
 
   it("when Tab is pressed, then moves to next; Shift+Tab moves to previous", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
 
-    act(() => { fireKeyDown(container, "Tab"); });
+    act(() => {
+      fireKeyDown(container, "Tab");
+    });
     expect(result.current.selectedIndex).toBe(1);
 
-    act(() => { fireKeyDown(container, "Tab", { shiftKey: true }); });
+    act(() => {
+      fireKeyDown(container, "Tab", { shiftKey: true });
+    });
     expect(result.current.selectedIndex).toBe(0);
   });
 
   it("when Home is pressed, then sets selectedIndex to 0", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
 
-    act(() => { fireKeyDown(container, "ArrowDown"); });
-    act(() => { fireKeyDown(container, "ArrowDown"); });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
     expect(result.current.selectedIndex).toBe(2);
 
-    act(() => { fireKeyDown(container, "Home"); });
+    act(() => {
+      fireKeyDown(container, "Home");
+    });
     expect(result.current.selectedIndex).toBe(0);
   });
 
   it("when End is pressed, then sets selectedIndex to last item", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
 
-    act(() => { fireKeyDown(container, "End"); });
+    act(() => {
+      fireKeyDown(container, "End");
+    });
     expect(result.current.selectedIndex).toBe(2);
   });
 
   it("when Enter is pressed with a selected item, then calls onSelect", () => {
     const onSelect = vi.fn();
-    renderHook(() =>
-      useMenuNavigation({ containerRef, items, onSelect }),
-    );
+    renderHook(() => useMenuNavigation({ containerRef, items, onSelect }));
 
-    act(() => { fireKeyDown(container, "Enter"); });
+    act(() => {
+      fireKeyDown(container, "Enter");
+    });
     expect(onSelect).toHaveBeenCalledWith("apple");
   });
 
@@ -148,17 +154,19 @@ describe("useMenuNavigation", () => {
       useMenuNavigation({ containerRef, items, onSelect, autoSelectFirstItem: false }),
     );
 
-    act(() => { fireKeyDown(container, "Enter"); });
+    act(() => {
+      fireKeyDown(container, "Enter");
+    });
     expect(onSelect).not.toHaveBeenCalled();
   });
 
   it("when Escape is pressed, then calls onClose", () => {
     const onClose = vi.fn();
-    renderHook(() =>
-      useMenuNavigation({ containerRef, items, onClose }),
-    );
+    renderHook(() => useMenuNavigation({ containerRef, items, onClose }));
 
-    act(() => { fireKeyDown(container, "Escape"); });
+    act(() => {
+      fireKeyDown(container, "Escape");
+    });
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -167,14 +175,20 @@ describe("useMenuNavigation", () => {
       useMenuNavigation({ containerRef, items, orientation: "horizontal" }),
     );
 
-    act(() => { fireKeyDown(container, "ArrowDown"); });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
     // Should remain at 0 since ArrowDown is ignored in horizontal
     expect(result.current.selectedIndex).toBe(0);
 
-    act(() => { fireKeyDown(container, "ArrowRight"); });
+    act(() => {
+      fireKeyDown(container, "ArrowRight");
+    });
     expect(result.current.selectedIndex).toBe(1);
 
-    act(() => { fireKeyDown(container, "ArrowLeft"); });
+    act(() => {
+      fireKeyDown(container, "ArrowLeft");
+    });
     expect(result.current.selectedIndex).toBe(0);
   });
 
@@ -183,10 +197,14 @@ describe("useMenuNavigation", () => {
       useMenuNavigation({ containerRef, items, orientation: "vertical" }),
     );
 
-    act(() => { fireKeyDown(container, "ArrowRight"); });
+    act(() => {
+      fireKeyDown(container, "ArrowRight");
+    });
     expect(result.current.selectedIndex).toBe(0);
 
-    act(() => { fireKeyDown(container, "ArrowDown"); });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
     expect(result.current.selectedIndex).toBe(1);
   });
 
@@ -195,16 +213,24 @@ describe("useMenuNavigation", () => {
       useMenuNavigation({ containerRef, items, orientation: "both" }),
     );
 
-    act(() => { fireKeyDown(container, "ArrowDown"); });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
     expect(result.current.selectedIndex).toBe(1);
 
-    act(() => { fireKeyDown(container, "ArrowRight"); });
+    act(() => {
+      fireKeyDown(container, "ArrowRight");
+    });
     expect(result.current.selectedIndex).toBe(2);
 
-    act(() => { fireKeyDown(container, "ArrowUp"); });
+    act(() => {
+      fireKeyDown(container, "ArrowUp");
+    });
     expect(result.current.selectedIndex).toBe(1);
 
-    act(() => { fireKeyDown(container, "ArrowLeft"); });
+    act(() => {
+      fireKeyDown(container, "ArrowLeft");
+    });
     expect(result.current.selectedIndex).toBe(0);
   });
 
@@ -214,7 +240,9 @@ describe("useMenuNavigation", () => {
       { initialProps: { query: "" } },
     );
 
-    act(() => { fireKeyDown(container, "ArrowDown"); });
+    act(() => {
+      fireKeyDown(container, "ArrowDown");
+    });
     expect(result.current.selectedIndex).toBe(1);
 
     rerender({ query: "b" });
@@ -222,19 +250,17 @@ describe("useMenuNavigation", () => {
   });
 
   it("when setSelectedIndex is called, then allows manual index setting", () => {
-    const { result } = renderHook(() =>
-      useMenuNavigation({ containerRef, items }),
-    );
+    const { result } = renderHook(() => useMenuNavigation({ containerRef, items }));
 
-    act(() => { result.current.setSelectedIndex(2); });
+    act(() => {
+      result.current.setSelectedIndex(2);
+    });
     expect(result.current.selectedIndex).toBe(2);
   });
 
   it("when Enter is pressed during IME composition, then does not trigger onSelect", () => {
     const onSelect = vi.fn();
-    renderHook(() =>
-      useMenuNavigation({ containerRef, items, onSelect }),
-    );
+    renderHook(() => useMenuNavigation({ containerRef, items, onSelect }));
 
     act(() => {
       const event = new KeyboardEvent("keydown", {

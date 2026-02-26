@@ -67,7 +67,12 @@ export function AnnotationPanel({
   onToggleReaction,
   onToggleReplyReaction,
 }: AnnotationPanelProps) {
-  const allPositions = useAllHighlightPositions(editorsRef, layers, containerRef, sectionVisibility);
+  const allPositions = useAllHighlightPositions(
+    editorsRef,
+    layers,
+    containerRef,
+    sectionVisibility,
+  );
   const positions = editorIndices
     ? allPositions.filter((p) => editorIndices.includes(p.editorIndex))
     : allPositions;
@@ -150,9 +155,7 @@ export function AnnotationPanel({
   const anyExpanded = useMemo(() => {
     const visibleCommentCount = layers.reduce(
       (count, layer) =>
-        layer.visible
-          ? count + layer.highlights.filter((h) => h.type === "comment").length
-          : count,
+        layer.visible ? count + layer.highlights.filter((h) => h.type === "comment").length : count,
       0,
     );
     return !collapsedIds || collapsedIds.size < visibleCommentCount;

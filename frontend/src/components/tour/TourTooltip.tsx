@@ -33,7 +33,9 @@ export function TourTooltip({
 
   const styles: CSSProperties = {
     ...floatingStyles,
-    ...(vignetteshadow ? { boxShadow: "0 0 400px 300px rgba(0,0,0,0.5), 0 0 120px 50px rgba(0,0,0,0.8)" } : {}),
+    ...(vignetteshadow
+      ? { boxShadow: "0 0 400px 300px rgba(0,0,0,0.5), 0 0 120px 50px rgba(0,0,0,0.8)" }
+      : {}),
   };
 
   return (

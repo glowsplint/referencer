@@ -45,86 +45,88 @@ async function drawArrowViaEnter(page: import("@playwright/test").Page) {
 }
 
 test.describe("arrow endpoint highlights", () => {
+  test("when an arrow is drawn, then endpoints are highlighted as inline decorations", async ({
+    page,
+  }) => {
+    await drawArrowViaEnter(page);
 
-test("when an arrow is drawn, then endpoints are highlighted as inline decorations", async ({ page }) => {
-  await drawArrowViaEnter(page);
+    // Arrow should be drawn
+    await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+      timeout: 2000,
+    });
 
-  // Arrow should be drawn
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
-    timeout: 2000,
+    // New arrow endpoints should be highlighted as inline decorations in the editor.
+    // Note: if a new endpoint shares a word with an existing arrow endpoint, ProseMirror
+    // merges the decorations, so the count may increase by 1 instead of 2.
+    const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
+    const count = await endpointDecorations.count();
+    expect(count).toBeGreaterThanOrEqual(initialEndpointCount + 1);
   });
 
-  // New arrow endpoints should be highlighted as inline decorations in the editor.
-  // Note: if a new endpoint shares a word with an existing arrow endpoint, ProseMirror
-  // merges the decorations, so the count may increase by 1 instead of 2.
-  const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
-  const count = await endpointDecorations.count();
-  expect(count).toBeGreaterThanOrEqual(initialEndpointCount + 1);
-});
+  test("when an arrow is drawn, then SVG uses mix-blend-mode multiply for text visibility", async ({
+    page,
+  }) => {
+    await drawArrowViaEnter(page);
 
-test("when an arrow is drawn, then SVG uses mix-blend-mode multiply for text visibility", async ({
-  page,
-}) => {
-  await drawArrowViaEnter(page);
+    await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+      timeout: 2000,
+    });
 
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
-    timeout: 2000,
+    // Verify the plugin's visual SVG uses mix-blend-mode multiply (light mode default)
+    const svg = page.getByTestId("editor-arrow-visual").first();
+    const blendMode = await svg.evaluate((el) => window.getComputedStyle(el).mixBlendMode);
+    expect(blendMode).toBe("multiply");
   });
 
-  // Verify the plugin's visual SVG uses mix-blend-mode multiply (light mode default)
-  const svg = page.getByTestId("editor-arrow-visual").first();
-  const blendMode = await svg.evaluate((el) => window.getComputedStyle(el).mixBlendMode);
-  expect(blendMode).toBe("multiply");
-});
+  test("when an arrow is drawn, then endpoint decorations, line, and arrowhead share same color", async ({
+    page,
+  }) => {
+    await drawArrowViaEnter(page);
 
-test("when an arrow is drawn, then endpoint decorations, line, and arrowhead share same color", async ({ page }) => {
-  await drawArrowViaEnter(page);
+    await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+      timeout: 2000,
+    });
 
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
-    timeout: 2000,
+    const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
+    const count = await endpointDecorations.count();
+    expect(count).toBeGreaterThanOrEqual(initialEndpointCount + 1);
+
+    // Verify endpoint has a non-transparent background (use one without word-selection
+    // since ProseMirror merges overlapping decoration styles)
+    const cleanEndpoint = page.locator(".ProseMirror .arrow-endpoint:not(.word-selection)").first();
+    const endpointBg = await cleanEndpoint.evaluate(
+      (el) => window.getComputedStyle(el).backgroundColor,
+    );
+    expect(endpointBg).toBeTruthy();
+    expect(endpointBg).not.toBe("rgba(0, 0, 0, 0)");
+
+    // Verify arrow line stroke color exists (use .last() to get the newly drawn arrow)
+    const lineStroke = await page.getByTestId("arrow-line").last().getAttribute("stroke");
+    expect(lineStroke).toBeTruthy();
+
+    // Verify arrowhead polygon fill matches line stroke
+    const arrowheadFill = await page.locator("marker polygon").first().getAttribute("fill");
+    expect(arrowheadFill).toBe(lineStroke);
   });
 
-  const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
-  const count = await endpointDecorations.count();
-  expect(count).toBeGreaterThanOrEqual(initialEndpointCount + 1);
+  test("when editor is unlocked, then arrow endpoint decorations disappear", async ({ page }) => {
+    await drawArrowViaEnter(page);
 
-  // Verify endpoint has a non-transparent background (use one without word-selection
-  // since ProseMirror merges overlapping decoration styles)
-  const cleanEndpoint = page.locator(".ProseMirror .arrow-endpoint:not(.word-selection)").first();
-  const endpointBg = await cleanEndpoint.evaluate(
-    (el) => window.getComputedStyle(el).backgroundColor,
-  );
-  expect(endpointBg).toBeTruthy();
-  expect(endpointBg).not.toBe("rgba(0, 0, 0, 0)");
+    await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
+      timeout: 2000,
+    });
 
-  // Verify arrow line stroke color exists (use .last() to get the newly drawn arrow)
-  const lineStroke = await page.getByTestId("arrow-line").last().getAttribute("stroke");
-  expect(lineStroke).toBeTruthy();
+    const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
+    const countBefore = await endpointDecorations.count();
+    expect(countBefore).toBeGreaterThanOrEqual(initialEndpointCount + 1);
 
-  // Verify arrowhead polygon fill matches line stroke
-  const arrowheadFill = await page.locator("marker polygon").first().getAttribute("fill");
-  expect(arrowheadFill).toBe(lineStroke);
-});
+    // Unlock editor — endpoint decorations should disappear
+    await page.getByTestId("lockButton").click();
+    await expect(endpointDecorations).toHaveCount(0, { timeout: 2000 });
 
-test("when editor is unlocked, then arrow endpoint decorations disappear", async ({ page }) => {
-  await drawArrowViaEnter(page);
-
-  await expect(page.getByTestId("arrow-line")).toHaveCount(initialArrowCount + 1, {
-    timeout: 2000,
+    // Lock again — endpoint decorations should reappear
+    await page.getByTestId("lockButton").click();
+    const countAfter = await endpointDecorations.count();
+    expect(countAfter).toBe(countBefore);
   });
-
-  const endpointDecorations = page.locator(".ProseMirror .arrow-endpoint");
-  const countBefore = await endpointDecorations.count();
-  expect(countBefore).toBeGreaterThanOrEqual(initialEndpointCount + 1);
-
-  // Unlock editor — endpoint decorations should disappear
-  await page.getByTestId("lockButton").click();
-  await expect(endpointDecorations).toHaveCount(0, { timeout: 2000 });
-
-  // Lock again — endpoint decorations should reappear
-  await page.getByTestId("lockButton").click();
-  const countAfter = await endpointDecorations.count();
-  expect(countAfter).toBe(countBefore);
-});
-
 }); // end arrow endpoint highlights describe

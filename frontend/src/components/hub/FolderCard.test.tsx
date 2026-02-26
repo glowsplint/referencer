@@ -137,7 +137,9 @@ describe("FolderCard", () => {
   describe("when the folder header is clicked", () => {
     it("then toggles expand/collapse", async () => {
       const user = userEvent.setup();
-      const workspaces = [makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "Inside WS" })];
+      const workspaces = [
+        makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "Inside WS" }),
+      ];
       renderCard({ workspaces });
 
       // Initially expanded (not collapsed), so workspace should be visible
