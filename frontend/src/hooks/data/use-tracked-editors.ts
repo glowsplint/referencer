@@ -12,7 +12,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
 
   const addEditor = useCallback(() => {
     const prevCount = raw.editorCount;
-    if (prevCount >= 3) return;
+    if (prevCount >= 4) return;
     const name = raw.addEditor();
     record({
       type: "addEditor",

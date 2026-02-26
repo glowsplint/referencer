@@ -32,6 +32,7 @@ const mockWorkspace = {
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
+    thirdEditorFullWidth: true,
   },
   annotations: { activeTool: "selection" as const },
   layers: [] as {
@@ -70,11 +71,16 @@ const mockWorkspace = {
   setSelectedArrow: vi.fn(),
   updateArrowStyle: vi.fn(),
   readOnly: false,
+  columnSplit: 50,
+  rowSplit: 50,
+  handleColumnResize: vi.fn(),
+  handleRowResize: vi.fn(),
   toggleManagementPane: vi.fn(),
   toggleOverscrollEnabled: vi.fn(),
   toggleHideOffscreenArrows: vi.fn(),
   toggleShowStatusBar: vi.fn(),
   toggleCommentPlacement: vi.fn(),
+  toggleThirdEditorFullWidth: vi.fn(),
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
   setActiveLayer: vi.fn(),
@@ -208,9 +214,11 @@ beforeEach(() => {
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
+    thirdEditorFullWidth: true,
   };
   mockWorkspace.layers = [];
   mockWorkspace.activeLayerId = null;
+  mockWorkspace.editorCount = 1;
   mockWorkspace.editorWidths = [100];
   mockWorkspace.editorKeys = [1];
   mockWorkspace.sectionVisibility = [true];
@@ -299,6 +307,7 @@ describe("App (desktop)", () => {
 
   describe("when multiple editor panes are configured", () => {
     it("then renders one pane per editor width", () => {
+      mockWorkspace.editorCount = 2;
       mockWorkspace.editorWidths = [50, 50];
       mockWorkspace.editorKeys = [1, 2];
       mockWorkspace.sectionVisibility = [true, true];

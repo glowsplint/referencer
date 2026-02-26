@@ -69,8 +69,8 @@ describe("useTrackedEditors", () => {
     expect(raw.addEditor).toHaveBeenCalledWith({ name: "Passage 3" });
   });
 
-  it("when addEditor is called at max (3 editors), then does nothing", () => {
-    const raw = createMockEditors({ editorCount: 3 });
+  it("when addEditor is called at max (4 editors), then does nothing", () => {
+    const raw = createMockEditors({ editorCount: 4 });
     const history = createMockHistory();
 
     const { result } = renderHook(() => useTrackedEditors(raw, history));

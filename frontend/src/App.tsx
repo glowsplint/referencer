@@ -2,7 +2,7 @@
 // toolbar, management panel, editor panes with dividers, annotation panel,
 // arrow overlay, and action console. Wires together all annotation tools
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
-import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject, type ReactNode } from "react";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -46,6 +46,15 @@ import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annot
 import { useCurrentUserName } from "./hooks/data/use-current-user-name";
 import { apiFetch } from "@/lib/api-client";
 
+function getEditorColumns(editorCount: number): { left: number[]; right: number[] } {
+  const left: number[] = [];
+  const right: number[] = [];
+  for (let i = 0; i < editorCount; i++) {
+    (i % 2 === 0 ? left : right).push(i);
+  }
+  return { left, right };
+}
+
 interface AppProps {
   workspaceId: string;
   navigate: (hash: string) => void;
@@ -75,6 +84,10 @@ export function App({ workspaceId, navigate }: AppProps) {
     editorCount,
     activeEditor,
     editorWidths,
+    columnSplit,
+    rowSplit,
+    handleColumnResize,
+    handleRowResize,
     isManagementPaneOpen,
     setActiveLayer,
     addHighlight,
@@ -129,6 +142,8 @@ export function App({ workspaceId, navigate }: AppProps) {
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const topRowRef = useRef<HTMLDivElement>(null);
+  const bottomRowRef = useRef<HTMLDivElement>(null);
   const { collapsedIds, toggleCollapse, collapseAll, expandAll } =
     useCollapsedAnnotations(workspaceId);
   const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
@@ -263,16 +278,34 @@ export function App({ workspaceId, navigate }: AppProps) {
     ? (layers.find((l) => l.id === activeLayerId)?.color ?? null)
     : null;
 
-  const hasAnyAnnotations = useMemo(
-    () =>
+  const editorColumns = useMemo(() => getEditorColumns(editorCount), [editorCount]);
+
+  const hasAnnotationsForEditors = useCallback(
+    (indices: number[]) =>
       layers.some(
         (l) =>
           l.visible &&
           l.highlights.some(
-            (h) => h.type === "comment" && sectionVisibility[h.editorIndex] !== false,
+            (h) =>
+              h.type === "comment" &&
+              indices.includes(h.editorIndex) &&
+              sectionVisibility[h.editorIndex] !== false,
           ),
       ),
     [layers, sectionVisibility],
+  );
+
+  const hasAnyAnnotations = useMemo(
+    () => hasAnnotationsForEditors([...editorColumns.left, ...editorColumns.right]),
+    [hasAnnotationsForEditors, editorColumns],
+  );
+  const hasLeftAnnotations = useMemo(
+    () => hasAnnotationsForEditors(editorColumns.left),
+    [hasAnnotationsForEditors, editorColumns],
+  );
+  const hasRightAnnotations = useMemo(
+    () => hasAnnotationsForEditors(editorColumns.right),
+    [hasAnnotationsForEditors, editorColumns],
   );
 
   const handleCollapseAll = useCallback(() => {
@@ -330,6 +363,51 @@ export function App({ workspaceId, navigate }: AppProps) {
     onToggleReplyReaction: handleToggleReplyReaction,
   };
 
+  function renderEditorCell(i: number, fullWidth?: boolean): ReactNode {
+    const cellFlex = fullWidth ? "1 0 0%" : `${i % 2 === 0 ? columnSplit : 100 - columnSplit} 0 0%`;
+    return (
+      <div
+        key={editorKeys[i]}
+        className="min-w-0 min-h-0 overflow-hidden flex flex-col"
+        style={{
+          flex: cellFlex,
+          display: sectionVisibility[i] === false ? "none" : undefined,
+        }}
+      >
+        <PassageHeader
+          name={workspace.sectionNames[i]}
+          index={i}
+          onUpdateName={(name) => workspace.updateSectionName(i, name)}
+        />
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <ErrorBoundary>
+            <EditorPane
+              isLocked={settings.isLocked || effectiveReadOnly}
+              activeTool={annotations.activeTool}
+              content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
+              index={i}
+              fragment={workspace.yjs.getFragment(i)}
+              onEditorMount={handleEditorMount}
+              onFocus={handlePaneFocus}
+              onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
+              onMouseMove={settings.isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
+              onMouseUp={settings.isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
+              layers={layers}
+              selection={selection}
+              selectionHidden={selectionHidden}
+              activeLayerColor={activeLayerColor}
+              isDarkMode={settings.isDarkMode}
+              removeArrow={removeArrow}
+              sectionVisibility={sectionVisibility}
+              selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+              yjsSynced={workspace.yjs.synced}
+            />
+          </ErrorBoundary>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <WorkspaceProvider value={workspace}>
       <RecordingProvider value={recordingContextValue}>
@@ -348,16 +426,20 @@ export function App({ workspaceId, navigate }: AppProps) {
                 <div className="flex flex-1 min-w-0 min-h-0">
                   {!isMobile &&
                     settings.isLocked &&
-                    hasAnyAnnotations &&
-                    settings.commentPlacement === "left" && (
+                    ((settings.commentPlacement === "left" && hasAnyAnnotations) ||
+                      (settings.commentPlacement === "both" && hasLeftAnnotations)) && (
                       <ErrorBoundary silent>
-                        <AnnotationPanel {...annotationPanelProps} placement="left" />
+                        <AnnotationPanel
+                          {...annotationPanelProps}
+                          placement="left"
+                          editorIndices={settings.commentPlacement === "both" ? editorColumns.left : undefined}
+                        />
                       </ErrorBoundary>
                     )}
                   <div
                     ref={containerRef}
                     data-testid="editorContainer"
-                    className={`relative flex flex-1 min-w-0 min-h-0 ${settings.isMultipleRowsLayout ? "flex-col" : "flex-row"}${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${settings.isLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${settings.isLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
+                    className={`relative flex flex-1 min-w-0 min-h-0 flex-col${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${settings.isLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${settings.isLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
                   >
                     <ErrorBoundary silent>
                       <ArrowOverlay
@@ -376,80 +458,116 @@ export function App({ workspaceId, navigate }: AppProps) {
                         hideOffscreenArrows={settings.hideOffscreenArrows}
                       />
                     </ErrorBoundary>
-                    {editorWidths.map((width, i) => {
-                      const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
-                      const dividerDirection = settings.isMultipleRowsLayout
-                        ? ("vertical" as const)
-                        : ("horizontal" as const);
-                      return (
-                        <Fragment key={editorKeys[i]}>
-                          {showDivider && (
-                            <Divider
-                              onResize={(pct) => handleDividerResize(i - 1, pct)}
-                              containerRef={containerRef}
-                              direction={dividerDirection}
-                            />
+                    {!settings.isMultipleRowsLayout ? (
+                      <>
+                        {/* Top row */}
+                        <div
+                          ref={topRowRef}
+                          className="flex flex-row min-w-0 min-h-0"
+                          style={{ flex: editorCount > 2 ? `${rowSplit} 0 0%` : "1 0 0%" }}
+                        >
+                          {renderEditorCell(0)}
+                          {editorCount >= 2 && sectionVisibility[0] && sectionVisibility[1] && (
+                            <Divider onResize={handleColumnResize} containerRef={topRowRef} direction="horizontal" />
                           )}
+                          {editorCount >= 2 && renderEditorCell(1)}
+                        </div>
+                        {/* Row divider */}
+                        {editorCount > 2 && (
+                          <Divider onResize={handleRowResize} containerRef={containerRef} direction="vertical" />
+                        )}
+                        {/* Bottom row */}
+                        {editorCount > 2 && (
                           <div
-                            className="min-w-0 min-h-0 overflow-hidden flex flex-col"
-                            style={{
-                              flex: `${width} 0 0%`,
-                              display: sectionVisibility[i] === false ? "none" : undefined,
-                            }}
+                            ref={bottomRowRef}
+                            className="flex flex-row min-w-0 min-h-0"
+                            style={{ flex: `${100 - rowSplit} 0 0%` }}
                           >
-                            <PassageHeader
-                              name={workspace.sectionNames[i]}
-                              index={i}
-                              onUpdateName={(name) => workspace.updateSectionName(i, name)}
-                            />
-                            <div className="flex-1 min-h-0 overflow-hidden">
-                              <ErrorBoundary>
-                                <EditorPane
-                                  isLocked={settings.isLocked || effectiveReadOnly}
-                                  activeTool={annotations.activeTool}
-                                  content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
-                                  index={i}
-                                  fragment={workspace.yjs.getFragment(i)}
-                                  onEditorMount={handleEditorMount}
-                                  onFocus={handlePaneFocus}
-                                  onMouseDown={
-                                    settings.isLocked && !effectiveReadOnly
-                                      ? handleMouseDown
-                                      : undefined
-                                  }
-                                  onMouseMove={
-                                    settings.isLocked && !effectiveReadOnly
-                                      ? handleMouseMove
-                                      : undefined
-                                  }
-                                  onMouseUp={
-                                    settings.isLocked && !effectiveReadOnly
-                                      ? handleMouseUp
-                                      : undefined
-                                  }
-                                  layers={layers}
-                                  selection={selection}
-                                  selectionHidden={selectionHidden}
-                                  activeLayerColor={activeLayerColor}
-                                  isDarkMode={settings.isDarkMode}
-                                  removeArrow={removeArrow}
-                                  sectionVisibility={sectionVisibility}
-                                  selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-                                  yjsSynced={workspace.yjs.synced}
-                                />
-                              </ErrorBoundary>
-                            </div>
+                            {renderEditorCell(2, editorCount === 3 && settings.thirdEditorFullWidth)}
+                            {editorCount >= 4 && sectionVisibility[2] && sectionVisibility[3] && (
+                              <Divider onResize={handleColumnResize} containerRef={bottomRowRef} direction="horizontal" />
+                            )}
+                            {editorCount >= 4 && renderEditorCell(3)}
                           </div>
-                        </Fragment>
-                      );
-                    })}
+                        )}
+                      </>
+                    ) : (
+                      editorWidths.map((width, i) => {
+                        const showDivider = i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
+                        return (
+                          <Fragment key={editorKeys[i]}>
+                            {showDivider && (
+                              <Divider
+                                onResize={(pct) => handleDividerResize(i - 1, pct)}
+                                containerRef={containerRef}
+                                direction="vertical"
+                              />
+                            )}
+                            <div
+                              className="min-w-0 min-h-0 overflow-hidden flex flex-col"
+                              style={{
+                                flex: `${width} 0 0%`,
+                                display: sectionVisibility[i] === false ? "none" : undefined,
+                              }}
+                            >
+                              <PassageHeader
+                                name={workspace.sectionNames[i]}
+                                index={i}
+                                onUpdateName={(name) => workspace.updateSectionName(i, name)}
+                              />
+                              <div className="flex-1 min-h-0 overflow-hidden">
+                                <ErrorBoundary>
+                                  <EditorPane
+                                    isLocked={settings.isLocked || effectiveReadOnly}
+                                    activeTool={annotations.activeTool}
+                                    content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
+                                    index={i}
+                                    fragment={workspace.yjs.getFragment(i)}
+                                    onEditorMount={handleEditorMount}
+                                    onFocus={handlePaneFocus}
+                                    onMouseDown={
+                                      settings.isLocked && !effectiveReadOnly
+                                        ? handleMouseDown
+                                        : undefined
+                                    }
+                                    onMouseMove={
+                                      settings.isLocked && !effectiveReadOnly
+                                        ? handleMouseMove
+                                        : undefined
+                                    }
+                                    onMouseUp={
+                                      settings.isLocked && !effectiveReadOnly
+                                        ? handleMouseUp
+                                        : undefined
+                                    }
+                                    layers={layers}
+                                    selection={selection}
+                                    selectionHidden={selectionHidden}
+                                    activeLayerColor={activeLayerColor}
+                                    isDarkMode={settings.isDarkMode}
+                                    removeArrow={removeArrow}
+                                    sectionVisibility={sectionVisibility}
+                                    selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+                                    yjsSynced={workspace.yjs.synced}
+                                  />
+                                </ErrorBoundary>
+                              </div>
+                            </div>
+                          </Fragment>
+                        );
+                      })
+                    )}
                   </div>
                   {!isMobile &&
                     settings.isLocked &&
-                    hasAnyAnnotations &&
-                    settings.commentPlacement === "right" && (
+                    ((settings.commentPlacement === "right" && hasAnyAnnotations) ||
+                      (settings.commentPlacement === "both" && hasRightAnnotations)) && (
                       <ErrorBoundary silent>
-                        <AnnotationPanel {...annotationPanelProps} placement="right" />
+                        <AnnotationPanel
+                          {...annotationPanelProps}
+                          placement="right"
+                          editorIndices={settings.commentPlacement === "both" ? editorColumns.right : undefined}
+                        />
                       </ErrorBoundary>
                     )}
                   <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">

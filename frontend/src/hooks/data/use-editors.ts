@@ -33,8 +33,19 @@ export function useEditors() {
   const editorCountRef = useRef(DEFAULT_EDITOR_COUNT);
   const editorKeyCounterRef = useRef(DEFAULT_EDITOR_COUNT);
 
+  const [columnSplit, setColumnSplit] = useState(50);
+  const [rowSplit, setRowSplit] = useState(50);
+
+  const handleColumnResize = useCallback((pct: number) => {
+    setColumnSplit(Math.min(100 - MIN_EDITOR_PCT, Math.max(MIN_EDITOR_PCT, pct)));
+  }, []);
+
+  const handleRowResize = useCallback((pct: number) => {
+    setRowSplit(Math.min(100 - MIN_EDITOR_PCT, Math.max(MIN_EDITOR_PCT, pct)));
+  }, []);
+
   const addEditor = useCallback((opts?: { name?: string }): string => {
-    if (editorCountRef.current >= 3) {
+    if (editorCountRef.current >= 4) {
       return opts?.name ?? `Passage ${passageCounterRef.current}`;
     }
     if (!opts?.name) {
@@ -151,6 +162,10 @@ export function useEditors() {
     mountedEditorCount,
     activeEditor,
     editorWidths,
+    columnSplit,
+    rowSplit,
+    handleColumnResize,
+    handleRowResize,
     sectionVisibility,
     sectionNames,
     editorKeys,
