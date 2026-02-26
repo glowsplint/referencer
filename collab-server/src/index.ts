@@ -5,6 +5,28 @@ import { YjsRoom } from "./durable-object";
 import { verifyJwt } from "./jwt";
 import { createLogger, type Logger } from "./logger";
 
+// Secrets — set via `wrangler secret put <NAME>` from collab-server/
+//
+// SUPABASE_URL           — Supabase project URL (e.g. https://xxx.supabase.co)
+//                          Also set in: backend
+//
+// SUPABASE_SERVICE_KEY   — Supabase service-role key (full DB access)
+//                          Also set in: backend
+//
+// WS_JWT_SECRET          — Secret for verifying WebSocket auth JWTs
+//                          Also set in: backend (for signing)
+//                          Must be the same value in both workers.
+//
+// WS_JWT_SECRET_PREV     — Previous JWT secret for key rotation (optional)
+//                          Also set in: backend
+//
+// ALLOWED_ORIGIN         — CORS origin for WebSocket connections (optional)
+//                          Default: "" (allows all origins)
+//
+// Bindings — configured in collab-server/wrangler.toml
+//
+// YJS_ROOM               — Durable Object namespace for Yjs document rooms
+
 type Env = {
   Bindings: {
     YJS_ROOM: DurableObjectNamespace;
