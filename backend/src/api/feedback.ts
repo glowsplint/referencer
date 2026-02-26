@@ -58,8 +58,7 @@ export function handleFeedback() {
       });
 
       if (!resp.ok) {
-        const text = await resp.text();
-        console.error("GitHub API error:", resp.status, text);
+        console.error("GitHub API error:", resp.status);
         return c.json({ error: "Failed to create issue" }, 502);
       }
 
@@ -69,7 +68,7 @@ export function handleFeedback() {
       const data = (await resp.json()) as { html_url: string };
       return c.json({ ok: true, url: data.html_url });
     } catch (err) {
-      console.error("Feedback error:", err);
+      console.error("Feedback error");
       return c.json({ error: "Failed to submit feedback" }, 500);
     }
   };

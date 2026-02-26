@@ -12,7 +12,10 @@ function base64urlDecode(str: string): string {
   return atob(str.replace(/-/g, "+").replace(/_/g, "/"));
 }
 
-export async function verifyJwt(token: string, secret: string): Promise<WsJwtPayload | null> {
+async function verifyWithSecret(
+  token: string,
+  secret: string,
+): Promise<WsJwtPayload | null> {
   const parts = token.split(".");
   if (parts.length !== 3) return null;
 
@@ -41,4 +44,19 @@ export async function verifyJwt(token: string, secret: string): Promise<WsJwtPay
   if (payload.exp < Math.floor(Date.now() / 1000)) return null;
 
   return payload;
+}
+
+export async function verifyJwt(
+  token: string,
+  secret: string,
+  previousSecret?: string,
+): Promise<WsJwtPayload | null> {
+  const result = await verifyWithSecret(token, secret);
+  if (result) return result;
+
+  if (previousSecret) {
+    return verifyWithSecret(token, previousSecret);
+  }
+
+  return null;
 }

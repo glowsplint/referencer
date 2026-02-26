@@ -11,7 +11,8 @@ CREATE TABLE share_link (
     code TEXT PRIMARY KEY,
     workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
     access TEXT NOT NULL CHECK (access IN ('edit', 'readonly')),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ DEFAULT NULL
 );
 
 CREATE TABLE "user" (
@@ -114,3 +115,17 @@ CREATE TABLE user_preference (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (user_id, key)
 );
+
+-- Row-Level Security: defense-in-depth.
+-- The app uses the service key (bypasses RLS), but enabling RLS ensures
+-- that non-service keys get zero access by default.
+ALTER TABLE "user" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_provider ENABLE ROW LEVEL SECURITY;
+ALTER TABLE session ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workspace ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workspace_permission ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workspace_folder ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_workspace ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_preference ENABLE ROW LEVEL SECURITY;
+ALTER TABLE share_link ENABLE ROW LEVEL SECURITY;
+ALTER TABLE yjs_document ENABLE ROW LEVEL SECURITY;

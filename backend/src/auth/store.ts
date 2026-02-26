@@ -99,6 +99,25 @@ export async function createSession(
     expires_at: expiresAt,
   });
 
+  // Enforce max 10 concurrent sessions per user
+  const MAX_SESSIONS = 10;
+  const { data: sessions } = await supabase
+    .from("session")
+    .select("id, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true });
+
+  if (sessions && sessions.length > MAX_SESSIONS) {
+    const stale = sessions.slice(0, sessions.length - MAX_SESSIONS);
+    await supabase
+      .from("session")
+      .delete()
+      .in(
+        "id",
+        stale.map((s) => s.id),
+      );
+  }
+
   return token;
 }
 
@@ -168,6 +187,13 @@ export async function maybeRefreshSession(
       .update({ created_at: new Date().toISOString(), expires_at: newExpiry })
       .eq("id", hashedToken);
   }
+}
+
+export async function revokeAllUserSessions(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<void> {
+  await supabase.from("session").delete().eq("user_id", userId);
 }
 
 export async function cleanExpiredSessions(supabase: SupabaseClient): Promise<void> {

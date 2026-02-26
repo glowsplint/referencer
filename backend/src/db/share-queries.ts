@@ -9,9 +9,10 @@ export async function createShareLink(
   const maxRetries = 5;
   for (let i = 0; i < maxRetries; i++) {
     const code = generateCode();
+    const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
     const { error } = await supabase
       .from("share_link")
-      .insert({ code, workspace_id: workspaceId, access });
+      .insert({ code, workspace_id: workspaceId, access, expires_at });
     if (!error) return code;
     // Retry on unique constraint violation
   }
@@ -22,7 +23,6 @@ export async function resolveShareLink(
   supabase: SupabaseClient,
   code: string,
 ): Promise<{ workspaceId: string; access: string } | null> {
-  // TODO: Add `expires_at` column migration to share_link table
   const { data } = await supabase
     .from("share_link")
     .select("workspace_id, access, expires_at")
