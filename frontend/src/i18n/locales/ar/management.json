@@ -34,7 +34,8 @@
     "toggleEditorLayout": "تبديل تخطيط المحرر",
     "toggleEditorLock": "تبديل قفل المحرر",
     "toggleCommentPlacement": "تبديل موضع التعليقات",
-    "startTour": "جولة إرشادية"
+    "startTour": "جولة إرشادية",
+    "loadDemo": "تحميل المحتوى التجريبي"
   },
   "annotations": {
     "placeholder": "إضافة تعليق...",

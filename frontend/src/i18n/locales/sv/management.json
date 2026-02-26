@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Växla redigeringslayout",
     "toggleEditorLock": "Växla redigeringslås",
     "toggleCommentPlacement": "Växla kommentarplacering",
-    "startTour": "Guidad tur"
+    "startTour": "Guidad tur",
+    "loadDemo": "Ladda demoinnehåll"
   },
   "annotations": {
     "placeholder": "Lägg till anteckning...",

@@ -10,6 +10,7 @@ const { testDocRef } = vi.hoisted(() => ({
 vi.mock("@/data/default-workspace", () => ({
   createDefaultLayers: () => [],
   DEFAULT_SECTION_NAMES: ["Passage 1"],
+  DEFAULT_PASSAGE_CONTENTS: [{}],
 }));
 
 // Mock Yjs provider — return a real Y.Doc without WebSocket

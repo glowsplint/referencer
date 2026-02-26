@@ -34,7 +34,8 @@
     "toggleEditorLayout": "הצג/הסתר פריסת עורך",
     "toggleEditorLock": "הצג/הסתר נעילת עורך",
     "toggleCommentPlacement": "הצג/הסתר מיקום הערות",
-    "startTour": "סיור מודרך"
+    "startTour": "סיור מודרך",
+    "loadDemo": "טען תוכן הדגמה"
   },
   "annotations": {
     "placeholder": "הוספת הערה...",

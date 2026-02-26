@@ -13,7 +13,11 @@ import { useYjsUndo } from "./use-yjs-undo";
 import { useUnifiedUndo } from "./use-unified-undo";
 import { useYjsOffline } from "./use-yjs-offline";
 import { seedDefaultLayers } from "@/lib/yjs/annotations";
-import { createDefaultLayers } from "@/data/default-workspace";
+import {
+  createDefaultLayers,
+  DEFAULT_PASSAGE_CONTENTS,
+  DEFAULT_SECTION_NAMES,
+} from "@/data/default-workspace";
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
 
 export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
@@ -43,27 +47,45 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // data that hasn't been loaded yet (race between IDB async load and WS error).
   const readyForSeeding = yjs.synced && idbSynced;
 
-  // Seed default layers when Y.Doc is ready and empty.
-  // Wait for BOTH Yjs sync AND IndexedDB sync AND all editors to mount so that:
-  // 1. We don't overwrite layers already stored on the server (WS sync gate)
-  // 2. We don't overwrite layers persisted in IndexedDB (IDB sync gate)
-  // 3. EditorViews are available for proper ProseMirror<->Yjs position mapping
-  // 4. Editor content is loaded (child content-seeding effects run before this parent effect)
-  const seededRef = useRef(false);
+  // Load demo content on demand
+  const demoLoadRequestedRef = useRef(false);
+  const loadDemoContent = useCallback(() => {
+    if (readOnly) return;
+    const count = DEFAULT_SECTION_NAMES.length;
+    // Set up editor panes
+    rawEditorsHook.setEditorCount(count);
+    rawEditorsHook.setSectionNames([...DEFAULT_SECTION_NAMES]);
+    rawEditorsHook.setSectionVisibility(Array.from({ length: count }, () => true));
+    rawEditorsHook.setSplitPositions(
+      Array.from({ length: count - 1 }, (_, i) => ((i + 1) / count) * 100),
+    );
+    rawEditorsHook.setEditorKeys(Array.from({ length: count }, (_, i) => Date.now() + i));
+    demoLoadRequestedRef.current = true;
+  }, [readOnly, rawEditorsHook]);
+
+  // After editors mount from a demo load request, set content and seed layers
   useEffect(() => {
-    seededRef.current = false;
-  }, [workspaceId]);
-  const allEditorsMounted = rawEditorsHook.mountedEditorCount >= rawEditorsHook.editorCount;
-  useEffect(() => {
-    if (!yjs.doc || seededRef.current || !readyForSeeding || !allEditorsMounted) return;
-    seededRef.current = true;
+    if (!demoLoadRequestedRef.current) return;
+    if (!readyForSeeding) return;
+    const allMounted = rawEditorsHook.mountedEditorCount >= DEFAULT_SECTION_NAMES.length;
+    if (!allMounted) return;
+    demoLoadRequestedRef.current = false;
+    // Set editor content
+    for (let i = 0; i < DEFAULT_SECTION_NAMES.length; i++) {
+      const editor = trackedEditorsHook.editorsRef.current.get(i);
+      if (editor && DEFAULT_PASSAGE_CONTENTS[i]) {
+        editor.commands.setContent(DEFAULT_PASSAGE_CONTENTS[i]);
+      }
+    }
+    // Seed annotation layers
+    if (!yjs.doc) return;
     try {
       const views = buildEditorViewMap(trackedEditorsHook.editorsRef);
       seedDefaultLayers(yjs.doc, createDefaultLayers(), views);
     } catch (err) {
-      console.error("Failed to seed default layers:", err);
+      console.error("Failed to seed demo layers:", err);
     }
-  }, [yjs.doc, readyForSeeding, allEditorsMounted, trackedEditorsHook.editorsRef]);
+  }, [rawEditorsHook.mountedEditorCount, readyForSeeding, yjs.doc, trackedEditorsHook.editorsRef]);
 
   // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<TArgs extends unknown[], TReturn>(
@@ -487,6 +509,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     reorderEditors,
     updateSectionName,
     toggleSectionVisibility,
+    loadDemoContent,
     workspaceId: workspaceId ?? null,
     readOnly,
     isManagementPaneOpen,

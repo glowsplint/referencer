@@ -34,7 +34,8 @@
     "toggleEditorLayout": "የአርታዒ አቀማመጥን ቀያይር",
     "toggleEditorLock": "የአርታዒ መቆለፊያን ቀያይር",
     "toggleCommentPlacement": "የአስተያየት ቦታ ቀያይር",
-    "startTour": "መመሪያ ጉብኝት"
+    "startTour": "መመሪያ ጉብኝት",
+    "loadDemo": "ማሳያ ይዘት ጫን"
   },
   "annotations": {
     "placeholder": "ማብራሪያ ጨምር...",

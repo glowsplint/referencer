@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Toggle editor layout",
     "toggleEditorLock": "Toggle editor lock",
     "toggleCommentPlacement": "Toggle comment placement",
-    "startTour": "Guided tour"
+    "startTour": "Guided tour",
+    "loadDemo": "Load demo content"
   },
   "annotations": {
     "placeholder": "Add annotation...",

@@ -34,7 +34,8 @@
     "toggleEditorLayout": "संपादक लेआउट टॉगल करें",
     "toggleEditorLock": "संपादक लॉक टॉगल करें",
     "toggleCommentPlacement": "टिप्पणी स्थान टॉगल करें",
-    "startTour": "गाइडेड टूर"
+    "startTour": "गाइडेड टूर",
+    "loadDemo": "डेमो सामग्री लोड करें"
   },
   "annotations": {
     "placeholder": "टिप्पणी जोड़ें...",

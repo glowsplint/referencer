@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Перемкнути макет редактора",
     "toggleEditorLock": "Перемкнути блокування редактора",
     "toggleCommentPlacement": "Перемкнути розміщення коментарів",
-    "startTour": "Інтерактивний тур"
+    "startTour": "Інтерактивний тур",
+    "loadDemo": "Завантажити демо-вміст"
   },
   "annotations": {
     "placeholder": "Додати анотацію...",
