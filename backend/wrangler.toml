@@ -10,6 +10,10 @@ crons = ["0 * * * *"]
 binding = "RATE_LIMIT_KV"
 id = "8c948d37b14d4f0199076fc63d3de491"
 
+[[r2_buckets]]
+binding = "BUG_REPORT_IMAGES"
+bucket_name = "referencer-bug-report-images"
+
 # Secrets (SUPABASE_URL, SUPABASE_SERVICE_KEY, WS_JWT_SECRET, etc.)
 # are managed via `wrangler secret put`
 [vars]

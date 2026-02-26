@@ -71,6 +71,8 @@ export type Env = {
     GITHUB_ISSUES_REPO?: string;
     WS_JWT_SECRET: string;
     WS_JWT_SECRET_PREV?: string;
+    BUG_REPORT_IMAGES?: R2Bucket;
+    R2_PUBLIC_URL?: string;
   };
   Variables: {
     user: User | null;

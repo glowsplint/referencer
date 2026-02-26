@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { execSync } from "child_process";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -15,11 +16,20 @@ import { defineConfig } from "vite";
 
 const backendUrl = process.env.VITE_BACKEND_URL || "http://localhost:8787";
 const collabWsUrl = process.env.VITE_COLLAB_WS_URL || "ws://localhost:8788";
+let gitSha = "dev";
+try {
+  gitSha = execSync("git rev-parse --short HEAD").toString().trim();
+} catch {
+  // Fallback to "dev" when not in a git repo (e.g. CI, Docker)
+}
 
 // https://vite.dev/config/
 export default defineConfig({
   base: "/",
   plugins: [react(), tailwindcss()],
+  define: {
+    __APP_VERSION__: JSON.stringify(gitSha),
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

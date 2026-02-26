@@ -129,6 +129,10 @@
     "success": "Bug report submitted successfully. Thank you!",
     "error": "Failed to submit bug report. Please try again.",
     "rateLimited": "Too many reports. Please try again later.",
-    "reportBug": "Report a Bug"
+    "reportBug": "Report a Bug",
+    "screenshotLabel": "Screenshot",
+    "attachScreenshot": "Click or drag & drop to attach a screenshot",
+    "invalidImageType": "Only PNG, JPEG, WebP, and GIF images are allowed.",
+    "imageTooLarge": "Image must be under 5 MB."
   }
 }
