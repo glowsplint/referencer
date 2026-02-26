@@ -167,7 +167,7 @@ export async function maybeRefreshSession(
   supabase: SupabaseClient,
   token: string,
   maxAge: number,
-): Promise<void> {
+): Promise<boolean> {
   const hashedToken = await hashToken(token);
   const { data: session } = await supabase
     .from("session")
@@ -175,7 +175,7 @@ export async function maybeRefreshSession(
     .eq("id", hashedToken)
     .single();
 
-  if (!session) return;
+  if (!session) return false;
 
   const createdAt = new Date(session.created_at);
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -186,7 +186,10 @@ export async function maybeRefreshSession(
       .from("session")
       .update({ created_at: new Date().toISOString(), expires_at: newExpiry })
       .eq("id", hashedToken);
+    return true;
   }
+
+  return false;
 }
 
 export async function revokeAllUserSessions(
