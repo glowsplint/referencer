@@ -34,7 +34,8 @@
     "toggleEditorLayout": "திருத்தி அமைப்பை நிலைமாற்று",
     "toggleEditorLock": "திருத்திப் பூட்டை நிலைமாற்று",
     "toggleCommentPlacement": "கருத்து இடத்தை நிலைமாற்று",
-    "startTour": "வழிகாட்டிச் சுற்றுலா"
+    "startTour": "வழிகாட்டிச் சுற்றுலா",
+    "loadDemo": "டெமோ உள்ளடக்கத்தை ஏற்று"
   },
   "annotations": {
     "placeholder": "குறிப்பைச் சேர்...",

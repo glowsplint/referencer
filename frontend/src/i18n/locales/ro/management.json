@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Comutați aspectul editorului",
     "toggleEditorLock": "Comutați blocarea editorului",
     "toggleCommentPlacement": "Comutați plasarea comentariilor",
-    "startTour": "Tur ghidat"
+    "startTour": "Tur ghidat",
+    "loadDemo": "Încarcă conținut demonstrativ"
   },
   "annotations": {
     "placeholder": "Adaugă adnotare...",

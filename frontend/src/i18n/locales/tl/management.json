@@ -34,7 +34,8 @@
     "toggleEditorLayout": "I-toggle ang layout ng editor",
     "toggleEditorLock": "I-toggle ang lock ng editor",
     "toggleCommentPlacement": "I-toggle ang paglalagay ng komento",
-    "startTour": "Gabay na paglilibot"
+    "startTour": "Gabay na paglilibot",
+    "loadDemo": "I-load ang demo na nilalaman"
   },
   "annotations": {
     "placeholder": "Magdagdag ng anotasyon...",

@@ -34,7 +34,8 @@
     "toggleEditorLayout": "편집기 레이아웃 전환",
     "toggleEditorLock": "편집기 잠금 전환",
     "toggleCommentPlacement": "댓글 배치 전환",
-    "startTour": "가이드 투어"
+    "startTour": "가이드 투어",
+    "loadDemo": "데모 콘텐츠 로드"
   },
   "annotations": {
     "placeholder": "주석 추가...",

@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Togol susun atur editor",
     "toggleEditorLock": "Togol kunci editor",
     "toggleCommentPlacement": "Togol penempatan komen",
-    "startTour": "Lawatan berpandu"
+    "startTour": "Lawatan berpandu",
+    "loadDemo": "Muat kandungan demo"
   },
   "annotations": {
     "placeholder": "Tambah anotasi...",

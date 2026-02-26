@@ -40,6 +40,15 @@ function createMockSupabase() {
                   const found = getStore().find((r) => r[col1] === val1);
                   return Promise.resolve({ data: found ?? null });
                 },
+                order(col: string, opts: { ascending: boolean }) {
+                  const filtered = getStore().filter((r) => r[col1] === val1);
+                  filtered.sort((a, b) =>
+                    opts.ascending
+                      ? a[col] < b[col] ? -1 : 1
+                      : a[col] > b[col] ? -1 : 1,
+                  );
+                  return Promise.resolve({ data: filtered });
+                },
               };
             },
           };
@@ -76,6 +85,15 @@ function createMockSupabase() {
               const store = getStore();
               for (let i = store.length - 1; i >= 0; i--) {
                 if (store[i][col] < val) {
+                  store.splice(i, 1);
+                }
+              }
+              return Promise.resolve({ error: null });
+            },
+            in(col: string, vals: string[]) {
+              const store = getStore();
+              for (let i = store.length - 1; i >= 0; i--) {
+                if (vals.includes(store[i][col])) {
                   store.splice(i, 1);
                 }
               }

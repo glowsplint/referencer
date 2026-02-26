@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Geuza mpangilio wa kihariri",
     "toggleEditorLock": "Geuza kufuli ya kihariri",
     "toggleCommentPlacement": "Geuza uwekaji wa maoni",
-    "startTour": "Ziara ya mwongozo"
+    "startTour": "Ziara ya mwongozo",
+    "loadDemo": "Pakia maudhui ya onyesho"
   },
   "annotations": {
     "placeholder": "Ongeza kidokezo...",

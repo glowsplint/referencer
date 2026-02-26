@@ -34,7 +34,8 @@
     "toggleEditorLayout": "สลับรูปแบบตัวแก้ไข",
     "toggleEditorLock": "สลับการล็อกตัวแก้ไข",
     "toggleCommentPlacement": "สลับตำแหน่งความคิดเห็น",
-    "startTour": "ทัวร์แนะนำ"
+    "startTour": "ทัวร์แนะนำ",
+    "loadDemo": "โหลดเนื้อหาสาธิต"
   },
   "annotations": {
     "placeholder": "เพิ่มคำอธิบายประกอบ...",

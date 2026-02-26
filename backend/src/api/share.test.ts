@@ -121,9 +121,10 @@ const ENV_BINDINGS = { FRONTEND_URL } as Env["Bindings"];
 function createApp(withUser = true) {
   const app = new Hono<Env>();
 
-  // Middleware that provides supabase and user via context variables
+  // Middleware that provides supabase, logger, and user via context variables
   app.use("*", async (c, next) => {
     c.set("supabase", createMockSupabase());
+    c.set("logger", { info: () => {}, error: () => {}, warn: () => {} });
     if (withUser) {
       c.set("user", {
         id: USER_ID,

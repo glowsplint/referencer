@@ -34,7 +34,8 @@
     "toggleEditorLayout": "Alihkan tata letak editor",
     "toggleEditorLock": "Alihkan kunci editor",
     "toggleCommentPlacement": "Alihkan penempatan komentar",
-    "startTour": "Tur panduan"
+    "startTour": "Tur panduan",
+    "loadDemo": "Muat konten demo"
   },
   "annotations": {
     "placeholder": "Tambah anotasi...",

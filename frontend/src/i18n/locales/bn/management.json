@@ -34,7 +34,8 @@
     "toggleEditorLayout": "সম্পাদক লেআউট টগল করুন",
     "toggleEditorLock": "সম্পাদক লক টগল করুন",
     "toggleCommentPlacement": "মন্তব্য স্থান টগল করুন",
-    "startTour": "গাইডেড ট্যুর"
+    "startTour": "গাইডেড ট্যুর",
+    "loadDemo": "ডেমো কন্টেন্ট লোড করুন"
   },
   "annotations": {
     "placeholder": "টীকা যোগ করুন...",

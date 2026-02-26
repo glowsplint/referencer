@@ -34,7 +34,8 @@
     "toggleEditorLayout": "エディターレイアウトの切り替え",
     "toggleEditorLock": "エディターロックの切り替え",
     "toggleCommentPlacement": "コメント配置の切り替え",
-    "startTour": "ガイドツアー"
+    "startTour": "ガイドツアー",
+    "loadDemo": "デモコンテンツを読み込む"
   },
   "annotations": {
     "placeholder": "注釈を追加...",

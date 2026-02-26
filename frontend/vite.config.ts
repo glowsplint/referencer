@@ -4,6 +4,15 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+// Environment variables — set in frontend/.env.local (not committed)
+//
+// VITE_BACKEND_URL       — Backend URL for dev proxy (dev only, default: http://localhost:8787)
+// VITE_COLLAB_WS_URL     — WebSocket URL for dev proxy (dev only, default: ws://localhost:8788)
+//                          At runtime, the client auto-detects from window.location (see src/lib/yjs/provider.ts)
+// VITE_API_URL            — API base URL prepended to fetch paths (default: "", same origin)
+//                          See src/lib/api-client.ts
+// VITE_USE_POLLING        — Enable file polling in watch mode (dev only, default: false)
+
 const backendUrl = process.env.VITE_BACKEND_URL || "http://localhost:8787";
 const collabWsUrl = process.env.VITE_COLLAB_WS_URL || "ws://localhost:8788";
 

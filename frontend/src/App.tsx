@@ -21,7 +21,7 @@ import { ManagementPaneDivider } from "./components/ui/ManagementPaneDivider";
 import { TitleBar, SimpleEditorToolbar, EditorPane } from "./components/tiptap-templates/simple";
 import { UnsavedBanner } from "./components/UnsavedBanner";
 import { PassageHeader } from "./components/PassageHeader";
-import { DEFAULT_PASSAGE_CONTENTS, PLACEHOLDER_CONTENT } from "./data/default-workspace";
+import { PLACEHOLDER_CONTENT } from "./data/default-workspace";
 import { useEditorWorkspace } from "./hooks/data/use-editor-workspace";
 import { useWordSelection } from "./hooks/selection/use-word-selection";
 import { useDrawingMode } from "./hooks/tools/use-drawing-mode";
@@ -403,7 +403,7 @@ export function App({ workspaceId, navigate }: AppProps) {
             <EditorPane
               isLocked={settings.isLocked || effectiveReadOnly}
               activeTool={annotations.activeTool}
-              content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
+              content={PLACEHOLDER_CONTENT}
               index={i}
               fragment={workspace.yjs.getFragment(i)}
               onEditorMount={handleEditorMount}
@@ -566,7 +566,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                                   <EditorPane
                                     isLocked={settings.isLocked || effectiveReadOnly}
                                     activeTool={annotations.activeTool}
-                                    content={DEFAULT_PASSAGE_CONTENTS[i] ?? PLACEHOLDER_CONTENT}
+                                    content={PLACEHOLDER_CONTENT}
                                     index={i}
                                     fragment={workspace.yjs.getFragment(i)}
                                     onEditorMount={handleEditorMount}
