@@ -291,8 +291,12 @@ export function ButtonPane() {
       {/* Annotation tools — wrapped for tour spotlight targeting */}
       <div style={{ display: "contents" }} data-testid="annotationToolGroup">
         {toolButtons
-          .filter(({ tool }) =>
-            tool === "arrow" || tool === "highlight" || tool === "comments" || tool === "underline",
+          .filter(
+            ({ tool }) =>
+              tool === "arrow" ||
+              tool === "highlight" ||
+              tool === "comments" ||
+              tool === "underline",
           )
           .map(({ tool, icon, label, testId }) => {
             const isArrow = tool === "arrow";
@@ -318,7 +322,10 @@ export function ButtonPane() {
                   </TooltipContent>
                 </Tooltip>
                 {isArrow && arrowStylePickerOpen && (
-                  <div className="absolute left-full top-0 ml-1 z-50" data-testid="arrowStylePopover">
+                  <div
+                    className="absolute left-full top-0 ml-1 z-50"
+                    data-testid="arrowStylePopover"
+                  >
                     <ArrowStylePicker
                       index={-1}
                       activeStyle={activeArrowStyle}

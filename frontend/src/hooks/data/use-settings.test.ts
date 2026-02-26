@@ -6,7 +6,6 @@ beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
   document.documentElement.classList.remove("dark");
-
 });
 
 describe("useSettings", () => {

@@ -98,9 +98,7 @@ vi.mock("@/components/ShareDialog", () => ({
     open: boolean;
     onOpenChange: (v: boolean) => void;
     workspaceId: string;
-  }) => (
-    <div data-testid="shareDialog" data-open={String(open)} data-workspace-id={workspaceId} />
-  ),
+  }) => <div data-testid="shareDialog" data-open={String(open)} data-workspace-id={workspaceId} />,
 }));
 
 // ---------------------------------------------------------------------------
@@ -179,12 +177,8 @@ describe("EditorTour", () => {
 
       render(<EditorTour />);
       // Since t() is an identity function, the translated title is the key itself
-      expect(screen.getByTestId("tourStepTitle")).toHaveTextContent(
-        EDITOR_TOUR_STEPS[0].title,
-      );
-      expect(screen.getByTestId("tourStepContent")).toHaveTextContent(
-        EDITOR_TOUR_STEPS[0].content,
-      );
+      expect(screen.getByTestId("tourStepTitle")).toHaveTextContent(EDITOR_TOUR_STEPS[0].title);
+      expect(screen.getByTestId("tourStepContent")).toHaveTextContent(EDITOR_TOUR_STEPS[0].content);
     });
 
     it("then passes step index and total steps to TourOverlay", () => {

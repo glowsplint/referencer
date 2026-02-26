@@ -47,9 +47,7 @@ describe("useSpotlightRect", () => {
     document.body.appendChild(el);
 
     // Mock getBoundingClientRect
-    vi.spyOn(el, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(100, 200, 300, 400),
-    );
+    vi.spyOn(el, "getBoundingClientRect").mockReturnValue(new DOMRect(100, 200, 300, 400));
 
     const { result } = renderHook(() => useSpotlightRect("#target"));
 
@@ -83,21 +81,13 @@ describe("useSpotlightRect", () => {
     });
 
     // Mock parent's own getBoundingClientRect (should not be used for contents)
-    vi.spyOn(parent, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(0, 0, 0, 0),
-    );
+    vi.spyOn(parent, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 0, 0));
 
     // Mock children's bounding rects
-    vi.spyOn(child1, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(10, 20, 50, 30),
-    );
-    vi.spyOn(child2, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(40, 10, 60, 50),
-    );
+    vi.spyOn(child1, "getBoundingClientRect").mockReturnValue(new DOMRect(10, 20, 50, 30));
+    vi.spyOn(child2, "getBoundingClientRect").mockReturnValue(new DOMRect(40, 10, 60, 50));
 
-    const { result } = renderHook(() =>
-      useSpotlightRect('[data-testid="contentsEl"]'),
-    );
+    const { result } = renderHook(() => useSpotlightRect('[data-testid="contentsEl"]'));
 
     // Union: left=10, top=10, right=100, bottom=60 => width=90, height=50
     // After padding: x=6, y=6, width=98, height=58
@@ -127,18 +117,12 @@ describe("useSpotlightRect", () => {
     });
 
     // All children have zero size
-    vi.spyOn(child, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(0, 0, 0, 0),
-    );
+    vi.spyOn(child, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 0, 0));
 
     // Fallback to parent's rect
-    vi.spyOn(parent, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(50, 50, 100, 100),
-    );
+    vi.spyOn(parent, "getBoundingClientRect").mockReturnValue(new DOMRect(50, 50, 100, 100));
 
-    const { result } = renderHook(() =>
-      useSpotlightRect('[data-testid="emptyContents"]'),
-    );
+    const { result } = renderHook(() => useSpotlightRect('[data-testid="emptyContents"]'));
 
     // Padded parent rect
     expect(result.current).not.toBeNull();
@@ -168,12 +152,8 @@ describe("useSpotlightRect", () => {
       return origGetComputedStyle(el);
     });
 
-    vi.spyOn(child1, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(10, 10, 50, 50),
-    );
-    vi.spyOn(child2, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(20, 20, 50, 50),
-    );
+    vi.spyOn(child1, "getBoundingClientRect").mockReturnValue(new DOMRect(10, 10, 50, 50));
+    vi.spyOn(child2, "getBoundingClientRect").mockReturnValue(new DOMRect(20, 20, 50, 50));
 
     renderHook(() => useSpotlightRect('[data-testid="roContents"]'));
 
