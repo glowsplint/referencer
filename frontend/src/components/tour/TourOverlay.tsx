@@ -108,20 +108,22 @@ export function TourOverlay({
       className="fixed inset-0 z-[10000]"
       style={{ pointerEvents: "auto" }}
     >
-      {/* Dim layer with spotlight cutout */}
+      {/* Dim layer with spotlight cutout — z-1 */}
       <div
         className="absolute inset-0 bg-black/60"
         style={{
+          zIndex: 1,
           clipPath: clipPath === "none" ? undefined : clipPath,
           transition: "clip-path 300ms ease-in-out",
         }}
       />
 
-      {/* Vignette inside spotlight for centered steps */}
+      {/* Vignette inside spotlight for centered steps — z-2 */}
       {isCentered && rect && (
         <div
-          className="absolute"
+          className="absolute pointer-events-none"
           style={{
+            zIndex: 2,
             left: rect.x,
             top: rect.y,
             width: rect.width,
@@ -132,10 +134,10 @@ export function TourOverlay({
         />
       )}
 
-      {/* Click shield — blocks clicks outside tooltip */}
-      <div className="absolute inset-0" />
+      {/* Click shield — blocks clicks outside tooltip — z-3 */}
+      <div className="absolute inset-0" style={{ zIndex: 3 }} />
 
-      {/* Tooltip — z-10 to stay above the vignette layer */}
+      {/* Tooltip — z-4, above all overlay layers */}
       <TourTooltip
         step={step}
         stepIndex={stepIndex}
@@ -143,7 +145,7 @@ export function TourOverlay({
         onNext={onNext}
         onBack={onBack}
         onSkip={onSkip}
-        floatingStyles={{ ...resolvedStyles, zIndex: 10 }}
+        floatingStyles={{ ...resolvedStyles, zIndex: 4 }}
         floatingRef={refs.setFloating}
       />
     </div>,
