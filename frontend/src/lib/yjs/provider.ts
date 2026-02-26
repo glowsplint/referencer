@@ -1,7 +1,3 @@
-// TODO: Add WebSocket authentication token
-// Currently the collab server rejects tokenless connections and the app falls back to offline mode.
-// A future PR should implement: /auth/ws-token endpoint, async provider initialization, hook refactor.
-
 // Yjs document and WebSocket provider management.
 // Creates a Y.Doc per workspace with named XmlFragments for each editor pane.
 // Connects to the collab server via y-websocket's WebsocketProvider.
@@ -29,11 +25,12 @@ export interface WorkspaceProvider {
  *   - Array("layers") for annotation layers (Phase 2)
  *   - Map("editors-meta") for editor metadata (Phase 2)
  */
-export function createWorkspaceProvider(workspaceId: string): WorkspaceProvider {
+export function createWorkspaceProvider(workspaceId: string, token?: string): WorkspaceProvider {
   const doc = new Y.Doc();
 
   const wsProvider = new WebsocketProvider(WS_URL, workspaceId, doc, {
     connect: true,
+    params: token ? { token } : {},
   });
 
   const getFragment = (index: number): Y.XmlFragment => {

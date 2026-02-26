@@ -5,6 +5,7 @@ import { kvRateLimiter } from "../lib/rate-limit";
 import { createProviders, getProviderFromMap, type OAuthProvider } from "./providers";
 import { loadAuthConfig, type AuthConfig } from "./config";
 import { upsertUser, createSession, getSessionUser, deleteSession } from "./store";
+import { signJwt } from "../lib/jwt";
 import type { Env } from "../env";
 
 interface AuthState {
@@ -65,6 +66,38 @@ export function createAuthRoutes() {
     }
     deleteCookie(c, "__session", { path: "/" });
     return c.json({ ok: true });
+  });
+
+  // POST /auth/ws-ticket — issue a short-lived JWT for WebSocket auth
+  const wsTicketLimiter = kvRateLimiter({
+    windowMs: 60_000,
+    limit: 30,
+    keyGenerator: getClientIp,
+  });
+
+  auth.post("/ws-ticket", wsTicketLimiter, async (c) => {
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const body = await c.req.json<{ room?: string }>();
+    if (!body.room) {
+      return c.json({ error: "Missing room" }, 400);
+    }
+
+    const ticket = await signJwt(
+      {
+        sub: user.id,
+        room: body.room,
+        iss: "referencer",
+        aud: "collab",
+        exp: Math.floor(Date.now() / 1000) + 60,
+      },
+      c.env.WS_JWT_SECRET,
+    );
+
+    return c.json({ ticket });
   });
 
   // GET /auth/:provider — start OAuth flow

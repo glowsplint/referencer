@@ -15,6 +15,7 @@ export type Env = {
     SESSION_MAX_AGE?: string;
     GITHUB_ISSUES_TOKEN?: string;
     GITHUB_ISSUES_REPO?: string;
+    WS_JWT_SECRET: string;
   };
   Variables: {
     user: User | null;
