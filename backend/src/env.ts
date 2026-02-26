@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "./types";
+import type { Logger } from "./lib/logger";
 
 export type Env = {
   Bindings: {
@@ -21,5 +22,6 @@ export type Env = {
   Variables: {
     user: User | null;
     supabase: SupabaseClient;
+    logger: Logger;
   };
 };

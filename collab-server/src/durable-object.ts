@@ -5,6 +5,7 @@ import * as decoding from "lib0/decoding";
 import * as syncProtocol from "y-protocols/sync";
 import * as awarenessProtocol from "y-protocols/awareness";
 import { loadSnapshot, saveSnapshot } from "./persistence";
+import { log } from "./logger";
 
 // Message types matching y-websocket v3
 const MSG_SYNC = 0;
@@ -84,10 +85,10 @@ export class YjsRoom extends DurableObject<Env> {
           Y.applyUpdate(this.doc, snapshot);
         }
       } catch (err) {
-        console.error(
-          `[collab-do] failed to load snapshot from Supabase for ${this.roomName}:`,
-          err instanceof Error ? err.message : "unknown",
-        );
+        log.error("Failed to load snapshot from Supabase", {
+          roomName: this.roomName,
+          error: err instanceof Error ? err.message : "unknown",
+        });
       }
     }
 
@@ -235,9 +236,10 @@ export class YjsRoom extends DurableObject<Env> {
     if (!this.doc) return;
     const state = Y.encodeStateAsUpdate(this.doc);
     if (state.byteLength > 128 * 1024) {
-      console.warn(
-        `[collab-do] State exceeds 128KB (${state.byteLength} bytes), falling back to Supabase for ${this.roomName}`,
-      );
+      log.warn("State exceeds 128KB, falling back to Supabase", {
+        roomName: this.roomName,
+        bytes: state.byteLength,
+      });
       await this.saveToSupabase();
       return;
     }
@@ -297,7 +299,10 @@ export class YjsRoom extends DurableObject<Env> {
         state,
       );
     } catch (err) {
-      console.error(`[collab-do] failed to save snapshot to Supabase for ${this.roomName}:`, err instanceof Error ? err.message : "unknown");
+      log.error("Failed to save snapshot to Supabase", {
+        roomName: this.roomName,
+        error: err instanceof Error ? err.message : "unknown",
+      });
     }
   }
 }

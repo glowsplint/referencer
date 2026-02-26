@@ -19,13 +19,15 @@ const workspaces = new Hono<Env>();
 workspaces.get("/", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const supabase = c.get("supabase");
     const items = await listUserWorkspaces(supabase, user.id);
+    log.info("GET /api/workspaces", { userId: user.id, count: items.length });
     return c.json(items);
   } catch (err) {
-    console.error("GET /api/workspaces error:", err);
+    log.error("GET /api/workspaces failed", { userId: user.id });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -34,6 +36,7 @@ workspaces.get("/", async (c) => {
 workspaces.post("/", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const body = await c.req.json<{ workspaceId: string; title?: string }>();
@@ -47,9 +50,10 @@ workspaces.post("/", async (c) => {
     const supabase = c.get("supabase");
     await createUserWorkspace(supabase, user.id, body.workspaceId, body.title ?? "");
     await setPermission(supabase, body.workspaceId, user.id, "owner");
+    log.info("POST /api/workspaces", { userId: user.id, workspaceId: body.workspaceId });
     return c.json({ ok: true }, 201);
   } catch (err) {
-    console.error("POST /api/workspaces error:", err);
+    log.error("POST /api/workspaces failed", { userId: user.id });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -58,15 +62,20 @@ workspaces.post("/", async (c) => {
 workspaces.get("/:id", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const workspaceId = c.req.param("id");
     const supabase = c.get("supabase");
     const workspace = await getUserWorkspace(supabase, user.id, workspaceId);
     if (!workspace) return c.json({ error: "Not found" }, 404);
+    log.info("GET /api/workspaces/:id", { userId: user.id, workspaceId });
     return c.json(workspace);
   } catch (err) {
-    console.error("GET /api/workspaces/:id error:", err);
+    log.error("GET /api/workspaces/:id failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -75,6 +84,7 @@ workspaces.get("/:id", async (c) => {
 workspaces.patch("/:id", requirePermission("editor"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const workspaceId = c.req.param("id");
@@ -88,9 +98,13 @@ workspaces.patch("/:id", requirePermission("editor"), async (c) => {
 
     const supabase = c.get("supabase");
     await renameUserWorkspace(supabase, user.id, workspaceId, body.title);
+    log.info("PATCH /api/workspaces/:id", { userId: user.id, workspaceId });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("PATCH /api/workspaces/:id error:", err);
+    log.error("PATCH /api/workspaces/:id failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -99,14 +113,19 @@ workspaces.patch("/:id", requirePermission("editor"), async (c) => {
 workspaces.patch("/:id/touch", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const workspaceId = c.req.param("id");
     const supabase = c.get("supabase");
     await touchUserWorkspace(supabase, user.id, workspaceId);
+    log.info("PATCH /api/workspaces/:id/touch", { userId: user.id, workspaceId });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("PATCH /api/workspaces/:id/touch error:", err);
+    log.error("PATCH /api/workspaces/:id/touch failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -115,6 +134,7 @@ workspaces.patch("/:id/touch", async (c) => {
 workspaces.patch("/:id/favorite", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const workspaceId = c.req.param("id");
@@ -125,9 +145,17 @@ workspaces.patch("/:id/favorite", async (c) => {
 
     const supabase = c.get("supabase");
     await toggleFavoriteWorkspace(supabase, user.id, workspaceId, body.isFavorite);
+    log.info("PATCH /api/workspaces/:id/favorite", {
+      userId: user.id,
+      workspaceId,
+      isFavorite: body.isFavorite,
+    });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("PATCH /api/workspaces/:id/favorite error:", err);
+    log.error("PATCH /api/workspaces/:id/favorite failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -136,14 +164,19 @@ workspaces.patch("/:id/favorite", async (c) => {
 workspaces.delete("/:id", requirePermission("editor"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const workspaceId = c.req.param("id");
     const supabase = c.get("supabase");
     await deleteUserWorkspace(supabase, user.id, workspaceId);
+    log.info("DELETE /api/workspaces/:id", { userId: user.id, workspaceId });
     return c.json({ ok: true });
   } catch (err) {
-    console.error("DELETE /api/workspaces/:id error:", err);
+    log.error("DELETE /api/workspaces/:id failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -152,6 +185,7 @@ workspaces.delete("/:id", requirePermission("editor"), async (c) => {
 workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const sourceId = c.req.param("id");
@@ -162,9 +196,17 @@ workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
 
     const supabase = c.get("supabase");
     await duplicateWorkspace(supabase, user.id, sourceId, body.newWorkspaceId);
+    log.info("POST /api/workspaces/:id/duplicate", {
+      userId: user.id,
+      sourceId,
+      newWorkspaceId: body.newWorkspaceId,
+    });
     return c.json({ ok: true }, 201);
   } catch (err) {
-    console.error("POST /api/workspaces/:id/duplicate error:", err);
+    log.error("POST /api/workspaces/:id/duplicate failed", {
+      userId: user.id,
+      sourceId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -173,15 +215,20 @@ workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
 workspaces.get("/:id/permission", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
 
   try {
     const workspaceId = c.req.param("id");
     const supabase = c.get("supabase");
     const role = await getPermission(supabase, workspaceId, user.id);
     if (!role) return c.json({ error: "No permission" }, 404);
+    log.info("GET /api/workspaces/:id/permission", { userId: user.id, workspaceId, role });
     return c.json({ role });
   } catch (err) {
-    console.error("GET /api/workspaces/:id/permission error:", err);
+    log.error("GET /api/workspaces/:id/permission failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });

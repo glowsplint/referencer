@@ -11,9 +11,16 @@ import { workspaces } from "./api/workspaces";
 import { folders } from "./api/folders";
 import { preferences } from "./api/preferences";
 import { cleanExpiredSessions } from "./auth/store";
+import { createLogger } from "./lib/logger";
 import type { Env } from "./env";
 
 const app = new Hono<Env>();
+
+// Per-request logger with UUID trace ID
+app.use("*", async (c, next) => {
+  c.set("logger", createLogger());
+  await next();
+});
 
 const getClientIp = (c: any) =>
   c.req.header("cf-connecting-ip") ??
