@@ -10,6 +10,12 @@
     "removeAnnotation": "הסרת הערה",
     "removeArrow": "הסרת חץ",
     "removeUnderline": "הסרת קו תחתון",
+    "hideAnnotation": "הסתרת הערה",
+    "showAnnotation": "הצגת הערה",
+    "hideArrow": "הסתרת חץ",
+    "showArrow": "הצגת חץ",
+    "hideUnderline": "הסתרת קו תחתון",
+    "showUnderline": "הצגת קו תחתון",
     "allColorsInUse": "כל הצבעים בשימוש — הסירו שכבה תחילה."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "עזרה ושאלות נפוצות",
     "settings": "הגדרות",
     "toggleEditorLayout": "הצג/הסתר פריסת עורך",
-    "toggleEditorLock": "הצג/הסתר נעילת עורך"
+    "toggleEditorLock": "הצג/הסתר נעילת עורך",
+    "toggleCommentPlacement": "הצג/הסתר מיקום הערות",
+    "startTour": "סיור מודרך"
   },
   "annotations": {
     "placeholder": "הוספת הערה...",
     "removeCustomColour": "הסרת צבע מותאם",
     "addCustomColour": "הוספת צבע מותאם",
-    "addToCustomColours": "הוספה לצבעים מותאמים"
+    "addToCustomColours": "הוספה לצבעים מותאמים",
+    "replyPlaceholder": "תגובה...",
+    "replies": "תגובות",
+    "addReaction": "הוספת תגובה רגשית",
+    "removeReply": "הסרת תגובה"
   },
   "actionConsole": {
     "title": "מסוף פעולות",

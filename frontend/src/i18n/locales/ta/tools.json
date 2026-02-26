@@ -30,5 +30,36 @@
     "status": "குறிப்புகளை அழிக்க கிளிக் செய்து இழுக்கவும்.",
     "erased": "குறிப்பு அழிக்கப்பட்டது."
   },
-  "lockHint": "உள்ளடக்கத்தை இறுதி செய்த பிறகு திருத்தியைப் பூட்ட <kbd>Esc</kbd> <kbd>K</kbd> அழுத்தவும்."
+  "lockHint": "உள்ளடக்கத்தை இறுதி செய்த பிறகு திருத்தியைப் பூட்ட <kbd>Esc</kbd> <kbd>K</kbd> அழுத்தவும்.",
+  "recording": {
+    "label": "பதிவு",
+    "record": "பதிவு செய்",
+    "stopRecording": "பதிவை நிறுத்து",
+    "play": "இயக்கு",
+    "stop": "நிறுத்து",
+    "pause": "இடைநிறுத்து",
+    "next": "அடுத்த படி",
+    "previous": "முந்தைய படி",
+    "newRecording": "புதிய பதிவு",
+    "editRecording": "பதிவைத் திருத்து",
+    "deleteRecording": "பதிவை நீக்கு",
+    "duplicateRecording": "பதிவை நகலெடு",
+    "noRecordings": "இன்னும் பதிவுகள் இல்லை",
+    "recording": "பதிவு செய்கிறது...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "ஆரம்ப நிலை",
+    "speed": "வேகம்",
+    "transition": "மாற்றம்",
+    "instant": "உடனடி",
+    "fade": "மங்கல்",
+    "untitled": "பெயரிடப்படாத பதிவு",
+    "showLayer": "{{name}} காட்டு",
+    "hideLayer": "{{name}} மறை",
+    "showAnnotation": "குறிப்பைக் காட்டு",
+    "hideAnnotation": "குறிப்பை மறை",
+    "showSection": "பகுதி {{index}} காட்டு",
+    "hideSection": "பகுதி {{index}} மறை",
+    "deletedAnnotationWarning": "சில படிகள் நீக்கப்பட்ட குறிப்புகளைக் குறிப்பிடுகின்றன",
+    "statusHint": "பதிவு செய்கிறது… படிகளைப் பிடிக்க அடுக்கு/குறிப்பு தெரிவுநிலையை மாற்றவும். நிறுத்த ■ அழுத்தவும்."
+  }
 }

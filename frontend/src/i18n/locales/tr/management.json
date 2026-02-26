@@ -10,6 +10,12 @@
     "removeAnnotation": "Aciklamayi kaldir",
     "removeArrow": "Oku kaldir",
     "removeUnderline": "Alti cizgiyi kaldir",
+    "hideAnnotation": "Aciklamayi gizle",
+    "showAnnotation": "Aciklamayi goster",
+    "hideArrow": "Oku gizle",
+    "showArrow": "Oku goster",
+    "hideUnderline": "Alti cizgiyi gizle",
+    "showUnderline": "Alti cizgiyi goster",
     "allColorsInUse": "Tum renkler kullaniliyor — once bir katmani kaldirin."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Yardim ve SSS",
     "settings": "Ayarlar",
     "toggleEditorLayout": "Duzenleyici yerlesimini degistir",
-    "toggleEditorLock": "Duzenleyici kilidini ac/kapat"
+    "toggleEditorLock": "Duzenleyici kilidini ac/kapat",
+    "toggleCommentPlacement": "Yorum yerlesimini degistir",
+    "startTour": "Rehberli tur"
   },
   "annotations": {
     "placeholder": "Aciklama ekle...",
     "removeCustomColour": "Ozel rengi kaldir",
     "addCustomColour": "Ozel renk ekle",
-    "addToCustomColours": "Ozel renklere ekle"
+    "addToCustomColours": "Ozel renklere ekle",
+    "replyPlaceholder": "Yanitla...",
+    "replies": "yanitlar",
+    "addReaction": "Tepki ekle",
+    "removeReply": "Yaniti kaldir"
   },
   "actionConsole": {
     "title": "Eylem Konsolu",

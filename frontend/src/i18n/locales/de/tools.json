@@ -30,5 +30,36 @@
     "status": "Klicken und ziehen, um Anmerkungen zu löschen.",
     "erased": "Anmerkung gelöscht."
   },
-  "lockHint": "Drücken Sie <kbd>Esc</kbd> <kbd>K</kbd>, um den Editor zu sperren, sobald Sie den Inhalt fertiggestellt haben."
+  "lockHint": "Drücken Sie <kbd>Esc</kbd> <kbd>K</kbd>, um den Editor zu sperren, sobald Sie den Inhalt fertiggestellt haben.",
+  "recording": {
+    "label": "Aufnahme",
+    "record": "Aufnehmen",
+    "stopRecording": "Aufnahme stoppen",
+    "play": "Abspielen",
+    "stop": "Stopp",
+    "pause": "Pause",
+    "next": "Nächster Schritt",
+    "previous": "Vorheriger Schritt",
+    "newRecording": "Neue Aufnahme",
+    "editRecording": "Aufnahme bearbeiten",
+    "deleteRecording": "Aufnahme löschen",
+    "duplicateRecording": "Aufnahme duplizieren",
+    "noRecordings": "Noch keine Aufnahmen",
+    "recording": "Aufnahme läuft...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Ausgangszustand",
+    "speed": "Geschwindigkeit",
+    "transition": "Übergang",
+    "instant": "Sofort",
+    "fade": "Einblenden",
+    "untitled": "Unbenannte Aufnahme",
+    "showLayer": "{{name}} anzeigen",
+    "hideLayer": "{{name}} ausblenden",
+    "showAnnotation": "Anmerkung anzeigen",
+    "hideAnnotation": "Anmerkung ausblenden",
+    "showSection": "Abschnitt {{index}} anzeigen",
+    "hideSection": "Abschnitt {{index}} ausblenden",
+    "deletedAnnotationWarning": "Einige Schritte verweisen auf gelöschte Anmerkungen",
+    "statusHint": "Aufnahme… Schalten Sie die Sichtbarkeit von Ebenen/Anmerkungen um, um Schritte aufzuzeichnen. Drücken Sie ■ zum Stoppen."
+  }
 }

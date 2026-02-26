@@ -30,5 +30,36 @@
     "status": "টীকা মুছতে ক্লিক করুন এবং টানুন।",
     "erased": "টীকা মোছা হয়েছে।"
   },
-  "lockHint": "বিষয়বস্তু চূড়ান্ত করার পর সম্পাদক লক করতে <kbd>Esc</kbd> <kbd>K</kbd> চাপুন।"
+  "lockHint": "বিষয়বস্তু চূড়ান্ত করার পর সম্পাদক লক করতে <kbd>Esc</kbd> <kbd>K</kbd> চাপুন।",
+  "recording": {
+    "label": "রেকর্ডিং",
+    "record": "রেকর্ড",
+    "stopRecording": "রেকর্ডিং বন্ধ করুন",
+    "play": "চালান",
+    "stop": "বন্ধ করুন",
+    "pause": "বিরতি",
+    "next": "পরবর্তী ধাপ",
+    "previous": "পূর্ববর্তী ধাপ",
+    "newRecording": "নতুন রেকর্ডিং",
+    "editRecording": "রেকর্ডিং সম্পাদনা করুন",
+    "deleteRecording": "রেকর্ডিং মুছুন",
+    "duplicateRecording": "রেকর্ডিং ডুপ্লিকেট করুন",
+    "noRecordings": "এখনও কোনো রেকর্ডিং নেই",
+    "recording": "রেকর্ড হচ্ছে...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "প্রাথমিক অবস্থা",
+    "speed": "গতি",
+    "transition": "ট্রানজিশন",
+    "instant": "তাৎক্ষণিক",
+    "fade": "ফেড",
+    "untitled": "শিরোনামহীন রেকর্ডিং",
+    "showLayer": "{{name}} দেখান",
+    "hideLayer": "{{name}} লুকান",
+    "showAnnotation": "টীকা দেখান",
+    "hideAnnotation": "টীকা লুকান",
+    "showSection": "বিভাগ {{index}} দেখান",
+    "hideSection": "বিভাগ {{index}} লুকান",
+    "deletedAnnotationWarning": "কিছু ধাপ মুছে ফেলা টীকা উল্লেখ করে",
+    "statusHint": "রেকর্ড হচ্ছে… ধাপ ক্যাপচার করতে স্তর/টীকার দৃশ্যমানতা টগল করুন। বন্ধ করতে ■ চাপুন।"
+  }
 }

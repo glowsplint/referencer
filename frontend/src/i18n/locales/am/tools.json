@@ -30,5 +30,36 @@
     "status": "ማብራሪያዎችን ለማጥፋት ጠቅ ያድርጉ እና ይጎትቱ።",
     "erased": "ማብራሪያ ተጠፋ።"
   },
-  "lockHint": "ይዘቱን ከጨረሱ በኋላ አርታዒውን ለመቆለፍ <kbd>Esc</kbd> <kbd>K</kbd> ይጫኑ።"
+  "lockHint": "ይዘቱን ከጨረሱ በኋላ አርታዒውን ለመቆለፍ <kbd>Esc</kbd> <kbd>K</kbd> ይጫኑ።",
+  "recording": {
+    "label": "ቅጂ",
+    "record": "ቅዳ",
+    "stopRecording": "ቅጂ አቁም",
+    "play": "አጫውት",
+    "stop": "አቁም",
+    "pause": "አቁም ለጊዜው",
+    "next": "ቀጣይ ደረጃ",
+    "previous": "ቀዳሚ ደረጃ",
+    "newRecording": "አዲስ ቅጂ",
+    "editRecording": "ቅጂ አርትዕ",
+    "deleteRecording": "ቅጂ ሰርዝ",
+    "duplicateRecording": "ቅጂ ኮፒ",
+    "noRecordings": "እስካሁን ምንም ቅጂዎች የሉም",
+    "recording": "በመቅዳት ላይ...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "የመጀመሪያ ሁኔታ",
+    "speed": "ፍጥነት",
+    "transition": "ሽግግር",
+    "instant": "ፈጣን",
+    "fade": "ማደብዘዝ",
+    "untitled": "ያልተሰየመ ቅጂ",
+    "showLayer": "{{name}} አሳይ",
+    "hideLayer": "{{name}} ደብቅ",
+    "showAnnotation": "ማብራሪያ አሳይ",
+    "hideAnnotation": "ማብራሪያ ደብቅ",
+    "showSection": "ክፍል {{index}} አሳይ",
+    "hideSection": "ክፍል {{index}} ደብቅ",
+    "deletedAnnotationWarning": "አንዳንድ ደረጃዎች የተሰረዙ ማብራሪያዎችን ይጠቅሳሉ",
+    "statusHint": "በመቅዳት ላይ… ደረጃዎችን ለመያዝ የንብርብር/ማብራሪያ ታይነትን ቀያይሩ። ለማቆም ■ ይጫኑ።"
+  }
 }

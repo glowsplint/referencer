@@ -10,6 +10,12 @@
     "removeAnnotation": "Yọ àkọsílẹ̀ kúrò",
     "removeArrow": "Yọ ọfà kúrò",
     "removeUnderline": "Yọ ìlà-ìsàlẹ̀ kúrò",
+    "hideAnnotation": "Ìbòmọ́lẹ̀ àkọsílẹ̀",
+    "showAnnotation": "Fi àkọsílẹ̀ hàn",
+    "hideArrow": "Ìbòmọ́lẹ̀ ọfà",
+    "showArrow": "Fi ọfà hàn",
+    "hideUnderline": "Ìbòmọ́lẹ̀ ìlà-ìsàlẹ̀",
+    "showUnderline": "Fi ìlà-ìsàlẹ̀ hàn",
     "allColorsInUse": "Gbogbo àwọ̀ ti wà ní lílo — yọ ìpele kan kúrò ní àkọ́kọ́."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Ìrànlọ́wọ́ & Àwọn Ìbéèrè",
     "settings": "Ètò",
     "toggleEditorLayout": "Yí ètò olóòtú padà",
-    "toggleEditorLock": "Yí títìí olóòtú padà"
+    "toggleEditorLock": "Yí títìí olóòtú padà",
+    "toggleCommentPlacement": "Yí ibùdó àlàyé padà",
+    "startTour": "Irin-àjò àmọ̀nà"
   },
   "annotations": {
     "placeholder": "Fi àkọsílẹ̀ kún...",
     "removeCustomColour": "Yọ àwọ̀ àdáni kúrò",
     "addCustomColour": "Fi àwọ̀ àdáni kún",
-    "addToCustomColours": "Fi sí àwọn àwọ̀ àdáni"
+    "addToCustomColours": "Fi sí àwọn àwọ̀ àdáni",
+    "replyPlaceholder": "Dáhùn...",
+    "replies": "àwọn ìdáhùn",
+    "addReaction": "Fi ìhùwàsí kún",
+    "removeReply": "Yọ ìdáhùn kúrò"
   },
   "actionConsole": {
     "title": "Kọ́nsólù Iṣẹ́",

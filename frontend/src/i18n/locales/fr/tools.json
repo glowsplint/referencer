@@ -30,5 +30,36 @@
     "status": "Cliquez et faites glisser pour effacer les annotations.",
     "erased": "Annotation effacée."
   },
-  "lockHint": "Appuyez sur <kbd>Esc</kbd> <kbd>K</kbd> pour verrouiller l'éditeur une fois le contenu finalisé."
+  "lockHint": "Appuyez sur <kbd>Esc</kbd> <kbd>K</kbd> pour verrouiller l'éditeur une fois le contenu finalisé.",
+  "recording": {
+    "label": "Enregistrement",
+    "record": "Enregistrer",
+    "stopRecording": "Arrêter l'enregistrement",
+    "play": "Lire",
+    "stop": "Arrêter",
+    "pause": "Pause",
+    "next": "Étape suivante",
+    "previous": "Étape précédente",
+    "newRecording": "Nouvel enregistrement",
+    "editRecording": "Modifier l'enregistrement",
+    "deleteRecording": "Supprimer l'enregistrement",
+    "duplicateRecording": "Dupliquer l'enregistrement",
+    "noRecordings": "Aucun enregistrement pour le moment",
+    "recording": "Enregistrement en cours...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "État initial",
+    "speed": "Vitesse",
+    "transition": "Transition",
+    "instant": "Instantané",
+    "fade": "Fondu",
+    "untitled": "Enregistrement sans titre",
+    "showLayer": "Afficher {{name}}",
+    "hideLayer": "Masquer {{name}}",
+    "showAnnotation": "Afficher l'annotation",
+    "hideAnnotation": "Masquer l'annotation",
+    "showSection": "Afficher la section {{index}}",
+    "hideSection": "Masquer la section {{index}}",
+    "deletedAnnotationWarning": "Certaines étapes font référence à des annotations supprimées",
+    "statusHint": "Enregistrement… Basculez la visibilité des calques/annotations pour capturer des étapes. Appuyez sur ■ pour arrêter."
+  }
 }

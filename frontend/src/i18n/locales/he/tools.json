@@ -30,5 +30,36 @@
     "status": "לחצו וגררו כדי למחוק הערות.",
     "erased": "ההערה נמחקה."
   },
-  "lockHint": "לחצו <kbd>Esc</kbd> <kbd>K</kbd> כדי לנעול את העורך לאחר שסיימתם את התוכן."
+  "lockHint": "לחצו <kbd>Esc</kbd> <kbd>K</kbd> כדי לנעול את העורך לאחר שסיימתם את התוכן.",
+  "recording": {
+    "label": "הקלטה",
+    "record": "הקלט",
+    "stopRecording": "עצור הקלטה",
+    "play": "נגן",
+    "stop": "עצור",
+    "pause": "השהה",
+    "next": "שלב הבא",
+    "previous": "שלב קודם",
+    "newRecording": "הקלטה חדשה",
+    "editRecording": "ערוך הקלטה",
+    "deleteRecording": "מחק הקלטה",
+    "duplicateRecording": "שכפל הקלטה",
+    "noRecordings": "אין הקלטות עדיין",
+    "recording": "מקליט...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "מצב התחלתי",
+    "speed": "מהירות",
+    "transition": "מעבר",
+    "instant": "מיידי",
+    "fade": "עמעום",
+    "untitled": "הקלטה ללא שם",
+    "showLayer": "הצג {{name}}",
+    "hideLayer": "הסתר {{name}}",
+    "showAnnotation": "הצג הערה",
+    "hideAnnotation": "הסתר הערה",
+    "showSection": "הצג קטע {{index}}",
+    "hideSection": "הסתר קטע {{index}}",
+    "deletedAnnotationWarning": "חלק מהשלבים מתייחסים להערות שנמחקו",
+    "statusHint": "מקליט… הפעילו/כבו שכבות/הערות כדי ללכוד שלבים. לחצו ■ לעצירה."
+  }
 }

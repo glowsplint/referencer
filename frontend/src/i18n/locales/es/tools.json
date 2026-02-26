@@ -30,5 +30,36 @@
     "status": "Haz clic y arrastra para borrar anotaciones.",
     "erased": "Decoración borrada."
   },
-  "lockHint": "Presiona <kbd>Esc</kbd> <kbd>K</kbd> para bloquear el editor una vez que hayas finalizado el contenido."
+  "lockHint": "Presiona <kbd>Esc</kbd> <kbd>K</kbd> para bloquear el editor una vez que hayas finalizado el contenido.",
+  "recording": {
+    "label": "Grabación",
+    "record": "Grabar",
+    "stopRecording": "Detener grabación",
+    "play": "Reproducir",
+    "stop": "Detener",
+    "pause": "Pausar",
+    "next": "Siguiente paso",
+    "previous": "Paso anterior",
+    "newRecording": "Nueva grabación",
+    "editRecording": "Editar grabación",
+    "deleteRecording": "Eliminar grabación",
+    "duplicateRecording": "Duplicar grabación",
+    "noRecordings": "Aún no hay grabaciones",
+    "recording": "Grabando...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Estado inicial",
+    "speed": "Velocidad",
+    "transition": "Transición",
+    "instant": "Instantánea",
+    "fade": "Fundido",
+    "untitled": "Grabación sin título",
+    "showLayer": "Mostrar {{name}}",
+    "hideLayer": "Ocultar {{name}}",
+    "showAnnotation": "Mostrar anotación",
+    "hideAnnotation": "Ocultar anotación",
+    "showSection": "Mostrar sección {{index}}",
+    "hideSection": "Ocultar sección {{index}}",
+    "deletedAnnotationWarning": "Algunos pasos hacen referencia a anotaciones eliminadas",
+    "statusHint": "Grabando… Alterna la visibilidad de capas/anotaciones para capturar pasos. Pulsa ■ para detener."
+  }
 }

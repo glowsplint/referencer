@@ -10,6 +10,12 @@
     "removeAnnotation": "Αφαίρεση σχολιασμού",
     "removeArrow": "Αφαίρεση βέλους",
     "removeUnderline": "Αφαίρεση υπογράμμισης",
+    "hideAnnotation": "Απόκρυψη σχολιασμού",
+    "showAnnotation": "Εμφάνιση σχολιασμού",
+    "hideArrow": "Απόκρυψη βέλους",
+    "showArrow": "Εμφάνιση βέλους",
+    "hideUnderline": "Απόκρυψη υπογράμμισης",
+    "showUnderline": "Εμφάνιση υπογράμμισης",
     "allColorsInUse": "Όλα τα χρώματα χρησιμοποιούνται — αφαιρέστε πρώτα ένα επίπεδο."
   },
   "passages": {
@@ -26,13 +32,19 @@
     "helpFaq": "Βοήθεια & Συχνές Ερωτήσεις",
     "settings": "Ρυθμίσεις",
     "toggleEditorLayout": "Εναλλαγή διάταξης επεξεργαστή",
-    "toggleEditorLock": "Εναλλαγή κλειδώματος επεξεργαστή"
+    "toggleEditorLock": "Εναλλαγή κλειδώματος επεξεργαστή",
+    "toggleCommentPlacement": "Εναλλαγή τοποθέτησης σχολίων",
+    "startTour": "Καθοδηγούμενη περιήγηση"
   },
   "annotations": {
     "placeholder": "Προσθήκη σχολιασμού...",
     "removeCustomColour": "Αφαίρεση προσαρμοσμένου χρώματος",
     "addCustomColour": "Προσθήκη προσαρμοσμένου χρώματος",
-    "addToCustomColours": "Προσθήκη στα προσαρμοσμένα χρώματα"
+    "addToCustomColours": "Προσθήκη στα προσαρμοσμένα χρώματα",
+    "replyPlaceholder": "Απάντηση...",
+    "replies": "απαντήσεις",
+    "addReaction": "Προσθήκη αντίδρασης",
+    "removeReply": "Αφαίρεση απάντησης"
   },
   "actionConsole": {
     "title": "Κονσόλα Ενεργειών",
