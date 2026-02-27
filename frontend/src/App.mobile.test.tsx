@@ -17,6 +17,11 @@ vi.mock("@/lib/tour-client", () => ({
   saveTourPreference: vi.fn().mockResolvedValue(undefined),
 }));
 
+// Mock permission fetch — return "owner" so readOnly defaults to false in tests
+vi.mock("@/lib/api-client", () => ({
+  apiFetch: vi.fn().mockResolvedValue({ role: "owner" }),
+}));
+
 // Mobile — always mobile
 vi.mock("./hooks/ui/use-is-breakpoint", () => ({
   useIsBreakpoint: () => true,

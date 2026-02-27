@@ -1,7 +1,6 @@
 // Yjs shared types for collaborative annotations.
 // Layers, highlights, arrows, and underlines are stored as Y.Array<Y.Map>
 // with RelativePosition anchors that survive concurrent text edits.
-import DOMPurify from "dompurify";
 import * as Y from "yjs";
 import {
   absolutePositionToRelativePosition,
@@ -17,6 +16,7 @@ import type {
   ArrowStyle,
   CommentReply,
 } from "@/types/editor";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 // ---------------------------------------------------------------------------
 // Y.Doc structure for annotations
@@ -237,7 +237,7 @@ function readReactions(
     const yR = yReactions.get(i);
     reactions.push({
       emoji: yR.get("emoji") as string,
-      userName: DOMPurify.sanitize(yR.get("userName") as string),
+      userName: sanitizeHtml(yR.get("userName") as string),
     });
   }
   return reactions;
@@ -250,8 +250,8 @@ function readReplies(yReplies: Y.Array<Y.Map<unknown>> | undefined): CommentRepl
     const yReply = yReplies.get(i);
     replies.push({
       id: yReply.get("id") as string,
-      text: DOMPurify.sanitize(yReply.get("text") as string),
-      userName: DOMPurify.sanitize(yReply.get("userName") as string),
+      text: sanitizeHtml(yReply.get("text") as string),
+      userName: sanitizeHtml(yReply.get("userName") as string),
       timestamp: yReply.get("timestamp") as number,
       reactions: readReactions(yReply.get("reactions") as Y.Array<Y.Map<unknown>> | undefined),
     });
@@ -285,11 +285,11 @@ function readHighlights(
       continue;
     }
 
-    const text = DOMPurify.sanitize(yH.get("text") as string);
-    const annotation = DOMPurify.sanitize((yH.get("annotation") as string) ?? "");
+    const text = sanitizeHtml(yH.get("text") as string);
+    const annotation = sanitizeHtml((yH.get("annotation") as string) ?? "");
     const lastEdited = (yH.get("lastEdited") as number) ?? undefined;
     const rawUserName = (yH.get("userName") as string) ?? undefined;
-    const userName = rawUserName ? DOMPurify.sanitize(rawUserName) : undefined;
+    const userName = rawUserName ? sanitizeHtml(rawUserName) : undefined;
     highlights.push({
       id,
       editorIndex,
@@ -347,13 +347,13 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>, editorViews?: EditorView
         editorIndex: fromEditorIndex,
         from: fromFrom,
         to: fromTo,
-        text: DOMPurify.sanitize(yA.get("fromText") as string),
+        text: sanitizeHtml(yA.get("fromText") as string),
       },
       to: {
         editorIndex: toEditorIndex,
         from: toFrom,
         to: toTo,
-        text: DOMPurify.sanitize(yA.get("toText") as string),
+        text: sanitizeHtml(yA.get("toText") as string),
       },
       arrowStyle: (yA.get("arrowStyle") as ArrowStyle) ?? "solid",
       visible: (yA.get("visible") as boolean) ?? true,
@@ -394,7 +394,7 @@ function readUnderlines(
       editorIndex,
       from,
       to,
-      text: DOMPurify.sanitize(yU.get("text") as string),
+      text: sanitizeHtml(yU.get("text") as string),
       visible: (yU.get("visible") as boolean) ?? true,
     });
   }

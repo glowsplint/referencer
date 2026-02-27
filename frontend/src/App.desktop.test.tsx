@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { AuthProvider } from "./contexts/AuthContext";
 import { TourProvider } from "./contexts/TourContext";
 import { App } from "./App";
@@ -14,6 +14,11 @@ vi.mock("@/lib/auth-client", () => ({
 vi.mock("@/lib/tour-client", () => ({
   fetchTourPreferences: vi.fn().mockResolvedValue({}),
   saveTourPreference: vi.fn().mockResolvedValue(undefined),
+}));
+
+// Mock permission fetch — return "owner" so readOnly defaults to false in tests
+vi.mock("@/lib/api-client", () => ({
+  apiFetch: vi.fn().mockResolvedValue({ role: "owner" }),
 }));
 
 // Desktop — never mobile
@@ -335,10 +340,12 @@ describe("App (desktop)", () => {
       mockWorkspace.settings.isLocked = true;
     });
 
-    it("then renders editors with annotation mouse handlers", () => {
+    it("then renders editors with annotation mouse handlers", async () => {
       renderApp();
       const pane = screen.getByTestId("editor-pane");
-      expect(pane).toHaveAttribute("data-has-mouse-handlers", "true");
+      await waitFor(() => {
+        expect(pane).toHaveAttribute("data-has-mouse-handlers", "true");
+      });
     });
 
     it("then renders editors as locked", () => {

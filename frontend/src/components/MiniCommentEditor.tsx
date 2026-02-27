@@ -5,6 +5,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useRef, useEffect } from "react";
+import { toast } from "sonner";
 
 interface MiniCommentEditorProps {
   value: string;
@@ -62,11 +63,16 @@ export function MiniCommentEditor({
       handlePaste: (_view, event) => {
         const items = event.clipboardData?.items;
         if (!items) return false;
+        const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
         for (const item of items) {
           if (item.type.startsWith("image/")) {
             event.preventDefault();
             const file = item.getAsFile();
             if (!file) return false;
+            if (file.size > MAX_IMAGE_SIZE) {
+              toast.error("Image too large. Maximum size is 2MB.");
+              return true;
+            }
             const reader = new FileReader();
             reader.onload = (e) => {
               const src = e.target?.result as string;
@@ -81,9 +87,14 @@ export function MiniCommentEditor({
       handleDrop: (_view, event) => {
         const files = event.dataTransfer?.files;
         if (!files?.length) return false;
+        const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
         for (const file of files) {
           if (file.type.startsWith("image/")) {
             event.preventDefault();
+            if (file.size > MAX_IMAGE_SIZE) {
+              toast.error("Image too large. Maximum size is 2MB.");
+              return true;
+            }
             const reader = new FileReader();
             reader.onload = (e) => {
               const src = e.target?.result as string;

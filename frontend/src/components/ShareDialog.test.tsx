@@ -1,7 +1,12 @@
 import { screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ShareDialog } from "./ShareDialog";
 import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { apiPost } from "@/lib/api-client";
+
+vi.mock("@/lib/api-client", () => ({
+  apiPost: vi.fn(),
+}));
 
 const mockLogin = vi.fn();
 const mockAuth = {
@@ -24,18 +29,11 @@ function renderShareDialog(overrides = {}) {
 }
 
 describe("ShareDialog", () => {
-  let originalFetch: typeof globalThis.fetch;
-
   beforeEach(() => {
     vi.restoreAllMocks();
-    originalFetch = globalThis.fetch;
     mockAuth.isAuthenticated = true;
     mockAuth.user = { id: "1", email: "test@test.com", name: "Test User", avatarUrl: "" };
     mockAuth.login = mockLogin;
-  });
-
-  afterEach(() => {
-    globalThis.fetch = originalFetch;
   });
 
   describe("when opened and authenticated", () => {
@@ -61,21 +59,16 @@ describe("ShareDialog", () => {
       const writeText = vi.fn().mockResolvedValue(undefined);
       Object.assign(navigator, { clipboard: { writeText } });
 
-      globalThis.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve({ code: "ABC123", url: "/s/ABC123" }),
-      });
+      vi.mocked(apiPost).mockResolvedValue({ url: "/s/ABC123" });
 
       renderShareDialog();
       fireEvent.click(screen.getByTestId("shareReadonlyButton"));
 
       await waitFor(() => {
-        expect(globalThis.fetch).toHaveBeenCalledWith(
-          "/api/share",
-          expect.objectContaining({
-            method: "POST",
-          }),
-        );
+        expect(apiPost).toHaveBeenCalledWith("/api/share", {
+          workspaceId: "test-workspace-123",
+          access: "readonly",
+        });
       });
 
       await waitFor(() => {
@@ -89,21 +82,16 @@ describe("ShareDialog", () => {
       const writeText = vi.fn().mockResolvedValue(undefined);
       Object.assign(navigator, { clipboard: { writeText } });
 
-      globalThis.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve({ code: "XYZ789", url: "/s/XYZ789" }),
-      });
+      vi.mocked(apiPost).mockResolvedValue({ url: "/s/XYZ789" });
 
       renderShareDialog();
       fireEvent.click(screen.getByTestId("shareEditButton"));
 
       await waitFor(() => {
-        expect(globalThis.fetch).toHaveBeenCalledWith(
-          "/api/share",
-          expect.objectContaining({
-            method: "POST",
-          }),
-        );
+        expect(apiPost).toHaveBeenCalledWith("/api/share", {
+          workspaceId: "test-workspace-123",
+          access: "edit",
+        });
       });
 
       await waitFor(() => {

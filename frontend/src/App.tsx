@@ -93,7 +93,7 @@ export function App({ workspaceId, navigate }: AppProps) {
       });
     return () => controller.abort();
   }, [workspaceId]);
-  const readOnly = permissionRole === "viewer";
+  const readOnly = permissionRole !== "owner" && permissionRole !== "editor";
   useWorkspaceAutosave(workspaceId);
   const workspace = useEditorWorkspace(workspaceId, readOnly);
   const {

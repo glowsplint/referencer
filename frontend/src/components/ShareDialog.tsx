@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { apiPost } from "@/lib/api-client";
 import { useAuth } from "@/hooks/data/use-auth";
 
 interface ShareDialogProps {
@@ -26,13 +27,7 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
 
   async function handleShare(access: "edit" | "readonly") {
     try {
-      const resp = await fetch("/api/share", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId, access }),
-      });
-      if (!resp.ok) throw new Error("Failed to create share link");
-      const data = await resp.json();
+      const data = await apiPost<{ url: string }>("/api/share", { workspaceId, access });
       const url = `${window.location.origin}${data.url}`;
       await navigator.clipboard.writeText(url);
       toast.success(t("share.linkCopied"));
