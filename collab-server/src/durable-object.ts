@@ -12,6 +12,16 @@ const MSG_SYNC = 0;
 const MSG_AWARENESS = 1;
 const MSG_QUERY_AWARENESS = 3;
 
+/** Maximum size for a single Yjs document update (512KB). */
+const MAX_UPDATE_SIZE = 512 * 1024;
+
+/**
+ * Maximum time (ms) a WebSocket session may stay connected without
+ * re-authenticating. After this duration the server closes the socket
+ * and the client's auto-reconnect fetches a fresh JWT.
+ */
+const MAX_SESSION_AGE_MS = 5 * 60 * 1000;
+
 interface Env {
   SUPABASE_URL: string;
   SUPABASE_SERVICE_KEY: string;
@@ -36,9 +46,9 @@ export class YjsRoom extends DurableObject<Env> {
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
 
-    // Tag WebSocket with user's role for server-side write enforcement
+    // Tag WebSocket with user's role and connection timestamp
     const role = url.searchParams.get("role") ?? "viewer";
-    this.ctx.acceptWebSocket(server, [`role:${role}`]);
+    this.ctx.acceptWebSocket(server, [`role:${role}`, `connected:${Date.now()}`]);
 
     // Store room name for persistence
     if (!this.roomName) {
@@ -157,6 +167,10 @@ export class YjsRoom extends DurableObject<Env> {
 
       // Client sent missing updates (response to our SyncStep1)
       const update = decoding.readVarUint8Array(decoder);
+      if (update.byteLength > MAX_UPDATE_SIZE) {
+        ws.close(1009, "Update too large");
+        return;
+      }
       Y.applyUpdate(this.doc, update, ws);
       this.debouncedSaveToStorage();
     } else if (syncType === syncProtocol.messageYjsUpdate) {
@@ -165,6 +179,10 @@ export class YjsRoom extends DurableObject<Env> {
 
       // Client sent a document update -- apply and broadcast
       const update = decoding.readVarUint8Array(decoder);
+      if (update.byteLength > MAX_UPDATE_SIZE) {
+        ws.close(1009, "Update too large");
+        return;
+      }
       Y.applyUpdate(this.doc, update, ws);
 
       // Broadcast the raw message to all other clients
@@ -276,6 +294,19 @@ export class YjsRoom extends DurableObject<Env> {
   async alarm(): Promise<void> {
     // Periodic snapshot to Supabase
     await this.saveToSupabase();
+
+    // Close sessions that have exceeded the maximum age so clients must
+    // reconnect with a fresh JWT — this enforces periodic permission re-checks.
+    const now = Date.now();
+    for (const ws of this.ctx.getWebSockets()) {
+      const connectedTag = this.ctx.getTags(ws).find((t) => t.startsWith("connected:"));
+      if (connectedTag) {
+        const connectedAt = Number(connectedTag.slice("connected:".length));
+        if (now - connectedAt > MAX_SESSION_AGE_MS) {
+          ws.close(4401, "Session expired, please reconnect");
+        }
+      }
+    }
 
     // Reset alarm if still active connections
     if (this.ctx.getWebSockets().length > 0) {

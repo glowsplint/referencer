@@ -28,6 +28,10 @@ export interface WorkspaceProvider {
 export function createWorkspaceProvider(workspaceId: string, token?: string): WorkspaceProvider {
   const doc = new Y.Doc();
 
+  // SECURITY: Token is passed in URL query string because the WebSocket
+  // protocol does not support custom headers during the upgrade handshake.
+  // Mitigated by: (1) 60-second JWT lifetime, (2) single-use room binding,
+  // (3) Referrer-Policy: strict-origin-when-cross-origin prevents URL leakage.
   const wsProvider = new WebsocketProvider(WS_URL, workspaceId, doc, {
     connect: true,
     params: token ? { token } : {},

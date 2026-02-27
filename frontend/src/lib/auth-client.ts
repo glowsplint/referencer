@@ -28,4 +28,18 @@ export function loginWith(provider: AuthProvider): void {
 
 export async function logout(): Promise<void> {
   await apiFetch("/auth/logout", { method: "POST" });
+
+  // Clear offline Yjs caches so stale data doesn't leak across accounts
+  if (typeof indexedDB !== "undefined" && indexedDB.databases) {
+    try {
+      const dbs = await indexedDB.databases();
+      for (const db of dbs) {
+        if (db.name?.startsWith("referencer-yjs-")) {
+          indexedDB.deleteDatabase(db.name);
+        }
+      }
+    } catch {
+      // Best-effort cleanup — indexedDB.databases() may not be supported
+    }
+  }
 }

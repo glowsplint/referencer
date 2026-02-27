@@ -21,7 +21,7 @@ import { createLogger, type Logger } from "./logger";
 //                          Also set in: backend
 //
 // ALLOWED_ORIGIN         — CORS origin for WebSocket connections (optional)
-//                          Default: "" (allows all origins)
+//                          Default: localhost-only (dev); empty string in prod (blocks CORS)
 //
 // Bindings — configured in collab-server/wrangler.toml
 //
@@ -49,10 +49,24 @@ app.use("*", async (c, next) => {
   await next();
 });
 
+// Warn at request-time if CORS origin is not explicitly configured
+app.use("*", async (c, next) => {
+  if (!c.env.ALLOWED_ORIGIN) {
+    c.get("logger").warn("ALLOWED_ORIGIN is not set — CORS will only allow localhost origins");
+  }
+  await next();
+});
+
 app.use(
   "*",
   cors({
-    origin: (origin, c) => c.env.ALLOWED_ORIGIN || "",
+    origin: (origin, c) => {
+      const allowed = c.env.ALLOWED_ORIGIN;
+      if (allowed) return allowed;
+      // Dev fallback: allow localhost origins only
+      if (origin && /^https?:\/\/localhost(:\d+)?$/.test(origin)) return origin;
+      return "";
+    },
     credentials: true,
   }),
 );
