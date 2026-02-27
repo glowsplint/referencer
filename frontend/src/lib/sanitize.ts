@@ -1,6 +1,6 @@
-import DOMPurify from "dompurify";
+import DOMPurify, { type Config } from "dompurify";
 
-const SANITIZE_CONFIG: DOMPurify.Config = {
+const SANITIZE_CONFIG: Config = {
   ALLOWED_TAGS: [
     "p",
     "br",

@@ -30,10 +30,7 @@ export function handleFeedback() {
     }
 
     const ua = c.req.header("user-agent") || "unknown";
-    const hashBuf = await crypto.subtle.digest(
-      "SHA-256",
-      new TextEncoder().encode(user.id),
-    );
+    const hashBuf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(user.id));
     const userHash = Array.from(new Uint8Array(hashBuf))
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("")

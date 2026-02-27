@@ -10,10 +10,7 @@ const MSG_SYNC = 0;
 const MSG_AWARENESS = 1;
 
 /** Helper: build a Yjs sync message (SyncStep1, SyncStep2, or Update) */
-function buildSyncMessage(
-  syncType: number,
-  payload: Uint8Array,
-): Uint8Array {
+function buildSyncMessage(syncType: number, payload: Uint8Array): Uint8Array {
   const encoder = encoding.createEncoder();
   encoding.writeVarUint(encoder, MSG_SYNC);
   encoding.writeVarUint(encoder, syncType);
@@ -45,10 +42,9 @@ async function connectWithRole(
   roomName: string,
   role: string,
 ): Promise<{ ws: WebSocket; messages: ArrayBuffer[] }> {
-  const resp = await stub.fetch(
-    `http://fake-host/${roomName}?role=${role}`,
-    { headers: { Upgrade: "websocket" } },
-  );
+  const resp = await stub.fetch(`http://fake-host/${roomName}?role=${role}`, {
+    headers: { Upgrade: "websocket" },
+  });
   const ws = resp.webSocket!;
   ws.accept();
 
@@ -81,11 +77,7 @@ describe("YjsRoom read-only enforcement", () => {
     await new Promise((r) => setTimeout(r, 100));
 
     // Connect a second editor to read back the state
-    const { ws: ws2, messages } = await connectWithRole(
-      stub,
-      "test-editor-writes",
-      "editor",
-    );
+    const { ws: ws2, messages } = await connectWithRole(stub, "test-editor-writes", "editor");
 
     // The server sends SyncStep1; reply with our empty state vector to get SyncStep2
     const emptyDoc = new Y.Doc();
@@ -124,11 +116,7 @@ describe("YjsRoom read-only enforcement", () => {
     const id = env.YJS_ROOM.idFromName("test-viewer-blocked");
     const stub = env.YJS_ROOM.get(id);
 
-    const { ws: viewerWs } = await connectWithRole(
-      stub,
-      "test-viewer-blocked",
-      "viewer",
-    );
+    const { ws: viewerWs } = await connectWithRole(stub, "test-viewer-blocked", "viewer");
 
     // Send a Yjs update as a viewer — should be silently dropped
     const update = createDocUpdate();
@@ -138,11 +126,7 @@ describe("YjsRoom read-only enforcement", () => {
     await new Promise((r) => setTimeout(r, 100));
 
     // Connect an editor to verify the viewer's update was NOT applied
-    const { ws: editorWs, messages } = await connectWithRole(
-      stub,
-      "test-viewer-blocked",
-      "editor",
-    );
+    const { ws: editorWs, messages } = await connectWithRole(stub, "test-viewer-blocked", "editor");
 
     const emptyDoc = new Y.Doc();
     const sv = Y.encodeStateVector(emptyDoc);
@@ -180,11 +164,7 @@ describe("YjsRoom read-only enforcement", () => {
     const id = env.YJS_ROOM.idFromName("test-viewer-sync2");
     const stub = env.YJS_ROOM.get(id);
 
-    const { ws: viewerWs } = await connectWithRole(
-      stub,
-      "test-viewer-sync2",
-      "viewer",
-    );
+    const { ws: viewerWs } = await connectWithRole(stub, "test-viewer-sync2", "viewer");
 
     // Send a SyncStep2 as a viewer — should be silently dropped
     const update = createDocUpdate();
@@ -194,11 +174,7 @@ describe("YjsRoom read-only enforcement", () => {
     await new Promise((r) => setTimeout(r, 100));
 
     // Connect an editor to verify
-    const { ws: editorWs, messages } = await connectWithRole(
-      stub,
-      "test-viewer-sync2",
-      "editor",
-    );
+    const { ws: editorWs, messages } = await connectWithRole(stub, "test-viewer-sync2", "editor");
 
     const emptyDoc = new Y.Doc();
     const sv = Y.encodeStateVector(emptyDoc);
@@ -243,20 +219,15 @@ describe("YjsRoom read-only enforcement", () => {
     );
 
     // Connect a viewer
-    const { ws: viewerWs } = await connectWithRole(
-      stub,
-      "test-viewer-awareness",
-      "viewer",
-    );
+    const { ws: viewerWs } = await connectWithRole(stub, "test-viewer-awareness", "viewer");
 
     // Create a valid awareness update using a real Awareness instance
     const viewerDoc = new Y.Doc();
     const viewerAwareness = new awarenessProtocol.Awareness(viewerDoc);
     viewerAwareness.setLocalState({ cursor: { x: 10, y: 20 } });
-    const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
-      viewerAwareness,
-      [viewerDoc.clientID],
-    );
+    const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(viewerAwareness, [
+      viewerDoc.clientID,
+    ]);
     const awarenessMsg = buildAwarenessMessage(awarenessUpdate);
     viewerWs.send(awarenessMsg);
 
