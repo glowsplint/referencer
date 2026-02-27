@@ -27,7 +27,7 @@ export function handleShare() {
         return c.json({ error: "Forbidden" }, 403);
       }
 
-      const code = await createShareLink(supabase, req.workspaceId, req.access);
+      const code = await createShareLink(supabase, req.workspaceId, req.access, user.id);
       const resp: ShareResponse = {
         code,
         url: "/s/" + code,

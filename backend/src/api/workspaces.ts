@@ -10,7 +10,14 @@ import {
   deleteUserWorkspace,
   duplicateWorkspace,
 } from "../db/workspace-queries";
-import { getPermission, setPermission } from "../db/permission-queries";
+import {
+  getPermission,
+  setPermission,
+  listWorkspaceMembers,
+  removePermission,
+  type PermissionRole,
+} from "../db/permission-queries";
+import { listShareLinks, deleteShareLink } from "../db/share-queries";
 import { requirePermission } from "../middleware/require-permission";
 
 const WORKSPACE_ID_RE =
@@ -243,6 +250,137 @@ workspaces.get("/:id/permission", async (c) => {
     return c.json({ role });
   } catch (err) {
     log.error("GET /api/workspaces/:id/permission failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+// GET /:id/links - list active share links
+workspaces.get("/:id/links", requirePermission("editor"), async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
+  try {
+    const workspaceId = c.req.param("id");
+    const supabase = c.get("supabase");
+    const links = await listShareLinks(supabase, workspaceId);
+    log.info("GET /api/workspaces/:id/links", {
+      userId: user.id,
+      workspaceId,
+      count: links.length,
+    });
+    return c.json(links);
+  } catch (err) {
+    log.error("GET /api/workspaces/:id/links failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+// DELETE /:id/links/:code - revoke a share link
+workspaces.delete("/:id/links/:code", requirePermission("editor"), async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
+  try {
+    const workspaceId = c.req.param("id");
+    const code = c.req.param("code");
+    const supabase = c.get("supabase");
+    const deleted = await deleteShareLink(supabase, code, workspaceId);
+    if (!deleted) return c.json({ error: "Not found" }, 404);
+    log.info("DELETE /api/workspaces/:id/links/:code", { userId: user.id, workspaceId, code });
+    return c.json({ ok: true });
+  } catch (err) {
+    log.error("DELETE /api/workspaces/:id/links/:code failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+// GET /:id/members - list workspace members
+workspaces.get("/:id/members", requirePermission("editor"), async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
+  try {
+    const workspaceId = c.req.param("id");
+    const supabase = c.get("supabase");
+    const members = await listWorkspaceMembers(supabase, workspaceId);
+    log.info("GET /api/workspaces/:id/members", {
+      userId: user.id,
+      workspaceId,
+      count: members.length,
+    });
+    return c.json(members);
+  } catch (err) {
+    log.error("GET /api/workspaces/:id/members failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+// PATCH /:id/members/:userId - change member role
+workspaces.patch("/:id/members/:userId", requirePermission("owner"), async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
+  try {
+    const workspaceId = c.req.param("id");
+    const targetUserId = c.req.param("userId");
+    if (targetUserId === user.id) return c.json({ error: "Cannot change your own role" }, 403);
+    const supabase = c.get("supabase");
+    const targetRole = await getPermission(supabase, workspaceId, targetUserId);
+    if (targetRole === "owner") return c.json({ error: "Cannot change an owner's role" }, 403);
+    const body = await c.req.json<{ role: string }>();
+    if (body.role !== "editor" && body.role !== "viewer") {
+      return c.json({ error: "Role must be 'editor' or 'viewer'" }, 400);
+    }
+    await setPermission(supabase, workspaceId, targetUserId, body.role as PermissionRole);
+    log.info("PATCH /api/workspaces/:id/members/:userId", {
+      userId: user.id,
+      workspaceId,
+      targetUserId,
+      newRole: body.role,
+    });
+    return c.json({ ok: true });
+  } catch (err) {
+    log.error("PATCH /api/workspaces/:id/members/:userId failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+    });
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+// DELETE /:id/members/:userId - remove a member
+workspaces.delete("/:id/members/:userId", requirePermission("owner"), async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
+  try {
+    const workspaceId = c.req.param("id");
+    const targetUserId = c.req.param("userId");
+    if (targetUserId === user.id) return c.json({ error: "Cannot remove yourself" }, 403);
+    const supabase = c.get("supabase");
+    const targetRole = await getPermission(supabase, workspaceId, targetUserId);
+    if (targetRole === "owner") return c.json({ error: "Cannot remove an owner" }, 403);
+    await removePermission(supabase, workspaceId, targetUserId);
+    log.info("DELETE /api/workspaces/:id/members/:userId", {
+      userId: user.id,
+      workspaceId,
+      targetUserId,
+    });
+    return c.json({ ok: true });
+  } catch (err) {
+    log.error("DELETE /api/workspaces/:id/members/:userId failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
     });

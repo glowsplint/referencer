@@ -12,8 +12,10 @@ CREATE TABLE share_link (
     workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
     access TEXT NOT NULL CHECK (access IN ('edit', 'readonly')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    expires_at TIMESTAMPTZ DEFAULT NULL
+    expires_at TIMESTAMPTZ DEFAULT NULL,
+    created_by TEXT REFERENCES "user"(id) ON DELETE SET NULL
 );
+CREATE INDEX idx_share_link_workspace_id ON share_link(workspace_id);
 
 CREATE TABLE "user" (
     id TEXT PRIMARY KEY,
