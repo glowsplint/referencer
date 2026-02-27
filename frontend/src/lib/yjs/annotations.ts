@@ -18,6 +18,13 @@ import type {
 } from "@/types/editor";
 import { sanitizeHtml } from "@/lib/sanitize";
 
+const MAX_USERNAME_LENGTH = 50;
+
+/** Sanitize and truncate a userName for safe storage. */
+function sanitizeUserName(name: string): string {
+  return sanitizeHtml(name).slice(0, MAX_USERNAME_LENGTH);
+}
+
 // ---------------------------------------------------------------------------
 // Y.Doc structure for annotations
 // ---------------------------------------------------------------------------
@@ -486,13 +493,14 @@ export function addHighlightToDoc(
     encodeRelativePosition(doc, highlight.editorIndex, highlight.from, editorViews),
   );
   yH.set("toRel", encodeRelativePosition(doc, highlight.editorIndex, highlight.to, editorViews));
-  yH.set("text", highlight.text);
-  yH.set("annotation", highlight.annotation);
+  yH.set("text", sanitizeHtml(highlight.text));
+  yH.set("annotation", sanitizeHtml(highlight.annotation));
   yH.set("type", highlight.type);
   yH.set("lastEdited", Date.now());
   yH.set("visible", true);
-  if ((highlight as { userName?: string }).userName) {
-    yH.set("userName", (highlight as { userName?: string }).userName);
+  const rawUserName = (highlight as { userName?: string }).userName;
+  if (rawUserName) {
+    yH.set("userName", sanitizeUserName(rawUserName));
   }
   yH.set("reactions", new Y.Array<Y.Map<unknown>>());
   yH.set("replies", new Y.Array<Y.Map<unknown>>());
@@ -542,8 +550,8 @@ export function addReplyToDoc(
   const yReplies = getOrCreateYArray(yH, "replies");
   const yReply = new Y.Map<unknown>();
   yReply.set("id", reply.id);
-  yReply.set("text", reply.text);
-  yReply.set("userName", reply.userName);
+  yReply.set("text", sanitizeHtml(reply.text));
+  yReply.set("userName", sanitizeUserName(reply.userName));
   yReply.set("timestamp", reply.timestamp);
   yReply.set("reactions", new Y.Array<Y.Map<unknown>>());
   yReplies.push([yReply]);
@@ -563,7 +571,7 @@ export function updateReplyInDoc(
   for (let i = 0; i < yReplies.length; i++) {
     const yReply = yReplies.get(i);
     if (yReply.get("id") === replyId) {
-      yReply.set("text", text);
+      yReply.set("text", sanitizeHtml(text));
       yReply.set("timestamp", Date.now());
       return;
     }
@@ -656,7 +664,7 @@ export function updateHighlightAnnotationInDoc(
     const yH = yHighlights.get(i);
     if (yH.get("id") === highlightId) {
       doc.transact(() => {
-        yH.set("annotation", annotation);
+        yH.set("annotation", sanitizeHtml(annotation));
         yH.set("lastEdited", Date.now());
       });
       return;
@@ -694,11 +702,11 @@ export function addArrowToDoc(
     "fromToRel",
     encodeRelativePosition(doc, arrow.from.editorIndex, arrow.from.to, editorViews),
   );
-  yA.set("fromText", arrow.from.text);
+  yA.set("fromText", sanitizeHtml(arrow.from.text));
   yA.set("toEditorIndex", arrow.to.editorIndex);
   yA.set("toRel", encodeRelativePosition(doc, arrow.to.editorIndex, arrow.to.from, editorViews));
   yA.set("toToRel", encodeRelativePosition(doc, arrow.to.editorIndex, arrow.to.to, editorViews));
-  yA.set("toText", arrow.to.text);
+  yA.set("toText", sanitizeHtml(arrow.to.text));
   yA.set("arrowStyle", arrow.arrowStyle ?? "solid");
   yA.set("visible", true);
   yArrows.push([yA]);
@@ -761,7 +769,7 @@ export function addUnderlineToDoc(
     encodeRelativePosition(doc, underline.editorIndex, underline.from, editorViews),
   );
   yU.set("toRel", encodeRelativePosition(doc, underline.editorIndex, underline.to, editorViews));
-  yU.set("text", underline.text);
+  yU.set("text", sanitizeHtml(underline.text));
   yU.set("visible", true);
   yUnderlines.push([yU]);
 }

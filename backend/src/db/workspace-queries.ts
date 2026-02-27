@@ -133,6 +133,20 @@ export async function deleteUserWorkspace(
   if (error) throw new Error(`Failed to delete workspace: ${error.message}`);
 }
 
+export async function removeUserWorkspace(
+  supabase: SupabaseClient,
+  workspaceId: string,
+  userId: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("user_workspace")
+    .delete()
+    .eq("workspace_id", workspaceId)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(`Failed to remove user workspace: ${error.message}`);
+}
+
 export async function duplicateWorkspace(
   supabase: SupabaseClient,
   userId: string,

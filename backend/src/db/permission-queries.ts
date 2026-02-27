@@ -39,3 +39,17 @@ export async function setPermission(
       { onConflict: "workspace_id,user_id" },
     );
 }
+
+export async function revokePermission(
+  supabase: SupabaseClient,
+  workspaceId: string,
+  userId: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("workspace_permission")
+    .delete()
+    .eq("workspace_id", workspaceId)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(`Failed to revoke permission: ${error.message}`);
+}

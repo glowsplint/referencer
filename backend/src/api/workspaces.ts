@@ -9,8 +9,9 @@ import {
   touchUserWorkspace,
   deleteUserWorkspace,
   duplicateWorkspace,
+  removeUserWorkspace,
 } from "../db/workspace-queries";
-import { getPermission, setPermission } from "../db/permission-queries";
+import { getPermission, setPermission, revokePermission } from "../db/permission-queries";
 import { requirePermission } from "../middleware/require-permission";
 
 const WORKSPACE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
@@ -75,7 +76,7 @@ workspaces.post("/", async (c) => {
 });
 
 // GET /:id - get single workspace
-workspaces.get("/:id", async (c) => {
+workspaces.get("/:id", requirePermission("viewer"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
@@ -126,7 +127,7 @@ workspaces.patch("/:id", requirePermission("editor"), async (c) => {
 });
 
 // PATCH /:id/touch - bump updated_at
-workspaces.patch("/:id/touch", async (c) => {
+workspaces.patch("/:id/touch", requirePermission("viewer"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
@@ -147,7 +148,7 @@ workspaces.patch("/:id/touch", async (c) => {
 });
 
 // PATCH /:id/favorite - toggle favorite
-workspaces.patch("/:id/favorite", async (c) => {
+workspaces.patch("/:id/favorite", requirePermission("viewer"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
@@ -245,6 +246,49 @@ workspaces.get("/:id/permission", async (c) => {
     log.error("GET /api/workspaces/:id/permission failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+    });
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+// DELETE /:id/permissions/:userId - revoke a user's permission
+workspaces.delete("/:id/permissions/:userId", requirePermission("owner"), async (c) => {
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const log = c.get("logger");
+
+  try {
+    const workspaceId = c.req.param("id");
+    const targetUserId = c.req.param("userId");
+
+    // Prevent owners from revoking their own permission
+    if (targetUserId === user.id) {
+      return c.json({ error: "Cannot revoke your own permission" }, 400);
+    }
+
+    const supabase = c.get("supabase");
+
+    // Check that the target user actually has a permission on this workspace
+    const targetRole = await getPermission(supabase, workspaceId, targetUserId);
+    if (!targetRole) {
+      return c.json({ error: "Permission not found" }, 404);
+    }
+
+    // Revoke the permission and remove from the user's hub
+    await revokePermission(supabase, workspaceId, targetUserId);
+    await removeUserWorkspace(supabase, workspaceId, targetUserId);
+
+    log.info("DELETE /api/workspaces/:id/permissions/:userId", {
+      userId: user.id,
+      workspaceId,
+      targetUserId,
+    });
+    return c.body(null, 204);
+  } catch (err) {
+    log.error("DELETE /api/workspaces/:id/permissions/:userId failed", {
+      userId: user.id,
+      workspaceId: c.req.param("id"),
+      targetUserId: c.req.param("userId"),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
