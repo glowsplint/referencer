@@ -12,10 +12,7 @@ function base64urlDecode(str: string): string {
   return atob(str.replace(/-/g, "+").replace(/_/g, "/"));
 }
 
-async function verifyWithSecret(
-  token: string,
-  secret: string,
-): Promise<WsJwtPayload | null> {
+async function verifyWithSecret(token: string, secret: string): Promise<WsJwtPayload | null> {
   const parts = token.split(".");
   if (parts.length !== 3) return null;
 

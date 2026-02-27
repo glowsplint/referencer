@@ -1,7 +1,6 @@
 // Draggable vertical divider for resizing the management pane. Reports pixel
 // width rather than percentage, clamped to [150px, 500px].
 import { useCallback } from "react";
-import { GripVertical } from "lucide-react";
 
 const MIN_WIDTH = 150;
 const MAX_WIDTH = 500;
@@ -49,8 +48,6 @@ export function ManagementPaneDivider({
       onMouseDown={handleMouseDown}
       className="flex flex-col items-center w-3 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
     >
-      <div className="flex-1 w-px bg-gray-300" />
-      <GripVertical size={14} className="text-muted-foreground shrink-0" />
       <div className="flex-1 w-px bg-gray-300" />
     </div>
   );
