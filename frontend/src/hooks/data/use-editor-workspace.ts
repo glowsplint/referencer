@@ -50,6 +50,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // Load demo content on demand (single-use)
   const demoLoadRequestedRef = useRef(false);
   const [demoLoaded, setDemoLoaded] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const loadDemoContent = useCallback(() => {
     if (readOnly || demoLoaded) return;
     const count = DEFAULT_SECTION_NAMES.length;
@@ -63,6 +64,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     rawEditorsHook.setEditorKeys(Array.from({ length: count }, (_, i) => Date.now() + i));
     demoLoadRequestedRef.current = true;
     setDemoLoaded(true);
+    setDemoLoading(true);
   }, [readOnly, demoLoaded, rawEditorsHook]);
 
   // After editors mount from a demo load request, set content and seed layers
@@ -87,6 +89,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     } catch (err) {
       console.error("Failed to seed demo layers:", err);
     }
+    setDemoLoading(false);
   }, [rawEditorsHook.mountedEditorCount, readyForSeeding, yjs.doc, trackedEditorsHook.editorsRef]);
 
   // Wraps mutation callbacks to no-op when in read-only mode
@@ -513,6 +516,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     toggleSectionVisibility,
     loadDemoContent,
     demoLoaded,
+    demoLoading,
     workspaceId: workspaceId ?? null,
     readOnly,
     isManagementPaneOpen,

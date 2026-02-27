@@ -81,6 +81,7 @@ const mockWorkspace = {
   toggleThirdEditorFullWidth: vi.fn(),
   loadDemoContent: vi.fn(),
   demoLoaded: false,
+  demoLoading: false,
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
   setActiveLayer: vi.fn(),
@@ -224,6 +225,7 @@ beforeEach(() => {
   mockWorkspace.isManagementPaneOpen = false;
   mockWorkspace.annotations = { activeTool: "selection" as const };
   mockWorkspace.selectedArrow = null;
+  mockWorkspace.demoLoading = false;
 });
 
 const defaultProps = {
@@ -448,6 +450,20 @@ describe("App (desktop)", () => {
       mockWorkspace.settings.showStatusBar = false;
       renderApp();
       expect(screen.queryByTestId("status-bar")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("when demo is loading", () => {
+    it("then shows the loading overlay", () => {
+      mockWorkspace.demoLoading = true;
+      renderApp();
+      expect(screen.getByTestId("demoLoadingOverlay")).toBeInTheDocument();
+    });
+
+    it("then hides the loading overlay when not loading", () => {
+      mockWorkspace.demoLoading = false;
+      renderApp();
+      expect(screen.queryByTestId("demoLoadingOverlay")).not.toBeInTheDocument();
     });
   });
 });
