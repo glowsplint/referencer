@@ -2,7 +2,7 @@
 // (management pane toggle, keyboard shortcuts, FAQ, settings), annotation tools
 // (selection, arrow, highlight, comments, underline, eraser), and layout/lock
 // toggles. Tool buttons are disabled when the editor is unlocked or read-only.
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Columns2,
@@ -112,7 +112,6 @@ export function ButtonPane() {
     activeArrowStyle,
     setActiveArrowStyle,
     arrowStylePickerOpen,
-    setArrowStylePickerOpen,
     selectedArrow,
     updateArrowStyle,
     isManagementPaneOpen,
@@ -136,17 +135,12 @@ export function ButtonPane() {
   const [faqOpen, setFaqOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  // Sync picker open state with active tool
-  useEffect(() => {
-    setArrowStylePickerOpen(annotations.activeTool === "arrow");
-  }, [annotations.activeTool, setArrowStylePickerOpen]);
-
-  // Activate arrow tool when an arrow is selected
-  useEffect(() => {
-    if (selectedArrow) {
-      setActiveTool("arrow");
-    }
-  }, [selectedArrow, setActiveTool]);
+  // Activate arrow tool when an arrow is selected (derived in render)
+  const prevSelectedArrowRef = useRef<typeof selectedArrow>(null);
+  if (selectedArrow && selectedArrow !== prevSelectedArrowRef.current) {
+    setActiveTool("arrow");
+  }
+  prevSelectedArrowRef.current = selectedArrow;
 
   const handleArrowStyleSelect = useCallback(
     (style: ArrowStyle) => {

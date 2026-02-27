@@ -366,22 +366,24 @@ describe("ButtonPane", () => {
     };
 
     describe("when activeTool is arrow", () => {
-      it("then opens the arrow style picker", () => {
-        const { workspace } = renderButtonPane({
+      it("then shows the arrow style picker via arrowStylePickerOpen", () => {
+        renderButtonPane({
           ...lockedSettings,
           annotations: { activeTool: "arrow" },
+          arrowStylePickerOpen: true,
         });
-        expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(true);
+        expect(screen.getByTestId("arrowStylePopover")).toBeInTheDocument();
       });
     });
 
     describe("when activeTool is not arrow", () => {
-      it("then closes the arrow style picker", () => {
-        const { workspace } = renderButtonPane({
+      it("then hides the arrow style picker via arrowStylePickerOpen", () => {
+        renderButtonPane({
           ...lockedSettings,
           annotations: { activeTool: "selection" },
+          arrowStylePickerOpen: false,
         });
-        expect(workspace.setArrowStylePickerOpen).toHaveBeenCalledWith(false);
+        expect(screen.queryByTestId("arrowStylePopover")).not.toBeInTheDocument();
       });
     });
 

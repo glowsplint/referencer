@@ -58,7 +58,7 @@ export function TourTooltip({
           <div className="flex items-center gap-1.5">
             {Array.from({ length: totalSteps }, (_, i) => (
               <span
-                key={i}
+                key={`step-${i}`}
                 className={`inline-block size-2 rounded-full ${
                   i === stepIndex ? "bg-primary" : "bg-muted-foreground/30"
                 }`}

@@ -110,8 +110,16 @@ export function FolderCard({
     <div data-testid={`folderCard-${node.folder.id}`}>
       <div
         ref={combinedRef}
+        role="button"
+        tabIndex={0}
         className={`group/folder relative flex flex-col p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer ${isDragging ? "opacity-50" : ""} ${isOver ? "ring-2 ring-primary bg-primary/5" : ""}`}
         onClick={toggleCollapsed}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleCollapsed();
+          }
+        }}
       >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-1.5 min-w-0 flex-1">
@@ -134,7 +142,7 @@ export function FolderCard({
             </button>
             <Folder size={14} className="text-muted-foreground shrink-0" />
             {isRenaming ? (
-              <div onClick={(e) => e.stopPropagation()}>
+              <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                 <InlineNameInput
                   defaultValue={node.folder.name}
                   onSave={(name) => {
@@ -151,7 +159,11 @@ export function FolderCard({
               {folderWorkspaces.length}
             </span>
           </div>
-          <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="ml-auto"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
             <FolderDropdownMenu
               depth={node.depth}
               onRename={() => onSetRenamingFolder(node.folder.id)}

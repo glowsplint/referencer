@@ -112,9 +112,21 @@ export function AnnotationCard({
     <div
       ref={cardRef}
       data-highlight-id={highlightId}
+      role="button"
+      tabIndex={0}
       className={`absolute w-full rounded border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800 group ${isCollapsed ? "cursor-pointer" : ""}`}
       style={{ top }}
       onClick={isCollapsed ? () => onToggleCollapse?.(highlightId) : handleClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          if (isCollapsed) {
+            onToggleCollapse?.(highlightId);
+          } else {
+            onClick(layerId, highlightId);
+          }
+        }
+      }}
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
     >
@@ -162,14 +174,30 @@ export function AnnotationCard({
             />
           ) : annotation ? (
             <div
+              role="button"
+              tabIndex={0}
               className="cursor-pointer p-2 text-xs text-zinc-600 dark:text-zinc-300 min-h-[2rem] prose-xs"
               onClick={handleClick}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onClick(layerId, highlightId);
+                }
+              }}
               dangerouslySetInnerHTML={{ __html: migrateAnnotation(annotation) }}
             />
           ) : (
             <div
+              role="button"
+              tabIndex={0}
               className="cursor-pointer p-2 text-xs text-zinc-600 dark:text-zinc-300 min-h-[2rem]"
               onClick={handleClick}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onClick(layerId, highlightId);
+                }
+              }}
             >
               <span className="text-zinc-400 italic">{t("annotations.placeholder")}</span>
             </div>

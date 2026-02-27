@@ -108,8 +108,16 @@ export function FolderListItem({
     <div data-testid={`folderListItem-${node.folder.id}`}>
       <div
         ref={combinedRef}
+        role="button"
+        tabIndex={0}
         className={`group/folder flex items-center px-4 py-3 rounded-md hover:bg-accent/30 transition-colors cursor-pointer ${isDragging ? "opacity-50" : ""} ${isOver ? "ring-2 ring-primary bg-primary/5" : ""}`}
         onClick={toggleCollapsed}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleCollapsed();
+          }
+        }}
       >
         <button
           onClick={(e) => {
@@ -130,7 +138,11 @@ export function FolderListItem({
         </button>
         <Folder size={14} className="text-muted-foreground shrink-0 ml-1" />
         {isRenaming ? (
-          <div className="flex-1 ml-1.5" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="flex-1 ml-1.5"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
             <InlineNameInput
               defaultValue={node.folder.name}
               onSave={(name) => {
@@ -146,7 +158,7 @@ export function FolderListItem({
         <span className="text-xs text-muted-foreground mr-2 shrink-0">
           {folderWorkspaces.length} items
         </span>
-        <div onClick={(e) => e.stopPropagation()}>
+        <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
           <FolderDropdownMenu
             depth={node.depth}
             onRename={() => onSetRenamingFolder(node.folder.id)}

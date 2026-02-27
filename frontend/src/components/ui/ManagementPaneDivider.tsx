@@ -44,6 +44,7 @@ export function ManagementPaneDivider({
 
   return (
     <div
+      role="separator"
       data-testid="management-pane-divider"
       onMouseDown={handleMouseDown}
       className="flex flex-col items-center w-3 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"

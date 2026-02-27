@@ -44,6 +44,7 @@ export function Divider({ onResize, containerRef, direction = "horizontal" }: Di
 
   return (
     <div
+      role="separator"
       data-testid="divider"
       onMouseDown={handleMouseDown}
       className={

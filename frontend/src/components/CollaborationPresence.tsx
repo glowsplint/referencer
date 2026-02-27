@@ -154,10 +154,18 @@ export function CollaborationPresence({
       {localUser && (
         <div className="relative">
           <div
+            role="button"
+            tabIndex={0}
             className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white shrink-0 cursor-pointer ring-1 ring-white/30"
             style={{ backgroundColor: localUser.color }}
             title="You"
             onClick={startEditingName}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                startEditingName();
+              }
+            }}
           >
             {getInitials(localUser.name)}
           </div>

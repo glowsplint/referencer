@@ -39,8 +39,16 @@ export function WorkspaceCard({
   return (
     <div
       ref={dragRef}
+      role="button"
+      tabIndex={0}
       className={`group relative flex flex-col p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer ${isDragging ? "opacity-50" : ""}`}
       onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
       data-testid={`workspaceCard-${workspace.workspaceId}`}
     >
       <div className="flex items-start justify-between">

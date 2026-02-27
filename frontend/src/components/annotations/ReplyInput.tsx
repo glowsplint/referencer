@@ -28,10 +28,19 @@ export function ReplyInput({ onSubmit, placeholder }: ReplyInputProps) {
   if (!active) {
     return (
       <div
+        role="button"
+        tabIndex={0}
         className="px-2 py-1 text-xs text-zinc-400 italic cursor-pointer hover:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
         onClick={(e) => {
           e.stopPropagation();
           setActive(true);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            e.stopPropagation();
+            setActive(true);
+          }
         }}
       >
         {resolvedPlaceholder}
@@ -40,7 +49,11 @@ export function ReplyInput({ onSubmit, placeholder }: ReplyInputProps) {
   }
 
   return (
-    <div className="flex items-end gap-1 px-1 pb-1" onClick={(e) => e.stopPropagation()}>
+    <div
+      role="group"
+      className="flex items-end gap-1 px-1 pb-1"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="flex-1 min-w-0">
         <MiniCommentEditor
           value={value}
