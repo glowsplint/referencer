@@ -43,9 +43,7 @@ function createMockSupabase() {
                 order(col: string, opts: { ascending: boolean }) {
                   const filtered = getStore().filter((r) => r[col1] === val1);
                   filtered.sort((a, b) =>
-                    opts.ascending
-                      ? a[col] < b[col] ? -1 : 1
-                      : a[col] > b[col] ? -1 : 1,
+                    opts.ascending ? (a[col] < b[col] ? -1 : 1) : a[col] > b[col] ? -1 : 1,
                   );
                   return Promise.resolve({ data: filtered });
                 },
