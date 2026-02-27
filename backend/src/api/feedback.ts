@@ -30,17 +30,33 @@ export function handleFeedback() {
     }
 
     const ua = c.req.header("user-agent") || "unknown";
+    const hashBuf = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(user.id),
+    );
+    const userHash = Array.from(new Uint8Array(hashBuf))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("")
+      .slice(0, 8);
     const issueBody = [
       body.description || "",
       "",
       "---",
-      `**Reported by:** (user ${user.id})`,
+      `**Reported by:** (user ${userHash})`,
       `**User-Agent:** ${ua}`,
       `**Timestamp:** ${new Date().toISOString()}`,
     ].join("\n");
 
     const githubIssuesUrl =
       c.env.GITHUB_ISSUES_REPO || "https://api.github.com/repos/glowsplint/referencer/issues";
+
+    if (!githubIssuesUrl.startsWith("https://api.github.com/")) {
+      log.error("POST /api/feedback misconfigured URL", { url: githubIssuesUrl });
+      return c.json({ error: "Misconfigured feedback endpoint" }, 500);
+    }
+
+    // Increment rate limit counter BEFORE the API call to prevent TOCTOU bypass
+    await kv.put(rateKey, String(current + 1), { expirationTtl: 3600 });
 
     try {
       const resp = await fetch(githubIssuesUrl, {
@@ -62,9 +78,6 @@ export function handleFeedback() {
         log.error("POST /api/feedback GitHub API error", { userId: user.id, status: resp.status });
         return c.json({ error: "Failed to create issue" }, 502);
       }
-
-      // Increment rate limit counter
-      await kv.put(rateKey, String(current + 1), { expirationTtl: 3600 });
 
       const data = (await resp.json()) as { html_url: string };
       log.info("POST /api/feedback", { userId: user.id });

@@ -13,6 +13,21 @@ import {
 import { getPermission, setPermission } from "../db/permission-queries";
 import { requirePermission } from "../middleware/require-permission";
 
+const WORKSPACE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
+
+function validateWorkspaceId(id: unknown): string | null {
+  if (typeof id !== "string" || id.length === 0) {
+    return "workspaceId must be a non-empty string";
+  }
+  if (id.length > 64) {
+    return "workspaceId must be at most 64 characters";
+  }
+  if (!WORKSPACE_ID_PATTERN.test(id)) {
+    return "workspaceId must contain only alphanumeric characters, hyphens, and underscores";
+  }
+  return null;
+}
+
 const workspaces = new Hono<Env>();
 
 // GET / - list workspaces
@@ -40,8 +55,9 @@ workspaces.post("/", async (c) => {
 
   try {
     const body = await c.req.json<{ workspaceId: string; title?: string }>();
-    if (!body.workspaceId) {
-      return c.json({ error: "workspaceId is required" }, 400);
+    const idError = validateWorkspaceId(body.workspaceId);
+    if (idError) {
+      return c.json({ error: idError }, 400);
     }
     if (body.title && body.title.length > 500) {
       return c.json({ error: "Title must be at most 500 characters" }, 400);
@@ -190,8 +206,9 @@ workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
   try {
     const sourceId = c.req.param("id");
     const body = await c.req.json<{ newWorkspaceId: string }>();
-    if (!body.newWorkspaceId) {
-      return c.json({ error: "newWorkspaceId is required" }, 400);
+    const idError = validateWorkspaceId(body.newWorkspaceId);
+    if (idError) {
+      return c.json({ error: idError }, 400);
     }
 
     const supabase = c.get("supabase");

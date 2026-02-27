@@ -34,6 +34,14 @@ const shareResolveLimiter = kvRateLimiter({
   keyGenerator: getClientIp,
 });
 
+const getUserKey = (c: any) => c.get("user")?.id ?? getClientIp(c);
+
+const apiRateLimiter = kvRateLimiter({
+  windowMs: 60_000,
+  limit: 120,
+  keyGenerator: (c) => `api:${getUserKey(c)}`,
+});
+
 // Create Supabase client per-request
 app.use("*", async (c, next) => {
   const supabase = createSupabaseClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY);
@@ -72,6 +80,12 @@ app.use("*", (c, next) => {
 
 // Auth routes (mounted directly so they share the main app's middleware context)
 app.route("/auth", createAuthRoutes());
+
+// Rate limit core API endpoints
+app.use("/api/workspaces/*", apiRateLimiter);
+app.use("/api/folders/*", apiRateLimiter);
+app.use("/api/preferences/*", apiRateLimiter);
+app.use("/api/share", apiRateLimiter);
 
 // Workspaces API
 app.route("/api/workspaces", workspaces);

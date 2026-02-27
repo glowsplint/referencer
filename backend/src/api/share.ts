@@ -6,6 +6,21 @@ import type { ShareRequest, ShareResponse } from "../types";
 import type { Env } from "../env";
 import type { PermissionRole } from "../db/permission-queries";
 
+const WORKSPACE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
+
+function validateWorkspaceId(id: unknown): string | null {
+  if (typeof id !== "string" || id.length === 0) {
+    return "workspaceId must be a non-empty string";
+  }
+  if (id.length > 64) {
+    return "workspaceId must be at most 64 characters";
+  }
+  if (!WORKSPACE_ID_PATTERN.test(id)) {
+    return "workspaceId must contain only alphanumeric characters, hyphens, and underscores";
+  }
+  return null;
+}
+
 export function handleShare() {
   return async (c: Context<Env>) => {
     const user = c.get("user");
@@ -13,6 +28,11 @@ export function handleShare() {
     const log = c.get("logger");
 
     const req = await c.req.json<ShareRequest>();
+
+    const idError = validateWorkspaceId(req.workspaceId);
+    if (idError) {
+      return c.json({ error: idError }, 400);
+    }
 
     if (req.access !== "edit" && req.access !== "readonly") {
       return c.json({ error: "access must be 'edit' or 'readonly'" }, 400);
