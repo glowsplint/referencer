@@ -48,6 +48,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
+import { Loader2 } from "lucide-react";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import { RecordingProvider } from "./contexts/RecordingContext";
 import { PlaybackBar } from "./components/PlaybackBar";
@@ -488,6 +489,14 @@ export function App({ workspaceId, navigate }: AppProps) {
                         hideOffscreenArrows={settings.hideOffscreenArrows}
                       />
                     </ErrorBoundary>
+                    {workspace.demoLoading && (
+                      <div
+                        className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm"
+                        data-testid="demoLoadingOverlay"
+                      >
+                        <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                      </div>
+                    )}
                     {!settings.isMultipleRowsLayout ? (
                       <>
                         {/* Top row */}

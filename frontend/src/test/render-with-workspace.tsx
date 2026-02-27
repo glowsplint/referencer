@@ -89,6 +89,7 @@ export function makeMockWorkspace(
     toggleAllSectionVisibility: vi.fn(),
     loadDemoContent: vi.fn(),
     demoLoaded: false,
+    demoLoading: false,
     handleDividerResize: vi.fn(),
     handleEditorMount: vi.fn(),
     handlePaneFocus: vi.fn(),
