@@ -120,9 +120,9 @@ export function SelectionRingOverlay({
 
   return (
     <>
-      {rects.map((rect, i) => (
+      {rects.map((rect) => (
         <div
-          key={i}
+          key={`${rect.top}-${rect.left}-${rect.width}-${rect.height}`}
           data-testid="selection-ring"
           className="pointer-events-none absolute"
           style={{

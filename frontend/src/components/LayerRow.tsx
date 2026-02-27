@@ -85,8 +85,16 @@ export function LayerRow({
       }}
     >
       <div
+        role="button"
+        tabIndex={0}
         className={`flex items-center gap-2 px-1 py-0.5 rounded ${isActive ? "bg-accent" : "hover:bg-accent/50"}`}
         onClick={onSetActive}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onSetActive();
+          }
+        }}
       >
         {hasItems ? (
           <button

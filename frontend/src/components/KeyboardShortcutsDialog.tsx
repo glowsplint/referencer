@@ -35,7 +35,7 @@ function KeyCombination({ keys }: { keys: string[] }) {
   return (
     <div className="flex items-center gap-1">
       {keys.map((key, i) => (
-        <span key={i} className="flex items-center gap-1">
+        <span key={key} className="flex items-center gap-1">
           {i > 0 && <span className="text-xs text-muted-foreground">+</span>}
           <Kbd>{key}</Kbd>
         </span>
@@ -164,7 +164,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
         <div className="overflow-y-auto max-h-[60vh]">
           <div className="px-6 pb-4 grid grid-cols-2 gap-x-8">
             {[LEFT_SECTIONS, RIGHT_SECTIONS].map((column, colIdx) => (
-              <div key={colIdx} className="space-y-5">
+              <div key={colIdx === 0 ? "left" : "right"} className="space-y-5">
                 {column.map((section) => (
                   <ShortcutGroup key={section.title} section={section} />
                 ))}

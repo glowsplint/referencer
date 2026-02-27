@@ -39,8 +39,16 @@ export function WorkspaceListItem({
   return (
     <div
       ref={dragRef}
+      role="button"
+      tabIndex={0}
       className={`group flex items-center px-4 py-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer ${isDragging ? "opacity-50" : ""}`}
       onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
       data-testid={`workspaceListItem-${workspace.workspaceId}`}
     >
       <button

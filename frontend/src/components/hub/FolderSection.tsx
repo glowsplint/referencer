@@ -99,8 +99,16 @@ export function FolderSection({
       {/* Folder header */}
       <div
         ref={dropRef}
+        role="button"
+        tabIndex={0}
         className={`group/folder flex items-center gap-1.5 py-2 px-1 rounded-md hover:bg-accent/30 cursor-pointer transition-colors ${isOver ? "ring-2 ring-primary bg-primary/5" : ""}`}
         onClick={toggleCollapsed}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleCollapsed();
+          }
+        }}
       >
         <button
           onClick={(e) => {
@@ -135,7 +143,11 @@ export function FolderSection({
         <span className="text-xs text-muted-foreground ml-1 shrink-0">
           {folderWorkspaces.length}
         </span>
-        <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="ml-auto"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
           <FolderDropdownMenu
             depth={node.depth}
             onRename={() => onSetRenamingFolder(node.folder.id)}

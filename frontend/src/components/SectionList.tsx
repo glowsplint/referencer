@@ -2,7 +2,7 @@
 // name and visibility toggle. Supports drag-and-drop reordering between passages
 // (builds a permutation array on drop and calls onReorder).
 import { Eye, EyeOff, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useInlineEdit } from "@/hooks/ui/use-inline-edit";
@@ -36,10 +36,12 @@ export function SectionList({
   // Reset drag state when editorCount changes (e.g., passage deleted via trash
   // drop). The browser skips the dragend event when the source element is removed
   // from the DOM, so we can't rely on it for cleanup.
-  useEffect(() => {
-    setDragFromIndex(null);
-    setDropTargetIndex(null);
-  }, [editorCount]);
+  const prevEditorCountRef = useRef(editorCount);
+  if (prevEditorCountRef.current !== editorCount) {
+    prevEditorCountRef.current = editorCount;
+    if (dragFromIndex !== null) setDragFromIndex(null);
+    if (dropTargetIndex !== null) setDropTargetIndex(null);
+  }
 
   const { isEditing, inputProps, startEditing } = useInlineEdit({
     currentName: editingIndex !== null ? sectionNames[editingIndex] : "",
@@ -86,7 +88,7 @@ export function SectionList({
       <div className="flex flex-col gap-1">
         {Array.from({ length: editorCount }, (_, i) => (
           <div
-            key={i}
+            key={`passage-${i}`}
             className={`flex items-center gap-2 px-1 py-0.5 rounded hover:bg-accent/50 cursor-grab${
               dragFromIndex === i ? " opacity-40" : ""
             }${dropTargetIndex === i && dragFromIndex !== i ? " border-t-2 border-primary" : ""}`}

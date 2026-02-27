@@ -2,16 +2,8 @@
 // toolbar, management panel, editor panes with dividers, annotation panel,
 // arrow overlay, and action console. Wires together all annotation tools
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
-import {
-  useRef,
-  useState,
-  useCallback,
-  useEffect,
-  useMemo,
-  Fragment,
-  type RefObject,
-  type ReactNode,
-} from "react";
+import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
+import type * as Y from "yjs";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
 import { ManagementPane } from "./components/ManagementPane";
@@ -65,6 +57,111 @@ function getEditorColumns(editorCount: number): { left: number[]; right: number[
     (i % 2 === 0 ? left : right).push(i);
   }
   return { left, right };
+}
+
+interface EditorCellProps {
+  index: number;
+  fullWidth?: boolean;
+  editorKey: number;
+  columnSplit: number;
+  sectionVisible: boolean;
+  sectionName: string;
+  onUpdateName: (name: string) => void;
+  isLocked: boolean;
+  effectiveReadOnly: boolean;
+  activeTool: import("@/types/editor").ActiveTool;
+  fragment: Y.XmlFragment | null;
+  onEditorMount: (index: number, editor: import("@tiptap/react").Editor) => void;
+  onFocus: (index: number) => void;
+  onMouseDown?: (
+    e: React.MouseEvent,
+    editor: import("@tiptap/react").Editor,
+    editorIndex: number,
+  ) => void;
+  onMouseMove?: (
+    e: React.MouseEvent,
+    editor: import("@tiptap/react").Editor,
+    editorIndex: number,
+  ) => void;
+  onMouseUp?: (
+    e: React.MouseEvent,
+    editor: import("@tiptap/react").Editor,
+    editorIndex: number,
+  ) => void;
+  layers: import("@/types/editor").Layer[];
+  selection: import("@/types/editor").WordSelection | null;
+  selectionHidden: boolean;
+  activeLayerColor: string | null;
+  isDarkMode: boolean;
+  removeArrow: (layerId: string, arrowId: string) => void;
+  sectionVisibility: boolean[];
+  selectedArrowId: string | null;
+  yjsSynced: boolean;
+}
+
+function EditorCell({
+  index: i,
+  fullWidth,
+  columnSplit,
+  sectionVisible,
+  sectionName,
+  onUpdateName,
+  isLocked,
+  effectiveReadOnly,
+  activeTool,
+  fragment,
+  onEditorMount,
+  onFocus: handlePaneFocus,
+  onMouseDown: handleMouseDown,
+  onMouseMove: handleMouseMove,
+  onMouseUp: handleMouseUp,
+  layers,
+  selection,
+  selectionHidden,
+  activeLayerColor,
+  isDarkMode,
+  removeArrow,
+  sectionVisibility,
+  selectedArrowId,
+  yjsSynced,
+}: EditorCellProps) {
+  const cellFlex = fullWidth ? "1 0 0%" : `${i % 2 === 0 ? columnSplit : 100 - columnSplit} 0 0%`;
+  return (
+    <div
+      className="min-w-0 min-h-0 overflow-hidden flex flex-col"
+      style={{
+        flex: cellFlex,
+        display: sectionVisible === false ? "none" : undefined,
+      }}
+    >
+      <PassageHeader name={sectionName} index={i} onUpdateName={onUpdateName} />
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <ErrorBoundary>
+          <EditorPane
+            isLocked={isLocked || effectiveReadOnly}
+            activeTool={activeTool}
+            content={PLACEHOLDER_CONTENT}
+            index={i}
+            fragment={fragment}
+            onEditorMount={onEditorMount}
+            onFocus={handlePaneFocus}
+            onMouseDown={isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
+            onMouseMove={isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
+            onMouseUp={isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
+            layers={layers}
+            selection={selection}
+            selectionHidden={selectionHidden}
+            activeLayerColor={activeLayerColor}
+            isDarkMode={isDarkMode}
+            removeArrow={removeArrow}
+            sectionVisibility={sectionVisibility}
+            selectedArrowId={selectedArrowId}
+            yjsSynced={yjsSynced}
+          />
+        </ErrorBoundary>
+      </div>
+    </div>
+  );
 }
 
 interface AppProps {
@@ -383,50 +480,33 @@ export function App({ workspaceId, navigate }: AppProps) {
     onToggleReplyReaction: handleToggleReplyReaction,
   };
 
-  function renderEditorCell(i: number, fullWidth?: boolean): ReactNode {
-    const cellFlex = fullWidth ? "1 0 0%" : `${i % 2 === 0 ? columnSplit : 100 - columnSplit} 0 0%`;
-    return (
-      <div
-        key={editorKeys[i]}
-        className="min-w-0 min-h-0 overflow-hidden flex flex-col"
-        style={{
-          flex: cellFlex,
-          display: sectionVisibility[i] === false ? "none" : undefined,
-        }}
-      >
-        <PassageHeader
-          name={workspace.sectionNames[i]}
-          index={i}
-          onUpdateName={(name) => workspace.updateSectionName(i, name)}
-        />
-        <div className="flex-1 min-h-0 overflow-hidden">
-          <ErrorBoundary>
-            <EditorPane
-              isLocked={settings.isLocked || effectiveReadOnly}
-              activeTool={annotations.activeTool}
-              content={PLACEHOLDER_CONTENT}
-              index={i}
-              fragment={workspace.yjs.getFragment(i)}
-              onEditorMount={handleEditorMount}
-              onFocus={handlePaneFocus}
-              onMouseDown={settings.isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
-              onMouseMove={settings.isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
-              onMouseUp={settings.isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
-              layers={layers}
-              selection={selection}
-              selectionHidden={selectionHidden}
-              activeLayerColor={activeLayerColor}
-              isDarkMode={settings.isDarkMode}
-              removeArrow={removeArrow}
-              sectionVisibility={sectionVisibility}
-              selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-              yjsSynced={workspace.readyForSeeding}
-            />
-          </ErrorBoundary>
-        </div>
-      </div>
-    );
-  }
+  const editorCellProps = (i: number, fullWidth?: boolean): EditorCellProps => ({
+    index: i,
+    fullWidth,
+    editorKey: editorKeys[i],
+    columnSplit,
+    sectionVisible: sectionVisibility[i] !== false,
+    sectionName: workspace.sectionNames[i],
+    onUpdateName: (name: string) => workspace.updateSectionName(i, name),
+    isLocked: settings.isLocked,
+    effectiveReadOnly,
+    activeTool: annotations.activeTool,
+    fragment: workspace.yjs.getFragment(i),
+    onEditorMount: handleEditorMount,
+    onFocus: handlePaneFocus,
+    onMouseDown: handleMouseDown,
+    onMouseMove: handleMouseMove,
+    onMouseUp: handleMouseUp,
+    layers,
+    selection,
+    selectionHidden,
+    activeLayerColor,
+    isDarkMode: settings.isDarkMode,
+    removeArrow,
+    sectionVisibility,
+    selectedArrowId: workspace.selectedArrow?.arrowId ?? null,
+    yjsSynced: workspace.readyForSeeding,
+  });
 
   return (
     <WorkspaceProvider value={workspace}>
@@ -505,7 +585,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                           className="flex flex-row min-w-0 min-h-0"
                           style={{ flex: editorCount > 2 ? `${rowSplit} 0 0%` : "1 0 0%" }}
                         >
-                          {renderEditorCell(0)}
+                          <EditorCell key={editorKeys[0]} {...editorCellProps(0)} />
                           {editorCount >= 2 && sectionVisibility[0] && sectionVisibility[1] && (
                             <Divider
                               onResize={handleColumnResize}
@@ -513,7 +593,9 @@ export function App({ workspaceId, navigate }: AppProps) {
                               direction="horizontal"
                             />
                           )}
-                          {editorCount >= 2 && renderEditorCell(1)}
+                          {editorCount >= 2 && (
+                            <EditorCell key={editorKeys[1]} {...editorCellProps(1)} />
+                          )}
                         </div>
                         {/* Row divider */}
                         {editorCount > 2 && (
@@ -530,10 +612,13 @@ export function App({ workspaceId, navigate }: AppProps) {
                             className="flex flex-row min-w-0 min-h-0"
                             style={{ flex: `${100 - rowSplit} 0 0%` }}
                           >
-                            {renderEditorCell(
-                              2,
-                              editorCount === 3 && settings.thirdEditorFullWidth,
-                            )}
+                            <EditorCell
+                              key={editorKeys[2]}
+                              {...editorCellProps(
+                                2,
+                                editorCount === 3 && settings.thirdEditorFullWidth,
+                              )}
+                            />
                             {editorCount >= 4 && sectionVisibility[2] && sectionVisibility[3] && (
                               <Divider
                                 onResize={handleColumnResize}
@@ -541,7 +626,9 @@ export function App({ workspaceId, navigate }: AppProps) {
                                 direction="horizontal"
                               />
                             )}
-                            {editorCount >= 4 && renderEditorCell(3)}
+                            {editorCount >= 4 && (
+                              <EditorCell key={editorKeys[3]} {...editorCellProps(3)} />
+                            )}
                           </div>
                         )}
                       </>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,9 +20,12 @@ export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: Ren
   const [title, setTitle] = useState(currentTitle);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (open) setTitle(currentTitle);
-  }, [open, currentTitle]);
+  // Reset title when dialog opens (replaces useEffect sync)
+  const prevOpenRef = useRef(open);
+  if (open && !prevOpenRef.current) {
+    setTitle(currentTitle);
+  }
+  prevOpenRef.current = open;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

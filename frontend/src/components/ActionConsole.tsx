@@ -134,6 +134,7 @@ export function ActionConsole({
       style={{ height }}
     >
       <div
+        role="separator"
         data-testid="consoleDragHandle"
         onMouseDown={handleDragStart}
         className="h-1.5 cursor-row-resize hover:bg-zinc-600 transition-colors shrink-0"
@@ -159,8 +160,8 @@ export function ActionConsole({
               </span>
               <span className="text-zinc-300">{entry.description}</span>
             </div>
-            {entry.details?.map((detail, i) => (
-              <DetailLine key={i} detail={detail} />
+            {entry.details?.map((detail) => (
+              <DetailLine key={detail.label} detail={detail} />
             ))}
           </div>
         ))}

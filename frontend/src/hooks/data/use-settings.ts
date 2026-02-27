@@ -74,7 +74,10 @@ export function useSettings() {
     [],
   );
   const toggleThirdEditorFullWidth = useToggle(setSettings, "thirdEditorFullWidth");
-  const setActiveTool = useCallback((tool: ActiveTool) => setAnnotations({ activeTool: tool }), []);
+  const setActiveTool = useCallback((tool: ActiveTool) => {
+    setAnnotations({ activeTool: tool });
+    setArrowStylePickerOpen(tool === "arrow");
+  }, []);
 
   return {
     settings,

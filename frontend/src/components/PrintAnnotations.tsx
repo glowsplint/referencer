@@ -60,7 +60,7 @@ export function PrintAnnotations({
           </div>
           {items.map((item, i) => (
             <div
-              key={i}
+              key={`${item.layerName}-${item.text}-${i}`}
               className="mb-2 border-l-2 pl-2"
               style={{ borderColor: sanitizeColor(item.layerColor) }}
             >
