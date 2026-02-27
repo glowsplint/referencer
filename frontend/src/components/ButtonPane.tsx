@@ -127,6 +127,7 @@ export function ButtonPane() {
     toggleCommentPlacement,
     toggleThirdEditorFullWidth,
     loadDemoContent,
+    demoLoaded,
   } = useWorkspace();
 
   const { startTour } = useTour();
@@ -266,7 +267,7 @@ export function ButtonPane() {
         <TooltipTrigger asChild>
           <button
             onClick={() => loadDemoContent()}
-            disabled={readOnly}
+            disabled={readOnly || demoLoaded}
             className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
             data-testid="loadDemoButton"
           >

@@ -47,10 +47,11 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   // data that hasn't been loaded yet (race between IDB async load and WS error).
   const readyForSeeding = yjs.synced && idbSynced;
 
-  // Load demo content on demand
+  // Load demo content on demand (single-use)
   const demoLoadRequestedRef = useRef(false);
+  const [demoLoaded, setDemoLoaded] = useState(false);
   const loadDemoContent = useCallback(() => {
-    if (readOnly) return;
+    if (readOnly || demoLoaded) return;
     const count = DEFAULT_SECTION_NAMES.length;
     // Set up editor panes
     rawEditorsHook.setEditorCount(count);
@@ -61,7 +62,8 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     );
     rawEditorsHook.setEditorKeys(Array.from({ length: count }, (_, i) => Date.now() + i));
     demoLoadRequestedRef.current = true;
-  }, [readOnly, rawEditorsHook]);
+    setDemoLoaded(true);
+  }, [readOnly, demoLoaded, rawEditorsHook]);
 
   // After editors mount from a demo load request, set content and seed layers
   useEffect(() => {
@@ -510,6 +512,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     updateSectionName,
     toggleSectionVisibility,
     loadDemoContent,
+    demoLoaded,
     workspaceId: workspaceId ?? null,
     readOnly,
     isManagementPaneOpen,

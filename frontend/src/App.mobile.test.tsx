@@ -75,6 +75,7 @@ const mockWorkspace = {
   toggleShowStatusBar: vi.fn(),
   toggleCommentPlacement: vi.fn(),
   loadDemoContent: vi.fn(),
+  demoLoaded: false,
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
   setActiveLayer: vi.fn(),

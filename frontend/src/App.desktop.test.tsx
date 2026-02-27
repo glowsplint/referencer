@@ -80,6 +80,7 @@ const mockWorkspace = {
   toggleCommentPlacement: vi.fn(),
   toggleThirdEditorFullWidth: vi.fn(),
   loadDemoContent: vi.fn(),
+  demoLoaded: false,
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
   setActiveLayer: vi.fn(),
