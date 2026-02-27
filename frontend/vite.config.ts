@@ -53,6 +53,65 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     css: false,
     exclude: ["e2e/**", "node_modules/**"],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "node",
+          environment: "node",
+          include: [
+            "src/lib/**/*.test.ts",
+            "src/constants/**/*.test.ts",
+            "src/hooks/recording/*.test.ts",
+          ],
+          exclude: [
+            "src/lib/dom.test.ts",
+            "src/lib/arrow/svg-helpers.test.ts",
+            "src/lib/auth-client.test.ts",
+            "src/lib/annotation/migrate-annotation.test.ts",
+            "src/lib/tiptap/nearest-word.test.ts",
+            "src/lib/tiptap/platform.test.ts",
+            "src/lib/tiptap/upload.test.ts",
+            "src/lib/yjs/__tests__/annotation-visibility.test.ts",
+            "src/lib/yjs/__tests__/annotations-crud.test.ts",
+            "src/hooks/recording/use-recording-manager.test.ts",
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "jsdom",
+          include: ["src/**/*.test.{ts,tsx}"],
+          exclude: [
+            "e2e/**",
+            "node_modules/**",
+            // Pure-logic files handled by the node project
+            "src/lib/**/*.test.ts",
+            "src/constants/**/*.test.ts",
+            "src/hooks/recording/*.test.ts",
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "jsdom-lib",
+          include: [
+            "src/lib/dom.test.ts",
+            "src/lib/arrow/svg-helpers.test.ts",
+            "src/lib/auth-client.test.ts",
+            "src/lib/annotation/migrate-annotation.test.ts",
+            "src/lib/tiptap/nearest-word.test.ts",
+            "src/lib/tiptap/platform.test.ts",
+            "src/lib/tiptap/upload.test.ts",
+            "src/lib/yjs/__tests__/annotation-visibility.test.ts",
+            "src/lib/yjs/__tests__/annotations-crud.test.ts",
+            "src/hooks/recording/use-recording-manager.test.ts",
+          ],
+        },
+      },
+    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov", "json-summary"],
