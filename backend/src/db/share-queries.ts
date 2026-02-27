@@ -11,15 +11,13 @@ export async function createShareLink(
   for (let i = 0; i < maxRetries; i++) {
     const code = generateCode();
     const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-    const { error } = await supabase
-      .from("share_link")
-      .insert({
-        code,
-        workspace_id: workspaceId,
-        access,
-        expires_at,
-        created_by: createdBy ?? null,
-      });
+    const { error } = await supabase.from("share_link").insert({
+      code,
+      workspace_id: workspaceId,
+      access,
+      expires_at,
+      created_by: createdBy ?? null,
+    });
     if (!error) return code;
     // Retry on unique constraint violation
   }

@@ -3,6 +3,7 @@
 // Unauthenticated users see a login prompt instead of share options.
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { Link, Eye, LogIn, Copy, Trash2, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -23,7 +24,7 @@ interface ShareDialogProps {
   workspaceId: string;
 }
 
-function RoleBadge({ role, t }: { role: string; t: (key: string) => string }) {
+function RoleBadge({ role, t }: { role: string; t: TFunction<"dialogs"> }) {
   const colors: Record<string, string> = {
     owner: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
     editor: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
@@ -43,7 +44,7 @@ function RoleBadge({ role, t }: { role: string; t: (key: string) => string }) {
   );
 }
 
-function AccessBadge({ access, t }: { access: string; t: (key: string) => string }) {
+function AccessBadge({ access, t }: { access: string; t: TFunction<"dialogs"> }) {
   const isEdit = access === "edit";
   return (
     <span
