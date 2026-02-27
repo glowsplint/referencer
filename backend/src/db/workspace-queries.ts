@@ -30,9 +30,21 @@ export async function createUserWorkspace(
   userId: string,
   workspaceId: string,
   title: string = "",
-): Promise<void> {
-  // Ensure the workspace row exists
-  await supabase.from("workspace").upsert({ id: workspaceId }, { onConflict: "id" });
+): Promise<{ isNew: boolean }> {
+  // Check if the workspace already exists
+  const { data: existing } = await supabase
+    .from("workspace")
+    .select("id")
+    .eq("id", workspaceId)
+    .single();
+
+  const isNew = !existing;
+
+  if (isNew) {
+    // Only insert if workspace doesn't exist yet
+    const { error: wsError } = await supabase.from("workspace").insert({ id: workspaceId });
+    if (wsError) throw new Error(`Failed to create workspace: ${wsError.message}`);
+  }
 
   // Insert the user_workspace row, ignore if already exists to preserve favorites/folders
   const { error } = await supabase.from("user_workspace").upsert(
@@ -48,6 +60,7 @@ export async function createUserWorkspace(
   );
 
   if (error) throw new Error(`Failed to create user workspace: ${error.message}`);
+  return { isNew };
 }
 
 export async function getUserWorkspace(

@@ -3,6 +3,8 @@
 // with RelativePosition anchors that survive concurrent text edits.
 import DOMPurify from "dompurify";
 import * as Y from "yjs";
+
+const PURIFY_CONFIG = { FORBID_ATTR: ["style"] };
 import {
   absolutePositionToRelativePosition,
   relativePositionToAbsolutePosition,
@@ -237,7 +239,7 @@ function readReactions(
     const yR = yReactions.get(i);
     reactions.push({
       emoji: yR.get("emoji") as string,
-      userName: DOMPurify.sanitize(yR.get("userName") as string),
+      userName: DOMPurify.sanitize(yR.get("userName") as string, PURIFY_CONFIG),
     });
   }
   return reactions;
@@ -250,8 +252,8 @@ function readReplies(yReplies: Y.Array<Y.Map<unknown>> | undefined): CommentRepl
     const yReply = yReplies.get(i);
     replies.push({
       id: yReply.get("id") as string,
-      text: DOMPurify.sanitize(yReply.get("text") as string),
-      userName: DOMPurify.sanitize(yReply.get("userName") as string),
+      text: DOMPurify.sanitize(yReply.get("text") as string, PURIFY_CONFIG),
+      userName: DOMPurify.sanitize(yReply.get("userName") as string, PURIFY_CONFIG),
       timestamp: yReply.get("timestamp") as number,
       reactions: readReactions(yReply.get("reactions") as Y.Array<Y.Map<unknown>> | undefined),
     });
@@ -285,11 +287,11 @@ function readHighlights(
       continue;
     }
 
-    const text = DOMPurify.sanitize(yH.get("text") as string);
-    const annotation = DOMPurify.sanitize((yH.get("annotation") as string) ?? "");
+    const text = DOMPurify.sanitize(yH.get("text") as string, PURIFY_CONFIG);
+    const annotation = DOMPurify.sanitize((yH.get("annotation") as string) ?? "", PURIFY_CONFIG);
     const lastEdited = (yH.get("lastEdited") as number) ?? undefined;
     const rawUserName = (yH.get("userName") as string) ?? undefined;
-    const userName = rawUserName ? DOMPurify.sanitize(rawUserName) : undefined;
+    const userName = rawUserName ? DOMPurify.sanitize(rawUserName, PURIFY_CONFIG) : undefined;
     highlights.push({
       id,
       editorIndex,
@@ -347,13 +349,13 @@ function readArrows(doc: Y.Doc, yLayer: Y.Map<unknown>, editorViews?: EditorView
         editorIndex: fromEditorIndex,
         from: fromFrom,
         to: fromTo,
-        text: DOMPurify.sanitize(yA.get("fromText") as string),
+        text: DOMPurify.sanitize(yA.get("fromText") as string, PURIFY_CONFIG),
       },
       to: {
         editorIndex: toEditorIndex,
         from: toFrom,
         to: toTo,
-        text: DOMPurify.sanitize(yA.get("toText") as string),
+        text: DOMPurify.sanitize(yA.get("toText") as string, PURIFY_CONFIG),
       },
       arrowStyle: (yA.get("arrowStyle") as ArrowStyle) ?? "solid",
       visible: (yA.get("visible") as boolean) ?? true,
@@ -394,7 +396,7 @@ function readUnderlines(
       editorIndex,
       from,
       to,
-      text: DOMPurify.sanitize(yU.get("text") as string),
+      text: DOMPurify.sanitize(yU.get("text") as string, PURIFY_CONFIG),
       visible: (yU.get("visible") as boolean) ?? true,
     });
   }

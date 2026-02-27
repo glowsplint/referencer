@@ -6,6 +6,7 @@ import { Extension } from "@tiptap/core";
 import type { EditorState, Transaction } from "@tiptap/pm/state";
 import { getSelectedNodesOfType } from "@/lib/tiptap-utils";
 import { updateNodesAttr } from "@/lib/tiptap-utils";
+import { sanitizeColor } from "@/lib/sanitize-color";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -87,7 +88,7 @@ export const NodeBackground = Extension.create<NodeBackgroundOptions>({
 
               if (this.options.useStyle) {
                 return {
-                  style: `background-color: ${color}`,
+                  style: `background-color: ${sanitizeColor(color)}`,
                 };
               } else {
                 return {

@@ -4,7 +4,7 @@ import { createSupabaseClient } from "./db/database";
 import { createAuthRoutes } from "./auth/handlers";
 import { loadAuthConfig } from "./auth/config";
 import { optionalAuth } from "./auth/middleware";
-import { handleShare, handleResolveShare } from "./api/share";
+import { handleShare, handleResolveShare, handleAcceptShare } from "./api/share";
 import { handleFeedback } from "./api/feedback";
 import { kvRateLimiter } from "./lib/rate-limit";
 import { workspaces } from "./api/workspaces";
@@ -50,6 +50,18 @@ app.use(
   }),
 );
 
+// CSRF protection: require Content-Type: application/json on state-changing requests
+app.use("*", async (c, next) => {
+  const method = c.req.method;
+  if (method === "POST" || method === "PATCH" || method === "PUT" || method === "DELETE") {
+    const ct = c.req.header("content-type") ?? "";
+    if (!ct.includes("application/json")) {
+      return c.json({ error: "Content-Type must be application/json" }, 415);
+    }
+  }
+  await next();
+});
+
 // Security headers
 app.use("*", async (c, next) => {
   await next();
@@ -85,7 +97,10 @@ app.route("/api/preferences", preferences);
 // Share API
 app.post("/api/share", handleShare());
 
-// Share link resolution
+// Share link accept (POST with auth + JSON body — resolves share and grants permissions)
+app.post("/api/share/accept", handleAcceptShare());
+
+// Share link resolution (GET only redirects to frontend — no state changes)
 app.get("/s/:code", shareResolveLimiter, handleResolveShare());
 
 // Feedback API

@@ -55,19 +55,34 @@ export function handleResolveShare() {
 
     const frontendUrl = c.env.FRONTEND_URL ?? "http://localhost:5173";
 
-    const supabase = c.get("supabase");
-    const result = await resolveShareLink(supabase, code);
-    if (!result) {
-      log.info("GET /s/:code not found", { code });
-      return c.redirect(frontendUrl, 302);
+    // Only redirect to the frontend — no state changes on GET
+    log.info("GET /s/:code redirect", { code });
+    return c.redirect(`${frontendUrl}/#/share/${code}`, 302);
+  };
+}
+
+export function handleAcceptShare() {
+  return async (c: Context<Env>) => {
+    const user = c.get("user");
+    if (!user) return c.json({ error: "Unauthorized" }, 401);
+    const log = c.get("logger");
+
+    const body = await c.req.json<{ code: string }>();
+    if (!body.code || typeof body.code !== "string") {
+      return c.json({ error: "code is required" }, 400);
     }
 
-    // Map share access to permission role
-    const shareRole: PermissionRole = result.access === "readonly" ? "viewer" : "editor";
+    try {
+      const supabase = c.get("supabase");
+      const result = await resolveShareLink(supabase, body.code);
+      if (!result) {
+        log.info("POST /api/share/accept not found", { code: body.code });
+        return c.json({ error: "Invalid or expired share link" }, 404);
+      }
 
-    // If user is logged in, grant permission and add to their hub
-    const user = c.get("user");
-    if (user) {
+      // Map share access to permission role
+      const shareRole: PermissionRole = result.access === "readonly" ? "viewer" : "editor";
+
       const existingRole = await getPermission(supabase, result.workspaceId, user.id);
       // Only set permission if user doesn't already have a higher role
       if (!existingRole || !hasMinimumRole(existingRole, shareRole)) {
@@ -89,13 +104,16 @@ export function handleResolveShare() {
           return c.json({ error: "Internal server error" }, 500);
         }
       }
-    }
 
-    log.info("GET /s/:code resolved", {
-      code,
-      workspaceId: result.workspaceId,
-      userId: user?.id ?? null,
-    });
-    return c.redirect(`${frontendUrl}/#/${result.workspaceId}`, 302);
+      log.info("POST /api/share/accept resolved", {
+        code: body.code,
+        workspaceId: result.workspaceId,
+        userId: user.id,
+      });
+      return c.json({ workspaceId: result.workspaceId });
+    } catch (err) {
+      log.error("POST /api/share/accept failed", { userId: user.id, code: body.code });
+      return c.json({ error: "Internal server error" }, 500);
+    }
   };
 }

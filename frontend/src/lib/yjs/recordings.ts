@@ -57,9 +57,15 @@ function readSteps(yRecording: Y.Map<unknown>): RecordingStep[] {
   const steps: RecordingStep[] = [];
   for (let i = 0; i < ySteps.length; i++) {
     const yStep = ySteps.get(i);
+    let delta: VisibilityDelta;
+    try {
+      delta = JSON.parse(yStep.get("delta") as string) as VisibilityDelta;
+    } catch {
+      continue;
+    }
     steps.push({
       id: yStep.get("id") as string,
-      delta: JSON.parse(yStep.get("delta") as string) as VisibilityDelta,
+      delta,
     });
   }
   return steps;
@@ -71,10 +77,16 @@ export function readRecordings(doc: Y.Doc): Recording[] {
 
   for (let i = 0; i < yRecordings.length; i++) {
     const yRec = yRecordings.get(i);
+    let initialState: VisibilitySnapshot;
+    try {
+      initialState = JSON.parse(yRec.get("initialState") as string) as VisibilitySnapshot;
+    } catch {
+      continue;
+    }
     recordings.push({
       id: yRec.get("id") as string,
       name: yRec.get("name") as string,
-      initialState: JSON.parse(yRec.get("initialState") as string) as VisibilitySnapshot,
+      initialState,
       steps: readSteps(yRec),
       globalDelayMs: yRec.get("globalDelayMs") as number,
       transitionType: yRec.get("transitionType") as TransitionType,

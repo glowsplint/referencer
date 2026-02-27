@@ -91,6 +91,9 @@ vi.mock("@/components/tiptap-ui/undo-redo-button", () => ({
 vi.mock("@/components/tiptap-ui/clear-formatting-button", () => ({
   ClearFormattingButton: () => null,
 }));
+vi.mock("@/components/tiptap-ui/text-color-button", () => ({
+  TextColorPopover: () => null,
+}));
 
 // Mock icons
 vi.mock("@/components/tiptap-icons/arrow-left-icon", () => ({

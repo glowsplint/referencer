@@ -39,23 +39,22 @@ export async function apiFetch<T = unknown>(path: string, options: RequestInit =
 export async function apiPost<T = unknown>(path: string, body?: unknown): Promise<T> {
   return apiFetch<T>(path, {
     method: "POST",
-    ...(body !== undefined && {
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }),
+    headers: { "Content-Type": "application/json" },
+    ...(body !== undefined && { body: JSON.stringify(body) }),
   });
 }
 
 export async function apiPatch<T = unknown>(path: string, body?: unknown): Promise<T> {
   return apiFetch<T>(path, {
     method: "PATCH",
-    ...(body !== undefined && {
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }),
+    headers: { "Content-Type": "application/json" },
+    ...(body !== undefined && { body: JSON.stringify(body) }),
   });
 }
 
 export async function apiDelete<T = unknown>(path: string): Promise<T> {
-  return apiFetch<T>(path, { method: "DELETE" });
+  return apiFetch<T>(path, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
 }

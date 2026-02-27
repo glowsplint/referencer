@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { WebsocketProvider } from "y-websocket";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
+import { sanitizeColor } from "@/lib/sanitize-color";
 
 interface UserPresence {
   clientId: number;
@@ -144,7 +145,7 @@ export function CollaborationPresence({
         <div
           key={user.clientId}
           className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white shrink-0"
-          style={{ backgroundColor: user.color }}
+          style={{ backgroundColor: sanitizeColor(user.color) }}
           title={user.name}
         >
           {getInitials(user.name)}

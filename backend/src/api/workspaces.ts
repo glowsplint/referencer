@@ -13,6 +13,9 @@ import {
 import { getPermission, setPermission } from "../db/permission-queries";
 import { requirePermission } from "../middleware/require-permission";
 
+const WORKSPACE_ID_RE =
+  /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-zA-Z]{27})$/i;
+
 const workspaces = new Hono<Env>();
 
 // GET / - list workspaces
@@ -43,13 +46,24 @@ workspaces.post("/", async (c) => {
     if (!body.workspaceId) {
       return c.json({ error: "workspaceId is required" }, 400);
     }
+    if (!WORKSPACE_ID_RE.test(body.workspaceId)) {
+      return c.json({ error: "Invalid workspaceId format" }, 400);
+    }
     if (body.title && body.title.length > 500) {
       return c.json({ error: "Title must be at most 500 characters" }, 400);
     }
 
     const supabase = c.get("supabase");
-    await createUserWorkspace(supabase, user.id, body.workspaceId, body.title ?? "");
-    await setPermission(supabase, body.workspaceId, user.id, "owner");
+    const { isNew } = await createUserWorkspace(
+      supabase,
+      user.id,
+      body.workspaceId,
+      body.title ?? "",
+    );
+    // Only grant owner permission if this is a newly created workspace
+    if (isNew) {
+      await setPermission(supabase, body.workspaceId, user.id, "owner");
+    }
     log.info("POST /api/workspaces", { userId: user.id, workspaceId: body.workspaceId });
     return c.json({ ok: true }, 201);
   } catch (err) {
@@ -192,6 +206,9 @@ workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
     const body = await c.req.json<{ newWorkspaceId: string }>();
     if (!body.newWorkspaceId) {
       return c.json({ error: "newWorkspaceId is required" }, 400);
+    }
+    if (!WORKSPACE_ID_RE.test(body.newWorkspaceId)) {
+      return c.json({ error: "Invalid newWorkspaceId format" }, 400);
     }
 
     const supabase = c.get("supabase");

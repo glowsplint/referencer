@@ -12,10 +12,10 @@ export function optionalAuth(config: AuthConfig) {
       const user = await getSessionUser(supabase, token);
       c.set("user", user);
       if (user) {
-        // Sliding window: refresh session and cookie if >24h old.
-        const refreshed = await maybeRefreshSession(supabase, token, config.sessionMaxAge);
-        if (refreshed) {
-          setCookie(c, "__session", token, {
+        // Sliding window: rotate session token and refresh cookie if >24h old.
+        const newToken = await maybeRefreshSession(supabase, token, config.sessionMaxAge);
+        if (newToken) {
+          setCookie(c, "__session", newToken, {
             httpOnly: true,
             secure: true,
             sameSite: "Lax",

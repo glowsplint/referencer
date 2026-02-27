@@ -1,4 +1,4 @@
-import { apiFetch, apiUrl } from "@/lib/api-client";
+import { apiFetch, apiPost, apiUrl } from "@/lib/api-client";
 
 export interface AuthUser {
   id: string;
@@ -27,5 +27,5 @@ export function loginWith(provider: AuthProvider): void {
 }
 
 export async function logout(): Promise<void> {
-  await apiFetch("/auth/logout", { method: "POST" });
+  await apiPost("/auth/logout");
 }

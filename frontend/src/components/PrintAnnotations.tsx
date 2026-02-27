@@ -1,5 +1,6 @@
 import type { Layer } from "@/types/editor";
 import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
+import { sanitizeColor } from "@/lib/sanitize-color";
 
 interface PrintAnnotationsProps {
   layers: Layer[];
@@ -58,7 +59,11 @@ export function PrintAnnotations({
             {sectionNames[editorIndex] ?? `Passage ${editorIndex + 1}`}
           </div>
           {items.map((item, i) => (
-            <div key={i} className="mb-2 border-l-2 pl-2" style={{ borderColor: item.layerColor }}>
+            <div
+              key={i}
+              className="mb-2 border-l-2 pl-2"
+              style={{ borderColor: sanitizeColor(item.layerColor) }}
+            >
               <div className="text-[10px] font-bold italic text-zinc-600 mb-0.5">
                 &ldquo;{item.text}&rdquo;
               </div>

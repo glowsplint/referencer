@@ -72,7 +72,7 @@ describe("when using apiPost", () => {
     );
   });
 
-  it("then sends POST without body when body is undefined", async () => {
+  it("then sends POST without body but with Content-Type when body is undefined", async () => {
     mockFetch.mockResolvedValue(mockResponse());
 
     await apiPost("/api/items");
@@ -80,6 +80,9 @@ describe("when using apiPost", () => {
     const callArgs = mockFetch.mock.calls[0][1];
     expect(callArgs.method).toBe("POST");
     expect(callArgs.body).toBeUndefined();
+    expect(callArgs.headers).toEqual(
+      expect.objectContaining({ "Content-Type": "application/json" }),
+    );
   });
 });
 
@@ -100,14 +103,17 @@ describe("when using apiPatch", () => {
 });
 
 describe("when using apiDelete", () => {
-  it("then sends DELETE method", async () => {
+  it("then sends DELETE method with Content-Type header", async () => {
     mockFetch.mockResolvedValue(mockResponse());
 
     await apiDelete("/api/items/1");
 
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/items/1",
-      expect.objectContaining({ method: "DELETE" }),
+      expect.objectContaining({
+        method: "DELETE",
+        headers: expect.objectContaining({ "Content-Type": "application/json" }),
+      }),
     );
   });
 });

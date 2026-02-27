@@ -167,29 +167,42 @@ export async function maybeRefreshSession(
   supabase: SupabaseClient,
   token: string,
   maxAge: number,
-): Promise<boolean> {
+): Promise<string | null> {
   const hashedToken = await hashToken(token);
   const { data: session } = await supabase
     .from("session")
-    .select("created_at")
+    .select("user_id, created_at")
     .eq("id", hashedToken)
     .single();
 
-  if (!session) return false;
+  if (!session) return null;
 
   const createdAt = new Date(session.created_at);
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
   if (createdAt < oneDayAgo) {
+    // Rotate: delete old session and create a new one with a fresh token
+    await supabase.from("session").delete().eq("id", hashedToken);
+
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    const newToken = Array.from(bytes)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
+    const newHashedToken = await hashToken(newToken);
     const newExpiry = new Date(Date.now() + maxAge * 1000).toISOString();
-    await supabase
-      .from("session")
-      .update({ created_at: new Date().toISOString(), expires_at: newExpiry })
-      .eq("id", hashedToken);
-    return true;
+    await supabase.from("session").insert({
+      id: newHashedToken,
+      user_id: session.user_id,
+      created_at: new Date().toISOString(),
+      expires_at: newExpiry,
+    });
+
+    return newToken;
   }
 
-  return false;
+  return null;
 }
 
 export async function revokeAllUserSessions(

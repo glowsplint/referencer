@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Hono } from "hono";
-import { handleShare, handleResolveShare } from "./share";
+import { handleShare, handleResolveShare, handleAcceptShare } from "./share";
 import type { Env } from "../env";
 
 const FRONTEND_URL = "http://localhost:5173";
@@ -11,6 +11,7 @@ const USER_ID = "test-user-1";
 let shareRows: Array<{ code: string; workspace_id: string; access: string }>;
 let permissionRows: Array<{ workspace_id: string; user_id: string; role: string }>;
 let userWorkspaceRows: Array<{ user_id: string; workspace_id: string; title: string }>;
+let workspaceRows: Array<{ id: string }>;
 
 function createMockSupabase() {
   return {
@@ -104,10 +105,28 @@ function createMockSupabase() {
       if (table === "workspace") {
         return {
           insert(row: { id: string }) {
+            workspaceRows.push(row);
             return Promise.resolve({ error: null });
           },
           upsert(row: { id: string }) {
+            if (!workspaceRows.find((r) => r.id === row.id)) {
+              workspaceRows.push(row);
+            }
             return Promise.resolve({ error: null });
+          },
+          select(_cols: string) {
+            return {
+              eq(column: string, value: string) {
+                return {
+                  single() {
+                    const found = workspaceRows.find(
+                      (r) => (r as Record<string, string>)[column] === value,
+                    );
+                    return Promise.resolve({ data: found ?? null });
+                  },
+                };
+              },
+            };
           },
         };
       }
@@ -141,6 +160,7 @@ function createApp(withUser = true) {
   });
 
   app.post("/api/share", handleShare());
+  app.post("/api/share/accept", handleAcceptShare());
   app.get("/s/:code", handleResolveShare());
 
   return app;
@@ -157,6 +177,7 @@ describe("share API routes", () => {
     shareRows = [];
     permissionRows = [];
     userWorkspaceRows = [];
+    workspaceRows = [];
     // Give the test user owner permission by default
     permissionRows.push({ workspace_id: WS_ID, user_id: USER_ID, role: "owner" });
     app = createApp();
@@ -225,26 +246,125 @@ describe("share API routes", () => {
   });
 
   describe("GET /s/:code — share link resolution", () => {
-    it("redirects to workspace for valid edit share code", async () => {
-      shareRows.push({ code: "ABC123", workspace_id: WS_ID, access: "edit" });
-
+    it("redirects to frontend share page for any code", async () => {
       const res = await request(app, "/s/ABC123", { redirect: "manual" });
       expect(res.status).toBe(302);
-      expect(res.headers.get("location")).toBe(`${FRONTEND_URL}/#/${WS_ID}`);
+      expect(res.headers.get("location")).toBe(`${FRONTEND_URL}/#/share/ABC123`);
     });
 
-    it("redirects to workspace without query param for readonly share code", async () => {
-      shareRows.push({ code: "RDO456", workspace_id: WS_ID, access: "readonly" });
-
-      const res = await request(app, "/s/RDO456", { redirect: "manual" });
-      expect(res.status).toBe(302);
-      expect(res.headers.get("location")).toBe(`${FRONTEND_URL}/#/${WS_ID}`);
-    });
-
-    it("redirects to frontend root for unknown code", async () => {
+    it("redirects to frontend share page for unknown code too", async () => {
       const res = await request(app, "/s/ZZZZZZ", { redirect: "manual" });
       expect(res.status).toBe(302);
-      expect(res.headers.get("location")).toBe(FRONTEND_URL);
+      expect(res.headers.get("location")).toBe(`${FRONTEND_URL}/#/share/ZZZZZZ`);
+    });
+  });
+
+  describe("POST /api/share/accept", () => {
+    it("resolves share and returns workspaceId", async () => {
+      shareRows.push({ code: "ACC123", workspace_id: WS_ID, access: "edit" });
+
+      const res = await request(app, "/api/share/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: "ACC123" }),
+      });
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.workspaceId).toBe(WS_ID);
+    });
+
+    it("grants editor permission for edit share", async () => {
+      shareRows.push({ code: "EDT001", workspace_id: WS_ID, access: "edit" });
+      // Remove the owner permission so we can verify the share sets editor
+      permissionRows.length = 0;
+
+      await request(app, "/api/share/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: "EDT001" }),
+      });
+
+      const perm = permissionRows.find((r) => r.workspace_id === WS_ID && r.user_id === USER_ID);
+      expect(perm).toBeDefined();
+      expect(perm!.role).toBe("editor");
+    });
+
+    it("grants viewer permission for readonly share", async () => {
+      shareRows.push({ code: "RDO001", workspace_id: WS_ID, access: "readonly" });
+      permissionRows.length = 0;
+
+      await request(app, "/api/share/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: "RDO001" }),
+      });
+
+      const perm = permissionRows.find((r) => r.workspace_id === WS_ID && r.user_id === USER_ID);
+      expect(perm).toBeDefined();
+      expect(perm!.role).toBe("viewer");
+    });
+
+    it("does not downgrade existing higher permission", async () => {
+      shareRows.push({ code: "RDO002", workspace_id: WS_ID, access: "readonly" });
+      // User already has owner permission
+      expect(permissionRows[0].role).toBe("owner");
+
+      await request(app, "/api/share/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: "RDO002" }),
+      });
+
+      const perm = permissionRows.find((r) => r.workspace_id === WS_ID && r.user_id === USER_ID);
+      expect(perm!.role).toBe("owner");
+    });
+
+    it("returns 404 for unknown share code", async () => {
+      const res = await request(app, "/api/share/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: "NONEXIST" }),
+      });
+
+      expect(res.status).toBe(404);
+    });
+
+    it("returns 400 when code is missing", async () => {
+      const res = await request(app, "/api/share/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+
+      expect(res.status).toBe(400);
+    });
+
+    it("returns 401 when user is not authenticated", async () => {
+      const noAuthApp = createApp(false);
+      shareRows.push({ code: "ACC401", workspace_id: WS_ID, access: "edit" });
+
+      const res = await request(noAuthApp, "/api/share/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: "ACC401" }),
+      });
+
+      expect(res.status).toBe(401);
+    });
+
+    it("adds workspace to user hub", async () => {
+      shareRows.push({ code: "HUB001", workspace_id: WS_ID, access: "edit" });
+      permissionRows.length = 0;
+
+      await request(app, "/api/share/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: "HUB001" }),
+      });
+
+      const uw = userWorkspaceRows.find((r) => r.workspace_id === WS_ID && r.user_id === USER_ID);
+      expect(uw).toBeDefined();
     });
   });
 });
