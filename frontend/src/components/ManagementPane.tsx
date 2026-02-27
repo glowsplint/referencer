@@ -62,7 +62,7 @@ export function ManagementPane({ width }: ManagementPaneProps) {
 
   return (
     <div
-      className="shrink-0 h-full overflow-y-auto p-3 border-r border-border"
+      className="shrink-0 h-full overflow-y-auto p-3"
       style={{ width: width ?? 250 }}
       data-testid="managementPane"
     >
