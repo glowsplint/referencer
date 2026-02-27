@@ -140,4 +140,58 @@ describe("useWorkspaceSort", () => {
     // desc => newer first => a should come before b => compare(a, b) < 0
     expect(result.current.compare(a, b)).toBeLessThan(0);
   });
+
+  it("when favorites exist, then sorts them by the active sort config", () => {
+    const favWorkspaces: WorkspaceItem[] = [
+      {
+        workspaceId: "fav-1",
+        title: "Zulu",
+        createdAt: "2026-01-01T00:00:00Z",
+        updatedAt: "2026-01-01T00:00:00Z",
+        isFavorite: true,
+        folderId: null,
+      },
+      {
+        workspaceId: "fav-2",
+        title: "Alpha",
+        createdAt: "2026-01-02T00:00:00Z",
+        updatedAt: "2026-01-05T00:00:00Z",
+        isFavorite: true,
+        folderId: null,
+      },
+    ];
+    // Default sort is updatedAt desc — fav-2 (Jan 5) should come before fav-1 (Jan 1)
+    const { result } = renderHook(() => useWorkspaceSort(favWorkspaces));
+    expect(result.current.favorites[0].workspaceId).toBe("fav-2");
+    expect(result.current.favorites[1].workspaceId).toBe("fav-1");
+  });
+
+  it("when sort is changed to title, then favorites reflect the new sort order", () => {
+    const favWorkspaces: WorkspaceItem[] = [
+      {
+        workspaceId: "fav-1",
+        title: "Zulu",
+        createdAt: "2026-01-01T00:00:00Z",
+        updatedAt: "2026-01-05T00:00:00Z",
+        isFavorite: true,
+        folderId: null,
+      },
+      {
+        workspaceId: "fav-2",
+        title: "Alpha",
+        createdAt: "2026-01-02T00:00:00Z",
+        updatedAt: "2026-01-01T00:00:00Z",
+        isFavorite: true,
+        folderId: null,
+      },
+    ];
+    const { result } = renderHook(() => useWorkspaceSort(favWorkspaces));
+    // Switch to title asc
+    act(() => {
+      result.current.setSort("title");
+    });
+    // Title asc => Alpha before Zulu
+    expect(result.current.favorites[0].workspaceId).toBe("fav-2");
+    expect(result.current.favorites[1].workspaceId).toBe("fav-1");
+  });
 });

@@ -251,4 +251,122 @@ describe("WorkspaceGrid", () => {
       expect(within(starredSection).getByText("Starred Folder")).toBeInTheDocument();
     });
   });
+
+  describe("when starred items are sorted", () => {
+    it("then sorts starred workspaces by updatedAt desc by default", () => {
+      const wsOld = makeWorkspace({
+        workspaceId: "ws-old",
+        title: "Old WS",
+        isFavorite: true,
+        updatedAt: "2026-01-01T00:00:00Z",
+      });
+      const wsNew = makeWorkspace({
+        workspaceId: "ws-new",
+        title: "New WS",
+        isFavorite: true,
+        updatedAt: "2026-01-10T00:00:00Z",
+      });
+      renderGrid([wsOld, wsNew]);
+
+      const starredSection = screen.getByTestId("starredSection");
+      const cards = within(starredSection).getAllByTestId(/^workspaceCard-/);
+      // Default sort is updatedAt desc, so newer first
+      expect(cards[0]).toHaveAttribute("data-testid", "workspaceCard-ws-new");
+      expect(cards[1]).toHaveAttribute("data-testid", "workspaceCard-ws-old");
+    });
+
+    it("then re-sorts starred workspaces when sort config changes", async () => {
+      const user = userEvent.setup();
+      const wsAlpha = makeWorkspace({
+        workspaceId: "ws-alpha",
+        title: "Alpha",
+        isFavorite: true,
+        updatedAt: "2026-01-01T00:00:00Z",
+      });
+      const wsBeta = makeWorkspace({
+        workspaceId: "ws-beta",
+        title: "Beta",
+        isFavorite: true,
+        updatedAt: "2026-01-10T00:00:00Z",
+      });
+      // Also add an unstarred workspace so the all-items section renders list view controls
+      const wsUnstarred = makeWorkspace({
+        workspaceId: "ws-other",
+        title: "Other",
+        isFavorite: false,
+      });
+      renderGrid([wsAlpha, wsBeta, wsUnstarred]);
+
+      // Switch to list view so sort controls are visible
+      await user.click(screen.getByTestId("listViewButton"));
+
+      // Sort by title ascending
+      await user.click(screen.getByTestId("sortByTitle"));
+
+      const starredSection = screen.getByTestId("starredSection");
+      const items = within(starredSection).getAllByTestId(/^workspaceListItem-/);
+      // Title asc => Alpha before Beta
+      expect(items[0]).toHaveAttribute("data-testid", "workspaceListItem-ws-alpha");
+      expect(items[1]).toHaveAttribute("data-testid", "workspaceListItem-ws-beta");
+    });
+  });
+
+  describe("when folders and workspaces are mixed", () => {
+    it("then renders folders before workspaces in the starred section", () => {
+      const starredFolder = makeFolder({
+        id: "f-star",
+        name: "Starred Folder",
+        isFavorite: true,
+      });
+      const starredWs = makeWorkspace({
+        workspaceId: "ws-starred",
+        title: "Starred WS",
+        isFavorite: true,
+      });
+      renderGrid([starredWs], [starredFolder]);
+
+      const starredSection = screen.getByTestId("starredSection");
+      const allItems = within(starredSection).getAllByTestId(/^(folderCard|workspaceCard)-/);
+      expect(allItems[0]).toHaveAttribute("data-testid", "folderCard-f-star");
+      expect(allItems[1]).toHaveAttribute("data-testid", "workspaceCard-ws-starred");
+    });
+
+    it("then renders folders before workspaces in the all items section", () => {
+      const folder = makeFolder({ id: "f1", name: "My Folder" });
+      const ws = makeWorkspace({
+        workspaceId: "ws-unfiled",
+        title: "Unfiled WS",
+        isFavorite: false,
+        folderId: null,
+      });
+      renderGrid([ws], [folder]);
+
+      const allItemsSection = screen.getByTestId("allItemsSection");
+      const allCards = within(allItemsSection).getAllByTestId(/^(folderCard|workspaceCard)-/);
+      expect(allCards[0]).toHaveAttribute("data-testid", "folderCard-f1");
+      expect(allCards[1]).toHaveAttribute("data-testid", "workspaceCard-ws-unfiled");
+    });
+
+    it("then renders folders before workspaces in list view too", async () => {
+      const user = userEvent.setup();
+      const folder = makeFolder({ id: "f1", name: "Zebra Folder" });
+      const ws = makeWorkspace({
+        workspaceId: "ws-unfiled",
+        title: "Alpha WS",
+        isFavorite: false,
+        folderId: null,
+      });
+      renderGrid([ws], [folder]);
+
+      await user.click(screen.getByTestId("listViewButton"));
+
+      const allItemsSection = screen.getByTestId("allItemsSection");
+      const allListItems = within(allItemsSection).getAllByTestId(
+        /^(folderListItem|workspaceListItem)-/,
+      );
+      // Even though "Alpha WS" < "Zebra Folder" alphabetically, folder should come first
+      expect(allListItems[0]).toHaveAttribute("data-testid", "folderListItem-f1");
+      expect(allListItems[1]).toHaveAttribute("data-testid", "workspaceListItem-ws-unfiled");
+    });
+  });
 });

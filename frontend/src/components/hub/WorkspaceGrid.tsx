@@ -134,15 +134,31 @@ export function WorkspaceGrid({
       }
     }
 
-    // Sort by name (case-insensitive)
+    // Sort: folders first, then by sortConfig
     items.sort((a, b) => {
-      const nameA = a.kind === "workspace" ? a.workspace.title || "Untitled" : a.node.folder.name;
-      const nameB = b.kind === "workspace" ? b.workspace.title || "Untitled" : b.node.folder.name;
-      return nameA.localeCompare(nameB, undefined, { sensitivity: "base" });
+      if (a.kind !== b.kind) return a.kind === "folder" ? -1 : 1;
+
+      if (a.kind === "workspace" && b.kind === "workspace") {
+        return compare(a.workspace, b.workspace);
+      }
+
+      const { field, direction } = sortConfig;
+      const getTitle = (item: MixedItem) =>
+        item.kind === "workspace" ? item.workspace.title || "Untitled" : item.node.folder.name;
+      const getDate = (item: MixedItem, f: "createdAt" | "updatedAt") =>
+        item.kind === "workspace" ? item.workspace[f] : item.node.folder[f];
+
+      let cmp = 0;
+      if (field === "title") {
+        cmp = getTitle(a).localeCompare(getTitle(b), undefined, { sensitivity: "base" });
+      } else {
+        cmp = getDate(a, field).localeCompare(getDate(b, field));
+      }
+      return direction === "asc" ? cmp : -cmp;
     });
 
     return items;
-  }, [folderTree, workspaces]);
+  }, [folderTree, workspaces, sortConfig, compare]);
 
   // All Items section: unstarred root-level folders + unstarred unfiled workspaces
   const allItems = useMemo(() => {
@@ -162,8 +178,10 @@ export function WorkspaceGrid({
       }
     }
 
-    // Sort by current sortConfig
+    // Sort: folders first, then by sortConfig
     items.sort((a, b) => {
+      if (a.kind !== b.kind) return a.kind === "folder" ? -1 : 1;
+
       if (a.kind === "workspace" && b.kind === "workspace") {
         return compare(a.workspace, b.workspace);
       }
