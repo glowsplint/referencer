@@ -67,7 +67,7 @@ vi.mock("@/components/tiptap-ui-primitive/popover", () => ({
   Popover: ({
     children,
     open,
-    onOpenChange,
+    onOpenChange: _onOpenChange,
   }: {
     children: React.ReactNode;
     open: boolean;
@@ -75,7 +75,7 @@ vi.mock("@/components/tiptap-ui-primitive/popover", () => ({
   }) => <div data-open={open}>{children}</div>,
   PopoverTrigger: ({
     children,
-    asChild,
+    asChild: _asChild,
   }: {
     children: React.ReactNode;
     asChild?: boolean;
@@ -106,11 +106,7 @@ vi.mock("@/components/tiptap-ui-primitive/card", () => ({
   CardBody: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => (
     <div {...props}>{children}</div>
   ),
-  CardItemGroup: ({
-    children,
-  }: {
-    children?: React.ReactNode;
-  }) => <div>{children}</div>,
+  CardItemGroup: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 
 beforeEach(() => {
@@ -156,10 +152,7 @@ describe("TextColorButton", () => {
 
   it("when the color is not active, then data-active-state is off", () => {
     render(<TextColorButton color="#dc2626" label="Red" />);
-    expect(screen.getByRole("button", { name: "Red" })).toHaveAttribute(
-      "data-active-state",
-      "off",
-    );
+    expect(screen.getByRole("button", { name: "Red" })).toHaveAttribute("data-active-state", "off");
   });
 
   it("when onClick handler prevents default, then setTextColor is not called", () => {

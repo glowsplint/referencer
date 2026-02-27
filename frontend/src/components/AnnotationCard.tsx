@@ -13,6 +13,7 @@ import { ReplyThread } from "./annotations/ReplyThread";
 import { ReplyInput } from "./annotations/ReplyInput";
 import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
+import { sanitizeColor } from "@/lib/sanitize-color";
 
 interface AnnotationCardProps {
   layerId: string;
@@ -117,7 +118,7 @@ export function AnnotationCard({
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
     >
-      <div className="h-1 rounded-t" style={{ backgroundColor: color }} />
+      <div className="h-1 rounded-t" style={{ backgroundColor: sanitizeColor(color) }} />
       {isCollapsed ? (
         <div className="flex items-center justify-center h-4 opacity-0 group-hover:opacity-100 transition-opacity">
           <ChevronDown size={10} className="text-zinc-400" />

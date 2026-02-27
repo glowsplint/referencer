@@ -182,22 +182,28 @@ describe("optionalAuth middleware", () => {
     expect(body.user).toBeNull();
   });
 
-  it("refreshes session that is older than 24 hours", async () => {
+  it("rotates session token when session is older than 24 hours", async () => {
     const userId = seedUser();
     await seedSession(userId, "old-token", { old: true });
 
-    const oldCreatedAt = sessions[0].created_at;
-
     const app = createApp();
 
-    await app.request("/test", {
+    const res = await app.request("/test", {
       headers: { Cookie: "__session=old-token" },
     });
 
+    // Old session should be deleted
     const hashedOldToken = await hashToken("old-token");
-    const session = sessions.find((s) => s.id === hashedOldToken);
-    expect(session).toBeDefined();
-    // created_at should have been updated (refreshed)
-    expect(session!.created_at).not.toBe(oldCreatedAt);
+    const oldSession = sessions.find((s) => s.id === hashedOldToken);
+    expect(oldSession).toBeUndefined();
+
+    // A new session should exist for the same user
+    const newSession = sessions.find((s) => s.user_id === userId);
+    expect(newSession).toBeDefined();
+    expect(newSession!.id).not.toBe(hashedOldToken);
+
+    // Response should set a new cookie
+    const setCookie = res.headers.get("set-cookie") ?? "";
+    expect(setCookie).toContain("__session=");
   });
 });

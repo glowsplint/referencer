@@ -68,10 +68,7 @@ export const TextColorButton = forwardRef<HTMLButtonElement, TextColorButtonProp
       >
         {children ?? (
           <span className="flex flex-col items-center leading-none">
-            <span
-              className="text-sm font-bold"
-              style={{ color: color || "currentColor" }}
-            >
+            <span className="text-sm font-bold" style={{ color: color || "currentColor" }}>
               A
             </span>
             <span
@@ -95,8 +92,7 @@ export interface TextColorPopoverContentProps {
 }
 
 export interface TextColorPopoverProps
-  extends Omit<ButtonProps, "type">,
-    Pick<UseTextColorConfig, "editor" | "hideWhenUnavailable"> {
+  extends Omit<ButtonProps, "type">, Pick<UseTextColorConfig, "editor" | "hideWhenUnavailable"> {
   colors?: TextColor[];
 }
 
@@ -117,10 +113,7 @@ export function TextColorPopoverContent({
   const isMobile = useIsBreakpoint();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const menuItems = useMemo(
-    () => [...colors, { label: "Remove color", value: "none" }],
-    [colors],
-  );
+  const menuItems = useMemo(() => [...colors, { label: "Remove color", value: "none" }], [colors]);
 
   const { selectedIndex } = useMenuNavigation({
     containerRef,
@@ -217,10 +210,7 @@ export function TextColorPopover({
           {...props}
         >
           <span className="flex flex-col items-center leading-none">
-            <span
-              className="text-sm font-bold"
-              style={{ color: currentColor || "currentColor" }}
-            >
+            <span className="text-sm font-bold" style={{ color: currentColor || "currentColor" }}>
               A
             </span>
             <span

@@ -20,6 +20,7 @@ import { DRAG_TYPE_LAYER } from "@/constants/drag-types";
 import { useInlineEdit } from "@/hooks/ui/use-inline-edit";
 
 import type { Layer } from "@/types/editor";
+import { sanitizeColor } from "@/lib/sanitize-color";
 
 interface LayerRowProps {
   layer: Layer;
@@ -103,7 +104,7 @@ export function LayerRow({
         )}
         <button
           className="w-5 h-5 rounded-full border-2 border-black/10 hover:border-black/30 shrink-0 transition-colors cursor-pointer"
-          style={{ backgroundColor: layer.color }}
+          style={{ backgroundColor: sanitizeColor(layer.color) }}
           onClick={(e) => {
             e.stopPropagation();
             setColorPickerOpen(!colorPickerOpen);

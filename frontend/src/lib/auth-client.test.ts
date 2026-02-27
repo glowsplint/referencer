@@ -3,11 +3,13 @@ import { fetchAuthStatus, loginWith, logout } from "./auth-client";
 
 vi.mock("@/lib/api-client", () => ({
   apiFetch: vi.fn(),
+  apiPost: vi.fn(),
   apiUrl: (path: string) => path,
 }));
 
-import { apiFetch } from "@/lib/api-client";
+import { apiFetch, apiPost } from "@/lib/api-client";
 const mockApiFetch = vi.mocked(apiFetch);
+const mockApiPost = vi.mocked(apiPost);
 
 describe("when using auth-client", () => {
   beforeEach(() => {
@@ -61,10 +63,10 @@ describe("when using auth-client", () => {
 
   describe("when using logout", () => {
     it("then calls POST /auth/logout", async () => {
-      mockApiFetch.mockResolvedValue(undefined);
+      mockApiPost.mockResolvedValue(undefined);
 
       await logout();
-      expect(mockApiFetch).toHaveBeenCalledWith("/auth/logout", { method: "POST" });
+      expect(mockApiPost).toHaveBeenCalledWith("/auth/logout");
     });
   });
 });
