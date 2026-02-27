@@ -52,6 +52,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     css: false,
+    pool: "threads",
     exclude: ["e2e/**", "node_modules/**"],
     coverage: {
       provider: "v8",

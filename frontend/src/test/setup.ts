@@ -2,7 +2,7 @@ import * as matchers from "@testing-library/jest-dom/matchers";
 import { expect } from "vitest";
 
 expect.extend(matchers);
-import "@/i18n";
+import "@/test/i18n-test";
 
 class ResizeObserverMock {
   observe = vi.fn();
