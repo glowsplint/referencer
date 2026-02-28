@@ -1,6 +1,7 @@
 import type { Context, Next } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import { getSessionUser, maybeRefreshSession } from "./store";
+import { getCookieDomain } from "./cookie-domain";
 import type { AuthConfig } from "./config";
 import type { Env } from "../env";
 
@@ -15,12 +16,14 @@ export function optionalAuth(config: AuthConfig) {
         // Sliding window: rotate session token and refresh cookie if >24h old.
         const newToken = await maybeRefreshSession(supabase, token, config.sessionMaxAge);
         if (newToken) {
+          const cookieDomain = getCookieDomain(c);
           setCookie(c, "__session", newToken, {
             httpOnly: true,
             secure: true,
             sameSite: "Lax",
             path: "/",
             maxAge: config.sessionMaxAge,
+            ...(cookieDomain && { domain: cookieDomain }),
           });
         }
       }

@@ -11,6 +11,7 @@ export const onRequest: PagesFunction = async (context) => {
   const target = new URL(url.pathname + url.search, WORKER_URL);
 
   const headers = new Headers(context.request.headers);
+  headers.set("x-forwarded-host", url.host);
   headers.set("host", target.host);
 
   const init: RequestInit = {

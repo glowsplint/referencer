@@ -12,12 +12,14 @@ import {
   revokeAllUserSessions,
 } from "./store";
 import { signJwt } from "../lib/jwt";
+import { getCookieDomain, getPreviewOrigin, isAllowedOrigin } from "./cookie-domain";
 import type { Env } from "../env";
 import type { Logger } from "../lib/logger";
 
 interface AuthState {
   state: string;
   codeVerifier?: string;
+  origin?: string;
 }
 
 const getClientIp = (c: any) =>
@@ -154,13 +156,20 @@ export function createAuthRoutes() {
       authUrl = (provider as GitHub).createAuthorizationURL(state, ["read:user", "user:email"]);
     }
 
+    const previewOrigin = getPreviewOrigin(c);
+    if (previewOrigin) {
+      authState.origin = previewOrigin;
+    }
+
     // Store state in cookie (10 minute expiry).
+    const cookieDomain = getCookieDomain(c);
     setCookie(c, "__auth_state", JSON.stringify(authState), {
       httpOnly: true,
       secure: true,
       sameSite: "Lax",
       path: "/",
       maxAge: 600,
+      ...(cookieDomain && { domain: cookieDomain }),
     });
 
     log.info("GET /auth/:provider", { provider: providerName });
@@ -188,7 +197,8 @@ async function handleCallback(c: any, config: AuthConfig, log: Logger) {
 
   // Read state from cookie.
   const stateCookie = getCookie(c, "__auth_state");
-  deleteCookie(c, "__auth_state", { path: "/" });
+  const cookieDomain = getCookieDomain(c);
+  deleteCookie(c, "__auth_state", { path: "/", ...(cookieDomain && { domain: cookieDomain }) });
 
   if (!stateCookie) {
     return c.json({ error: "Missing auth state" }, 400);
@@ -292,8 +302,15 @@ async function handleCallback(c: any, config: AuthConfig, log: Logger) {
     sameSite: "Lax",
     path: "/",
     maxAge: config.sessionMaxAge,
+    ...(cookieDomain && { domain: cookieDomain }),
   });
 
+  // Redirect to preview origin if valid, otherwise production frontend.
+  const redirectTarget =
+    authState.origin && isAllowedOrigin(authState.origin, c.env)
+      ? authState.origin
+      : frontendUrl;
+
   log.info("GET /auth/:provider/callback", { provider: providerName, userId });
-  return c.redirect(frontendUrl);
+  return c.redirect(redirectTarget);
 }
