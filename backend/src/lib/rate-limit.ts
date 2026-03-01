@@ -1,5 +1,6 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { log } from "./logger";
+import type { Metrics } from "./metrics";
 
 interface RateLimitOptions {
   windowMs: number;
@@ -23,13 +24,31 @@ export function kvRateLimiter(options: RateLimitOptions): MiddlewareHandler {
     const timestamps = (raw?.timestamps ?? []).filter((t: number) => t > windowStart);
 
     if (timestamps.length >= options.limit) {
+      // Logger may not be available if this runs before the logger middleware,
+      // but in our setup the logger middleware runs first on "*".
+      try {
+        const reqLog = (c as any).get("logger");
+        reqLog?.warn("Rate limit exceeded", {
+          endpoint: c.req.path,
+          method: c.req.method,
+          limit: options.limit,
+        });
+        const metrics: Metrics | undefined = (c as any).get("metrics");
+        metrics?.trackRateLimit(c.req.path, c.req.method);
+      } catch {
+        // Logger/metrics not available — fall through
+      }
       return c.json({ error: "Too many requests" }, 429);
     }
 
     timestamps.push(now);
-    await kv.put(key, JSON.stringify({ timestamps }), {
-      expirationTtl: Math.ceil(options.windowMs / 1000),
-    });
+    try {
+      await kv.put(key, JSON.stringify({ timestamps }), {
+        expirationTtl: Math.ceil(options.windowMs / 1000),
+      });
+    } catch {
+      log.warn("rate_limit_kv_put_failed", { key });
+    }
 
     await next();
   };

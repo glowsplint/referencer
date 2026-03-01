@@ -59,7 +59,12 @@ export function handleFeedback() {
       });
 
       if (!resp.ok) {
-        log.error("POST /api/feedback GitHub API error", { userId: user.id, status: resp.status });
+        const body = await resp.text().catch(() => "<unreadable>");
+        log.error("POST /api/feedback GitHub API error", {
+          userId: user.id,
+          status: resp.status,
+          body,
+        });
         return c.json({ error: "Failed to create issue" }, 502);
       }
 
@@ -70,7 +75,7 @@ export function handleFeedback() {
       log.info("POST /api/feedback", { userId: user.id });
       return c.json({ ok: true, url: data.html_url });
     } catch (err) {
-      log.error("POST /api/feedback failed", { userId: user.id });
+      log.error("POST /api/feedback failed", { userId: user.id, error: String(err) });
       return c.json({ error: "Failed to submit feedback" }, 500);
     }
   };

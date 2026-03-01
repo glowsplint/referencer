@@ -12,6 +12,7 @@ import { folders } from "./api/folders";
 import { preferences } from "./api/preferences";
 import { cleanExpiredSessions } from "./auth/store";
 import { createLogger } from "./lib/logger";
+import { createMetrics } from "./lib/metrics";
 import type { Env } from "./env";
 
 const app = new Hono<Env>();
@@ -19,7 +20,17 @@ const app = new Hono<Env>();
 // Per-request logger with UUID trace ID
 app.use("*", async (c, next) => {
   c.set("logger", createLogger());
+  c.set("metrics", createMetrics(c.env.METRICS));
   await next();
+});
+
+// Response-time tracking
+app.use("*", async (c, next) => {
+  const start = Date.now();
+  await next();
+  const durationMs = Date.now() - start;
+  const metrics = c.get("metrics");
+  metrics.trackRequest(c.req.method, c.req.path, c.res.status, durationMs);
 });
 
 const getClientIp = (c: any) =>
@@ -56,6 +67,13 @@ app.use("*", async (c, next) => {
   if (method === "POST" || method === "PATCH" || method === "PUT" || method === "DELETE") {
     const ct = c.req.header("content-type") ?? "";
     if (!ct.includes("application/json")) {
+      const log = c.get("logger");
+      log.warn("CSRF rejection: missing application/json content-type", {
+        method,
+        contentType: ct,
+        ip: getClientIp(c),
+        endpoint: c.req.path,
+      });
       return c.json({ error: "Content-Type must be application/json" }, 415);
     }
   }
@@ -106,14 +124,35 @@ app.get("/s/:code", shareResolveLimiter, handleResolveShare());
 // Feedback API
 app.post("/api/feedback", handleFeedback());
 
-app.onError((_err, c) => {
+app.onError((err, c) => {
+  const log = c.get("logger");
+  log.error("Unhandled error", {
+    error: String(err),
+    stack: err instanceof Error ? err.stack : undefined,
+  });
+  const metrics = c.get("metrics");
+  metrics.trackError(
+    c.req.path,
+    c.req.method,
+    err instanceof Error ? err.name : "UnknownError",
+    500,
+  );
   return c.json({ error: "Internal server error" }, 500);
 });
 
 export default {
   fetch: app.fetch,
   async scheduled(_event: ScheduledEvent, env: Env["Bindings"], _ctx: ExecutionContext) {
+    const log = createLogger("scheduled");
     const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_KEY);
-    await cleanExpiredSessions(supabase);
+    try {
+      await cleanExpiredSessions(supabase);
+      log.info("Scheduled session cleanup completed");
+    } catch (err) {
+      log.error("Scheduled session cleanup failed", {
+        error: String(err),
+        stack: err instanceof Error ? (err as Error).stack : undefined,
+      });
+    }
   },
 };

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspaces } from "@/hooks/data/use-workspaces";
@@ -5,6 +6,7 @@ import { useFolders } from "@/hooks/data/use-folders";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
 import { WorkspaceGrid } from "./WorkspaceGrid";
+import { NewWorkspaceDialog } from "./NewWorkspaceDialog";
 import { Button } from "@/components/ui/button";
 
 interface HubPageProps {
@@ -33,14 +35,21 @@ export function HubPage({ navigate }: HubPageProps) {
     moveFolder,
   } = useFolders();
 
+  const [showNewDialog, setShowNewDialog] = useState(false);
+
   const handleTryWithoutSignIn = () => {
     const id = randomKSUID();
     navigate(`#/${id}`);
   };
 
-  const handleNewWorkspace = async () => {
+  const handleNewWorkspace = () => {
+    setShowNewDialog(true);
+  };
+
+  const handleCreateWorkspace = async (title: string) => {
+    setShowNewDialog(false);
     const id = randomKSUID();
-    await create(id);
+    await create(id, title);
     navigate(`#/${id}`);
   };
 
@@ -108,6 +117,12 @@ export function HubPage({ navigate }: HubPageProps) {
           </div>
         ) : null}
       </main>
+
+      <NewWorkspaceDialog
+        open={showNewDialog}
+        onOpenChange={setShowNewDialog}
+        onCreate={handleCreateWorkspace}
+      />
     </div>
   );
 }

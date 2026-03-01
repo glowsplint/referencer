@@ -39,7 +39,11 @@ export function handleShare() {
       });
       return c.json(resp);
     } catch (err) {
-      log.error("POST /api/share failed", { userId: user.id, workspaceId: req.workspaceId });
+      log.error("POST /api/share failed", {
+        userId: user.id,
+        workspaceId: req.workspaceId,
+        error: String(err),
+      });
       return c.json({ error: "Internal server error" }, 500);
     }
   };
@@ -100,6 +104,7 @@ export function handleAcceptShare() {
           log.error("Failed to add workspace to hub", {
             userId: user.id,
             workspaceId: result.workspaceId,
+            error: String(err),
           });
           return c.json({ error: "Internal server error" }, 500);
         }
@@ -112,7 +117,11 @@ export function handleAcceptShare() {
       });
       return c.json({ workspaceId: result.workspaceId });
     } catch (err) {
-      log.error("POST /api/share/accept failed", { userId: user.id, code: body.code });
+      log.error("POST /api/share/accept failed", {
+        userId: user.id,
+        code: body.code,
+        error: String(err),
+      });
       return c.json({ error: "Internal server error" }, 500);
     }
   };

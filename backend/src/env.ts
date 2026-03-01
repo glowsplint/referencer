@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "./types";
 import type { Logger } from "./lib/logger";
+import type { Metrics } from "./lib/metrics";
 
 // Secrets — set via `wrangler secret put <NAME>` from backend/
 //
@@ -54,6 +55,9 @@ import type { Logger } from "./lib/logger";
 // Bindings — configured in backend/wrangler.toml
 //
 // RATE_LIMIT_KV          — KV namespace for rate limiting
+//
+// METRICS                — Analytics Engine dataset for request/event metrics
+//                          Dataset: referencer_metrics
 
 export type Env = {
   Bindings: {
@@ -62,6 +66,7 @@ export type Env = {
     FRONTEND_URL: string;
     BASE_URL: string;
     RATE_LIMIT_KV: KVNamespace;
+    METRICS: AnalyticsEngineDataset;
     GOOGLE_CLIENT_ID?: string;
     GOOGLE_CLIENT_SECRET?: string;
     GITHUB_CLIENT_ID?: string;
@@ -76,5 +81,6 @@ export type Env = {
     user: User | null;
     supabase: SupabaseClient;
     logger: Logger;
+    metrics: Metrics;
   };
 };

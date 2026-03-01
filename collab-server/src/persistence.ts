@@ -42,7 +42,7 @@ export async function saveSnapshot(
 ): Promise<void> {
   const supabase = createClient(url, key);
   const encoded = uint8ToBase64(state);
-  await supabase.from("yjs_document").upsert(
+  const { error } = await supabase.from("yjs_document").upsert(
     {
       room_name: roomName,
       state: encoded,
@@ -50,4 +50,7 @@ export async function saveSnapshot(
     },
     { onConflict: "room_name" },
   );
+  if (error) {
+    throw new Error(`Supabase upsert failed for room ${roomName}: ${error.message}`);
+  }
 }
