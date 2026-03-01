@@ -33,10 +33,14 @@
   outline: none;
   caret-color: var(--tt-cursor-color);
 
-  // Paragraph spacing
+  // Paragraph line-height (all paragraphs except inside tables)
+  p:not(td p):not(th p) {
+    line-height: var(--editor-line-height, 1.6);
+  }
+
+  // Paragraph spacing (non-first paragraphs)
   p:not(:first-child):not(td p):not(th p) {
     font-size: 1rem;
-    line-height: 1.6;
     font-weight: normal;
     margin-top: 20px;
   }
