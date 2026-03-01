@@ -88,7 +88,7 @@ export function HubPage({ navigate }: HubPageProps) {
         {!isAuthenticated && !authLoading ? (
           /* Guest hero */
           <div className="flex flex-col items-center justify-center h-full px-4">
-            <div className="max-w-md text-center space-y-6">
+            <div className="max-w-lg text-center space-y-6">
               <h1 className="text-4xl font-bold tracking-tight">Referencer</h1>
               <p className="text-muted-foreground text-lg">
                 Annotate, highlight, and connect passages side by side. A collaborative workspace
