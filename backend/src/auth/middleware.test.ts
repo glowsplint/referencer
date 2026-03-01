@@ -113,6 +113,13 @@ function createApp() {
 
   app.use("*", async (c, next) => {
     c.set("supabase", createMockSupabase());
+    c.set("logger", { info: () => {}, warn: () => {}, error: () => {} });
+    c.set("metrics", {
+      trackRequest: () => {},
+      trackAuthEvent: () => {},
+      trackRateLimit: () => {},
+      trackError: () => {},
+    });
     await next();
   });
 
@@ -188,9 +195,9 @@ describe("optionalAuth middleware", () => {
 
     const app = createApp();
 
-    const res = await app.request("/test", {
-      headers: { Cookie: "__session=old-token" },
-    });
+    const res = await app.request("/test", { headers: { Cookie: "__session=old-token" } }, {
+      FRONTEND_URL: "http://localhost:5173",
+    } as any);
 
     // Old session should be deleted
     const hashedOldToken = await hashToken("old-token");

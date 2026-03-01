@@ -11,5 +11,9 @@ class_name = "YjsRoom"
 tag = "v1"
 new_sqlite_classes = ["YjsRoom"]
 
+[[analytics_engine_datasets]]
+binding = "METRICS"
+dataset = "referencer_collab_metrics"
+
 # Secrets (SUPABASE_URL, SUPABASE_SERVICE_KEY, WS_JWT_SECRET, ALLOWED_ORIGIN)
 # are managed via `wrangler secret put`

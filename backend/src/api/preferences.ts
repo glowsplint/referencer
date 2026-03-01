@@ -16,7 +16,7 @@ preferences.get("/", async (c) => {
     log.info("GET /api/preferences", { userId: user.id, count: items.length });
     return c.json(items);
   } catch (err) {
-    log.error("GET /api/preferences failed", { userId: user.id });
+    log.error("GET /api/preferences failed", { userId: user.id, error: String(err) });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -45,7 +45,11 @@ preferences.put("/:key", async (c) => {
     log.info("PUT /api/preferences/:key", { userId: user.id, key });
     return c.json({ ok: true });
   } catch (err) {
-    log.error("PUT /api/preferences/:key failed", { userId: user.id, key: c.req.param("key") });
+    log.error("PUT /api/preferences/:key failed", {
+      userId: user.id,
+      key: c.req.param("key"),
+      error: String(err),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });

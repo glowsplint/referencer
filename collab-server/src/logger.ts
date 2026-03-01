@@ -65,6 +65,3 @@ export function createLogger(requestId?: string): Logger {
     error: (msg: string, extra?: Record<string, unknown>) => emit("ERROR", id, msg, extra),
   };
 }
-
-/** Standalone logger without a request context (e.g. Durable Object internals). */
-export const log = createLogger("no-request");

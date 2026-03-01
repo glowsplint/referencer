@@ -25,7 +25,7 @@ folders.get("/", async (c) => {
     log.info("GET /api/folders", { userId: user.id, count: items.length });
     return c.json(items);
   } catch (err) {
-    log.error("GET /api/folders failed", { userId: user.id });
+    log.error("GET /api/folders failed", { userId: user.id, error: String(err) });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -57,9 +57,10 @@ folders.post("/", async (c) => {
     });
     return c.json({ ok: true }, 201);
   } catch (err) {
-    log.error("POST /api/folders failed", { userId: user.id });
+    log.error("POST /api/folders failed", { userId: user.id, error: String(err) });
     const message = err instanceof Error ? err.message : "";
     if (message.includes("depth limit")) {
+      log.warn("Folder depth limit exceeded", { userId: user.id });
       return c.json({ error: "Folder nesting limit reached" }, 400);
     }
     return c.json({ error: "Internal server error" }, 500);
@@ -91,6 +92,7 @@ folders.patch("/:id/favorite", async (c) => {
     log.error("PATCH /api/folders/:id/favorite failed", {
       userId: user.id,
       folderId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -113,15 +115,22 @@ folders.patch("/:id/move", async (c) => {
     log.error("PATCH /api/folders/:id/move failed", {
       userId: user.id,
       folderId: c.req.param("id"),
+      error: String(err),
     });
     const message = err instanceof Error ? err.message : "";
     if (message.includes("depth limit")) {
+      log.warn("Folder move depth limit exceeded", {
+        userId: user.id,
+        folderId: c.req.param("id"),
+      });
       return c.json({ error: "Folder nesting limit reached" }, 400);
     }
     if (message.includes("cycle")) {
+      log.warn("Folder move cycle detected", { userId: user.id, folderId: c.req.param("id") });
       return c.json({ error: "Cannot create circular folder structure" }, 400);
     }
     if (message.includes("Cannot move")) {
+      log.warn("Folder move into self", { userId: user.id, folderId: c.req.param("id") });
       return c.json({ error: "Cannot move folder into itself" }, 400);
     }
     return c.json({ error: "Internal server error" }, 500);
@@ -149,7 +158,11 @@ folders.patch("/:id", async (c) => {
     log.info("PATCH /api/folders/:id", { userId: user.id, folderId });
     return c.json({ ok: true });
   } catch (err) {
-    log.error("PATCH /api/folders/:id failed", { userId: user.id, folderId: c.req.param("id") });
+    log.error("PATCH /api/folders/:id failed", {
+      userId: user.id,
+      folderId: c.req.param("id"),
+      error: String(err),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -167,7 +180,11 @@ folders.delete("/:id", async (c) => {
     log.info("DELETE /api/folders/:id", { userId: user.id, folderId });
     return c.json({ ok: true });
   } catch (err) {
-    log.error("DELETE /api/folders/:id failed", { userId: user.id, folderId: c.req.param("id") });
+    log.error("DELETE /api/folders/:id failed", {
+      userId: user.id,
+      folderId: c.req.param("id"),
+      error: String(err),
+    });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -197,6 +214,7 @@ folders.patch("/:id/move-workspace", async (c) => {
     log.error("PATCH /api/folders/:id/move-workspace failed", {
       userId: user.id,
       folderId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -222,7 +240,7 @@ folders.post("/unfile-workspace", async (c) => {
     });
     return c.json({ ok: true });
   } catch (err) {
-    log.error("POST /api/folders/unfile-workspace failed", { userId: user.id });
+    log.error("POST /api/folders/unfile-workspace failed", { userId: user.id, error: String(err) });
     return c.json({ error: "Internal server error" }, 500);
   }
 });

@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { YjsRoom } from "./durable-object";
 import { verifyJwt } from "./jwt";
 import { createLogger, type Logger } from "./logger";
+import { createCollabMetrics } from "./metrics";
 
 // Secrets — set via `wrangler secret put <NAME>` from collab-server/
 //
@@ -26,6 +27,9 @@ import { createLogger, type Logger } from "./logger";
 // Bindings — configured in collab-server/wrangler.toml
 //
 // YJS_ROOM               — Durable Object namespace for Yjs document rooms
+//
+// METRICS                — Analytics Engine dataset for collab metrics
+//                          Dataset: referencer_collab_metrics
 
 type Env = {
   Bindings: {
@@ -35,6 +39,7 @@ type Env = {
     WS_JWT_SECRET: string;
     WS_JWT_SECRET_PREV?: string;
     ALLOWED_ORIGIN?: string;
+    METRICS: AnalyticsEngineDataset;
   };
   Variables: {
     logger: Logger;
@@ -99,19 +104,43 @@ app.get("/:roomName", async (c) => {
     return c.json({ error: "Forbidden" }, 403);
   }
 
+  log.info("JWT validation successful", { userId: payload.sub, roomName });
+
   // Check workspace permission (DB check)
   const supabase = createClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY);
-  const { data: permission } = await supabase
-    .from("workspace_permission")
-    .select("role")
-    .eq("workspace_id", roomName)
-    .eq("user_id", payload.sub)
-    .single();
+  let permission: { role: string } | null = null;
+  try {
+    const { data, error } = await supabase
+      .from("workspace_permission")
+      .select("role")
+      .eq("workspace_id", roomName)
+      .eq("user_id", payload.sub)
+      .single();
+
+    if (error) {
+      log.error("GET /:roomName permission check failed", {
+        roomName,
+        userId: payload.sub,
+        error: error.message,
+      });
+      return c.json({ error: "Internal Server Error" }, 500);
+    }
+    permission = data;
+  } catch (err) {
+    log.error("GET /:roomName permission check threw", {
+      roomName,
+      userId: payload.sub,
+      error: err instanceof Error ? err.message : "unknown",
+    });
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
 
   if (!permission) {
     log.warn("GET /:roomName no permission", { roomName, userId: payload.sub });
     return c.json({ error: "Forbidden" }, 403);
   }
+
+  log.info("Permission check passed", { userId: payload.sub, roomName, role: permission.role });
 
   const id = c.env.YJS_ROOM.idFromName(roomName);
   const stub = c.env.YJS_ROOM.get(id);
@@ -120,6 +149,9 @@ app.get("/:roomName", async (c) => {
   const doUrl = new URL(c.req.url);
   doUrl.searchParams.set("role", permission.role);
   const doRequest = new Request(doUrl.toString(), c.req.raw);
+
+  const metrics = createCollabMetrics(c.env.METRICS);
+  metrics.trackConnection("connect", roomName, 0);
 
   log.info("GET /:roomName WebSocket upgrade", {
     roomName,

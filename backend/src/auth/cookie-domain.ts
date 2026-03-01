@@ -69,10 +69,7 @@ export function getPreviewOrigin(c: {
  * Validates that `origin` is the FRONTEND_URL or a direct subdomain of it.
  * Used to prevent open-redirect via the stored preview origin.
  */
-export function isAllowedOrigin(
-  origin: string,
-  env: Record<string, unknown>,
-): boolean {
+export function isAllowedOrigin(origin: string, env: Record<string, unknown>): boolean {
   const fh = frontendHost(env);
   if (!fh) return false;
   try {

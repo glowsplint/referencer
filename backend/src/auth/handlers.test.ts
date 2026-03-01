@@ -133,6 +133,12 @@ function createApp() {
     (c.env as any) = { ...testEnv, ...c.env };
     c.set("supabase", createMockSupabase());
     c.set("logger", { info: () => {}, error: () => {}, warn: () => {} });
+    c.set("metrics", {
+      trackRequest: () => {},
+      trackAuthEvent: () => {},
+      trackRateLimit: () => {},
+      trackError: () => {},
+    });
     await next();
   });
 
@@ -196,6 +202,13 @@ describe("auth routes", () => {
       appWithGoogle.use("*", async (c, next) => {
         (c.env as any) = { ...envWithGoogle, ...c.env };
         c.set("supabase", createMockSupabase());
+        c.set("logger", { info: () => {}, error: () => {}, warn: () => {} });
+        c.set("metrics", {
+          trackRequest: () => {},
+          trackAuthEvent: () => {},
+          trackRateLimit: () => {},
+          trackError: () => {},
+        });
         await next();
       });
       appWithGoogle.use("*", optionalAuth(testConfig));

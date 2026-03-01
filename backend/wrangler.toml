@@ -10,8 +10,15 @@ crons = ["0 * * * *"]
 binding = "RATE_LIMIT_KV"
 id = "8c948d37b14d4f0199076fc63d3de491"
 
+[observability]
+enabled = true
+
 # Secrets (SUPABASE_URL, SUPABASE_SERVICE_KEY, WS_JWT_SECRET, etc.)
 # are managed via `wrangler secret put`
+[[analytics_engine_datasets]]
+binding = "METRICS"
+dataset = "referencer_metrics"
+
 [vars]
 FRONTEND_URL = "https://referencer.pages.dev"
 BASE_URL = "https://referencer.pages.dev"

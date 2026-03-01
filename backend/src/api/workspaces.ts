@@ -37,7 +37,7 @@ workspaces.get("/", async (c) => {
     log.info("GET /api/workspaces", { userId: user.id, count: items.length });
     return c.json(items);
   } catch (err) {
-    log.error("GET /api/workspaces failed", { userId: user.id });
+    log.error("GET /api/workspaces failed", { userId: user.id, error: String(err) });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -54,6 +54,11 @@ workspaces.post("/", async (c) => {
       return c.json({ error: "workspaceId is required" }, 400);
     }
     if (!WORKSPACE_ID_RE.test(body.workspaceId)) {
+      log.warn("Invalid workspaceId format", {
+        userId: user.id,
+        workspaceId: body.workspaceId,
+        endpoint: "POST /api/workspaces",
+      });
       return c.json({ error: "Invalid workspaceId format" }, 400);
     }
     if (body.title && body.title.length > 500) {
@@ -74,7 +79,7 @@ workspaces.post("/", async (c) => {
     log.info("POST /api/workspaces", { userId: user.id, workspaceId: body.workspaceId });
     return c.json({ ok: true }, 201);
   } catch (err) {
-    log.error("POST /api/workspaces failed", { userId: user.id });
+    log.error("POST /api/workspaces failed", { userId: user.id, error: String(err) });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -96,6 +101,7 @@ workspaces.get("/:id", async (c) => {
     log.error("GET /api/workspaces/:id failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -125,6 +131,7 @@ workspaces.patch("/:id", requirePermission("editor"), async (c) => {
     log.error("PATCH /api/workspaces/:id failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -146,6 +153,7 @@ workspaces.patch("/:id/touch", async (c) => {
     log.error("PATCH /api/workspaces/:id/touch failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -176,6 +184,7 @@ workspaces.patch("/:id/favorite", async (c) => {
     log.error("PATCH /api/workspaces/:id/favorite failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -197,6 +206,7 @@ workspaces.delete("/:id", requirePermission("editor"), async (c) => {
     log.error("DELETE /api/workspaces/:id failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -215,6 +225,11 @@ workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
       return c.json({ error: "newWorkspaceId is required" }, 400);
     }
     if (!WORKSPACE_ID_RE.test(body.newWorkspaceId)) {
+      log.warn("Invalid newWorkspaceId format", {
+        userId: user.id,
+        newWorkspaceId: body.newWorkspaceId,
+        endpoint: "POST /api/workspaces/:id/duplicate",
+      });
       return c.json({ error: "Invalid newWorkspaceId format" }, 400);
     }
 
@@ -230,6 +245,7 @@ workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
     log.error("POST /api/workspaces/:id/duplicate failed", {
       userId: user.id,
       sourceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -252,6 +268,7 @@ workspaces.get("/:id/permission", async (c) => {
     log.error("GET /api/workspaces/:id/permission failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -276,6 +293,7 @@ workspaces.get("/:id/links", requirePermission("editor"), async (c) => {
     log.error("GET /api/workspaces/:id/links failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -298,6 +316,7 @@ workspaces.delete("/:id/links/:code", requirePermission("editor"), async (c) => 
     log.error("DELETE /api/workspaces/:id/links/:code failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -322,6 +341,7 @@ workspaces.get("/:id/members", requirePermission("editor"), async (c) => {
     log.error("GET /api/workspaces/:id/members failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -348,6 +368,7 @@ workspaces.patch("/:id/members/:userId", requirePermission("owner"), async (c) =
       userId: user.id,
       workspaceId,
       targetUserId,
+      previousRole: targetRole,
       newRole: body.role,
     });
     return c.json({ ok: true });
@@ -355,6 +376,7 @@ workspaces.patch("/:id/members/:userId", requirePermission("owner"), async (c) =
     log.error("PATCH /api/workspaces/:id/members/:userId failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -377,12 +399,14 @@ workspaces.delete("/:id/members/:userId", requirePermission("owner"), async (c) 
       userId: user.id,
       workspaceId,
       targetUserId,
+      removedRole: targetRole,
     });
     return c.json({ ok: true });
   } catch (err) {
     log.error("DELETE /api/workspaces/:id/members/:userId failed", {
       userId: user.id,
       workspaceId: c.req.param("id"),
+      error: String(err),
     });
     return c.json({ error: "Internal server error" }, 500);
   }

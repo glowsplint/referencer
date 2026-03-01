@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getCookieDomain, getPreviewOrigin, isAllowedOrigin } from "./cookie-domain";
 
-function mockContext(
-  headers: Record<string, string>,
-  env: Record<string, unknown> = {},
-) {
+function mockContext(headers: Record<string, string>, env: Record<string, unknown> = {}) {
   return {
     req: {
       header(name: string) {
@@ -19,18 +16,12 @@ const PAGES_ENV = { FRONTEND_URL: "https://referencer.pages.dev" };
 
 describe("getCookieDomain", () => {
   it("returns parent domain for a preview subdomain", () => {
-    const c = mockContext(
-      { "x-forwarded-host": "abc123.referencer.pages.dev" },
-      PAGES_ENV,
-    );
+    const c = mockContext({ "x-forwarded-host": "abc123.referencer.pages.dev" }, PAGES_ENV);
     expect(getCookieDomain(c)).toBe("referencer.pages.dev");
   });
 
   it("returns domain for the production host", () => {
-    const c = mockContext(
-      { "x-forwarded-host": "referencer.pages.dev" },
-      PAGES_ENV,
-    );
+    const c = mockContext({ "x-forwarded-host": "referencer.pages.dev" }, PAGES_ENV);
     expect(getCookieDomain(c)).toBe("referencer.pages.dev");
   });
 
@@ -45,28 +36,19 @@ describe("getCookieDomain", () => {
   });
 
   it("returns undefined for an unrelated domain", () => {
-    const c = mockContext(
-      { "x-forwarded-host": "evil.com" },
-      PAGES_ENV,
-    );
+    const c = mockContext({ "x-forwarded-host": "evil.com" }, PAGES_ENV);
     expect(getCookieDomain(c)).toBeUndefined();
   });
 });
 
 describe("getPreviewOrigin", () => {
   it("returns full https origin for a preview subdomain", () => {
-    const c = mockContext(
-      { "x-forwarded-host": "abc123.referencer.pages.dev" },
-      PAGES_ENV,
-    );
+    const c = mockContext({ "x-forwarded-host": "abc123.referencer.pages.dev" }, PAGES_ENV);
     expect(getPreviewOrigin(c)).toBe("https://abc123.referencer.pages.dev");
   });
 
   it("returns null for the production host (not a preview)", () => {
-    const c = mockContext(
-      { "x-forwarded-host": "referencer.pages.dev" },
-      PAGES_ENV,
-    );
+    const c = mockContext({ "x-forwarded-host": "referencer.pages.dev" }, PAGES_ENV);
     expect(getPreviewOrigin(c)).toBeNull();
   });
 
@@ -90,9 +72,7 @@ describe("isAllowedOrigin", () => {
   });
 
   it("returns true for a preview subdomain origin", () => {
-    expect(
-      isAllowedOrigin("https://abc123.referencer.pages.dev", PAGES_ENV),
-    ).toBe(true);
+    expect(isAllowedOrigin("https://abc123.referencer.pages.dev", PAGES_ENV)).toBe(true);
   });
 
   it("returns false for an unrelated domain", () => {
@@ -100,12 +80,9 @@ describe("isAllowedOrigin", () => {
   });
 
   it("returns false for a suffix-attack domain", () => {
-    expect(
-      isAllowedOrigin(
-        "https://evil.referencer.pages.dev.attacker.com",
-        PAGES_ENV,
-      ),
-    ).toBe(false);
+    expect(isAllowedOrigin("https://evil.referencer.pages.dev.attacker.com", PAGES_ENV)).toBe(
+      false,
+    );
   });
 
   it("returns false for invalid URL strings", () => {
