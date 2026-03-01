@@ -22,6 +22,7 @@ import { ClearFormattingButton } from "@/components/tiptap-ui/clear-formatting-b
 import { TextColorPopover } from "@/components/tiptap-ui/text-color-button";
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
+import { LineHeightDropdown } from "@/components/tiptap-ui/line-height-dropdown";
 
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
 import { LinkIcon } from "@/components/tiptap-icons/link-icon";
@@ -84,6 +85,12 @@ const MainToolbarContent = ({
         <TextAlignButton align="center" />
         <TextAlignButton align="right" />
         <TextAlignButton align="justify" />
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      <ToolbarGroup>
+        <LineHeightDropdown portal={isMobile} />
       </ToolbarGroup>
 
       <ToolbarSeparator />
