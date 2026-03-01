@@ -3,7 +3,7 @@ import type { CommentReaction } from "@/types/editor";
 interface ReactionBarProps {
   reactions: CommentReaction[];
   currentUserName: string;
-  onToggleReaction: (emoji: string) => void;
+  onToggleReaction?: (emoji: string) => void;
 }
 
 /** Renders grouped reaction pills showing emoji + count, highlighted when the current user has reacted. */
@@ -22,14 +22,16 @@ export function ReactionBar({ reactions, currentUserName, onToggleReaction }: Re
     <div className="inline-flex flex-wrap gap-1 px-2 py-1">
       {[...grouped.entries()].map(([emoji, users]) => {
         const isMine = users.includes(currentUserName);
-        return (
+        const pillClass = `inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs border transition-colors ${
+          isMine
+            ? "border-blue-400 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-500"
+            : "border-zinc-200 bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-700/50" +
+              (onToggleReaction ? " hover:bg-zinc-100 dark:hover:bg-zinc-700" : "")
+        }`;
+        return onToggleReaction ? (
           <button
             key={emoji}
-            className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs border transition-colors ${
-              isMine
-                ? "border-blue-400 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-500"
-                : "border-zinc-200 bg-zinc-50 hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-700/50 dark:hover:bg-zinc-700"
-            }`}
+            className={pillClass}
             onClick={(e) => {
               e.stopPropagation();
               onToggleReaction(emoji);
@@ -39,6 +41,11 @@ export function ReactionBar({ reactions, currentUserName, onToggleReaction }: Re
             <span>{emoji}</span>
             <span className="text-[10px] text-zinc-500 dark:text-zinc-400">{users.length}</span>
           </button>
+        ) : (
+          <span key={emoji} className={pillClass} title={users.join(", ")}>
+            <span>{emoji}</span>
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">{users.length}</span>
+          </span>
         );
       })}
     </div>

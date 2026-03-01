@@ -21,4 +21,6 @@ export const STORAGE_KEYS = {
   FOLDER_COLLAPSED_PREFIX: "referencer-folder-collapsed-",
   /** Persisted management pane width in pixels. */
   MANAGEMENT_PANE_WIDTH: "referencer-management-pane-width",
+  /** Persisted annotation panel width in pixels. */
+  ANNOTATION_PANEL_WIDTH: "referencer-annotation-panel-width",
 } as const;

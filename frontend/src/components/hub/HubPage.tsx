@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { Settings, TriangleAlert } from "lucide-react";
 import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspaces } from "@/hooks/data/use-workspaces";
 import { useFolders } from "@/hooks/data/use-folders";
+import { useSettings } from "@/hooks/data/use-settings";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
+import { SettingsDialog } from "@/components/SettingsDialog";
 import { WorkspaceGrid } from "./WorkspaceGrid";
 import { NewWorkspaceDialog } from "./NewWorkspaceDialog";
 import { Button } from "@/components/ui/button";
@@ -34,8 +37,16 @@ export function HubPage({ navigate }: HubPageProps) {
     toggleFavorite: toggleFolderFavorite,
     moveFolder,
   } = useFolders();
+  const {
+    settings,
+    toggleDarkMode,
+    toggleHideOffscreenArrows,
+    toggleShowStatusBar,
+    toggleThirdEditorFullWidth,
+  } = useSettings();
 
   const [showNewDialog, setShowNewDialog] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const handleTryWithoutSignIn = () => {
     const id = randomKSUID();
@@ -61,6 +72,13 @@ export function HubPage({ navigate }: HubPageProps) {
           <span className="text-lg font-semibold">Referencer</span>
         </div>
         <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            data-testid="hubSettingsButton"
+          >
+            <Settings size={20} />
+          </button>
           {!authLoading && (isAuthenticated ? <UserMenu /> : <LoginButton />)}
         </div>
       </header>
@@ -89,6 +107,14 @@ export function HubPage({ navigate }: HubPageProps) {
                   Sign in
                 </Button>
               </div>
+              <p
+                className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-500 mt-4"
+                data-testid="guestWarningBanner"
+              >
+                <TriangleAlert size={14} className="shrink-0" />
+                Data created without signing in is stored locally and may be lost. Sign in to save
+                your work.
+              </p>
             </div>
           </div>
         ) : isAuthenticated ? (
@@ -122,6 +148,19 @@ export function HubPage({ navigate }: HubPageProps) {
         open={showNewDialog}
         onOpenChange={setShowNewDialog}
         onCreate={handleCreateWorkspace}
+      />
+      <SettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        isDarkMode={settings.isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        hideOffscreenArrows={settings.hideOffscreenArrows}
+        toggleHideOffscreenArrows={toggleHideOffscreenArrows}
+        showStatusBar={settings.showStatusBar}
+        toggleShowStatusBar={toggleShowStatusBar}
+        thirdEditorFullWidth={settings.thirdEditorFullWidth}
+        toggleThirdEditorFullWidth={toggleThirdEditorFullWidth}
+        isAuthenticated={isAuthenticated}
       />
     </div>
   );

@@ -105,9 +105,10 @@ describe("WorkspaceGrid", () => {
   });
 
   describe("when there are no workspaces or folders", () => {
-    it("then shows the empty state message", () => {
+    it("then shows the empty state onboarding", () => {
       renderGrid([], [], false);
-      expect(screen.getByText("No workspaces yet")).toBeInTheDocument();
+      expect(screen.getByTestId("emptyStateOnboarding")).toBeInTheDocument();
+      expect(screen.getByText("Welcome to Referencer")).toBeInTheDocument();
       expect(screen.getByText("Create your first workspace")).toBeInTheDocument();
     });
 

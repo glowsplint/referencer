@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { Link, Eye, LogIn, Copy, Trash2, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AlertDialog } from "radix-ui";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/data/use-auth";
 import { apiPost } from "@/lib/api-client";
 import { useShareManagement, type WorkspaceMember } from "@/hooks/data/use-share-management";
+
+type ExpiryOption = "never" | "7" | "30" | "90";
 
 interface ShareDialogProps {
   open: boolean;
@@ -92,21 +95,43 @@ function RoleSelect({
   );
 }
 
+function formatExpiryDate(expiresAt: string | null, t: TFunction<"dialogs">): string {
+  if (!expiresAt) return t("share.noExpiry");
+  const now = new Date();
+  const expiry = new Date(expiresAt);
+  const diffMs = expiry.getTime() - now.getTime();
+  if (diffMs <= 0) return t("share.expired");
+  const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  return t("share.expiresIn", { days });
+}
+
+function expiryOptionToDate(option: ExpiryOption): string | null {
+  if (option === "never") return null;
+  const days = parseInt(option);
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date.toISOString();
+}
+
 export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProps) {
   const { t } = useTranslation("dialogs");
   const { user, isAuthenticated, login } = useAuth();
   const { links, members, isLoading, refetch, revokeLink, changeMemberRole, removeMember } =
     useShareManagement(workspaceId, open && isAuthenticated);
   const [creatingLink, setCreatingLink] = useState(false);
+  const [expiryOption, setExpiryOption] = useState<ExpiryOption>("never");
+  const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
 
   const isOwner = members.some((m) => m.userId === user?.id && m.role === "owner");
 
   async function handleShare(access: "edit" | "readonly") {
     setCreatingLink(true);
     try {
+      const expiresAt = expiryOptionToDate(expiryOption);
       const data = await apiPost<{ url: string }>("/api/share", {
         workspaceId,
         access,
+        ...(expiresAt && { expiresAt }),
       });
       const url = `${window.location.origin}${data.url}`;
       await navigator.clipboard.writeText(url);
@@ -156,6 +181,10 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
     }
   }
 
+  function buildFullUrl(code: string): string {
+    return `${window.location.origin}/s/${code}`;
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md" data-testid="shareDialog">
@@ -168,6 +197,28 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
 
         {isAuthenticated ? (
           <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto">
+            {/* Expiry dropdown */}
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="expirySelect"
+                className="whitespace-nowrap text-sm text-muted-foreground"
+              >
+                {t("share.expiryLabel")}
+              </label>
+              <select
+                id="expirySelect"
+                value={expiryOption}
+                onChange={(e) => setExpiryOption(e.target.value as ExpiryOption)}
+                className="bg-background border-input flex-1 rounded-md border px-2 py-1 text-sm"
+                data-testid="expirySelect"
+              >
+                <option value="never">{t("share.expiryNever")}</option>
+                <option value="7">{t("share.expiry7Days")}</option>
+                <option value="30">{t("share.expiry30Days")}</option>
+                <option value="90">{t("share.expiry90Days")}</option>
+              </select>
+            </div>
+
             {/* Create link buttons */}
             <div className="flex flex-col gap-2">
               <Button
@@ -201,35 +252,44 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
             {/* Active links section */}
             {links.length > 0 && (
               <div data-testid="shareLinksList">
-                <h4 className="text-sm font-medium mb-2">{t("share.activeLinks")}</h4>
+                <h4 className="mb-2 text-sm font-medium">{t("share.activeLinks")}</h4>
                 <div className="flex flex-col gap-2">
                   {links.map((link) => (
                     <div
                       key={link.code}
-                      className="flex items-center gap-2 rounded-md border px-3 py-2"
+                      className="flex flex-col gap-1 rounded-md border px-3 py-2"
                     >
-                      <AccessBadge access={link.access} t={t} />
-                      <span className="text-muted-foreground flex-1 truncate font-mono text-xs">
-                        {link.code}
+                      <div className="flex items-center gap-2">
+                        <AccessBadge access={link.access} t={t} />
+                        <span
+                          className="text-muted-foreground flex-1 select-all truncate font-mono text-xs"
+                          title={buildFullUrl(link.code)}
+                          data-testid="shareLinkUrl"
+                        >
+                          {buildFullUrl(link.code)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyLink(link.code)}
+                          className="text-muted-foreground hover:text-foreground shrink-0"
+                          title={t("share.copyLink")}
+                          data-testid="copyLinkButton"
+                        >
+                          <Copy className="size-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setRevokeTarget(link.code)}
+                          className="text-muted-foreground hover:text-destructive shrink-0"
+                          title={t("share.revoke")}
+                          data-testid="revokeLinkButton"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      </div>
+                      <span className="text-muted-foreground text-xs" data-testid="shareLinkExpiry">
+                        {formatExpiryDate(link.expiresAt, t)}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopyLink(link.code)}
-                        className="text-muted-foreground hover:text-foreground shrink-0"
-                        title={t("share.copyLink")}
-                        data-testid="copyLinkButton"
-                      >
-                        <Copy className="size-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleRevoke(link.code)}
-                        className="text-muted-foreground hover:text-destructive shrink-0"
-                        title={t("share.revoke")}
-                        data-testid="revokeLinkButton"
-                      >
-                        <X className="size-4" />
-                      </button>
                     </div>
                   ))}
                 </div>
@@ -239,7 +299,7 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
             {/* Members section */}
             {members.length > 0 && (
               <div data-testid="shareMembersList">
-                <h4 className="text-sm font-medium mb-2">{t("share.members")}</h4>
+                <h4 className="mb-2 text-sm font-medium">{t("share.members")}</h4>
                 <div className="flex flex-col gap-2">
                   {members.map((member) => {
                     const isCurrentUser = member.userId === user?.id;
@@ -251,7 +311,7 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
                         className="flex items-center gap-2 rounded-md border px-3 py-2"
                       >
                         <MemberAvatar name={member.name} />
-                        <div className="flex-1 min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1 text-sm font-medium">
                             <span className="truncate">{member.name}</span>
                             {isCurrentUser && (
@@ -303,6 +363,50 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
           </div>
         )}
       </DialogContent>
+
+      {/* Revoke confirmation dialog */}
+      <AlertDialog.Root
+        open={revokeTarget !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setRevokeTarget(null);
+        }}
+      >
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay className="fixed inset-0 z-50 bg-black/50" />
+          <AlertDialog.Content
+            className="bg-background fixed left-[50%] top-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-6 shadow-lg sm:max-w-md"
+            data-testid="revokeConfirmDialog"
+          >
+            <AlertDialog.Title className="text-lg font-semibold">
+              {t("share.revokeConfirmTitle")}
+            </AlertDialog.Title>
+            <AlertDialog.Description className="text-muted-foreground mt-2 text-sm">
+              {t("share.revokeConfirmDescription")}
+            </AlertDialog.Description>
+            <div className="mt-4 flex justify-end gap-2">
+              <AlertDialog.Cancel asChild>
+                <Button variant="outline" data-testid="revokeCancelButton">
+                  {t("share.revokeConfirmCancel")}
+                </Button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action asChild>
+                <Button
+                  variant="destructive"
+                  data-testid="revokeConfirmButton"
+                  onClick={() => {
+                    if (revokeTarget) {
+                      handleRevoke(revokeTarget);
+                      setRevokeTarget(null);
+                    }
+                  }}
+                >
+                  {t("share.revokeConfirmAction")}
+                </Button>
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
     </Dialog>
   );
 }

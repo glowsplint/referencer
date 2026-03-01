@@ -20,6 +20,7 @@ export async function apiFetch<T = unknown>(path: string, options: RequestInit =
     credentials: "include",
     ...options,
     headers: {
+      "X-Requested-With": "XMLHttpRequest",
       ...options.headers,
     },
   });

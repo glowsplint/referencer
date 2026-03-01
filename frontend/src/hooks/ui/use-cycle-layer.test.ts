@@ -20,7 +20,7 @@ function pressKey(key: string, options: Partial<KeyboardEvent> = {}) {
 }
 
 describe("useCycleLayer", () => {
-  it("when Tab key is pressed, then cycles to next layer", () => {
+  it("when ] key is pressed, then cycles to next layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -31,11 +31,11 @@ describe("useCycleLayer", () => {
       }),
     );
 
-    pressKey("Tab");
+    pressKey("]");
     expect(setActiveLayer).toHaveBeenCalledWith("layer-1");
   });
 
-  it("when at last layer and Tab is pressed, then wraps to first layer", () => {
+  it("when at last layer and ] is pressed, then wraps to first layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -46,11 +46,11 @@ describe("useCycleLayer", () => {
       }),
     );
 
-    pressKey("Tab");
+    pressKey("]");
     expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
   });
 
-  it("when no active layer and Tab is pressed, then selects first layer", () => {
+  it("when no active layer and ] is pressed, then selects first layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -61,11 +61,11 @@ describe("useCycleLayer", () => {
       }),
     );
 
-    pressKey("Tab");
+    pressKey("]");
     expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
   });
 
-  it("when Shift+Tab is pressed, then cycles to previous layer", () => {
+  it("when [ is pressed, then cycles to previous layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -76,11 +76,11 @@ describe("useCycleLayer", () => {
       }),
     );
 
-    pressKey("Tab", { shiftKey: true });
+    pressKey("[");
     expect(setActiveLayer).toHaveBeenCalledWith("layer-0");
   });
 
-  it("when at first layer and Shift+Tab is pressed, then wraps to last layer", () => {
+  it("when at first layer and [ is pressed, then wraps to last layer", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -91,7 +91,7 @@ describe("useCycleLayer", () => {
       }),
     );
 
-    pressKey("Tab", { shiftKey: true });
+    pressKey("[");
     expect(setActiveLayer).toHaveBeenCalledWith("layer-2");
   });
 
@@ -105,7 +105,7 @@ describe("useCycleLayer", () => {
       }),
     );
 
-    pressKey("Tab");
+    pressKey("]");
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
@@ -120,11 +120,11 @@ describe("useCycleLayer", () => {
       }),
     );
 
-    pressKey("Tab", { repeat: true });
+    pressKey("]", { repeat: true });
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 
-  it("when a non-Tab key is pressed, then ignores it", () => {
+  it("when a non-bracket key is pressed, then ignores it", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -140,7 +140,7 @@ describe("useCycleLayer", () => {
   });
 
   it.each([{ modifier: "metaKey" }, { modifier: "ctrlKey" }, { modifier: "altKey" }])(
-    "ignores Tab when $modifier is held",
+    "ignores ] when $modifier is held",
     ({ modifier }) => {
       const layers = makeLayers(3);
       const setActiveLayer = vi.fn();
@@ -152,12 +152,12 @@ describe("useCycleLayer", () => {
         }),
       );
 
-      pressKey("Tab", { [modifier]: true });
+      pressKey("]", { [modifier]: true });
       expect(setActiveLayer).not.toHaveBeenCalled();
     },
   );
 
-  it("when Tab is pressed on a contentEditable target, then ignores it", () => {
+  it("when ] is pressed on a contentEditable target, then ignores it", () => {
     const layers = makeLayers(3);
     const setActiveLayer = vi.fn();
     renderHook(() =>
@@ -171,9 +171,24 @@ describe("useCycleLayer", () => {
     const editableDiv = document.createElement("div");
     editableDiv.contentEditable = "true";
     document.body.appendChild(editableDiv);
-    editableDiv.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+    editableDiv.dispatchEvent(new KeyboardEvent("keydown", { key: "]", bubbles: true }));
     document.body.removeChild(editableDiv);
 
+    expect(setActiveLayer).not.toHaveBeenCalled();
+  });
+
+  it("ignores ] when shiftKey is held", () => {
+    const layers = makeLayers(3);
+    const setActiveLayer = vi.fn();
+    renderHook(() =>
+      useCycleLayer({
+        layers,
+        activeLayerId: "layer-0",
+        setActiveLayer,
+      }),
+    );
+
+    pressKey("]", { shiftKey: true });
     expect(setActiveLayer).not.toHaveBeenCalled();
   });
 });

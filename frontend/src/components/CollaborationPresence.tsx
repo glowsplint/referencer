@@ -118,7 +118,7 @@ export function CollaborationPresence({
 
   const commitName = () => {
     if (!provider) return;
-    const trimmed = editValue.trim();
+    const trimmed = editValue.trim().slice(0, 50);
     if (!trimmed) {
       setIsEditingName(false);
       return;

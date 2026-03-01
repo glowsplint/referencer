@@ -8,6 +8,12 @@ interface RateLimitOptions {
   keyGenerator: (c: Context) => string;
 }
 
+/**
+ * SECURITY NOTE: This rate limiter uses Cloudflare KV which has eventual consistency.
+ * Two near-simultaneous requests may both read the old counter before either write completes,
+ * allowing slightly more requests than the configured limit. For stricter enforcement,
+ * consider Durable Objects or Workers KV with compare-and-swap (when available).
+ */
 export function kvRateLimiter(options: RateLimitOptions): MiddlewareHandler {
   return async (c, next) => {
     const kv = (c.env as any).RATE_LIMIT_KV;

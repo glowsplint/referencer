@@ -4,6 +4,7 @@ import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
 import * as syncProtocol from "y-protocols/sync";
 import * as awarenessProtocol from "y-protocols/awareness";
+import { createClient } from "@supabase/supabase-js";
 import { loadSnapshot, saveSnapshot } from "./persistence";
 import { createLogger, type Logger } from "./logger";
 import { createCollabMetrics, type CollabMetrics } from "./metrics";
@@ -48,8 +49,10 @@ export class YjsRoom extends DurableObject<Env> {
       const [client, server] = Object.values(pair);
 
       // Tag WebSocket with user's role for server-side write enforcement
+      // and userId for periodic permission re-validation
       const role = url.searchParams.get("role") ?? "viewer";
-      this.ctx.acceptWebSocket(server, [`role:${role}`]);
+      const userId = url.searchParams.get("userId") ?? "unknown";
+      this.ctx.acceptWebSocket(server, [`role:${role}`, `user:${userId}`]);
 
       // Store room name for persistence
       if (!this.roomName) {
@@ -399,11 +402,16 @@ export class YjsRoom extends DurableObject<Env> {
 
   async alarm(): Promise<void> {
     const room = this.roomName ?? "unknown";
-    this.log.info("Alarm fired for periodic Supabase snapshot", { roomName: room });
+    this.log.info("Alarm fired for periodic snapshot and permission revalidation", {
+      roomName: room,
+    });
 
     try {
       // Periodic snapshot to Supabase
       await this.saveToSupabase();
+
+      // Re-validate permissions for all connected clients
+      await this.revalidatePermissions();
 
       // Reset alarm if still active connections
       if (this.ctx.getWebSockets().length > 0) {
@@ -424,6 +432,55 @@ export class YjsRoom extends DurableObject<Env> {
         }
       } catch {
         // Nothing we can do
+      }
+    }
+  }
+
+  private async revalidatePermissions(): Promise<void> {
+    if (!this.roomName) return;
+    const room = this.roomName;
+
+    const supabase = createClient(this.env.SUPABASE_URL, this.env.SUPABASE_SERVICE_KEY);
+    const sockets = this.ctx.getWebSockets();
+
+    for (const ws of sockets) {
+      const tags = this.ctx.getTags(ws);
+      const userTag = tags.find((t) => t.startsWith("user:"));
+      if (!userTag) continue;
+      const userId = userTag.slice(5);
+      if (userId === "unknown") continue;
+
+      try {
+        const { data } = await supabase
+          .from("workspace_permission")
+          .select("role")
+          .eq("workspace_id", room)
+          .eq("user_id", userId)
+          .single();
+
+        if (!data) {
+          // Permission revoked — close the connection
+          this.log.warn("Permission revoked, closing WebSocket", { roomName: room, userId });
+          ws.close(4403, "Permission revoked");
+        } else {
+          const currentRole = tags.find((t) => t.startsWith("role:"))?.slice(5);
+          if (currentRole && currentRole !== data.role) {
+            // Permission downgraded (or changed) — close so client reconnects with new role
+            this.log.warn("Permission changed, closing WebSocket", {
+              roomName: room,
+              userId,
+              oldRole: currentRole,
+              newRole: data.role,
+            });
+            ws.close(4403, "Permission changed");
+          }
+        }
+      } catch (err) {
+        this.log.error("Permission revalidation failed for user", {
+          roomName: room,
+          userId,
+          error: err instanceof Error ? err.message : "unknown",
+        });
       }
     }
   }

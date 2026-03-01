@@ -107,6 +107,12 @@ app.get("/:roomName", async (c) => {
   log.info("JWT validation successful", { userId: payload.sub, roomName });
 
   // Check workspace permission (DB check)
+  /**
+   * SECURITY NOTE: In production, this should use a restricted Supabase role
+   * with only SELECT permissions on workspace_permission, rather than the
+   * service_role key which has full database access. Create a custom role
+   * with: GRANT SELECT ON workspace_permission TO collab_reader;
+   */
   const supabase = createClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY);
   let permission: { role: string } | null = null;
   try {
@@ -145,9 +151,11 @@ app.get("/:roomName", async (c) => {
   const id = c.env.YJS_ROOM.idFromName(roomName);
   const stub = c.env.YJS_ROOM.get(id);
 
-  // Forward role to the Durable Object so it can enforce read-only for viewers
+  // Forward role and userId to the Durable Object so it can enforce read-only for viewers
+  // and periodically re-validate permissions
   const doUrl = new URL(c.req.url);
   doUrl.searchParams.set("role", permission.role);
+  doUrl.searchParams.set("userId", payload.sub);
   const doRequest = new Request(doUrl.toString(), c.req.raw);
 
   const metrics = createCollabMetrics(c.env.METRICS);

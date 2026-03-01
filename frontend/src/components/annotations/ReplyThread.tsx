@@ -8,8 +8,8 @@ import { ReactionBar } from "./ReactionBar";
 interface ReplyThreadProps {
   replies: CommentReply[];
   currentUserName: string;
-  onRemoveReply: (replyId: string) => void;
-  onToggleReplyReaction: (replyId: string, emoji: string) => void;
+  onRemoveReply?: (replyId: string) => void;
+  onToggleReplyReaction?: (replyId: string, emoji: string) => void;
 }
 
 const COLLAPSED_LIMIT = 3;
@@ -51,16 +51,18 @@ export function ReplyThread({
             <span className="text-[10px] text-zinc-400 dark:text-zinc-500">
               {formatRelativeTime(reply.timestamp)}
             </span>
-            <button
-              className="ml-auto p-0.5 rounded opacity-0 group-hover/reply:opacity-100 transition-opacity text-zinc-400 hover:text-red-500"
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemoveReply(reply.id);
-              }}
-              title="Remove reply"
-            >
-              <X size={10} />
-            </button>
+            {onRemoveReply && (
+              <button
+                className="ml-auto p-0.5 rounded opacity-0 group-hover/reply:opacity-100 transition-opacity text-zinc-400 hover:text-red-500"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemoveReply(reply.id);
+                }}
+                title="Remove reply"
+              >
+                <X size={10} />
+              </button>
+            )}
           </div>
           <div
             className="text-xs text-zinc-600 dark:text-zinc-300 prose-xs"
@@ -70,7 +72,11 @@ export function ReplyThread({
             <ReactionBar
               reactions={reply.reactions}
               currentUserName={currentUserName}
-              onToggleReaction={(emoji) => onToggleReplyReaction(reply.id, emoji)}
+              onToggleReaction={
+                onToggleReplyReaction
+                  ? (emoji) => onToggleReplyReaction(reply.id, emoji)
+                  : undefined
+              }
             />
           )}
         </div>

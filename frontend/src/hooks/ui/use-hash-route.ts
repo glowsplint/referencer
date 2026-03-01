@@ -8,7 +8,7 @@ export type Route =
 const WORKSPACE_ID_RE =
   /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-zA-Z]{27})$/i;
 
-const SHARE_RE = /^share\/(.+)$/;
+const SHARE_RE = /^share\/([a-zA-Z0-9_-]+)$/;
 
 function parseHash(): Route {
   const hash = window.location.hash;

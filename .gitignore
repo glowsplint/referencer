@@ -8,9 +8,6 @@ nul
 # Test coverage
 coverage/
 
-# Bun
-bun.lockb
-
 # Claude Code
 .claude/worktrees/
 .claude/settings.local.json

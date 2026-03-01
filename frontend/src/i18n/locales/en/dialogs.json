@@ -127,7 +127,19 @@
     "loading": "Loading...",
     "edit": "edit",
     "readonly": "read-only",
-    "copyLink": "Copy link"
+    "copyLink": "Copy link",
+    "revokeConfirmTitle": "Revoke share link",
+    "revokeConfirmDescription": "Are you sure you want to revoke this link? Anyone using it will lose access.",
+    "revokeConfirmCancel": "Cancel",
+    "revokeConfirmAction": "Revoke",
+    "expiryNever": "Never",
+    "expiry7Days": "7 days",
+    "expiry30Days": "30 days",
+    "expiry90Days": "90 days",
+    "expiryLabel": "Link expiry",
+    "noExpiry": "No expiry",
+    "expiresIn": "Expires in {{days}} days",
+    "expired": "Expired"
   },
   "mobile": {
     "title": "Best on Desktop",

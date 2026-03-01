@@ -8,6 +8,7 @@ import {
   toggleFavoriteWorkspace,
   touchUserWorkspace,
   deleteUserWorkspace,
+  deleteWorkspaceCascade,
   duplicateWorkspace,
 } from "../db/workspace-queries";
 import {
@@ -191,6 +192,8 @@ workspaces.patch("/:id/favorite", async (c) => {
 });
 
 // DELETE /:id - delete workspace
+// Owner: cascade delete (workspace + share_links + user_workspace + workspace_permission + yjs_document)
+// Non-owner: just unlink (delete user_workspace + workspace_permission for that user)
 workspaces.delete("/:id", requirePermission("editor"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
@@ -199,8 +202,18 @@ workspaces.delete("/:id", requirePermission("editor"), async (c) => {
   try {
     const workspaceId = c.req.param("id");
     const supabase = c.get("supabase");
-    await deleteUserWorkspace(supabase, user.id, workspaceId);
-    log.info("DELETE /api/workspaces/:id", { userId: user.id, workspaceId });
+    const role = await getPermission(supabase, workspaceId, user.id);
+
+    if (role === "owner") {
+      // Owner: cascade delete everything
+      await deleteWorkspaceCascade(supabase, workspaceId);
+      log.info("DELETE /api/workspaces/:id (cascade)", { userId: user.id, workspaceId });
+    } else {
+      // Non-owner: just unlink this user
+      await deleteUserWorkspace(supabase, user.id, workspaceId);
+      await removePermission(supabase, workspaceId, user.id);
+      log.info("DELETE /api/workspaces/:id (unlink)", { userId: user.id, workspaceId });
+    }
     return c.json({ ok: true });
   } catch (err) {
     log.error("DELETE /api/workspaces/:id failed", {

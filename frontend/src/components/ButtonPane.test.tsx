@@ -309,9 +309,9 @@ describe("ButtonPane", () => {
       });
     });
 
-    describe("when the lock button receives focus", () => {
-      it("then shows a tooltip with the shortcut key", async () => {
-        renderButtonPane();
+    describe("when the lock button receives focus and editor is unlocked", () => {
+      it("then shows a tooltip saying Switch to Annotate mode", async () => {
+        renderButtonPane({ settings: { isLocked: false } });
         const btn = screen.getByTestId("lockButton");
 
         await act(async () => {
@@ -319,7 +319,22 @@ describe("ButtonPane", () => {
         });
 
         const tooltip = await screen.findByRole("tooltip");
-        expect(tooltip).toHaveTextContent("Toggle editor lock");
+        expect(tooltip).toHaveTextContent("Switch to Annotate mode");
+        expect(tooltip.querySelector("kbd")).toHaveTextContent("K");
+      });
+    });
+
+    describe("when the lock button receives focus and editor is locked", () => {
+      it("then shows a tooltip saying Switch to Edit mode", async () => {
+        renderButtonPane({ settings: { isLocked: true } });
+        const btn = screen.getByTestId("lockButton");
+
+        await act(async () => {
+          fireEvent.focus(btn);
+        });
+
+        const tooltip = await screen.findByRole("tooltip");
+        expect(tooltip).toHaveTextContent("Switch to Edit mode");
         expect(tooltip.querySelector("kbd")).toHaveTextContent("K");
       });
     });
