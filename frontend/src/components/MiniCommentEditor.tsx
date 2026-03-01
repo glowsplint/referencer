@@ -67,6 +67,7 @@ export function MiniCommentEditor({
             event.preventDefault();
             const file = item.getAsFile();
             if (!file) return false;
+            if (file.size > 5 * 1024 * 1024) return false; // 5MB limit
             const reader = new FileReader();
             reader.onload = (e) => {
               const src = e.target?.result as string;
@@ -84,6 +85,7 @@ export function MiniCommentEditor({
         for (const file of files) {
           if (file.type.startsWith("image/")) {
             event.preventDefault();
+            if (file.size > 5 * 1024 * 1024) return false; // 5MB limit
             const reader = new FileReader();
             reader.onload = (e) => {
               const src = e.target?.result as string;

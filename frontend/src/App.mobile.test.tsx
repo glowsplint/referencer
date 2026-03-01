@@ -185,8 +185,15 @@ vi.mock("./components/tiptap-templates/simple", () => ({
 
 vi.mock("./components/AnnotationPanel", () => ({
   AnnotationPanel: (props: Record<string, unknown>) => (
-    <div data-testid="annotation-panel" data-placement={props.placement} />
+    <div
+      data-testid="annotation-panel"
+      data-placement={props.placement}
+      data-read-only={String(props.readOnly ?? false)}
+    />
   ),
+  DEFAULT_PANEL_WIDTH: 224,
+  MIN_PANEL_WIDTH: 160,
+  MAX_PANEL_WIDTH: 400,
 }));
 
 beforeEach(() => {
@@ -267,6 +274,97 @@ describe("App (mobile)", () => {
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
+    });
+  });
+
+  describe("mobile annotation panel", () => {
+    const layerWithComment = {
+      id: "layer-1",
+      color: "#ff0000",
+      name: "Layer 1",
+      visible: true,
+      arrowStyle: "solid",
+      highlights: [
+        {
+          id: "h-1",
+          editorIndex: 0,
+          from: 0,
+          to: 5,
+          text: "Hello",
+          annotation: "A comment",
+          type: "comment",
+        },
+      ],
+      arrows: [],
+      underlines: [],
+    };
+
+    it("does not show the toggle button when not locked", () => {
+      mockWorkspace.settings.isLocked = false;
+      mockWorkspace.layers = [layerWithComment];
+      renderApp();
+      expect(screen.queryByTestId("mobileAnnotationToggle")).not.toBeInTheDocument();
+    });
+
+    it("does not show the toggle button when locked but no annotations", () => {
+      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.layers = [];
+      renderApp();
+      expect(screen.queryByTestId("mobileAnnotationToggle")).not.toBeInTheDocument();
+    });
+
+    it("shows the toggle button when locked with comment annotations", () => {
+      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.layers = [layerWithComment];
+      renderApp();
+      expect(screen.getByTestId("mobileAnnotationToggle")).toBeInTheDocument();
+    });
+
+    it("opens the annotation drawer when the toggle button is clicked", async () => {
+      const user = userEvent.setup();
+      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.layers = [layerWithComment];
+      renderApp();
+
+      // Dismiss the mobile info dialog first
+      await user.click(screen.getByRole("button", { name: "Close" }));
+
+      await user.click(screen.getByTestId("mobileAnnotationToggle"));
+      expect(screen.getByTestId("mobileAnnotationDrawer")).toBeInTheDocument();
+      // Toggle button should be hidden when drawer is open
+      expect(screen.queryByTestId("mobileAnnotationToggle")).not.toBeInTheDocument();
+    });
+
+    it("renders the annotation panel in read-only mode inside the drawer", async () => {
+      const user = userEvent.setup();
+      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.layers = [layerWithComment];
+      renderApp();
+
+      // Dismiss the mobile info dialog first
+      await user.click(screen.getByRole("button", { name: "Close" }));
+
+      await user.click(screen.getByTestId("mobileAnnotationToggle"));
+      const panel = screen.getByTestId("annotation-panel");
+      expect(panel).toHaveAttribute("data-read-only", "true");
+    });
+
+    it("closes the drawer when the close button is clicked", async () => {
+      const user = userEvent.setup();
+      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.layers = [layerWithComment];
+      renderApp();
+
+      // Dismiss the mobile info dialog first
+      await user.click(screen.getByRole("button", { name: "Close" }));
+
+      await user.click(screen.getByTestId("mobileAnnotationToggle"));
+      expect(screen.getByTestId("mobileAnnotationDrawer")).toBeInTheDocument();
+
+      await user.click(screen.getByTestId("mobileAnnotationClose"));
+      expect(screen.queryByTestId("mobileAnnotationDrawer")).not.toBeInTheDocument();
+      // Toggle button should reappear
+      expect(screen.getByTestId("mobileAnnotationToggle")).toBeInTheDocument();
     });
   });
 });

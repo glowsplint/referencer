@@ -34,13 +34,18 @@ import { useRecordingManager } from "./hooks/recording/use-recording-manager";
 import { useAnnotationEdit } from "./hooks/data/use-annotation-edit";
 import { useStatusHints } from "./hooks/ui/use-status-hints";
 import { ArrowOverlay } from "./components/ArrowOverlay";
-import { AnnotationPanel } from "./components/AnnotationPanel";
+import {
+  AnnotationPanel,
+  DEFAULT_PANEL_WIDTH,
+  MIN_PANEL_WIDTH,
+  MAX_PANEL_WIDTH,
+} from "./components/AnnotationPanel";
 import { PrintAnnotations } from "./components/PrintAnnotations";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, MessageSquare, X } from "lucide-react";
 import { WorkspaceProvider } from "./contexts/WorkspaceContext";
 import { RecordingProvider } from "./contexts/RecordingContext";
 import { PlaybackBar } from "./components/PlaybackBar";
@@ -178,6 +183,41 @@ export function App({ workspaceId, navigate }: AppProps) {
     localStorage.setItem(STORAGE_KEYS.MANAGEMENT_PANE_WIDTH, String(width));
   }, []);
 
+  const [annotationPanelWidth, setAnnotationPanelWidth] = useState(() => {
+    const stored = localStorage.getItem(STORAGE_KEYS.ANNOTATION_PANEL_WIDTH);
+    return stored ? Number(stored) : DEFAULT_PANEL_WIDTH;
+  });
+  const handleAnnotationPanelResizeEnd = useCallback((width: number) => {
+    localStorage.setItem(STORAGE_KEYS.ANNOTATION_PANEL_WIDTH, String(width));
+  }, []);
+
+  const handleAnnotationPanelDrag = useCallback(
+    (e: React.MouseEvent, side: "left" | "right") => {
+      e.preventDefault();
+      document.body.style.userSelect = "none";
+      const startX = e.clientX;
+      const startWidth = annotationPanelWidth;
+      let currentWidth = startWidth;
+
+      const onMouseMove = (ev: MouseEvent) => {
+        const delta = side === "right" ? startX - ev.clientX : ev.clientX - startX;
+        currentWidth = Math.min(MAX_PANEL_WIDTH, Math.max(MIN_PANEL_WIDTH, startWidth + delta));
+        setAnnotationPanelWidth(currentWidth);
+      };
+
+      const onMouseUp = () => {
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+        document.body.style.userSelect = "";
+        handleAnnotationPanelResizeEnd(currentWidth);
+      };
+
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    },
+    [annotationPanelWidth, handleAnnotationPanelResizeEnd],
+  );
+
   const [permissionRole, setPermissionRole] = useState<string | null>(null);
   useEffect(() => {
     const controller = new AbortController();
@@ -235,6 +275,7 @@ export function App({ workspaceId, navigate }: AppProps) {
   const isMobile = useIsBreakpoint("max", 768);
   const effectiveReadOnly = readOnly || isMobile;
   const [mobileDialogDismissed, setMobileDialogDismissed] = useState(false);
+  const [mobileAnnotationPanelOpen, setMobileAnnotationPanelOpen] = useState(false);
 
   useToolShortcuts({ isLocked: settings.isLocked, setActiveTool });
   useToggleShortcuts({
@@ -373,7 +414,11 @@ export function App({ workspaceId, navigate }: AppProps) {
 
   useCycleLayer({ layers, activeLayerId, setActiveLayer });
 
-  const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragSelection({
+  const {
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp: rawHandleMouseUp,
+  } = useDragSelection({
     isLocked: settings.isLocked,
     activeTool: annotations.activeTool,
     selectWord,
@@ -381,6 +426,18 @@ export function App({ workspaceId, navigate }: AppProps) {
     clearSelection,
     eraseAtPosition,
   });
+
+  const handleMouseUp = useCallback(
+    (e: React.MouseEvent, editor: import("@tiptap/react").Editor, editorIndex: number) => {
+      rawHandleMouseUp(e, editor, editorIndex);
+      if (annotations.activeTool === "highlight") {
+        setTimeout(() => confirmHighlight(), 0);
+      } else if (annotations.activeTool === "underline") {
+        setTimeout(() => confirmUnderline(), 0);
+      }
+    },
+    [rawHandleMouseUp, annotations.activeTool, confirmHighlight, confirmUnderline],
+  );
 
   // Mutual exclusivity: selecting an arrow hides word selection
   const handleSetSelectedArrow = useCallback(
@@ -537,15 +594,26 @@ export function App({ workspaceId, navigate }: AppProps) {
                     settings.isLocked &&
                     ((settings.commentPlacement === "left" && hasAnyAnnotations) ||
                       (settings.commentPlacement === "both" && hasLeftAnnotations)) && (
-                      <ErrorBoundary silent>
-                        <AnnotationPanel
-                          {...annotationPanelProps}
-                          placement="left"
-                          editorIndices={
-                            settings.commentPlacement === "both" ? editorColumns.left : undefined
-                          }
-                        />
-                      </ErrorBoundary>
+                      <>
+                        <ErrorBoundary silent>
+                          <AnnotationPanel
+                            {...annotationPanelProps}
+                            placement="left"
+                            width={annotationPanelWidth}
+                            editorIndices={
+                              settings.commentPlacement === "both" ? editorColumns.left : undefined
+                            }
+                          />
+                        </ErrorBoundary>
+                        <div
+                          role="separator"
+                          data-testid="annotation-panel-divider"
+                          onMouseDown={(e) => handleAnnotationPanelDrag(e, "left")}
+                          className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
+                        >
+                          <div className="flex-1 w-px bg-gray-300" />
+                        </div>
+                      </>
                     )}
                   <div
                     ref={containerRef}
@@ -704,15 +772,26 @@ export function App({ workspaceId, navigate }: AppProps) {
                     settings.isLocked &&
                     ((settings.commentPlacement === "right" && hasAnyAnnotations) ||
                       (settings.commentPlacement === "both" && hasRightAnnotations)) && (
-                      <ErrorBoundary silent>
-                        <AnnotationPanel
-                          {...annotationPanelProps}
-                          placement="right"
-                          editorIndices={
-                            settings.commentPlacement === "both" ? editorColumns.right : undefined
-                          }
-                        />
-                      </ErrorBoundary>
+                      <>
+                        <div
+                          role="separator"
+                          data-testid="annotation-panel-divider"
+                          onMouseDown={(e) => handleAnnotationPanelDrag(e, "right")}
+                          className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
+                        >
+                          <div className="flex-1 w-px bg-gray-300" />
+                        </div>
+                        <ErrorBoundary silent>
+                          <AnnotationPanel
+                            {...annotationPanelProps}
+                            placement="right"
+                            width={annotationPanelWidth}
+                            editorIndices={
+                              settings.commentPlacement === "both" ? editorColumns.right : undefined
+                            }
+                          />
+                        </ErrorBoundary>
+                      </>
                     )}
                   <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
                     <PrintAnnotations
@@ -733,6 +812,44 @@ export function App({ workspaceId, navigate }: AppProps) {
               height={actionConsole.consoleHeight}
               onHeightChange={actionConsole.setConsoleHeight}
             />
+          )}
+          {/* Mobile annotation drawer: bottom panel with read-only annotation cards */}
+          {isMobile && settings.isLocked && hasAnyAnnotations && (
+            <>
+              {!mobileAnnotationPanelOpen && (
+                <button
+                  data-testid="mobileAnnotationToggle"
+                  className="fixed bottom-4 right-4 z-40 flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground shadow-lg px-3 py-2 text-sm"
+                  onClick={() => setMobileAnnotationPanelOpen(true)}
+                >
+                  <MessageSquare size={16} />
+                  <span>Annotations</span>
+                </button>
+              )}
+              {mobileAnnotationPanelOpen && (
+                <div
+                  data-testid="mobileAnnotationDrawer"
+                  className="relative flex-shrink-0 border-t border-zinc-200 dark:border-zinc-700 bg-background"
+                  style={{ height: "40vh", minHeight: 200 }}
+                >
+                  <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-200 dark:border-zinc-700">
+                    <span className="text-xs font-medium text-muted-foreground">Annotations</span>
+                    <button
+                      data-testid="mobileAnnotationClose"
+                      className="p-1 rounded hover:bg-accent text-muted-foreground"
+                      onClick={() => setMobileAnnotationPanelOpen(false)}
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                  <div className="overflow-y-auto h-[calc(100%-2rem)]">
+                    <ErrorBoundary silent>
+                      <AnnotationPanel {...annotationPanelProps} placement="right" readOnly />
+                    </ErrorBoundary>
+                  </div>
+                </div>
+              )}
+            </>
           )}
           <MobileInfoDialog
             open={isMobile && !mobileDialogDismissed}

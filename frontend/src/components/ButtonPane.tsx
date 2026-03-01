@@ -293,6 +293,7 @@ export function ButtonPane() {
               </TooltipTrigger>
               <TooltipContent>
                 {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
+                {!settings.isLocked && tm("tooltips.annotateModeLockHint")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -328,6 +329,7 @@ export function ButtonPane() {
                   </TooltipTrigger>
                   <TooltipContent>
                     {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
+                    {!settings.isLocked && tm("tooltips.annotateModeLockHint")}
                   </TooltipContent>
                 </Tooltip>
                 {isArrow && arrowStylePickerOpen && (
@@ -368,6 +370,7 @@ export function ButtonPane() {
               </TooltipTrigger>
               <TooltipContent>
                 {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
+                {!settings.isLocked && tm("tooltips.annotateModeLockHint")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -442,7 +445,10 @@ export function ButtonPane() {
           />
         </TooltipTrigger>
         <TooltipContent>
-          {tm("tooltips.toggleEditorLock")} <kbd>K</kbd>
+          {settings.isLocked
+            ? tm("tooltips.switchToEditMode")
+            : tm("tooltips.switchToAnnotateMode")}{" "}
+          <kbd>K</kbd>
         </TooltipContent>
       </Tooltip>
       <KeyboardShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />

@@ -58,7 +58,7 @@ describe("AnnotationCard", () => {
   });
 
   describe("when collapsed", () => {
-    it("then hides the annotation text", () => {
+    it("then shows truncated preview text when collapsed", () => {
       const onToggleCollapse = vi.fn();
       const { container } = render(
         <AnnotationCard
@@ -69,7 +69,7 @@ describe("AnnotationCard", () => {
           })}
         />,
       );
-      expect(container.textContent).not.toContain("test");
+      expect(container.textContent).toContain("test");
     });
 
     it("then calls onToggleCollapse when clicked", () => {

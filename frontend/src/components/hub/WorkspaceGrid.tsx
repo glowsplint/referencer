@@ -9,6 +9,10 @@ import {
   ChevronDown,
   Star,
   Folder,
+  Search,
+  BookOpen,
+  Highlighter,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
@@ -77,6 +81,7 @@ export function WorkspaceGrid({
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem(STORAGE_KEYS.HUB_VIEW_MODE) as ViewMode) || "grid";
   });
+  const [searchQuery, setSearchQuery] = useState("");
   const [renameTarget, setRenameTarget] = useState<WorkspaceItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<WorkspaceItem | null>(null);
   const [creatingFolder, setCreatingFolder] = useState(false);
@@ -116,6 +121,8 @@ export function WorkspaceGrid({
     }
   };
 
+  const queryLower = searchQuery.toLowerCase();
+
   // Starred section: starred root-level folders + all starred workspaces (regardless of folder)
   const starredItems = useMemo(() => {
     const items: MixedItem[] = [];
@@ -123,14 +130,18 @@ export function WorkspaceGrid({
     // Starred root-level folders
     for (const node of folderTree) {
       if (node.folder.isFavorite) {
-        items.push({ kind: "folder", node });
+        if (!searchQuery || node.folder.name.toLowerCase().includes(queryLower)) {
+          items.push({ kind: "folder", node });
+        }
       }
     }
 
     // All starred workspaces
     for (const ws of workspaces) {
       if (ws.isFavorite) {
-        items.push({ kind: "workspace", workspace: ws });
+        if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
+          items.push({ kind: "workspace", workspace: ws });
+        }
       }
     }
 
@@ -158,7 +169,7 @@ export function WorkspaceGrid({
     });
 
     return items;
-  }, [folderTree, workspaces, sortConfig, compare]);
+  }, [folderTree, workspaces, sortConfig, compare, searchQuery, queryLower]);
 
   // All Items section: unstarred root-level folders + unstarred unfiled workspaces
   const allItems = useMemo(() => {
@@ -167,14 +178,18 @@ export function WorkspaceGrid({
     // Unstarred root-level folders
     for (const node of folderTree) {
       if (!node.folder.isFavorite) {
-        items.push({ kind: "folder", node });
+        if (!searchQuery || node.folder.name.toLowerCase().includes(queryLower)) {
+          items.push({ kind: "folder", node });
+        }
       }
     }
 
     // Unstarred unfiled workspaces
     for (const ws of workspaces) {
       if (!ws.isFavorite && !ws.folderId) {
-        items.push({ kind: "workspace", workspace: ws });
+        if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
+          items.push({ kind: "workspace", workspace: ws });
+        }
       }
     }
 
@@ -202,7 +217,7 @@ export function WorkspaceGrid({
     });
 
     return items;
-  }, [folderTree, workspaces, sortConfig, compare]);
+  }, [folderTree, workspaces, sortConfig, compare, searchQuery, queryLower]);
 
   // Shared folder props for FolderCard/FolderListItem
   const folderProps = {
@@ -277,6 +292,20 @@ export function WorkspaceGrid({
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">My Workspaces</h2>
           <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search
+                size={14}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search workspaces..."
+                data-testid="hubSearchInput"
+                className="h-8 w-48 rounded-md border border-border bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
             <div className="flex items-center border border-border rounded-md">
               <button
                 onClick={() => toggleView("grid")}
@@ -313,9 +342,42 @@ export function WorkspaceGrid({
         {isLoading ? (
           <div className="text-center py-12 text-muted-foreground">Loading...</div>
         ) : workspaces.length === 0 && folders.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">No workspaces yet</p>
-            <Button onClick={onNew} variant="outline">
+          <div className="flex flex-col items-center py-16 px-4" data-testid="emptyStateOnboarding">
+            <h2 className="text-2xl font-bold mb-2">Welcome to Referencer</h2>
+            <p className="text-muted-foreground text-center max-w-md mb-8">
+              A collaborative workspace for close reading. Annotate, highlight, and connect passages
+              side by side.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-lg mb-8">
+              <div className="flex flex-col items-center text-center gap-2">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+                  <BookOpen size={20} />
+                </div>
+                <span className="text-sm font-medium">Add passages</span>
+                <span className="text-xs text-muted-foreground">
+                  Import or paste texts to study side by side
+                </span>
+              </div>
+              <div className="flex flex-col items-center text-center gap-2">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+                  <Highlighter size={20} />
+                </div>
+                <span className="text-sm font-medium">Highlight & underline</span>
+                <span className="text-xs text-muted-foreground">
+                  Mark key phrases with colored layers
+                </span>
+              </div>
+              <div className="flex flex-col items-center text-center gap-2">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+                  <MessageSquare size={20} />
+                </div>
+                <span className="text-sm font-medium">Comment & discuss</span>
+                <span className="text-xs text-muted-foreground">
+                  Add notes, replies, and reactions
+                </span>
+              </div>
+            </div>
+            <Button onClick={onNew} size="lg">
               <Plus size={16} />
               Create your first workspace
             </Button>

@@ -8,6 +8,7 @@ import { hexToRgb, rgbToHex } from "@/lib/color";
 interface ColorPickerProps {
   index: number;
   onSelectColor: (color: string) => void;
+  currentColor?: string;
   customColors?: string[];
   onAddCustomColor?: (hex: string) => void;
   onRemoveCustomColor?: (hex: string) => void;
@@ -16,6 +17,7 @@ interface ColorPickerProps {
 export function ColorPicker({
   index,
   onSelectColor,
+  currentColor,
   customColors,
   onAddCustomColor,
   onRemoveCustomColor,
@@ -56,7 +58,7 @@ export function ColorPicker({
         {TAILWIND_300_COLORS.map((color) => (
           <button
             key={color}
-            className="w-5 h-5 rounded-full border border-black/10 hover:scale-110 transition-transform"
+            className={`w-5 h-5 rounded-full border border-black/10 hover:scale-110 transition-transform ${currentColor === color ? "ring-2 ring-offset-1 ring-blue-500" : ""}`}
             style={{ backgroundColor: color }}
             onClick={() => onSelectColor(color)}
             title={color}
@@ -71,7 +73,7 @@ export function ColorPicker({
             {customColors?.map((color) => (
               <div key={color} className="group relative">
                 <button
-                  className="w-5 h-5 rounded-full border border-black/10 hover:scale-110 transition-transform"
+                  className={`w-5 h-5 rounded-full border border-black/10 hover:scale-110 transition-transform ${currentColor === color ? "ring-2 ring-offset-1 ring-blue-500" : ""}`}
                   style={{ backgroundColor: color }}
                   onClick={() => onSelectColor(color)}
                   title={color}

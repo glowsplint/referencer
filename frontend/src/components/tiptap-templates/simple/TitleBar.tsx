@@ -1,7 +1,8 @@
 // Title bar with inline-editable document title, share dialog trigger,
-// and PDF export button. Sits above the editor toolbar.
+// workspace switcher dropdown, and PDF export button. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Share2, Download, Home } from "lucide-react";
+import { Share2, Download, Home, ChevronDown, Check } from "lucide-react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/tiptap-ui-primitive/tooltip";
 import { ShareDialog } from "@/components/ShareDialog";
@@ -10,6 +11,7 @@ import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useWorkspaces } from "@/hooks/data/use-workspaces";
 import { renameWorkspace, fetchWorkspace } from "@/lib/workspace-client";
 
 interface TitleBarProps {
@@ -19,6 +21,7 @@ interface TitleBarProps {
 export function TitleBar({ navigate }: TitleBarProps) {
   const { workspaceId, readOnly, yjs } = useWorkspace();
   const { isAuthenticated, isLoading } = useAuth();
+  const { workspaces } = useWorkspaces();
   const [title, setTitle] = useState("Title");
   const [isEditing, setIsEditing] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -95,9 +98,11 @@ export function TitleBar({ navigate }: TitleBarProps) {
     }
   }, [isEditing]);
 
+  const showSwitcher = isAuthenticated && navigate && workspaces.length > 0;
+
   return (
-    <div className="flex items-center px-4 py-2 border-b border-[var(--tt-border-color-tint)] bg-[var(--tt-bg-color)] shrink-0">
-      {navigate && (
+    <div className="flex shrink-0 items-center border-b border-[var(--tt-border-color-tint)] bg-[var(--tt-bg-color)] px-4 py-2">
+      {navigate && !showSwitcher && (
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
@@ -105,7 +110,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
                 await pendingRenameRef.current;
                 navigate("#/");
               }}
-              className="p-1.5 mr-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="mr-2 rounded-md p-1.5 transition-colors hover:bg-accent hover:text-accent-foreground"
               data-testid="homeButton"
             >
               <Home size={16} />
@@ -114,10 +119,61 @@ export function TitleBar({ navigate }: TitleBarProps) {
           <TooltipContent>Home</TooltipContent>
         </Tooltip>
       )}
+      {showSwitcher && (
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <button
+              className="mr-2 flex items-center rounded-md p-1.5 transition-colors hover:bg-accent hover:text-accent-foreground"
+              data-testid="workspaceSwitcher"
+            >
+              <Home size={16} />
+              <ChevronDown size={12} className="ml-0.5 text-muted-foreground" />
+            </button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              sideOffset={4}
+              className="z-50 max-h-[300px] min-w-[200px] max-w-[300px] overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-md"
+              data-testid="workspaceSwitcherMenu"
+            >
+              <DropdownMenu.Item
+                onSelect={async () => {
+                  await pendingRenameRef.current;
+                  navigate("#/");
+                }}
+                className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                data-testid="workspaceSwitcherHub"
+              >
+                <Home size={14} />
+                Hub
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator className="my-1 h-px bg-border" />
+              {workspaces.map((ws) => {
+                const isCurrent = ws.workspaceId === workspaceId;
+                return (
+                  <DropdownMenu.Item
+                    key={ws.workspaceId}
+                    onSelect={async () => {
+                      if (isCurrent) return;
+                      await pendingRenameRef.current;
+                      navigate(`#/${ws.workspaceId}`);
+                    }}
+                    className={`flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground ${isCurrent ? "bg-accent/50" : ""}`}
+                    data-testid={`workspaceSwitcherItem-${ws.workspaceId}`}
+                  >
+                    <span className="flex-1 truncate">{ws.title || "Untitled"}</span>
+                    {isCurrent && <Check size={14} className="shrink-0 text-primary" />}
+                  </DropdownMenu.Item>
+                );
+              })}
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+      )}
       {isEditing ? (
         <input
           ref={inputRef}
-          className="text-sm font-medium font-[inherit] text-[var(--tt-theme-text)] px-2 py-1 rounded-md border border-[var(--tt-brand-color-400)] outline-none bg-transparent min-w-[100px]"
+          className="min-w-[100px] rounded-md border border-[var(--tt-brand-color-400)] bg-transparent px-2 py-1 font-[inherit] text-sm font-medium text-[var(--tt-theme-text)] outline-none"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onBlur={stopEditing}
@@ -128,7 +184,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <div
-              className="text-sm font-medium text-[var(--tt-theme-text)] px-2 py-1 rounded-md border border-transparent cursor-text select-none transition-[border-color] duration-150 hover:border-[var(--tt-border-color)]"
+              className="cursor-text select-none rounded-md border border-transparent px-2 py-1 text-sm font-medium text-[var(--tt-theme-text)] transition-[border-color] duration-150 hover:border-[var(--tt-border-color)]"
               onClick={startEditing}
             >
               {title}
@@ -141,9 +197,9 @@ export function TitleBar({ navigate }: TitleBarProps) {
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <span
-              className={`w-2 h-2 rounded-full shrink-0 ${
+              className={`h-2 w-2 shrink-0 rounded-full ${
                 yjs.connected
-                  ? "bg-green-500 animate-[pulse_3s_ease-in-out_infinite]"
+                  ? "animate-[pulse_3s_ease-in-out_infinite] bg-green-500"
                   : "bg-gray-400"
               }`}
               data-testid="connectionStatusDot"
@@ -156,7 +212,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
           <TooltipTrigger asChild>
             <button
               onClick={() => window.print()}
-              className="p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="rounded-md p-1.5 transition-colors hover:bg-accent hover:text-accent-foreground"
               data-testid="exportPdfButton"
             >
               <Download size={16} />
@@ -168,7 +224,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
           <TooltipTrigger asChild>
             <button
               onClick={() => setShareOpen(true)}
-              className="p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="rounded-md p-1.5 transition-colors hover:bg-accent hover:text-accent-foreground"
               data-testid="shareButton"
             >
               <Share2 size={16} />

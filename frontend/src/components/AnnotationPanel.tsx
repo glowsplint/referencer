@@ -27,6 +27,7 @@ interface AnnotationPanelProps {
   onExpandAll?: () => void;
   editorIndices?: number[];
   placement?: "left" | "right";
+  width?: number;
   currentUserName?: string;
   onAddReply?: (layerId: string, highlightId: string, text: string) => void;
   onRemoveReply?: (layerId: string, highlightId: string, replyId: string) => void;
@@ -37,9 +38,12 @@ interface AnnotationPanelProps {
     replyId: string,
     emoji: string,
   ) => void;
+  readOnly?: boolean;
 }
 
-const PANEL_WIDTH = 224; // w-56
+export const DEFAULT_PANEL_WIDTH = 224; // w-56
+export const MIN_PANEL_WIDTH = 160;
+export const MAX_PANEL_WIDTH = 400;
 const CONNECTOR_GAP = 8; // px between highlight right edge and connector line start
 const CONNECTOR_Y_OFFSET = 10; // vertically center connector on text line (~half line height)
 const PANEL_LEFT_PAD = 16; // left-4 (Tailwind) — connector endpoint inside panel
@@ -61,12 +65,19 @@ export function AnnotationPanel({
   onExpandAll,
   editorIndices,
   placement = "right",
+  width,
   currentUserName,
   onAddReply,
   onRemoveReply,
   onToggleReaction,
   onToggleReplyReaction,
+  readOnly,
 }: AnnotationPanelProps) {
+  const panelWidth = Math.min(
+    MAX_PANEL_WIDTH,
+    Math.max(MIN_PANEL_WIDTH, width ?? DEFAULT_PANEL_WIDTH),
+  );
+
   const allPositions = useAllHighlightPositions(
     editorsRef,
     layers,
@@ -167,7 +178,7 @@ export function AnnotationPanel({
   return (
     <div
       className="relative flex-shrink-0"
-      style={{ width: PANEL_WIDTH, overflowY: "clip" }}
+      style={{ width: panelWidth, overflowY: "clip" }}
       data-testid="annotation-panel"
     >
       {positions.length > 0 && (
@@ -205,8 +216,8 @@ export function AnnotationPanel({
               if (placement === "left") {
                 // Panel is to the left of the container — connector goes from
                 // the panel's right edge to the highlight's left edge
-                x1 = PANEL_WIDTH - PANEL_LEFT_PAD;
-                x2 = PANEL_WIDTH + original.leftEdge + CONNECTOR_GAP;
+                x1 = panelWidth - PANEL_LEFT_PAD;
+                x2 = panelWidth + original.leftEdge + CONNECTOR_GAP;
               } else {
                 // Panel is to the right of the container — connector goes from
                 // the highlight's right edge to the panel's left edge
@@ -266,6 +277,7 @@ export function AnnotationPanel({
                   onRemoveReply={onRemoveReply}
                   onToggleReaction={onToggleReaction}
                   onToggleReplyReaction={onToggleReplyReaction}
+                  readOnly={readOnly}
                 />
               );
             })}

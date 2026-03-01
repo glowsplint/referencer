@@ -203,6 +203,9 @@ vi.mock("./components/AnnotationPanel", () => ({
       )}
     />
   ),
+  DEFAULT_PANEL_WIDTH: 224,
+  MIN_PANEL_WIDTH: 160,
+  MAX_PANEL_WIDTH: 400,
 }));
 
 beforeEach(() => {

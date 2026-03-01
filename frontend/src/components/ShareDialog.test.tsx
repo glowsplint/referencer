@@ -5,7 +5,12 @@ import { renderWithWorkspace } from "@/test/render-with-workspace";
 
 const mockLogin = vi.fn();
 const mockAuth = {
-  user: null as { id: string; email: string; name: string; avatarUrl: string } | null,
+  user: null as {
+    id: string;
+    email: string;
+    name: string;
+    avatarUrl: string;
+  } | null,
   isAuthenticated: false,
   isLoading: false,
   login: mockLogin,
@@ -54,7 +59,12 @@ describe("ShareDialog", () => {
     mockShareManagement.changeMemberRole = vi.fn();
     mockShareManagement.removeMember = vi.fn();
     mockAuth.isAuthenticated = true;
-    mockAuth.user = { id: "1", email: "test@test.com", name: "Test User", avatarUrl: "" };
+    mockAuth.user = {
+      id: "1",
+      email: "test@test.com",
+      name: "Test User",
+      avatarUrl: "",
+    };
     mockAuth.login = mockLogin;
   });
 
@@ -64,6 +74,12 @@ describe("ShareDialog", () => {
       expect(screen.getByText("Share workspace")).toBeInTheDocument();
       expect(screen.getByTestId("shareReadonlyButton")).toBeInTheDocument();
       expect(screen.getByTestId("shareEditButton")).toBeInTheDocument();
+    });
+
+    it("then shows the expiry dropdown", () => {
+      renderShareDialog();
+      expect(screen.getByTestId("expirySelect")).toBeInTheDocument();
+      expect(screen.getByText("Link expiry")).toBeInTheDocument();
     });
   });
 
@@ -81,7 +97,10 @@ describe("ShareDialog", () => {
       const writeText = vi.fn().mockResolvedValue(undefined);
       Object.assign(navigator, { clipboard: { writeText } });
 
-      mockApiPost.mockResolvedValue({ code: "ABC123", url: "/s/ABC123" });
+      mockApiPost.mockResolvedValue({
+        code: "ABC123",
+        url: "/s/ABC123",
+      });
 
       renderShareDialog();
       fireEvent.click(screen.getByTestId("shareReadonlyButton"));
@@ -97,6 +116,36 @@ describe("ShareDialog", () => {
         expect(writeText).toHaveBeenCalledWith(expect.stringContaining("/s/ABC123"));
       });
     });
+
+    it("then passes expiresAt when expiry is set", async () => {
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      Object.assign(navigator, { clipboard: { writeText } });
+
+      mockApiPost.mockResolvedValue({
+        code: "ABC123",
+        url: "/s/ABC123",
+      });
+
+      renderShareDialog();
+
+      // Set expiry to 7 days
+      fireEvent.change(screen.getByTestId("expirySelect"), {
+        target: { value: "7" },
+      });
+
+      fireEvent.click(screen.getByTestId("shareReadonlyButton"));
+
+      await waitFor(() => {
+        expect(mockApiPost).toHaveBeenCalledWith(
+          "/api/share",
+          expect.objectContaining({
+            workspaceId: "test-workspace-123",
+            access: "readonly",
+            expiresAt: expect.any(String),
+          }),
+        );
+      });
+    });
   });
 
   describe("when edit sharing is selected", () => {
@@ -104,7 +153,10 @@ describe("ShareDialog", () => {
       const writeText = vi.fn().mockResolvedValue(undefined);
       Object.assign(navigator, { clipboard: { writeText } });
 
-      mockApiPost.mockResolvedValue({ code: "XYZ789", url: "/s/XYZ789" });
+      mockApiPost.mockResolvedValue({
+        code: "XYZ789",
+        url: "/s/XYZ789",
+      });
 
       renderShareDialog();
       fireEvent.click(screen.getByTestId("shareEditButton"));
@@ -153,7 +205,7 @@ describe("ShareDialog", () => {
   });
 
   describe("active links section", () => {
-    it("shows active links when links exist", () => {
+    it("shows active links with full URLs when links exist", () => {
       mockShareManagement.links = [
         {
           code: "ABC123",
@@ -174,8 +226,39 @@ describe("ShareDialog", () => {
       renderShareDialog();
       expect(screen.getByTestId("shareLinksList")).toBeInTheDocument();
       expect(screen.getByText("Active links")).toBeInTheDocument();
-      expect(screen.getByText("ABC123")).toBeInTheDocument();
-      expect(screen.getByText("DEF456")).toBeInTheDocument();
+      // Full URLs are displayed instead of just codes
+      const linkUrls = screen.getAllByTestId("shareLinkUrl");
+      expect(linkUrls).toHaveLength(2);
+      expect(linkUrls[0].textContent).toContain("/s/ABC123");
+      expect(linkUrls[1].textContent).toContain("/s/DEF456");
+    });
+
+    it("shows expiry info on links", () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 10);
+
+      mockShareManagement.links = [
+        {
+          code: "EXP1",
+          access: "edit",
+          createdAt: "2026-01-01",
+          expiresAt: futureDate.toISOString(),
+          createdBy: null,
+        },
+        {
+          code: "EXP2",
+          access: "readonly",
+          createdAt: "2026-01-02",
+          expiresAt: null,
+          createdBy: null,
+        },
+      ];
+
+      renderShareDialog();
+      const expiryElements = screen.getAllByTestId("shareLinkExpiry");
+      expect(expiryElements).toHaveLength(2);
+      expect(expiryElements[0].textContent).toContain("Expires in");
+      expect(expiryElements[1].textContent).toBe("No expiry");
     });
 
     it("does not show links section when no links exist", () => {
@@ -184,7 +267,32 @@ describe("ShareDialog", () => {
       expect(screen.queryByTestId("shareLinksList")).not.toBeInTheDocument();
     });
 
-    it("calls revokeLink when revoke button is clicked", async () => {
+    it("opens confirmation dialog when revoke button is clicked", () => {
+      mockShareManagement.links = [
+        {
+          code: "REVOKE1",
+          access: "edit",
+          createdAt: "2026-01-01",
+          expiresAt: null,
+          createdBy: null,
+        },
+      ];
+
+      renderShareDialog();
+      const revokeButtons = screen.getAllByTestId("revokeLinkButton");
+      fireEvent.click(revokeButtons[0]);
+
+      // Confirmation dialog should appear
+      expect(screen.getByTestId("revokeConfirmDialog")).toBeInTheDocument();
+      expect(screen.getByText("Revoke share link")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Are you sure you want to revoke this link? Anyone using it will lose access.",
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it("calls revokeLink after confirming revoke", async () => {
       mockShareManagement.links = [
         {
           code: "REVOKE1",
@@ -200,17 +308,55 @@ describe("ShareDialog", () => {
       const revokeButtons = screen.getAllByTestId("revokeLinkButton");
       fireEvent.click(revokeButtons[0]);
 
+      // Click confirm button in the dialog
+      const confirmButton = screen.getByTestId("revokeConfirmButton");
+      fireEvent.click(confirmButton);
+
       await waitFor(() => {
         expect(mockShareManagement.revokeLink).toHaveBeenCalledWith("REVOKE1");
       });
+    });
+
+    it("does not call revokeLink when revoke is cancelled", () => {
+      mockShareManagement.links = [
+        {
+          code: "REVOKE1",
+          access: "edit",
+          createdAt: "2026-01-01",
+          expiresAt: null,
+          createdBy: null,
+        },
+      ];
+
+      renderShareDialog();
+      const revokeButtons = screen.getAllByTestId("revokeLinkButton");
+      fireEvent.click(revokeButtons[0]);
+
+      // Click cancel button in the dialog
+      const cancelButton = screen.getByTestId("revokeCancelButton");
+      fireEvent.click(cancelButton);
+
+      expect(mockShareManagement.revokeLink).not.toHaveBeenCalled();
     });
   });
 
   describe("members section", () => {
     it("shows members when members exist", () => {
       mockShareManagement.members = [
-        { userId: "1", role: "owner", name: "Test User", email: "test@test.com", avatarUrl: "" },
-        { userId: "2", role: "editor", name: "Other User", email: "other@test.com", avatarUrl: "" },
+        {
+          userId: "1",
+          role: "owner",
+          name: "Test User",
+          email: "test@test.com",
+          avatarUrl: "",
+        },
+        {
+          userId: "2",
+          role: "editor",
+          name: "Other User",
+          email: "other@test.com",
+          avatarUrl: "",
+        },
       ];
 
       renderShareDialog();
@@ -228,7 +374,13 @@ describe("ShareDialog", () => {
 
     it("shows (you) for current user", () => {
       mockShareManagement.members = [
-        { userId: "1", role: "owner", name: "Test User", email: "test@test.com", avatarUrl: "" },
+        {
+          userId: "1",
+          role: "owner",
+          name: "Test User",
+          email: "test@test.com",
+          avatarUrl: "",
+        },
       ];
 
       renderShareDialog();
@@ -237,7 +389,13 @@ describe("ShareDialog", () => {
 
     it("shows role dropdowns and remove buttons for non-owners when user is owner", () => {
       mockShareManagement.members = [
-        { userId: "1", role: "owner", name: "Test User", email: "test@test.com", avatarUrl: "" },
+        {
+          userId: "1",
+          role: "owner",
+          name: "Test User",
+          email: "test@test.com",
+          avatarUrl: "",
+        },
         {
           userId: "2",
           role: "editor",
@@ -248,9 +406,9 @@ describe("ShareDialog", () => {
       ];
 
       renderShareDialog();
-      // Should have a select dropdown for the editor
+      // Should have select dropdowns: 1 for expiry + 1 for the editor role
       const selects = screen.getAllByRole("combobox");
-      expect(selects.length).toBeGreaterThanOrEqual(1);
+      expect(selects.length).toBeGreaterThanOrEqual(2);
       // Should have a remove button
       expect(screen.getByTestId("removeMemberButton")).toBeInTheDocument();
     });
@@ -258,8 +416,20 @@ describe("ShareDialog", () => {
     it("shows read-only role badges for non-owners when user is not owner", () => {
       // Set user as editor (not owner)
       mockShareManagement.members = [
-        { userId: "99", role: "owner", name: "Owner User", email: "owner@test.com", avatarUrl: "" },
-        { userId: "1", role: "editor", name: "Test User", email: "test@test.com", avatarUrl: "" },
+        {
+          userId: "99",
+          role: "owner",
+          name: "Owner User",
+          email: "owner@test.com",
+          avatarUrl: "",
+        },
+        {
+          userId: "1",
+          role: "editor",
+          name: "Test User",
+          email: "test@test.com",
+          avatarUrl: "",
+        },
         {
           userId: "2",
           role: "viewer",
@@ -270,14 +440,21 @@ describe("ShareDialog", () => {
       ];
 
       renderShareDialog();
-      // No select dropdowns or remove buttons should appear (user is not owner)
-      expect(screen.queryAllByRole("combobox")).toHaveLength(0);
+      // Only the expiry select should appear (1 combobox), no role dropdowns
+      const selects = screen.queryAllByRole("combobox");
+      expect(selects).toHaveLength(1); // just the expiry select
       expect(screen.queryByTestId("removeMemberButton")).not.toBeInTheDocument();
     });
 
     it("calls removeMember when remove button is clicked", async () => {
       mockShareManagement.members = [
-        { userId: "1", role: "owner", name: "Test User", email: "test@test.com", avatarUrl: "" },
+        {
+          userId: "1",
+          role: "owner",
+          name: "Test User",
+          email: "test@test.com",
+          avatarUrl: "",
+        },
         {
           userId: "2",
           role: "editor",

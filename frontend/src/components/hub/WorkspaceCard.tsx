@@ -73,7 +73,7 @@ export function WorkspaceCard({
           <DropdownMenu.Trigger asChild>
             <button
               onClick={(e) => e.stopPropagation()}
-              className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-accent transition-all shrink-0"
+              className="p-1 rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 hover:bg-accent transition-all shrink-0"
               data-testid="workspaceCardMenu"
             >
               <MoreHorizontal size={14} />

@@ -146,6 +146,18 @@ export async function deleteUserWorkspace(
   if (error) throw new Error(`Failed to delete workspace: ${error.message}`);
 }
 
+export async function deleteWorkspaceCascade(
+  supabase: SupabaseClient,
+  workspaceId: string,
+): Promise<void> {
+  // Order matters — delete dependent rows first to avoid FK violations
+  await supabase.from("share_link").delete().eq("workspace_id", workspaceId);
+  await supabase.from("user_workspace").delete().eq("workspace_id", workspaceId);
+  await supabase.from("workspace_permission").delete().eq("workspace_id", workspaceId);
+  await supabase.from("yjs_document").delete().eq("workspace_id", workspaceId);
+  await supabase.from("workspace").delete().eq("id", workspaceId);
+}
+
 export async function duplicateWorkspace(
   supabase: SupabaseClient,
   userId: string,

@@ -45,6 +45,12 @@ const shareResolveLimiter = kvRateLimiter({
   keyGenerator: getClientIp,
 });
 
+const crudWriteLimiter = kvRateLimiter({
+  windowMs: 60_000,
+  limit: 60,
+  keyGenerator: (c) => `crud:${c.get("user")?.id ?? getClientIp(c)}`,
+});
+
 // Create Supabase client per-request
 app.use("*", async (c, next) => {
   const supabase = createSupabaseClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY);
@@ -102,6 +108,22 @@ app.use("*", (c, next) => {
 
 // Auth routes (mounted directly so they share the main app's middleware context)
 app.route("/auth", createAuthRoutes());
+
+// CRUD write rate limiting for workspace and folder mutations
+app.use("/api/workspaces/*", async (c, next) => {
+  const method = c.req.method;
+  if (method === "POST" || method === "PATCH" || method === "DELETE") {
+    return crudWriteLimiter(c, next);
+  }
+  await next();
+});
+app.use("/api/folders/*", async (c, next) => {
+  const method = c.req.method;
+  if (method === "POST" || method === "PATCH" || method === "DELETE") {
+    return crudWriteLimiter(c, next);
+  }
+  await next();
+});
 
 // Workspaces API
 app.route("/api/workspaces", workspaces);
