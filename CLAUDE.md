@@ -22,6 +22,7 @@ Components under `tiptap-*` directories (`tiptap-ui`, `tiptap-ui-primitive`, `ti
 ## Testing
 
 Add or update tests for every code change. Use **Vitest** with **React Testing Library**. Run from `frontend/`:
+
 - Unit tests: `bun run test:run`
 - E2E tests: `bun run test:e2e`
 
