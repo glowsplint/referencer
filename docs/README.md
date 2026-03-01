@@ -15,13 +15,21 @@ referencer/
 │   │   ├── types/             # TypeScript type definitions
 │   │   └── data/              # Default workspace data
 │   └── e2e/                   # Playwright end-to-end tests
-├── backend/                   # TypeScript backend (Bun + Hono + bun:sqlite)
+├── backend/                   # Cloudflare Worker (Hono + Supabase)
 │   └── src/
-│       ├── api/               # REST handlers (share links)
-│       ├── auth/              # OAuth2 (Google, Apple, Facebook) via Arctic
-│       ├── db/                # SQLite schema and query functions
-│       └── lib/               # Utilities
-├── collab-server/             # Node.js Yjs CRDT sync server (y-websocket + LevelDB)
+│       ├── api/               # REST handlers (share, workspaces, folders, preferences, feedback)
+│       ├── auth/              # OAuth2 (Google, GitHub) via Arctic
+│       ├── db/                # Supabase client
+│       ├── lib/               # Utilities (rate-limit, logger, metrics, JWT)
+│       └── middleware/        # Permission middleware
+├── collab-server/             # Cloudflare Worker with Durable Objects (Yjs CRDT sync)
+│   └── src/
+│       ├── durable-object.ts  # YjsRoom — Yjs sync via WebSocket + DO storage + Supabase persistence
+│       ├── index.ts           # Hono app, JWT auth, permission check, WebSocket upgrade
+│       ├── persistence.ts     # Supabase snapshot load/save
+│       └── ...                # JWT, logger, metrics
+├── functions/                 # Cloudflare Pages middleware (proxies /auth, /api, /s to backend worker)
+├── supabase/                  # Database schema (PostgreSQL)
 └── docs/                      # Architecture documentation (you are here)
 ```
 
@@ -36,13 +44,14 @@ referencer/
 
 ## Tech Stack
 
-| Layer           | Technology                                    |
-| --------------- | --------------------------------------------- |
-| Frontend        | React 19, TypeScript, Vite 7, Tailwind CSS v4 |
-| Rich text       | TipTap 3 (ProseMirror) with custom extensions |
-| CRDT sync       | Yjs with y-websocket protocol                 |
-| Backend         | Bun runtime, Hono framework, bun:sqlite       |
-| Collab server   | Node.js, y-websocket, LevelDB persistence     |
-| Auth            | OAuth2 (Google, Apple, Facebook) via Arctic   |
-| Testing         | Vitest + React Testing Library, Playwright    |
-| Package manager | Bun                                           |
+| Layer           | Technology                                            |
+| --------------- | ----------------------------------------------------- |
+| Frontend        | React 19, TypeScript, Vite 7, Tailwind CSS v4         |
+| Rich text       | TipTap 3 (ProseMirror) with custom extensions         |
+| CRDT sync       | Yjs with y-websocket protocol                         |
+| Backend         | Cloudflare Workers, Hono framework, Supabase          |
+| Collab server   | Cloudflare Workers + Durable Objects, Supabase        |
+| Auth            | OAuth2 (Google, GitHub) via Arctic                    |
+| Persistence     | Supabase (PostgreSQL), DO storage, IndexedDB (client) |
+| Testing         | Vitest + React Testing Library, Playwright            |
+| Package manager | Bun                                                   |

@@ -2,9 +2,8 @@
 
 ## Prerequisites
 
-- **[Bun](https://bun.sh/)** -- frontend package management, dev server, and backend runtime
-- **[Node.js](https://nodejs.org/) 20+** -- required for the collab server (y-leveldb uses native Node bindings) and Playwright tests
-- **[fnm](https://github.com/Schniz/fnm)** (recommended) -- manages Node.js versions; the dev script uses `fnm exec --using=22` to run the collab server with the correct Node version
+- **[Bun](https://bun.sh/)** -- package management and script execution across all workspaces
+- **[Wrangler](https://developers.cloudflare.com/workers/wrangler/)** -- Cloudflare Workers CLI for local dev and deployment (installed per-workspace as devDependency)
 
 ## Quick Start
 
@@ -24,7 +23,7 @@ bun install
 bun run dev
 ```
 
-Opens at [http://localhost:5173/referencer/](http://localhost:5173/referencer/). The app works fully offline -- when the collab server is unavailable, the Yjs provider treats the local Y.Doc as synced and content seeding proceeds normally.
+Opens at [http://localhost:5173](http://localhost:5173). The app works fully offline -- when the collab server is unavailable, the Yjs provider treats the local Y.Doc as synced and content seeding proceeds normally.
 
 ### Full stack (with collaboration)
 
@@ -36,11 +35,11 @@ bun run dev
 
 This uses `concurrently` to launch:
 
-| Service       | Port | Runner         |
-| ------------- | ---- | -------------- |
-| Backend       | 5000 | Bun            |
-| Collab server | 4444 | Node (via fnm) |
-| Frontend      | 5173 | Bun            |
+| Service       | Port | Runner       |
+| ------------- | ---- | ------------ |
+| Backend       | 8787 | Wrangler dev |
+| Collab server | 8788 | Wrangler dev |
+| Frontend      | 5173 | Vite         |
 
 The Vite dev server proxies API requests to the backend and Yjs WebSocket connections to the collab server.
 
@@ -51,7 +50,7 @@ cd frontend
 bun run build
 ```
 
-Output goes to `frontend/dist/`. The backend serves this directory as static files.
+Output goes to `frontend/dist/`. In production, the frontend is served by Cloudflare Pages (not the backend).
 
 ## Vite Proxy Configuration
 
@@ -59,10 +58,16 @@ In development, `frontend/vite.config.ts` proxies:
 
 | Frontend path | Target                  | Notes                            |
 | ------------- | ----------------------- | -------------------------------- |
-| `/api/*`      | `http://localhost:5000` | REST API                         |
-| `/s/*`        | `http://localhost:5000` | Share link resolution            |
-| `/auth/*`     | `http://localhost:5000` | OAuth routes                     |
-| `/yjs/*`      | `ws://localhost:4444`   | CRDT sync (path prefix stripped) |
+| `/api/*`      | `http://localhost:8787` | REST API                         |
+| `/s/`         | `http://localhost:8787` | Share link resolution            |
+| `/auth/*`     | `http://localhost:8787` | OAuth routes                     |
+| `/yjs/*`      | `ws://localhost:8788`   | CRDT sync (path prefix stripped) |
+
+## Production Deployment
+
+- **Frontend**: Cloudflare Pages with Git integration (auto-deploy on push). Pages Functions middleware (`functions/_middleware.ts`) proxies `/auth/*`, `/api/*`, `/s/*` to the backend Worker.
+- **Backend**: `cd backend && wrangler deploy`
+- **Collab server**: `cd collab-server && wrangler deploy`
 
 ## Testing
 
@@ -74,7 +79,7 @@ bun run test:run     # single run
 bun run test         # watch mode
 ```
 
-Configuration in `frontend/vite.config.ts` (test section): jsdom environment, globals enabled, CSS disabled.
+Configuration in `frontend/vite.config.ts` (test section): three test projects (node, jsdom, jsdom-lib) for different test environments.
 
 ### E2E Tests (Playwright)
 
@@ -97,35 +102,63 @@ Uses a separate Playwright config at `e2e/integration/playwright.integration.con
 
 ## Environment Variables
 
-### Backend (`backend/`)
+### Backend (Cloudflare Worker secrets + vars)
 
-| Variable               | Default                 | Description                               |
-| ---------------------- | ----------------------- | ----------------------------------------- |
-| `PORT`                 | `5000`                  | Server listen port                        |
-| `DB_PATH`              | `./data/referencer.db`  | SQLite database file path                 |
-| `BASE_URL`             | `http://localhost:5000` | Public URL (used for OAuth callback URLs) |
-| `NODE_ENV`             | --                      | Set to `production` for Secure cookies    |
-| `SESSION_MAX_AGE`      | `2592000` (30 days)     | Session lifetime in seconds               |
-| `GOOGLE_CLIENT_ID`     | --                      | Google OAuth client ID                    |
-| `GOOGLE_CLIENT_SECRET` | --                      | Google OAuth client secret                |
-| `GITHUB_CLIENT_ID`     | --                      | GitHub OAuth client ID                    |
-| `GITHUB_CLIENT_SECRET` | --                      | GitHub OAuth client secret                |
+Secrets are managed via `wrangler secret put <NAME>` from `backend/`:
 
-Providers are only enabled when all their required env vars are set.
+| Secret                 | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| `SUPABASE_URL`         | Supabase project URL                            |
+| `SUPABASE_SERVICE_KEY` | Supabase service-role key                       |
+| `WS_JWT_SECRET`        | Secret for signing WebSocket auth JWTs          |
+| `WS_JWT_SECRET_PREV`   | Previous JWT secret for key rotation (optional) |
+| `GOOGLE_CLIENT_ID`     | Google OAuth client ID (optional)               |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret (optional)           |
+| `GITHUB_CLIENT_ID`     | GitHub OAuth client ID (optional)               |
+| `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret (optional)           |
+| `GITHUB_ISSUES_TOKEN`  | GitHub token for feedback issues (optional)     |
+| `SESSION_MAX_AGE`      | Session lifetime in seconds (default: 2592000)  |
 
-### Collab Server (`collab-server/`)
+Vars are set in `backend/wrangler.toml`:
 
-| Variable | Default           | Description               |
-| -------- | ----------------- | ------------------------- |
-| `PORT`   | `4444`            | Server listen port        |
-| `HOST`   | `0.0.0.0`         | Server listen host        |
-| `DB_DIR` | `./data/yjs-docs` | LevelDB storage directory |
+| Var            | Default                        | Description             |
+| -------------- | ------------------------------ | ----------------------- |
+| `FRONTEND_URL` | `https://referencer.pages.dev` | CORS origin             |
+| `BASE_URL`     | `https://referencer.pages.dev` | OAuth callback base URL |
 
-### Frontend (`frontend/`)
+Bindings configured in `backend/wrangler.toml`:
 
-| Variable             | Default              | Description                 |
-| -------------------- | -------------------- | --------------------------- |
-| `VITE_COLLAB_WS_URL` | `ws[s]://{host}/yjs` | Collab server WebSocket URL |
+| Binding         | Type             | Description     |
+| --------------- | ---------------- | --------------- |
+| `RATE_LIMIT_KV` | KV Namespace     | Rate limiting   |
+| `METRICS`       | Analytics Engine | Request metrics |
+
+### Collab Server (Cloudflare Worker secrets)
+
+Secrets are managed via `wrangler secret put <NAME>` from `collab-server/`:
+
+| Secret                 | Description                                      |
+| ---------------------- | ------------------------------------------------ |
+| `SUPABASE_URL`         | Supabase project URL (same as backend)           |
+| `SUPABASE_SERVICE_KEY` | Supabase service-role key (same as backend)      |
+| `WS_JWT_SECRET`        | Secret for verifying WebSocket auth JWTs         |
+| `WS_JWT_SECRET_PREV`   | Previous JWT secret for rotation (optional)      |
+| `ALLOWED_ORIGIN`       | CORS origin for WebSocket connections (optional) |
+
+Bindings configured in `collab-server/wrangler.toml`:
+
+| Binding    | Type             | Description                 |
+| ---------- | ---------------- | --------------------------- |
+| `YJS_ROOM` | Durable Object   | Yjs document room instances |
+| `METRICS`  | Analytics Engine | Collab metrics              |
+
+### Frontend
+
+| Variable             | Default                 | Description                 |
+| -------------------- | ----------------------- | --------------------------- |
+| `VITE_COLLAB_WS_URL` | `ws[s]://{host}/yjs`    | Collab server WebSocket URL |
+| `VITE_BACKEND_URL`   | `http://localhost:8787` | Backend URL (dev proxy)     |
+| `VITE_API_URL`       | `""` (same origin)      | API base URL for fetch      |
 
 ## Scripts Reference
 
@@ -145,21 +178,22 @@ Providers are only enabled when all their required env vars are set.
 
 ### Backend (`backend/package.json`)
 
-| Script  | Command                      | Description                 |
-| ------- | ---------------------------- | --------------------------- |
-| `dev`   | `bun run --hot src/index.ts` | Start with hot reloading    |
-| `start` | `bun run src/index.ts`       | Start without hot reloading |
+| Script   | Command           | Description                    |
+| -------- | ----------------- | ------------------------------ |
+| `dev`    | `wrangler dev`    | Start local dev server (:8787) |
+| `deploy` | `wrangler deploy` | Deploy to Cloudflare           |
 
 ### Collab Server (`collab-server/package.json`)
 
-| Script  | Command           | Description                         |
-| ------- | ----------------- | ----------------------------------- |
-| `start` | `node server.mjs` | Start collab server                 |
-| `dev`   | `node server.mjs` | Start collab server (same as start) |
+| Script   | Command           | Description                    |
+| -------- | ----------------- | ------------------------------ |
+| `dev:cf` | `wrangler dev`    | Start local dev server (:8788) |
+| `deploy` | `wrangler deploy` | Deploy to Cloudflare           |
+| `test`   | `vitest run`      | Run collab server tests        |
 
 ## Project Conventions
 
 - **Styling**: Tailwind CSS for all new styling. SCSS only exists in tiptap template components.
 - **Components under `tiptap-*` directories**: Sourced from third-party tiptap templates. Avoid structural refactoring; minor fixes like import path changes are fine.
 - **Git**: Linear history. Always rebase, never merge.
-- **Package manager**: Bun for everything. The collab server runs under Node.js (via `fnm exec`) due to native LevelDB bindings, but uses `bun install` for dependency management.
+- **Package manager**: Bun for everything.

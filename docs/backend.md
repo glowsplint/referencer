@@ -1,17 +1,18 @@
 # Backend
 
-The backend is a TypeScript server running on Bun with the Hono framework. It handles authentication, share links, and serves the production SPA. Real-time collaboration is handled separately by the collab server (see `collab-server/`).
+The backend is a **Cloudflare Worker** (`referencer-api`) using the Hono framework with Supabase as the database. It handles authentication, share links, workspace/folder management, user preferences, and feedback. Real-time collaboration is handled separately by the collab server (see `collab-server/`).
 
 ## Entry Point
 
 `backend/src/index.ts` initializes:
 
-1. SQLite database (WAL mode, foreign keys enabled)
-2. OAuth providers from environment variables
-3. Hono routes (auth, share API, static files)
-4. Periodic session cleanup (hourly)
+1. Per-request Supabase client, logger, and metrics
+2. CORS, CSRF protection, and security headers middleware
+3. OAuth providers from environment variables (via `wrangler secret`)
+4. Hono routes (auth, workspaces, folders, preferences, share, feedback)
+5. Scheduled handler for hourly session cleanup
 
-The server exports Bun's native `fetch` handler.
+The Worker exports a `fetch` handler and a `scheduled` handler (cron).
 
 ## Routes
 
@@ -20,50 +21,77 @@ The server exports Bun's native `fetch` handler.
 | Method | Endpoint                   | Description                                                       |
 | ------ | -------------------------- | ----------------------------------------------------------------- |
 | `GET`  | `/auth/:provider`          | Start OAuth flow (redirects to provider)                          |
-| `GET`  | `/auth/:provider/callback` | OAuth callback (Google, Facebook)                                 |
-| `POST` | `/auth/:provider/callback` | OAuth callback (Apple sends POST)                                 |
+| `GET`  | `/auth/:provider/callback` | OAuth callback (Google, GitHub)                                   |
 | `GET`  | `/auth/me`                 | Check current session, returns user or `{ authenticated: false }` |
 | `POST` | `/auth/logout`             | End session, clear cookie                                         |
 
-Supported providers: `google`, `apple`, `facebook`. Providers are only enabled when their required environment variables are set.
+Supported providers: `google`, `github`. Providers are only enabled when their required environment variables are set.
+
+### Workspaces
+
+| Method   | Endpoint              | Description               |
+| -------- | --------------------- | ------------------------- |
+| `GET`    | `/api/workspaces`     | List user's workspaces    |
+| `POST`   | `/api/workspaces`     | Create a workspace        |
+| `PATCH`  | `/api/workspaces/:id` | Update workspace metadata |
+| `DELETE` | `/api/workspaces/:id` | Delete a workspace        |
+
+### Folders
+
+| Method   | Endpoint           | Description         |
+| -------- | ------------------ | ------------------- |
+| `GET`    | `/api/folders`     | List user's folders |
+| `POST`   | `/api/folders`     | Create a folder     |
+| `PATCH`  | `/api/folders/:id` | Update folder       |
+| `DELETE` | `/api/folders/:id` | Delete a folder     |
+
+### Preferences
+
+| Method | Endpoint           | Description             |
+| ------ | ------------------ | ----------------------- |
+| `GET`  | `/api/preferences` | Get user preferences    |
+| `PUT`  | `/api/preferences` | Update user preferences |
 
 ### Share Links
 
-| Method | Endpoint     | Description                                                                                        |
-| ------ | ------------ | -------------------------------------------------------------------------------------------------- |
-| `POST` | `/api/share` | Create share link. Body: `{ workspaceId, access: "edit" \| "readonly" }`. Returns: `{ code, url }` |
-| `GET`  | `/s/:code`   | Resolve share link. Redirects to `/space/{workspaceId}` (with `?access=readonly` if applicable)    |
+| Method | Endpoint            | Description                                                                                        |
+| ------ | ------------------- | -------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/share`        | Create share link. Body: `{ workspaceId, access: "edit" \| "readonly" }`. Returns: `{ code, url }` |
+| `POST` | `/api/share/accept` | Accept a share link (grants permissions to authenticated user)                                     |
+| `GET`  | `/s/:code`          | Resolve share link. Redirects to frontend workspace URL                                            |
 
-Share codes are 6-character alphanumeric strings with retry on collision (up to 5 attempts).
+### Feedback
 
-### Static Files
-
-In production, the backend serves the built frontend SPA from `frontend/dist/`. Unmatched routes fall through to `index.html` for client-side routing. The base path is `/referencer/`.
+| Method | Endpoint        | Description                            |
+| ------ | --------------- | -------------------------------------- |
+| `POST` | `/api/feedback` | Submit feedback (creates GitHub issue) |
 
 ## Authentication System
 
 The auth system follows the **Backend-for-Frontend (BFF)** pattern. OAuth tokens never reach the frontend. The frontend only sees an HttpOnly session cookie.
 
-Authentication is **optional** -- the app works fully for anonymous users. When authenticated, user identity is available but no features are gated behind login.
+Authentication is **optional** -- the app works fully for anonymous users. When authenticated, user identity is available for workspace ownership, sharing, and preferences.
 
 ### OAuth Flow
 
 1. Frontend calls `loginWith(provider)` which navigates to `/auth/{provider}`
-2. Backend generates OAuth `state` (and PKCE `code_verifier` for Google)
-3. State stored in `__auth_state` HttpOnly cookie (10min TTL)
-4. User redirected to provider's authorization URL
-5. Provider redirects back to `/auth/{provider}/callback` with `code` and `state`
-6. Backend verifies state, exchanges code for tokens
-7. User profile extracted from provider API or ID token
-8. User upserted in database (accounts linked by email)
-9. Session token (64-char hex, 32 random bytes) stored in `session` table
-10. `__session` HttpOnly cookie set (30-day default, sliding window refresh)
+2. Pages Functions middleware proxies to the backend Worker
+3. Backend generates OAuth `state` (and PKCE `code_verifier` for Google)
+4. State stored in `__auth_state` HttpOnly cookie (10min TTL)
+5. User redirected to provider's authorization URL
+6. Provider redirects back to `/auth/{provider}/callback` with `code` and `state`
+7. Backend verifies state, exchanges code for tokens
+8. User profile extracted from provider API or ID token
+9. User upserted in database (accounts linked by email)
+10. Session token (KSUID) stored in Supabase `session` table
+11. `__session` HttpOnly cookie set (30-day default, sliding window refresh)
 
 ### Session Management
 
 - **Cookie**: `__session`, HttpOnly, Secure (production), SameSite=Lax, 30-day default
 - **Sliding refresh**: Sessions older than 24h are refreshed on use
-- **Cleanup**: Expired sessions deleted hourly via `cleanExpiredSessions()`
+- **Cleanup**: Expired sessions deleted hourly via scheduled cron handler
+- **Cookie domain**: Derived from `x-forwarded-host` header (set by Pages Functions middleware) for correct scoping on preview deployments
 
 ### Account Linking
 
@@ -76,72 +104,65 @@ When signing in, the system checks in order:
 ### Provider Notes
 
 - **Google**: Uses PKCE (`code_verifier`/`code_challenge`). User info from OIDC userinfo endpoint.
-- **Apple**: Callback is POST (not GET). User name only sent on first authorization. ID token is JWT.
-- **Facebook**: Standard OAuth code flow. Profile picture from Graph API.
+- **GitHub**: Standard OAuth code flow. Profile info from GitHub user API.
 
-## Database Schema
+## Database
 
-SQLite with WAL mode and foreign keys. Schema defined inline in `backend/src/db/database.ts`.
+The backend uses **Supabase** (PostgreSQL) for all persistent data. The schema is defined in `supabase/schema.sql`.
 
 ### Tables
 
-```
-workspace
-├── id TEXT (PK)
-└── created_at TEXT
+- `workspace` -- workspace metadata
+- `share_link` -- short share codes with access level
+- `user` -- user profiles (email, name, avatar)
+- `user_provider` -- OAuth provider links
+- `session` -- active sessions
+- `workspace_folder` -- folder organization
+- `user_workspace` -- workspace ownership/starring
+- `workspace_permission` -- per-user workspace permissions (owner/editor/viewer)
+- `user_preference` -- user preferences
+- `yjs_document` -- Yjs document snapshots (used by collab server for persistence)
 
-share_link
-├── code TEXT (PK, 6-char alphanumeric)
-├── workspace_id TEXT (FK -> workspace, CASCADE)
-├── access TEXT (CHECK: 'edit' or 'readonly')
-└── created_at TEXT
+### Bindings
 
-user
-├── id TEXT (PK, UUID)
-├── email TEXT (UNIQUE INDEX)
-├── name TEXT
-├── avatar_url TEXT
-├── created_at TEXT
-└── updated_at TEXT
-
-user_provider
-├── id TEXT (PK, UUID)
-├── user_id TEXT (FK -> user, CASCADE)
-├── provider TEXT
-├── provider_user_id TEXT
-├── created_at TEXT
-└── UNIQUE(provider, provider_user_id)
-
-session
-├── id TEXT (PK, 64-char hex token)
-├── user_id TEXT (FK -> user, CASCADE)
-├── created_at TEXT
-└── expires_at TEXT (INDEX)
-```
-
-### Relationships
-
-- `workspace` 1 -- N `share_link`
-- `user` 1 -- N `user_provider`
-- `user` 1 -- N `session`
+| Binding         | Type             | Purpose                            |
+| --------------- | ---------------- | ---------------------------------- |
+| `RATE_LIMIT_KV` | KV Namespace     | Rate limiting (share link resolve) |
+| `METRICS`       | Analytics Engine | Request metrics                    |
 
 ## Source Layout
 
 ```
 backend/src/
-├── index.ts              # Entry point, Hono app setup
-├── types.ts              # Shared TypeScript interfaces
+├── index.ts                    # Entry point, Hono app setup, middleware chain
+├── types.ts                    # Shared TypeScript interfaces
+├── env.ts                      # Environment/binding type definitions
 ├── api/
-│   └── share.ts          # POST /api/share, GET /s/:code handlers
+│   ├── feedback.ts             # POST /api/feedback
+│   ├── folders.ts              # Folders CRUD
+│   ├── preferences.ts          # Preferences get/put
+│   ├── share.ts                # Share link create/accept/resolve
+│   └── workspaces.ts           # Workspaces CRUD
 ├── auth/
-│   ├── config.ts         # AuthConfig type and env var loading
-│   ├── providers.ts      # Arctic provider initialization
-│   ├── handlers.ts       # OAuth routes (start, callback, me, logout)
-│   ├── middleware.ts      # optionalAuth middleware
-│   └── store.ts          # User upsert, session CRUD
+│   ├── config.ts               # AuthConfig type and env var loading
+│   ├── cookie-domain.ts        # Domain derivation from x-forwarded-host
+│   ├── providers.ts            # Arctic provider initialization
+│   ├── handlers.ts             # OAuth routes (start, callback, me, logout)
+│   ├── middleware.ts            # optionalAuth middleware
+│   └── store.ts                # User upsert, session CRUD
 ├── db/
-│   ├── database.ts       # openDatabase(), schema DDL
-│   └── share-queries.ts  # Share link create/resolve
-└── lib/
-    └── utils.ts          # generateCode utility
+│   ├── database.ts             # Supabase client factory
+│   ├── folder-queries.ts       # Folder queries
+│   ├── permission-queries.ts   # Permission queries
+│   ├── preference-queries.ts   # Preference queries
+│   ├── share-queries.ts        # Share link queries
+│   └── workspace-queries.ts    # Workspace queries
+├── lib/
+│   ├── jwt.ts                  # JWT signing for WebSocket auth
+│   ├── logger.ts               # Structured logging
+│   ├── metrics.ts              # Analytics Engine metrics
+│   ├── rate-limit.ts           # KV-based rate limiter
+│   └── utils.ts                # Utilities (code generation)
+└── middleware/
+    └── require-permission.ts   # Permission check middleware
 ```

@@ -2,11 +2,11 @@
 
 ## System Overview
 
-Referencer is composed of three independently-running services:
+Referencer is composed of three independently-deployed Cloudflare services:
 
-1. **Frontend** -- React 19 SPA served by Vite in development and by the backend in production.
-2. **Backend** -- TypeScript server (Bun + Hono) handling REST API, OAuth2 auth, and share links.
-3. **Collab server** -- Node.js y-websocket server providing CRDT synchronization with LevelDB persistence.
+1. **Frontend** -- React 19 SPA deployed to Cloudflare Pages with a Functions middleware proxy.
+2. **Backend** -- Cloudflare Worker (Hono) handling REST API, OAuth2 auth, share links, workspaces, folders, and preferences.
+3. **Collab server** -- Cloudflare Worker with Durable Objects providing Yjs CRDT synchronization with DO storage + Supabase persistence.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -23,38 +23,62 @@ Referencer is composed of three independently-running services:
          ┌────────────────┼────────────────┐
          │                │                │
          ▼                ▼                ▼
-   ┌───────────┐   ┌───────────┐   ┌──────────────┐
-   │  Backend   │   │  Collab   │   │   Vite Dev   │
-   │  :5000     │   │  Server   │   │   Server     │
-   │            │   │  :4444    │   │   :5173      │
-   │ Hono API   │   │           │   │  (dev only)  │
-   │ OAuth2     │   │ y-ws sync │   │              │
-   │ Share links│   │ LevelDB   │   │ Proxies to   │
-   │            │   │           │   │ backend and  │
-   │ Static SPA │   │           │   │ collab server│
-   │            │   │           │   │              │
-   │ ┌────────┐ │   │ ┌───────┐│   └──────────────┘
-   │ │ SQLite │ │   │ │LevelDB││
-   │ └────────┘ │   │ └───────┘│
-   └───────────┘   └───────────┘
+   ┌────────────┐  ┌────────────┐   ┌──────────────┐
+   │ Cloudflare │  │ Cloudflare │   │   Vite Dev   │
+   │ Pages      │  │ Worker     │   │   Server     │
+   │            │  │ (collab)   │   │   :5173      │
+   │ Static SPA │  │            │   │  (dev only)  │
+   │ + Functions│  │ Durable    │   │              │
+   │   middleware│  │ Objects    │   │ Proxies to   │
+   │            │  │ (YjsRoom)  │   │ backend and  │
+   │ Proxies    │  │            │   │ collab server│
+   │ /api,/auth │  │ DO storage │   │              │
+   │ /s to      │  │ + Supabase │   └──────────────┘
+   │ backend    │  │            │
+   │ worker     │  │            │
+   │            │  │            │
+   └──────┬─────┘  └────────────┘
+          │
+          ▼
+   ┌────────────┐
+   │ Cloudflare │
+   │ Worker     │
+   │ (backend)  │
+   │            │
+   │ Hono API   │
+   │ OAuth2     │
+   │ Supabase   │
+   │ KV (rate   │
+   │  limiting) │
+   │ Analytics  │
+   │ Engine     │
+   └────────────┘
 ```
 
 ## Service Communication
 
 ### Development (Vite dev server on :5173)
 
-The Vite dev server proxies requests to the other services:
+The Vite dev server proxies requests to the other services (both running via `wrangler dev`):
 
 | Path      | Target                  | Protocol                  |
 | --------- | ----------------------- | ------------------------- |
-| `/api/*`  | `http://localhost:5000` | HTTP                      |
-| `/s/*`    | `http://localhost:5000` | HTTP                      |
-| `/auth/*` | `http://localhost:5000` | HTTP                      |
-| `/yjs/*`  | `ws://localhost:4444`   | WebSocket (path stripped) |
+| `/api/*`  | `http://localhost:8787` | HTTP                      |
+| `/s/*`    | `http://localhost:8787` | HTTP                      |
+| `/auth/*` | `http://localhost:8787` | HTTP                      |
+| `/yjs/*`  | `ws://localhost:8788`   | WebSocket (path stripped) |
 
-### Production
+### Production (Cloudflare)
 
-The backend serves the built frontend SPA from `frontend/dist/`. The collab server runs separately. A reverse proxy (e.g. nginx) routes `/yjs` to the collab server on port 4444.
+The frontend is deployed to **Cloudflare Pages** at `referencer.pages.dev`. A **Pages Functions middleware** (`functions/_middleware.ts`) proxies `/auth/*`, `/api/*`, and `/s/*` requests to the backend Worker at `referencer-api.elurion.workers.dev`. This keeps all requests same-origin, avoiding third-party cookie issues.
+
+The collab server runs as a separate Cloudflare Worker (`referencer-collab`) with Durable Objects. Clients connect via WebSocket with JWT authentication.
+
+Route gating is defined in `frontend/public/_routes.json`:
+
+```json
+{ "version": 1, "include": ["/auth/*", "/api/*", "/s/*"], "exclude": [] }
+```
 
 ## Frontend Architecture
 
@@ -96,23 +120,28 @@ Custom ProseMirror plugins in `lib/tiptap/extensions/`:
 
 ## Backend Architecture
 
-The backend (Bun + Hono) serves three roles:
+The backend is a **Cloudflare Worker** (`referencer-api`) using Hono. It serves three roles:
 
-1. **OAuth2 authentication** -- Google, Apple, Facebook via Arctic library. BFF pattern: tokens never reach the frontend.
-2. **Share link API** -- create and resolve short share codes with `edit` or `readonly` access.
-3. **Static SPA hosting** -- serves the built frontend in production.
+1. **OAuth2 authentication** -- Google, GitHub via Arctic library. BFF pattern: tokens never reach the frontend.
+2. **REST API** -- share links, workspaces, folders, preferences, feedback.
+3. **Scheduled tasks** -- hourly cron for session cleanup, rate-limit key expiry.
+
+Bindings: KV (rate limiting), Analytics Engine (metrics), Supabase (database).
 
 See [backend.md](backend.md) for full details.
 
 ## Collab Server Architecture
 
-The collab server is a standalone Node.js process running y-websocket:
+The collab server is a **Cloudflare Worker** (`referencer-collab`) with **Durable Objects**:
 
-- Clients connect to `ws://host:4444/{workspaceId}`
-- Y.Doc state is loaded from LevelDB on first connection to a room
-- Updates are flushed to LevelDB every 5 seconds (debounced)
-- Final flush on document destroy and graceful shutdown
-- Health endpoint at `GET /health` returns `{ status, rooms, uptime }`
+- Each workspace room maps to a `YjsRoom` Durable Object instance
+- Clients connect via WebSocket with JWT auth (verified by the Worker entry point)
+- Permission check against Supabase before upgrading to WebSocket
+- The `YjsRoom` DO manages the Y.Doc, syncs updates between clients using the y-websocket binary protocol
+- Persistence: DO storage (primary, <128KB) with Supabase fallback (larger docs)
+- Periodic Supabase snapshots via DO alarms (every 5 minutes)
+- Full flush to both DO storage and Supabase on last client disconnect
+- Health endpoint at `GET /health`
 
 See [collaboration.md](collaboration.md) for the full CRDT design.
 
@@ -146,6 +175,7 @@ User selects text and clicks highlight
 ```
 User clicks "Sign in with Google"
   → Frontend sets window.location.href = /auth/google
+  → Pages Functions middleware proxies to backend worker
   → Backend generates state + PKCE, redirects to Google
   → User authorizes at Google
   → Google redirects to /auth/google/callback

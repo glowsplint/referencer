@@ -2,7 +2,7 @@
 
 ## Overview
 
-Referencer uses [Yjs](https://yjs.dev/) CRDTs for real-time collaboration. All shared state -- text content and annotation data (layers, highlights, arrows, underlines) -- lives in a single `Y.Doc` per workspace. The Y.Doc syncs between clients via the [y-websocket](https://github.com/yjs/y-websocket) protocol, with server-side LevelDB persistence and client-side IndexedDB persistence for offline support.
+Referencer uses [Yjs](https://yjs.dev/) CRDTs for real-time collaboration. All shared state -- text content and annotation data (layers, highlights, arrows, underlines) -- lives in a single `Y.Doc` per workspace. The Y.Doc syncs between clients via the y-websocket binary protocol, with server-side persistence (Durable Object storage + Supabase) and client-side IndexedDB persistence for offline support.
 
 ## Y.Doc Structure
 
@@ -62,24 +62,26 @@ When a highlight or arrow is created, its positions are encoded as `Uint8Array` 
 ## Sync Protocol
 
 ```
-┌──────────┐           ┌──────────────┐           ┌──────────┐
-│ Client A │           │ Collab Server│           │ Client B │
-│          │           │   (:4444)    │           │          │
-│ Y.Doc    │◄─────────►│ Y.Doc cache  │◄─────────►│ Y.Doc    │
-│ y-ws     │  y-ws     │ LevelDB      │  y-ws     │ y-ws     │
-│ IndexedDB│  protocol │              │  protocol │ IndexedDB│
-└──────────┘           └──────────────┘           └──────────┘
+┌──────────┐           ┌──────────────────┐           ┌──────────┐
+│ Client A │           │ Collab Worker    │           │ Client B │
+│          │           │ (Durable Object) │           │          │
+│ Y.Doc    │◄─────────►│ Y.Doc cache      │◄─────────►│ Y.Doc    │
+│ y-ws     │  y-ws     │ DO storage       │  y-ws     │ y-ws     │
+│ IndexedDB│  protocol │ + Supabase       │  protocol │ IndexedDB│
+└──────────┘           └──────────────────┘           └──────────┘
 ```
 
-1. Client creates a `WebsocketProvider` connecting to `ws://host:4444/{workspaceId}`
-2. The collab server loads the Y.Doc from LevelDB (if it exists) and syncs state to the client
-3. Local edits generate Y.Doc updates, sent to the server via the y-websocket protocol
-4. The server broadcasts updates to all other connected clients in the same room
-5. Server flushes Y.Doc state to LevelDB every 5 seconds and on document destroy
+1. Client creates a `WebsocketProvider` connecting to the collab server with a JWT token
+2. The Worker verifies the JWT and checks workspace permissions against Supabase
+3. The request is forwarded to a `YjsRoom` Durable Object (one per workspace)
+4. The DO loads the Y.Doc from DO storage (or Supabase fallback) and syncs state to the client
+5. Local edits generate Y.Doc updates, sent to the server via the y-websocket binary protocol
+6. The DO broadcasts updates to all other connected clients in the same room
+7. Updates are saved to DO storage (debounced, 1s) and periodically snapshotted to Supabase (every 5 minutes via DO alarm)
 
 ### Connection URL
 
-The WebSocket URL is configured via `VITE_COLLAB_WS_URL` env var. In development, the Vite proxy rewrites `/yjs/{workspaceId}` to `ws://localhost:4444/{workspaceId}`. If unset, it defaults to `ws[s]://{current_host}/yjs`.
+The WebSocket URL is configured via `VITE_COLLAB_WS_URL` env var. In development, the Vite proxy rewrites `/yjs/{workspaceId}` to `ws://localhost:8788/{workspaceId}`. If unset, it defaults to `ws[s]://{current_host}/yjs`.
 
 ## Frontend Hooks
 
@@ -144,20 +146,26 @@ The seed check only runs once per session (tracked by a `useRef` flag) and only 
 
 ## Collab Server Details
 
-The collab server (`collab-server/server.mjs`) is a lightweight Node.js process:
+The collab server (`collab-server/`) is a **Cloudflare Worker** with a **Durable Object** (`YjsRoom`):
 
-- **Runtime**: Node.js (not Bun -- y-leveldb requires native Node bindings)
-- **Protocol**: y-websocket binary sync protocol on port 4444
-- **Persistence**: LevelDB at `collab-server/data/yjs-docs/` (configurable via `DB_DIR`)
-- **Flush interval**: 5 seconds (configurable via `FLUSH_INTERVAL`)
-- **Retry logic**: Up to 3 retries with exponential backoff on persistence flush errors
-- **Health check**: `GET /health` returns `{ status: "ok", rooms: <count>, uptime: <seconds> }`
-- **Graceful shutdown**: On `SIGINT`, flushes all documents and destroys the LevelDB instance
+- **Runtime**: Cloudflare Workers with Durable Objects (SQLite storage class)
+- **Entry point**: Hono app verifies JWT auth, checks Supabase permissions, upgrades to WebSocket
+- **Protocol**: y-websocket binary sync protocol (MSG_SYNC, MSG_AWARENESS, MSG_QUERY_AWARENESS)
+- **Persistence (primary)**: Durable Object storage (`ctx.storage.put/get`) for states <128KB
+- **Persistence (fallback)**: Supabase `yjs_document` table for larger documents
+- **Periodic snapshots**: DO alarm fires every 5 minutes to save to Supabase while clients are connected
+- **Cleanup**: On last client disconnect, flushes to both DO storage and Supabase, destroys Y.Doc, cancels alarm
+- **Read-only enforcement**: Viewers (role:viewer) are tagged on WebSocket accept; sync writes and updates from viewers are silently dropped
+- **Health check**: `GET /health` returns `{ status: "ok" }`
 
-### Environment Variables
+### Secrets
 
-| Variable | Default           | Description               |
-| -------- | ----------------- | ------------------------- |
-| `PORT`   | `4444`            | Server listen port        |
-| `HOST`   | `0.0.0.0`         | Server listen host        |
-| `DB_DIR` | `./data/yjs-docs` | LevelDB storage directory |
+Managed via `wrangler secret put <NAME>` from `collab-server/`:
+
+| Secret                 | Description                                      |
+| ---------------------- | ------------------------------------------------ |
+| `SUPABASE_URL`         | Supabase project URL                             |
+| `SUPABASE_SERVICE_KEY` | Supabase service-role key                        |
+| `WS_JWT_SECRET`        | Secret for verifying WebSocket auth JWTs         |
+| `WS_JWT_SECRET_PREV`   | Previous JWT secret for rotation (optional)      |
+| `ALLOWED_ORIGIN`       | CORS origin for WebSocket connections (optional) |
