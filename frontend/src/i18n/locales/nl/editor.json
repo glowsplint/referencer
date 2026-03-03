@@ -63,5 +63,20 @@
       "red": "Rode achtergrond"
     },
     "toggleHighlight": "Markering in-/uitschakelen ({{color}})"
+  },
+  "table": {
+    "label": "Tabel",
+    "insertTable": "Tabel invoegen",
+    "addColumnBefore": "Kolom ervoor invoegen",
+    "addColumnAfter": "Kolom erna invoegen",
+    "deleteColumn": "Kolom verwijderen",
+    "addRowBefore": "Rij ervoor invoegen",
+    "addRowAfter": "Rij erna invoegen",
+    "deleteRow": "Rij verwijderen",
+    "deleteTable": "Tabel verwijderen",
+    "mergeCells": "Cellen samenvoegen",
+    "splitCell": "Cel splitsen",
+    "toggleHeaderRow": "Koptekstrij wisselen",
+    "toggleHeaderColumn": "Koptekstkolom wisselen"
   }
 }

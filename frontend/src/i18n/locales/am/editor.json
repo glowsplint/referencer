@@ -63,5 +63,20 @@
       "red": "ቀይ ዳራ"
     },
     "toggleHighlight": "ማድመቂያ ቀያይር ({{color}})"
+  },
+  "table": {
+    "label": "ሰንጠረዥ",
+    "insertTable": "ሰንጠረዥ አስገባ",
+    "addColumnBefore": "ከዓምድ በፊት አክል",
+    "addColumnAfter": "ከዓምድ በኋላ አክል",
+    "deleteColumn": "ዓምድ ሰርዝ",
+    "addRowBefore": "ከረድፍ በፊት አክል",
+    "addRowAfter": "ከረድፍ በኋላ አክል",
+    "deleteRow": "ረድፍ ሰርዝ",
+    "deleteTable": "ሰንጠረዥ ሰርዝ",
+    "mergeCells": "ሴሎችን አዋህድ",
+    "splitCell": "ሴል ክፈል",
+    "toggleHeaderRow": "የራስጌ ረድፍ ቀያይር",
+    "toggleHeaderColumn": "የራስጌ ዓምድ ቀያይር"
   }
 }

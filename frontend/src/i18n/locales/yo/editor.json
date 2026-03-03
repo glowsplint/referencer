@@ -63,5 +63,20 @@
       "red": "Ìpìlẹ̀ àwọ̀ pupa"
     },
     "toggleHighlight": "Yí àmì ìtànṣán padà ({{color}})"
+  },
+  "table": {
+    "label": "Tábùlù",
+    "insertTable": "Fi tábùlù sí",
+    "addColumnBefore": "Fi ìlà ìdúró kí",
+    "addColumnAfter": "Fi ìlà ìdúró lẹ́yìn",
+    "deleteColumn": "Pa ìlà ìdúró rẹ́",
+    "addRowBefore": "Fi ìlà pẹ̀tẹ́lẹ̀ kí",
+    "addRowAfter": "Fi ìlà pẹ̀tẹ́lẹ̀ lẹ́yìn",
+    "deleteRow": "Pa ìlà pẹ̀tẹ́lẹ̀ rẹ́",
+    "deleteTable": "Pa tábùlù rẹ́",
+    "mergeCells": "Da àwọn sẹ́ẹ̀lì pọ̀",
+    "splitCell": "Pín sẹ́ẹ̀lì",
+    "toggleHeaderRow": "Yí ìlà àkọlé padà",
+    "toggleHeaderColumn": "Yí ìlà ìdúró àkọlé padà"
   }
 }

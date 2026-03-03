@@ -63,5 +63,20 @@
       "red": "Nền đỏ"
     },
     "toggleHighlight": "Bật/tắt đánh dấu ({{color}})"
+  },
+  "table": {
+    "label": "Bảng",
+    "insertTable": "Chèn bảng",
+    "addColumnBefore": "Thêm cột trước",
+    "addColumnAfter": "Thêm cột sau",
+    "deleteColumn": "Xóa cột",
+    "addRowBefore": "Thêm hàng trước",
+    "addRowAfter": "Thêm hàng sau",
+    "deleteRow": "Xóa hàng",
+    "deleteTable": "Xóa bảng",
+    "mergeCells": "Gộp ô",
+    "splitCell": "Tách ô",
+    "toggleHeaderRow": "Chuyển đổi hàng tiêu đề",
+    "toggleHeaderColumn": "Chuyển đổi cột tiêu đề"
   }
 }

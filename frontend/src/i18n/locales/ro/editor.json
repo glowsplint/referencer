@@ -63,5 +63,20 @@
       "red": "Fundal roșu"
     },
     "toggleHighlight": "Comută evidențierea ({{color}})"
+  },
+  "table": {
+    "label": "Tabel",
+    "insertTable": "Inserare tabel",
+    "addColumnBefore": "Adăugare coloană înainte",
+    "addColumnAfter": "Adăugare coloană după",
+    "deleteColumn": "Ștergere coloană",
+    "addRowBefore": "Adăugare rând înainte",
+    "addRowAfter": "Adăugare rând după",
+    "deleteRow": "Ștergere rând",
+    "deleteTable": "Ștergere tabel",
+    "mergeCells": "Îmbinare celule",
+    "splitCell": "Divizare celulă",
+    "toggleHeaderRow": "Comutare rând antet",
+    "toggleHeaderColumn": "Comutare coloană antet"
   }
 }

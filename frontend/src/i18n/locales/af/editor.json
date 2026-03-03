@@ -63,5 +63,20 @@
       "red": "Rooi agtergrond"
     },
     "toggleHighlight": "Wissel uitligting ({{color}})"
+  },
+  "table": {
+    "label": "Tabel",
+    "insertTable": "Voeg tabel in",
+    "addColumnBefore": "Voeg kolom voor by",
+    "addColumnAfter": "Voeg kolom na by",
+    "deleteColumn": "Verwyder kolom",
+    "addRowBefore": "Voeg ry voor by",
+    "addRowAfter": "Voeg ry na by",
+    "deleteRow": "Verwyder ry",
+    "deleteTable": "Verwyder tabel",
+    "mergeCells": "Voeg selle saam",
+    "splitCell": "Verdeel sel",
+    "toggleHeaderRow": "Wissel kopry",
+    "toggleHeaderColumn": "Wissel kopkolom"
   }
 }

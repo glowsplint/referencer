@@ -63,5 +63,20 @@
       "red": "خلفية حمراء"
     },
     "toggleHighlight": "تبديل التمييز ({{color}})"
+  },
+  "table": {
+    "label": "جدول",
+    "insertTable": "إدراج جدول",
+    "addColumnBefore": "إضافة عمود قبل",
+    "addColumnAfter": "إضافة عمود بعد",
+    "deleteColumn": "حذف عمود",
+    "addRowBefore": "إضافة صف قبل",
+    "addRowAfter": "إضافة صف بعد",
+    "deleteRow": "حذف صف",
+    "deleteTable": "حذف الجدول",
+    "mergeCells": "دمج الخلايا",
+    "splitCell": "تقسيم الخلية",
+    "toggleHeaderRow": "تبديل صف الرأس",
+    "toggleHeaderColumn": "تبديل عمود الرأس"
   }
 }

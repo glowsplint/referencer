@@ -14,6 +14,7 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { Selection } from "@tiptap/extensions";
 import Placeholder from "@tiptap/extension-placeholder";
 import Collaboration from "@tiptap/extension-collaboration";
@@ -60,6 +61,10 @@ export function createSimpleEditorExtensions(opts?: EditorExtensionOptions) {
     Superscript,
     Subscript,
     Selection,
+    Table.configure({ resizable: true, allowTableNodeSelection: true }),
+    TableRow,
+    TableCell,
+    TableHeader,
     LayerHighlightsExtension,
     LayerUnderlineExtension,
     WordSelectionExtension,

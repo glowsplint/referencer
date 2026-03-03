@@ -63,5 +63,20 @@
       "red": "சிவப்பு பின்னணி"
     },
     "toggleHighlight": "முன்னிலைப்படுத்தலை நிலைமாற்று ({{color}})"
+  },
+  "table": {
+    "label": "அட்டவணை",
+    "insertTable": "அட்டவணை செருகு",
+    "addColumnBefore": "முன் நெடுவரிசை சேர்",
+    "addColumnAfter": "பின் நெடுவரிசை சேர்",
+    "deleteColumn": "நெடுவரிசை நீக்கு",
+    "addRowBefore": "முன் வரிசை சேர்",
+    "addRowAfter": "பின் வரிசை சேர்",
+    "deleteRow": "வரிசை நீக்கு",
+    "deleteTable": "அட்டவணை நீக்கு",
+    "mergeCells": "கலங்களை இணை",
+    "splitCell": "கலத்தைப் பிரி",
+    "toggleHeaderRow": "தலைப்பு வரிசை நிலைமாற்று",
+    "toggleHeaderColumn": "தலைப்பு நெடுவரிசை நிலைமாற்று"
   }
 }

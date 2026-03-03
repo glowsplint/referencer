@@ -63,5 +63,20 @@
       "red": "Sfondo rosso"
     },
     "toggleHighlight": "Attiva/disattiva evidenziazione ({{color}})"
+  },
+  "table": {
+    "label": "Tabella",
+    "insertTable": "Inserisci tabella",
+    "addColumnBefore": "Aggiungi colonna prima",
+    "addColumnAfter": "Aggiungi colonna dopo",
+    "deleteColumn": "Elimina colonna",
+    "addRowBefore": "Aggiungi riga prima",
+    "addRowAfter": "Aggiungi riga dopo",
+    "deleteRow": "Elimina riga",
+    "deleteTable": "Elimina tabella",
+    "mergeCells": "Unisci celle",
+    "splitCell": "Dividi cella",
+    "toggleHeaderRow": "Attiva/disattiva riga intestazione",
+    "toggleHeaderColumn": "Attiva/disattiva colonna intestazione"
   }
 }

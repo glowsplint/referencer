@@ -63,5 +63,20 @@
       "red": "Roter Hintergrund"
     },
     "toggleHighlight": "Hervorhebung umschalten ({{color}})"
+  },
+  "table": {
+    "label": "Tabelle",
+    "insertTable": "Tabelle einfügen",
+    "addColumnBefore": "Spalte davor einfügen",
+    "addColumnAfter": "Spalte danach einfügen",
+    "deleteColumn": "Spalte löschen",
+    "addRowBefore": "Zeile davor einfügen",
+    "addRowAfter": "Zeile danach einfügen",
+    "deleteRow": "Zeile löschen",
+    "deleteTable": "Tabelle löschen",
+    "mergeCells": "Zellen verbinden",
+    "splitCell": "Zelle teilen",
+    "toggleHeaderRow": "Kopfzeile umschalten",
+    "toggleHeaderColumn": "Kopfspalte umschalten"
   }
 }

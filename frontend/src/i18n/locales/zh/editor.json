@@ -8,15 +8,21 @@
     "superscript": "上标",
     "subscript": "下标"
   },
-  "heading": { "label": "标题 {{level}}" },
+  "heading": {
+    "label": "标题 {{level}}"
+  },
   "list": {
     "bulletList": "无序列表",
     "orderedList": "有序列表",
     "taskList": "任务列表",
     "label": "列表"
   },
-  "blockquote": { "label": "引用块" },
-  "codeBlock": { "label": "代码块" },
+  "blockquote": {
+    "label": "引用块"
+  },
+  "codeBlock": {
+    "label": "代码块"
+  },
   "link": {
     "label": "链接",
     "placeholder": "输入网址",
@@ -24,9 +30,19 @@
     "copyLink": "复制链接",
     "removeLink": "移除链接"
   },
-  "image": { "label": "添加图片" },
-  "textAlign": { "left": "左对齐", "center": "居中对齐", "right": "右对齐", "justify": "两端对齐" },
-  "history": { "undo": "撤销", "redo": "重做" },
+  "image": {
+    "label": "添加图片"
+  },
+  "textAlign": {
+    "left": "左对齐",
+    "center": "居中对齐",
+    "right": "右对齐",
+    "justify": "两端对齐"
+  },
+  "history": {
+    "undo": "撤销",
+    "redo": "重做"
+  },
   "colorHighlight": {
     "label": "颜色高亮",
     "highlightText": "高亮文本",
@@ -47,5 +63,20 @@
       "red": "红色背景"
     },
     "toggleHighlight": "切换高亮（{{color}}）"
+  },
+  "table": {
+    "label": "表格",
+    "insertTable": "插入表格",
+    "addColumnBefore": "在前方添加列",
+    "addColumnAfter": "在后方添加列",
+    "deleteColumn": "删除列",
+    "addRowBefore": "在前方添加行",
+    "addRowAfter": "在后方添加行",
+    "deleteRow": "删除行",
+    "deleteTable": "删除表格",
+    "mergeCells": "合并单元格",
+    "splitCell": "拆分单元格",
+    "toggleHeaderRow": "切换标题行",
+    "toggleHeaderColumn": "切换标题列"
   }
 }

@@ -97,6 +97,9 @@ vi.mock("@/components/tiptap-ui/text-color-button", () => ({
 vi.mock("@/components/tiptap-ui/line-height-dropdown", () => ({
   LineHeightDropdown: () => null,
 }));
+vi.mock("@/components/tiptap-ui/table-dropdown-menu", () => ({
+  TableDropdownMenu: () => null,
+}));
 
 // Mock icons
 vi.mock("@/components/tiptap-icons/arrow-left-icon", () => ({
