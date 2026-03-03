@@ -42,7 +42,7 @@
   p:not(:first-child):not(td p):not(th p) {
     font-size: 1rem;
     font-weight: normal;
-    margin-top: 20px;
+    margin-top: var(--editor-paragraph-spacing, 20px);
   }
 
   // Selection styles

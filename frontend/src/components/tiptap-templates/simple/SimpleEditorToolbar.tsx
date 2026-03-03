@@ -23,6 +23,7 @@ import { TextColorPopover } from "@/components/tiptap-ui/text-color-button";
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 import { LineHeightDropdown } from "@/components/tiptap-ui/line-height-dropdown";
+import { ParagraphSpacingDropdown } from "@/components/tiptap-ui/paragraph-spacing-dropdown";
 import { TableDropdownMenu } from "@/components/tiptap-ui/table-dropdown-menu";
 
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
@@ -92,6 +93,7 @@ const MainToolbarContent = ({
 
       <ToolbarGroup>
         <LineHeightDropdown portal={isMobile} />
+        <ParagraphSpacingDropdown portal={isMobile} />
       </ToolbarGroup>
 
       <ToolbarSeparator />
