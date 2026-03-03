@@ -63,5 +63,20 @@
       "red": "Mandhari ya nyekundu"
     },
     "toggleHighlight": "Geuza uangaziaji ({{color}})"
+  },
+  "table": {
+    "label": "Jedwali",
+    "insertTable": "Ingiza jedwali",
+    "addColumnBefore": "Ongeza safu wima kabla",
+    "addColumnAfter": "Ongeza safu wima baada",
+    "deleteColumn": "Futa safu wima",
+    "addRowBefore": "Ongeza safu mlalo kabla",
+    "addRowAfter": "Ongeza safu mlalo baada",
+    "deleteRow": "Futa safu mlalo",
+    "deleteTable": "Futa jedwali",
+    "mergeCells": "Unganisha seli",
+    "splitCell": "Gawanya seli",
+    "toggleHeaderRow": "Badilisha safu mlalo ya kichwa",
+    "toggleHeaderColumn": "Badilisha safu wima ya kichwa"
   }
 }

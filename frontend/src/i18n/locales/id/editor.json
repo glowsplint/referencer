@@ -63,5 +63,20 @@
       "red": "Latar belakang merah"
     },
     "toggleHighlight": "Alihkan sorotan ({{color}})"
+  },
+  "table": {
+    "label": "Tabel",
+    "insertTable": "Sisipkan tabel",
+    "addColumnBefore": "Tambah kolom sebelum",
+    "addColumnAfter": "Tambah kolom sesudah",
+    "deleteColumn": "Hapus kolom",
+    "addRowBefore": "Tambah baris sebelum",
+    "addRowAfter": "Tambah baris sesudah",
+    "deleteRow": "Hapus baris",
+    "deleteTable": "Hapus tabel",
+    "mergeCells": "Gabungkan sel",
+    "splitCell": "Pisahkan sel",
+    "toggleHeaderRow": "Alihkan baris header",
+    "toggleHeaderColumn": "Alihkan kolom header"
   }
 }

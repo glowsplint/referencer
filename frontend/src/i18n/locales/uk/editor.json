@@ -63,5 +63,20 @@
       "red": "Червоний фон"
     },
     "toggleHighlight": "Перемкнути виділення ({{color}})"
+  },
+  "table": {
+    "label": "Таблиця",
+    "insertTable": "Вставити таблицю",
+    "addColumnBefore": "Додати стовпець перед",
+    "addColumnAfter": "Додати стовпець після",
+    "deleteColumn": "Видалити стовпець",
+    "addRowBefore": "Додати рядок перед",
+    "addRowAfter": "Додати рядок після",
+    "deleteRow": "Видалити рядок",
+    "deleteTable": "Видалити таблицю",
+    "mergeCells": "Об'єднати комірки",
+    "splitCell": "Розділити комірку",
+    "toggleHeaderRow": "Перемкнути рядок заголовка",
+    "toggleHeaderColumn": "Перемкнути стовпець заголовка"
   }
 }

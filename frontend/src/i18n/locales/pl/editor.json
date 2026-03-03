@@ -63,5 +63,20 @@
       "red": "Czerwone tlo"
     },
     "toggleHighlight": "Przelacz podswietlenie ({{color}})"
+  },
+  "table": {
+    "label": "Tabela",
+    "insertTable": "Wstaw tabelę",
+    "addColumnBefore": "Dodaj kolumnę przed",
+    "addColumnAfter": "Dodaj kolumnę po",
+    "deleteColumn": "Usuń kolumnę",
+    "addRowBefore": "Dodaj wiersz przed",
+    "addRowAfter": "Dodaj wiersz po",
+    "deleteRow": "Usuń wiersz",
+    "deleteTable": "Usuń tabelę",
+    "mergeCells": "Scal komórki",
+    "splitCell": "Podziel komórkę",
+    "toggleHeaderRow": "Przełącz wiersz nagłówka",
+    "toggleHeaderColumn": "Przełącz kolumnę nagłówka"
   }
 }

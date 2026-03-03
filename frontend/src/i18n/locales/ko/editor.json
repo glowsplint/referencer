@@ -8,15 +8,21 @@
     "superscript": "위 첨자",
     "subscript": "아래 첨자"
   },
-  "heading": { "label": "제목 {{level}}" },
+  "heading": {
+    "label": "제목 {{level}}"
+  },
   "list": {
     "bulletList": "글머리 기호 목록",
     "orderedList": "번호 매기기 목록",
     "taskList": "할 일 목록",
     "label": "목록"
   },
-  "blockquote": { "label": "인용문" },
-  "codeBlock": { "label": "코드 블록" },
+  "blockquote": {
+    "label": "인용문"
+  },
+  "codeBlock": {
+    "label": "코드 블록"
+  },
   "link": {
     "label": "링크",
     "placeholder": "URL 입력",
@@ -24,14 +30,19 @@
     "copyLink": "링크 복사",
     "removeLink": "링크 삭제"
   },
-  "image": { "label": "이미지 추가" },
+  "image": {
+    "label": "이미지 추가"
+  },
   "textAlign": {
     "left": "왼쪽 정렬",
     "center": "가운데 정렬",
     "right": "오른쪽 정렬",
     "justify": "양쪽 정렬"
   },
-  "history": { "undo": "실행 취소", "redo": "다시 실행" },
+  "history": {
+    "undo": "실행 취소",
+    "redo": "다시 실행"
+  },
   "colorHighlight": {
     "label": "색상 형광펜",
     "highlightText": "텍스트 형광펜",
@@ -52,5 +63,20 @@
       "red": "빨간색 배경"
     },
     "toggleHighlight": "형광펜 전환 ({{color}})"
+  },
+  "table": {
+    "label": "표",
+    "insertTable": "표 삽입",
+    "addColumnBefore": "앞에 열 추가",
+    "addColumnAfter": "뒤에 열 추가",
+    "deleteColumn": "열 삭제",
+    "addRowBefore": "앞에 행 추가",
+    "addRowAfter": "뒤에 행 추가",
+    "deleteRow": "행 삭제",
+    "deleteTable": "표 삭제",
+    "mergeCells": "셀 병합",
+    "splitCell": "셀 분할",
+    "toggleHeaderRow": "머리글 행 전환",
+    "toggleHeaderColumn": "머리글 열 전환"
   }
 }
