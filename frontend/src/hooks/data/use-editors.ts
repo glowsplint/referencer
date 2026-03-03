@@ -26,6 +26,7 @@ export function useEditors() {
     Array.from({ length: DEFAULT_EDITOR_COUNT }, (_, i) => i),
   );
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
+  const [activeEditorIndex, setActiveEditorIndex] = useState(0);
   const [mountedEditorCount, setMountedEditorCount] = useState(0);
   const editorsRef = useRef<Map<number, Editor>>(new Map());
   const passageCounterRef = useRef(DEFAULT_EDITOR_COUNT);
@@ -86,6 +87,7 @@ export function useEditors() {
     // Set active editor to the first remaining editor
     const firstEditor = newMap.get(0);
     if (firstEditor) setActiveEditor(firstEditor);
+    setActiveEditorIndex(0);
   }, []);
 
   const updateSectionName = useCallback((index: number, name: string) => {
@@ -144,6 +146,7 @@ export function useEditors() {
     if (editor) {
       setActiveEditor(editor);
     }
+    setActiveEditorIndex(index);
   }, []);
 
   const editorWidths = useMemo(() => {
@@ -160,6 +163,7 @@ export function useEditors() {
     editorCount,
     mountedEditorCount,
     activeEditor,
+    activeEditorIndex,
     editorWidths,
     columnSplit,
     rowSplit,

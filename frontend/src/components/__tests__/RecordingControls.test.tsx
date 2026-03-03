@@ -71,7 +71,7 @@ function renderRecordingControls(
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: true,
+      lockedPanes: { 0: true, 1: true, 2: true, 3: true },
       hideOffscreenArrows: false,
       showStatusBar: true,
     },

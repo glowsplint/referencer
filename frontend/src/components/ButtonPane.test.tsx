@@ -1,11 +1,24 @@
 import { screen, fireEvent, act } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { ButtonPane } from "./ButtonPane";
 import { renderWithWorkspace } from "@/test/render-with-workspace";
 
 function renderButtonPane(overrides = {}) {
   return renderWithWorkspace(<ButtonPane />, overrides);
 }
+
+/** Helper: overrides that simulate all panes locked (annotation mode active) */
+const allLocked = {
+  settings: {
+    isDarkMode: false,
+    isLayersOn: false,
+    isMultipleRowsLayout: false,
+    lockedPanes: { 0: true, 1: true, 2: true, 3: true },
+  },
+  isPaneLocked: vi.fn((_i: number) => true),
+  isAnyPaneLocked: true,
+  activeEditorIndex: 0,
+};
 
 describe("ButtonPane", () => {
   describe("when rendered", () => {
@@ -61,15 +74,11 @@ describe("ButtonPane", () => {
     });
   });
 
-  describe("when the editor is not locked", () => {
+  describe("when no panes are locked", () => {
     it("then disables tool buttons", () => {
       renderButtonPane({
-        settings: {
-          isDarkMode: false,
-          isLayersOn: false,
-          isMultipleRowsLayout: false,
-          isLocked: false,
-        },
+        isAnyPaneLocked: false,
+        isPaneLocked: vi.fn(() => false),
       });
       expect(screen.getByTestId("selectionToolButton")).toBeDisabled();
       expect(screen.getByTestId("arrowToolButton")).toBeDisabled();
@@ -77,18 +86,9 @@ describe("ButtonPane", () => {
     });
   });
 
-  describe("when the editor is locked", () => {
-    const lockedSettings = {
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-    };
-
+  describe("when at least one pane is locked", () => {
     it("then enables tool buttons", () => {
-      renderButtonPane(lockedSettings);
+      renderButtonPane(allLocked);
       expect(screen.getByTestId("selectionToolButton")).toBeEnabled();
       expect(screen.getByTestId("arrowToolButton")).toBeEnabled();
       expect(screen.getByTestId("commentsToolButton")).toBeEnabled();
@@ -96,7 +96,7 @@ describe("ButtonPane", () => {
 
     describe("when the selection button is clicked", () => {
       it("then calls setActiveTool with selection", () => {
-        const { workspace } = renderButtonPane(lockedSettings);
+        const { workspace } = renderButtonPane(allLocked);
         fireEvent.click(screen.getByTestId("selectionToolButton"));
         expect(workspace.setActiveTool).toHaveBeenCalledWith("selection");
       });
@@ -104,7 +104,7 @@ describe("ButtonPane", () => {
 
     describe("when the arrow button is clicked", () => {
       it("then calls setActiveTool with arrow", () => {
-        const { workspace } = renderButtonPane(lockedSettings);
+        const { workspace } = renderButtonPane(allLocked);
         fireEvent.click(screen.getByTestId("arrowToolButton"));
         expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
       });
@@ -112,7 +112,7 @@ describe("ButtonPane", () => {
 
     describe("when the comments button is clicked", () => {
       it("then calls setActiveTool with comments", () => {
-        const { workspace } = renderButtonPane(lockedSettings);
+        const { workspace } = renderButtonPane(allLocked);
         fireEvent.click(screen.getByTestId("commentsToolButton"));
         expect(workspace.setActiveTool).toHaveBeenCalledWith("comments");
       });
@@ -139,9 +139,6 @@ describe("ButtonPane", () => {
     function getLayoutIcon() {
       return screen.getByTestId("editorLayoutButton").querySelector("svg")!;
     }
-
-    // In grid mode (isMultipleRowsLayout=false), iconOne is shown (rows/stack icons).
-    // In stack mode (isMultipleRowsLayout=true), iconTwo is shown (grid icons).
 
     describe("when in grid mode with 1 editor", () => {
       it("then shows the square-round-corner icon", () => {
@@ -230,10 +227,10 @@ describe("ButtonPane", () => {
   });
 
   describe("when the lock button is clicked", () => {
-    it("then calls toggleLocked", () => {
+    it("then calls toggleFocusedPaneLocked", () => {
       const { workspace } = renderButtonPane();
       fireEvent.click(screen.getByTestId("lockButton"));
-      expect(workspace.toggleLocked).toHaveBeenCalledOnce();
+      expect(workspace.toggleFocusedPaneLocked).toHaveBeenCalledOnce();
     });
   });
 
@@ -267,14 +264,7 @@ describe("ButtonPane", () => {
   describe("tooltips", () => {
     describe("when the selection tool button receives focus", () => {
       it("then shows a tooltip with the shortcut key", async () => {
-        renderButtonPane({
-          settings: {
-            isDarkMode: false,
-            isLayersOn: false,
-            isMultipleRowsLayout: false,
-            isLocked: true,
-          },
-        });
+        renderButtonPane(allLocked);
         const btn = screen.getByTestId("selectionToolButton");
 
         await act(async () => {
@@ -289,14 +279,7 @@ describe("ButtonPane", () => {
 
     describe("when the arrow tool button receives focus", () => {
       it("then shows a tooltip with the shortcut key", async () => {
-        renderButtonPane({
-          settings: {
-            isDarkMode: false,
-            isLayersOn: false,
-            isMultipleRowsLayout: false,
-            isLocked: true,
-          },
-        });
+        renderButtonPane(allLocked);
         const btn = screen.getByTestId("arrowToolButton");
 
         await act(async () => {
@@ -309,9 +292,13 @@ describe("ButtonPane", () => {
       });
     });
 
-    describe("when the lock button receives focus and editor is unlocked", () => {
+    describe("when the lock button receives focus and focused pane is unlocked", () => {
       it("then shows a tooltip saying Switch to Annotate mode", async () => {
-        renderButtonPane({ settings: { isLocked: false } });
+        renderButtonPane({
+          isPaneLocked: vi.fn(() => false),
+          isAnyPaneLocked: false,
+          activeEditorIndex: 0,
+        });
         const btn = screen.getByTestId("lockButton");
 
         await act(async () => {
@@ -324,9 +311,9 @@ describe("ButtonPane", () => {
       });
     });
 
-    describe("when the lock button receives focus and editor is locked", () => {
+    describe("when the lock button receives focus and focused pane is locked", () => {
       it("then shows a tooltip saying Switch to Edit mode", async () => {
-        renderButtonPane({ settings: { isLocked: true } });
+        renderButtonPane(allLocked);
         const btn = screen.getByTestId("lockButton");
 
         await act(async () => {
@@ -371,19 +358,10 @@ describe("ButtonPane", () => {
   });
 
   describe("arrow style picker", () => {
-    const lockedSettings = {
-      settings: {
-        isDarkMode: false,
-        isLayersOn: false,
-        isMultipleRowsLayout: false,
-        isLocked: true,
-      },
-    };
-
     describe("when activeTool is arrow", () => {
       it("then shows the arrow style picker via arrowStylePickerOpen", () => {
         renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           annotations: { activeTool: "arrow" },
           arrowStylePickerOpen: true,
         });
@@ -394,7 +372,7 @@ describe("ButtonPane", () => {
     describe("when activeTool is not arrow", () => {
       it("then hides the arrow style picker via arrowStylePickerOpen", () => {
         renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           annotations: { activeTool: "selection" },
           arrowStylePickerOpen: false,
         });
@@ -405,7 +383,7 @@ describe("ButtonPane", () => {
     describe("when an arrow is selected", () => {
       it("then activates the arrow tool", () => {
         const { workspace } = renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
         });
         expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
@@ -415,7 +393,7 @@ describe("ButtonPane", () => {
     describe("when arrowStylePickerOpen is true", () => {
       it("then shows the arrow style popover", () => {
         renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           arrowStylePickerOpen: true,
         });
         expect(screen.getByTestId("arrowStylePopover")).toBeInTheDocument();
@@ -426,7 +404,7 @@ describe("ButtonPane", () => {
     describe("when arrowStylePickerOpen is false", () => {
       it("then does not show the arrow style popover", () => {
         renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           arrowStylePickerOpen: false,
         });
         expect(screen.queryByTestId("arrowStylePopover")).not.toBeInTheDocument();
@@ -436,7 +414,7 @@ describe("ButtonPane", () => {
     describe("when a style is selected", () => {
       it("then calls setActiveArrowStyle", () => {
         const { workspace } = renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           arrowStylePickerOpen: true,
         });
 
@@ -449,7 +427,7 @@ describe("ButtonPane", () => {
     describe("when a style is selected and an arrow is selected", () => {
       it("then calls updateArrowStyle for the selected arrow", () => {
         const { workspace } = renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           arrowStylePickerOpen: true,
           selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
         });
@@ -464,7 +442,7 @@ describe("ButtonPane", () => {
     describe("when a style is selected and no arrow is selected", () => {
       it("then does not call updateArrowStyle", () => {
         const { workspace } = renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           arrowStylePickerOpen: true,
           selectedArrow: null,
         });
@@ -479,7 +457,7 @@ describe("ButtonPane", () => {
     describe("when activeArrowStyle is dashed", () => {
       it("then renders the arrow button icon with dashed stroke", () => {
         renderButtonPane({
-          ...lockedSettings,
+          ...allLocked,
           activeArrowStyle: "dashed",
         });
         const btn = screen.getByTestId("arrowToolButton");

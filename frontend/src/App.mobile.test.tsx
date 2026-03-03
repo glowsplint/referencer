@@ -28,11 +28,14 @@ const mockWorkspace = {
     isDarkMode: false,
     isLayersOn: false,
     isMultipleRowsLayout: false,
-    isLocked: false,
+    lockedPanes: { 0: false, 1: false, 2: false, 3: false } as Record<number, boolean>,
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   },
+  isPaneLocked: (i: number) => mockWorkspace.settings.lockedPanes[i] ?? true,
+  isAnyPaneLocked: false,
+  activeEditorIndex: 0,
   annotations: { activeTool: "selection" as const },
   layers: [] as {
     id: string;
@@ -60,7 +63,8 @@ const mockWorkspace = {
   toggleDarkMode: vi.fn(),
   toggleLayersOn: vi.fn(),
   toggleMultipleRowsLayout: vi.fn(),
-  toggleLocked: vi.fn(),
+  togglePaneLocked: vi.fn(),
+  toggleFocusedPaneLocked: vi.fn(),
   setActiveTool: vi.fn(),
   setArrowStylePickerOpen: vi.fn(),
   arrowStylePickerOpen: false,
@@ -201,11 +205,12 @@ beforeEach(() => {
     isDarkMode: false,
     isLayersOn: false,
     isMultipleRowsLayout: false,
-    isLocked: false,
+    lockedPanes: { 0: false, 1: false, 2: false, 3: false },
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   };
+  mockWorkspace.isAnyPaneLocked = false;
   mockWorkspace.layers = [];
   mockWorkspace.activeLayerId = null;
   mockWorkspace.editorWidths = [100];
@@ -263,14 +268,16 @@ describe("App (mobile)", () => {
 
   describe("when viewing editors on mobile (read-only)", () => {
     it("then renders editors as locked regardless of lock setting", () => {
-      mockWorkspace.settings.isLocked = false;
+      mockWorkspace.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
+      mockWorkspace.isAnyPaneLocked = false;
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-locked", "true");
     });
 
     it("then does not enable annotation mouse handlers even when locked", () => {
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
@@ -300,21 +307,24 @@ describe("App (mobile)", () => {
     };
 
     it("does not show the toggle button when not locked", () => {
-      mockWorkspace.settings.isLocked = false;
+      mockWorkspace.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
+      mockWorkspace.isAnyPaneLocked = false;
       mockWorkspace.layers = [layerWithComment];
       renderApp();
       expect(screen.queryByTestId("mobileAnnotationToggle")).not.toBeInTheDocument();
     });
 
     it("does not show the toggle button when locked but no annotations", () => {
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
       mockWorkspace.layers = [];
       renderApp();
       expect(screen.queryByTestId("mobileAnnotationToggle")).not.toBeInTheDocument();
     });
 
     it("shows the toggle button when locked with comment annotations", () => {
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
       mockWorkspace.layers = [layerWithComment];
       renderApp();
       expect(screen.getByTestId("mobileAnnotationToggle")).toBeInTheDocument();
@@ -322,7 +332,8 @@ describe("App (mobile)", () => {
 
     it("opens the annotation drawer when the toggle button is clicked", async () => {
       const user = userEvent.setup();
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
       mockWorkspace.layers = [layerWithComment];
       renderApp();
 
@@ -337,7 +348,8 @@ describe("App (mobile)", () => {
 
     it("renders the annotation panel in read-only mode inside the drawer", async () => {
       const user = userEvent.setup();
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
       mockWorkspace.layers = [layerWithComment];
       renderApp();
 
@@ -351,7 +363,8 @@ describe("App (mobile)", () => {
 
     it("closes the drawer when the close button is clicked", async () => {
       const user = userEvent.setup();
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
       mockWorkspace.layers = [layerWithComment];
       renderApp();
 

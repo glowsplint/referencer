@@ -56,7 +56,7 @@ describe("useEditorWorkspace", () => {
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: true,
+      lockedPanes: { 0: true, 1: true, 2: true, 3: true },
       hideOffscreenArrows: false,
       showStatusBar: true,
       commentPlacement: "right",
@@ -88,14 +88,18 @@ describe("useEditorWorkspace", () => {
     expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
 
-  it("when toggleLocked is called, then toggles isLocked", () => {
+  it("when toggleFocusedPaneLocked is called, then toggles the focused pane", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
+    expect(result.current.isPaneLocked(0)).toBe(true);
+
     act(() => {
-      result.current.toggleLocked();
+      result.current.toggleFocusedPaneLocked();
     });
 
-    expect(result.current.settings.isLocked).toBe(false);
+    expect(result.current.isPaneLocked(0)).toBe(false);
+    // Other panes remain locked
+    expect(result.current.isPaneLocked(1)).toBe(true);
   });
 
   it("when setActiveTool is called, then changes the active tool", () => {
@@ -861,26 +865,26 @@ describe("useEditorWorkspace", () => {
     expect(result.current.sectionVisibility[0]).toBe(false);
   });
 
-  it("when toggleLocked is called, then it is undoable", () => {
+  it("when toggleFocusedPaneLocked is called, then it is undoable", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
-    expect(result.current.settings.isLocked).toBe(true);
+    expect(result.current.isPaneLocked(0)).toBe(true);
 
     act(() => {
-      result.current.toggleLocked();
+      result.current.toggleFocusedPaneLocked();
     });
-    expect(result.current.settings.isLocked).toBe(false);
+    expect(result.current.isPaneLocked(0)).toBe(false);
     expect(result.current.history.canUndo).toBe(true);
 
     act(() => {
       result.current.history.undo();
     });
-    expect(result.current.settings.isLocked).toBe(true);
+    expect(result.current.isPaneLocked(0)).toBe(true);
 
     act(() => {
       result.current.history.redo();
     });
-    expect(result.current.settings.isLocked).toBe(false);
+    expect(result.current.isPaneLocked(0)).toBe(false);
   });
 
   it("when toggleDarkMode is called, then it is undoable", () => {
@@ -992,7 +996,7 @@ describe("useEditorWorkspace", () => {
     });
 
     act(() => {
-      result.current.toggleLocked();
+      result.current.toggleFocusedPaneLocked();
       result.current.toggleDarkMode();
       result.current.toggleMultipleRowsLayout();
       result.current.toggleSectionVisibility(0);

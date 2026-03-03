@@ -120,7 +120,10 @@ export function ButtonPane() {
     editorCount,
     toggleMultipleRowsLayout,
     setActiveTool,
-    toggleLocked,
+    toggleFocusedPaneLocked,
+    isPaneLocked,
+    isAnyPaneLocked,
+    activeEditorIndex,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleCommentPlacement,
@@ -280,9 +283,9 @@ export function ButtonPane() {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => setActiveTool(tool)}
-                  disabled={!settings.isLocked || readOnly}
+                  disabled={!isAnyPaneLocked || readOnly}
                   className={`p-2 rounded-md transition-colors ${
-                    annotations.activeTool === tool && settings.isLocked
+                    annotations.activeTool === tool && isAnyPaneLocked
                       ? "bg-accent text-accent-foreground"
                       : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
                   }`}
@@ -293,7 +296,7 @@ export function ButtonPane() {
               </TooltipTrigger>
               <TooltipContent>
                 {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
-                {!settings.isLocked && tm("tooltips.annotateModeLockHint")}
+                {!isAnyPaneLocked && tm("tooltips.annotateModeLockHint")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -316,9 +319,9 @@ export function ButtonPane() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setActiveTool(tool)}
-                      disabled={!settings.isLocked || readOnly}
+                      disabled={!isAnyPaneLocked || readOnly}
                       className={`p-2 rounded-md transition-colors ${
-                        annotations.activeTool === tool && settings.isLocked
+                        annotations.activeTool === tool && isAnyPaneLocked
                           ? "bg-accent text-accent-foreground"
                           : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
                       }`}
@@ -329,7 +332,7 @@ export function ButtonPane() {
                   </TooltipTrigger>
                   <TooltipContent>
                     {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
-                    {!settings.isLocked && tm("tooltips.annotateModeLockHint")}
+                    {!isAnyPaneLocked && tm("tooltips.annotateModeLockHint")}
                   </TooltipContent>
                 </Tooltip>
                 {isArrow && arrowStylePickerOpen && (
@@ -357,9 +360,9 @@ export function ButtonPane() {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => setActiveTool(tool)}
-                  disabled={!settings.isLocked || readOnly}
+                  disabled={!isAnyPaneLocked || readOnly}
                   className={`p-2 rounded-md transition-colors ${
-                    annotations.activeTool === tool && settings.isLocked
+                    annotations.activeTool === tool && isAnyPaneLocked
                       ? "bg-accent text-accent-foreground"
                       : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
                   }`}
@@ -370,7 +373,7 @@ export function ButtonPane() {
               </TooltipTrigger>
               <TooltipContent>
                 {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
-                {!settings.isLocked && tm("tooltips.annotateModeLockHint")}
+                {!isAnyPaneLocked && tm("tooltips.annotateModeLockHint")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -439,13 +442,13 @@ export function ButtonPane() {
           <SwitchingButtonIcon
             iconOne={<Lock size={20} />}
             iconTwo={<LockOpen size={20} />}
-            bool={settings.isLocked}
-            callback={toggleLocked}
+            bool={isPaneLocked(activeEditorIndex)}
+            callback={toggleFocusedPaneLocked}
             buttonProps={{ "data-testid": "lockButton", disabled: readOnly }}
           />
         </TooltipTrigger>
         <TooltipContent>
-          {settings.isLocked
+          {isPaneLocked(activeEditorIndex)
             ? tm("tooltips.switchToEditMode")
             : tm("tooltips.switchToAnnotateMode")}{" "}
           <kbd>K</kbd>

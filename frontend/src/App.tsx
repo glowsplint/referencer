@@ -277,11 +277,15 @@ export function App({ workspaceId, navigate }: AppProps) {
   const [mobileDialogDismissed, setMobileDialogDismissed] = useState(false);
   const [mobileAnnotationPanelOpen, setMobileAnnotationPanelOpen] = useState(false);
 
-  useToolShortcuts({ isLocked: settings.isLocked, setActiveTool });
+  const { isPaneLocked, isAnyPaneLocked, activeEditorIndex } = workspace;
+  const focusedPaneLocked = isPaneLocked(activeEditorIndex);
+  const anyPaneLocked = isAnyPaneLocked;
+
+  useToolShortcuts({ isLocked: anyPaneLocked, setActiveTool });
   useToggleShortcuts({
     toggleDarkMode: workspace.toggleDarkMode,
     toggleMultipleRowsLayout: workspace.toggleMultipleRowsLayout,
-    toggleLocked: workspace.toggleLocked,
+    toggleLocked: workspace.toggleFocusedPaneLocked,
     toggleManagementPane: workspace.toggleManagementPane,
     toggleCommentPlacement: workspace.toggleCommentPlacement,
   });
@@ -311,7 +315,7 @@ export function App({ workspaceId, navigate }: AppProps) {
 
   const { selection, selectionHidden, selectWord, selectRange, clearSelection, hideSelection } =
     useWordSelection({
-      isLocked: settings.isLocked,
+      isLocked: anyPaneLocked,
       editorsRef,
       containerRef,
       editorCount,
@@ -323,7 +327,7 @@ export function App({ workspaceId, navigate }: AppProps) {
     });
 
   const { drawingState, confirmSelection } = useDrawingMode({
-    isLocked: settings.isLocked,
+    isLocked: anyPaneLocked,
     activeTool: annotations.activeTool,
     selection,
     activeLayerId,
@@ -336,7 +340,7 @@ export function App({ workspaceId, navigate }: AppProps) {
   });
 
   const { confirmComment } = useCommentMode({
-    isLocked: settings.isLocked,
+    isLocked: anyPaneLocked,
     activeTool: annotations.activeTool,
     selection,
     activeLayerId,
@@ -351,7 +355,7 @@ export function App({ workspaceId, navigate }: AppProps) {
   });
 
   const { confirmHighlight } = useHighlightMode({
-    isLocked: settings.isLocked,
+    isLocked: anyPaneLocked,
     activeTool: annotations.activeTool,
     selection,
     activeLayerId,
@@ -365,7 +369,7 @@ export function App({ workspaceId, navigate }: AppProps) {
   });
 
   const { confirmUnderline } = useUnderlineMode({
-    isLocked: settings.isLocked,
+    isLocked: anyPaneLocked,
     activeTool: annotations.activeTool,
     selection,
     activeLayerId,
@@ -379,7 +383,7 @@ export function App({ workspaceId, navigate }: AppProps) {
   });
 
   const { confirmErase, eraseAtPosition } = useEraserMode({
-    isLocked: settings.isLocked,
+    isLocked: anyPaneLocked,
     activeTool: annotations.activeTool,
     selection,
     layers,
@@ -392,7 +396,7 @@ export function App({ workspaceId, navigate }: AppProps) {
   });
 
   useStatusHints({
-    isLocked: settings.isLocked,
+    isLocked: anyPaneLocked,
     effectiveReadOnly,
     activeTool: annotations.activeTool,
     selection,
@@ -419,7 +423,7 @@ export function App({ workspaceId, navigate }: AppProps) {
     handleMouseMove,
     handleMouseUp: rawHandleMouseUp,
   } = useDragSelection({
-    isLocked: settings.isLocked,
+    isLocked: anyPaneLocked,
     activeTool: annotations.activeTool,
     selectWord,
     selectRange,
@@ -545,7 +549,7 @@ export function App({ workspaceId, navigate }: AppProps) {
     sectionVisible: sectionVisibility[i] !== false,
     sectionName: workspace.sectionNames[i],
     onUpdateName: (name: string) => workspace.updateSectionName(i, name),
-    isLocked: settings.isLocked,
+    isLocked: isPaneLocked(i),
     effectiveReadOnly,
     activeTool: annotations.activeTool,
     fragment: workspace.yjs.getFragment(i),
@@ -587,11 +591,11 @@ export function App({ workspaceId, navigate }: AppProps) {
               <div className="flex flex-col flex-1 min-w-0">
                 <TitleBar navigate={navigate} />
                 <UnsavedBanner />
-                <SimpleEditorToolbar isLocked={settings.isLocked} />
+                <SimpleEditorToolbar isLocked={focusedPaneLocked} />
                 {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
                 <div className="flex flex-1 min-w-0 min-h-0">
                   {!isMobile &&
-                    settings.isLocked &&
+                    anyPaneLocked &&
                     ((settings.commentPlacement === "left" && hasAnyAnnotations) ||
                       (settings.commentPlacement === "both" && hasLeftAnnotations)) && (
                       <>
@@ -618,7 +622,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                   <div
                     ref={containerRef}
                     data-testid="editorContainer"
-                    className={`relative flex flex-1 min-w-0 min-h-0 flex-col${settings.isLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${settings.isLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${settings.isLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
+                    className={`relative flex flex-1 min-w-0 min-h-0 flex-col${anyPaneLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${anyPaneLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${anyPaneLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
                   >
                     <ErrorBoundary silent>
                       <ArrowOverlay
@@ -633,7 +637,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                         activeTool={annotations.activeTool}
                         sectionVisibility={sectionVisibility}
                         isDarkMode={settings.isDarkMode}
-                        isLocked={settings.isLocked || effectiveReadOnly}
+                        isLocked={anyPaneLocked || effectiveReadOnly}
                         hideOffscreenArrows={settings.hideOffscreenArrows}
                       />
                     </ErrorBoundary>
@@ -728,7 +732,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                               <div className="flex-1 min-h-0 overflow-hidden">
                                 <ErrorBoundary>
                                   <EditorPane
-                                    isLocked={settings.isLocked || effectiveReadOnly}
+                                    isLocked={isPaneLocked(i) || effectiveReadOnly}
                                     activeTool={annotations.activeTool}
                                     content={PLACEHOLDER_CONTENT}
                                     index={i}
@@ -736,17 +740,17 @@ export function App({ workspaceId, navigate }: AppProps) {
                                     onEditorMount={handleEditorMount}
                                     onFocus={handlePaneFocus}
                                     onMouseDown={
-                                      settings.isLocked && !effectiveReadOnly
+                                      isPaneLocked(i) && !effectiveReadOnly
                                         ? handleMouseDown
                                         : undefined
                                     }
                                     onMouseMove={
-                                      settings.isLocked && !effectiveReadOnly
+                                      isPaneLocked(i) && !effectiveReadOnly
                                         ? handleMouseMove
                                         : undefined
                                     }
                                     onMouseUp={
-                                      settings.isLocked && !effectiveReadOnly
+                                      isPaneLocked(i) && !effectiveReadOnly
                                         ? handleMouseUp
                                         : undefined
                                     }
@@ -769,7 +773,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                     )}
                   </div>
                   {!isMobile &&
-                    settings.isLocked &&
+                    anyPaneLocked &&
                     ((settings.commentPlacement === "right" && hasAnyAnnotations) ||
                       (settings.commentPlacement === "both" && hasRightAnnotations)) && (
                       <>
@@ -814,7 +818,7 @@ export function App({ workspaceId, navigate }: AppProps) {
             />
           )}
           {/* Mobile annotation drawer: bottom panel with read-only annotation cards */}
-          {isMobile && settings.isLocked && hasAnyAnnotations && (
+          {isMobile && anyPaneLocked && hasAnyAnnotations && (
             <>
               {!mobileAnnotationPanelOpen && (
                 <button
