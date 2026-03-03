@@ -13,6 +13,7 @@ import { preferences } from "./api/preferences";
 import { cleanExpiredSessions } from "./auth/store";
 import { createLogger } from "./lib/logger";
 import { createMetrics } from "./lib/metrics";
+import { getClientIp } from "./lib/client-ip";
 import type { Env } from "./env";
 
 const app = new Hono<Env>();
@@ -32,12 +33,6 @@ app.use("*", async (c, next) => {
   const metrics = c.get("metrics");
   metrics.trackRequest(c.req.method, c.req.path, c.res.status, durationMs);
 });
-
-const getClientIp = (c: any) =>
-  c.req.header("cf-connecting-ip") ??
-  c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
-  c.req.header("x-real-ip") ??
-  "unknown";
 
 const shareResolveLimiter = kvRateLimiter({
   windowMs: 60_000,
