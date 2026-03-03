@@ -14,6 +14,9 @@ export const onRequest: PagesFunction = async (context) => {
   headers.set("x-forwarded-host", url.host);
   headers.set("host", target.host);
 
+  const clientIp = context.request.headers.get("cf-connecting-ip");
+  if (clientIp) headers.set("x-real-client-ip", clientIp);
+
   // Explicitly preserve the cookie header — the Headers constructor or
   // Cloudflare's CDN layer can strip it during cross-origin subrequests.
   const cookie = context.request.headers.get("cookie");
