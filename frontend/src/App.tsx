@@ -649,128 +649,146 @@ export function App({ workspaceId, navigate }: AppProps) {
                         <Loader2 className="size-8 animate-spin text-muted-foreground" />
                       </div>
                     )}
-                    {!settings.isMultipleRowsLayout ? (
-                      <>
-                        {/* Top row */}
-                        <div
-                          ref={topRowRef}
-                          className="flex flex-row min-w-0 min-h-0"
-                          style={{ flex: editorCount > 2 ? `${rowSplit} 0 0%` : "1 0 0%" }}
-                        >
-                          <EditorCell key={editorKeys[0]} {...editorCellProps(0)} />
-                          {editorCount >= 2 && sectionVisibility[0] && sectionVisibility[1] && (
-                            <Divider
-                              onResize={handleColumnResize}
-                              containerRef={topRowRef}
-                              direction="horizontal"
-                            />
-                          )}
-                          {editorCount >= 2 && (
-                            <EditorCell key={editorKeys[1]} {...editorCellProps(1)} />
-                          )}
-                        </div>
-                        {/* Row divider */}
-                        {editorCount > 2 && (
-                          <Divider
-                            onResize={handleRowResize}
-                            containerRef={containerRef}
-                            direction="vertical"
-                          />
-                        )}
-                        {/* Bottom row */}
-                        {editorCount > 2 && (
-                          <div
-                            ref={bottomRowRef}
-                            className="flex flex-row min-w-0 min-h-0"
-                            style={{ flex: `${100 - rowSplit} 0 0%` }}
-                          >
-                            <EditorCell
-                              key={editorKeys[2]}
-                              {...editorCellProps(
-                                2,
-                                editorCount === 3 && settings.thirdEditorFullWidth,
+                    {!settings.isMultipleRowsLayout
+                      ? (() => {
+                          const topRowVisible =
+                            sectionVisibility[0] || (editorCount >= 2 && sectionVisibility[1]);
+                          const bottomRowVisible =
+                            editorCount > 2 &&
+                            (sectionVisibility[2] || (editorCount >= 4 && sectionVisibility[3]));
+                          const bothRowsVisible = topRowVisible && bottomRowVisible;
+                          return (
+                            <>
+                              {/* Top row */}
+                              {topRowVisible && (
+                                <div
+                                  ref={topRowRef}
+                                  className="flex flex-row min-w-0 min-h-0"
+                                  style={{
+                                    flex: bothRowsVisible ? `${rowSplit} 0 0%` : "1 0 0%",
+                                  }}
+                                >
+                                  <EditorCell key={editorKeys[0]} {...editorCellProps(0)} />
+                                  {editorCount >= 2 &&
+                                    sectionVisibility[0] &&
+                                    sectionVisibility[1] && (
+                                      <Divider
+                                        onResize={handleColumnResize}
+                                        containerRef={topRowRef}
+                                        direction="horizontal"
+                                      />
+                                    )}
+                                  {editorCount >= 2 && (
+                                    <EditorCell key={editorKeys[1]} {...editorCellProps(1)} />
+                                  )}
+                                </div>
                               )}
-                            />
-                            {editorCount >= 4 && sectionVisibility[2] && sectionVisibility[3] && (
-                              <Divider
-                                onResize={handleColumnResize}
-                                containerRef={bottomRowRef}
-                                direction="horizontal"
-                              />
-                            )}
-                            {editorCount >= 4 && (
-                              <EditorCell key={editorKeys[3]} {...editorCellProps(3)} />
-                            )}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      editorWidths.map((width, i) => {
-                        const showDivider =
-                          i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
-                        return (
-                          <Fragment key={editorKeys[i]}>
-                            {showDivider && (
-                              <Divider
-                                onResize={(pct) => handleDividerResize(i - 1, pct)}
-                                containerRef={containerRef}
-                                direction="vertical"
-                              />
-                            )}
-                            <div
-                              className="min-w-0 min-h-0 overflow-hidden flex flex-col"
-                              style={{
-                                flex: `${width} 0 0%`,
-                                display: sectionVisibility[i] === false ? "none" : undefined,
-                              }}
-                            >
-                              <PassageHeader
-                                name={workspace.sectionNames[i]}
-                                index={i}
-                                onUpdateName={(name) => workspace.updateSectionName(i, name)}
-                              />
-                              <div className="flex-1 min-h-0 overflow-hidden">
-                                <ErrorBoundary>
-                                  <EditorPane
-                                    isLocked={isPaneLocked(i) || effectiveReadOnly}
-                                    activeTool={annotations.activeTool}
-                                    content={PLACEHOLDER_CONTENT}
-                                    index={i}
-                                    fragment={workspace.yjs.getFragment(i)}
-                                    onEditorMount={handleEditorMount}
-                                    onFocus={handlePaneFocus}
-                                    onMouseDown={
-                                      isPaneLocked(i) && !effectiveReadOnly
-                                        ? handleMouseDown
-                                        : undefined
-                                    }
-                                    onMouseMove={
-                                      isPaneLocked(i) && !effectiveReadOnly
-                                        ? handleMouseMove
-                                        : undefined
-                                    }
-                                    onMouseUp={
-                                      isPaneLocked(i) && !effectiveReadOnly
-                                        ? handleMouseUp
-                                        : undefined
-                                    }
-                                    layers={layers}
-                                    selection={selection}
-                                    selectionHidden={selectionHidden}
-                                    activeLayerColor={activeLayerColor}
-                                    isDarkMode={settings.isDarkMode}
-                                    removeArrow={removeArrow}
-                                    sectionVisibility={sectionVisibility}
-                                    selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-                                    yjsSynced={workspace.readyForSeeding}
+                              {/* Row divider */}
+                              {bothRowsVisible && (
+                                <Divider
+                                  onResize={handleRowResize}
+                                  containerRef={containerRef}
+                                  direction="vertical"
+                                />
+                              )}
+                              {/* Bottom row */}
+                              {bottomRowVisible && (
+                                <div
+                                  ref={bottomRowRef}
+                                  className="flex flex-row min-w-0 min-h-0"
+                                  style={{
+                                    flex: bothRowsVisible ? `${100 - rowSplit} 0 0%` : "1 0 0%",
+                                  }}
+                                >
+                                  <EditorCell
+                                    key={editorKeys[2]}
+                                    {...editorCellProps(
+                                      2,
+                                      editorCount === 3 && settings.thirdEditorFullWidth,
+                                    )}
                                   />
-                                </ErrorBoundary>
+                                  {editorCount >= 4 &&
+                                    sectionVisibility[2] &&
+                                    sectionVisibility[3] && (
+                                      <Divider
+                                        onResize={handleColumnResize}
+                                        containerRef={bottomRowRef}
+                                        direction="horizontal"
+                                      />
+                                    )}
+                                  {editorCount >= 4 && (
+                                    <EditorCell key={editorKeys[3]} {...editorCellProps(3)} />
+                                  )}
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()
+                      : editorWidths.map((width, i) => {
+                          const showDivider =
+                            i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
+                          return (
+                            <Fragment key={editorKeys[i]}>
+                              {showDivider && (
+                                <Divider
+                                  onResize={(pct) => handleDividerResize(i - 1, pct)}
+                                  containerRef={containerRef}
+                                  direction="vertical"
+                                />
+                              )}
+                              <div
+                                className="min-w-0 min-h-0 overflow-hidden flex flex-col"
+                                style={{
+                                  flex: `${width} 0 0%`,
+                                  display: sectionVisibility[i] === false ? "none" : undefined,
+                                }}
+                              >
+                                <PassageHeader
+                                  name={workspace.sectionNames[i]}
+                                  index={i}
+                                  onUpdateName={(name) => workspace.updateSectionName(i, name)}
+                                />
+                                <div className="flex-1 min-h-0 overflow-hidden">
+                                  <ErrorBoundary>
+                                    <EditorPane
+                                      isLocked={isPaneLocked(i) || effectiveReadOnly}
+                                      activeTool={annotations.activeTool}
+                                      content={PLACEHOLDER_CONTENT}
+                                      index={i}
+                                      fragment={workspace.yjs.getFragment(i)}
+                                      onEditorMount={handleEditorMount}
+                                      onFocus={handlePaneFocus}
+                                      onMouseDown={
+                                        isPaneLocked(i) && !effectiveReadOnly
+                                          ? handleMouseDown
+                                          : undefined
+                                      }
+                                      onMouseMove={
+                                        isPaneLocked(i) && !effectiveReadOnly
+                                          ? handleMouseMove
+                                          : undefined
+                                      }
+                                      onMouseUp={
+                                        isPaneLocked(i) && !effectiveReadOnly
+                                          ? handleMouseUp
+                                          : undefined
+                                      }
+                                      layers={layers}
+                                      selection={selection}
+                                      selectionHidden={selectionHidden}
+                                      activeLayerColor={activeLayerColor}
+                                      isDarkMode={settings.isDarkMode}
+                                      removeArrow={removeArrow}
+                                      sectionVisibility={sectionVisibility}
+                                      selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
+                                      yjsSynced={workspace.readyForSeeding}
+                                    />
+                                  </ErrorBoundary>
+                                </div>
                               </div>
-                            </div>
-                          </Fragment>
-                        );
-                      })
-                    )}
+                            </Fragment>
+                          );
+                        })}
                   </div>
                   {!isMobile &&
                     anyPaneLocked &&

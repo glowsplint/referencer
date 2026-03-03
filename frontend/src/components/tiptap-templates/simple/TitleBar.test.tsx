@@ -59,6 +59,21 @@ describe("TitleBar", () => {
       renderTitleBar();
       expect(screen.getByText("Title")).toBeInTheDocument();
     });
+
+    it("then shows the export PDF button", () => {
+      renderTitleBar();
+      expect(screen.getByTestId("exportPdfButton")).toBeInTheDocument();
+    });
+  });
+
+  describe("when the export PDF button is clicked", () => {
+    it("then calls window.print", () => {
+      const printSpy = vi.spyOn(window, "print").mockImplementation(() => {});
+      renderTitleBar();
+      fireEvent.click(screen.getByTestId("exportPdfButton"));
+      expect(printSpy).toHaveBeenCalledOnce();
+      printSpy.mockRestore();
+    });
   });
 
   describe("when the share button is clicked", () => {

@@ -60,4 +60,22 @@ describe("PassageHeader", () => {
       expect(onUpdateName).toHaveBeenCalledWith("Exodus 2");
     });
   });
+
+  describe("when Escape is pressed during rename", () => {
+    it("then cancels editing without calling onUpdateName", async () => {
+      const user = userEvent.setup();
+      const onUpdateName = vi.fn();
+      render(<PassageHeader name="Genesis 1" index={0} onUpdateName={onUpdateName} />);
+
+      await user.dblClick(screen.getByTestId("passageHeader-0"));
+
+      const input = screen.getByTestId("passageHeaderInput-0");
+      await user.clear(input);
+      await user.type(input, "Should Not Save");
+      await user.keyboard("{Escape}");
+
+      expect(onUpdateName).not.toHaveBeenCalled();
+      expect(screen.getByTestId("passageHeader-0")).toHaveTextContent("Genesis 1");
+    });
+  });
 });
