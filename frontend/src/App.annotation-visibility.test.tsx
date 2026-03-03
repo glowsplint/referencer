@@ -1,0 +1,513 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { AuthProvider } from "./contexts/AuthContext";
+import { TourProvider } from "./contexts/TourContext";
+import { App } from "./App";
+
+vi.mock("@/lib/auth-client", () => ({
+  fetchAuthStatus: vi.fn().mockResolvedValue({ authenticated: false }),
+  loginWith: vi.fn(),
+  logout: vi.fn(),
+}));
+
+vi.mock("@/lib/tour-client", () => ({
+  fetchTourPreferences: vi.fn().mockResolvedValue({}),
+  saveTourPreference: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock("./hooks/ui/use-is-breakpoint", () => ({
+  useIsBreakpoint: () => false,
+}));
+
+const mockWorkspace = {
+  settings: {
+    isDarkMode: false,
+    isLayersOn: false,
+    isMultipleRowsLayout: false,
+    lockedPanes: { 0: true, 1: true, 2: true, 3: true } as Record<number, boolean>,
+    showStatusBar: true,
+    hideOffscreenArrows: false,
+    commentPlacement: "right" as const,
+    thirdEditorFullWidth: true,
+  },
+  isPaneLocked: (i: number) => mockWorkspace.settings.lockedPanes[i] ?? true,
+  isAnyPaneLocked: true,
+  activeEditorIndex: 0,
+  annotations: { activeTool: "selection" as const },
+  layers: [] as {
+    id: string;
+    color: string;
+    name: string;
+    visible: boolean;
+    arrowStyle: string;
+    highlights: {
+      id: string;
+      editorIndex: number;
+      from: number;
+      to: number;
+      text: string;
+      annotation: string;
+      type: string;
+      visible?: boolean;
+    }[];
+    arrows: {
+      id: string;
+      from: { editorIndex: number; from: number; to: number; text: string };
+      to: { editorIndex: number; from: number; to: number; text: string };
+      visible?: boolean;
+    }[];
+    underlines: unknown[];
+  }[],
+  activeLayerId: null as string | null,
+  editorCount: 2,
+  activeEditor: null,
+  editorWidths: [50, 50],
+  isManagementPaneOpen: false,
+  toggleDarkMode: vi.fn(),
+  toggleLayersOn: vi.fn(),
+  toggleMultipleRowsLayout: vi.fn(),
+  toggleLocked: vi.fn(),
+  setActiveTool: vi.fn(),
+  setArrowStylePickerOpen: vi.fn(),
+  arrowStylePickerOpen: false,
+  activeArrowStyle: "solid" as const,
+  setActiveArrowStyle: vi.fn(),
+  selectedArrow: null as { layerId: string; arrowId: string } | null,
+  setSelectedArrow: vi.fn(),
+  updateArrowStyle: vi.fn(),
+  readOnly: false,
+  columnSplit: 50,
+  rowSplit: 50,
+  handleColumnResize: vi.fn(),
+  handleRowResize: vi.fn(),
+  toggleManagementPane: vi.fn(),
+  toggleHideOffscreenArrows: vi.fn(),
+  toggleShowStatusBar: vi.fn(),
+  toggleCommentPlacement: vi.fn(),
+  toggleThirdEditorFullWidth: vi.fn(),
+  loadDemoContent: vi.fn(),
+  demoLoaded: false,
+  demoLoading: false,
+  addLayer: vi.fn(),
+  removeLayer: vi.fn(),
+  setActiveLayer: vi.fn(),
+  updateLayerColor: vi.fn(),
+  updateLayerName: vi.fn(),
+  toggleLayerVisibility: vi.fn(),
+  toggleAllLayerVisibility: vi.fn(),
+  addHighlight: vi.fn(),
+  removeHighlight: vi.fn(),
+  updateHighlightAnnotation: vi.fn(),
+  addReply: vi.fn(),
+  updateReply: vi.fn(),
+  removeReply: vi.fn(),
+  toggleReactionOnHighlight: vi.fn(),
+  toggleReactionOnReply: vi.fn(),
+  clearLayerHighlights: vi.fn(),
+  addArrow: vi.fn(),
+  removeArrow: vi.fn(),
+  clearLayerArrows: vi.fn(),
+  clearLayerUnderlines: vi.fn(),
+  addUnderline: vi.fn(),
+  removeUnderline: vi.fn(),
+  toggleHighlightVisibility: vi.fn(),
+  toggleArrowVisibility: vi.fn(),
+  toggleUnderlineVisibility: vi.fn(),
+  setActiveLayerId: vi.fn(),
+  editorsRef: { current: new Map() },
+  sectionVisibility: [true, true],
+  sectionNames: ["Passage 1", "Passage 2"],
+  editorKeys: [1, 2],
+  addEditor: vi.fn(),
+  removeEditor: vi.fn(),
+  reorderEditors: vi.fn(),
+  updateSectionName: vi.fn(),
+  toggleSectionVisibility: vi.fn(),
+  toggleAllSectionVisibility: vi.fn(),
+  handleDividerResize: vi.fn(),
+  handleEditorMount: vi.fn(),
+  handlePaneFocus: vi.fn(),
+  history: {
+    log: [],
+    canUndo: false,
+    canRedo: false,
+    undo: vi.fn(),
+    redo: vi.fn(),
+    record: vi.fn(),
+  },
+  wsConnected: false,
+  workspaceId: "test-workspace",
+  yjs: {
+    provider: null,
+    doc: null,
+    connected: false,
+    synced: false,
+    getFragment: () => null,
+    awareness: null,
+  },
+  unifiedUndo: {
+    undo: vi.fn(),
+    redo: vi.fn(),
+    canUndo: false,
+    canRedo: false,
+  },
+};
+
+vi.mock("./hooks/data/use-editor-workspace", () => ({
+  useEditorWorkspace: () => mockWorkspace,
+}));
+
+vi.mock("./hooks/data/use-workspace-autosave", () => ({
+  useWorkspaceAutosave: vi.fn(),
+}));
+
+vi.mock("./components/UnsavedBanner", () => ({
+  UnsavedBanner: () => <div data-testid="unsaved-banner" />,
+}));
+
+vi.mock("@tiptap/react", () => ({
+  useEditor: () => null,
+  useCurrentEditor: () => ({ editor: null }),
+  EditorContent: (props: Record<string, unknown>) => (
+    <div data-testid="editor-content" {...props} />
+  ),
+  EditorContext: {
+    Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  },
+}));
+
+vi.mock("./components/tiptap-templates/simple", () => ({
+  TitleBar: () => <div data-testid="title-bar" />,
+  SimpleEditorToolbar: () => <div data-testid="toolbar" />,
+  EditorPane: (props: Record<string, unknown>) => (
+    <div
+      data-testid="editor-pane"
+      data-locked={String(props.isLocked ?? false)}
+      data-index={props.index}
+      data-layer-count={Array.isArray(props.layers) ? (props.layers as unknown[]).length : 0}
+    />
+  ),
+  SIMPLE_EDITOR_CONTENT: {},
+}));
+
+vi.mock("./components/AnnotationPanel", () => ({
+  AnnotationPanel: (props: Record<string, unknown>) => (
+    <div data-testid="annotation-panel" data-placement={props.placement} />
+  ),
+  DEFAULT_PANEL_WIDTH: 224,
+  MIN_PANEL_WIDTH: 160,
+  MAX_PANEL_WIDTH: 400,
+}));
+
+const defaultProps = {
+  workspaceId: "test-workspace",
+  navigate: vi.fn(),
+};
+
+function renderApp() {
+  return render(
+    <AuthProvider>
+      <TourProvider>
+        <App {...defaultProps} />
+      </TourProvider>
+    </AuthProvider>,
+  );
+}
+
+function makeLayer(
+  id: string,
+  name: string,
+  opts: {
+    visible?: boolean;
+    highlights?: {
+      id: string;
+      editorIndex: number;
+      from: number;
+      to: number;
+      text: string;
+      annotation: string;
+      type: string;
+    }[];
+    arrows?: {
+      id: string;
+      from: { editorIndex: number; from: number; to: number; text: string };
+      to: { editorIndex: number; from: number; to: number; text: string };
+    }[];
+  } = {},
+) {
+  return {
+    id,
+    name,
+    color: "#fca5a5",
+    visible: opts.visible ?? true,
+    arrowStyle: "solid",
+    highlights: opts.highlights ?? [],
+    arrows: opts.arrows ?? [],
+    underlines: [],
+  };
+}
+
+function makeComment(id: string, editorIndex: number, text: string) {
+  return {
+    id,
+    editorIndex,
+    from: 0,
+    to: 5,
+    text: "word",
+    annotation: text,
+    type: "comment",
+  };
+}
+
+beforeEach(() => {
+  mockWorkspace.settings = {
+    isDarkMode: false,
+    isLayersOn: false,
+    isMultipleRowsLayout: false,
+    lockedPanes: { 0: true, 1: true, 2: true, 3: true } as Record<number, boolean>,
+    showStatusBar: true,
+    hideOffscreenArrows: false,
+    commentPlacement: "right" as const,
+    thirdEditorFullWidth: true,
+  };
+  mockWorkspace.isAnyPaneLocked = true;
+  mockWorkspace.layers = [];
+  mockWorkspace.activeLayerId = null;
+  mockWorkspace.editorCount = 2;
+  mockWorkspace.editorWidths = [50, 50];
+  mockWorkspace.editorKeys = [1, 2];
+  mockWorkspace.sectionVisibility = [true, true];
+  mockWorkspace.sectionNames = ["Passage 1", "Passage 2"];
+  mockWorkspace.isManagementPaneOpen = false;
+  mockWorkspace.annotations = { activeTool: "selection" as const };
+  mockWorkspace.selectedArrow = null;
+  mockWorkspace.demoLoading = false;
+});
+
+describe("App annotation visibility (layer toggles)", () => {
+  it("when layer is hidden, then its annotations disappear (no annotation panel)", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: false,
+        highlights: [makeComment("h1", 0, "Layer 1 note")],
+      }),
+    ];
+    renderApp();
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
+  });
+
+  it("when layer is visible, then its annotations are shown (annotation panel renders)", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "Layer 1 note")],
+      }),
+    ];
+    renderApp();
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+  });
+
+  it("when layer is shown again, then its annotations are restored", () => {
+    // First render with visible layer
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "Restored note")],
+      }),
+    ];
+    const { unmount } = renderApp();
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+    unmount();
+
+    // Hide the layer
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: false,
+        highlights: [makeComment("h1", 0, "Restored note")],
+      }),
+    ];
+    const { unmount: unmount2 } = renderApp();
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
+    unmount2();
+
+    // Show the layer again
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "Restored note")],
+      }),
+    ];
+    renderApp();
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+  });
+
+  it("when one layer is hidden, then annotations on other layers remain visible", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: false,
+        highlights: [makeComment("h1", 0, "L1 annotation")],
+      }),
+      makeLayer("layer-2", "Layer 2", {
+        visible: true,
+        highlights: [makeComment("h2", 0, "L2 annotation")],
+      }),
+    ];
+    renderApp();
+    // Panel is still shown because layer-2 is visible and has comments
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+  });
+
+  it("when all layers are hidden, then annotation panel disappears", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: false,
+        highlights: [makeComment("h1", 0, "Only note")],
+      }),
+    ];
+    renderApp();
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
+  });
+});
+
+describe("App annotation visibility (passage toggles)", () => {
+  it("when passage is hidden, then its annotations disappear", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "Passage 1 note")],
+      }),
+    ];
+    mockWorkspace.sectionVisibility = [false, true];
+    renderApp();
+    // Annotation is in passage 0, which is hidden
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
+  });
+
+  it("when passage is shown again, then its annotations are restored", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "Restored passage note")],
+      }),
+    ];
+
+    // First with passage visible
+    mockWorkspace.sectionVisibility = [true, true];
+    const { unmount } = renderApp();
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+    unmount();
+
+    // Hide passage
+    mockWorkspace.sectionVisibility = [false, true];
+    const { unmount: unmount2 } = renderApp();
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
+    unmount2();
+
+    // Show passage again
+    mockWorkspace.sectionVisibility = [true, true];
+    renderApp();
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+  });
+
+  it("when one passage is hidden, then annotations in other passages remain visible", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "P1 note"), makeComment("h2", 1, "P2 note")],
+      }),
+    ];
+    mockWorkspace.sectionVisibility = [false, true];
+    renderApp();
+    // Panel still shows because passage 1 has a visible comment
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+  });
+
+  it("when all passages are hidden, then annotation panel disappears", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "P1 note"), makeComment("h2", 1, "P2 note")],
+      }),
+    ];
+    mockWorkspace.sectionVisibility = [false, false];
+    renderApp();
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
+  });
+});
+
+describe("App annotation visibility (combined layer + passage toggles)", () => {
+  it("when layer is hidden then passage is hidden, showing layer alone does not restore annotations", () => {
+    // Layer hidden, passage hidden => no annotations
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "Combined note")],
+      }),
+    ];
+    mockWorkspace.sectionVisibility = [false, true];
+    renderApp();
+    // Passage 0 hidden => annotation in editorIndex 0 is not visible
+    expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
+  });
+
+  it("when both layer and passage are visible, then annotations appear", () => {
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "Combined note")],
+      }),
+    ];
+    mockWorkspace.sectionVisibility = [true, true];
+    renderApp();
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+  });
+
+  it("when layers and passages are toggled independently, then annotations respect both visibility states", () => {
+    // Layer 1 visible, layer 2 visible; passage 0 visible, passage 1 visible
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "L1P1"), makeComment("h2", 1, "L1P2")],
+      }),
+      makeLayer("layer-2", "Layer 2", {
+        visible: true,
+        highlights: [makeComment("h3", 0, "L2P1")],
+      }),
+    ];
+    mockWorkspace.sectionVisibility = [true, true];
+    const { unmount } = renderApp();
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+    unmount();
+
+    // Hide layer 1 => only L2P1 remains (in passage 0)
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: false,
+        highlights: [makeComment("h1", 0, "L1P1"), makeComment("h2", 1, "L1P2")],
+      }),
+      makeLayer("layer-2", "Layer 2", {
+        visible: true,
+        highlights: [makeComment("h3", 0, "L2P1")],
+      }),
+    ];
+    const { unmount: unmount2 } = renderApp();
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+    unmount2();
+
+    // Show layer 1, hide passage 0 => L1P1 and L2P1 hidden, L1P2 visible
+    mockWorkspace.layers = [
+      makeLayer("layer-1", "Layer 1", {
+        visible: true,
+        highlights: [makeComment("h1", 0, "L1P1"), makeComment("h2", 1, "L1P2")],
+      }),
+      makeLayer("layer-2", "Layer 2", {
+        visible: true,
+        highlights: [makeComment("h3", 0, "L2P1")],
+      }),
+    ];
+    mockWorkspace.sectionVisibility = [false, true];
+    renderApp();
+    // L1P2 is in passage 1 (visible) on layer 1 (visible) => panel should show
+    expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
+  });
+});

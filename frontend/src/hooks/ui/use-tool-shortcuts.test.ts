@@ -42,6 +42,36 @@ describe("useToolShortcuts", () => {
     expect(setActiveTool).toHaveBeenCalledWith("comments");
   });
 
+  it("when H is pressed, then sets highlight tool", () => {
+    const setActiveTool = vi.fn();
+    renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
+
+    act(() => {
+      fireKeyDown("KeyH");
+    });
+    expect(setActiveTool).toHaveBeenCalledWith("highlight");
+  });
+
+  it("when U is pressed, then sets underline tool", () => {
+    const setActiveTool = vi.fn();
+    renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
+
+    act(() => {
+      fireKeyDown("KeyU");
+    });
+    expect(setActiveTool).toHaveBeenCalledWith("underline");
+  });
+
+  it("when E is pressed, then sets eraser tool", () => {
+    const setActiveTool = vi.fn();
+    renderHook(() => useToolShortcuts({ isLocked: true, setActiveTool }));
+
+    act(() => {
+      fireKeyDown("KeyE");
+    });
+    expect(setActiveTool).toHaveBeenCalledWith("eraser");
+  });
+
   it("when isLocked is false, then does nothing", () => {
     const setActiveTool = vi.fn();
     renderHook(() => useToolShortcuts({ isLocked: false, setActiveTool }));
