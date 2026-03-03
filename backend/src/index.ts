@@ -94,7 +94,7 @@ app.use("*", async (c, next) => {
   c.res.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
   c.res.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' wss: https:; frame-ancestors 'none'",
+    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' wss: https:; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none'",
   );
   c.res.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
   c.res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
