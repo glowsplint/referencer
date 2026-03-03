@@ -320,5 +320,41 @@ describe("auth routes", () => {
       const setCookie = res.headers.get("set-cookie");
       expect(setCookie).toContain("__session=");
     });
+
+    it("includes Domain in Set-Cookie when x-forwarded-host is a preview subdomain", async () => {
+      const previewEnv = {
+        ...testEnv,
+        FRONTEND_URL: "https://referencer.pages.dev",
+      };
+      const app = new Hono<Env>();
+      app.use("*", async (c, next) => {
+        (c.env as any) = { ...previewEnv, ...c.env };
+        c.set("supabase", createMockSupabase());
+        c.set("logger", { info: () => {}, error: () => {}, warn: () => {} });
+        c.set("metrics", {
+          trackRequest: () => {},
+          trackAuthEvent: () => {},
+          trackRateLimit: () => {},
+          trackError: () => {},
+        });
+        await next();
+      });
+      app.use("*", optionalAuth(testConfig));
+      app.route("/auth", createAuthRoutes());
+
+      const res = await app.request(
+        "/auth/logout",
+        {
+          method: "POST",
+          headers: {
+            "x-forwarded-host": "abc123.referencer.pages.dev",
+          },
+        },
+        previewEnv as any,
+      );
+      expect(res.status).toBe(200);
+      const setCookie = res.headers.get("set-cookie");
+      expect(setCookie).toContain("Domain=referencer.pages.dev");
+    });
   });
 });

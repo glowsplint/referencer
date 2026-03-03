@@ -13,6 +13,7 @@ import {
 } from "./store";
 import { signJwt } from "../lib/jwt";
 import { getCookieDomain, getPreviewOrigin, isAllowedOrigin } from "./cookie-domain";
+import { getClientIp } from "../lib/client-ip";
 import type { Env } from "../env";
 import type { Logger } from "../lib/logger";
 import type { Metrics } from "../lib/metrics";
@@ -22,12 +23,6 @@ interface AuthState {
   codeVerifier?: string;
   origin?: string;
 }
-
-const getClientIp = (c: any) =>
-  c.req.header("cf-connecting-ip") ??
-  c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
-  c.req.header("x-real-ip") ??
-  "unknown";
 
 const authStartLimiter = kvRateLimiter({
   windowMs: 60 * 1000,
@@ -62,7 +57,8 @@ export function createAuthRoutes() {
       const supabase = c.get("supabase");
       const user = await getSessionUser(supabase, token);
       if (!user) {
-        deleteCookie(c, "__session", { path: "/" });
+        const cookieDomain = getCookieDomain(c);
+        deleteCookie(c, "__session", { path: "/", ...(cookieDomain && { domain: cookieDomain }) });
         return c.json({ authenticated: false });
       }
 
@@ -86,7 +82,8 @@ export function createAuthRoutes() {
         log.error("POST /auth/logout session delete failed", { error: String(err) });
       }
     }
-    deleteCookie(c, "__session", { path: "/" });
+    const cookieDomain = getCookieDomain(c);
+    deleteCookie(c, "__session", { path: "/", ...(cookieDomain && { domain: cookieDomain }) });
     log.info("POST /auth/logout");
     c.get("metrics").trackAuthEvent("logout");
     return c.json({ ok: true });
@@ -102,7 +99,8 @@ export function createAuthRoutes() {
     try {
       const supabase = c.get("supabase");
       await revokeAllUserSessions(supabase, user.id);
-      deleteCookie(c, "__session", { path: "/" });
+      const cookieDomain = getCookieDomain(c);
+      deleteCookie(c, "__session", { path: "/", ...(cookieDomain && { domain: cookieDomain }) });
       log.info("POST /auth/logout-all", { userId: user.id });
       return c.json({ success: true });
     } catch (err) {
