@@ -91,7 +91,7 @@ export function SectionList({
             key={`passage-${i}`}
             className={`flex items-center gap-2 px-1 py-0.5 rounded hover:bg-accent/50 cursor-grab${
               dragFromIndex === i ? " opacity-40" : ""
-            }${dropTargetIndex === i && dragFromIndex !== i ? " border-t-2 border-primary" : ""}`}
+            }${dropTargetIndex === i && dragFromIndex !== null && dragFromIndex !== i ? (dragFromIndex < i ? " border-b-2 border-primary" : " border-t-2 border-primary") : ""}`}
             draggable={editorCount > 1}
             data-testid={`passageRow-${i}`}
             onDragStart={(e) => {
