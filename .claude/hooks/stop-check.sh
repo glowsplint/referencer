@@ -10,7 +10,7 @@ fi
 cd "$CLAUDE_PROJECT_DIR/frontend" || exit 0
 
 # Run unit tests (not e2e — too slow for every stop)
-if ! bun run test:run --reporter=dot 2>/dev/null; then
+if ! bun run test:run --changed --reporter=dot 2>/dev/null; then
   echo "Unit tests are failing. Fix them before finishing." >&2
   exit 2
 fi
