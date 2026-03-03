@@ -63,5 +63,20 @@
       "red": "רקע אדום"
     },
     "toggleHighlight": "הפעלת/כיבוי הדגשה ({{color}})"
+  },
+  "table": {
+    "label": "טבלה",
+    "insertTable": "הוסף טבלה",
+    "addColumnBefore": "הוסף עמודה לפני",
+    "addColumnAfter": "הוסף עמודה אחרי",
+    "deleteColumn": "מחק עמודה",
+    "addRowBefore": "הוסף שורה לפני",
+    "addRowAfter": "הוסף שורה אחרי",
+    "deleteRow": "מחק שורה",
+    "deleteTable": "מחק טבלה",
+    "mergeCells": "מזג תאים",
+    "splitCell": "פצל תא",
+    "toggleHeaderRow": "החלף שורת כותרת",
+    "toggleHeaderColumn": "החלף עמודת כותרת"
   }
 }

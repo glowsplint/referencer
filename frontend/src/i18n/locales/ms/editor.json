@@ -63,5 +63,20 @@
       "red": "Latar belakang merah"
     },
     "toggleHighlight": "Togol sorotan ({{color}})"
+  },
+  "table": {
+    "label": "Jadual",
+    "insertTable": "Sisipkan jadual",
+    "addColumnBefore": "Tambah lajur sebelum",
+    "addColumnAfter": "Tambah lajur selepas",
+    "deleteColumn": "Padam lajur",
+    "addRowBefore": "Tambah baris sebelum",
+    "addRowAfter": "Tambah baris selepas",
+    "deleteRow": "Padam baris",
+    "deleteTable": "Padam jadual",
+    "mergeCells": "Gabungkan sel",
+    "splitCell": "Pisahkan sel",
+    "toggleHeaderRow": "Togol baris pengepala",
+    "toggleHeaderColumn": "Togol lajur pengepala"
   }
 }

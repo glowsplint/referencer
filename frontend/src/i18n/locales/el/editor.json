@@ -63,5 +63,20 @@
       "red": "Κόκκινο φόντο"
     },
     "toggleHighlight": "Εναλλαγή επισήμανσης ({{color}})"
+  },
+  "table": {
+    "label": "Πίνακας",
+    "insertTable": "Εισαγωγή πίνακα",
+    "addColumnBefore": "Προσθήκη στήλης πριν",
+    "addColumnAfter": "Προσθήκη στήλης μετά",
+    "deleteColumn": "Διαγραφή στήλης",
+    "addRowBefore": "Προσθήκη γραμμής πριν",
+    "addRowAfter": "Προσθήκη γραμμής μετά",
+    "deleteRow": "Διαγραφή γραμμής",
+    "deleteTable": "Διαγραφή πίνακα",
+    "mergeCells": "Συγχώνευση κελιών",
+    "splitCell": "Διαίρεση κελιού",
+    "toggleHeaderRow": "Εναλλαγή γραμμής κεφαλίδας",
+    "toggleHeaderColumn": "Εναλλαγή στήλης κεφαλίδας"
   }
 }

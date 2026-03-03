@@ -8,15 +8,21 @@
     "superscript": "Superíndice",
     "subscript": "Subíndice"
   },
-  "heading": { "label": "Encabezado {{level}}" },
+  "heading": {
+    "label": "Encabezado {{level}}"
+  },
   "list": {
     "bulletList": "Lista con viñetas",
     "orderedList": "Lista numerada",
     "taskList": "Lista de tareas",
     "label": "Lista"
   },
-  "blockquote": { "label": "Cita en bloque" },
-  "codeBlock": { "label": "Bloque de código" },
+  "blockquote": {
+    "label": "Cita en bloque"
+  },
+  "codeBlock": {
+    "label": "Bloque de código"
+  },
   "link": {
     "label": "Enlace",
     "placeholder": "Introduce la URL",
@@ -24,14 +30,19 @@
     "copyLink": "Copiar enlace",
     "removeLink": "Eliminar enlace"
   },
-  "image": { "label": "Añadir imagen" },
+  "image": {
+    "label": "Añadir imagen"
+  },
   "textAlign": {
     "left": "Alinear a la izquierda",
     "center": "Centrar",
     "right": "Alinear a la derecha",
     "justify": "Justificar"
   },
-  "history": { "undo": "Deshacer", "redo": "Rehacer" },
+  "history": {
+    "undo": "Deshacer",
+    "redo": "Rehacer"
+  },
   "colorHighlight": {
     "label": "Resaltado de color",
     "highlightText": "Resaltar texto",
@@ -52,5 +63,20 @@
       "red": "Fondo rojo"
     },
     "toggleHighlight": "Alternar resaltado ({{color}})"
+  },
+  "table": {
+    "label": "Tabla",
+    "insertTable": "Insertar tabla",
+    "addColumnBefore": "Añadir columna antes",
+    "addColumnAfter": "Añadir columna después",
+    "deleteColumn": "Eliminar columna",
+    "addRowBefore": "Añadir fila antes",
+    "addRowAfter": "Añadir fila después",
+    "deleteRow": "Eliminar fila",
+    "deleteTable": "Eliminar tabla",
+    "mergeCells": "Fusionar celdas",
+    "splitCell": "Dividir celda",
+    "toggleHeaderRow": "Alternar fila de encabezado",
+    "toggleHeaderColumn": "Alternar columna de encabezado"
   }
 }

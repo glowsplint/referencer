@@ -63,5 +63,20 @@
       "red": "Red na background"
     },
     "toggleHighlight": "I-toggle ang highlight ({{color}})"
+  },
+  "table": {
+    "label": "Talahanayan",
+    "insertTable": "Ipasok ang talahanayan",
+    "addColumnBefore": "Magdagdag ng haligi bago",
+    "addColumnAfter": "Magdagdag ng haligi pagkatapos",
+    "deleteColumn": "Tanggalin ang haligi",
+    "addRowBefore": "Magdagdag ng hilera bago",
+    "addRowAfter": "Magdagdag ng hilera pagkatapos",
+    "deleteRow": "Tanggalin ang hilera",
+    "deleteTable": "Tanggalin ang talahanayan",
+    "mergeCells": "Pagsamahin ang mga cell",
+    "splitCell": "Hatiin ang cell",
+    "toggleHeaderRow": "I-toggle ang header row",
+    "toggleHeaderColumn": "I-toggle ang header column"
   }
 }

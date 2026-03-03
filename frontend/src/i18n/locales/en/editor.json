@@ -63,5 +63,20 @@
       "red": "Red background"
     },
     "toggleHighlight": "Toggle highlight ({{color}})"
+  },
+  "table": {
+    "label": "Table",
+    "insertTable": "Insert table",
+    "addColumnBefore": "Add column before",
+    "addColumnAfter": "Add column after",
+    "deleteColumn": "Delete column",
+    "addRowBefore": "Add row before",
+    "addRowAfter": "Add row after",
+    "deleteRow": "Delete row",
+    "deleteTable": "Delete table",
+    "mergeCells": "Merge cells",
+    "splitCell": "Split cell",
+    "toggleHeaderRow": "Toggle header row",
+    "toggleHeaderColumn": "Toggle header column"
   }
 }

@@ -63,5 +63,20 @@
       "red": "Röd bakgrund"
     },
     "toggleHighlight": "Växla markering ({{color}})"
+  },
+  "table": {
+    "label": "Tabell",
+    "insertTable": "Infoga tabell",
+    "addColumnBefore": "Lägg till kolumn före",
+    "addColumnAfter": "Lägg till kolumn efter",
+    "deleteColumn": "Ta bort kolumn",
+    "addRowBefore": "Lägg till rad före",
+    "addRowAfter": "Lägg till rad efter",
+    "deleteRow": "Ta bort rad",
+    "deleteTable": "Ta bort tabell",
+    "mergeCells": "Slå samman celler",
+    "splitCell": "Dela cell",
+    "toggleHeaderRow": "Växla rubrikrad",
+    "toggleHeaderColumn": "Växla rubrikkolumn"
   }
 }

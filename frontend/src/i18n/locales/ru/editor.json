@@ -63,5 +63,20 @@
       "red": "Красный фон"
     },
     "toggleHighlight": "Переключить выделение ({{color}})"
+  },
+  "table": {
+    "label": "Таблица",
+    "insertTable": "Вставить таблицу",
+    "addColumnBefore": "Добавить столбец перед",
+    "addColumnAfter": "Добавить столбец после",
+    "deleteColumn": "Удалить столбец",
+    "addRowBefore": "Добавить строку перед",
+    "addRowAfter": "Добавить строку после",
+    "deleteRow": "Удалить строку",
+    "deleteTable": "Удалить таблицу",
+    "mergeCells": "Объединить ячейки",
+    "splitCell": "Разделить ячейку",
+    "toggleHeaderRow": "Переключить строку заголовка",
+    "toggleHeaderColumn": "Переключить столбец заголовка"
   }
 }

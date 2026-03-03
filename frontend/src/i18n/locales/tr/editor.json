@@ -63,5 +63,20 @@
       "red": "Kirmizi arka plan"
     },
     "toggleHighlight": "Vurgulamayi ac/kapat ({{color}})"
+  },
+  "table": {
+    "label": "Tablo",
+    "insertTable": "Tablo ekle",
+    "addColumnBefore": "Öncesine sütun ekle",
+    "addColumnAfter": "Sonrasına sütun ekle",
+    "deleteColumn": "Sütunu sil",
+    "addRowBefore": "Öncesine satır ekle",
+    "addRowAfter": "Sonrasına satır ekle",
+    "deleteRow": "Satırı sil",
+    "deleteTable": "Tabloyu sil",
+    "mergeCells": "Hücreleri birleştir",
+    "splitCell": "Hücreyi böl",
+    "toggleHeaderRow": "Başlık satırını değiştir",
+    "toggleHeaderColumn": "Başlık sütununu değiştir"
   }
 }

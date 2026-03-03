@@ -1,0 +1,73 @@
+.tiptap.ProseMirror {
+  --tt-table-border: var(--tt-gray-light-a-200);
+  --tt-table-header-bg: var(--tt-gray-light-a-50);
+  --tt-table-selected-bg: var(--tt-gray-light-a-100);
+
+  .dark & {
+    --tt-table-border: var(--tt-gray-dark-a-200);
+    --tt-table-header-bg: var(--tt-gray-dark-a-50);
+    --tt-table-selected-bg: var(--tt-gray-dark-a-100);
+  }
+}
+
+/* =====================
+   TABLE FORMATTING
+   ===================== */
+.tiptap.ProseMirror {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    table-layout: fixed;
+    overflow: hidden;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--tt-table-border);
+    padding: 0.5em 0.75em;
+    vertical-align: top;
+    min-width: 80px;
+    position: relative;
+  }
+
+  th {
+    font-weight: 600;
+    background-color: var(--tt-table-header-bg);
+    text-align: left;
+  }
+
+  .selectedCell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--tt-table-selected-bg);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .column-resize-handle {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    bottom: -2px;
+    width: 4px;
+    background-color: var(--tt-blue-light-a-400, #6c9fff);
+    pointer-events: none;
+
+    .dark & {
+      background-color: var(--tt-blue-dark-a-400, #6c9fff);
+    }
+  }
+
+  .tableWrapper {
+    overflow-x: auto;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+  }
+
+  &.resize-cursor {
+    cursor: col-resize;
+  }
+}

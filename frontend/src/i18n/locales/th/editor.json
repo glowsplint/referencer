@@ -63,5 +63,20 @@
       "red": "พื้นหลังแดง"
     },
     "toggleHighlight": "สลับไฮไลต์ ({{color}})"
+  },
+  "table": {
+    "label": "ตาราง",
+    "insertTable": "แทรกตาราง",
+    "addColumnBefore": "เพิ่มคอลัมน์ก่อน",
+    "addColumnAfter": "เพิ่มคอลัมน์หลัง",
+    "deleteColumn": "ลบคอลัมน์",
+    "addRowBefore": "เพิ่มแถวก่อน",
+    "addRowAfter": "เพิ่มแถวหลัง",
+    "deleteRow": "ลบแถว",
+    "deleteTable": "ลบตาราง",
+    "mergeCells": "รวมเซลล์",
+    "splitCell": "แยกเซลล์",
+    "toggleHeaderRow": "สลับแถวส่วนหัว",
+    "toggleHeaderColumn": "สลับคอลัมน์ส่วนหัว"
   }
 }

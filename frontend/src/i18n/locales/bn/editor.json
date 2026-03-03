@@ -63,5 +63,20 @@
       "red": "লাল ব্যাকগ্রাউন্ড"
     },
     "toggleHighlight": "হাইলাইট টগল করুন ({{color}})"
+  },
+  "table": {
+    "label": "টেবিল",
+    "insertTable": "টেবিল সন্নিবেশ",
+    "addColumnBefore": "আগে কলাম যোগ",
+    "addColumnAfter": "পরে কলাম যোগ",
+    "deleteColumn": "কলাম মুছুন",
+    "addRowBefore": "আগে সারি যোগ",
+    "addRowAfter": "পরে সারি যোগ",
+    "deleteRow": "সারি মুছুন",
+    "deleteTable": "টেবিল মুছুন",
+    "mergeCells": "ঘর একত্রিত",
+    "splitCell": "ঘর বিভক্ত",
+    "toggleHeaderRow": "হেডার সারি টগল",
+    "toggleHeaderColumn": "হেডার কলাম টগল"
   }
 }
