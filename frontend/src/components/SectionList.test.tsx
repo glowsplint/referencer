@@ -119,6 +119,46 @@ describe("SectionList", () => {
     });
   });
 
+  describe("when dragging a passage downward", () => {
+    it("then shows border-b-2 on the drop target", () => {
+      renderList({
+        editorCount: 3,
+        sectionVisibility: [true, true, true],
+        sectionNames: ["Passage 1", "Passage 2", "Passage 3"],
+      });
+      const row0 = screen.getByTestId("passageRow-0");
+      const row2 = screen.getByTestId("passageRow-2");
+      fireEvent.dragStart(row0, {
+        dataTransfer: { setData: vi.fn(), types: ["application/x-section-index"] },
+      });
+      fireEvent.dragOver(row2, {
+        dataTransfer: { types: ["application/x-section-index"] },
+      });
+      expect(row2.className).toContain("border-b-2");
+      expect(row2.className).not.toContain("border-t-2");
+    });
+  });
+
+  describe("when dragging a passage upward", () => {
+    it("then shows border-t-2 on the drop target", () => {
+      renderList({
+        editorCount: 3,
+        sectionVisibility: [true, true, true],
+        sectionNames: ["Passage 1", "Passage 2", "Passage 3"],
+      });
+      const row2 = screen.getByTestId("passageRow-2");
+      const row0 = screen.getByTestId("passageRow-0");
+      fireEvent.dragStart(row2, {
+        dataTransfer: { setData: vi.fn(), types: ["application/x-section-index"] },
+      });
+      fireEvent.dragOver(row0, {
+        dataTransfer: { types: ["application/x-section-index"] },
+      });
+      expect(row0.className).toContain("border-t-2");
+      expect(row0.className).not.toContain("border-b-2");
+    });
+  });
+
   describe("when only one passage exists", () => {
     it("then does not allow dragging", () => {
       renderList();
