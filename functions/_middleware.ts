@@ -14,6 +14,11 @@ export const onRequest: PagesFunction = async (context) => {
   headers.set("x-forwarded-host", url.host);
   headers.set("host", target.host);
 
+  // Explicitly preserve the cookie header — the Headers constructor or
+  // Cloudflare's CDN layer can strip it during cross-origin subrequests.
+  const cookie = context.request.headers.get("cookie");
+  if (cookie) headers.set("cookie", cookie);
+
   const init: RequestInit = {
     method: context.request.method,
     headers,
@@ -24,5 +29,8 @@ export const onRequest: PagesFunction = async (context) => {
     init.body = context.request.body;
   }
 
-  return fetch(target.toString(), init);
+  // Bypass Cloudflare CDN cache — the CDN layer can strip cookies from
+  // subrequests, which breaks auth flows that rely on cookie state.
+  // @ts-expect-error — `cf` is a Cloudflare-specific RequestInit extension
+  return fetch(target.toString(), { ...init, cf: { cacheTtl: 0 } });
 };
