@@ -10,6 +10,7 @@ import {
   toggleFavoriteFolder,
   moveFolderToFolder,
 } from "../db/folder-queries";
+import { getPermission, hasMinimumRole } from "../db/permission-queries";
 
 const folders = new Hono<Env>();
 
@@ -203,6 +204,15 @@ folders.patch("/:id/move-workspace", async (c) => {
     }
 
     const supabase = c.get("supabase");
+    const role = await getPermission(supabase, body.workspaceId, user.id);
+    if (!role || !hasMinimumRole(role, "viewer")) {
+      log.warn("Permission denied for move-workspace", {
+        userId: user.id,
+        workspaceId: body.workspaceId,
+        folderId,
+      });
+      return c.json({ error: "Forbidden" }, 403);
+    }
     await moveWorkspaceToFolder(supabase, user.id, body.workspaceId, folderId);
     log.info("PATCH /api/folders/:id/move-workspace", {
       userId: user.id,
@@ -233,6 +243,14 @@ folders.post("/unfile-workspace", async (c) => {
     }
 
     const supabase = c.get("supabase");
+    const role = await getPermission(supabase, body.workspaceId, user.id);
+    if (!role || !hasMinimumRole(role, "viewer")) {
+      log.warn("Permission denied for unfile-workspace", {
+        userId: user.id,
+        workspaceId: body.workspaceId,
+      });
+      return c.json({ error: "Forbidden" }, 403);
+    }
     await unfileWorkspace(supabase, user.id, body.workspaceId);
     log.info("POST /api/folders/unfile-workspace", {
       userId: user.id,

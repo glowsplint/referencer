@@ -67,13 +67,31 @@ workspaces.post("/", async (c) => {
     }
 
     const supabase = c.get("supabase");
+
+    // Check if workspace already exists — if so, require permission before association
+    const { data: existing } = await supabase
+      .from("workspace")
+      .select("id")
+      .eq("id", body.workspaceId)
+      .single();
+
+    if (existing) {
+      const role = await getPermission(supabase, body.workspaceId, user.id);
+      if (!role) {
+        log.warn("POST /api/workspaces denied — no permission on existing workspace", {
+          userId: user.id,
+          workspaceId: body.workspaceId,
+        });
+        return c.json({ error: "Forbidden" }, 403);
+      }
+    }
+
     const { isNew } = await createUserWorkspace(
       supabase,
       user.id,
       body.workspaceId,
       body.title ?? "",
     );
-    // Only grant owner permission if this is a newly created workspace
     if (isNew) {
       await setPermission(supabase, body.workspaceId, user.id, "owner");
     }
@@ -139,7 +157,7 @@ workspaces.patch("/:id", requirePermission("editor"), async (c) => {
 });
 
 // PATCH /:id/touch - bump updated_at
-workspaces.patch("/:id/touch", async (c) => {
+workspaces.patch("/:id/touch", requirePermission("viewer"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
@@ -161,7 +179,7 @@ workspaces.patch("/:id/touch", async (c) => {
 });
 
 // PATCH /:id/favorite - toggle favorite
-workspaces.patch("/:id/favorite", async (c) => {
+workspaces.patch("/:id/favorite", requirePermission("viewer"), async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
@@ -248,6 +266,7 @@ workspaces.post("/:id/duplicate", requirePermission("editor"), async (c) => {
 
     const supabase = c.get("supabase");
     await duplicateWorkspace(supabase, user.id, sourceId, body.newWorkspaceId);
+    await setPermission(supabase, body.newWorkspaceId, user.id, "owner");
     log.info("POST /api/workspaces/:id/duplicate", {
       userId: user.id,
       sourceId,
