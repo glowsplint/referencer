@@ -107,7 +107,7 @@ export function FolderCard({
   const isOver = overTargetId === node.folder.id;
 
   return (
-    <div data-testid={`folderCard-${node.folder.id}`}>
+    <div className="col-span-full" data-testid={`folderCard-${node.folder.id}`}>
       <div
         ref={combinedRef}
         role="button"
