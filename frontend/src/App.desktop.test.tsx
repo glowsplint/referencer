@@ -27,12 +27,15 @@ const mockWorkspace = {
     isDarkMode: false,
     isLayersOn: false,
     isMultipleRowsLayout: false,
-    isLocked: false,
+    lockedPanes: { 0: false, 1: false, 2: false, 3: false } as Record<number, boolean>,
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
     thirdEditorFullWidth: true,
   },
+  isPaneLocked: (i: number) => mockWorkspace.settings.lockedPanes[i] ?? true,
+  isAnyPaneLocked: false,
+  activeEditorIndex: 0,
   annotations: { activeTool: "selection" as const },
   layers: [] as {
     id: string;
@@ -60,7 +63,8 @@ const mockWorkspace = {
   toggleDarkMode: vi.fn(),
   toggleLayersOn: vi.fn(),
   toggleMultipleRowsLayout: vi.fn(),
-  toggleLocked: vi.fn(),
+  togglePaneLocked: vi.fn(),
+  toggleFocusedPaneLocked: vi.fn(),
   setActiveTool: vi.fn(),
   setArrowStylePickerOpen: vi.fn(),
   arrowStylePickerOpen: false,
@@ -213,12 +217,13 @@ beforeEach(() => {
     isDarkMode: false,
     isLayersOn: false,
     isMultipleRowsLayout: false,
-    isLocked: false,
+    lockedPanes: { 0: false, 1: false, 2: false, 3: false },
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
     thirdEditorFullWidth: true,
   };
+  mockWorkspace.isAnyPaneLocked = false;
   mockWorkspace.layers = [];
   mockWorkspace.activeLayerId = null;
   mockWorkspace.editorCount = 1;
@@ -322,14 +327,16 @@ describe("App (desktop)", () => {
 
   describe("when unlocked (editing mode)", () => {
     it("then renders editors without annotation mouse handlers", () => {
-      mockWorkspace.settings.isLocked = false;
+      mockWorkspace.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
+      mockWorkspace.isAnyPaneLocked = false;
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
     });
 
     it("then does not show the annotation panel even with comments", () => {
-      mockWorkspace.settings.isLocked = false;
+      mockWorkspace.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
+      mockWorkspace.isAnyPaneLocked = false;
       mockWorkspace.layers = [LAYER_WITH_COMMENT];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
@@ -338,7 +345,8 @@ describe("App (desktop)", () => {
 
   describe("when locked (annotation mode)", () => {
     beforeEach(() => {
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
     });
 
     it("then renders editors with annotation mouse handlers", () => {
@@ -362,7 +370,8 @@ describe("App (desktop)", () => {
 
   describe("when locked with comment annotations", () => {
     beforeEach(() => {
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
       mockWorkspace.layers = [LAYER_WITH_COMMENT];
     });
 
@@ -405,7 +414,8 @@ describe("App (desktop)", () => {
 
   describe("when a tool mode is active while locked", () => {
     beforeEach(() => {
-      mockWorkspace.settings.isLocked = true;
+      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockWorkspace.isAnyPaneLocked = true;
     });
 
     it("then applies eraser cursor class to editor container", () => {

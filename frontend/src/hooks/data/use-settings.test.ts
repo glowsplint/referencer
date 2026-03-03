@@ -15,7 +15,7 @@ describe("useSettings", () => {
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: true,
+      lockedPanes: { 0: true, 1: true, 2: true, 3: true },
       hideOffscreenArrows: false,
       showStatusBar: true,
       commentPlacement: "right",
@@ -62,13 +62,56 @@ describe("useSettings", () => {
     expect(result.current.settings.isMultipleRowsLayout).toBe(true);
   });
 
-  it("when toggleLocked is called, then toggles isLocked", () => {
+  it("when togglePaneLocked is called, then toggles only that pane", () => {
+    const { result } = renderHook(() => useSettings());
+
+    // All panes start locked
+    expect(result.current.isPaneLocked(0)).toBe(true);
+    expect(result.current.isPaneLocked(1)).toBe(true);
+
+    act(() => {
+      result.current.togglePaneLocked(1);
+    });
+    // Only pane 1 should be unlocked
+    expect(result.current.isPaneLocked(0)).toBe(true);
+    expect(result.current.isPaneLocked(1)).toBe(false);
+    expect(result.current.isAnyPaneLocked).toBe(true);
+  });
+
+  it("when all panes unlocked, isAnyPaneLocked is false", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
-      result.current.toggleLocked();
+      result.current.togglePaneLocked(0);
+      result.current.togglePaneLocked(1);
+      result.current.togglePaneLocked(2);
+      result.current.togglePaneLocked(3);
     });
-    expect(result.current.settings.isLocked).toBe(false);
+    expect(result.current.isAnyPaneLocked).toBe(false);
+  });
+
+  it("when isPaneLocked is called for unknown index, then defaults to true", () => {
+    const { result } = renderHook(() => useSettings());
+    expect(result.current.isPaneLocked(99)).toBe(true);
+  });
+
+  it("when old isLocked format is in localStorage, then migrates to lockedPanes", () => {
+    localStorage.setItem(
+      "referencer-settings",
+      JSON.stringify({
+        isDarkMode: false,
+        isLocked: false,
+      }),
+    );
+
+    const { result } = renderHook(() => useSettings());
+    expect(result.current.settings.lockedPanes).toEqual({
+      0: false,
+      1: false,
+      2: false,
+      3: false,
+    });
+    expect(result.current.isPaneLocked(0)).toBe(false);
   });
 
   it("when setActiveTool is called, then changes the active tool", () => {
@@ -99,7 +142,7 @@ describe("useSettings", () => {
 
     expect(result.current.settings.isLayersOn).toBe(false);
     expect(result.current.settings.isMultipleRowsLayout).toBe(false);
-    expect(result.current.settings.isLocked).toBe(true);
+    expect(result.current.isPaneLocked(0)).toBe(true);
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
   });
 
@@ -121,7 +164,7 @@ describe("useSettings", () => {
         isDarkMode: true,
         isLayersOn: true,
         isMultipleRowsLayout: false,
-        isLocked: false,
+        lockedPanes: { 0: false, 1: true, 2: true, 3: true },
       }),
     );
 
@@ -140,7 +183,7 @@ describe("useSettings", () => {
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: true,
+      lockedPanes: { 0: true, 1: true, 2: true, 3: true },
       hideOffscreenArrows: false,
       showStatusBar: true,
       commentPlacement: "right",
@@ -206,5 +249,24 @@ describe("useSettings", () => {
     renderHook(() => useSettings());
 
     expect(document.documentElement.classList.contains("dark")).toBe(true);
+  });
+
+  it("when reorderLockedPanes is called, then permutes lock state", () => {
+    const { result } = renderHook(() => useSettings());
+
+    // Unlock pane 0, keep 1 locked
+    act(() => {
+      result.current.togglePaneLocked(0);
+    });
+    expect(result.current.isPaneLocked(0)).toBe(false);
+    expect(result.current.isPaneLocked(1)).toBe(true);
+
+    // Swap panes 0 and 1
+    act(() => {
+      result.current.reorderLockedPanes([1, 0]);
+    });
+    // After swap: pane 0 gets old pane 1's state (true), pane 1 gets old pane 0's state (false)
+    expect(result.current.isPaneLocked(0)).toBe(true);
+    expect(result.current.isPaneLocked(1)).toBe(false);
   });
 });

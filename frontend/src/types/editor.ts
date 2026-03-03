@@ -6,7 +6,7 @@ export interface EditorSettings {
   isDarkMode: boolean;
   isLayersOn: boolean;
   isMultipleRowsLayout: boolean;
-  isLocked: boolean;
+  lockedPanes: Record<number, boolean>;
   hideOffscreenArrows: boolean;
   showStatusBar: boolean;
   commentPlacement: "left" | "right" | "both";

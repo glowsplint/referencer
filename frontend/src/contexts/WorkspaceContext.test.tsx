@@ -9,7 +9,7 @@ function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}): Work
       isDarkMode: false,
       isLayersOn: false,
       isMultipleRowsLayout: false,
-      isLocked: false,
+      lockedPanes: { 0: false, 1: false, 2: false, 3: false },
     },
     annotations: { activeTool: "selection" as const },
     layers: [],
@@ -56,7 +56,7 @@ describe("WorkspaceContext", () => {
           isDarkMode: true,
           isLayersOn: true,
           isMultipleRowsLayout: false,
-          isLocked: false,
+          lockedPanes: { 0: false, 1: false, 2: false, 3: false },
         },
       });
 

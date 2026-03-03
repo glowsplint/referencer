@@ -146,12 +146,11 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
     }
   }, [isMobile, mobileView]);
 
-  if (isLocked) return null;
-
   return (
     <Toolbar
       ref={toolbarRef}
       data-testid="editorToolbar"
+      className={isLocked ? "opacity-50 pointer-events-none" : undefined}
       style={
         isMobile
           ? {

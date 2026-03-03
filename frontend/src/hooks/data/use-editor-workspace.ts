@@ -312,6 +312,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const reorderEditors = useCallback(
     guarded((permutation: number[]) => {
       rawEditorsHook.reorderEditors(permutation);
+      settingsHook.reorderLockedPanes(permutation);
       history.record({
         type: "reorderEditors",
         description: "Reordered passages",
@@ -322,14 +323,16 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
             inverse[permutation[newIdx]] = newIdx;
           }
           rawEditorsHook.reorderEditors(inverse);
+          settingsHook.reorderLockedPanes(inverse);
         },
         redo: () => {
           if (rawEditorsHook.editorCount !== permutation.length) return;
           rawEditorsHook.reorderEditors(permutation);
+          settingsHook.reorderLockedPanes(permutation);
         },
       });
     }),
-    [readOnly, rawEditorsHook, history],
+    [readOnly, rawEditorsHook, settingsHook, history],
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -349,16 +352,23 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     [readOnly, rawEditorsHook, history],
   );
 
-  const toggleLocked = useCallback(() => {
-    const wasLocked = settingsHook.settings.isLocked;
-    settingsHook.toggleLocked();
-    history.record({
-      type: wasLocked ? "unlock" : "lock",
-      description: wasLocked ? "Unlocked editor" : "Locked editor",
-      undo: () => settingsHook.toggleLocked(),
-      redo: () => settingsHook.toggleLocked(),
-    });
-  }, [settingsHook, history]);
+  const togglePaneLocked = useCallback(
+    (index: number) => {
+      const wasLocked = settingsHook.isPaneLocked(index);
+      settingsHook.togglePaneLocked(index);
+      history.record({
+        type: wasLocked ? "unlock" : "lock",
+        description: wasLocked ? `Unlocked pane ${index + 1}` : `Locked pane ${index + 1}`,
+        undo: () => settingsHook.togglePaneLocked(index),
+        redo: () => settingsHook.togglePaneLocked(index),
+      });
+    },
+    [settingsHook, history],
+  );
+
+  const toggleFocusedPaneLocked = useCallback(() => {
+    togglePaneLocked(rawEditorsHook.activeEditorIndex);
+  }, [togglePaneLocked, rawEditorsHook.activeEditorIndex]);
 
   const setActiveTool = useCallback(
     (tool: Parameters<typeof settingsHook.setActiveTool>[0]) => {
@@ -458,7 +468,8 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
 
   return {
     ...settingsHook,
-    toggleLocked,
+    togglePaneLocked,
+    toggleFocusedPaneLocked,
     setActiveTool,
     toggleDarkMode,
     toggleMultipleRowsLayout,
@@ -496,6 +507,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     // Editors (still local state — not yet CRDT)
     editorCount: trackedEditorsHook.editorCount,
     activeEditor: trackedEditorsHook.activeEditor,
+    activeEditorIndex: trackedEditorsHook.activeEditorIndex,
     editorWidths: trackedEditorsHook.editorWidths,
     sectionVisibility: trackedEditorsHook.sectionVisibility,
     sectionNames: trackedEditorsHook.sectionNames,

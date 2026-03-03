@@ -192,9 +192,12 @@ describe("SimpleEditorToolbar", () => {
   });
 
   describe("when locked", () => {
-    it("then removes the toolbar from the DOM", () => {
+    it("then renders the toolbar with disabled styling", () => {
       render(<SimpleEditorToolbar isLocked={true} />);
-      expect(screen.queryByTestId("editorToolbar")).not.toBeInTheDocument();
+      const toolbar = screen.getByTestId("editorToolbar");
+      expect(toolbar).toBeInTheDocument();
+      expect(toolbar).toHaveClass("opacity-50");
+      expect(toolbar).toHaveClass("pointer-events-none");
     });
   });
 });
