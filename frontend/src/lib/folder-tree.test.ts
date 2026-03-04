@@ -7,6 +7,7 @@ import {
   getAllDescendantFolderIds,
   getSubtreeDepth,
   canMoveFolderTo,
+  getFolderAncestorPath,
 } from "./folder-tree";
 import type { FolderItem } from "@/lib/folder-client";
 import type { WorkspaceItem } from "@/lib/workspace-client";
@@ -249,28 +250,67 @@ describe("when using canMoveFolderTo", () => {
     expect(canMoveFolderTo(folders, "f2", "f3")).toBe(true);
   });
 
-  it("then returns false when resulting depth exceeds max (3)", () => {
-    // Build a deep tree: f10 -> f11 -> f12 (subtree depth of f10 = 2)
-    // Target parent at depth 1 => 1 + 1 + 2 = 4 > 3
-    const deepFolders = [
-      makeFolder({ id: "f10", name: "Deep Root" }),
-      makeFolder({ id: "f11", name: "Deep Child", parentId: "f10" }),
-      makeFolder({ id: "f12", name: "Deep Grandchild", parentId: "f11" }),
-      makeFolder({ id: "f20", name: "Other Root" }),
-      makeFolder({ id: "f21", name: "Other Child", parentId: "f20" }),
-    ];
-    // Moving f10 (subtree depth 2) under f21 (depth 1) => 1 + 1 + 2 = 4 > 3
-    expect(canMoveFolderTo(deepFolders, "f10", "f21")).toBe(false);
+  it("then returns false when resulting depth exceeds max (10)", () => {
+    // Build a chain: f0 -> f1 -> ... -> f8 (subtree depth of f0 = 8)
+    // Target parent at depth 2 => 2 + 1 + 8 = 11 > 10
+    const deepFolders: FolderItem[] = [];
+    for (let i = 0; i <= 8; i++) {
+      deepFolders.push(
+        makeFolder({
+          id: `f${i}`,
+          name: `Level ${i}`,
+          parentId: i === 0 ? null : `f${i - 1}`,
+        }),
+      );
+    }
+    // Add a separate chain: p0 -> p1 -> p2
+    deepFolders.push(makeFolder({ id: "p0", name: "Parent Root" }));
+    deepFolders.push(makeFolder({ id: "p1", name: "Parent Child", parentId: "p0" }));
+    deepFolders.push(makeFolder({ id: "p2", name: "Parent Grandchild", parentId: "p1" }));
+    // Moving f0 (subtree depth 8) under p2 (depth 2) => 2 + 1 + 8 = 11 > 10
+    expect(canMoveFolderTo(deepFolders, "f0", "p2")).toBe(false);
   });
 
   it("then returns true when resulting depth is exactly at the limit", () => {
-    // f10 has subtree depth 0, parent at depth 2 => 2 + 1 + 0 = 3 <= 3
-    const limitFolders = [
-      makeFolder({ id: "f10", name: "Leaf" }),
-      makeFolder({ id: "f20", name: "Root" }),
-      makeFolder({ id: "f21", name: "Child", parentId: "f20" }),
-      makeFolder({ id: "f22", name: "Grandchild", parentId: "f21" }),
-    ];
-    expect(canMoveFolderTo(limitFolders, "f10", "f22")).toBe(true);
+    // Build a chain of 10 levels: f0 -> f1 -> ... -> f9 (depth 9)
+    // f10 (leaf, subtree depth 0) moved under f9 (depth 9) => 9 + 1 + 0 = 10 <= 10
+    const limitFolders: FolderItem[] = [];
+    for (let i = 0; i <= 9; i++) {
+      limitFolders.push(
+        makeFolder({
+          id: `f${i}`,
+          name: `Level ${i}`,
+          parentId: i === 0 ? null : `f${i - 1}`,
+        }),
+      );
+    }
+    limitFolders.push(makeFolder({ id: "f10", name: "Leaf" }));
+    expect(canMoveFolderTo(limitFolders, "f10", "f9")).toBe(true);
+  });
+});
+
+describe("when using getFolderAncestorPath", () => {
+  const folders = [
+    makeFolder({ id: "f1", name: "Root" }),
+    makeFolder({ id: "f2", name: "Child", parentId: "f1" }),
+    makeFolder({ id: "f3", name: "Grandchild", parentId: "f2" }),
+  ];
+
+  it("then returns the full path from root to the given folder", () => {
+    const path = getFolderAncestorPath(folders, "f3");
+    expect(path).toHaveLength(3);
+    expect(path[0].id).toBe("f1");
+    expect(path[1].id).toBe("f2");
+    expect(path[2].id).toBe("f3");
+  });
+
+  it("then returns a single element for a root folder", () => {
+    const path = getFolderAncestorPath(folders, "f1");
+    expect(path).toHaveLength(1);
+    expect(path[0].id).toBe("f1");
+  });
+
+  it("then returns empty array for nonexistent folder", () => {
+    expect(getFolderAncestorPath(folders, "f99")).toEqual([]);
   });
 });

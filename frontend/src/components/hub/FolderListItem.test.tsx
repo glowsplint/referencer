@@ -40,12 +40,14 @@ const folders = [folder];
 describe("FolderListItem", () => {
   let onToggleFolderFavorite: ReturnType<typeof vi.fn>;
   let onOpenWorkspace: ReturnType<typeof vi.fn>;
+  let onNavigateToFolder: ReturnType<typeof vi.fn>;
   const noopFn = vi.fn();
 
   beforeEach(() => {
     localStorage.clear();
     onToggleFolderFavorite = vi.fn();
     onOpenWorkspace = vi.fn();
+    onNavigateToFolder = vi.fn();
   });
 
   function renderListItem(opts?: {
@@ -75,6 +77,7 @@ describe("FolderListItem", () => {
           onToggleFolderFavorite={onToggleFolderFavorite}
           onMoveToFolder={noopFn}
           onMoveFolder={noopFn}
+          onNavigateToFolder={onNavigateToFolder}
         />
       </DndProvider>,
     );
@@ -135,22 +138,14 @@ describe("FolderListItem", () => {
     });
   });
 
-  describe("when the folder header is clicked", () => {
-    it("then toggles expand/collapse", async () => {
+  describe("when the folder list item is double-clicked", () => {
+    it("then calls onNavigateToFolder with the folder id", async () => {
       const user = userEvent.setup();
-      const workspaces = [
-        makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "Inside WS" }),
-      ];
-      renderListItem({ workspaces });
+      renderListItem();
 
-      // Initially expanded, so workspace should be visible
-      expect(screen.getByText("Inside WS")).toBeInTheDocument();
+      await user.dblClick(screen.getByTestId("folderListItem-f1"));
 
-      // Click to collapse
-      await user.click(screen.getByTestId("folderListItem-f1").firstElementChild!);
-
-      // After collapse, workspace should be hidden
-      expect(screen.queryByText("Inside WS")).not.toBeInTheDocument();
+      expect(onNavigateToFolder).toHaveBeenCalledWith("f1");
     });
   });
 });
