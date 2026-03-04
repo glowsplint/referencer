@@ -25,6 +25,7 @@ import { WorkspaceCard } from "./WorkspaceCard";
 import { WorkspaceListItem } from "./WorkspaceListItem";
 import { FolderCard } from "./FolderCard";
 import { FolderListItem } from "./FolderListItem";
+import { FolderBreadcrumb } from "./FolderBreadcrumb";
 import { RenameDialog } from "./RenameDialog";
 import { DeleteDialog } from "./DeleteDialog";
 import { DeleteFolderDialog } from "./DeleteFolderDialog";
@@ -88,6 +89,7 @@ export function WorkspaceGrid({
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
   const [creatingSubfolderId, setCreatingSubfolderId] = useState<string | null>(null);
   const [deleteFolderTarget, setDeleteFolderTarget] = useState<FolderItem | null>(null);
+  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const { sortConfig, setSort, compare } = useWorkspaceSort(workspaces);
 
   const folderTree = buildFolderTree(folders);
@@ -121,10 +123,32 @@ export function WorkspaceGrid({
     }
   };
 
+  const handleNavigateToFolder = (folderId: string | null) => {
+    setCurrentFolderId(folderId);
+  };
+
   const queryLower = searchQuery.toLowerCase();
 
-  // Starred section: starred root-level folders + all starred workspaces (regardless of folder)
+  // Find folder nodes at the current level
+  const currentLevelFolderNodes = useMemo(() => {
+    if (currentFolderId === null) return folderTree;
+    // Find the node for currentFolderId in the tree
+    function findNode(nodes: FolderNode[]): FolderNode | null {
+      for (const n of nodes) {
+        if (n.folder.id === currentFolderId) return n;
+        const found = findNode(n.children);
+        if (found) return found;
+      }
+      return null;
+    }
+    const node = findNode(folderTree);
+    return node ? node.children : [];
+  }, [folderTree, currentFolderId]);
+
+  // Starred section: only at root level
   const starredItems = useMemo(() => {
+    if (currentFolderId !== null) return [];
+
     const items: MixedItem[] = [];
 
     // Starred root-level folders
@@ -169,26 +193,42 @@ export function WorkspaceGrid({
     });
 
     return items;
-  }, [folderTree, workspaces, sortConfig, compare, searchQuery, queryLower]);
+  }, [folderTree, workspaces, sortConfig, compare, searchQuery, queryLower, currentFolderId]);
 
-  // All Items section: unstarred root-level folders + unstarred unfiled workspaces
+  // All Items section: items at the current folder level
   const allItems = useMemo(() => {
     const items: MixedItem[] = [];
 
-    // Unstarred root-level folders
-    for (const node of folderTree) {
-      if (!node.folder.isFavorite) {
+    if (currentFolderId === null) {
+      // Root level: unstarred root folders + unstarred unfiled workspaces
+      for (const node of currentLevelFolderNodes) {
+        if (!node.folder.isFavorite) {
+          if (!searchQuery || node.folder.name.toLowerCase().includes(queryLower)) {
+            items.push({ kind: "folder", node });
+          }
+        }
+      }
+
+      for (const ws of workspaces) {
+        if (!ws.isFavorite && !ws.folderId) {
+          if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
+            items.push({ kind: "workspace", workspace: ws });
+          }
+        }
+      }
+    } else {
+      // Inside a folder: show direct child folders + workspaces in this folder
+      for (const node of currentLevelFolderNodes) {
         if (!searchQuery || node.folder.name.toLowerCase().includes(queryLower)) {
           items.push({ kind: "folder", node });
         }
       }
-    }
 
-    // Unstarred unfiled workspaces
-    for (const ws of workspaces) {
-      if (!ws.isFavorite && !ws.folderId) {
-        if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
-          items.push({ kind: "workspace", workspace: ws });
+      for (const ws of workspaces) {
+        if (ws.folderId === currentFolderId) {
+          if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
+            items.push({ kind: "workspace", workspace: ws });
+          }
         }
       }
     }
@@ -217,7 +257,15 @@ export function WorkspaceGrid({
     });
 
     return items;
-  }, [folderTree, workspaces, sortConfig, compare, searchQuery, queryLower]);
+  }, [
+    currentFolderId,
+    currentLevelFolderNodes,
+    workspaces,
+    sortConfig,
+    compare,
+    searchQuery,
+    queryLower,
+  ]);
 
   // Shared folder props for FolderCard/FolderListItem
   const folderProps = {
@@ -239,6 +287,7 @@ export function WorkspaceGrid({
     onToggleFolderFavorite,
     onMoveToFolder: handleMoveToFolder,
     onMoveFolder,
+    onNavigateToFolder: handleNavigateToFolder,
     ownerName,
     ownerAvatarUrl,
   };
@@ -384,36 +433,49 @@ export function WorkspaceGrid({
           </div>
         ) : (
           <div className="space-y-8">
-            {/* Starred section */}
-            <section data-testid="starredSection">
-              <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground mb-3">
-                <Star size={14} fill="currentColor" className="text-yellow-500" />
-                Starred
-              </h3>
-              {starredItems.length === 0 ? (
-                <p className="text-sm text-muted-foreground/60 px-1">Star an item to pin it here</p>
-              ) : viewMode === "grid" ? (
-                <div
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                  data-testid="starredGrid"
-                >
-                  {starredItems.map(renderItem)}
-                </div>
-              ) : (
-                <div className="flex flex-col gap-1">{starredItems.map(renderItem)}</div>
-              )}
-            </section>
+            {/* Breadcrumb navigation */}
+            <FolderBreadcrumb
+              folders={folders}
+              currentFolderId={currentFolderId}
+              onNavigate={handleNavigateToFolder}
+              onMoveToFolder={handleMoveToFolder}
+              onMoveFolder={onMoveFolder}
+            />
 
-            {/* Divider */}
-            <hr className="border-border" />
+            {/* Starred section — only at root level */}
+            {currentFolderId === null && (
+              <section data-testid="starredSection">
+                <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground mb-3">
+                  <Star size={14} fill="currentColor" className="text-yellow-500" />
+                  Starred
+                </h3>
+                {starredItems.length === 0 ? (
+                  <p className="text-sm text-muted-foreground/60 px-1">
+                    Star an item to pin it here
+                  </p>
+                ) : viewMode === "grid" ? (
+                  <div
+                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                    data-testid="starredGrid"
+                  >
+                    {starredItems.map(renderItem)}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-1">{starredItems.map(renderItem)}</div>
+                )}
+              </section>
+            )}
 
-            {/* Inline input for new root folder */}
+            {/* Divider — only at root level */}
+            {currentFolderId === null && <hr className="border-border" />}
+
+            {/* Inline input for new folder */}
             {creatingFolder && (
               <div className="flex items-center gap-1.5 py-2 px-1">
                 <Folder size={14} className="text-muted-foreground shrink-0" />
                 <InlineNameInput
                   onSave={(name) => {
-                    handleCreateFolder(null, name);
+                    handleCreateFolder(currentFolderId, name);
                     setCreatingFolder(false);
                   }}
                   onCancel={() => setCreatingFolder(false)}

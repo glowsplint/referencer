@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { WorkspaceFolder } from "../types";
 
-const MAX_FOLDER_DEPTH = 3;
+const MAX_FOLDER_DEPTH = 10;
 
 export async function getFolderDepth(
   supabase: SupabaseClient,
