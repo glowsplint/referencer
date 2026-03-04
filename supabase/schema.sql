@@ -118,6 +118,134 @@ CREATE TABLE user_preference (
     PRIMARY KEY (user_id, key)
 );
 
+-- Full-text search index for annotations.
+-- Annotation data lives in opaque Yjs blobs — this table mirrors text fields
+-- for server-side search across workspaces.
+CREATE TABLE annotation_index (
+    id TEXT NOT NULL,
+    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+    layer_id TEXT NOT NULL,
+    layer_name TEXT NOT NULL DEFAULT '',
+    annotation_type TEXT NOT NULL CHECK (annotation_type IN ('highlight', 'comment', 'arrow', 'underline')),
+    selected_text TEXT NOT NULL DEFAULT '',
+    annotation_text TEXT NOT NULL DEFAULT '',
+    reply_texts TEXT NOT NULL DEFAULT '',
+    user_name TEXT NOT NULL DEFAULT '',
+    search_vector tsvector GENERATED ALWAYS AS (
+        setweight(to_tsvector('english', coalesce(annotation_text, '')), 'A') ||
+        setweight(to_tsvector('english', coalesce(selected_text, '')), 'B') ||
+        setweight(to_tsvector('english', coalesce(reply_texts, '')), 'C')
+    ) STORED,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (workspace_id, id)
+);
+CREATE INDEX idx_annotation_search ON annotation_index USING GIN (search_vector);
+
+-- Atomic upsert: delete all annotations for a workspace then insert fresh rows.
+-- Called by the collab server on each Yjs document save.
+CREATE OR REPLACE FUNCTION upsert_annotation_index(
+    p_workspace_id TEXT,
+    p_rows JSONB
+) RETURNS VOID AS $$
+BEGIN
+    IF p_rows IS NULL THEN
+        RAISE EXCEPTION 'p_rows must not be NULL';
+    END IF;
+
+    -- Serialize concurrent upserts for the same workspace
+    PERFORM pg_advisory_xact_lock(hashtext(p_workspace_id));
+
+    DELETE FROM annotation_index WHERE workspace_id = p_workspace_id;
+    INSERT INTO annotation_index (id, workspace_id, layer_id, layer_name, annotation_type,
+                                   selected_text, annotation_text, reply_texts, user_name, updated_at)
+    SELECT
+        r->>'id',
+        p_workspace_id,
+        r->>'layer_id',
+        COALESCE(r->>'layer_name', ''),
+        r->>'annotation_type',
+        COALESCE(r->>'selected_text', ''),
+        COALESCE(r->>'annotation_text', ''),
+        COALESCE(r->>'reply_texts', ''),
+        COALESCE(r->>'user_name', ''),
+        NOW()
+    FROM jsonb_array_elements(p_rows) AS r;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Cross-workspace annotation search with access control.
+-- Uses FTS (websearch_to_tsquery) with ILIKE fallback for partial matches.
+-- Only returns annotations in workspaces the user has access to via user_workspace.
+CREATE OR REPLACE FUNCTION search_annotations(
+    p_user_id TEXT,
+    p_query TEXT,
+    p_limit INT DEFAULT 20,
+    p_offset INT DEFAULT 0
+) RETURNS JSONB AS $$
+DECLARE
+    v_results JSONB;
+    v_total BIGINT;
+    v_tsquery tsquery;
+    v_escaped_query TEXT;
+BEGIN
+    -- Guard against empty/null queries
+    IF p_query IS NULL OR trim(p_query) = '' THEN
+        RETURN jsonb_build_object('results', '[]'::jsonb, 'total', 0);
+    END IF;
+
+    -- Clamp pagination bounds
+    p_limit := LEAST(GREATEST(p_limit, 1), 100);
+    p_offset := GREATEST(p_offset, 0);
+
+    v_tsquery := websearch_to_tsquery('english', p_query);
+
+    -- Escape ILIKE wildcards for the fallback path
+    v_escaped_query := replace(replace(replace(p_query, '\', '\\'), '%', '\%'), '_', '\_');
+
+    SELECT COUNT(*) INTO v_total
+    FROM annotation_index ai
+    JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+    WHERE ai.search_vector @@ v_tsquery;
+
+    IF v_total = 0 THEN
+        -- Fallback to ILIKE for partial word matches
+        SELECT COUNT(*) INTO v_total
+        FROM annotation_index ai
+        JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+        WHERE ai.selected_text ILIKE '%' || v_escaped_query || '%'
+           OR ai.annotation_text ILIKE '%' || v_escaped_query || '%'
+           OR ai.reply_texts ILIKE '%' || v_escaped_query || '%';
+
+        SELECT jsonb_agg(row_to_json(t)) INTO v_results FROM (
+            SELECT ai.id as annotation_id, ai.workspace_id, uw.title as workspace_title,
+                   ai.layer_id, ai.layer_name, ai.annotation_type, ai.selected_text,
+                   ai.annotation_text, ai.reply_texts, ai.user_name, 0::float as rank
+            FROM annotation_index ai
+            JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+            WHERE ai.selected_text ILIKE '%' || v_escaped_query || '%'
+               OR ai.annotation_text ILIKE '%' || v_escaped_query || '%'
+               OR ai.reply_texts ILIKE '%' || v_escaped_query || '%'
+            ORDER BY ai.updated_at DESC
+            LIMIT p_limit OFFSET p_offset
+        ) t;
+    ELSE
+        SELECT jsonb_agg(row_to_json(t)) INTO v_results FROM (
+            SELECT ai.id as annotation_id, ai.workspace_id, uw.title as workspace_title,
+                   ai.layer_id, ai.layer_name, ai.annotation_type, ai.selected_text,
+                   ai.annotation_text, ai.reply_texts, ai.user_name,
+                   ts_rank(ai.search_vector, v_tsquery) as rank
+            FROM annotation_index ai
+            JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+            WHERE ai.search_vector @@ v_tsquery
+            ORDER BY rank DESC
+            LIMIT p_limit OFFSET p_offset
+        ) t;
+    END IF;
+
+    RETURN jsonb_build_object('results', COALESCE(v_results, '[]'::jsonb), 'total', v_total);
+END;
+$$ LANGUAGE plpgsql;
+
 -- Row-Level Security: defense-in-depth.
 -- The app uses the service key (bypasses RLS), but enabling RLS ensures
 -- that non-service keys get zero access by default.
@@ -131,3 +259,4 @@ ALTER TABLE user_workspace ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_preference ENABLE ROW LEVEL SECURITY;
 ALTER TABLE share_link ENABLE ROW LEVEL SECURITY;
 ALTER TABLE yjs_document ENABLE ROW LEVEL SECURITY;
+ALTER TABLE annotation_index ENABLE ROW LEVEL SECURITY;

@@ -168,6 +168,7 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
       flashStatusRef.current({ text: addedTextRef.current, type: "success" }, FLASH_DURATION_MS);
     }
     onItemAddedRef.current?.(layerId!, itemId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { confirm };
