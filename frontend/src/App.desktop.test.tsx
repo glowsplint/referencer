@@ -279,7 +279,7 @@ describe("App (desktop)", () => {
       expect(screen.getByTestId("buttonPane")).toBeInTheDocument();
       expect(screen.getByTestId("menuButton")).toBeInTheDocument();
       expect(screen.getByTestId("settingsButton")).toBeInTheDocument();
-      expect(screen.getByTestId("lockButton")).toBeInTheDocument();
+      // Lock button is now in the editor toolbar, not the button pane
     });
 
     it("then shows the title bar and editor toolbar", () => {

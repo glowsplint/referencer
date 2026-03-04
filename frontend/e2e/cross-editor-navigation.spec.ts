@@ -75,11 +75,11 @@ test.describe("when navigating across 3 editors", () => {
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
 
     // Unlock to type content in the empty 3rd editor, then re-lock
-    await page.getByTestId("lockButton").click();
+    await page.getByTestId("toolbarLockButton").click();
     const thirdEditor = page.locator(".simple-editor-wrapper").nth(2).locator(".ProseMirror");
     await thirdEditor.click();
     await page.keyboard.type("Alpha Beta Gamma Delta Epsilon Zeta Eta Theta");
-    await page.getByTestId("lockButton").click();
+    await page.getByTestId("toolbarLockButton").click();
 
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();

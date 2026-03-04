@@ -55,4 +55,51 @@ describe("StatusBar", () => {
       expect(bar.querySelector("kbd")).toBeInTheDocument();
     });
   });
+
+  describe("pane context", () => {
+    describe("when paneName and paneLocked are provided with a message", () => {
+      it("then shows the pane context prefix followed by the message", () => {
+        render(
+          <StatusBar
+            message={{ text: "Click a word", type: "info" }}
+            paneName="Romans 8"
+            paneLocked={true}
+          />,
+        );
+        const context = screen.getByTestId("status-bar-context");
+        expect(context).toHaveTextContent("Romans 8 (Annotating) —");
+        expect(screen.getByTestId("status-bar")).toHaveTextContent("Click a word");
+      });
+    });
+
+    describe("when paneName is provided but paneLocked is false", () => {
+      it("then shows Editing in the context prefix", () => {
+        render(
+          <StatusBar
+            message={{ text: "Some hint", type: "info" }}
+            paneName="Genesis 1"
+            paneLocked={false}
+          />,
+        );
+        const context = screen.getByTestId("status-bar-context");
+        expect(context).toHaveTextContent("Genesis 1 (Editing) —");
+      });
+    });
+
+    describe("when paneName is provided but no message", () => {
+      it("then shows just the pane context without a dash", () => {
+        render(<StatusBar message={null} paneName="Psalm 23" paneLocked={true} />);
+        const context = screen.getByTestId("status-bar-context");
+        expect(context).toHaveTextContent("Psalm 23 (Annotating)");
+        expect(context).not.toHaveTextContent("—");
+      });
+    });
+
+    describe("when no paneName is provided", () => {
+      it("then does not render the context prefix", () => {
+        render(<StatusBar message={{ text: "Hello", type: "info" }} />);
+        expect(screen.queryByTestId("status-bar-context")).not.toBeInTheDocument();
+      });
+    });
+  });
 });

@@ -1,15 +1,24 @@
 // Rich text formatting toolbar (from tiptap template). Renders headings,
-// lists, marks, text alignment, image upload, and link controls. Hidden
-// when the editor is in locked (annotation) mode. Switches between a
-// desktop layout and a mobile-friendly view with a link sub-screen.
+// lists, marks, text alignment, image upload, and link controls. The
+// editing tools are visually disabled when the focused editor pane is
+// locked (annotation mode), but the lock toggle button remains interactive.
+// Switches between a desktop layout and a mobile-friendly view with a link
+// sub-screen.
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCurrentEditor } from "@tiptap/react";
+import { Lock, LockOpen } from "lucide-react";
 
 import { Button } from "@/components/tiptap-ui-primitive/button";
 import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/tiptap-ui-primitive/toolbar";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/tiptap-ui-primitive/tooltip/tooltip";
 
 import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu";
 import { ImageUploadButton } from "@/components/tiptap-ui/image-upload-button";
@@ -29,6 +38,7 @@ import { TableDropdownMenu } from "@/components/tiptap-ui/table-dropdown-menu";
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
 import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { useIsBreakpoint } from "@/hooks/ui/use-is-breakpoint";
 import { useWindowSize } from "@/hooks/utilities/use-window-size";
 import { useCursorVisibility } from "@/hooks/ui/use-cursor-visibility";
@@ -130,7 +140,11 @@ const MobileToolbarContent = ({ onBack }: { onBack: () => void }) => (
 
 // --- Exported component ---
 
-export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }) {
+export function SimpleEditorToolbar() {
+  const { t: tm } = useTranslation("management");
+  const { isPaneLocked, activeEditorIndex, toggleFocusedPaneLocked, readOnly } = useWorkspace();
+  const focusedLocked = isPaneLocked(activeEditorIndex);
+
   const isMobile = useIsBreakpoint();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = useState<"main" | "link">("main");
@@ -152,7 +166,6 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
     <Toolbar
       ref={toolbarRef}
       data-testid="editorToolbar"
-      className={isLocked ? "opacity-50 pointer-events-none" : undefined}
       style={
         isMobile
           ? {
@@ -161,11 +174,41 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
           : undefined
       }
     >
-      {mobileView === "main" ? (
-        <MainToolbarContent onLinkClick={() => setMobileView("link")} isMobile={isMobile} />
-      ) : (
-        <MobileToolbarContent onBack={() => setMobileView("main")} />
-      )}
+      <div
+        className={
+          focusedLocked ? "flex items-center opacity-50 pointer-events-none" : "flex items-center"
+        }
+      >
+        {mobileView === "main" ? (
+          <MainToolbarContent onLinkClick={() => setMobileView("link")} isMobile={isMobile} />
+        ) : (
+          <MobileToolbarContent onBack={() => setMobileView("main")} />
+        )}
+      </div>
+      <ToolbarSeparator />
+      <ToolbarGroup>
+        <Tooltip placement="bottom">
+          <TooltipTrigger asChild>
+            <button
+              onClick={toggleFocusedPaneLocked}
+              disabled={readOnly}
+              className={`p-2 rounded-md transition-colors ${
+                focusedLocked
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-accent hover:text-accent-foreground"
+              } disabled:opacity-40 disabled:pointer-events-none`}
+              data-testid="toolbarLockButton"
+            >
+              {focusedLocked ? <Lock size={18} /> : <LockOpen size={18} />}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {focusedLocked ? tm("tooltips.switchToEditMode") : tm("tooltips.switchToAnnotateMode")}{" "}
+            <kbd>K</kbd>
+          </TooltipContent>
+        </Tooltip>
+      </ToolbarGroup>
+      <Spacer />
     </Toolbar>
   );
 }

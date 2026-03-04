@@ -8,10 +8,10 @@ export const EDITOR_TOUR_STEPS: TourStep[] = [
     centered: true,
   },
   {
-    target: '[data-testid="lockButton"]',
+    target: '[data-testid="toolbarLockButton"]',
     title: "steps.editor.lock.title",
     content: "steps.editor.lock.content",
-    placement: "right",
+    placement: "bottom",
   },
   {
     target: '[data-testid="annotationToolGroup"]',
@@ -26,10 +26,10 @@ export const EDITOR_TOUR_STEPS: TourStep[] = [
     placement: "right",
   },
   {
-    target: '[data-testid="lockButton"]',
+    target: '[data-testid="toolbarLockButton"]',
     title: "steps.editor.unlock.title",
     content: "steps.editor.unlock.content",
-    placement: "right",
+    placement: "bottom",
   },
   {
     target: '[data-testid="status-bar"]',

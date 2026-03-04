@@ -121,11 +121,11 @@ test.describe("arrow endpoint highlights", () => {
     expect(countBefore).toBeGreaterThanOrEqual(initialEndpointCount + 1);
 
     // Unlock editor — endpoint decorations should disappear
-    await page.getByTestId("lockButton").click();
+    await page.getByTestId("toolbarLockButton").click();
     await expect(endpointDecorations).toHaveCount(0, { timeout: 2000 });
 
     // Lock again — endpoint decorations should reappear
-    await page.getByTestId("lockButton").click();
+    await page.getByTestId("toolbarLockButton").click();
     const countAfter = await endpointDecorations.count();
     expect(countAfter).toBe(countBefore);
   });

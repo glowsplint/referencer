@@ -275,7 +275,7 @@ test.describe("when editor state changes", () => {
     await expect(selection).toBeVisible({ timeout: 2000 });
 
     // Unlock
-    await page.getByTestId("lockButton").click();
+    await page.getByTestId("toolbarLockButton").click();
     await expect(page.getByTestId("editorToolbar")).toBeVisible();
 
     // Selection should be gone

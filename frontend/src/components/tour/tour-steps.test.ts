@@ -10,10 +10,10 @@ describe("EDITOR_TOUR_STEPS", () => {
     const targets = EDITOR_TOUR_STEPS.map((s) => s.target);
     expect(targets).toEqual([
       '[data-testid="editorContainer"]',
-      '[data-testid="lockButton"]',
+      '[data-testid="toolbarLockButton"]',
       '[data-testid="annotationToolGroup"]',
       '[data-testid="eraserToolButton"]',
-      '[data-testid="lockButton"]',
+      '[data-testid="toolbarLockButton"]',
       '[data-testid="status-bar"]',
       '[data-testid="shareDialog"]',
     ]);

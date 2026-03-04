@@ -1,7 +1,34 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { SimpleEditorToolbar } from "./SimpleEditorToolbar";
 import { EditorPane } from "./EditorPane";
+
+// Mock workspace context
+const mockToggleFocusedPaneLocked = vi.fn();
+const mockIsPaneLocked = vi.fn((_i: number) => false);
+let mockWorkspaceOverrides: Record<string, unknown> = {};
+vi.mock("@/contexts/WorkspaceContext", () => ({
+  useWorkspace: () => ({
+    isPaneLocked: mockIsPaneLocked,
+    activeEditorIndex: 0,
+    toggleFocusedPaneLocked: mockToggleFocusedPaneLocked,
+    readOnly: false,
+    ...mockWorkspaceOverrides,
+  }),
+}));
+
+// Mock i18n
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "tooltips.switchToEditMode": "Switch to Edit mode",
+        "tooltips.switchToAnnotateMode": "Switch to Annotate mode",
+      };
+      return translations[key] ?? key;
+    },
+  }),
+}));
 
 // Mock editor instance shared across mocks
 const mockDispatch = vi.fn();
@@ -58,6 +85,14 @@ vi.mock("@/components/tiptap-ui-primitive/spacer", () => ({
   Spacer: () => <div />,
 }));
 
+vi.mock("@/components/tiptap-ui-primitive/tooltip/tooltip", () => ({
+  Tooltip: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  TooltipTrigger: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  TooltipContent: ({ children }: { children?: React.ReactNode }) => (
+    <div role="tooltip">{children}</div>
+  ),
+}));
+
 // Mock all toolbar child components
 vi.mock("@/components/tiptap-ui/heading-dropdown-menu", () => ({
   HeadingDropdownMenu: () => null,
@@ -102,6 +137,12 @@ vi.mock("@/components/tiptap-ui/paragraph-spacing-dropdown", () => ({
 }));
 vi.mock("@/components/tiptap-ui/table-dropdown-menu", () => ({
   TableDropdownMenu: () => null,
+}));
+
+// Mock lucide-react icons
+vi.mock("lucide-react", () => ({
+  Lock: (props: Record<string, unknown>) => <svg data-testid="lock-icon" {...props} />,
+  LockOpen: (props: Record<string, unknown>) => <svg data-testid="lock-open-icon" {...props} />,
 }));
 
 // Mock icons
@@ -184,23 +225,93 @@ const defaultEditorPaneProps = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockIsPaneLocked.mockImplementation(() => false);
+  mockWorkspaceOverrides = {};
 });
 
 describe("SimpleEditorToolbar", () => {
   describe("when unlocked", () => {
     it("then shows the formatting toolbar", () => {
-      render(<SimpleEditorToolbar isLocked={false} />);
+      render(<SimpleEditorToolbar />);
       expect(screen.getByTestId("editorToolbar")).toBeInTheDocument();
+    });
+
+    it("then shows the LockOpen icon", () => {
+      render(<SimpleEditorToolbar />);
+      expect(screen.getByTestId("lock-open-icon")).toBeInTheDocument();
     });
   });
 
   describe("when locked", () => {
-    it("then renders the toolbar with disabled styling", () => {
-      render(<SimpleEditorToolbar isLocked={true} />);
+    it("then renders the editing tools wrapper with disabled styling", () => {
+      mockIsPaneLocked.mockImplementation(() => true);
+      render(<SimpleEditorToolbar />);
       const toolbar = screen.getByTestId("editorToolbar");
       expect(toolbar).toBeInTheDocument();
-      expect(toolbar).toHaveClass("opacity-50");
-      expect(toolbar).toHaveClass("pointer-events-none");
+      // The inner wrapper should have opacity-50, not the toolbar itself
+      const wrapper = toolbar.querySelector(".opacity-50");
+      expect(wrapper).toBeInTheDocument();
+    });
+
+    it("then shows the Lock icon", () => {
+      mockIsPaneLocked.mockImplementation(() => true);
+      render(<SimpleEditorToolbar />);
+      expect(screen.getByTestId("lock-icon")).toBeInTheDocument();
+    });
+  });
+
+  describe("lock button", () => {
+    it("then renders the lock toggle button", () => {
+      render(<SimpleEditorToolbar />);
+      expect(screen.getByTestId("toolbarLockButton")).toBeInTheDocument();
+    });
+
+    it("when clicked, then calls toggleFocusedPaneLocked", () => {
+      render(<SimpleEditorToolbar />);
+      fireEvent.click(screen.getByTestId("toolbarLockButton"));
+      expect(mockToggleFocusedPaneLocked).toHaveBeenCalledOnce();
+    });
+
+    it("when readOnly, then is disabled", () => {
+      mockWorkspaceOverrides = { readOnly: true };
+      render(<SimpleEditorToolbar />);
+      expect(screen.getByTestId("toolbarLockButton")).toBeDisabled();
+    });
+
+    it("when locked, then shows Switch to Edit mode tooltip", async () => {
+      mockIsPaneLocked.mockImplementation(() => true);
+      render(<SimpleEditorToolbar />);
+      const btn = screen.getByTestId("toolbarLockButton");
+
+      await act(async () => {
+        fireEvent.focus(btn);
+      });
+
+      const tooltips = screen.getAllByRole("tooltip");
+      const lockTooltip = tooltips.find((t) => t.textContent?.includes("Switch to"));
+      expect(lockTooltip).toHaveTextContent("Switch to Edit mode");
+      expect(lockTooltip!.querySelector("kbd")).toHaveTextContent("K");
+    });
+
+    it("when unlocked, then shows Switch to Annotate mode tooltip", async () => {
+      render(<SimpleEditorToolbar />);
+      const btn = screen.getByTestId("toolbarLockButton");
+
+      await act(async () => {
+        fireEvent.focus(btn);
+      });
+
+      const tooltips = screen.getAllByRole("tooltip");
+      const lockTooltip = tooltips.find((t) => t.textContent?.includes("Switch to"));
+      expect(lockTooltip).toHaveTextContent("Switch to Annotate mode");
+      expect(lockTooltip!.querySelector("kbd")).toHaveTextContent("K");
+    });
+
+    it("when locked, then the lock button remains interactive", () => {
+      mockIsPaneLocked.mockImplementation(() => true);
+      render(<SimpleEditorToolbar />);
+      const btn = screen.getByTestId("toolbarLockButton");
+      expect(btn).not.toBeDisabled();
     });
   });
 });

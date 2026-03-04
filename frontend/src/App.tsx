@@ -591,8 +591,14 @@ export function App({ workspaceId, navigate }: AppProps) {
               <div className="flex flex-col flex-1 min-w-0">
                 <TitleBar navigate={navigate} />
                 <UnsavedBanner />
-                <SimpleEditorToolbar isLocked={focusedPaneLocked} />
-                {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
+                <SimpleEditorToolbar />
+                {!isMobile && settings.showStatusBar && (
+                  <StatusBar
+                    message={statusMessage}
+                    paneName={workspace.sectionNames[activeEditorIndex]}
+                    paneLocked={focusedPaneLocked}
+                  />
+                )}
                 <div className="flex flex-1 min-w-0 min-h-0">
                   {!isMobile &&
                     anyPaneLocked &&
