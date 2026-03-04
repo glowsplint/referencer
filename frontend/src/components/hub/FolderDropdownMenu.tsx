@@ -37,7 +37,7 @@ export function FolderDropdownMenu({
           >
             <Pencil size={14} /> Rename
           </DropdownMenu.Item>
-          {depth < 3 && (
+          {depth < 10 && (
             <DropdownMenu.Item
               onSelect={onNewSubfolder}
               className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"

@@ -1,6 +1,5 @@
 import { useCallback } from "react";
-import { Folder, ChevronRight, ChevronDown, Star } from "lucide-react";
-import { useFolderCollapse } from "@/hooks/ui/use-folder-collapse";
+import { Folder, Star } from "lucide-react";
 import { useDndContext } from "@/contexts/DndContext";
 import { useDraggable, useDropTarget, type DragData } from "@/hooks/ui/use-hub-dnd";
 import { getWorkspacesForFolder, canMoveFolderTo } from "@/lib/folder-tree";
@@ -9,8 +8,6 @@ import type { WorkspaceItem } from "@/lib/workspace-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { InlineNameInput } from "./InlineNameInput";
 import { FolderDropdownMenu } from "./FolderDropdownMenu";
-import { FolderSection } from "./FolderSection";
-import { WorkspaceListItem } from "./WorkspaceListItem";
 
 interface FolderListItemProps {
   node: FolderNode;
@@ -32,6 +29,7 @@ interface FolderListItemProps {
   onToggleFolderFavorite: (folderId: string, isFavorite: boolean) => void;
   onMoveToFolder: (workspaceId: string, folderId: string | null) => void;
   onMoveFolder: (folderId: string, parentId: string | null) => void;
+  onNavigateToFolder: (folderId: string | null) => void;
   ownerName?: string;
   ownerAvatarUrl?: string;
 }
@@ -40,30 +38,19 @@ export function FolderListItem({
   node,
   workspaces,
   folders,
-  viewMode,
   renamingFolderId,
-  creatingSubfolderId,
   onSetRenamingFolder,
   onSetCreatingSubfolder,
   onRenameFolder,
   onDeleteFolder,
-  onCreateFolder,
-  onOpenWorkspace,
-  onRenameWorkspace,
-  onDuplicateWorkspace,
-  onDeleteWorkspace,
-  onToggleFavorite,
   onToggleFolderFavorite,
   onMoveToFolder,
   onMoveFolder,
-  ownerName,
-  ownerAvatarUrl,
+  onNavigateToFolder,
 }: FolderListItemProps) {
-  const { isCollapsed, toggleCollapsed } = useFolderCollapse(node.folder.id);
   const { dragId, overTargetId } = useDndContext();
   const folderWorkspaces = getWorkspacesForFolder(workspaces, node.folder.id);
   const isRenaming = renamingFolderId === node.folder.id;
-  const isCreatingSubfolder = creatingSubfolderId === node.folder.id;
 
   const dragRef = useDraggable("folder", node.folder.id);
 
@@ -105,19 +92,13 @@ export function FolderListItem({
   const isOver = overTargetId === node.folder.id;
 
   return (
-    <div data-testid={`folderListItem-${node.folder.id}`}>
+    <div
+      data-testid={`folderListItem-${node.folder.id}`}
+      onDoubleClick={() => onNavigateToFolder(node.folder.id)}
+    >
       <div
         ref={combinedRef}
-        role="button"
-        tabIndex={0}
         className={`group/folder flex items-center px-4 py-3 rounded-md hover:bg-accent/30 transition-colors cursor-pointer ${isDragging ? "opacity-50" : ""} ${isOver ? "ring-2 ring-primary bg-primary/5" : ""}`}
-        onClick={toggleCollapsed}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            toggleCollapsed();
-          }
-        }}
       >
         <button
           onClick={(e) => {
@@ -132,9 +113,6 @@ export function FolderListItem({
             fill={node.folder.isFavorite ? "currentColor" : "none"}
             className={node.folder.isFavorite ? "text-yellow-500" : "text-muted-foreground"}
           />
-        </button>
-        <button className="p-0.5 shrink-0 ml-1">
-          {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
         </button>
         <Folder size={14} className="text-muted-foreground shrink-0 ml-1" />
         {isRenaming ? (
@@ -167,71 +145,6 @@ export function FolderListItem({
           />
         </div>
       </div>
-
-      {/* Expanded children */}
-      {!isCollapsed && (
-        <div className="ml-6">
-          {isCreatingSubfolder && (
-            <div className="flex items-center gap-1.5 py-2 px-1 mb-1">
-              <Folder size={14} className="text-muted-foreground shrink-0" />
-              <InlineNameInput
-                onSave={(name) => {
-                  onCreateFolder(node.folder.id, name);
-                  onSetCreatingSubfolder(null);
-                }}
-                onCancel={() => onSetCreatingSubfolder(null)}
-              />
-            </div>
-          )}
-
-          {node.children.map((child) => (
-            <FolderSection
-              key={child.folder.id}
-              node={child}
-              workspaces={workspaces}
-              folders={folders}
-              viewMode={viewMode}
-              renamingFolderId={renamingFolderId}
-              creatingSubfolderId={creatingSubfolderId}
-              onSetRenamingFolder={onSetRenamingFolder}
-              onSetCreatingSubfolder={onSetCreatingSubfolder}
-              onRenameFolder={onRenameFolder}
-              onDeleteFolder={onDeleteFolder}
-              onCreateFolder={onCreateFolder}
-              onOpenWorkspace={onOpenWorkspace}
-              onRenameWorkspace={onRenameWorkspace}
-              onDuplicateWorkspace={onDuplicateWorkspace}
-              onDeleteWorkspace={onDeleteWorkspace}
-              onToggleFavorite={onToggleFavorite}
-              onToggleFolderFavorite={onToggleFolderFavorite}
-              onMoveToFolder={onMoveToFolder}
-              onMoveFolder={onMoveFolder}
-              ownerName={ownerName}
-              ownerAvatarUrl={ownerAvatarUrl}
-            />
-          ))}
-
-          {folderWorkspaces.length > 0 && (
-            <div className="flex flex-col gap-1 py-1">
-              {folderWorkspaces.map((ws) => (
-                <WorkspaceListItem
-                  key={ws.workspaceId}
-                  workspace={ws}
-                  onOpen={() => onOpenWorkspace(ws.workspaceId)}
-                  onRename={() => onRenameWorkspace(ws)}
-                  onDuplicate={() => onDuplicateWorkspace(ws.workspaceId)}
-                  onDelete={() => onDeleteWorkspace(ws)}
-                  onToggleFavorite={onToggleFavorite}
-                  folders={folders}
-                  onMoveToFolder={onMoveToFolder}
-                  ownerName={ownerName}
-                  ownerAvatarUrl={ownerAvatarUrl}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

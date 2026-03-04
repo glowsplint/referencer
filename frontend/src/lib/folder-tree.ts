@@ -1,6 +1,8 @@
 import type { FolderItem } from "@/lib/folder-client";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
+export const MAX_FOLDER_DEPTH = 10;
+
 export interface FolderNode {
   folder: FolderItem;
   children: FolderNode[];
@@ -80,8 +82,21 @@ export function canMoveFolderTo(
   // Can't move to own descendant (would create cycle)
   const descendants = getAllDescendantFolderIds(folders, folderId);
   if (descendants.includes(targetParentId)) return false;
-  // Check depth constraint: parent's depth + subtree depth of moved folder + 1 <= MAX_DEPTH (3)
+  // Check depth constraint: parent's depth + subtree depth of moved folder + 1 <= MAX_DEPTH
   const parentDepth = getFolderDepth(folders, targetParentId);
   const subtreeDepth = getSubtreeDepth(folders, folderId);
-  return parentDepth + 1 + subtreeDepth <= 3;
+  return parentDepth + 1 + subtreeDepth <= MAX_FOLDER_DEPTH;
+}
+
+/** Returns the ancestor path from root to the given folder (inclusive) */
+export function getFolderAncestorPath(folders: FolderItem[], folderId: string): FolderItem[] {
+  const path: FolderItem[] = [];
+  let currentId: string | null = folderId;
+  while (currentId) {
+    const folder = folders.find((f) => f.id === currentId);
+    if (!folder) break;
+    path.unshift(folder);
+    currentId = folder.parentId;
+  }
+  return path;
 }

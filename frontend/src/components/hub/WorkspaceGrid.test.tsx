@@ -131,7 +131,7 @@ describe("WorkspaceGrid", () => {
       expect(screen.getByText("My Workspaces")).toBeInTheDocument();
     });
 
-    it("then shows the starred section", () => {
+    it("then shows the starred section at root level", () => {
       renderGrid([makeWorkspace()]);
       expect(screen.getByTestId("starredSection")).toBeInTheDocument();
     });
@@ -368,6 +368,83 @@ describe("WorkspaceGrid", () => {
       // Even though "Alpha WS" < "Zebra Folder" alphabetically, folder should come first
       expect(allListItems[0]).toHaveAttribute("data-testid", "folderListItem-f1");
       expect(allListItems[1]).toHaveAttribute("data-testid", "workspaceListItem-ws-unfiled");
+    });
+  });
+
+  describe("when navigating into a folder", () => {
+    it("then hides the starred section and shows breadcrumb", async () => {
+      const user = userEvent.setup();
+      const folder = makeFolder({ id: "f1", name: "Study Notes" });
+      const ws = makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "WS in folder" });
+      const unfiledWs = makeWorkspace({
+        workspaceId: "ws-unfiled",
+        title: "Unfiled",
+        folderId: null,
+      });
+      renderGrid([ws, unfiledWs], [folder]);
+
+      // Starred section visible at root
+      expect(screen.getByTestId("starredSection")).toBeInTheDocument();
+      // Breadcrumb not rendered at root
+      expect(screen.queryByTestId("folderBreadcrumb")).not.toBeInTheDocument();
+
+      // Double-click folder to navigate into it
+      await user.dblClick(screen.getByTestId("folderCard-f1"));
+
+      // Starred section should be hidden
+      expect(screen.queryByTestId("starredSection")).not.toBeInTheDocument();
+      // Breadcrumb should appear
+      expect(screen.getByTestId("folderBreadcrumb")).toBeInTheDocument();
+      expect(screen.getByTestId("breadcrumb-root")).toHaveTextContent("My Workspaces");
+      expect(screen.getByTestId("breadcrumb-f1")).toHaveTextContent("Study Notes");
+
+      // Should show workspace inside the folder
+      expect(screen.getByText("WS in folder")).toBeInTheDocument();
+      // Should NOT show unfiled workspace (it's at root level)
+      expect(screen.queryByText("Unfiled")).not.toBeInTheDocument();
+    });
+
+    it("then navigates back to root when breadcrumb root is clicked", async () => {
+      const user = userEvent.setup();
+      const folder = makeFolder({ id: "f1", name: "Study Notes" });
+      const unfiledWs = makeWorkspace({
+        workspaceId: "ws-unfiled",
+        title: "Unfiled",
+        folderId: null,
+      });
+      renderGrid([unfiledWs], [folder]);
+
+      // Navigate into folder
+      await user.dblClick(screen.getByTestId("folderCard-f1"));
+      expect(screen.queryByTestId("starredSection")).not.toBeInTheDocument();
+
+      // Click breadcrumb root to go back
+      await user.click(screen.getByTestId("breadcrumb-root"));
+
+      // Starred section visible again
+      expect(screen.getByTestId("starredSection")).toBeInTheDocument();
+      // Breadcrumb disappears
+      expect(screen.queryByTestId("folderBreadcrumb")).not.toBeInTheDocument();
+      // Unfiled workspace visible again
+      expect(screen.getByText("Unfiled")).toBeInTheDocument();
+    });
+
+    it("then shows child subfolders when inside a folder", async () => {
+      const user = userEvent.setup();
+      const parent = makeFolder({ id: "f1", name: "Parent" });
+      const child = makeFolder({ id: "f2", name: "Child Folder", parentId: "f1" });
+      renderGrid([], [parent, child]);
+
+      // At root, should see parent folder
+      expect(screen.getByText("Parent")).toBeInTheDocument();
+      // Child is nested, not visible at root
+      expect(screen.queryByTestId("folderCard-f2")).not.toBeInTheDocument();
+
+      // Navigate into parent
+      await user.dblClick(screen.getByTestId("folderCard-f1"));
+
+      // Child should now be visible
+      expect(screen.getByText("Child Folder")).toBeInTheDocument();
     });
   });
 });

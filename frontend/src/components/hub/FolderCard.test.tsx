@@ -40,12 +40,14 @@ const folders = [folder];
 describe("FolderCard", () => {
   let onToggleFolderFavorite: ReturnType<typeof vi.fn>;
   let onOpenWorkspace: ReturnType<typeof vi.fn>;
+  let onNavigateToFolder: ReturnType<typeof vi.fn>;
   const noopFn = vi.fn();
 
   beforeEach(() => {
     localStorage.clear();
     onToggleFolderFavorite = vi.fn();
     onOpenWorkspace = vi.fn();
+    onNavigateToFolder = vi.fn();
   });
 
   function renderCard(opts?: {
@@ -75,6 +77,7 @@ describe("FolderCard", () => {
           onToggleFolderFavorite={onToggleFolderFavorite}
           onMoveToFolder={noopFn}
           onMoveFolder={noopFn}
+          onNavigateToFolder={onNavigateToFolder}
         />
       </DndProvider>,
     );
@@ -95,7 +98,7 @@ describe("FolderCard", () => {
   describe("when folder has no workspaces", () => {
     it("then displays workspace count of 0", () => {
       renderCard();
-      expect(screen.getByText("0")).toBeInTheDocument();
+      expect(screen.getByText("0 items")).toBeInTheDocument();
     });
   });
 
@@ -106,7 +109,7 @@ describe("FolderCard", () => {
         makeWorkspace({ workspaceId: "ws-2", folderId: "f1" }),
       ];
       renderCard({ workspaces });
-      expect(screen.getByText("2")).toBeInTheDocument();
+      expect(screen.getByText("2 items")).toBeInTheDocument();
     });
   });
 
@@ -134,22 +137,14 @@ describe("FolderCard", () => {
     });
   });
 
-  describe("when the folder header is clicked", () => {
-    it("then toggles expand/collapse", async () => {
+  describe("when the folder card is double-clicked", () => {
+    it("then calls onNavigateToFolder with the folder id", async () => {
       const user = userEvent.setup();
-      const workspaces = [
-        makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "Inside WS" }),
-      ];
-      renderCard({ workspaces });
+      renderCard();
 
-      // Initially expanded (not collapsed), so workspace should be visible
-      expect(screen.getByText("Inside WS")).toBeInTheDocument();
+      await user.dblClick(screen.getByTestId("folderCard-f1"));
 
-      // Click to collapse
-      await user.click(screen.getByTestId("folderCard-f1").firstElementChild!);
-
-      // After collapse, workspace should be hidden
-      expect(screen.queryByText("Inside WS")).not.toBeInTheDocument();
+      expect(onNavigateToFolder).toHaveBeenCalledWith("f1");
     });
   });
 });
