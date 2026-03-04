@@ -1,14 +1,14 @@
 import { test, expect } from "@playwright/test";
+import { setupWorkspace } from "./helpers";
 
 let initialArrowCount = 0;
 let initialEndpointCount = 0;
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
-  await expect(page.locator(".simple-editor p").first()).toBeVisible();
+  await setupWorkspace(page);
 
   // Hide default layers so their arrows/highlights don't interfere with tests
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 4; i++) {
     await page.getByTestId(`layerVisibility-${i}`).click();
   }
 

@@ -108,7 +108,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
             <button
               onClick={async () => {
                 await pendingRenameRef.current;
-                navigate("#/");
+                navigate("#/hub");
               }}
               className="mr-2 rounded-md p-1.5 transition-colors hover:bg-accent hover:text-accent-foreground"
               data-testid="homeButton"
@@ -139,7 +139,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
               <DropdownMenu.Item
                 onSelect={async () => {
                   await pendingRenameRef.current;
-                  navigate("#/");
+                  navigate("#/hub");
                 }}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
                 data-testid="workspaceSwitcherHub"

@@ -137,7 +137,7 @@ describe("ShareAcceptPage", () => {
       });
 
       fireEvent.click(screen.getByText("Go to Hub"));
-      expect(mockNavigate).toHaveBeenCalledWith("#/");
+      expect(mockNavigate).toHaveBeenCalledWith("#/hub");
     });
   });
 });

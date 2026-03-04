@@ -131,11 +131,13 @@ export function FolderListItem({
             />
           </div>
         ) : (
-          <span className="font-medium text-sm truncate flex-1 ml-1.5">{node.folder.name}</span>
+          <span className="font-medium text-sm truncate flex-1 ml-1.5">
+            {node.folder.name}
+            <span className="text-xs text-muted-foreground font-normal ml-2">
+              {folderWorkspaces.length} items
+            </span>
+          </span>
         )}
-        <span className="text-xs text-muted-foreground mr-2 shrink-0">
-          {folderWorkspaces.length} items
-        </span>
         <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
           <FolderDropdownMenu
             depth={node.depth}

@@ -64,7 +64,7 @@ export function ShareAcceptPage({ code, navigate }: ShareAcceptPageProps) {
       <div className="flex h-screen flex-col items-center justify-center gap-4">
         <p className="text-destructive">{error}</p>
         <button
-          onClick={() => navigate("#/")}
+          onClick={() => navigate("#/hub")}
           className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           Go to Hub
