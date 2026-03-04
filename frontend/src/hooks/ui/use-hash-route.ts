@@ -13,7 +13,14 @@ const SHARE_RE = /^share\/([a-zA-Z0-9_-]+)$/;
 function parseHash(): Route {
   const hash = window.location.hash;
   const hashPath = hash.replace(/^#\/?/, "").split("?")[0];
-  if (!hashPath) return { type: "hub" };
+
+  if (hashPath === "hub") return { type: "hub" };
+
+  if (!hashPath) {
+    // Redirect root to #/hub
+    window.location.hash = "#/hub";
+    return { type: "hub" };
+  }
 
   const shareMatch = SHARE_RE.exec(hashPath);
   if (shareMatch) {
@@ -22,7 +29,7 @@ function parseHash(): Route {
 
   if (!WORKSPACE_ID_RE.test(hashPath)) {
     // Non-matching path, redirect to hub
-    window.location.hash = "#/";
+    window.location.hash = "#/hub";
     return { type: "hub" };
   }
   return { type: "editor", workspaceId: hashPath };

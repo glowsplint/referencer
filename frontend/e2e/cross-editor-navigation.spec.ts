@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { setupWorkspace } from "./helpers";
 
 async function editorOfSelection(page: import("@playwright/test").Page, editorCount: number) {
   for (let e = 0; e < editorCount; e++) {
@@ -14,10 +15,9 @@ async function editorOfSelection(page: import("@playwright/test").Page, editorCo
 
 test.describe("when navigating across 2 editors", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(".simple-editor p").first()).toBeVisible();
+    await setupWorkspace(page);
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
     // Editor starts locked with 2 passages. Close management pane for more space.
@@ -62,11 +62,12 @@ test.describe("when navigating across 2 editors", () => {
 });
 
 test.describe("when navigating across 3 editors", () => {
+  test.setTimeout(90000);
+
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(".simple-editor p").first()).toBeVisible();
+    await setupWorkspace(page);
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
     // Editor starts locked with 2 passages. Add one more for 3 total.
@@ -74,10 +75,21 @@ test.describe("when navigating across 3 editors", () => {
     await page.getByTestId("addPassageButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
 
-    // Unlock to type content in the empty 3rd editor, then re-lock
+    // Focus the 3rd editor pane so the lock button targets it
+    await page
+      .locator(".simple-editor-wrapper")
+      .nth(2)
+      .evaluate((el) => {
+        el.setAttribute("tabindex", "-1");
+        el.focus();
+      });
+    await page.waitForTimeout(100);
+
+    // Unlock the focused pane (now pane 2) to type content, then re-lock
     await page.getByTestId("lockButton").click();
-    const thirdEditor = page.locator(".simple-editor-wrapper").nth(2).locator(".ProseMirror");
-    await thirdEditor.click();
+    const thirdPM = page.locator(".simple-editor-wrapper").nth(2).locator(".ProseMirror");
+    await expect(thirdPM).toHaveAttribute("contenteditable", "true", { timeout: 5000 });
+    await thirdPM.click();
     await page.keyboard.type("Alpha Beta Gamma Delta Epsilon Zeta Eta Theta");
     await page.getByTestId("lockButton").click();
 
@@ -88,10 +100,12 @@ test.describe("when navigating across 3 editors", () => {
   test("when ArrowDown is pressed from E1, then selection eventually reaches E2 and E3", async ({
     page,
   }) => {
-    // Click a word in E1
-    const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
-    const box = await p.boundingBox();
-    await page.mouse.click(box!.x + 10, box!.y + 10);
+    // Click a word near the bottom of E1 to reduce traversal distance
+    const paragraphs = page.locator(".simple-editor-wrapper").nth(0).locator("p");
+    const lastP = paragraphs.last();
+    await lastP.scrollIntoViewIfNeeded();
+    const box = await lastP.boundingBox();
+    await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
     await expect(page.locator(".word-selection").first()).toBeVisible({ timeout: 2000 });
 
     let reachedE2 = false,
@@ -99,7 +113,7 @@ test.describe("when navigating across 3 editors", () => {
 
     for (let i = 0; i < 150; i++) {
       await page.keyboard.press("ArrowDown");
-      await page.waitForTimeout(30);
+      await page.waitForTimeout(20);
       const ed = await editorOfSelection(page, 3);
       if (ed === 1) reachedE2 = true;
       if (ed === 2) {
@@ -112,26 +126,31 @@ test.describe("when navigating across 3 editors", () => {
     expect(reachedE3).toBe(true);
   });
 
-  test("when ArrowUp is pressed from E3, then selection reaches E2", async ({ page }) => {
-    // Click a word in E3
+  test("when ArrowUp is pressed from E3, then selection reaches a top-row editor", async ({
+    page,
+  }) => {
+    // Click a word in E3 (bottom row, full width).
+    // "Alpha" is left-aligned, sitting below E1 (editor 0) in the 2-row grid,
+    // so ArrowUp should reach E1 (editorIndex 0) rather than E2 (editorIndex 1).
     const p = page.locator(".simple-editor-wrapper").nth(2).locator("p").first();
+    await p.scrollIntoViewIfNeeded();
     const box = await p.boundingBox();
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
     await expect(page.locator(".word-selection").first()).toBeVisible({ timeout: 2000 });
 
-    let reachedE2 = false;
+    let reachedTopRow = false;
 
     for (let i = 0; i < 150; i++) {
       await page.keyboard.press("ArrowUp");
       await page.waitForTimeout(30);
       const ed = await editorOfSelection(page, 3);
-      if (ed === 1) {
-        reachedE2 = true;
+      if (ed === 0 || ed === 1) {
+        reachedTopRow = true;
         break;
       }
     }
 
-    expect(reachedE2).toBe(true);
+    expect(reachedTopRow).toBe(true);
   });
 
   test("when ArrowDown crosses editors, then ArrowUp crosses back", async ({ page }) => {

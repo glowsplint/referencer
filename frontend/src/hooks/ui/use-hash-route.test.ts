@@ -13,16 +13,24 @@ describe("useHashRoute", () => {
     window.location.hash = originalHash;
   });
 
-  it("when hash is empty, then returns hub route", () => {
+  it("when hash is empty, then redirects to #/hub and returns hub route", () => {
     window.location.hash = "";
+    const { result } = renderHook(() => useHashRoute());
+    expect(result.current.route).toEqual({ type: "hub" });
+    expect(window.location.hash).toBe("#/hub");
+  });
+
+  it("returns hub route when hash is #/hub", () => {
+    window.location.hash = "#/hub";
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({ type: "hub" });
   });
 
-  it("returns hub route when hash is #/", () => {
+  it("when hash is #/, then redirects to #/hub", () => {
     window.location.hash = "#/";
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({ type: "hub" });
+    expect(window.location.hash).toBe("#/hub");
   });
 
   it("when hash is a UUID, then returns editor route with correct workspaceId", () => {
@@ -55,16 +63,15 @@ describe("useHashRoute", () => {
     });
   });
 
-  it("when hash is a non-UUID/KSUID path, then returns hub route", () => {
+  it("when hash is a non-UUID/KSUID path, then redirects to #/hub", () => {
     window.location.hash = "#/not-a-uuid";
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({ type: "hub" });
-    // It should also redirect to #/
-    expect(window.location.hash).toBe("#/");
+    expect(window.location.hash).toBe("#/hub");
   });
 
   it("when hashchange event fires, then updates route", () => {
-    window.location.hash = "#/";
+    window.location.hash = "#/hub";
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({ type: "hub" });
 
@@ -80,7 +87,7 @@ describe("useHashRoute", () => {
   });
 
   it("when navigate is called, then updates window.location.hash", () => {
-    window.location.hash = "#/";
+    window.location.hash = "#/hub";
     const { result } = renderHook(() => useHashRoute());
 
     act(() => {

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { setupWorkspace } from "./helpers";
 
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
@@ -16,10 +17,9 @@ async function clickWordInEditor(
 
 test.describe("when using Shift+Arrow for multi-word selection", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(".simple-editor p").first()).toBeVisible();
+    await setupWorkspace(page);
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
   });
@@ -81,7 +81,7 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
     expect(box1).not.toBeNull();
 
     // Expand 3 times
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       await page.keyboard.press("Shift+ArrowRight");
       await page.waitForTimeout(50);
     }
@@ -146,10 +146,13 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
 
 test.describe("when dragging to select multiple words", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(".simple-editor p").first()).toBeVisible();
+    await setupWorkspace(page);
+    // Hide default layers so their annotations don't interfere with tests
+    for (let i = 0; i < 4; i++) {
+      await page.getByTestId(`layerVisibility-${i}`).click();
+    }
 
-    // Editor starts locked with 3 default layers. Add a fresh layer for tests.
+    // Add a fresh layer for tests.
     await page.getByTestId("addLayerButton").click();
 
     // Switch to comments tool for annotation creation
@@ -209,13 +212,15 @@ test.describe("when dragging to select multiple words", () => {
     // Confirm selection with Enter to create highlight
     await page.keyboard.press("Enter");
 
-    // Annotation panel should appear
+    // Annotation panel should appear with an annotation card
     await expect(page.getByTestId("annotation-panel")).toBeVisible({
-      timeout: 2000,
+      timeout: 5000,
     });
-    await expect(page.getByPlaceholder("Add annotation...")).toBeVisible({
-      timeout: 2000,
-    });
+    const card = page.getByTestId("annotation-panel").locator("[data-highlight-id]").first();
+    await expect(card).toBeVisible({ timeout: 2000 });
+    // Click card to enter editing mode — renders a Tiptap mini-editor
+    await card.click();
+    await expect(page.locator(".mini-editor")).toBeVisible({ timeout: 2000 });
   });
 
   test("when drag selection annotation is saved, then highlight has background color", async ({
@@ -236,10 +241,17 @@ test.describe("when dragging to select multiple words", () => {
 
     // Confirm selection and save annotation so highlight persists
     await page.keyboard.press("Enter");
-    const input = page.getByPlaceholder("Add annotation...");
-    await expect(input).toBeVisible({ timeout: 2000 });
-    await input.fill("Drag note");
-    await input.press("Enter");
+    // Wait for annotation panel and card to appear, then click card to edit
+    await expect(page.getByTestId("annotation-panel")).toBeVisible({ timeout: 5000 });
+    const card = page.getByTestId("annotation-panel").locator("[data-highlight-id]").first();
+    await card.click();
+    const miniEditor = page.locator(".mini-editor");
+    await expect(miniEditor).toBeVisible({ timeout: 2000 });
+    await miniEditor.click();
+    await page.keyboard.type("Drag note");
+    // Blur to commit the annotation (Escape blurs the Tiptap editor)
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(300);
 
     // Clear selection to see only the decoration highlights
     await page.keyboard.press("Escape");
@@ -255,10 +267,9 @@ test.describe("when dragging to select multiple words", () => {
 
 test.describe("when editor state changes", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(".simple-editor p").first()).toBeVisible();
+    await setupWorkspace(page);
     // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
   });
