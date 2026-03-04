@@ -9,10 +9,12 @@ import type { TourStep } from "@/hooks/ui/use-tour-engine";
 // ---------------------------------------------------------------------------
 
 // react-i18next — identity translation
+let mockLanguage = "en";
+
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
-    i18n: { language: "en" },
+    i18n: { language: mockLanguage },
   }),
 }));
 
@@ -112,6 +114,7 @@ function resetMocks() {
   mockReadOnly = false;
   mockWorkspaceId = "test-workspace-id";
   mockIsMobile = false;
+  mockLanguage = "en";
   mockIsTourCompleted.mockReturnValue(false);
 
   mockEngine = {
@@ -475,6 +478,42 @@ describe("EditorTour", () => {
       render(<EditorTour />);
 
       expect(mockEngine.stop).toHaveBeenCalled();
+    });
+  });
+
+  describe("when language is an English variant like en-US", () => {
+    it("then renders the tour overlay", () => {
+      mockLanguage = "en-US";
+      mockActiveTourId = "editor";
+      setEngineRunning(0);
+
+      render(<EditorTour />);
+      expect(screen.getByTestId("tourOverlay")).toBeInTheDocument();
+    });
+
+    it("then auto-starts on first visit", () => {
+      mockLanguage = "en-GB";
+      mockActiveTourId = null;
+      mockIsMobile = false;
+      mockReadOnly = false;
+      mockIsTourCompleted.mockReturnValue(false);
+
+      render(<EditorTour />);
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(mockStartTour).toHaveBeenCalledWith("editor");
+    });
+  });
+
+  describe("when language is non-English", () => {
+    it("then renders nothing", () => {
+      mockLanguage = "zh";
+      mockActiveTourId = "editor";
+      setEngineRunning(0);
+
+      const { container } = render(<EditorTour />);
+      expect(container.innerHTML).toBe("");
     });
   });
 });
