@@ -27,7 +27,7 @@
 
 ## Sprint 3 — Medium Security Fixes
 
-- [x] **S5** KV rate limiter: documented race condition, recommended alternatives
+- [x] **S5** Rate limiter: replaced KV with in-memory Map (per-isolate, no external deps)
 - [x] **S6** Workspace cascade delete: owner delete removes workspace + share links + Yjs docs
 - [x] **S7** Rate limit CRUD endpoints (60 req/min per user on workspaces + folders)
 - [x] **S9** Least privilege: documented restricted Supabase role recommendation

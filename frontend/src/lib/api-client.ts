@@ -1,5 +1,7 @@
 /** Thin fetch wrapper with centralized API_URL, credentials, and error handling. */
 
+import { toast } from "sonner";
+
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 export class ApiError extends Error {
@@ -25,6 +27,9 @@ export async function apiFetch<T = unknown>(path: string, options: RequestInit =
     },
   });
   if (!res.ok) {
+    if (res.status === 429) {
+      toast.error("Too many requests. Please try again later.", { id: "rate-limited" });
+    }
     throw new ApiError(res.status, `API ${options.method ?? "GET"} ${path} failed: ${res.status}`);
   }
   if (res.status === 204 || res.headers.get("content-length") === "0") {

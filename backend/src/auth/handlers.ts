@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { generateState, generateCodeVerifier, Google, GitHub } from "arctic";
-import { kvRateLimiter } from "../lib/rate-limit";
+import { rateLimiter } from "../lib/rate-limit";
 import { createProviders, getProviderFromMap, type OAuthProvider } from "./providers";
 import { loadAuthConfig, type AuthConfig } from "./config";
 import {
@@ -24,19 +24,19 @@ interface AuthState {
   origin?: string;
 }
 
-const authStartLimiter = kvRateLimiter({
+const authStartLimiter = rateLimiter({
   windowMs: 60 * 1000,
   limit: 10,
   keyGenerator: getClientIp,
 });
 
-const authCallbackLimiter = kvRateLimiter({
+const authCallbackLimiter = rateLimiter({
   windowMs: 60 * 1000,
   limit: 5,
   keyGenerator: getClientIp,
 });
 
-const authLogoutLimiter = kvRateLimiter({
+const authLogoutLimiter = rateLimiter({
   windowMs: 60 * 1000,
   limit: 10,
   keyGenerator: getClientIp,
@@ -110,7 +110,7 @@ export function createAuthRoutes() {
   });
 
   // POST /auth/ws-ticket — issue a short-lived JWT for WebSocket auth
-  const wsTicketLimiter = kvRateLimiter({
+  const wsTicketLimiter = rateLimiter({
     windowMs: 60_000,
     limit: 30,
     keyGenerator: getClientIp,

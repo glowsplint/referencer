@@ -128,10 +128,9 @@ Vars are set in `backend/wrangler.toml`:
 
 Bindings configured in `backend/wrangler.toml`:
 
-| Binding         | Type             | Description     |
-| --------------- | ---------------- | --------------- |
-| `RATE_LIMIT_KV` | KV Namespace     | Rate limiting   |
-| `METRICS`       | Analytics Engine | Request metrics |
+| Binding   | Type             | Description     |
+| --------- | ---------------- | --------------- |
+| `METRICS` | Analytics Engine | Request metrics |
 
 ### Collab Server (Cloudflare Worker secrets)
 
