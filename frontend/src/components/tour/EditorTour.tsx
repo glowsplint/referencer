@@ -25,7 +25,7 @@ export function EditorTour() {
   const isMobile = useIsBreakpoint("max", 768);
   const [shareOpen, setShareOpen] = useState(false);
   const prevStepRef = useRef<number>(-1);
-  const isNonEnglish = i18n.language !== "en";
+  const isNonEnglish = !i18n.language.startsWith("en");
 
   // Translate step titles and content (keys are dynamic strings from tour-steps.ts)
   const translatedSteps: TourStep[] = EDITOR_TOUR_STEPS.map((step) => ({
