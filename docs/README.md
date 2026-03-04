@@ -35,12 +35,15 @@ referencer/
 
 ## Documentation Index
 
-| Document                             | Description                                                                    |
-| ------------------------------------ | ------------------------------------------------------------------------------ |
-| [architecture.md](architecture.md)   | High-level system architecture and how the three services connect              |
-| [collaboration.md](collaboration.md) | CRDT collaboration system: Yjs, annotations, relative positions, undo, offline |
-| [backend.md](backend.md)             | Backend API: routes, authentication, database schema                           |
-| [development.md](development.md)     | Development setup, commands, environment variables, testing                    |
+| Document                                       | Description                                                                       |
+| ---------------------------------------------- | --------------------------------------------------------------------------------- |
+| [architecture.md](architecture.md)             | High-level system architecture and how the three services connect                 |
+| [collaboration.md](collaboration.md)           | CRDT collaboration system: Yjs, annotations, relative positions, undo, offline    |
+| [backend.md](backend.md)                       | Backend API: routes, authentication, database schema                              |
+| [authentication.md](authentication.md)         | OAuth flow, session management, security measures, auth API reference             |
+| [development.md](development.md)               | Development setup, commands, environment variables, testing                       |
+| [ux-brainstorm.md](ux-brainstorm.md)           | UX improvement brainstorm: 60+ ideas across 10 themes with competitor research    |
+| [search-improvement.md](search-improvement.md) | Full-text annotation search: architecture, schema, and phased implementation plan |
 
 ## Tech Stack
 
