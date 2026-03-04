@@ -50,6 +50,45 @@
     "addReaction": "Add reaction",
     "removeReply": "Remove reply"
   },
+  "schemes": {
+    "title": "Start with a study scheme",
+    "applyScheme": "Apply study scheme",
+    "blankLayer": "Blank layer",
+    "layerCount": "{{count}} layers",
+    "layerCount_one": "{{count}} layer",
+    "layerCount_other": "{{count}} layers",
+    "inductive": {
+      "name": "Inductive Bible Study",
+      "description": "Close reading with OIA method",
+      "layers": {
+        "keyTerms": "Key Terms & Repeated Words",
+        "commands": "Commands & Warnings",
+        "promises": "Promises & Blessings",
+        "attributes": "Attributes of God",
+        "structure": "Literary Structure",
+        "questions": "Questions & Application"
+      }
+    },
+    "character": {
+      "name": "Character Study",
+      "description": "Trace persons through narrative",
+      "layers": {
+        "godChrist": "God / Christ",
+        "protagonist": "Protagonist / Faithful",
+        "antagonist": "Antagonist / Opposition",
+        "speech": "Speech & Dialogue"
+      }
+    },
+    "oia": {
+      "name": "Minimal (OIA)",
+      "description": "Observation / Interpretation / Application",
+      "layers": {
+        "observation": "Observation",
+        "interpretation": "Interpretation",
+        "application": "Application"
+      }
+    }
+  },
   "actionConsole": {
     "title": "Action Console",
     "close": "close",
