@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { apiFetch, apiPost, apiPatch, apiDelete, apiUrl, ApiError } from "./api-client";
+import { toast } from "sonner";
+
+vi.mock("sonner", () => ({
+  toast: { error: vi.fn() },
+}));
 
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
@@ -52,6 +57,18 @@ describe("when using apiFetch", () => {
       expect(err).toBeInstanceOf(ApiError);
       expect((err as ApiError).status).toBe(404);
     }
+  });
+
+  it("then shows deduplicated toast on 429 response", async () => {
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 429,
+    });
+
+    await expect(apiFetch("/api/limited")).rejects.toThrow(ApiError);
+    expect(toast.error).toHaveBeenCalledWith("Too many requests. Please try again later.", {
+      id: "rate-limited",
+    });
   });
 });
 

@@ -48,8 +48,6 @@ Referencer is composed of three independently-deployed Cloudflare services:
    │ Hono API   │
    │ OAuth2     │
    │ Supabase   │
-   │ KV (rate   │
-   │  limiting) │
    │ Analytics  │
    │ Engine     │
    └────────────┘
@@ -126,7 +124,7 @@ The backend is a **Cloudflare Worker** (`referencer-api`) using Hono. It serves 
 2. **REST API** -- share links, workspaces, folders, preferences, feedback.
 3. **Scheduled tasks** -- hourly cron for session cleanup, rate-limit key expiry.
 
-Bindings: KV (rate limiting), Analytics Engine (metrics), Supabase (database).
+Bindings: Analytics Engine (metrics), Supabase (database). Rate limiting uses an in-memory Map (per-isolate).
 
 See [backend.md](backend.md) for full details.
 

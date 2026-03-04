@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { createAuthRoutes } from "./handlers";
 import { optionalAuth } from "./middleware";
 import { hashToken } from "./store";
+import { _resetStoreForTesting } from "../lib/rate-limit";
 import type { AuthConfig } from "./config";
 import type { Env } from "../env";
 
@@ -14,31 +15,12 @@ const testConfig: AuthConfig = {
   github: null,
 };
 
-function createMockKV() {
-  const store = new Map<string, string>();
-  return {
-    get(key: string, _type?: string) {
-      const val = store.get(key);
-      return Promise.resolve(val ? JSON.parse(val) : null);
-    },
-    put(key: string, value: string, _opts?: any) {
-      store.set(key, value);
-      return Promise.resolve();
-    },
-    delete(key: string) {
-      store.delete(key);
-      return Promise.resolve();
-    },
-  };
-}
-
 // Minimal env bindings so loadAuthConfig(c.env) works.
 const testEnv = {
   SUPABASE_URL: "http://localhost:54321",
   SUPABASE_SERVICE_KEY: "test-key",
   FRONTEND_URL: "http://localhost:5173",
   BASE_URL: "http://localhost:5000",
-  RATE_LIMIT_KV: createMockKV(),
 } as Env["Bindings"];
 
 // In-memory stores for mock Supabase
@@ -155,6 +137,7 @@ describe("auth routes", () => {
   beforeEach(() => {
     users = [];
     sessions = [];
+    _resetStoreForTesting();
   });
 
   describe("GET /auth/:provider — unknown provider", () => {

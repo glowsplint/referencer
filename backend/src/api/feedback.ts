@@ -10,14 +10,6 @@ export function handleFeedback() {
     const token = c.env.GITHUB_ISSUES_TOKEN;
     if (!token) return c.json({ error: "Feedback not configured" }, 503);
 
-    // Rate limit: 3 per hour per user
-    const kv = c.env.RATE_LIMIT_KV;
-    const rateKey = `feedback:${user.id}`;
-    const current = parseInt((await kv.get(rateKey)) || "0", 10);
-    if (current >= 3) {
-      return c.json({ error: "Rate limit exceeded. Try again later." }, 429);
-    }
-
     const body = await c.req.json<{ title: string; description: string }>();
     if (!body.title?.trim()) {
       return c.json({ error: "Title is required" }, 400);
@@ -67,9 +59,6 @@ export function handleFeedback() {
         });
         return c.json({ error: "Failed to create issue" }, 502);
       }
-
-      // Increment rate limit counter
-      await kv.put(rateKey, String(current + 1), { expirationTtl: 3600 });
 
       const data = (await resp.json()) as { html_url: string };
       log.info("POST /api/feedback", { userId: user.id });

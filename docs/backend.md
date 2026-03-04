@@ -125,10 +125,9 @@ The backend uses **Supabase** (PostgreSQL) for all persistent data. The schema i
 
 ### Bindings
 
-| Binding         | Type             | Purpose                            |
-| --------------- | ---------------- | ---------------------------------- |
-| `RATE_LIMIT_KV` | KV Namespace     | Rate limiting (share link resolve) |
-| `METRICS`       | Analytics Engine | Request metrics                    |
+| Binding   | Type             | Purpose         |
+| --------- | ---------------- | --------------- |
+| `METRICS` | Analytics Engine | Request metrics |
 
 ## Source Layout
 
@@ -161,7 +160,7 @@ backend/src/
 │   ├── jwt.ts                  # JWT signing for WebSocket auth
 │   ├── logger.ts               # Structured logging
 │   ├── metrics.ts              # Analytics Engine metrics
-│   ├── rate-limit.ts           # KV-based rate limiter
+│   ├── rate-limit.ts           # In-memory rate limiter (per-isolate)
 │   └── utils.ts                # Utilities (code generation)
 └── middleware/
     └── require-permission.ts   # Permission check middleware

@@ -54,8 +54,6 @@ import type { Metrics } from "./lib/metrics";
 //
 // Bindings — configured in backend/wrangler.toml
 //
-// RATE_LIMIT_KV          — KV namespace for rate limiting
-//
 // METRICS                — Analytics Engine dataset for request/event metrics
 //                          Dataset: referencer_metrics
 
@@ -65,7 +63,6 @@ export type Env = {
     SUPABASE_SERVICE_KEY: string;
     FRONTEND_URL: string;
     BASE_URL: string;
-    RATE_LIMIT_KV: KVNamespace;
     METRICS: AnalyticsEngineDataset;
     GOOGLE_CLIENT_ID?: string;
     GOOGLE_CLIENT_SECRET?: string;
