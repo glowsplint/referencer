@@ -10,7 +10,9 @@
   "presence": {
     "online": "{{count}} online",
     "you": "You",
-    "yourName": "Your name"
+    "yourName": "Your name",
+    "connected": "Connected",
+    "disconnected": "Disconnected"
   },
   "print": {
     "comments": "Comments"
