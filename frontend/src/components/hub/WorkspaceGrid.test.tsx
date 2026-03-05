@@ -112,11 +112,11 @@ describe("WorkspaceGrid", () => {
       expect(screen.getByText("Create your first workspace")).toBeInTheDocument();
     });
 
-    it("then calls onNew when the empty state button is clicked", async () => {
+    it("then calls onNew with null when the empty state button is clicked", async () => {
       const user = userEvent.setup();
       renderGrid([], [], false);
       await user.click(screen.getByText("Create your first workspace"));
-      expect(onNew).toHaveBeenCalledTimes(1);
+      expect(onNew).toHaveBeenCalledWith(null);
     });
   });
 
@@ -188,12 +188,26 @@ describe("WorkspaceGrid", () => {
   });
 
   describe("when new workspace button is clicked", () => {
-    it("then calls onNew", async () => {
+    it("then calls onNew with null at root level", async () => {
       const user = userEvent.setup();
       renderGrid([makeWorkspace()]);
 
       await user.click(screen.getByTestId("newWorkspaceButton"));
-      expect(onNew).toHaveBeenCalledTimes(1);
+      expect(onNew).toHaveBeenCalledWith(null);
+    });
+
+    it("then calls onNew with the current folder id when inside a folder", async () => {
+      const user = userEvent.setup();
+      const folder = makeFolder({ id: "f1", name: "Study Notes" });
+      const ws = makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "WS in folder" });
+      renderGrid([ws], [folder]);
+
+      // Navigate into folder
+      await user.dblClick(screen.getByTestId("folderCard-f1"));
+
+      // Click new workspace button
+      await user.click(screen.getByTestId("newWorkspaceButton"));
+      expect(onNew).toHaveBeenCalledWith("f1");
     });
   });
 

@@ -42,7 +42,7 @@ interface WorkspaceGridProps {
   workspaces: WorkspaceItem[];
   isLoading: boolean;
   navigate: (hash: string) => void;
-  onNew: () => void;
+  onNew: (currentFolderId: string | null) => void;
   onRename: (workspaceId: string, title: string) => void;
   onDelete: (workspaceId: string) => void;
   onDuplicate: (sourceId: string, newId: string) => void;
@@ -380,7 +380,11 @@ export function WorkspaceGrid({
               <FolderPlus size={16} />
               New Folder
             </Button>
-            <Button onClick={onNew} size="sm" data-testid="newWorkspaceButton">
+            <Button
+              onClick={() => onNew(currentFolderId)}
+              size="sm"
+              data-testid="newWorkspaceButton"
+            >
               <Plus size={16} />
               New Workspace
             </Button>
@@ -426,7 +430,7 @@ export function WorkspaceGrid({
                 </span>
               </div>
             </div>
-            <Button onClick={onNew} size="lg">
+            <Button onClick={() => onNew(null)} size="lg">
               <Plus size={16} />
               Create your first workspace
             </Button>
