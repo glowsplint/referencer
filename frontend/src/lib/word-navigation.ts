@@ -127,31 +127,31 @@ export function resolveNavigationTarget(
 }
 
 /**
- * Return the word with the smallest `from` in the given passage (editorIndex).
+ * Return the word with the smallest `from` in the given text (editorIndex).
  */
-export function findFirstWordInPassage(
+export function findFirstWordInText(
   editorIndex: number,
   allCandidates: WordCenter[],
 ): CollectedWord | null {
-  const inPassage = allCandidates.filter((c) => c.word.editorIndex === editorIndex);
-  if (inPassage.length === 0) return null;
-  return inPassage.reduce((best, c) => (c.word.from < best.word.from ? c : best)).word;
+  const inText = allCandidates.filter((c) => c.word.editorIndex === editorIndex);
+  if (inText.length === 0) return null;
+  return inText.reduce((best, c) => (c.word.from < best.word.from ? c : best)).word;
 }
 
 /**
- * Return the word with the largest `to` in the given passage (editorIndex).
+ * Return the word with the largest `to` in the given text (editorIndex).
  */
-export function findLastWordInPassage(
+export function findLastWordInText(
   editorIndex: number,
   allCandidates: WordCenter[],
 ): CollectedWord | null {
-  const inPassage = allCandidates.filter((c) => c.word.editorIndex === editorIndex);
-  if (inPassage.length === 0) return null;
-  return inPassage.reduce((best, c) => (c.word.to > best.word.to ? c : best)).word;
+  const inText = allCandidates.filter((c) => c.word.editorIndex === editorIndex);
+  if (inText.length === 0) return null;
+  return inText.reduce((best, c) => (c.word.to > best.word.to ? c : best)).word;
 }
 
 /**
- * Like `findHorizontalTarget` but constrained to the same passage (editorIndex).
+ * Like `findHorizontalTarget` but constrained to the same text (editorIndex).
  */
 export function findHorizontalTargetConstrained(
   key: "ArrowLeft" | "ArrowRight",
@@ -168,7 +168,7 @@ export function findHorizontalTargetConstrained(
 }
 
 /**
- * Like `findVerticalTarget` step 1 only — stays within the same passage.
+ * Like `findVerticalTarget` step 1 only — stays within the same text.
  * No cross-editor fallback.
  */
 export function findVerticalTargetConstrained(
@@ -189,15 +189,15 @@ export function findVerticalTargetConstrained(
 }
 
 /**
- * Compute a WordSelection spanning the entire passage (first to last word).
+ * Compute a WordSelection spanning the entire text (first to last word).
  */
-export function computeSelectAllInPassage(
+export function computeSelectAllInText(
   editorIndex: number,
   allCandidates: WordCenter[],
   editor: Editor,
 ): WordSelection | null {
-  const first = findFirstWordInPassage(editorIndex, allCandidates);
-  const last = findLastWordInPassage(editorIndex, allCandidates);
+  const first = findFirstWordInText(editorIndex, allCandidates);
+  const last = findLastWordInText(editorIndex, allCandidates);
   if (!first || !last) return null;
 
   const from = first.from;

@@ -18,13 +18,13 @@
     "showUnderline": "밑줄 표시",
     "allColorsInUse": "모든 색상이 사용 중입니다. 먼저 레이어를 삭제하세요."
   },
-  "passages": {
+  "texts": {
     "title": "구절",
-    "addPassage": "구절 추가",
+    "addText": "구절 추가",
     "hideAll": "모든 구절 숨기기",
     "showAll": "모든 구절 표시",
-    "hidePassage": "구절 숨기기",
-    "showPassage": "구절 표시"
+    "hideText": "구절 숨기기",
+    "showText": "구절 표시"
   },
   "tooltips": {
     "toggleManagementPane": "관리 패널 전환",

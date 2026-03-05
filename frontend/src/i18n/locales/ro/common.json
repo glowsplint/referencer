@@ -1,6 +1,6 @@
 {
   "close": "Inchide",
   "active": "Activ",
-  "passage": "Pasajul {{number}}",
+  "text": "Pasajul {{number}}",
   "layer": "Stratul {{number}}"
 }

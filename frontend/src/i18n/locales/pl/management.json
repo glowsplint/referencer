@@ -18,13 +18,13 @@
     "showUnderline": "Pokaz podkreslenie",
     "allColorsInUse": "Wszystkie kolory sa w uzyciu — najpierw usun warstwe."
   },
-  "passages": {
+  "texts": {
     "title": "Fragmenty",
-    "addPassage": "Dodaj fragment",
+    "addText": "Dodaj fragment",
     "hideAll": "Ukryj wszystkie fragmenty",
     "showAll": "Pokaz wszystkie fragmenty",
-    "hidePassage": "Ukryj fragment",
-    "showPassage": "Pokaz fragment"
+    "hideText": "Ukryj fragment",
+    "showText": "Pokaz fragment"
   },
   "tooltips": {
     "toggleManagementPane": "Przelacz panel zarzadzania",

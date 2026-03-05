@@ -74,7 +74,7 @@ test.describe("when toggling passage visibility with arrows (2 editors)", () => 
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 2 passages and 3 default layers. Add a fresh layer.
+    // Editor starts locked with 2 texts and 3 default layers. Add a fresh layer.
     await page.getByTestId("addLayerButton").click();
 
     await page.getByTestId("menuButton").click();
@@ -271,9 +271,9 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
 
-    // Editor starts locked with 2 passages and 3 default layers.
-    // Add one more passage for 3 total.
-    await page.getByTestId("addPassageButton").click();
+    // Editor starts locked with 2 texts and 3 default layers.
+    // Add one more text for 3 total.
+    await page.getByTestId("addTextButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
 
     // Focus the 3rd editor pane so the lock button targets it

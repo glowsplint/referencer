@@ -18,13 +18,13 @@
     "showUnderline": "إظهار التسطير",
     "allColorsInUse": "جميع الألوان مستخدمة — أزل طبقة أولاً."
   },
-  "passages": {
+  "texts": {
     "title": "الفقرات",
-    "addPassage": "إضافة فقرة",
+    "addText": "إضافة فقرة",
     "hideAll": "إخفاء جميع الفقرات",
     "showAll": "إظهار جميع الفقرات",
-    "hidePassage": "إخفاء الفقرة",
-    "showPassage": "إظهار الفقرة"
+    "hideText": "إخفاء الفقرة",
+    "showText": "إظهار الفقرة"
   },
   "tooltips": {
     "toggleManagementPane": "تبديل لوحة الإدارة",

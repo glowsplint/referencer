@@ -18,13 +18,13 @@
     "showUnderline": "Onyesha mstari",
     "allColorsInUse": "Rangi zote zinatumika — ondoa tabaka kwanza."
   },
-  "passages": {
+  "texts": {
     "title": "Vifungu",
-    "addPassage": "Ongeza kifungu",
+    "addText": "Ongeza kifungu",
     "hideAll": "Ficha vifungu vyote",
     "showAll": "Onyesha vifungu vyote",
-    "hidePassage": "Ficha kifungu",
-    "showPassage": "Onyesha kifungu"
+    "hideText": "Ficha kifungu",
+    "showText": "Onyesha kifungu"
   },
   "tooltips": {
     "toggleManagementPane": "Geuza paneli ya usimamizi",

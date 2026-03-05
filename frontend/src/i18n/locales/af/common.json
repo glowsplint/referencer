@@ -1,6 +1,6 @@
 {
   "close": "Sluit",
   "active": "Aktief",
-  "passage": "Gedeelte {{number}}",
+  "text": "Gedeelte {{number}}",
   "layer": "Laag {{number}}"
 }

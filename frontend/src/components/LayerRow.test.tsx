@@ -56,7 +56,7 @@ function renderRow(overrides = {}) {
     layer: defaultLayer,
     index: 0,
     isActive: false,
-    sectionNames: ["Passage 1", "Passage 2"],
+    sectionNames: ["Text 1", "Text 2"],
     onSetActive: vi.fn(),
     onUpdateColor: vi.fn(),
     onUpdateName: vi.fn(),
@@ -350,7 +350,7 @@ describe("LayerRow", () => {
       expect(screen.getByText("selected text")).toBeInTheDocument();
     });
 
-    it("then includes the passage name in the title", () => {
+    it("then includes the text name in the title", () => {
       const layer = {
         ...defaultLayer,
         highlights: [makeHighlight("h1", "hello", "note", 1)],
@@ -374,7 +374,7 @@ describe("LayerRow", () => {
       expect(screen.getByText("hello (3) \u2192 goodbye (3)")).toBeInTheDocument();
     });
 
-    it("then includes passage names in the arrow title", () => {
+    it("then includes text names in the arrow title", () => {
       const layer = {
         ...defaultLayer,
         arrows: [makeArrow("a1", "foo", "bar", 0, 1)],

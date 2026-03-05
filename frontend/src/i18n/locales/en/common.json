@@ -1,7 +1,7 @@
 {
   "close": "Close",
   "active": "Active",
-  "passage": "Passage {{number}}",
+  "text": "Text {{number}}",
   "layer": "Layer {{number}}",
   "errorBoundary": {
     "somethingWentWrong": "Something went wrong.",

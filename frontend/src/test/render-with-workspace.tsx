@@ -84,7 +84,7 @@ export function makeMockWorkspace(
     editorKeys: [1],
     editorsRef: { current: new Map() },
     sectionVisibility: [true],
-    sectionNames: ["Passage 1"],
+    sectionNames: ["Text 1"],
     addEditor: vi.fn(),
     removeEditor: vi.fn(),
     reorderEditors: vi.fn(),

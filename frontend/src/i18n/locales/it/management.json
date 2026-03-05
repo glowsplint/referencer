@@ -18,13 +18,13 @@
     "showUnderline": "Mostra sottolineatura",
     "allColorsInUse": "Tutti i colori sono in uso — rimuovi prima un livello."
   },
-  "passages": {
+  "texts": {
     "title": "Brani",
-    "addPassage": "Aggiungi brano",
+    "addText": "Aggiungi brano",
     "hideAll": "Nascondi tutti i brani",
     "showAll": "Mostra tutti i brani",
-    "hidePassage": "Nascondi brano",
-    "showPassage": "Mostra brano"
+    "hideText": "Nascondi brano",
+    "showText": "Mostra brano"
   },
   "tooltips": {
     "toggleManagementPane": "Mostra/nascondi pannello di gestione",

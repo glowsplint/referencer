@@ -18,13 +18,13 @@
     "showUnderline": "顯示底線",
     "allColorsInUse": "所有顏色都已被使用——請先移除一個圖層。"
   },
-  "passages": {
+  "texts": {
     "title": "段落",
-    "addPassage": "新增段落",
+    "addText": "新增段落",
     "hideAll": "隱藏所有段落",
     "showAll": "顯示所有段落",
-    "hidePassage": "隱藏段落",
-    "showPassage": "顯示段落"
+    "hideText": "隱藏段落",
+    "showText": "顯示段落"
   },
   "tooltips": {
     "toggleManagementPane": "切換管理面板",

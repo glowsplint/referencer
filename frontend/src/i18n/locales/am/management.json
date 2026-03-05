@@ -18,13 +18,13 @@
     "showUnderline": "ከስር መስመር አሳይ",
     "allColorsInUse": "ሁሉም ቀለሞች ጥቅም ላይ ናቸው — መጀመሪያ ንብርብር ያስወግዱ።"
   },
-  "passages": {
+  "texts": {
     "title": "ክፍሎች",
-    "addPassage": "ክፍል ጨምር",
+    "addText": "ክፍል ጨምር",
     "hideAll": "ሁሉንም ክፍሎች ደብቅ",
     "showAll": "ሁሉንም ክፍሎች አሳይ",
-    "hidePassage": "ክፍል ደብቅ",
-    "showPassage": "ክፍል አሳይ"
+    "hideText": "ክፍል ደብቅ",
+    "showText": "ክፍል አሳይ"
   },
   "tooltips": {
     "toggleManagementPane": "የአስተዳደር ሰሌዳን ቀያይር",

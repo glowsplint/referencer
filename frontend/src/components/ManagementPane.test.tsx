@@ -84,9 +84,9 @@ describe("ManagementPane", () => {
       expect(screen.getByTestId("addLayerButton")).toBeInTheDocument();
     });
 
-    it("then shows the Passages heading", () => {
+    it("then shows the Texts heading", () => {
       renderPane();
-      expect(screen.getByText("Passages")).toBeInTheDocument();
+      expect(screen.getByText("Texts")).toBeInTheDocument();
     });
   });
 
@@ -161,24 +161,24 @@ describe("ManagementPane", () => {
     });
   });
 
-  describe("when passages are configured", () => {
-    it("then renders passage rows matching editorCount", () => {
+  describe("when texts are configured", () => {
+    it("then renders text rows matching editorCount", () => {
       renderPane({
         editorCount: 2,
         sectionVisibility: [true, true],
-        sectionNames: ["Passage 1", "Passage 2"],
+        sectionNames: ["Text 1", "Text 2"],
       });
-      expect(screen.getByText("Passage 1")).toBeInTheDocument();
-      expect(screen.getByText("Passage 2")).toBeInTheDocument();
+      expect(screen.getByText("Text 1")).toBeInTheDocument();
+      expect(screen.getByText("Text 2")).toBeInTheDocument();
     });
   });
 
-  describe("when passage visibility button is clicked", () => {
+  describe("when text visibility button is clicked", () => {
     it("then calls toggleSectionVisibility with the section index", () => {
       const { workspace } = renderPane({
         editorCount: 2,
         sectionVisibility: [true, true],
-        sectionNames: ["Passage 1", "Passage 2"],
+        sectionNames: ["Text 1", "Text 2"],
       });
       fireEvent.click(screen.getByTestId("sectionVisibility-1"));
       expect(workspace.toggleSectionVisibility).toHaveBeenCalledWith(1);
@@ -262,16 +262,16 @@ describe("ManagementPane", () => {
     });
   });
 
-  describe("passage reordering", () => {
-    describe("when dragging passage 0 to position 2", () => {
+  describe("text reordering", () => {
+    describe("when dragging text 0 to position 2", () => {
       it("then calls reorderEditors with the correct permutation", () => {
         const { workspace } = renderPane({
           editorCount: 3,
           sectionVisibility: [true, true, true],
           sectionNames: ["A", "B", "C"],
         });
-        const row0 = screen.getByTestId("passageRow-0");
-        const row2 = screen.getByTestId("passageRow-2");
+        const row0 = screen.getByTestId("textRow-0");
+        const row2 = screen.getByTestId("textRow-2");
         fireEvent.dragStart(row0, {
           dataTransfer: { setData: () => {}, types: ["application/x-section-index"] },
         });
@@ -286,15 +286,15 @@ describe("ManagementPane", () => {
       });
     });
 
-    describe("when dragging passage 2 to position 0", () => {
+    describe("when dragging text 2 to position 0", () => {
       it("then calls reorderEditors with the correct permutation", () => {
         const { workspace } = renderPane({
           editorCount: 3,
           sectionVisibility: [true, true, true],
           sectionNames: ["A", "B", "C"],
         });
-        const row2 = screen.getByTestId("passageRow-2");
-        const row0 = screen.getByTestId("passageRow-0");
+        const row2 = screen.getByTestId("textRow-2");
+        const row0 = screen.getByTestId("textRow-0");
         fireEvent.dragStart(row2, {
           dataTransfer: { setData: () => {}, types: ["application/x-section-index"] },
         });
@@ -316,7 +316,7 @@ describe("ManagementPane", () => {
           sectionVisibility: [true, true, true],
           sectionNames: ["A", "B", "C"],
         });
-        const row1 = screen.getByTestId("passageRow-1");
+        const row1 = screen.getByTestId("textRow-1");
         fireEvent.drop(row1, {
           dataTransfer: {
             getData: (type: string) => (type === "application/x-section-index" ? "1" : ""),
@@ -328,9 +328,9 @@ describe("ManagementPane", () => {
     });
 
     describe("when only 1 editor exists", () => {
-      it("then passage rows are not draggable", () => {
+      it("then text rows are not draggable", () => {
         renderPane({ editorCount: 1, sectionVisibility: [true], sectionNames: ["A"] });
-        const row = screen.getByTestId("passageRow-0");
+        const row = screen.getByTestId("textRow-0");
         expect(row).not.toHaveAttribute("draggable", "true");
       });
     });
@@ -340,9 +340,9 @@ describe("ManagementPane", () => {
     it("then forwards names and updateSectionName to SectionList", () => {
       const { workspace } = renderPane({ sectionNames: ["Custom Name"] });
       expect(screen.getByText("Custom Name")).toBeInTheDocument();
-      fireEvent.doubleClick(screen.getByTestId("passageName-0"));
-      fireEvent.change(screen.getByTestId("passageNameInput-0"), { target: { value: "Renamed" } });
-      fireEvent.keyDown(screen.getByTestId("passageNameInput-0"), { key: "Enter" });
+      fireEvent.doubleClick(screen.getByTestId("textName-0"));
+      fireEvent.change(screen.getByTestId("textNameInput-0"), { target: { value: "Renamed" } });
+      fireEvent.keyDown(screen.getByTestId("textNameInput-0"), { key: "Enter" });
       expect(workspace.updateSectionName).toHaveBeenCalledWith(0, "Renamed");
     });
   });
@@ -367,7 +367,7 @@ describe("ManagementPane", () => {
     });
 
     describe("when sectionNames are provided to layers with items", () => {
-      it("then includes passage name in item titles", () => {
+      it("then includes text name in item titles", () => {
         renderPane({ layers: [layerWithItems], sectionNames: ["Intro", "Body"] });
         fireEvent.click(screen.getByTestId("layerExpand-0"));
         const span = screen.getByText("my note");

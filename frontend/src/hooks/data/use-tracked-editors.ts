@@ -16,7 +16,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
     const name = raw.addEditor();
     record({
       type: "addEditor",
-      description: `Added passage '${name}'`,
+      description: `Added text '${name}'`,
       details: [{ label: "name", after: name }],
       undo: () => {
         raw.removeEditor(prevCount);
@@ -35,7 +35,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
       raw.removeEditor(index);
       record({
         type: "removeEditor",
-        description: `Removed passage '${name}'`,
+        description: `Removed text '${name}'`,
         details: [{ label: "name", before: name }],
         undo: () => {
           raw.addEditor({ name });
@@ -62,7 +62,7 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
       raw.updateSectionName(index, name);
       record({
         type: "updateSectionName",
-        description: `Renamed passage '${oldName}' to '${name}'`,
+        description: `Renamed text '${oldName}' to '${name}'`,
         details: [{ label: "name", before: oldName, after: name }],
         undo: () => {
           raw.updateSectionName(index, oldName);
@@ -79,8 +79,8 @@ export function useTrackedEditors(raw: EditorsHook, history: History) {
     const anyVisible = raw.sectionVisibility.some((v) => v);
     raw.toggleAllSectionVisibility();
     record({
-      type: anyVisible ? "hideAllPassages" : "showAllPassages",
-      description: anyVisible ? "Hid all passages" : "Showed all passages",
+      type: anyVisible ? "hideAllTexts" : "showAllTexts",
+      description: anyVisible ? "Hid all texts" : "Showed all texts",
       undo: () => raw.toggleAllSectionVisibility(),
       redo: () => raw.toggleAllSectionVisibility(),
     });

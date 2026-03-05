@@ -116,7 +116,7 @@ const mockWorkspace = {
   setActiveLayerId: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true, true],
-  sectionNames: ["Passage 1", "Passage 2"],
+  sectionNames: ["Text 1", "Text 2"],
   editorKeys: [1, 2],
   addEditor: vi.fn(),
   removeEditor: vi.fn(),
@@ -277,7 +277,7 @@ beforeEach(() => {
   mockWorkspace.editorWidths = [50, 50];
   mockWorkspace.editorKeys = [1, 2];
   mockWorkspace.sectionVisibility = [true, true];
-  mockWorkspace.sectionNames = ["Passage 1", "Passage 2"];
+  mockWorkspace.sectionNames = ["Text 1", "Text 2"];
   mockWorkspace.isManagementPaneOpen = false;
   mockWorkspace.annotations = { activeTool: "selection" as const };
   mockWorkspace.selectedArrow = null;
@@ -369,47 +369,47 @@ describe("App annotation visibility (layer toggles)", () => {
   });
 });
 
-describe("App annotation visibility (passage toggles)", () => {
-  it("when passage is hidden, then its annotations disappear", () => {
+describe("App annotation visibility (text toggles)", () => {
+  it("when text is hidden, then its annotations disappear", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
-        highlights: [makeComment("h1", 0, "Passage 1 note")],
+        highlights: [makeComment("h1", 0, "Text 1 note")],
       }),
     ];
     mockWorkspace.sectionVisibility = [false, true];
     renderApp();
-    // Annotation is in passage 0, which is hidden
+    // Annotation is in text 0, which is hidden
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
   });
 
-  it("when passage is shown again, then its annotations are restored", () => {
+  it("when text is shown again, then its annotations are restored", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
-        highlights: [makeComment("h1", 0, "Restored passage note")],
+        highlights: [makeComment("h1", 0, "Restored text note")],
       }),
     ];
 
-    // First with passage visible
+    // First with text visible
     mockWorkspace.sectionVisibility = [true, true];
     const { unmount } = renderApp();
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
     unmount();
 
-    // Hide passage
+    // Hide text
     mockWorkspace.sectionVisibility = [false, true];
     const { unmount: unmount2 } = renderApp();
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     unmount2();
 
-    // Show passage again
+    // Show text again
     mockWorkspace.sectionVisibility = [true, true];
     renderApp();
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
   });
 
-  it("when one passage is hidden, then annotations in other passages remain visible", () => {
+  it("when one text is hidden, then annotations in other texts remain visible", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
@@ -418,11 +418,11 @@ describe("App annotation visibility (passage toggles)", () => {
     ];
     mockWorkspace.sectionVisibility = [false, true];
     renderApp();
-    // Panel still shows because passage 1 has a visible comment
+    // Panel still shows because text 1 has a visible comment
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
   });
 
-  it("when all passages are hidden, then annotation panel disappears", () => {
+  it("when all texts are hidden, then annotation panel disappears", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
@@ -435,9 +435,9 @@ describe("App annotation visibility (passage toggles)", () => {
   });
 });
 
-describe("App annotation visibility (combined layer + passage toggles)", () => {
-  it("when layer is hidden then passage is hidden, showing layer alone does not restore annotations", () => {
-    // Layer hidden, passage hidden => no annotations
+describe("App annotation visibility (combined layer + text toggles)", () => {
+  it("when layer is hidden then text is hidden, showing layer alone does not restore annotations", () => {
+    // Layer hidden, text hidden => no annotations
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
@@ -446,11 +446,11 @@ describe("App annotation visibility (combined layer + passage toggles)", () => {
     ];
     mockWorkspace.sectionVisibility = [false, true];
     renderApp();
-    // Passage 0 hidden => annotation in editorIndex 0 is not visible
+    // Text 0 hidden => annotation in editorIndex 0 is not visible
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
   });
 
-  it("when both layer and passage are visible, then annotations appear", () => {
+  it("when both layer and text are visible, then annotations appear", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
@@ -462,8 +462,8 @@ describe("App annotation visibility (combined layer + passage toggles)", () => {
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
   });
 
-  it("when layers and passages are toggled independently, then annotations respect both visibility states", () => {
-    // Layer 1 visible, layer 2 visible; passage 0 visible, passage 1 visible
+  it("when layers and texts are toggled independently, then annotations respect both visibility states", () => {
+    // Layer 1 visible, layer 2 visible; text 0 visible, text 1 visible
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
@@ -479,7 +479,7 @@ describe("App annotation visibility (combined layer + passage toggles)", () => {
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
     unmount();
 
-    // Hide layer 1 => only L2P1 remains (in passage 0)
+    // Hide layer 1 => only L2P1 remains (in text 0)
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: false,
@@ -494,7 +494,7 @@ describe("App annotation visibility (combined layer + passage toggles)", () => {
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
     unmount2();
 
-    // Show layer 1, hide passage 0 => L1P1 and L2P1 hidden, L1P2 visible
+    // Show layer 1, hide text 0 => L1P1 and L2P1 hidden, L1P2 visible
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
@@ -507,7 +507,7 @@ describe("App annotation visibility (combined layer + passage toggles)", () => {
     ];
     mockWorkspace.sectionVisibility = [false, true];
     renderApp();
-    // L1P2 is in passage 1 (visible) on layer 1 (visible) => panel should show
+    // L1P2 is in text 1 (visible) on layer 1 (visible) => panel should show
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
   });
 });

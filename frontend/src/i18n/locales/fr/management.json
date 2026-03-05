@@ -18,13 +18,13 @@
     "showUnderline": "Afficher le soulignement",
     "allColorsInUse": "Toutes les couleurs sont utilisées — supprimez d'abord un calque."
   },
-  "passages": {
+  "texts": {
     "title": "Passages",
-    "addPassage": "Ajouter un passage",
+    "addText": "Ajouter un passage",
     "hideAll": "Masquer tous les passages",
     "showAll": "Afficher tous les passages",
-    "hidePassage": "Masquer le passage",
-    "showPassage": "Afficher le passage"
+    "hideText": "Masquer le passage",
+    "showText": "Afficher le passage"
   },
   "tooltips": {
     "toggleManagementPane": "Basculer le panneau de gestion",

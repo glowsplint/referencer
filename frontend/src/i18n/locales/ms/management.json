@@ -18,13 +18,13 @@
     "showUnderline": "Tunjukkan garis bawah",
     "allColorsInUse": "Semua warna sedang digunakan — buang satu lapisan dahulu."
   },
-  "passages": {
+  "texts": {
     "title": "Petikan",
-    "addPassage": "Tambah petikan",
+    "addText": "Tambah petikan",
     "hideAll": "Sembunyikan semua petikan",
     "showAll": "Tunjukkan semua petikan",
-    "hidePassage": "Sembunyikan petikan",
-    "showPassage": "Tunjukkan petikan"
+    "hideText": "Sembunyikan petikan",
+    "showText": "Tunjukkan petikan"
   },
   "tooltips": {
     "toggleManagementPane": "Togol panel pengurusan",

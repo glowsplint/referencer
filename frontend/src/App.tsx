@@ -12,7 +12,7 @@ import { Divider } from "./components/ui/Divider";
 import { ManagementPaneDivider } from "./components/ui/ManagementPaneDivider";
 import { TitleBar, SimpleEditorToolbar, EditorPane } from "./components/tiptap-templates/simple";
 import { UnsavedBanner } from "./components/UnsavedBanner";
-import { PassageHeader } from "./components/PassageHeader";
+import { TextHeader } from "./components/TextHeader";
 import { PLACEHOLDER_CONTENT } from "./data/default-workspace";
 import { useEditorWorkspace } from "./hooks/data/use-editor-workspace";
 import { useWordSelection } from "./hooks/selection/use-word-selection";
@@ -140,7 +140,7 @@ function EditorCell({
         display: sectionVisible === false ? "none" : undefined,
       }}
     >
-      <PassageHeader name={sectionName} index={i} onUpdateName={onUpdateName} />
+      <TextHeader name={sectionName} index={i} onUpdateName={onUpdateName} />
       <div className="flex-1 min-h-0 overflow-hidden">
         <ErrorBoundary>
           <EditorPane
@@ -289,6 +289,7 @@ export function App({ workspaceId, navigate }: AppProps) {
     toggleLocked: workspace.toggleFocusedPaneLocked,
     toggleManagementPane: workspace.toggleManagementPane,
     toggleCommentPlacement: workspace.toggleCommentPlacement,
+    addText: workspace.addEditor,
   });
   useUndoRedoKeyboard(unifiedUndo);
 
@@ -751,7 +752,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                                   display: sectionVisibility[i] === false ? "none" : undefined,
                                 }}
                               >
-                                <PassageHeader
+                                <TextHeader
                                   name={workspace.sectionNames[i]}
                                   index={i}
                                   onUpdateName={(name) => workspace.updateSectionName(i, name)}

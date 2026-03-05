@@ -18,13 +18,13 @@
     "showUnderline": "Alti cizgiyi goster",
     "allColorsInUse": "Tum renkler kullaniliyor — once bir katmani kaldirin."
   },
-  "passages": {
+  "texts": {
     "title": "Pasajlar",
-    "addPassage": "Pasaj ekle",
+    "addText": "Pasaj ekle",
     "hideAll": "Tum pasajlari gizle",
     "showAll": "Tum pasajlari goster",
-    "hidePassage": "Pasaji gizle",
-    "showPassage": "Pasaji goster"
+    "hideText": "Pasaji gizle",
+    "showText": "Pasaji goster"
   },
   "tooltips": {
     "toggleManagementPane": "Yonetim panelini ac/kapat",

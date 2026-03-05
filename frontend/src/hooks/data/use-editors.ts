@@ -1,4 +1,4 @@
-// Manages the multi-pane editor layout: add/remove passages (up to 3),
+// Manages the multi-pane editor layout: add/remove texts (up to 3),
 // track split positions, section visibility/names, and active editor focus.
 // Handles divider resize with minimum pane width constraints.
 import { useRef, useState, useCallback, useMemo } from "react";
@@ -21,7 +21,7 @@ export function useEditors() {
   const [sectionVisibility, setSectionVisibility] = useState<boolean[]>(() =>
     Array.from({ length: DEFAULT_EDITOR_COUNT }, () => true),
   );
-  const [sectionNames, setSectionNames] = useState<string[]>(() => ["Passage 1"]);
+  const [sectionNames, setSectionNames] = useState<string[]>(() => ["Text 1"]);
   const [editorKeys, setEditorKeys] = useState<number[]>(() =>
     Array.from({ length: DEFAULT_EDITOR_COUNT }, (_, i) => i),
   );
@@ -29,7 +29,7 @@ export function useEditors() {
   const [activeEditorIndex, setActiveEditorIndex] = useState(0);
   const [mountedEditorCount, setMountedEditorCount] = useState(0);
   const editorsRef = useRef<Map<number, Editor>>(new Map());
-  const passageCounterRef = useRef(DEFAULT_EDITOR_COUNT);
+  const textCounterRef = useRef(DEFAULT_EDITOR_COUNT);
   const editorCountRef = useRef(DEFAULT_EDITOR_COUNT);
   const editorKeyCounterRef = useRef(DEFAULT_EDITOR_COUNT);
 
@@ -46,12 +46,12 @@ export function useEditors() {
 
   const addEditor = useCallback((opts?: { name?: string }): string => {
     if (editorCountRef.current >= 4) {
-      return opts?.name ?? `Passage ${passageCounterRef.current}`;
+      return opts?.name ?? `Text ${textCounterRef.current}`;
     }
     if (!opts?.name) {
-      passageCounterRef.current += 1;
+      textCounterRef.current += 1;
     }
-    const name = opts?.name ?? `Passage ${passageCounterRef.current}`;
+    const name = opts?.name ?? `Text ${textCounterRef.current}`;
     const newCount = editorCountRef.current + 1;
     editorCountRef.current = newCount;
     setEditorCount(newCount);

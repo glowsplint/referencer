@@ -18,13 +18,13 @@
     "showUnderline": "रेखांकन दिखाएं",
     "allColorsInUse": "सभी रंग उपयोग में हैं — पहले एक परत हटाएं।"
   },
-  "passages": {
+  "texts": {
     "title": "अनुच्छेद",
-    "addPassage": "अनुच्छेद जोड़ें",
+    "addText": "अनुच्छेद जोड़ें",
     "hideAll": "सभी अनुच्छेद छिपाएं",
     "showAll": "सभी अनुच्छेद दिखाएं",
-    "hidePassage": "अनुच्छेद छिपाएं",
-    "showPassage": "अनुच्छेद दिखाएं"
+    "hideText": "अनुच्छेद छिपाएं",
+    "showText": "अनुच्छेद दिखाएं"
   },
   "tooltips": {
     "toggleManagementPane": "प्रबंधन पैनल टॉगल करें",

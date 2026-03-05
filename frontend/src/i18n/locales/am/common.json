@@ -1,6 +1,6 @@
 {
   "close": "ዝጋ",
   "active": "ንቁ",
-  "passage": "ክፍል {{number}}",
+  "text": "ክፍል {{number}}",
   "layer": "ንብርብር {{number}}"
 }

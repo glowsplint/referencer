@@ -109,7 +109,7 @@ const mockWorkspace = {
   setActiveLayerId: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
-  sectionNames: ["Passage 1"],
+  sectionNames: ["Text 1"],
   editorKeys: [1],
   addEditor: vi.fn(),
   removeEditor: vi.fn(),

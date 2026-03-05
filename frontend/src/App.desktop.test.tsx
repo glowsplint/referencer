@@ -114,7 +114,7 @@ const mockWorkspace = {
   setActiveLayerId: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true],
-  sectionNames: ["Passage 1"],
+  sectionNames: ["Text 1"],
   editorKeys: [1],
   addEditor: vi.fn(),
   removeEditor: vi.fn(),
@@ -398,7 +398,7 @@ describe("App (desktop)", () => {
       expect(panel).toHaveAttribute("data-placement", "left");
     });
 
-    it("then hides annotation panel when all annotated passages are hidden", () => {
+    it("then hides annotation panel when all annotated texts are hidden", () => {
       mockWorkspace.sectionVisibility = [false];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();

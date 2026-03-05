@@ -15,7 +15,7 @@ import { useYjsOffline } from "./use-yjs-offline";
 import { seedDefaultLayers } from "@/lib/yjs/annotations";
 import {
   createDefaultLayers,
-  DEFAULT_PASSAGE_CONTENTS,
+  DEFAULT_TEXT_CONTENTS,
   DEFAULT_SECTION_NAMES,
 } from "@/data/default-workspace";
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
@@ -77,8 +77,8 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     // Set editor content
     for (let i = 0; i < DEFAULT_SECTION_NAMES.length; i++) {
       const editor = trackedEditorsHook.editorsRef.current.get(i);
-      if (editor && DEFAULT_PASSAGE_CONTENTS[i]) {
-        editor.commands.setContent(DEFAULT_PASSAGE_CONTENTS[i]);
+      if (editor && DEFAULT_TEXT_CONTENTS[i]) {
+        editor.commands.setContent(DEFAULT_TEXT_CONTENTS[i]);
       }
     }
     // Seed annotation layers
@@ -315,7 +315,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
       settingsHook.reorderLockedPanes(permutation);
       history.record({
         type: "reorderEditors",
-        description: "Reordered passages",
+        description: "Reordered texts",
         undo: () => {
           if (rawEditorsHook.editorCount !== permutation.length) return;
           const inverse = new Array<number>(permutation.length);
@@ -339,11 +339,11 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const toggleSectionVisibility = useCallback(
     guarded((index: number) => {
       const wasVisible = rawEditorsHook.sectionVisibility[index] ?? true;
-      const name = rawEditorsHook.sectionNames[index] ?? `Passage ${index + 1}`;
+      const name = rawEditorsHook.sectionNames[index] ?? `Text ${index + 1}`;
       rawEditorsHook.toggleSectionVisibility(index);
       history.record({
-        type: wasVisible ? "hidePassage" : "showPassage",
-        description: `${wasVisible ? "Hid" : "Showed"} passage '${name}'`,
+        type: wasVisible ? "hideText" : "showText",
+        description: `${wasVisible ? "Hid" : "Showed"} text '${name}'`,
         details: [{ label: "visible", before: String(wasVisible), after: String(!wasVisible) }],
         undo: () => rawEditorsHook.toggleSectionVisibility(index),
         redo: () => rawEditorsHook.toggleSectionVisibility(index),

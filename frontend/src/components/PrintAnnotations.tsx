@@ -42,7 +42,7 @@ export function PrintAnnotations({
   // Sort by editorIndex then by appearance
   comments.sort((a, b) => a.editorIndex - b.editorIndex);
 
-  // Group by passage
+  // Group by text
   const grouped = new Map<number, typeof comments>();
   for (const c of comments) {
     const group = grouped.get(c.editorIndex) ?? [];
@@ -60,7 +60,7 @@ export function PrintAnnotations({
       {[...grouped.entries()].map(([editorIndex, items]) => (
         <div key={editorIndex} className="mb-3">
           <div className="text-[10px] font-medium text-zinc-500 mb-1">
-            {sectionNames[editorIndex] ?? t("passage", { number: editorIndex + 1 })}
+            {sectionNames[editorIndex] ?? t("text", { number: editorIndex + 1 })}
           </div>
           {items.map((item, i) => (
             <div

@@ -1,7 +1,7 @@
-// Left sidebar that organizes workspace structure: annotation layers and text
-// passages. Provides controls to add/remove/reorder layers and passages, toggle
-// visibility, and a drag-to-trash delete zone. Consumes WorkspaceContext for
-// all state mutations.
+// Left sidebar that organizes workspace structure: annotation layers and texts.
+// Provides controls to add/remove/reorder layers and texts, toggle visibility,
+// and a drag-to-trash delete zone. Consumes WorkspaceContext for all state
+// mutations.
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BookOpen, Eye, EyeOff, Plus, Trash2 } from "lucide-react";

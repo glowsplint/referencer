@@ -18,13 +18,13 @@
     "showUnderline": "Показати підкреслення",
     "allColorsInUse": "Усі кольори використовуються — спочатку видаліть шар."
   },
-  "passages": {
+  "texts": {
     "title": "Уривки",
-    "addPassage": "Додати уривок",
+    "addText": "Додати уривок",
     "hideAll": "Сховати всі уривки",
     "showAll": "Показати всі уривки",
-    "hidePassage": "Сховати уривок",
-    "showPassage": "Показати уривок"
+    "hideText": "Сховати уривок",
+    "showText": "Показати уривок"
   },
   "tooltips": {
     "toggleManagementPane": "Перемкнути панель керування",

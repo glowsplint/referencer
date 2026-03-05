@@ -26,9 +26,9 @@ import {
   findVerticalTarget,
   resolveNavigationTarget,
   computeRangeSelection,
-  findFirstWordInPassage,
-  findLastWordInPassage,
-  computeSelectAllInPassage,
+  findFirstWordInText,
+  findLastWordInText,
+  computeSelectAllInText,
 } from "./word-navigation";
 
 // ── helpers ──────────────────────────────────────────────────────────
@@ -324,9 +324,9 @@ describe("when using computeRangeSelection", () => {
   });
 });
 
-// ── findFirstWordInPassage / findLastWordInPassage ───────────────
+// ── findFirstWordInText / findLastWordInText ───────────────
 
-describe("when using findFirstWordInPassage", () => {
+describe("when using findFirstWordInText", () => {
   const a = makeWord(0, 10, 15, "alpha");
   const b = makeWord(0, 1, 5, "beta");
   const c = makeWord(1, 3, 8, "gamma");
@@ -337,23 +337,23 @@ describe("when using findFirstWordInPassage", () => {
     makeCenter(c, 400, 100),
   ];
 
-  it("then returns word with smallest from in the passage", () => {
-    const result = findFirstWordInPassage(0, candidates);
+  it("then returns word with smallest from in the text", () => {
+    const result = findFirstWordInText(0, candidates);
     expect(result?.text).toBe("beta");
     expect(result?.from).toBe(1);
   });
 
   it("then filters by editorIndex", () => {
-    const result = findFirstWordInPassage(1, candidates);
+    const result = findFirstWordInText(1, candidates);
     expect(result?.text).toBe("gamma");
   });
 
-  it("then returns null for empty passage", () => {
-    expect(findFirstWordInPassage(2, candidates)).toBeNull();
+  it("then returns null for empty text", () => {
+    expect(findFirstWordInText(2, candidates)).toBeNull();
   });
 });
 
-describe("when using findLastWordInPassage", () => {
+describe("when using findLastWordInText", () => {
   const a = makeWord(0, 1, 5, "alpha");
   const b = makeWord(0, 10, 20, "beta");
   const c = makeWord(1, 3, 8, "gamma");
@@ -364,26 +364,26 @@ describe("when using findLastWordInPassage", () => {
     makeCenter(c, 400, 100),
   ];
 
-  it("then returns word with largest to in the passage", () => {
-    const result = findLastWordInPassage(0, candidates);
+  it("then returns word with largest to in the text", () => {
+    const result = findLastWordInText(0, candidates);
     expect(result?.text).toBe("beta");
     expect(result?.to).toBe(20);
   });
 
   it("then filters by editorIndex", () => {
-    const result = findLastWordInPassage(1, candidates);
+    const result = findLastWordInText(1, candidates);
     expect(result?.text).toBe("gamma");
   });
 
-  it("then returns null for empty passage", () => {
-    expect(findLastWordInPassage(2, candidates)).toBeNull();
+  it("then returns null for empty text", () => {
+    expect(findLastWordInText(2, candidates)).toBeNull();
   });
 });
 
-// ── computeSelectAllInPassage ───────────────────────────────────
+// ── computeSelectAllInText ───────────────────────────────────
 
-describe("when using computeSelectAllInPassage", () => {
-  it("then spans from first to last word in passage", () => {
+describe("when using computeSelectAllInText", () => {
+  it("then spans from first to last word in text", () => {
     const a = makeWord(0, 1, 5, "alpha");
     const b = makeWord(0, 6, 12, "bravo");
     const c = makeWord(0, 13, 20, "charlie");
@@ -405,7 +405,7 @@ describe("when using computeSelectAllInPassage", () => {
       },
     } as unknown as Editor;
 
-    const result = computeSelectAllInPassage(0, candidates, fakeEditor);
+    const result = computeSelectAllInText(0, candidates, fakeEditor);
     expect(result).toEqual({
       editorIndex: 0,
       from: 1,
@@ -429,7 +429,7 @@ describe("when using computeSelectAllInPassage", () => {
       },
     } as unknown as Editor;
 
-    const result = computeSelectAllInPassage(0, candidates, fakeEditor);
+    const result = computeSelectAllInText(0, candidates, fakeEditor);
     expect(result).toEqual({
       editorIndex: 0,
       from: 5,
@@ -438,8 +438,8 @@ describe("when using computeSelectAllInPassage", () => {
     });
   });
 
-  it("then returns null for empty passage", () => {
+  it("then returns null for empty text", () => {
     const fakeEditor = {} as Editor;
-    expect(computeSelectAllInPassage(2, [], fakeEditor)).toBeNull();
+    expect(computeSelectAllInText(2, [], fakeEditor)).toBeNull();
   });
 });

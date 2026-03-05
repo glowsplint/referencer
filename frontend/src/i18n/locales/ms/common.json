@@ -1,6 +1,6 @@
 {
   "close": "Tutup",
   "active": "Aktif",
-  "passage": "Petikan {{number}}",
+  "text": "Petikan {{number}}",
   "layer": "Lapisan {{number}}"
 }

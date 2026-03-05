@@ -1,6 +1,6 @@
 {
   "close": "Isara",
   "active": "Aktibo",
-  "passage": "Sipi {{number}}",
+  "text": "Sipi {{number}}",
   "layer": "Layer {{number}}"
 }

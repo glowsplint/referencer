@@ -297,9 +297,9 @@ describe("useEditors", () => {
 
   // --- Section names ---
 
-  it("when initialized, then sectionNames starts with Passage 1", () => {
+  it("when initialized, then sectionNames starts with Text 1", () => {
     const { result } = renderHook(() => useEditors());
-    expect(result.current.sectionNames).toEqual(["Passage 1"]);
+    expect(result.current.sectionNames).toEqual(["Text 1"]);
   });
 
   it("when addEditor is called, then appends the correct default name", () => {
@@ -307,7 +307,7 @@ describe("useEditors", () => {
     act(() => {
       result.current.addEditor();
     });
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Text 2"]);
   });
 
   it("when addEditor is called in quick succession, then assigns unique names", () => {
@@ -316,7 +316,7 @@ describe("useEditors", () => {
       result.current.addEditor();
       result.current.addEditor();
     });
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2", "Passage 3"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Text 2", "Text 3"]);
   });
 
   it("when removeEditor is called, then removes the name at that index", () => {
@@ -328,11 +328,11 @@ describe("useEditors", () => {
     act(() => {
       result.current.updateSectionName(1, "Custom");
     });
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Custom", "Passage 3"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Custom", "Text 3"]);
     act(() => {
       result.current.removeEditor(1);
     });
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 3"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Text 3"]);
   });
 
   it("when deps are unchanged, then editorWidths is referentially stable", () => {
@@ -350,7 +350,7 @@ describe("useEditors", () => {
     act(() => {
       result.current.updateSectionName(0, "Intro");
     });
-    expect(result.current.sectionNames).toEqual(["Intro", "Passage 2"]);
+    expect(result.current.sectionNames).toEqual(["Intro", "Text 2"]);
     act(() => {
       result.current.updateSectionName(1, "Body");
     });
@@ -363,7 +363,7 @@ describe("useEditors", () => {
     act(() => {
       name = result.current.addEditor();
     });
-    expect(name).toBe("Passage 2");
+    expect(name).toBe("Text 2");
   });
 
   it("when addEditor is called with an explicit name, then does not increment counter", () => {
@@ -371,25 +371,25 @@ describe("useEditors", () => {
     act(() => {
       result.current.addEditor({ name: "Custom" });
     });
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Custom"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Custom"]);
   });
 
-  it("when editors are removed, then passage name counter never resets", () => {
+  it("when editors are removed, then text name counter never resets", () => {
     const { result } = renderHook(() => useEditors());
     // Start at 1, add 2 more to get to 3
     act(() => {
       result.current.addEditor();
       result.current.addEditor();
     });
-    // Names: ["Passage 1", "Passage 2", "Passage 3"]
+    // Names: ["Text 1", "Text 2", "Text 3"]
     act(() => {
       result.current.removeEditor(1);
     });
-    // Names: ["Passage 1", "Passage 3"]
+    // Names: ["Text 1", "Text 3"]
     act(() => {
       result.current.addEditor();
     });
-    // Counter was at 3, so next auto-name is "Passage 4"
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 3", "Passage 4"]);
+    // Counter was at 3, so next auto-name is "Text 4"
+    expect(result.current.sectionNames).toEqual(["Text 1", "Text 3", "Text 4"]);
   });
 });

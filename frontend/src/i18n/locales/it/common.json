@@ -1,6 +1,6 @@
 {
   "close": "Chiudi",
   "active": "Attivo",
-  "passage": "Brano {{number}}",
+  "text": "Brano {{number}}",
   "layer": "Livello {{number}}"
 }

@@ -18,13 +18,13 @@
     "showUnderline": "Fi ìlà-ìsàlẹ̀ hàn",
     "allColorsInUse": "Gbogbo àwọ̀ ti wà ní lílo — yọ ìpele kan kúrò ní àkọ́kọ́."
   },
-  "passages": {
+  "texts": {
     "title": "Àwọn Ẹsẹ",
-    "addPassage": "Fi ẹsẹ kún",
+    "addText": "Fi ẹsẹ kún",
     "hideAll": "Ìbòmọ́lẹ̀ gbogbo ẹsẹ",
     "showAll": "Fi gbogbo ẹsẹ hàn",
-    "hidePassage": "Ìbòmọ́lẹ̀ ẹsẹ",
-    "showPassage": "Fi ẹsẹ hàn"
+    "hideText": "Ìbòmọ́lẹ̀ ẹsẹ",
+    "showText": "Fi ẹsẹ hàn"
   },
   "tooltips": {
     "toggleManagementPane": "Yí pánẹ́ẹ̀lì ìṣàkóso padà",
