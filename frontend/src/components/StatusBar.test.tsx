@@ -36,6 +36,22 @@ describe("StatusBar", () => {
     });
   });
 
+  describe("when displaying an error message", () => {
+    it("then shows the message text with a red error icon", () => {
+      render(<StatusBar message={{ text: "Save failed.", type: "error" }} />);
+      const bar = screen.getByTestId("status-bar");
+      expect(bar).toHaveTextContent("Save failed.");
+      expect(bar.querySelector("svg")).toBeInTheDocument();
+    });
+
+    it("then applies red text styling", () => {
+      render(<StatusBar message={{ text: "Save failed.", type: "error" }} />);
+      const bar = screen.getByTestId("status-bar");
+      const span = bar.querySelector("span");
+      expect(span?.className).toContain("text-red-600");
+    });
+  });
+
   describe("when the message contains rich content", () => {
     it("then renders the ReactNode text and preserves inline elements", () => {
       render(

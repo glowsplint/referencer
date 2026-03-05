@@ -30,6 +30,12 @@
     "status": "Click and drag to erase annotations.",
     "erased": "Erased annotation."
   },
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  },
   "lockHint": "Press <kbd>Esc</kbd> <kbd>K</kbd> to lock the editor once you've finalised the contents.",
   "recording": {
     "label": "Recording",
