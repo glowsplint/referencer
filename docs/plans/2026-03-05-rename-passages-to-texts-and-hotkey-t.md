@@ -17,6 +17,7 @@ This workstream has 5 parallelizable tasks (A1–A5). Each agent can handle one 
 ### Task A1: i18n — Rename all locale strings
 
 **Files to modify:**
+
 - `frontend/src/i18n/locales/en/common.json` — rename `"passage"` key to `"text"`
 - `frontend/src/i18n/locales/en/management.json` — rename `"passages"` section to `"texts"` with updated values
 - `frontend/src/i18n/locales/en-SG/common.json` — same as en
@@ -27,12 +28,15 @@ This workstream has 5 parallelizable tasks (A1–A5). Each agent can handle one 
 - `frontend/src/i18n/locales/en-SG/dialogs.json` — add `"shortcuts.addText": "Add new text"`
 
 **For English `common.json`:**
+
 ```json
 "text": "Text {{number}}"
 ```
+
 (was `"passage": "Passage {{number}}"`)
 
 **For English `management.json`:**
+
 ```json
 "texts": {
   "title": "Texts",
@@ -43,11 +47,13 @@ This workstream has 5 parallelizable tasks (A1–A5). Each agent can handle one 
   "showText": "Show text"
 }
 ```
+
 (was `"passages": { "title": "Passages", "addPassage": "Add passage", ... }`)
 
 **For non-English locales:** Apply the same key renames. For `management.json`, rename the key structure from `"passages"` to `"texts"` and update sub-keys from `addPassage` → `addText`, `hidePassage` → `hideText`, `showPassage` → `showText`, `hideAll` → same, `showAll` → same. Keep the translated values but update them to reference "text" instead of "passage" in each language.
 
 **For English `dialogs.json`:** Add within the `"shortcuts"` object:
+
 ```json
 "addText": "Add new text"
 ```
@@ -59,6 +65,7 @@ This workstream has 5 parallelizable tasks (A1–A5). Each agent can handle one 
 ### Task A2: Rename PassageHeader component → TextHeader
 
 **Files:**
+
 - Rename: `frontend/src/components/PassageHeader.tsx` → `frontend/src/components/TextHeader.tsx`
 - Rename: `frontend/src/components/PassageHeader.test.tsx` → `frontend/src/components/TextHeader.test.tsx`
 - Modify: `frontend/src/App.tsx` (import and usage)
@@ -103,6 +110,7 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 ```
 
 **Step 2: Create `TextHeader.test.tsx`** — same as PassageHeader.test.tsx but:
+
 - Import `TextHeader` from `./TextHeader`
 - Replace `describe("PassageHeader"` → `describe("TextHeader"`
 - Replace `<PassageHeader` → `<TextHeader`
@@ -111,10 +119,12 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 - Replace `"passage name"` → `"text name"` in describe strings
 
 **Step 3: Update `App.tsx`**
+
 - Line 15: `import { TextHeader } from "./components/TextHeader";`
 - Lines 142 and 746: `<TextHeader` instead of `<PassageHeader`
 
 **Step 4: Delete old files**
+
 - Delete `frontend/src/components/PassageHeader.tsx`
 - Delete `frontend/src/components/PassageHeader.test.tsx`
 
@@ -123,10 +133,12 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 ### Task A3: Rename test IDs and i18n keys in SectionList
 
 **Files:**
+
 - Modify: `frontend/src/components/SectionList.tsx`
 - Modify: `frontend/src/components/SectionList.test.tsx`
 
 **SectionList.tsx changes:**
+
 - Line 1 comment: "passage" → "text"
 - Line 36 comment: "passage" → "text"
 - Line 68: `t("passages.title")` → `t("texts.title")`
@@ -140,6 +152,7 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 - Line 154: `t("passages.hidePassage")` / `t("passages.showPassage")` → `t("texts.hideText")` / `t("texts.showText")`
 
 **SectionList.test.tsx changes:**
+
 - All `"Passage 1"`, `"Passage 2"`, `"Passage 3"` in sectionNames → `"Text 1"`, `"Text 2"`, `"Text 3"`
 - `"Passages"` heading assertion → `"Texts"`
 - `"addPassageButton"` → `"addTextButton"`
@@ -155,6 +168,7 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 ### Task A4: Rename code identifiers in use-editors.ts and related
 
 **Files:**
+
 - Modify: `frontend/src/hooks/data/use-editors.ts`
 - Modify: `frontend/src/hooks/data/use-editors.test.ts`
 - Modify: `frontend/src/hooks/data/use-editor-workspace.ts`
@@ -162,6 +176,7 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 - Modify: `frontend/src/data/default-workspace.ts`
 
 **use-editors.ts changes:**
+
 - Line 1 comment: "passages" → "texts"
 - Line 24: `["Passage 1"]` → `["Text 1"]`
 - Line 32: `passageCounterRef` → `textCounterRef`
@@ -170,22 +185,26 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 - Line 54: same pattern
 
 **use-editors.test.ts changes:**
+
 - All `"Passage 1"`, `"Passage 2"`, etc. → `"Text 1"`, `"Text 2"`, etc.
 - Line 300 describe text: `"Passage 1"` → `"Text 1"`
 - Line 377 describe text: `"passage name counter"` → `"text name counter"`
 - All assertions using passage names updated
 
 **default-workspace.ts changes:**
+
 - Line 14: `DEFAULT_PASSAGE_CONTENTS` → `DEFAULT_TEXT_CONTENTS`
 - Line 4 comment: "passage contents" → "text contents"
 
 **use-editor-workspace.ts changes:**
+
 - Line 18: `DEFAULT_PASSAGE_CONTENTS` → `DEFAULT_TEXT_CONTENTS`
 - Lines 80-81: `DEFAULT_PASSAGE_CONTENTS[i]` → `DEFAULT_TEXT_CONTENTS[i]`
 - Line 318: `"Reordered passages"` → `"Reordered texts"`
 - Lines 342-346: `"Passage ${index + 1}"` → `"Text ${index + 1}"`, `hidePassage`/`showPassage` → `hideText`/`showText`, `"passage"` → `"text"` in descriptions
 
 **use-editor-workspace.test.ts changes:**
+
 - Line 13: `DEFAULT_PASSAGE_CONTENTS` → `DEFAULT_TEXT_CONTENTS`
 
 ---
@@ -193,6 +212,7 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 ### Task A5: Rename passage references in App test files and remaining components
 
 **Files:**
+
 - Modify: `frontend/src/App.multi-editor-layers.test.tsx` — rename `"Passage 1"`, `"Passage 2"` in sectionNames and all "passage" in describe/comment strings
 - Modify: `frontend/src/App.ui-consistency.test.tsx` — same pattern
 - Modify: `frontend/src/App.desktop.test.tsx` — if it has passage refs
@@ -220,6 +240,7 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 ### Task B1: Add T hotkey to toggle shortcuts
 
 **Files:**
+
 - Modify: `frontend/src/hooks/ui/use-toggle-shortcuts.ts`
 - Modify: `frontend/src/App.tsx` (pass `addEditor` to `useToggleShortcuts`)
 - Modify: `frontend/src/components/KeyboardShortcutsDialog.tsx`
@@ -228,21 +249,25 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 **use-toggle-shortcuts.ts changes:**
 
 Add `"addText"` to the ToggleAction type:
+
 ```ts
 type ToggleAction = "darkMode" | "layout" | "lock" | "menu" | "commentPlacement" | "addText";
 ```
 
 Add to KEY_MAP:
+
 ```ts
 KeyT: "addText",
 ```
 
 Add to interface:
+
 ```ts
 addText: () => void;
 ```
 
 Add to callbacksRef, effect, and switch:
+
 ```ts
 case "addText":
   callbacksRef.current.addText();
@@ -252,6 +277,7 @@ case "addText":
 **App.tsx changes:**
 
 In the `useToggleShortcuts` call (around line 285), add:
+
 ```ts
 addText: workspace.addEditor,
 ```
@@ -259,6 +285,7 @@ addText: workspace.addEditor,
 **KeyboardShortcutsDialog.tsx changes:**
 
 Add to the workspace shortcuts section (LEFT_SECTIONS, first section), after the `toggleManagement` entry:
+
 ```ts
 { keys: ["T"], description: t("shortcuts.addText") },
 ```
@@ -266,6 +293,7 @@ Add to the workspace shortcuts section (LEFT_SECTIONS, first section), after the
 **KeyboardShortcutsDialog.test.tsx changes:**
 
 In the "lists all workspace shortcuts" test, add:
+
 ```ts
 expect(screen.getByText("Add new text")).toBeInTheDocument();
 ```

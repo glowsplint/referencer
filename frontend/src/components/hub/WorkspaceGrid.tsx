@@ -422,8 +422,8 @@ export function WorkspaceGrid({
             >
               <h2 className="text-2xl font-bold mb-2">Welcome to Referencer</h2>
               <p className="text-muted-foreground text-center max-w-md mb-8">
-                A collaborative workspace for close reading. Annotate, highlight, and connect
-                texts side by side.
+                A collaborative workspace for close reading. Annotate, highlight, and connect texts
+                side by side.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-lg mb-8">
                 <div className="flex flex-col items-center text-center gap-2">
