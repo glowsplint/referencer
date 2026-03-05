@@ -18,13 +18,13 @@
     "showUnderline": "Visa understrykning",
     "allColorsInUse": "Alla färger är i bruk — ta bort ett lager först."
   },
-  "passages": {
+  "texts": {
     "title": "Avsnitt",
-    "addPassage": "Lägg till avsnitt",
+    "addText": "Lägg till avsnitt",
     "hideAll": "Dölj alla avsnitt",
     "showAll": "Visa alla avsnitt",
-    "hidePassage": "Dölj avsnitt",
-    "showPassage": "Visa avsnitt"
+    "hideText": "Dölj avsnitt",
+    "showText": "Visa avsnitt"
   },
   "tooltips": {
     "toggleManagementPane": "Växla hanteringspanel",

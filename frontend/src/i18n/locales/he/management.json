@@ -18,13 +18,13 @@
     "showUnderline": "הצגת קו תחתון",
     "allColorsInUse": "כל הצבעים בשימוש — הסירו שכבה תחילה."
   },
-  "passages": {
+  "texts": {
     "title": "קטעים",
-    "addPassage": "הוספת קטע",
+    "addText": "הוספת קטע",
     "hideAll": "הסתרת כל הקטעים",
     "showAll": "הצגת כל הקטעים",
-    "hidePassage": "הסתרת קטע",
-    "showPassage": "הצגת קטע"
+    "hideText": "הסתרת קטע",
+    "showText": "הצגת קטע"
   },
   "tooltips": {
     "toggleManagementPane": "הצג/הסתר חלונית ניהול",

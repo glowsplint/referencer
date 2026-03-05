@@ -1,6 +1,6 @@
 {
   "close": "Đóng",
   "active": "Đang hoạt động",
-  "passage": "Đoạn văn {{number}}",
+  "text": "Đoạn văn {{number}}",
   "layer": "Lớp {{number}}"
 }

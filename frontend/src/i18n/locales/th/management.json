@@ -18,13 +18,13 @@
     "showUnderline": "แสดงขีดเส้นใต้",
     "allColorsInUse": "สีทั้งหมดถูกใช้งานแล้ว — กรุณาลบเลเยอร์ก่อน"
   },
-  "passages": {
+  "texts": {
     "title": "ข้อความ",
-    "addPassage": "เพิ่มข้อความ",
+    "addText": "เพิ่มข้อความ",
     "hideAll": "ซ่อนข้อความทั้งหมด",
     "showAll": "แสดงข้อความทั้งหมด",
-    "hidePassage": "ซ่อนข้อความ",
-    "showPassage": "แสดงข้อความ"
+    "hideText": "ซ่อนข้อความ",
+    "showText": "แสดงข้อความ"
   },
   "tooltips": {
     "toggleManagementPane": "สลับแผงจัดการ",

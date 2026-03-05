@@ -1,7 +1,7 @@
 {
   "close": "关闭",
   "active": "活跃",
-  "passage": "段落 {{number}}",
+  "text": "段落 {{number}}",
   "layer": "图层 {{number}}",
   "errorBoundary": {
     "somethingWentWrong": "出错了。",

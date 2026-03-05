@@ -1,6 +1,6 @@
 {
   "close": "Fechar",
   "active": "Ativo",
-  "passage": "Passagem {{number}}",
+  "text": "Passagem {{number}}",
   "layer": "Camada {{number}}"
 }

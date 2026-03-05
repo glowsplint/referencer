@@ -18,13 +18,13 @@
     "showUnderline": "Onderstreping tonen",
     "allColorsInUse": "Alle kleuren zijn in gebruik — verwijder eerst een laag."
   },
-  "passages": {
+  "texts": {
     "title": "Passages",
-    "addPassage": "Passage toevoegen",
+    "addText": "Passage toevoegen",
     "hideAll": "Alle passages verbergen",
     "showAll": "Alle passages tonen",
-    "hidePassage": "Passage verbergen",
-    "showPassage": "Passage tonen"
+    "hideText": "Passage verbergen",
+    "showText": "Passage tonen"
   },
   "tooltips": {
     "toggleManagementPane": "Beheerpaneel in-/uitschakelen",

@@ -18,13 +18,13 @@
     "showUnderline": "Tampilkan garis bawah",
     "allColorsInUse": "Semua warna sudah digunakan — hapus lapisan terlebih dahulu."
   },
-  "passages": {
+  "texts": {
     "title": "Bagian",
-    "addPassage": "Tambah bagian",
+    "addText": "Tambah bagian",
     "hideAll": "Sembunyikan semua bagian",
     "showAll": "Tampilkan semua bagian",
-    "hidePassage": "Sembunyikan bagian",
-    "showPassage": "Tampilkan bagian"
+    "hideText": "Sembunyikan bagian",
+    "showText": "Tampilkan bagian"
   },
   "tooltips": {
     "toggleManagementPane": "Alihkan panel manajemen",

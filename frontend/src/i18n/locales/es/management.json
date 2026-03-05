@@ -18,13 +18,13 @@
     "showUnderline": "Mostrar subrayado",
     "allColorsInUse": "Todos los colores están en uso — elimina una capa primero."
   },
-  "passages": {
+  "texts": {
     "title": "Pasajes",
-    "addPassage": "Añadir pasaje",
+    "addText": "Añadir pasaje",
     "hideAll": "Ocultar todos los pasajes",
     "showAll": "Mostrar todos los pasajes",
-    "hidePassage": "Ocultar pasaje",
-    "showPassage": "Mostrar pasaje"
+    "hideText": "Ocultar pasaje",
+    "showText": "Mostrar pasaje"
   },
   "tooltips": {
     "toggleManagementPane": "Alternar panel de gestión",

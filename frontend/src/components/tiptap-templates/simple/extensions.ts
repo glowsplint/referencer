@@ -72,7 +72,7 @@ export function createSimpleEditorExtensions(opts?: EditorExtensionOptions) {
     WordHoverExtension,
     ArrowLinesExtension,
     Placeholder.configure({
-      placeholder: "Paste or type your passage here\u2026",
+      placeholder: "Paste or type your text here\u2026",
     }),
     ImageUploadNode.configure({
       accept: "image/*",

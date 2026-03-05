@@ -18,13 +18,13 @@
     "showUnderline": "Ipakita ang salungguhit",
     "allColorsInUse": "Lahat ng kulay ay ginagamit na — alisin muna ang isang layer."
   },
-  "passages": {
+  "texts": {
     "title": "Mga Sipi",
-    "addPassage": "Magdagdag ng sipi",
+    "addText": "Magdagdag ng sipi",
     "hideAll": "Itago lahat ng sipi",
     "showAll": "Ipakita lahat ng sipi",
-    "hidePassage": "Itago ang sipi",
-    "showPassage": "Ipakita ang sipi"
+    "hideText": "Itago ang sipi",
+    "showText": "Ipakita ang sipi"
   },
   "tooltips": {
     "toggleManagementPane": "I-toggle ang management pane",

@@ -20,7 +20,7 @@ test.describe("when navigating across 2 editors", () => {
     for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
-    // Editor starts locked with 2 passages. Close management pane for more space.
+    // Editor starts locked with 2 texts. Close management pane for more space.
     await expect(page.getByTestId("managementPane")).toBeVisible();
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
@@ -70,9 +70,9 @@ test.describe("when navigating across 3 editors", () => {
     for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
     }
-    // Editor starts locked with 2 passages. Add one more for 3 total.
+    // Editor starts locked with 2 texts. Add one more for 3 total.
     await expect(page.getByTestId("managementPane")).toBeVisible();
-    await page.getByTestId("addPassageButton").click();
+    await page.getByTestId("addTextButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
 
     // Focus the 3rd editor pane so the lock button targets it

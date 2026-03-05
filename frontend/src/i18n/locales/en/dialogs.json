@@ -49,7 +49,7 @@
       },
       "arrows": {
         "question": "What are arrows for?",
-        "answer": "Arrows connect two annotations to show a relationship between passages — for example, linking a repeated word to its first occurrence, or connecting a prophecy to its fulfillment. Select the arrow tool (or press A), then click two annotations to draw a connector."
+        "answer": "Arrows connect two annotations to show a relationship between texts — for example, linking a repeated word to its first occurrence, or connecting a prophecy to its fulfillment. Select the arrow tool (or press A), then click two annotations to draw a connector."
       },
       "sharing": {
         "question": "How do I share a workspace?",
@@ -103,7 +103,8 @@
     "alignLeft": "Align left",
     "alignCenter": "Align center",
     "alignRight": "Align right",
-    "alignJustify": "Align justify"
+    "alignJustify": "Align justify",
+    "addText": "Add new text"
   },
   "share": {
     "title": "Share workspace",

@@ -18,13 +18,13 @@
     "showUnderline": "Show underline",
     "allColorsInUse": "All colors in use already lah — remove a layer first."
   },
-  "passages": {
-    "title": "Passages",
-    "addPassage": "Add passage",
-    "hideAll": "Hide all passages",
-    "showAll": "Show all passages",
-    "hidePassage": "Hide passage",
-    "showPassage": "Show passage"
+  "texts": {
+    "title": "Texts",
+    "addText": "Add text",
+    "hideAll": "Hide all texts",
+    "showAll": "Show all texts",
+    "hideText": "Hide text",
+    "showText": "Show text"
   },
   "tooltips": {
     "toggleManagementPane": "Toggle management pane",
@@ -100,7 +100,7 @@
   },
   "hub": {
     "title": "Referencer",
-    "tagline": "Annotate, highlight, and connect passages side by side. A collaborative workspace for close reading.",
+    "tagline": "Annotate, highlight, and connect texts side by side. A collaborative workspace for close reading.",
     "tryWithoutSignIn": "Try without signing in",
     "signIn": "Sign in",
     "signInGoogle": "Sign in with Google",
@@ -124,7 +124,7 @@
     "onboardingStep1": "Create a workspace",
     "onboardingStep1Hint": "Click the button below to get started lah",
     "onboardingStep2": "Add your text",
-    "onboardingStep2Hint": "Paste or type your passage",
+    "onboardingStep2Hint": "Paste or type your text",
     "onboardingStep3": "Start annotating",
     "onboardingStep3Hint": "Highlight, underline, and comment",
     "guestWarning": "Data created without signing in is stored locally and may be lost. Sign in to save your work lah.",

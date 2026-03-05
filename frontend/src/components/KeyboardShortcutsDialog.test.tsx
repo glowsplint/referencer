@@ -51,6 +51,7 @@ describe("KeyboardShortcutsDialog", () => {
       expect(screen.getByText("Toggle editor lock")).toBeInTheDocument();
       expect(screen.getByText("Toggle management pane")).toBeInTheDocument();
       expect(screen.getByText("Eraser tool")).toBeInTheDocument();
+      expect(screen.getByText("Add new text")).toBeInTheDocument();
     });
   });
 

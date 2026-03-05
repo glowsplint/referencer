@@ -18,13 +18,13 @@
     "showUnderline": "下線を表示",
     "allColorsInUse": "すべての色が使用中です。先にレイヤーを削除してください。"
   },
-  "passages": {
+  "texts": {
     "title": "パッセージ",
-    "addPassage": "パッセージを追加",
+    "addText": "パッセージを追加",
     "hideAll": "すべてのパッセージを非表示",
     "showAll": "すべてのパッセージを表示",
-    "hidePassage": "パッセージを非表示",
-    "showPassage": "パッセージを表示"
+    "hideText": "パッセージを非表示",
+    "showText": "パッセージを表示"
   },
   "tooltips": {
     "toggleManagementPane": "管理パネルの切り替え",

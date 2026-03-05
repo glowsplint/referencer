@@ -22,7 +22,7 @@ describe("PrintAnnotations", () => {
       const { container } = render(
         <PrintAnnotations
           layers={[makeLayer()]}
-          sectionNames={["Passage 1"]}
+          sectionNames={["Text 1"]}
           sectionVisibility={[true]}
         />,
       );
@@ -47,11 +47,7 @@ describe("PrintAnnotations", () => {
         ],
       });
       const { container } = render(
-        <PrintAnnotations
-          layers={[layer]}
-          sectionNames={["Passage 1"]}
-          sectionVisibility={[true]}
-        />,
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
       );
       expect(container.innerHTML).toBe("");
     });
@@ -73,18 +69,14 @@ describe("PrintAnnotations", () => {
         ],
       });
       const { container } = render(
-        <PrintAnnotations
-          layers={[layer]}
-          sectionNames={["Passage 1"]}
-          sectionVisibility={[true]}
-        />,
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
       );
       expect(container.innerHTML).toBe("");
     });
   });
 
-  describe("when comments exist across multiple passages", () => {
-    it("then groups annotations by passage", () => {
+  describe("when comments exist across multiple texts", () => {
+    it("then groups annotations by text", () => {
       const layer = makeLayer({
         highlights: [
           {
@@ -139,11 +131,7 @@ describe("PrintAnnotations", () => {
       });
 
       const { container } = render(
-        <PrintAnnotations
-          layers={[layer]}
-          sectionNames={["Passage 1"]}
-          sectionVisibility={[true]}
-        />,
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
       );
 
       expect(container.textContent).toContain("selected text");
@@ -206,11 +194,7 @@ describe("PrintAnnotations", () => {
       });
 
       const { container } = render(
-        <PrintAnnotations
-          layers={[layer]}
-          sectionNames={["Passage 1"]}
-          sectionVisibility={[true]}
-        />,
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
       );
 
       const proseEl = container.querySelector(".prose-xs");

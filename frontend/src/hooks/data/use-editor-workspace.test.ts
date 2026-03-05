@@ -9,8 +9,8 @@ const { testDocRef } = vi.hoisted(() => ({
 
 vi.mock("@/data/default-workspace", () => ({
   createDefaultLayers: () => [],
-  DEFAULT_SECTION_NAMES: ["Passage 1"],
-  DEFAULT_PASSAGE_CONTENTS: [{}],
+  DEFAULT_SECTION_NAMES: ["Text 1"],
+  DEFAULT_TEXT_CONTENTS: [{}],
 }));
 
 // Mock Yjs provider — return a real Y.Doc without WebSocket
@@ -800,26 +800,26 @@ describe("useEditorWorkspace", () => {
     expect(typeof result.current.unifiedUndo.canRedo).toBe("boolean");
   });
 
-  it("when undo/redo is used on addEditor, then preserves the original passage name", () => {
+  it("when undo/redo is used on addEditor, then preserves the original text name", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
       result.current.addEditor();
     });
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Text 2"]);
 
     act(() => {
       result.current.history.undo();
     });
-    expect(result.current.sectionNames).toEqual(["Passage 1"]);
+    expect(result.current.sectionNames).toEqual(["Text 1"]);
 
     act(() => {
       result.current.history.redo();
     });
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Text 2"]);
   });
 
-  it("when undo/redo of addEditor is repeated, then does not increment passage name", () => {
+  it("when undo/redo of addEditor is repeated, then does not increment text name", () => {
     const { result } = renderHook(() => useEditorWorkspace());
 
     act(() => {
@@ -835,7 +835,7 @@ describe("useEditorWorkspace", () => {
       });
     }
 
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Text 2"]);
   });
 
   // --- Toggle actions are undoable (logOnly → record) ---

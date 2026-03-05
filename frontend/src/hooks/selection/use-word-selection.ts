@@ -1,7 +1,7 @@
 // Manages word-level keyboard navigation and selection in locked mode.
-// Supports arrow keys (with Shift for range extension, Cmd for line/passage
+// Supports arrow keys (with Shift for range extension, Cmd for line/text
 // boundaries), Home/End, Escape to clear, Enter to confirm, and Cmd+A for
-// select-all within a passage. Maintains a sticky X coordinate for vertical
+// select-all within a text. Maintains a sticky X coordinate for vertical
 // movement consistency.
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { Editor } from "@tiptap/react";
@@ -19,11 +19,11 @@ import {
   collectCandidates,
   resolveNavigationTarget,
   computeRangeSelection,
-  findFirstWordInPassage,
-  findLastWordInPassage,
+  findFirstWordInText,
+  findLastWordInText,
   findHorizontalTargetConstrained,
   findVerticalTargetConstrained,
-  computeSelectAllInPassage,
+  computeSelectAllInText,
 } from "@/lib/word-navigation";
 
 const ARROW_KEYS = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]);
@@ -103,7 +103,7 @@ export function useWordSelection({
     const containerRect = container.getBoundingClientRect();
     const ctx = { editorsRef, containerRect, editorCount };
     const allCandidates = collectCandidates(ctx);
-    const first = findFirstWordInPassage(0, allCandidates);
+    const first = findFirstWordInText(0, allCandidates);
 
     if (first) {
       setSelection(first);
@@ -146,7 +146,7 @@ export function useWordSelection({
             const containerRect = container.getBoundingClientRect();
             const ctx = { editorsRef, containerRect, editorCount };
             const allCandidates = collectCandidates(ctx);
-            const first = findFirstWordInPassage(0, allCandidates);
+            const first = findFirstWordInText(0, allCandidates);
             if (first) {
               setSelection(first);
               setSelectionHidden(true);
@@ -160,7 +160,7 @@ export function useWordSelection({
       // ── Page Up/Down — let browser handle ──────────────────────
       if (e.key === "PageUp" || e.key === "PageDown") return;
 
-      // ── Cmd+A — select all in passage ──────────────────────────
+      // ── Cmd+A — select all in text ────────────────────────────
       if (cmd && e.key === "a") {
         e.preventDefault();
         setSelectionHidden(false);
@@ -172,7 +172,7 @@ export function useWordSelection({
         const editorIndex = selection?.editorIndex ?? 0;
         const editor = editorsRef.current.get(editorIndex);
         if (!editor) return;
-        const selectAll = computeSelectAllInPassage(editorIndex, allCandidates, editor);
+        const selectAll = computeSelectAllInText(editorIndex, allCandidates, editor);
         if (selectAll) {
           anchorRef.current = null;
           headRef.current = null;
@@ -307,7 +307,7 @@ export function useWordSelection({
       const isEnd = e.key === "End";
 
       if (e.shiftKey) {
-        // Progressive: line boundary first, then passage boundary
+        // Progressive: line boundary first, then text boundary
         if (!anchorRef.current) {
           anchorRef.current = sel;
           headRef.current = sel;
@@ -322,10 +322,10 @@ export function useWordSelection({
 
         let target: import("@/lib/tiptap/word-collection").CollectedWord | null;
         if (atBoundary) {
-          // Already at line boundary → go to passage boundary
+          // Already at line boundary → go to text boundary
           target = isEnd
-            ? findLastWordInPassage(sel.editorIndex, allCandidates)
-            : findFirstWordInPassage(sel.editorIndex, allCandidates);
+            ? findLastWordInText(sel.editorIndex, allCandidates)
+            : findFirstWordInText(sel.editorIndex, allCandidates);
         } else {
           // Go to line boundary
           target = isEnd
@@ -342,13 +342,13 @@ export function useWordSelection({
         headRef.current = target;
         setSelection(rangeSelection);
       } else {
-        // Without Shift: jump to passage start/end
+        // Without Shift: jump to text start/end
         anchorRef.current = null;
         headRef.current = null;
         stickyXRef.current = null;
         const target = isEnd
-          ? findLastWordInPassage(sel.editorIndex, allCandidates)
-          : findFirstWordInPassage(sel.editorIndex, allCandidates);
+          ? findLastWordInText(sel.editorIndex, allCandidates)
+          : findFirstWordInText(sel.editorIndex, allCandidates);
         if (target) setSelection(target);
       }
     }
@@ -379,10 +379,10 @@ export function useWordSelection({
           target = findLastWordOnLine(headCenter, sameEditorCandidates);
           break;
         case "ArrowUp":
-          target = findFirstWordInPassage(sel.editorIndex, allCandidates);
+          target = findFirstWordInText(sel.editorIndex, allCandidates);
           break;
         case "ArrowDown":
-          target = findLastWordInPassage(sel.editorIndex, allCandidates);
+          target = findLastWordInText(sel.editorIndex, allCandidates);
           break;
         default:
           return;

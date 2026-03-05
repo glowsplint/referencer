@@ -18,13 +18,13 @@
     "showUnderline": "Показать подчёркивание",
     "allColorsInUse": "Все цвета используются — сначала удалите слой."
   },
-  "passages": {
+  "texts": {
     "title": "Отрывки",
-    "addPassage": "Добавить отрывок",
+    "addText": "Добавить отрывок",
     "hideAll": "Скрыть все отрывки",
     "showAll": "Показать все отрывки",
-    "hidePassage": "Скрыть отрывок",
-    "showPassage": "Показать отрывок"
+    "hideText": "Скрыть отрывок",
+    "showText": "Показать отрывок"
   },
   "tooltips": {
     "toggleManagementPane": "Переключить панель управления",

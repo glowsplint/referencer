@@ -14,8 +14,8 @@ function createMockEditors(overrides: Partial<EditorsHook> = {}): EditorsHook {
     activeEditor: null,
     editorsRef: { current: new Map() },
     sectionVisibility: [true, true],
-    sectionNames: ["Passage 1", "Passage 2"],
-    addEditor: vi.fn(() => "Passage 3"),
+    sectionNames: ["Text 1", "Text 2"],
+    addEditor: vi.fn(() => "Text 3"),
     removeEditor: vi.fn(),
     handleDividerResize: vi.fn(),
     handleEditorMount: vi.fn(),
@@ -55,7 +55,7 @@ describe("useTrackedEditors", () => {
     expect(history.record).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "addEditor",
-        description: expect.stringContaining("Passage 3"),
+        description: expect.stringContaining("Text 3"),
       }),
     );
 
@@ -66,7 +66,7 @@ describe("useTrackedEditors", () => {
 
     // Verify redo calls addEditor with name
     recordCall.redo();
-    expect(raw.addEditor).toHaveBeenCalledWith({ name: "Passage 3" });
+    expect(raw.addEditor).toHaveBeenCalledWith({ name: "Text 3" });
   });
 
   it("when addEditor is called at max (4 editors), then does nothing", () => {
@@ -97,15 +97,15 @@ describe("useTrackedEditors", () => {
     expect(history.record).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "removeEditor",
-        description: expect.stringContaining("Passage 1"),
-        details: [{ label: "name", before: "Passage 1" }],
+        description: expect.stringContaining("Text 1"),
+        details: [{ label: "name", before: "Text 1" }],
       }),
     );
 
     // Undo should re-add the editor
     const recordCall = vi.mocked(history.record).mock.calls[0][0];
     recordCall.undo();
-    expect(raw.addEditor).toHaveBeenCalledWith({ name: "Passage 1" });
+    expect(raw.addEditor).toHaveBeenCalledWith({ name: "Text 1" });
   });
 
   it("when removeEditor is called with only 1 editor, then does nothing", () => {
@@ -136,15 +136,15 @@ describe("useTrackedEditors", () => {
     expect(history.record).toHaveBeenCalledWith(
       expect.objectContaining({
         type: "updateSectionName",
-        description: "Renamed passage 'Passage 1' to 'Intro'",
-        details: [{ label: "name", before: "Passage 1", after: "Intro" }],
+        description: "Renamed text 'Text 1' to 'Intro'",
+        details: [{ label: "name", before: "Text 1", after: "Intro" }],
       }),
     );
 
     // Undo restores old name
     const recordCall = vi.mocked(history.record).mock.calls[0][0];
     recordCall.undo();
-    expect(raw.updateSectionName).toHaveBeenCalledWith(0, "Passage 1");
+    expect(raw.updateSectionName).toHaveBeenCalledWith(0, "Text 1");
 
     // Redo sets new name again
     recordCall.redo();
@@ -162,16 +162,16 @@ describe("useTrackedEditors", () => {
     });
 
     expect(raw.toggleAllSectionVisibility).toHaveBeenCalled();
-    // anyVisible is true, so type should be "hideAllPassages"
+    // anyVisible is true, so type should be "hideAllTexts"
     expect(history.record).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: "hideAllPassages",
-        description: "Hid all passages",
+        type: "hideAllTexts",
+        description: "Hid all texts",
       }),
     );
   });
 
-  it("when toggleAllSectionVisibility is called with all hidden, then records showAllPassages", () => {
+  it("when toggleAllSectionVisibility is called with all hidden, then records showAllTexts", () => {
     const raw = createMockEditors({ sectionVisibility: [false, false] });
     const history = createMockHistory();
 
@@ -183,8 +183,8 @@ describe("useTrackedEditors", () => {
 
     expect(history.record).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: "showAllPassages",
-        description: "Showed all passages",
+        type: "showAllTexts",
+        description: "Showed all texts",
       }),
     );
   });
@@ -197,6 +197,6 @@ describe("useTrackedEditors", () => {
 
     expect(result.current.editorCount).toBe(2);
     expect(result.current.editorWidths).toEqual([50, 50]);
-    expect(result.current.sectionNames).toEqual(["Passage 1", "Passage 2"]);
+    expect(result.current.sectionNames).toEqual(["Text 1", "Text 2"]);
   });
 });

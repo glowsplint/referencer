@@ -1,6 +1,6 @@
 {
   "close": "Schließen",
   "active": "Aktiv",
-  "passage": "Abschnitt {{number}}",
+  "text": "Abschnitt {{number}}",
   "layer": "Ebene {{number}}"
 }

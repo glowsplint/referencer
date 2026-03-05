@@ -1,6 +1,6 @@
 {
   "close": "Cerrar",
   "active": "Activo",
-  "passage": "Pasaje {{number}}",
+  "text": "Pasaje {{number}}",
   "layer": "Capa {{number}}"
 }

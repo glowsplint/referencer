@@ -115,7 +115,7 @@ const mockWorkspace = {
   setActiveLayerId: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true, true],
-  sectionNames: ["Passage 1", "Passage 2"],
+  sectionNames: ["Text 1", "Text 2"],
   editorKeys: [1, 2],
   addEditor: vi.fn(),
   removeEditor: vi.fn(),
@@ -285,7 +285,7 @@ beforeEach(() => {
   mockWorkspace.editorWidths = [50, 50];
   mockWorkspace.editorKeys = [1, 2];
   mockWorkspace.sectionVisibility = [true, true];
-  mockWorkspace.sectionNames = ["Passage 1", "Passage 2"];
+  mockWorkspace.sectionNames = ["Text 1", "Text 2"];
   mockWorkspace.isManagementPaneOpen = false;
   mockWorkspace.annotations = { activeTool: "selection" as const };
   mockWorkspace.selectedArrow = null;
@@ -346,7 +346,7 @@ describe("App multi-editor layers", () => {
   });
 
   describe("when toggling section visibility with layers", () => {
-    it("when a passage is hidden, then its editor pane is not displayed", () => {
+    it("when a text is hidden, then its editor pane is not displayed", () => {
       mockWorkspace.sectionVisibility = [true, false];
       renderApp();
       const panes = screen.getAllByTestId("editor-pane");
@@ -358,7 +358,7 @@ describe("App multi-editor layers", () => {
       expect(secondPane!.closest('[style*="display: none"]')).not.toBeNull();
     });
 
-    it("when passage is shown again, then its editor pane is visible", () => {
+    it("when text is shown again, then its editor pane is visible", () => {
       mockWorkspace.sectionVisibility = [true, true];
       renderApp();
       const panes = screen.getAllByTestId("editor-pane");
@@ -368,20 +368,20 @@ describe("App multi-editor layers", () => {
       expect(secondPane!.closest('[style*="display: none"]')).toBeNull();
     });
 
-    it("when passage with annotations is hidden, then annotation panel reflects visibility", () => {
+    it("when text with annotations is hidden, then annotation panel reflects visibility", () => {
       mockWorkspace.layers = [
         makeLayer("layer-1", "Layer 1", {
           visible: true,
           highlights: [makeComment("h1", 1, "P2 note")],
         }),
       ];
-      // Hide passage 1 where the annotation is
+      // Hide text 1 where the annotation is
       mockWorkspace.sectionVisibility = [true, false];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     });
 
-    it("when annotations exist in visible passage only, then annotation panel shows", () => {
+    it("when annotations exist in visible text only, then annotation panel shows", () => {
       mockWorkspace.layers = [
         makeLayer("layer-1", "Layer 1", {
           visible: true,

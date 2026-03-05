@@ -1016,7 +1016,7 @@ describe("useWordSelection Home/End keys", () => {
     vi.clearAllMocks();
   });
 
-  it("when Home is pressed, then jumps to first word in passage", () => {
+  it("when Home is pressed, then jumps to first word in text", () => {
     const { editorsRef, containerRef } = setupHomeEndMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1032,7 +1032,7 @@ describe("useWordSelection Home/End keys", () => {
     expect(result.current.selection?.from).toBe(1);
   });
 
-  it("when End is pressed, then jumps to last word in passage", () => {
+  it("when End is pressed, then jumps to last word in text", () => {
     const { editorsRef, containerRef } = setupHomeEndMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1048,7 +1048,7 @@ describe("useWordSelection Home/End keys", () => {
     expect(result.current.selection?.to).toBe(29);
   });
 
-  it("when Shift+End is pressed, then progressively extends to line end then passage end", () => {
+  it("when Shift+End is pressed, then progressively extends to line end then text end", () => {
     const { editorsRef, containerRef } = setupHomeEndMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1065,14 +1065,14 @@ describe("useWordSelection Home/End keys", () => {
     });
     expect(result.current.selection?.to).toBe(16); // "brown" ends at 16
 
-    // Second Shift+End: head is now at "brown" (line end), extend to passage end ("jumps")
+    // Second Shift+End: head is now at "brown" (line end), extend to text end ("jumps")
     act(() => {
       fireKey("End", { shiftKey: true });
     });
     expect(result.current.selection?.to).toBe(29); // "jumps" ends at 29
   });
 
-  it("when Shift+Home is pressed, then progressively extends to line start then passage start", () => {
+  it("when Shift+Home is pressed, then progressively extends to line start then text start", () => {
     const { editorsRef, containerRef } = setupHomeEndMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1089,7 +1089,7 @@ describe("useWordSelection Home/End keys", () => {
     });
     expect(result.current.selection?.from).toBe(20); // "fox" starts at 20
 
-    // Second Shift+Home: head is now at "fox" (line start), extend to passage start ("the")
+    // Second Shift+Home: head is now at "fox" (line start), extend to text start ("the")
     act(() => {
       fireKey("Home", { shiftKey: true });
     });
@@ -1148,7 +1148,7 @@ describe("useWordSelection Cmd+Arrow keys", () => {
     vi.clearAllMocks();
   });
 
-  it("when Cmd+ArrowDown is pressed, then stays in same passage", () => {
+  it("when Cmd+ArrowDown is pressed, then stays in same text", () => {
     const { editorsRef, containerRef } = setupCmdMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -1165,7 +1165,7 @@ describe("useWordSelection Cmd+Arrow keys", () => {
     expect(result.current.selection?.editorIndex).toBe(0);
   });
 
-  it("when Cmd+ArrowDown is pressed at bottom of passage, then stays put", () => {
+  it("when Cmd+ArrowDown is pressed at bottom of text, then stays put", () => {
     const { editorsRef, containerRef } = setupCmdMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 2 }),
@@ -1280,7 +1280,7 @@ describe("useWordSelection Cmd+Shift+Arrow keys", () => {
     });
   });
 
-  it("when Cmd+Shift+ArrowDown is pressed, then extends to last word in passage", () => {
+  it("when Cmd+Shift+ArrowDown is pressed, then extends to last word in text", () => {
     const { editorsRef, containerRef } = setupCmdShiftMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1300,7 +1300,7 @@ describe("useWordSelection Cmd+Shift+Arrow keys", () => {
     });
   });
 
-  it("when Cmd+Shift+ArrowUp is pressed, then extends to first word in passage", () => {
+  it("when Cmd+Shift+ArrowUp is pressed, then extends to first word in text", () => {
     const { editorsRef, containerRef } = setupCmdShiftMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1375,7 +1375,7 @@ describe("useWordSelection Cmd+A", () => {
     vi.clearAllMocks();
   });
 
-  it("when Cmd+A is pressed, then selects all words in active passage", () => {
+  it("when Cmd+A is pressed, then selects all words in active text", () => {
     const { editorsRef, containerRef } = setupCmdAMocks();
     const { result } = renderHook(() =>
       useWordSelection({ isLocked: true, editorsRef, containerRef, editorCount: 1 }),
@@ -1415,4 +1415,4 @@ describe("useWordSelection Cmd+A", () => {
   });
 });
 
-// Tab/Shift+Tab passage cycling was removed — Tab now cycles layers via useCycleLayer
+// Tab/Shift+Tab text cycling was removed — Tab now cycles layers via useCycleLayer

@@ -115,7 +115,7 @@ const mockWorkspace = {
   setActiveLayerId: vi.fn(),
   editorsRef: { current: new Map() },
   sectionVisibility: [true, true],
-  sectionNames: ["Passage 1", "Passage 2"],
+  sectionNames: ["Text 1", "Text 2"],
   editorKeys: [1, 2],
   addEditor: vi.fn(),
   removeEditor: vi.fn(),
@@ -284,7 +284,7 @@ beforeEach(() => {
   mockWorkspace.editorWidths = [50, 50];
   mockWorkspace.editorKeys = [1, 2];
   mockWorkspace.sectionVisibility = [true, true];
-  mockWorkspace.sectionNames = ["Passage 1", "Passage 2"];
+  mockWorkspace.sectionNames = ["Text 1", "Text 2"];
   mockWorkspace.isManagementPaneOpen = false;
   mockWorkspace.annotations = { activeTool: "selection" as const };
   mockWorkspace.selectedArrow = null;
@@ -330,12 +330,12 @@ describe("App UI consistency (layer hidden)", () => {
   });
 });
 
-describe("App UI consistency (passage hidden)", () => {
-  it("when passage is hidden and only annotation is in that passage, then annotation panel is removed", () => {
+describe("App UI consistency (text hidden)", () => {
+  it("when text is hidden and only annotation is in that text, then annotation panel is removed", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
-        highlights: [makeComment("h1", 0, "Passage gone note")],
+        highlights: [makeComment("h1", 0, "Text gone note")],
       }),
     ];
     mockWorkspace.sectionVisibility = [false, true];
@@ -343,7 +343,7 @@ describe("App UI consistency (passage hidden)", () => {
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
   });
 
-  it("when destination passage is hidden, then cross-editor arrow data still passed (filtering internal)", () => {
+  it("when destination text is hidden, then cross-editor arrow data still passed (filtering internal)", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
@@ -357,7 +357,7 @@ describe("App UI consistency (passage hidden)", () => {
     expect(panes[0]).toHaveAttribute("data-layer-count", "1");
   });
 
-  it("when passage is shown again, then annotation panel reappears", () => {
+  it("when text is shown again, then annotation panel reappears", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
@@ -465,12 +465,12 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
   });
 
-  it("when passage visibility is toggled multiple times (ends hidden), then annotations disappear", () => {
-    // After 5 toggles of passage (odd number) => ends hidden
+  it("when text visibility is toggled multiple times (ends hidden), then annotations disappear", () => {
+    // After 5 toggles of text (odd number) => ends hidden
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
-        highlights: [makeComment("h1", 0, "Rapid passage test")],
+        highlights: [makeComment("h1", 0, "Rapid text test")],
       }),
     ];
     mockWorkspace.sectionVisibility = [false, true];
@@ -478,11 +478,11 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
   });
 
-  it("when passage visibility is toggled back to visible, then annotations reappear", () => {
+  it("when text visibility is toggled back to visible, then annotations reappear", () => {
     mockWorkspace.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
-        highlights: [makeComment("h1", 0, "Rapid passage test")],
+        highlights: [makeComment("h1", 0, "Rapid text test")],
       }),
     ];
     mockWorkspace.sectionVisibility = [true, true];

@@ -1,5 +1,5 @@
-// Passage list in the management pane. Each passage row has an inline-editable
-// name and visibility toggle. Supports drag-and-drop reordering between passages
+// Text list in the management pane. Each text row has an inline-editable
+// name and visibility toggle. Supports drag-and-drop reordering between texts
 // (builds a permutation array on drop and calls onReorder).
 import { Eye, EyeOff, Plus } from "lucide-react";
 import { useRef, useState } from "react";
@@ -33,7 +33,7 @@ export function SectionList({
   const [dragFromIndex, setDragFromIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
-  // Reset drag state when editorCount changes (e.g., passage deleted via trash
+  // Reset drag state when editorCount changes (e.g., text deleted via trash
   // drop). The browser skips the dragend event when the source element is removed
   // from the DOM, so we can't rely on it for cleanup.
   const prevEditorCountRef = useRef(editorCount);
@@ -65,20 +65,20 @@ export function SectionList({
   return (
     <div>
       <div className="flex items-center justify-between mb-2 px-1">
-        <h3 className="text-xs font-medium text-muted-foreground">{t("passages.title")}</h3>
+        <h3 className="text-xs font-medium text-muted-foreground">{t("texts.title")}</h3>
         <div className="flex items-center gap-1">
           <button
             className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
             onClick={addEditor}
-            title={t("passages.addPassage")}
-            data-testid="addPassageButton"
+            title={t("texts.addText")}
+            data-testid="addTextButton"
           >
             <Plus size={14} />
           </button>
           <button
             className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
             onClick={toggleAllSectionVisibility}
-            title={sectionVisibility.some(Boolean) ? t("passages.hideAll") : t("passages.showAll")}
+            title={sectionVisibility.some(Boolean) ? t("texts.hideAll") : t("texts.showAll")}
             data-testid="toggleAllSectionVisibility"
           >
             {sectionVisibility.some(Boolean) ? <Eye size={14} /> : <EyeOff size={14} />}
@@ -88,12 +88,12 @@ export function SectionList({
       <div className="flex flex-col gap-1">
         {Array.from({ length: editorCount }, (_, i) => (
           <div
-            key={`passage-${i}`}
+            key={`text-${i}`}
             className={`flex items-center gap-2 px-1 py-0.5 rounded hover:bg-accent/50 cursor-grab${
               dragFromIndex === i ? " opacity-40" : ""
             }${dropTargetIndex === i && dragFromIndex !== null && dragFromIndex !== i ? (dragFromIndex < i ? " border-b-2 border-primary" : " border-t-2 border-primary") : ""}`}
             draggable={editorCount > 1}
-            data-testid={`passageRow-${i}`}
+            data-testid={`textRow-${i}`}
             onDragStart={(e) => {
               e.dataTransfer.setData(DRAG_TYPE_SECTION, String(i));
               setDragFromIndex(i);
@@ -137,13 +137,13 @@ export function SectionList({
                   inputProps.onKeyDown(e);
                 }}
                 className="text-sm w-full bg-transparent border-0 ring-1 ring-border rounded px-1 py-0 outline-none"
-                data-testid={`passageNameInput-${i}`}
+                data-testid={`textNameInput-${i}`}
               />
             ) : (
               <div
                 className="text-sm flex-1 bg-transparent border-0 rounded px-1 py-0 truncate cursor-text hover:bg-muted/50 hover:underline decoration-muted-foreground/30"
                 onDoubleClick={() => handleStartEditing(i)}
-                data-testid={`passageName-${i}`}
+                data-testid={`textName-${i}`}
               >
                 {sectionNames[i]}
               </div>
@@ -151,7 +151,7 @@ export function SectionList({
             <button
               className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
               onClick={() => toggleSectionVisibility(i)}
-              title={sectionVisibility[i] ? t("passages.hidePassage") : t("passages.showPassage")}
+              title={sectionVisibility[i] ? t("texts.hideText") : t("texts.showText")}
               data-testid={`sectionVisibility-${i}`}
             >
               {sectionVisibility[i] ? <Eye size={14} /> : <EyeOff size={14} />}

@@ -94,6 +94,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
         { keys: ["R"], description: t("shortcuts.toggleLayout") },
         { keys: ["K"], description: t("shortcuts.toggleLock") },
         { keys: ["M"], description: t("shortcuts.toggleManagement") },
+        { keys: ["T"], description: t("shortcuts.addText") },
       ],
     },
     {

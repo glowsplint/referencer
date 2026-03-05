@@ -94,7 +94,7 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
   test("when Shift+Arrow is pressed at editor boundary, then selection does not cross editors", async ({
     page,
   }) => {
-    // Already have 2 passages by default
+    // Already have 2 texts by default
 
     // Click word in editor 1
     await clickWordInEditor(page, 0, 30);

@@ -18,13 +18,13 @@
     "showUnderline": "Wys onderstreping",
     "allColorsInUse": "Alle kleure is in gebruik — verwyder eers 'n laag."
   },
-  "passages": {
+  "texts": {
     "title": "Gedeeltes",
-    "addPassage": "Voeg gedeelte by",
+    "addText": "Voeg gedeelte by",
     "hideAll": "Versteek alle gedeeltes",
     "showAll": "Wys alle gedeeltes",
-    "hidePassage": "Versteek gedeelte",
-    "showPassage": "Wys gedeelte"
+    "hideText": "Versteek gedeelte",
+    "showText": "Wys gedeelte"
   },
   "tooltips": {
     "toggleManagementPane": "Wissel bestuurspaneel",

@@ -18,13 +18,13 @@
     "showUnderline": "Afișează sublinierea",
     "allColorsInUse": "Toate culorile sunt utilizate — eliminați mai întâi un strat."
   },
-  "passages": {
+  "texts": {
     "title": "Pasaje",
-    "addPassage": "Adaugă pasaj",
+    "addText": "Adaugă pasaj",
     "hideAll": "Ascunde toate pasajele",
     "showAll": "Afișează toate pasajele",
-    "hidePassage": "Ascunde pasajul",
-    "showPassage": "Afișează pasajul"
+    "hideText": "Ascunde pasajul",
+    "showText": "Afișează pasajul"
   },
   "tooltips": {
     "toggleManagementPane": "Comutați panoul de gestionare",

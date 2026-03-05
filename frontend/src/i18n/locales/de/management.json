@@ -18,13 +18,13 @@
     "showUnderline": "Unterstreichung anzeigen",
     "allColorsInUse": "Alle Farben sind vergeben — entfernen Sie zuerst eine Ebene."
   },
-  "passages": {
+  "texts": {
     "title": "Abschnitte",
-    "addPassage": "Abschnitt hinzufügen",
+    "addText": "Abschnitt hinzufügen",
     "hideAll": "Alle Abschnitte ausblenden",
     "showAll": "Alle Abschnitte anzeigen",
-    "hidePassage": "Abschnitt ausblenden",
-    "showPassage": "Abschnitt anzeigen"
+    "hideText": "Abschnitt ausblenden",
+    "showText": "Abschnitt anzeigen"
   },
   "tooltips": {
     "toggleManagementPane": "Verwaltungspanel ein-/ausblenden",

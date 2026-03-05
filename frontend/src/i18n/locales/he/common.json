@@ -1,6 +1,6 @@
 {
   "close": "סגור",
   "active": "פעיל",
-  "passage": "קטע {{number}}",
+  "text": "קטע {{number}}",
   "layer": "שכבה {{number}}"
 }

@@ -1,6 +1,6 @@
 {
   "close": "إغلاق",
   "active": "نشط",
-  "passage": "فقرة {{number}}",
+  "text": "فقرة {{number}}",
   "layer": "طبقة {{number}}"
 }

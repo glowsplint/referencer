@@ -1,6 +1,6 @@
 {
   "close": "Stäng",
   "active": "Aktiv",
-  "passage": "Avsnitt {{number}}",
+  "text": "Avsnitt {{number}}",
   "layer": "Lager {{number}}"
 }

@@ -1,5 +1,5 @@
 // Default workspace data for the Bible study demo.
-// Provides two passage contents (Genesis 1:1-31, Revelation 21:1-27),
+// Provides two text contents (Genesis 1:1-31, Revelation 21:1-27),
 // four pre-populated annotation layers for inductive study, and a placeholder
 // for new editors.
 import contentGenesis1 from "./default-content-genesis1.json";
@@ -11,7 +11,7 @@ import type { Layer, Highlight, Arrow, LayerUnderline, ArrowStyle } from "@/type
 // Exports
 // ---------------------------------------------------------------------------
 
-export const DEFAULT_PASSAGE_CONTENTS: Record<string, unknown>[] = [
+export const DEFAULT_TEXT_CONTENTS: Record<string, unknown>[] = [
   contentGenesis1 as Record<string, unknown>,
   contentRev21 as Record<string, unknown>,
 ];
@@ -166,7 +166,7 @@ function ul(editorIndex: number, doc: any, text: string, occurrence = 0): LayerU
 
 // ---------------------------------------------------------------------------
 // Layer 1 — Parallels: Creation → New Creation
-// Arrows and highlights connecting direct echoes between the two passages.
+// Arrows and highlights connecting direct echoes between the two texts.
 // ---------------------------------------------------------------------------
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

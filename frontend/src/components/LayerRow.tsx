@@ -191,10 +191,10 @@ export function LayerRow({
       {expanded && hasItems && (
         <div className="ml-[14px] pl-2 border-l border-border" data-testid={`layerItems-${index}`}>
           {layer.highlights.map((h) => {
-            const passageName =
-              sectionNames[h.editorIndex] ?? tc("passage", { number: h.editorIndex + 1 });
+            const textName =
+              sectionNames[h.editorIndex] ?? tc("text", { number: h.editorIndex + 1 });
             const label = h.annotation || h.text;
-            const fullTitle = `${label} (${passageName})`;
+            const fullTitle = `${label} (${textName})`;
             return (
               <div
                 key={h.id}
@@ -232,9 +232,9 @@ export function LayerRow({
           })}
           {layer.arrows.map((a) => {
             const fromName =
-              sectionNames[a.from.editorIndex] ?? tc("passage", { number: a.from.editorIndex + 1 });
+              sectionNames[a.from.editorIndex] ?? tc("text", { number: a.from.editorIndex + 1 });
             const toName =
-              sectionNames[a.to.editorIndex] ?? tc("passage", { number: a.to.editorIndex + 1 });
+              sectionNames[a.to.editorIndex] ?? tc("text", { number: a.to.editorIndex + 1 });
             const fromWords = a.from.text.split(/\s+/).filter(Boolean);
             const toWords = a.to.text.split(/\s+/).filter(Boolean);
             const label = `${fromWords[0] ?? ""} (${fromWords.length}) \u2192 ${toWords[0] ?? ""} (${toWords.length})`;
@@ -271,9 +271,9 @@ export function LayerRow({
             );
           })}
           {layer.underlines.map((u) => {
-            const passageName =
-              sectionNames[u.editorIndex] ?? tc("passage", { number: u.editorIndex + 1 });
-            const fullTitle = `${u.text} (${passageName})`;
+            const textName =
+              sectionNames[u.editorIndex] ?? tc("text", { number: u.editorIndex + 1 });
+            const fullTitle = `${u.text} (${textName})`;
             return (
               <div
                 key={u.id}

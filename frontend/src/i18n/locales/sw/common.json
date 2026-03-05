@@ -1,6 +1,6 @@
 {
   "close": "Funga",
   "active": "Inatumika",
-  "passage": "Kifungu {{number}}",
+  "text": "Kifungu {{number}}",
   "layer": "Tabaka {{number}}"
 }

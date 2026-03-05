@@ -423,14 +423,14 @@ export function WorkspaceGrid({
               <h2 className="text-2xl font-bold mb-2">Welcome to Referencer</h2>
               <p className="text-muted-foreground text-center max-w-md mb-8">
                 A collaborative workspace for close reading. Annotate, highlight, and connect
-                passages side by side.
+                texts side by side.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-lg mb-8">
                 <div className="flex flex-col items-center text-center gap-2">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
                     <BookOpen size={20} />
                   </div>
-                  <span className="text-sm font-medium">Add passages</span>
+                  <span className="text-sm font-medium">Add texts</span>
                   <span className="text-xs text-muted-foreground">
                     Import or paste texts to study side by side
                   </span>
