@@ -1,6 +1,11 @@
 // React hook for managing a Yjs workspace provider.
 // Creates and tears down Y.Doc + WebsocketProvider per workspace ID.
 // Fetches a JWT ticket before connecting, and refreshes it proactively.
+//
+// KNOWN ISSUE: In production, the ws-ticket POST may fail silently when the
+// __session cookie isn't sent cross-origin (SameSite=Lax blocks cross-site POST).
+// When this happens, the WebSocket connects without a token and gets 401.
+// The provider falls back to local-only mode (synced=true via connection-error).
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createWorkspaceProvider, type WorkspaceProvider } from "@/lib/yjs/provider";
 import { apiPost } from "@/lib/api-client";
