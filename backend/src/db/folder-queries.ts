@@ -120,6 +120,23 @@ export async function toggleFavoriteFolder(
   if (error) throw new Error(`Failed to toggle folder favorite: ${error.message}`);
 }
 
+async function getSubtreeDepth(
+  supabase: SupabaseClient,
+  folderId: string,
+  userId: string,
+): Promise<number> {
+  const { data } = await supabase
+    .from("workspace_folder")
+    .select("id")
+    .eq("parent_id", folderId)
+    .eq("user_id", userId);
+  if (!data || data.length === 0) return 0;
+  const childDepths = await Promise.all(
+    data.map((child: { id: string }) => getSubtreeDepth(supabase, child.id, userId)),
+  );
+  return 1 + Math.max(...childDepths);
+}
+
 export async function moveFolderToFolder(
   supabase: SupabaseClient,
   userId: string,
@@ -131,9 +148,10 @@ export async function moveFolderToFolder(
   }
 
   if (newParentId !== null) {
-    // Check depth limit
+    // Check depth limit including subtree depth of moved folder
     const parentDepth = await getFolderDepth(supabase, newParentId, userId);
-    if (parentDepth >= MAX_FOLDER_DEPTH) {
+    const subtreeDepth = await getSubtreeDepth(supabase, folderId, userId);
+    if (parentDepth + 1 + subtreeDepth > MAX_FOLDER_DEPTH) {
       throw new Error(`Folder depth limit of ${MAX_FOLDER_DEPTH} exceeded`);
     }
 

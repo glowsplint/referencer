@@ -1,12 +1,15 @@
 import { useCallback } from "react";
 import { Folder, Star } from "lucide-react";
 import { useDndContext } from "@/contexts/DndContext";
+import { useSelection } from "@/contexts/SelectionContext";
+import { useClickHandler } from "@/hooks/ui/use-click-handler";
 import { useDraggable, useDropTarget, type DragData } from "@/hooks/ui/use-hub-dnd";
 import { getWorkspacesForFolder, canMoveFolderTo } from "@/lib/folder-tree";
 import type { FolderNode } from "@/lib/folder-tree";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { InlineNameInput } from "./InlineNameInput";
+import { SelectionCheckbox } from "./SelectionCheckbox";
 import { FolderDropdownMenu } from "./FolderDropdownMenu";
 
 interface FolderCardProps {
@@ -49,20 +52,41 @@ export function FolderCard({
   onNavigateToFolder,
 }: FolderCardProps) {
   const { dragId, overTargetId } = useDndContext();
+  const { isSelected, isSelectionActive, handleItemClick, clearSelection, getSelectedItems } =
+    useSelection();
+  const selected = isSelected(node.folder.id);
   const folderWorkspaces = getWorkspacesForFolder(workspaces, node.folder.id);
   const isRenaming = renamingFolderId === node.folder.id;
 
-  const dragRef = useDraggable("folder", node.folder.id);
+  const dragRef = useDraggable("folder", node.folder.id, {
+    isSelected: selected,
+    getSelectedItems,
+    onClearSelection: clearSelection,
+  });
+
+  const onSelect = useCallback(
+    (e: React.MouseEvent) => {
+      handleItemClick(node.folder.id, e);
+    },
+    [handleItemClick, node.folder.id],
+  );
+
+  const handleCardClick = useClickHandler(onSelect, () => onNavigateToFolder(node.folder.id));
 
   const handleDrop = useCallback(
     (data: DragData) => {
-      if (data.type === "workspace") {
-        const ws = workspaces.find((w) => w.workspaceId === data.id);
-        if (ws?.folderId === node.folder.id) return;
-        onMoveToFolder(data.id, node.folder.id);
-      } else if (data.type === "folder") {
-        if (canMoveFolderTo(folders, data.id, node.folder.id)) {
-          onMoveFolder(data.id, node.folder.id);
+      const items = data.selectedItems ?? [{ type: data.type, id: data.id }];
+      // Workspaces in parallel, folders sequentially
+      const wsItems = items.filter((i) => i.type === "workspace");
+      const folderItems = items.filter((i) => i.type === "folder");
+      for (const item of wsItems) {
+        const ws = workspaces.find((w) => w.workspaceId === item.id);
+        if (ws?.folderId === node.folder.id) continue;
+        onMoveToFolder(item.id, node.folder.id);
+      }
+      for (const item of folderItems) {
+        if (canMoveFolderTo(folders, item.id, node.folder.id)) {
+          onMoveFolder(item.id, node.folder.id);
         }
       }
     },
@@ -71,11 +95,14 @@ export function FolderCard({
 
   const handleCanDrop = useCallback(
     (data: DragData) => {
-      if (data.id === node.folder.id) return false;
-      if (data.type === "folder") {
-        return canMoveFolderTo(folders, data.id, node.folder.id);
-      }
-      return true;
+      const items = data.selectedItems ?? [{ type: data.type, id: data.id }];
+      return items.every((item) => {
+        if (item.id === node.folder.id) return false;
+        if (item.type === "folder") {
+          return canMoveFolderTo(folders, item.id, node.folder.id);
+        }
+        return true;
+      });
     },
     [folders, node.folder.id],
   );
@@ -97,11 +124,24 @@ export function FolderCard({
     <div
       ref={combinedRef}
       data-testid={`folderCard-${node.folder.id}`}
-      className={`group/folder relative flex flex-col justify-between p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer ${isDragging ? "opacity-50" : ""} ${isOver ? "ring-2 ring-primary bg-primary/5" : ""}`}
-      onDoubleClick={() => onNavigateToFolder(node.folder.id)}
+      data-selectable
+      className={`group/folder relative flex flex-col justify-between p-4 rounded-lg border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer ${isDragging ? "opacity-50" : ""} ${isOver ? "ring-2 ring-primary bg-primary/5" : ""} ${selected && !isOver ? "ring-2 ring-primary bg-primary/5 border-primary/30" : "border-border"}`}
+      onClick={handleCardClick}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
+          <SelectionCheckbox
+            checked={selected}
+            visible={isSelectionActive}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleItemClick(node.folder.id, {
+                ctrlKey: !e.shiftKey,
+                metaKey: false,
+                shiftKey: e.shiftKey,
+              });
+            }}
+          />
           <button
             onClick={(e) => {
               e.stopPropagation();

@@ -1,11 +1,15 @@
+import { useCallback } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2, Star } from "lucide-react";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 import { useDraggable } from "@/hooks/ui/use-hub-dnd";
 import { useDndContext } from "@/contexts/DndContext";
+import { useSelection } from "@/contexts/SelectionContext";
+import { useClickHandler } from "@/hooks/ui/use-click-handler";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { MoveToFolderMenu } from "./MoveToFolderMenu";
+import { SelectionCheckbox } from "./SelectionCheckbox";
 import { OwnerAvatar } from "./OwnerAvatar";
 
 interface WorkspaceCardProps {
@@ -33,17 +37,34 @@ export function WorkspaceCard({
   ownerName,
   ownerAvatarUrl,
 }: WorkspaceCardProps) {
-  const dragRef = useDraggable("workspace", workspace.workspaceId);
+  const { isSelected, isSelectionActive, handleItemClick, clearSelection, getSelectedItems } =
+    useSelection();
+  const selected = isSelected(workspace.workspaceId);
+  const dragRef = useDraggable("workspace", workspace.workspaceId, {
+    isSelected: selected,
+    getSelectedItems,
+    onClearSelection: clearSelection,
+  });
   const { dragId } = useDndContext();
   const isDragging = dragId === workspace.workspaceId;
+
+  const onSelect = useCallback(
+    (e: React.MouseEvent) => {
+      handleItemClick(workspace.workspaceId, e);
+    },
+    [handleItemClick, workspace.workspaceId],
+  );
+
+  const handleCardClick = useClickHandler(onSelect, onOpen);
 
   return (
     <div
       ref={dragRef}
       role="button"
       tabIndex={0}
-      className={`group relative flex flex-col p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer ${isDragging ? "opacity-50" : ""}`}
-      onClick={onOpen}
+      data-selectable
+      className={`group relative flex flex-col p-4 rounded-lg border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer ${isDragging ? "opacity-50" : ""} ${selected ? "ring-2 ring-primary bg-primary/5 border-primary/30" : "border-border"}`}
+      onClick={handleCardClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -54,6 +75,19 @@ export function WorkspaceCard({
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
+          <SelectionCheckbox
+            checked={selected}
+            visible={isSelectionActive}
+            onClick={(e) => {
+              e.stopPropagation();
+              // Checkbox click: toggle (like Ctrl+Click), or range if Shift held
+              handleItemClick(workspace.workspaceId, {
+                ctrlKey: !e.shiftKey,
+                metaKey: false,
+                shiftKey: e.shiftKey,
+              });
+            }}
+          />
           <button
             onClick={(e) => {
               e.stopPropagation();
