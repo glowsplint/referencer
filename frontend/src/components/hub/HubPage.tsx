@@ -160,7 +160,6 @@ export function HubPage({ navigate }: HubPageProps) {
         toggleShowStatusBar={toggleShowStatusBar}
         thirdEditorFullWidth={settings.thirdEditorFullWidth}
         toggleThirdEditorFullWidth={toggleThirdEditorFullWidth}
-        isAuthenticated={isAuthenticated}
       />
     </div>
   );

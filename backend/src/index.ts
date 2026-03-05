@@ -5,7 +5,7 @@ import { createAuthRoutes } from "./auth/handlers";
 import { loadAuthConfig } from "./auth/config";
 import { optionalAuth } from "./auth/middleware";
 import { handleShare, handleResolveShare, handleAcceptShare } from "./api/share";
-import { handleFeedback } from "./api/feedback";
+
 import { rateLimiter } from "./lib/rate-limit";
 import { workspaces } from "./api/workspaces";
 import { folders } from "./api/folders";
@@ -44,12 +44,6 @@ const crudWriteLimiter = rateLimiter({
   windowMs: 60_000,
   limit: 60,
   keyGenerator: (c) => `crud:${c.get("user")?.id ?? getClientIp(c)}`,
-});
-
-const feedbackLimiter = rateLimiter({
-  windowMs: 3_600_000,
-  limit: 3,
-  keyGenerator: (c) => `feedback:${c.get("user")?.id ?? getClientIp(c)}`,
 });
 
 // Create Supabase client per-request
@@ -143,9 +137,6 @@ app.post("/api/share/accept", handleAcceptShare());
 
 // Share link resolution (GET only redirects to frontend — no state changes)
 app.get("/s/:code", shareResolveLimiter, handleResolveShare());
-
-// Feedback API
-app.post("/api/feedback", feedbackLimiter, handleFeedback());
 
 app.onError((err, c) => {
   const log = c.get("logger");
