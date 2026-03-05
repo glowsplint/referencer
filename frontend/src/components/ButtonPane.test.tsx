@@ -219,9 +219,9 @@ describe("ButtonPane", () => {
     });
 
     describe("when comment placement is both", () => {
-      it("then shows the columns-2 icon", () => {
+      it("then shows the square-split-horizontal icon", () => {
         renderButtonPane({ settings: { commentPlacement: "both" } });
-        expect(getCommentIcon()).toHaveClass("lucide-columns-2");
+        expect(getCommentIcon()).toHaveClass("lucide-square-split-horizontal");
       });
     });
   });

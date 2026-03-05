@@ -6,6 +6,7 @@ import { useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Columns2,
+  SquareSplitHorizontal,
   SquareRoundCorner,
   LayoutGrid,
   LayoutPanelTop,
@@ -428,7 +429,7 @@ export function ButtonPane() {
             ) : settings.commentPlacement === "left" ? (
               <PanelLeftClose size={20} />
             ) : (
-              <Columns2 size={20} />
+              <SquareSplitHorizontal size={20} />
             )}
           </button>
         </TooltipTrigger>
