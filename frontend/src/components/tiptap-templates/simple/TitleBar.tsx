@@ -1,6 +1,7 @@
 // Title bar with inline-editable document title, share dialog trigger,
 // workspace switcher dropdown, and PDF export button. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Share2, Download, Home, ChevronDown, Check } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
@@ -19,6 +20,7 @@ interface TitleBarProps {
 }
 
 export function TitleBar({ navigate }: TitleBarProps) {
+  const { t } = useTranslation();
   const { workspaceId, readOnly, yjs } = useWorkspace();
   const { isAuthenticated, isLoading } = useAuth();
   const { workspaces } = useWorkspaces();
@@ -194,19 +196,24 @@ export function TitleBar({ navigate }: TitleBarProps) {
         </Tooltip>
       )}
       <div className="ml-auto flex items-center gap-2">
-        <Tooltip placement="bottom" delay={300}>
-          <TooltipTrigger asChild>
-            <span
-              className={`h-2 w-2 shrink-0 rounded-full ${
-                yjs.connected
-                  ? "animate-[pulse_3s_ease-in-out_infinite] bg-green-500"
-                  : "bg-gray-400"
-              }`}
-              data-testid="connectionStatusDot"
-            />
-          </TooltipTrigger>
-          <TooltipContent>{yjs.connected ? "Connected" : "Offline"}</TooltipContent>
-        </Tooltip>
+        <div className="flex items-center gap-1.5">
+          <span
+            className={`h-2 w-2 shrink-0 rounded-full ${
+              yjs.connected ? "animate-[pulse_3s_ease-in-out_infinite] bg-green-500" : "bg-red-500"
+            }`}
+            data-testid="connectionStatusDot"
+          />
+          <span
+            className={`text-xs ${
+              yjs.connected
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400"
+            }`}
+            data-testid="connectionStatusLabel"
+          >
+            {yjs.connected ? t("presence.connected") : t("presence.disconnected")}
+          </span>
+        </div>
         <CollaborationPresence provider={yjs.provider?.wsProvider ?? null} className="mr-1" />
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
