@@ -33,6 +33,9 @@
     "settings": "设置",
     "toggleEditorLayout": "切换编辑器布局",
     "toggleEditorLock": "切换编辑器锁定",
+    "switchToEditMode": "切换到编辑模式",
+    "switchToAnnotateMode": "切换到标注模式",
+    "annotateModeLockHint": " — 请先切换到标注模式",
     "toggleCommentPlacement": "切换评论位置",
     "startTour": "引导教程",
     "loadDemo": "加载演示内容"
@@ -45,7 +48,50 @@
     "replyPlaceholder": "回复...",
     "replies": "回复",
     "addReaction": "添加表情",
-    "removeReply": "删除回复"
+    "removeReply": "删除回复",
+    "moreEmojis": "更多表情",
+    "sendReply": "发送回复",
+    "showMoreReplies_one": "显示 {{count}} 条更多回复",
+    "showMoreReplies_other": "显示 {{count}} 条更多回复"
+  },
+  "schemes": {
+    "title": "选择学习方案",
+    "applyScheme": "应用学习方案",
+    "blankLayer": "空白图层",
+    "layerCount": "{{count}} 个图层",
+    "layerCount_one": "{{count}} 个图层",
+    "layerCount_other": "{{count}} 个图层",
+    "inductive": {
+      "name": "归纳式圣经学习",
+      "description": "使用 OIA 方法精读",
+      "layers": {
+        "keyTerms": "关键术语与重复词语",
+        "commands": "命令与警告",
+        "promises": "应许与祝福",
+        "attributes": "上帝的属性",
+        "structure": "文学结构",
+        "questions": "问题与应用"
+      }
+    },
+    "character": {
+      "name": "人物研究",
+      "description": "在叙事中追踪人物",
+      "layers": {
+        "godChrist": "上帝 / 基督",
+        "protagonist": "主角 / 忠信者",
+        "antagonist": "对手 / 反对者",
+        "speech": "对话与讲论"
+      }
+    },
+    "oia": {
+      "name": "简约版 (OIA)",
+      "description": "观察 / 解释 / 应用",
+      "layers": {
+        "observation": "观察",
+        "interpretation": "解释",
+        "application": "应用"
+      }
+    }
   },
   "actionConsole": {
     "title": "操作控制台",
@@ -57,6 +103,8 @@
     "tagline": "并排注释、高亮和关联段落。用于精读的协作工作区。",
     "tryWithoutSignIn": "无需登录即可试用",
     "signIn": "登录",
+    "signInGoogle": "使用 Google 登录",
+    "signInGithub": "使用 GitHub 登录",
     "myWorkspaces": "我的工作区",
     "newFolder": "新建文件夹",
     "newWorkspace": "新建工作区",

@@ -1,0 +1,172 @@
+{
+  "settings": {
+    "title": "設置",
+    "description": "自訂您的工作區偏好設置。",
+    "darkMode": {
+      "label": "深色模式",
+      "description": "在淺色和深色主題之間切換"
+    },
+    "hideOffscreenArrows": {
+      "label": "隱藏螢幕外箭頭",
+      "description": "當任一端點捲動到視圖外時完全隱藏箭頭"
+    },
+    "statusBar": {
+      "label": "狀態列",
+      "description": "在工具列下方顯示狀態列"
+    },
+    "thirdEditorFullWidth": {
+      "label": "第三編輯器全寬顯示",
+      "description": "啟用後，第三編輯器將橫跨底部整列寬度"
+    },
+    "language": {
+      "label": "語言",
+      "description": "選擇您的偏好語言"
+    }
+  },
+  "faq": {
+    "title": "常見問題",
+    "description": "了解 Referencer 以及如何使用它。",
+    "items": {
+      "whatIsApp": {
+        "question": "這個應用程式是什麼？",
+        "answer": "Referencer 是一個用於歸納式聖經學習的協作工具。它為學習小組提供了一個共享工作區，可以一起即時閱讀、標註和討論經文。"
+      },
+      "inductiveStudy": {
+        "question": "什麼是歸納式聖經學習？",
+        "answer": "歸納式聖經學習是一種從觀察（經文說了什麼？）到解釋（它是什麼意思？）再到應用（如何應用？）的閱讀方法。它不從外部註釋開始，而是透過仔細研究經文的詞語、結構和上下文，讓經文自己說話。"
+      },
+      "collaboration": {
+        "question": "協作是如何運作的？",
+        "answer": "每個工作區都可以透過連結與他人共享。所有參與者看到相同的文字，並可以新增自己的標註。變更會即時同步，確保每個人都在同一頁面上。"
+      },
+      "layers": {
+        "question": "什麼是圖層？",
+        "answer": "圖層允許您將標註組織到不同的群組中——例如，一個圖層用於觀察，另一個用於解釋。您可以使用 L 鍵在圖層之間切換，以便一次專注於一組標註。"
+      },
+      "annotations": {
+        "question": "標註是如何運作的？",
+        "answer": "使用鎖定按鈕（或按 K 鍵）鎖定編輯器，然後選擇文字進行高亮。您可以選擇顏色、新增留言，並在標註之間繪製箭頭以顯示關聯。點擊現有標註可以將其移除。"
+      },
+      "arrows": {
+        "question": "箭頭有什麼用？",
+        "answer": "箭頭連接兩個標註以顯示段落之間的關係——例如，將重複出現的詞語連結到首次出現的位置，或將預言與其應驗連接起來。選擇箭頭工具（或按 A 鍵），然後點擊兩個標註來繪製連接線。"
+      },
+      "sharing": {
+        "question": "如何共享工作區？",
+        "answer": "開啟管理面板（按 M 鍵或點擊選單圖示），使用共享選項產生連結。任何擁有該連結的人都可以加入工作區並進行協作。"
+      },
+      "mobile": {
+        "question": "可以在手機上使用嗎？",
+        "answer": "該應用程式可以在行動瀏覽器中使用，但完整的標註和箭頭工具在有鍵盤和滑鼠的裝置上體驗最佳。"
+      }
+    }
+  },
+  "shortcuts": {
+    "title": "鍵盤快捷鍵",
+    "description": "工作區可用的鍵盤快捷鍵。",
+    "workspace": "工作區",
+    "cycleNextLayer": "切換到下一個圖層",
+    "cyclePrevLayer": "切換到上一個圖層",
+    "selectionTool": "選擇工具",
+    "arrowTool": "箭頭工具",
+    "commentsTool": "留言工具",
+    "highlightTool": "高亮工具",
+    "underlineTool": "底線工具",
+    "eraserTool": "橡皮擦工具",
+    "navigateWords": "在詞語之間導覽",
+    "toggleConsole": "切換操作控制台",
+    "toggleDarkMode": "切換深色模式",
+    "toggleLayout": "切換編輯器版面配置",
+    "toggleLock": "切換編輯器鎖定",
+    "toggleManagement": "切換管理面板",
+    "textFormatting": "文字格式",
+    "bold": "粗體",
+    "italic": "斜體",
+    "underline": "底線",
+    "strikethrough": "刪除線",
+    "inlineCode": "行內程式碼",
+    "superscript": "上標",
+    "subscript": "下標",
+    "colorHighlight": "顏色高亮",
+    "general": "一般",
+    "undo": "復原（鎖定時為工作區操作）",
+    "redo": "重做（鎖定時為工作區操作）",
+    "headings": "標題",
+    "heading": "標題 {{level}}",
+    "listsAndBlocks": "列表和區塊",
+    "bulletList": "無序列表",
+    "orderedList": "有序列表",
+    "taskList": "任務列表",
+    "blockquote": "引用區塊",
+    "codeBlock": "程式碼區塊",
+    "textAlignment": "文字對齊",
+    "alignLeft": "靠左對齊",
+    "alignCenter": "置中對齊",
+    "alignRight": "靠右對齊",
+    "alignJustify": "左右對齊"
+  },
+  "share": {
+    "title": "共享工作區",
+    "description": "管理此工作區的連結和成員。",
+    "readonlyLink": "唯讀連結",
+    "editLink": "編輯連結",
+    "linkCopied": "連結已複製到剪貼簿。",
+    "copyFailed": "複製連結失敗。",
+    "loginRequired": "登入後可為此工作區產生共享連結。",
+    "loginGoogle": "使用 Google 登入",
+    "loginGithub": "使用 GitHub 登入",
+    "activeLinks": "活躍連結",
+    "revoke": "撤銷",
+    "linkRevoked": "連結已撤銷。",
+    "revokeFailed": "撤銷連結失敗。",
+    "members": "成員",
+    "you": "你",
+    "roleOwner": "擁有者",
+    "roleEditor": "編輯者",
+    "roleViewer": "檢視者",
+    "roleChanged": "角色已更新。",
+    "roleChangeFailed": "變更角色失敗。",
+    "memberRemoved": "成員已移除。",
+    "removeFailed": "移除成員失敗。",
+    "loading": "載入中...",
+    "edit": "編輯",
+    "readonly": "唯讀",
+    "copyLink": "複製連結",
+    "revokeConfirmTitle": "撤銷共享連結",
+    "revokeConfirmDescription": "確定要撤銷此連結嗎？使用該連結的人將失去存取權限。",
+    "revokeConfirmCancel": "取消",
+    "revokeConfirmAction": "撤銷",
+    "expiryNever": "永不過期",
+    "expiry7Days": "7 天",
+    "expiry30Days": "30 天",
+    "expiry90Days": "90 天",
+    "expiryLabel": "連結有效期",
+    "noExpiry": "無過期時間",
+    "expiresIn": "{{days}} 天後過期",
+    "expired": "已過期",
+    "acceptSignIn": "登入以接受此共享工作區",
+    "acceptError": "發生錯誤，請重試。",
+    "acceptExpired": "此共享連結無效或已過期。",
+    "goToHub": "前往首頁",
+    "accepting": "正在接受共享工作區..."
+  },
+  "mobile": {
+    "title": "桌面端體驗最佳",
+    "description": "Referencer 專為桌面端設計，需要鍵盤和滑鼠操作。您仍然可以在此閱讀內容，但編輯和標註工具在行動裝置上不可用。",
+    "continueReading": "繼續閱讀"
+  },
+  "bugReport": {
+    "title": "回報問題",
+    "description": "描述您遇到的問題。您的回報將被提交到問題追蹤器。",
+    "titleLabel": "標題",
+    "titlePlaceholder": "問題的簡要概述",
+    "descriptionLabel": "描述",
+    "descriptionPlaceholder": "重現步驟、預期行為、實際行為...",
+    "submit": "提交回報",
+    "submitting": "提交中...",
+    "success": "問題回報已成功提交。謝謝！",
+    "error": "提交問題回報失敗。請重試。",
+    "rateLimited": "提交過於頻繁。請稍後再試。",
+    "reportBug": "回報問題"
+  }
+}

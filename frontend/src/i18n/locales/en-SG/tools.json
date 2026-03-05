@@ -1,0 +1,65 @@
+{
+  "selection": {
+    "label": "Selection tool",
+    "defaultStatus": "Click a word or use arrow keys to navigate."
+  },
+  "arrow": {
+    "label": "Arrow tool",
+    "selectAnchor": "Select words for the anchor, then press <kbd>Enter</kbd>.",
+    "selectTarget": "Now select the target and press <kbd>Enter</kbd>.",
+    "created": "Arrow created already."
+  },
+  "highlight": {
+    "label": "Highlight tool",
+    "selectWords": "Select words to highlight, then press <kbd>Enter</kbd>.",
+    "added": "Highlight added already.",
+    "removed": "Highlight removed already."
+  },
+  "comments": {
+    "label": "Comments tool",
+    "selectWords": "Select words to comment on, then press <kbd>Enter</kbd>.",
+    "added": "Comment added already."
+  },
+  "underline": {
+    "label": "Underline tool",
+    "selectWords": "Select words to underline, then press <kbd>Enter</kbd>.",
+    "added": "Underline added already."
+  },
+  "eraser": {
+    "label": "Eraser tool",
+    "status": "Click and drag to erase annotations.",
+    "erased": "Erased annotation already."
+  },
+  "lockHint": "Press <kbd>Esc</kbd> <kbd>K</kbd> to lock the editor once you've finalised the contents.",
+  "recording": {
+    "label": "Recording",
+    "record": "Record",
+    "stopRecording": "Stop recording",
+    "play": "Play",
+    "stop": "Stop",
+    "pause": "Pause",
+    "next": "Next step",
+    "previous": "Previous step",
+    "newRecording": "New recording",
+    "editRecording": "Edit recording",
+    "deleteRecording": "Delete recording",
+    "duplicateRecording": "Duplicate recording",
+    "noRecordings": "No recordings yet",
+    "recording": "Recording...",
+    "stepOf": "{{current}} / {{total}}",
+    "initialState": "Initial state",
+    "speed": "Speed",
+    "transition": "Transition",
+    "instant": "Instant",
+    "fade": "Fade",
+    "untitled": "Untitled Recording",
+    "showLayer": "Show {{name}}",
+    "hideLayer": "Hide {{name}}",
+    "showAnnotation": "Show annotation",
+    "hideAnnotation": "Hide annotation",
+    "showSection": "Show section {{index}}",
+    "hideSection": "Hide section {{index}}",
+    "deletedAnnotationWarning": "Some steps reference deleted annotations",
+    "statusHint": "Recording\u2026 Toggle layer/annotation visibility to capture steps. Press \u25A0 to stop."
+  }
+}

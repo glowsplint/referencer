@@ -75,7 +75,7 @@ export function ReplyInput({ onSubmit, placeholder }: ReplyInputProps) {
           e.stopPropagation();
           handleSubmit();
         }}
-        title="Send reply"
+        title={t("annotations.sendReply")}
       >
         <Send size={12} />
       </button>

@@ -2,6 +2,7 @@
 // Shows each user's name/color from the Yjs awareness protocol.
 // The local user's avatar is shown with a click-to-edit name feature.
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { WebsocketProvider } from "y-websocket";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
 import { sanitizeColor } from "@/lib/sanitize-color";
@@ -50,6 +51,7 @@ export function CollaborationPresence({
   provider: WebsocketProvider | null;
   className?: string;
 }) {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<UserPresence[]>([]);
   const [localNameOverride, setLocalNameOverride] = useState<string | null>(null);
   const localUser = useMemo<UserPresence | null>(() => {
@@ -139,7 +141,9 @@ export function CollaborationPresence({
   return (
     <div className={`flex items-center gap-1 ${className}`}>
       {totalCount > 1 && (
-        <span className="text-xs text-muted-foreground mr-1">{totalCount} online</span>
+        <span className="text-xs text-muted-foreground mr-1">
+          {t("presence.online", { count: totalCount })}
+        </span>
       )}
       {users.map((user) => (
         <div
@@ -158,7 +162,7 @@ export function CollaborationPresence({
             tabIndex={0}
             className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white shrink-0 cursor-pointer ring-1 ring-white/30"
             style={{ backgroundColor: localUser.color }}
-            title="You"
+            title={t("presence.you")}
             onClick={startEditingName}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -187,7 +191,7 @@ export function CollaborationPresence({
                     setIsEditingName(false);
                   }
                 }}
-                placeholder="Your name"
+                placeholder={t("presence.yourName")}
                 spellCheck={false}
               />
             </div>

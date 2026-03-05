@@ -1,5 +1,6 @@
 import * as Popover from "@radix-ui/react-popover";
 import { LogIn } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   Tooltip,
   TooltipTrigger,
@@ -8,6 +9,7 @@ import {
 import { useAuth } from "@/hooks/data/use-auth";
 
 export function LoginButton() {
+  const { t } = useTranslation("management");
   const { login } = useAuth();
 
   return (
@@ -23,7 +25,7 @@ export function LoginButton() {
             </button>
           </Popover.Trigger>
         </TooltipTrigger>
-        <TooltipContent>Sign in</TooltipContent>
+        <TooltipContent>{t("hub.signIn")}</TooltipContent>
       </Tooltip>
       <Popover.Portal>
         <Popover.Content
@@ -38,14 +40,14 @@ export function LoginButton() {
               className="px-3 py-2 text-sm rounded-md text-left hover:bg-accent hover:text-accent-foreground transition-colors whitespace-nowrap"
               data-testid="login-google"
             >
-              Sign in with Google
+              {t("hub.signInGoogle")}
             </button>
             <button
               onClick={() => login("github")}
               className="px-3 py-2 text-sm rounded-md text-left hover:bg-accent hover:text-accent-foreground transition-colors whitespace-nowrap"
               data-testid="login-github"
             >
-              Sign in with GitHub
+              {t("hub.signInGithub")}
             </button>
           </div>
         </Popover.Content>

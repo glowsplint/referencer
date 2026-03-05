@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import type { CommentReply } from "@/types/editor";
 import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
@@ -21,6 +22,7 @@ export function ReplyThread({
   onRemoveReply,
   onToggleReplyReaction,
 }: ReplyThreadProps) {
+  const { t } = useTranslation("management");
   const [expanded, setExpanded] = useState(false);
 
   if (replies.length === 0) return null;
@@ -39,7 +41,7 @@ export function ReplyThread({
             setExpanded(true);
           }}
         >
-          Show {hiddenCount} more {hiddenCount === 1 ? "reply" : "replies"}
+          {t("annotations.showMoreReplies", { count: hiddenCount })}
         </button>
       )}
       {visible.map((reply) => (
@@ -58,7 +60,7 @@ export function ReplyThread({
                   e.stopPropagation();
                   onRemoveReply(reply.id);
                 }}
-                title="Remove reply"
+                title={t("annotations.removeReply")}
               >
                 <X size={10} />
               </button>

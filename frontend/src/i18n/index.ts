@@ -10,11 +10,23 @@ import managementEn from "./locales/en/management.json";
 import editorEn from "./locales/en/editor.json";
 import tourEn from "./locales/en/tour.json";
 
-import commonZh from "./locales/zh/common.json";
-import toolsZh from "./locales/zh/tools.json";
-import dialogsZh from "./locales/zh/dialogs.json";
-import managementZh from "./locales/zh/management.json";
-import editorZh from "./locales/zh/editor.json";
+import commonEnSg from "./locales/en-SG/common.json";
+import toolsEnSg from "./locales/en-SG/tools.json";
+import dialogsEnSg from "./locales/en-SG/dialogs.json";
+import managementEnSg from "./locales/en-SG/management.json";
+import editorEnSg from "./locales/en-SG/editor.json";
+
+import commonZhHans from "./locales/zh-Hans/common.json";
+import toolsZhHans from "./locales/zh-Hans/tools.json";
+import dialogsZhHans from "./locales/zh-Hans/dialogs.json";
+import managementZhHans from "./locales/zh-Hans/management.json";
+import editorZhHans from "./locales/zh-Hans/editor.json";
+
+import commonZhHant from "./locales/zh-Hant/common.json";
+import toolsZhHant from "./locales/zh-Hant/tools.json";
+import dialogsZhHant from "./locales/zh-Hant/dialogs.json";
+import managementZhHant from "./locales/zh-Hant/management.json";
+import editorZhHant from "./locales/zh-Hant/editor.json";
 
 import commonEs from "./locales/es/common.json";
 import toolsEs from "./locales/es/tools.json";
@@ -194,7 +206,9 @@ import { STORAGE_KEYS } from "@/constants/storage-keys";
 
 export const LANGUAGE_OPTIONS = [
   { code: "en", label: "English" },
-  { code: "zh", label: "中文" },
+  { code: "en-SG", label: "Singlish" },
+  { code: "zh-Hans", label: "简体中文" },
+  { code: "zh-Hant", label: "繁體中文" },
   { code: "es", label: "Español" },
   { code: "hi", label: "हिन्दी" },
   { code: "ar", label: "العربية" },
@@ -248,13 +262,35 @@ const localeData: [string, Namespaces][] = [
     },
   ],
   [
-    "zh",
+    "en-SG",
     {
-      common: commonZh,
-      tools: toolsZh,
-      dialogs: dialogsZh,
-      management: managementZh,
-      editor: editorZh,
+      common: commonEnSg,
+      tools: toolsEnSg,
+      dialogs: dialogsEnSg,
+      management: managementEnSg,
+      editor: editorEnSg,
+      tour: tourEn,
+    },
+  ],
+  [
+    "zh-Hans",
+    {
+      common: commonZhHans,
+      tools: toolsZhHans,
+      dialogs: dialogsZhHans,
+      management: managementZhHans,
+      editor: editorZhHans,
+      tour: tourEn,
+    },
+  ],
+  [
+    "zh-Hant",
+    {
+      common: commonZhHant,
+      tools: toolsZhHant,
+      dialogs: dialogsZhHant,
+      management: managementZhHant,
+      editor: editorZhHant,
       tour: tourEn,
     },
   ],
@@ -581,12 +617,25 @@ const localeData: [string, Namespaces][] = [
 
 const resources = Object.fromEntries(localeData);
 
+// Migrate legacy "zh" locale code to "zh-Hans"
+const storedLang = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
+if (storedLang === "zh") {
+  localStorage.setItem(STORAGE_KEYS.LANGUAGE, "zh-Hans");
+}
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: "en",
+    fallbackLng: {
+      "zh-CN": ["zh-Hans", "en"],
+      "zh-TW": ["zh-Hant", "zh-Hans", "en"],
+      "zh-HK": ["zh-Hant", "zh-Hans", "en"],
+      zh: ["zh-Hans", "en"],
+      "en-SG": ["en-SG", "en"],
+      default: ["en"],
+    },
     defaultNS: "common",
     ns: ["common", "tools", "dialogs", "management", "editor", "tour"],
     interpolation: {
@@ -602,6 +651,44 @@ i18n
 i18n.on("languageChanged", (lng) => {
   const rtlLanguages = ["ar", "he", "fa", "ur"];
   document.documentElement.dir = rtlLanguages.includes(lng) ? "rtl" : "ltr";
+  document.documentElement.lang = lng;
+
+  // Dynamic CJK font loading
+  const existingLink = document.getElementById("cjk-font-link");
+  if (lng === "zh-Hans") {
+    document.documentElement.setAttribute("data-cjk-font", "sc");
+    if (!existingLink) {
+      const link = document.createElement("link");
+      link.id = "cjk-font-link";
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap";
+      document.head.appendChild(link);
+    } else {
+      existingLink.setAttribute(
+        "href",
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap",
+      );
+    }
+  } else if (lng === "zh-Hant") {
+    document.documentElement.setAttribute("data-cjk-font", "tc");
+    if (!existingLink) {
+      const link = document.createElement("link");
+      link.id = "cjk-font-link";
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap";
+      document.head.appendChild(link);
+    } else {
+      existingLink.setAttribute(
+        "href",
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap",
+      );
+    }
+  } else {
+    document.documentElement.removeAttribute("data-cjk-font");
+    existingLink?.remove();
+  }
 });
 
 export default i18n;

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Layer } from "@/types/editor";
 import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
 import { sanitizeColor } from "@/lib/sanitize-color";
@@ -13,6 +14,7 @@ export function PrintAnnotations({
   sectionNames,
   sectionVisibility,
 }: PrintAnnotationsProps) {
+  const { t } = useTranslation();
   // Collect all visible comments in document order
   const comments: {
     layerColor: string;
@@ -52,11 +54,13 @@ export function PrintAnnotations({
 
   return (
     <div className="print-annotations">
-      <h3 className="text-sm font-semibold mb-2 border-b border-zinc-300 pb-1">Comments</h3>
+      <h3 className="text-sm font-semibold mb-2 border-b border-zinc-300 pb-1">
+        {t("print.comments")}
+      </h3>
       {[...grouped.entries()].map(([editorIndex, items]) => (
         <div key={editorIndex} className="mb-3">
           <div className="text-[10px] font-medium text-zinc-500 mb-1">
-            {sectionNames[editorIndex] ?? `Passage ${editorIndex + 1}`}
+            {sectionNames[editorIndex] ?? t("passage", { number: editorIndex + 1 })}
           </div>
           {items.map((item, i) => (
             <div

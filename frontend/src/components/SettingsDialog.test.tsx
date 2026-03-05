@@ -12,6 +12,8 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
     toggleHideOffscreenArrows: vi.fn(),
     showStatusBar: true,
     toggleShowStatusBar: vi.fn(),
+    thirdEditorFullWidth: false,
+    toggleThirdEditorFullWidth: vi.fn(),
     ...overrides,
   };
   render(<SettingsDialog {...props} />);

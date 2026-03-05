@@ -16,7 +16,7 @@
     "showArrow": "Show arrow",
     "hideUnderline": "Hide underline",
     "showUnderline": "Show underline",
-    "allColorsInUse": "All colors are in use — remove a layer first."
+    "allColorsInUse": "All colors in use already lah — remove a layer first."
   },
   "passages": {
     "title": "Passages",
@@ -109,8 +109,8 @@
     "newFolder": "New Folder",
     "newWorkspace": "New Workspace",
     "loading": "Loading...",
-    "noWorkspacesYet": "No workspaces yet",
-    "createFirstWorkspace": "Create your first workspace",
+    "noWorkspacesYet": "Wah, no workspaces yet",
+    "createFirstWorkspace": "Create your first workspace lah",
     "starred": "Starred",
     "starHint": "Star an item to pin it here",
     "name": "Name",
@@ -122,12 +122,12 @@
     "welcomeTitle": "Welcome to Referencer",
     "welcomeDescription": "Your collaborative workspace for close reading, annotation, and study.",
     "onboardingStep1": "Create a workspace",
-    "onboardingStep1Hint": "Click the button below to get started",
+    "onboardingStep1Hint": "Click the button below to get started lah",
     "onboardingStep2": "Add your text",
     "onboardingStep2Hint": "Paste or type your passage",
     "onboardingStep3": "Start annotating",
     "onboardingStep3Hint": "Highlight, underline, and comment",
-    "guestWarning": "Data created without signing in is stored locally and may be lost. Sign in to save your work.",
+    "guestWarning": "Data created without signing in is stored locally and may be lost. Sign in to save your work lah.",
     "open": "Open",
     "rename": "Rename",
     "duplicate": "Duplicate",
@@ -146,8 +146,8 @@
     "renameWorkspaceDescription": "Enter a new name for this workspace.",
     "save": "Save",
     "deleteWorkspaceTitle": "Delete Workspace",
-    "deleteWorkspaceConfirm": "Are you sure you want to delete \"{{title}}\"? This cannot be undone.",
+    "deleteWorkspaceConfirm": "Confirm want to delete \"{{title}}\" or not? Cannot undo one.",
     "deleteFolderTitle": "Delete Folder",
-    "deleteFolderConfirm": "Are you sure you want to delete \"{{name}}\"? Workspaces inside will be moved to the root level."
+    "deleteFolderConfirm": "Confirm want to delete \"{{name}}\" or not? Workspaces inside will kena moved to the root level."
   }
 }

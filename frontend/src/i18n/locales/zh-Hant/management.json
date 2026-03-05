@@ -1,0 +1,153 @@
+{
+  "layers": {
+    "title": "圖層",
+    "addLayer": "新增圖層",
+    "hideAll": "隱藏所有圖層",
+    "showAll": "顯示所有圖層",
+    "hideLayer": "隱藏圖層",
+    "showLayer": "顯示圖層",
+    "changeColour": "變更顏色",
+    "removeAnnotation": "移除標註",
+    "removeArrow": "移除箭頭",
+    "removeUnderline": "移除底線",
+    "hideAnnotation": "隱藏標註",
+    "showAnnotation": "顯示標註",
+    "hideArrow": "隱藏箭頭",
+    "showArrow": "顯示箭頭",
+    "hideUnderline": "隱藏底線",
+    "showUnderline": "顯示底線",
+    "allColorsInUse": "所有顏色都已被使用——請先移除一個圖層。"
+  },
+  "passages": {
+    "title": "段落",
+    "addPassage": "新增段落",
+    "hideAll": "隱藏所有段落",
+    "showAll": "顯示所有段落",
+    "hidePassage": "隱藏段落",
+    "showPassage": "顯示段落"
+  },
+  "tooltips": {
+    "toggleManagementPane": "切換管理面板",
+    "keyboardShortcuts": "鍵盤快捷鍵",
+    "helpFaq": "說明與常見問題",
+    "settings": "設定",
+    "toggleEditorLayout": "切換編輯器版面配置",
+    "toggleEditorLock": "切換編輯器鎖定",
+    "switchToEditMode": "切換到編輯模式",
+    "switchToAnnotateMode": "切換到標註模式",
+    "annotateModeLockHint": " — 請先切換到標註模式",
+    "toggleCommentPlacement": "切換留言位置",
+    "startTour": "導覽教學",
+    "loadDemo": "載入示範內容"
+  },
+  "annotations": {
+    "placeholder": "新增標註...",
+    "removeCustomColour": "移除自訂顏色",
+    "addCustomColour": "新增自訂顏色",
+    "addToCustomColours": "新增到自訂顏色",
+    "replyPlaceholder": "回覆...",
+    "replies": "回覆",
+    "addReaction": "新增表情",
+    "removeReply": "刪除回覆",
+    "moreEmojis": "更多表情",
+    "sendReply": "傳送回覆",
+    "showMoreReplies_one": "顯示 {{count}} 則更多回覆",
+    "showMoreReplies_other": "顯示 {{count}} 則更多回覆"
+  },
+  "schemes": {
+    "title": "選擇學習方案",
+    "applyScheme": "套用學習方案",
+    "blankLayer": "空白圖層",
+    "layerCount": "{{count}} 個圖層",
+    "layerCount_one": "{{count}} 個圖層",
+    "layerCount_other": "{{count}} 個圖層",
+    "inductive": {
+      "name": "歸納式聖經學習",
+      "description": "使用 OIA 方法精讀",
+      "layers": {
+        "keyTerms": "關鍵術語與重複詞語",
+        "commands": "命令與警告",
+        "promises": "應許與祝福",
+        "attributes": "上帝的屬性",
+        "structure": "文學結構",
+        "questions": "問題與應用"
+      }
+    },
+    "character": {
+      "name": "人物研究",
+      "description": "在敘事中追蹤人物",
+      "layers": {
+        "godChrist": "上帝 / 基督",
+        "protagonist": "主角 / 忠信者",
+        "antagonist": "對手 / 反對者",
+        "speech": "對話與講論"
+      }
+    },
+    "oia": {
+      "name": "簡約版 (OIA)",
+      "description": "觀察 / 解釋 / 應用",
+      "layers": {
+        "observation": "觀察",
+        "interpretation": "解釋",
+        "application": "應用"
+      }
+    }
+  },
+  "actionConsole": {
+    "title": "操作控制台",
+    "close": "關閉",
+    "empty": "尚未記錄任何操作。"
+  },
+  "hub": {
+    "title": "Referencer",
+    "tagline": "並排標註、高亮和關聯段落。用於精讀的協作工作區。",
+    "tryWithoutSignIn": "無需登入即可試用",
+    "signIn": "登入",
+    "signInGoogle": "使用 Google 登入",
+    "signInGithub": "使用 GitHub 登入",
+    "myWorkspaces": "我的工作區",
+    "newFolder": "新建資料夾",
+    "newWorkspace": "新建工作區",
+    "loading": "載入中...",
+    "noWorkspacesYet": "暫無工作區",
+    "createFirstWorkspace": "建立您的第一個工作區",
+    "starred": "已收藏",
+    "starHint": "為項目加星號以將其釘選在此處",
+    "name": "名稱",
+    "created": "建立時間",
+    "modified": "修改時間",
+    "owner": "擁有者",
+    "untitled": "無標題",
+    "search": "搜尋工作區...",
+    "welcomeTitle": "歡迎使用 Referencer",
+    "welcomeDescription": "您的協作工作區，用於精讀、標註和學習。",
+    "onboardingStep1": "建立工作區",
+    "onboardingStep1Hint": "點擊下方按鈕開始",
+    "onboardingStep2": "新增您的文字",
+    "onboardingStep2Hint": "貼上或輸入您的段落",
+    "onboardingStep3": "開始標註",
+    "onboardingStep3Hint": "高亮、底線和留言",
+    "guestWarning": "未登入時建立的資料僅儲存在本機，可能會遺失。請登入以儲存您的工作。",
+    "open": "開啟",
+    "rename": "重新命名",
+    "duplicate": "複製",
+    "delete": "刪除",
+    "moveTo": "移動到...",
+    "noFolder": "無資料夾",
+    "newSubfolder": "新建子資料夾",
+    "itemCount_one": "{{count}} 個項目",
+    "itemCount_other": "{{count}} 個項目",
+    "newWorkspaceTitle": "建立新工作區",
+    "newWorkspaceDescription": "為您的新工作區輸入名稱。",
+    "workspaceNamePlaceholder": "工作區名稱",
+    "cancel": "取消",
+    "create": "建立",
+    "renameWorkspaceTitle": "重新命名工作區",
+    "renameWorkspaceDescription": "為此工作區輸入新名稱。",
+    "save": "儲存",
+    "deleteWorkspaceTitle": "刪除工作區",
+    "deleteWorkspaceConfirm": "您確定要刪除「{{title}}」嗎？此操作無法復原。",
+    "deleteFolderTitle": "刪除資料夾",
+    "deleteFolderConfirm": "您確定要刪除「{{name}}」嗎？其中的工作區將被移至根層級。"
+  }
+}
