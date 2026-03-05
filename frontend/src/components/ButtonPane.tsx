@@ -14,8 +14,6 @@ import {
   Rows3,
   Rows4,
   MousePointer2,
-  Lock,
-  LockOpen,
   Menu,
   MessageSquareText,
   Highlighter,
@@ -121,10 +119,7 @@ export function ButtonPane() {
     editorCount,
     toggleMultipleRowsLayout,
     setActiveTool,
-    toggleFocusedPaneLocked,
-    isPaneLocked,
     isAnyPaneLocked,
-    activeEditorIndex,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleCommentPlacement,
@@ -435,23 +430,6 @@ export function ButtonPane() {
         </TooltipTrigger>
         <TooltipContent>
           {tm("tooltips.toggleCommentPlacement")} <kbd>P</kbd>
-        </TooltipContent>
-      </Tooltip>
-      <Tooltip placement="right">
-        <TooltipTrigger asChild>
-          <SwitchingButtonIcon
-            iconOne={<Lock size={20} />}
-            iconTwo={<LockOpen size={20} />}
-            bool={isPaneLocked(activeEditorIndex)}
-            callback={toggleFocusedPaneLocked}
-            buttonProps={{ "data-testid": "lockButton", disabled: readOnly }}
-          />
-        </TooltipTrigger>
-        <TooltipContent>
-          {isPaneLocked(activeEditorIndex)
-            ? tm("tooltips.switchToEditMode")
-            : tm("tooltips.switchToAnnotateMode")}{" "}
-          <kbd>K</kbd>
         </TooltipContent>
       </Tooltip>
       <KeyboardShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
