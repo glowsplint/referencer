@@ -11,6 +11,10 @@ vi.mock("@atlaskit/pragmatic-drag-and-drop/element/adapter", () => ({
   dropTargetForElements: (...args: any[]) => dropTargetSpy(...args),
 }));
 
+vi.mock("@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview", () => ({
+  setCustomNativeDragPreview: vi.fn(),
+}));
+
 // Mock the DndContext
 const mockSetDragState = vi.fn();
 const mockResetDrag = vi.fn();
@@ -65,7 +69,11 @@ describe("useDraggable", () => {
   it("when getInitialData is called, then returns type and id", () => {
     render(<DraggableComponent type="folder" id="f-1" />);
     const config = draggableSpy.mock.calls[0][0];
-    expect(config.getInitialData()).toEqual({ type: "folder", id: "f-1" });
+    expect(config.getInitialData()).toEqual({
+      type: "folder",
+      id: "f-1",
+      selectedItems: [{ type: "folder", id: "f-1" }],
+    });
   });
 
   it("when onDragStart fires, then sets drag state", () => {

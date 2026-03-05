@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkspaceCard } from "./WorkspaceCard";
 import { DndProvider } from "@/contexts/DndContext";
+import { SelectionProvider } from "@/contexts/SelectionContext";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
 vi.mock("@/lib/annotation/format-relative-time", () => ({
@@ -34,18 +35,23 @@ describe("WorkspaceCard", () => {
   });
 
   function renderCard(overrides?: Partial<WorkspaceItem>) {
+    const ws = { ...workspace, ...overrides };
+    const orderedIds = [ws.workspaceId];
+    const itemTypes = new Map([[ws.workspaceId, "workspace" as const]]);
     return render(
       <DndProvider>
-        <WorkspaceCard
-          workspace={{ ...workspace, ...overrides }}
-          onOpen={onOpen}
-          onRename={onRename}
-          onDuplicate={onDuplicate}
-          onDelete={onDelete}
-          onToggleFavorite={onToggleFavorite}
-          ownerName="Test User"
-          ownerAvatarUrl="https://example.com/avatar.jpg"
-        />
+        <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
+          <WorkspaceCard
+            workspace={ws}
+            onOpen={onOpen}
+            onRename={onRename}
+            onDuplicate={onDuplicate}
+            onDelete={onDelete}
+            onToggleFavorite={onToggleFavorite}
+            ownerName="Test User"
+            ownerAvatarUrl="https://example.com/avatar.jpg"
+          />
+        </SelectionProvider>
       </DndProvider>,
     );
   }
@@ -88,16 +94,20 @@ describe("WorkspaceCard", () => {
     });
 
     it("then shows initials when no avatar URL is provided", () => {
+      const orderedIds = [workspace.workspaceId];
+      const itemTypes = new Map([[workspace.workspaceId, "workspace" as const]]);
       render(
         <DndProvider>
-          <WorkspaceCard
-            workspace={workspace}
-            onOpen={onOpen}
-            onRename={onRename}
-            onDuplicate={onDuplicate}
-            onDelete={onDelete}
-            ownerName="Test User"
-          />
+          <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
+            <WorkspaceCard
+              workspace={workspace}
+              onOpen={onOpen}
+              onRename={onRename}
+              onDuplicate={onDuplicate}
+              onDelete={onDelete}
+              ownerName="Test User"
+            />
+          </SelectionProvider>
         </DndProvider>,
       );
       expect(screen.getByText("T")).toBeInTheDocument();
@@ -105,12 +115,12 @@ describe("WorkspaceCard", () => {
     });
   });
 
-  describe("when the card is clicked", () => {
+  describe("when the card is double-clicked", () => {
     it("then calls onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
-      await user.click(screen.getByTestId("workspaceCard-ws-1"));
+      await user.dblClick(screen.getByTestId("workspaceCard-ws-1"));
 
       expect(onOpen).toHaveBeenCalledTimes(1);
     });
@@ -207,20 +217,7 @@ describe("WorkspaceCard", () => {
 
   describe("when workspace title is empty", () => {
     it("then renders 'Untitled' as the title", () => {
-      render(
-        <DndProvider>
-          <WorkspaceCard
-            workspace={{ ...workspace, title: "" }}
-            onOpen={onOpen}
-            onRename={onRename}
-            onDuplicate={onDuplicate}
-            onDelete={onDelete}
-            onToggleFavorite={onToggleFavorite}
-            ownerName="Test User"
-            ownerAvatarUrl="https://example.com/avatar.jpg"
-          />
-        </DndProvider>,
-      );
+      renderCard({ title: "" });
       expect(screen.getByText("Untitled")).toBeInTheDocument();
     });
   });

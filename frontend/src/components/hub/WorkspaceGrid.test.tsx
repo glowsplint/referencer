@@ -240,12 +240,12 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("when a workspace card is clicked", () => {
+  describe("when a workspace card is double-clicked", () => {
     it("then opens the workspace", async () => {
       const user = userEvent.setup();
       renderGrid([makeWorkspace({ workspaceId: "ws-open-test" })]);
 
-      await user.click(screen.getByTestId("workspaceCard-ws-open-test"));
+      await user.dblClick(screen.getByTestId("workspaceCard-ws-open-test"));
       expect(navigate).toHaveBeenCalledWith("#/ws-open-test");
     });
   });

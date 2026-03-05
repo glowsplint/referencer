@@ -29,11 +29,15 @@ function BreadcrumbDropSegment({
 }) {
   const handleDrop = useCallback(
     (data: DragData) => {
-      if (data.type === "workspace") {
-        onMoveToFolder(data.id, folderId);
-      } else if (data.type === "folder") {
-        if (folderId === null || canMoveFolderTo(folders, data.id, folderId)) {
-          onMoveFolder(data.id, folderId);
+      const items = data.selectedItems ?? [{ type: data.type, id: data.id }];
+      const wsItems = items.filter((i) => i.type === "workspace");
+      const folderItems = items.filter((i) => i.type === "folder");
+      for (const item of wsItems) {
+        onMoveToFolder(item.id, folderId);
+      }
+      for (const item of folderItems) {
+        if (folderId === null || canMoveFolderTo(folders, item.id, folderId)) {
+          onMoveFolder(item.id, folderId);
         }
       }
     },
@@ -42,12 +46,15 @@ function BreadcrumbDropSegment({
 
   const handleCanDrop = useCallback(
     (data: DragData) => {
-      if (data.type === "folder") {
-        if (data.id === folderId) return false;
-        if (folderId === null) return true;
-        return canMoveFolderTo(folders, data.id, folderId);
-      }
-      return true;
+      const items = data.selectedItems ?? [{ type: data.type, id: data.id }];
+      return items.every((item) => {
+        if (item.type === "folder") {
+          if (item.id === folderId) return false;
+          if (folderId === null) return true;
+          return canMoveFolderTo(folders, item.id, folderId);
+        }
+        return true;
+      });
     },
     [folderId, folders],
   );

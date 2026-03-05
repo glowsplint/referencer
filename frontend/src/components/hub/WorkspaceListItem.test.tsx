@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkspaceListItem } from "./WorkspaceListItem";
 import { DndProvider } from "@/contexts/DndContext";
+import { SelectionProvider } from "@/contexts/SelectionContext";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 
 vi.mock("@/lib/annotation/format-relative-time", () => ({
@@ -33,19 +34,24 @@ describe("WorkspaceListItem", () => {
     onToggleFavorite = vi.fn();
   });
 
-  function renderListItem() {
+  function renderListItem(overrides?: Partial<WorkspaceItem>) {
+    const ws = { ...workspace, ...overrides };
+    const orderedIds = [ws.workspaceId];
+    const itemTypes = new Map([[ws.workspaceId, "workspace" as const]]);
     return render(
       <DndProvider>
-        <WorkspaceListItem
-          workspace={workspace}
-          onOpen={onOpen}
-          onRename={onRename}
-          onDuplicate={onDuplicate}
-          onDelete={onDelete}
-          onToggleFavorite={onToggleFavorite}
-          ownerName="Test User"
-          ownerAvatarUrl="https://example.com/avatar.jpg"
-        />
+        <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
+          <WorkspaceListItem
+            workspace={ws}
+            onOpen={onOpen}
+            onRename={onRename}
+            onDuplicate={onDuplicate}
+            onDelete={onDelete}
+            onToggleFavorite={onToggleFavorite}
+            ownerName="Test User"
+            ownerAvatarUrl="https://example.com/avatar.jpg"
+          />
+        </SelectionProvider>
       </DndProvider>,
     );
   }
@@ -89,16 +95,20 @@ describe("WorkspaceListItem", () => {
     });
 
     it("then shows initials when no avatar URL is provided", () => {
+      const orderedIds = [workspace.workspaceId];
+      const itemTypes = new Map([[workspace.workspaceId, "workspace" as const]]);
       render(
         <DndProvider>
-          <WorkspaceListItem
-            workspace={workspace}
-            onOpen={onOpen}
-            onRename={onRename}
-            onDuplicate={onDuplicate}
-            onDelete={onDelete}
-            ownerName="Test User"
-          />
+          <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
+            <WorkspaceListItem
+              workspace={workspace}
+              onOpen={onOpen}
+              onRename={onRename}
+              onDuplicate={onDuplicate}
+              onDelete={onDelete}
+              ownerName="Test User"
+            />
+          </SelectionProvider>
         </DndProvider>,
       );
       expect(screen.getByText("T")).toBeInTheDocument();
@@ -106,12 +116,12 @@ describe("WorkspaceListItem", () => {
     });
   });
 
-  describe("when the list item is clicked", () => {
+  describe("when the list item is double-clicked", () => {
     it("then calls onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
-      await user.click(screen.getByTestId("workspaceListItem-ws-2"));
+      await user.dblClick(screen.getByTestId("workspaceListItem-ws-2"));
 
       expect(onOpen).toHaveBeenCalledTimes(1);
     });
@@ -208,20 +218,7 @@ describe("WorkspaceListItem", () => {
 
   describe("when workspace title is empty", () => {
     it("then renders 'Untitled' as the title", () => {
-      render(
-        <DndProvider>
-          <WorkspaceListItem
-            workspace={{ ...workspace, title: "" }}
-            onOpen={onOpen}
-            onRename={onRename}
-            onDuplicate={onDuplicate}
-            onDelete={onDelete}
-            onToggleFavorite={onToggleFavorite}
-            ownerName="Test User"
-            ownerAvatarUrl="https://example.com/avatar.jpg"
-          />
-        </DndProvider>,
-      );
+      renderListItem({ title: "" });
       expect(screen.getByText("Untitled")).toBeInTheDocument();
     });
   });

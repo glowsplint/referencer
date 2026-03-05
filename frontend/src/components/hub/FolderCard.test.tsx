@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FolderCard } from "./FolderCard";
 import { DndProvider } from "@/contexts/DndContext";
+import { SelectionProvider } from "@/contexts/SelectionContext";
 import type { FolderNode } from "@/lib/folder-tree";
 import type { FolderItem } from "@/lib/folder-client";
 import type { WorkspaceItem } from "@/lib/workspace-client";
@@ -55,30 +56,35 @@ describe("FolderCard", () => {
     workspaces?: WorkspaceItem[];
     folders?: FolderItem[];
   }) {
+    const n = opts?.node ?? node;
+    const orderedIds = [n.folder.id];
+    const itemTypes = new Map([[n.folder.id, "folder" as const]]);
     return render(
       <DndProvider>
-        <FolderCard
-          node={opts?.node ?? node}
-          workspaces={opts?.workspaces ?? []}
-          folders={opts?.folders ?? folders}
-          viewMode="grid"
-          renamingFolderId={null}
-          creatingSubfolderId={null}
-          onSetRenamingFolder={noopFn}
-          onSetCreatingSubfolder={noopFn}
-          onRenameFolder={noopFn}
-          onDeleteFolder={noopFn}
-          onCreateFolder={noopFn}
-          onOpenWorkspace={onOpenWorkspace}
-          onRenameWorkspace={noopFn}
-          onDuplicateWorkspace={noopFn}
-          onDeleteWorkspace={noopFn}
-          onToggleFavorite={noopFn}
-          onToggleFolderFavorite={onToggleFolderFavorite}
-          onMoveToFolder={noopFn}
-          onMoveFolder={noopFn}
-          onNavigateToFolder={onNavigateToFolder}
-        />
+        <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
+          <FolderCard
+            node={n}
+            workspaces={opts?.workspaces ?? []}
+            folders={opts?.folders ?? folders}
+            viewMode="grid"
+            renamingFolderId={null}
+            creatingSubfolderId={null}
+            onSetRenamingFolder={noopFn}
+            onSetCreatingSubfolder={noopFn}
+            onRenameFolder={noopFn}
+            onDeleteFolder={noopFn}
+            onCreateFolder={noopFn}
+            onOpenWorkspace={onOpenWorkspace}
+            onRenameWorkspace={noopFn}
+            onDuplicateWorkspace={noopFn}
+            onDeleteWorkspace={noopFn}
+            onToggleFavorite={noopFn}
+            onToggleFolderFavorite={onToggleFolderFavorite}
+            onMoveToFolder={noopFn}
+            onMoveFolder={noopFn}
+            onNavigateToFolder={onNavigateToFolder}
+          />
+        </SelectionProvider>
       </DndProvider>,
     );
   }

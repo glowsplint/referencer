@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { randomKSUID } from "@/lib/ksuid";
 import {
   LayoutGrid,
@@ -21,6 +21,8 @@ import { buildFolderTree } from "@/lib/folder-tree";
 import type { FolderNode } from "@/lib/folder-tree";
 import type { FolderItem } from "@/lib/folder-client";
 import { DndProvider } from "@/contexts/DndContext";
+import { SelectionProvider, useSelection } from "@/contexts/SelectionContext";
+import type { DragItemType } from "@/hooks/ui/use-hub-dnd";
 import { WorkspaceCard } from "./WorkspaceCard";
 import { WorkspaceListItem } from "./WorkspaceListItem";
 import { FolderCard } from "./FolderCard";
@@ -267,6 +269,24 @@ export function WorkspaceGrid({
     queryLower,
   ]);
 
+  // Compute orderedIds and itemTypes for SelectionProvider
+  const { orderedIds, itemTypes } = useMemo(() => {
+    const ids: string[] = [];
+    const types = new Map<string, DragItemType>();
+    const addItem = (item: MixedItem) => {
+      if (item.kind === "workspace") {
+        ids.push(item.workspace.workspaceId);
+        types.set(item.workspace.workspaceId, "workspace");
+      } else {
+        ids.push(item.node.folder.id);
+        types.set(item.node.folder.id, "folder");
+      }
+    };
+    for (const item of starredItems) addItem(item);
+    for (const item of allItems) addItem(item);
+    return { orderedIds: ids, itemTypes: types };
+  }, [starredItems, allItems]);
+
   // Shared folder props for FolderCard/FolderListItem
   const folderProps = {
     workspaces,
@@ -336,268 +356,304 @@ export function WorkspaceGrid({
 
   return (
     <DndProvider>
-      <div>
-        {/* Header row */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold">My Workspaces</h2>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search
-                size={14}
-                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search workspaces..."
-                data-testid="hubSearchInput"
-                className="h-8 w-48 rounded-md border border-border bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-              />
-            </div>
-            <div className="flex items-center border border-border rounded-md">
-              <button
-                onClick={() => toggleView("grid")}
-                className={`p-1.5 rounded-l-md transition-colors ${viewMode === "grid" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"}`}
-                data-testid="gridViewButton"
-              >
-                <LayoutGrid size={16} />
-              </button>
-              <button
-                onClick={() => toggleView("list")}
-                className={`p-1.5 rounded-r-md transition-colors ${viewMode === "list" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"}`}
-                data-testid="listViewButton"
-              >
-                <List size={16} />
-              </button>
-            </div>
-            <Button
-              onClick={() => setCreatingFolder(true)}
-              size="sm"
-              variant="outline"
-              data-testid="newFolderButton"
-            >
-              <FolderPlus size={16} />
-              New Folder
-            </Button>
-            <Button
-              onClick={() => onNew(currentFolderId)}
-              size="sm"
-              data-testid="newWorkspaceButton"
-            >
-              <Plus size={16} />
-              New Workspace
-            </Button>
-          </div>
-        </div>
-
-        {/* Content */}
-        {isLoading ? (
-          <div className="text-center py-12 text-muted-foreground">Loading...</div>
-        ) : workspaces.length === 0 && folders.length === 0 ? (
-          <div className="flex flex-col items-center py-16 px-4" data-testid="emptyStateOnboarding">
-            <h2 className="text-2xl font-bold mb-2">Welcome to Referencer</h2>
-            <p className="text-muted-foreground text-center max-w-md mb-8">
-              A collaborative workspace for close reading. Annotate, highlight, and connect passages
-              side by side.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-lg mb-8">
-              <div className="flex flex-col items-center text-center gap-2">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
-                  <BookOpen size={20} />
-                </div>
-                <span className="text-sm font-medium">Add passages</span>
-                <span className="text-xs text-muted-foreground">
-                  Import or paste texts to study side by side
-                </span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-2">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
-                  <Highlighter size={20} />
-                </div>
-                <span className="text-sm font-medium">Highlight & underline</span>
-                <span className="text-xs text-muted-foreground">
-                  Mark key phrases with colored layers
-                </span>
-              </div>
-              <div className="flex flex-col items-center text-center gap-2">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
-                  <MessageSquare size={20} />
-                </div>
-                <span className="text-sm font-medium">Comment & discuss</span>
-                <span className="text-xs text-muted-foreground">
-                  Add notes, replies, and reactions
-                </span>
-              </div>
-            </div>
-            <Button onClick={() => onNew(null)} size="lg">
-              <Plus size={16} />
-              Create your first workspace
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {/* Breadcrumb navigation */}
-            <FolderBreadcrumb
-              folders={folders}
-              currentFolderId={currentFolderId}
-              onNavigate={handleNavigateToFolder}
-              onMoveToFolder={handleMoveToFolder}
-              onMoveFolder={onMoveFolder}
-            />
-
-            {/* Starred section — only at root level */}
-            {currentFolderId === null && (
-              <section data-testid="starredSection">
-                <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground mb-3">
-                  <Star size={14} fill="currentColor" className="text-yellow-500" />
-                  Starred
-                </h3>
-                {starredItems.length === 0 ? (
-                  <p className="text-sm text-muted-foreground/60 px-1">
-                    Star an item to pin it here
-                  </p>
-                ) : viewMode === "grid" ? (
-                  <div data-testid="starredGrid" className="space-y-4">
-                    {starredItems.some((i) => i.kind === "folder") && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {starredItems.filter((i) => i.kind === "folder").map(renderItem)}
-                      </div>
-                    )}
-                    {starredItems.some((i) => i.kind === "workspace") && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {starredItems.filter((i) => i.kind === "workspace").map(renderItem)}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-1">{starredItems.map(renderItem)}</div>
-                )}
-              </section>
-            )}
-
-            {/* Divider — only at root level */}
-            {currentFolderId === null && <hr className="border-border" />}
-
-            {/* Inline input for new folder */}
-            {creatingFolder && (
-              <div className="flex items-center gap-1.5 py-2 px-1">
-                <Folder size={14} className="text-muted-foreground shrink-0" />
-                <InlineNameInput
-                  onSave={(name) => {
-                    handleCreateFolder(currentFolderId, name);
-                    setCreatingFolder(false);
-                  }}
-                  onCancel={() => setCreatingFolder(false)}
+      <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
+        <WorkspaceGridInner>
+          {/* Header row */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold">My Workspaces</h2>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search
+                  size={14}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search workspaces..."
+                  data-testid="hubSearchInput"
+                  className="h-8 w-48 rounded-md border border-border bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                 />
               </div>
-            )}
-
-            {/* All Items section */}
-            {allItems.length > 0 && (
-              <section data-testid="allItemsSection">
-                {viewMode === "grid" ? (
-                  <div data-testid="allItemsGrid" className="space-y-4">
-                    {allItems.some((i) => i.kind === "folder") && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {allItems.filter((i) => i.kind === "folder").map(renderItem)}
-                      </div>
-                    )}
-                    {allItems.some((i) => i.kind === "workspace") && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {allItems.filter((i) => i.kind === "workspace").map(renderItem)}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border mb-1">
-                      <div className="w-8" /> {/* star column */}
-                      <button
-                        onClick={() => setSort("title")}
-                        className="flex items-center gap-1 flex-1"
-                        data-testid="sortByTitle"
-                      >
-                        Name{" "}
-                        {sortConfig.field === "title" &&
-                          (sortConfig.direction === "asc" ? (
-                            <ChevronUp size={12} />
-                          ) : (
-                            <ChevronDown size={12} />
-                          ))}
-                      </button>
-                      <button
-                        onClick={() => setSort("createdAt")}
-                        className="flex items-center gap-1 w-[120px] shrink-0"
-                        data-testid="sortByCreated"
-                      >
-                        Created{" "}
-                        {sortConfig.field === "createdAt" &&
-                          (sortConfig.direction === "asc" ? (
-                            <ChevronUp size={12} />
-                          ) : (
-                            <ChevronDown size={12} />
-                          ))}
-                      </button>
-                      <button
-                        onClick={() => setSort("updatedAt")}
-                        className="flex items-center gap-1 w-[120px] shrink-0"
-                        data-testid="sortByModified"
-                      >
-                        Modified{" "}
-                        {sortConfig.field === "updatedAt" &&
-                          (sortConfig.direction === "asc" ? (
-                            <ChevronUp size={12} />
-                          ) : (
-                            <ChevronDown size={12} />
-                          ))}
-                      </button>
-                      <div className="w-[140px] shrink-0">Owner</div>
-                      <div className="w-8" /> {/* menu column */}
-                    </div>
-                    {allItems.map(renderItem)}
-                  </div>
-                )}
-              </section>
-            )}
+              <div className="flex items-center border border-border rounded-md">
+                <button
+                  onClick={() => toggleView("grid")}
+                  className={`p-1.5 rounded-l-md transition-colors ${viewMode === "grid" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"}`}
+                  data-testid="gridViewButton"
+                >
+                  <LayoutGrid size={16} />
+                </button>
+                <button
+                  onClick={() => toggleView("list")}
+                  className={`p-1.5 rounded-r-md transition-colors ${viewMode === "list" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"}`}
+                  data-testid="listViewButton"
+                >
+                  <List size={16} />
+                </button>
+              </div>
+              <Button
+                onClick={() => setCreatingFolder(true)}
+                size="sm"
+                variant="outline"
+                data-testid="newFolderButton"
+              >
+                <FolderPlus size={16} />
+                New Folder
+              </Button>
+              <Button
+                onClick={() => onNew(currentFolderId)}
+                size="sm"
+                data-testid="newWorkspaceButton"
+              >
+                <Plus size={16} />
+                New Workspace
+              </Button>
+            </div>
           </div>
-        )}
 
-        {/* Dialogs */}
-        <RenameDialog
-          open={!!renameTarget}
-          onOpenChange={(open) => {
-            if (!open) setRenameTarget(null);
-          }}
-          currentTitle={renameTarget?.title ?? ""}
-          onRename={(title) => {
-            if (renameTarget) onRename(renameTarget.workspaceId, title);
-            setRenameTarget(null);
-          }}
-        />
-        <DeleteDialog
-          open={!!deleteTarget}
-          onOpenChange={(open) => {
-            if (!open) setDeleteTarget(null);
-          }}
-          workspaceTitle={deleteTarget?.title || "Untitled"}
-          onDelete={() => {
-            if (deleteTarget) onDelete(deleteTarget.workspaceId);
-            setDeleteTarget(null);
-          }}
-        />
-        <DeleteFolderDialog
-          open={!!deleteFolderTarget}
-          onOpenChange={(open) => {
-            if (!open) setDeleteFolderTarget(null);
-          }}
-          folderName={deleteFolderTarget?.name || ""}
-          onDelete={() => {
-            if (deleteFolderTarget) onDeleteFolder(deleteFolderTarget.id);
-            setDeleteFolderTarget(null);
-          }}
-        />
-      </div>
+          {/* Content */}
+          {isLoading ? (
+            <div className="text-center py-12 text-muted-foreground">Loading...</div>
+          ) : workspaces.length === 0 && folders.length === 0 ? (
+            <div
+              className="flex flex-col items-center py-16 px-4"
+              data-testid="emptyStateOnboarding"
+            >
+              <h2 className="text-2xl font-bold mb-2">Welcome to Referencer</h2>
+              <p className="text-muted-foreground text-center max-w-md mb-8">
+                A collaborative workspace for close reading. Annotate, highlight, and connect
+                passages side by side.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-lg mb-8">
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+                    <BookOpen size={20} />
+                  </div>
+                  <span className="text-sm font-medium">Add passages</span>
+                  <span className="text-xs text-muted-foreground">
+                    Import or paste texts to study side by side
+                  </span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+                    <Highlighter size={20} />
+                  </div>
+                  <span className="text-sm font-medium">Highlight & underline</span>
+                  <span className="text-xs text-muted-foreground">
+                    Mark key phrases with colored layers
+                  </span>
+                </div>
+                <div className="flex flex-col items-center text-center gap-2">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+                    <MessageSquare size={20} />
+                  </div>
+                  <span className="text-sm font-medium">Comment & discuss</span>
+                  <span className="text-xs text-muted-foreground">
+                    Add notes, replies, and reactions
+                  </span>
+                </div>
+              </div>
+              <Button onClick={() => onNew(null)} size="lg">
+                <Plus size={16} />
+                Create your first workspace
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {/* Breadcrumb navigation */}
+              <FolderBreadcrumb
+                folders={folders}
+                currentFolderId={currentFolderId}
+                onNavigate={handleNavigateToFolder}
+                onMoveToFolder={handleMoveToFolder}
+                onMoveFolder={onMoveFolder}
+              />
+
+              {/* Starred section — only at root level */}
+              {currentFolderId === null && (
+                <section data-testid="starredSection">
+                  <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground mb-3">
+                    <Star size={14} fill="currentColor" className="text-yellow-500" />
+                    Starred
+                  </h3>
+                  {starredItems.length === 0 ? (
+                    <p className="text-sm text-muted-foreground/60 px-1">
+                      Star an item to pin it here
+                    </p>
+                  ) : viewMode === "grid" ? (
+                    <div data-testid="starredGrid" className="space-y-4">
+                      {starredItems.some((i) => i.kind === "folder") && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {starredItems.filter((i) => i.kind === "folder").map(renderItem)}
+                        </div>
+                      )}
+                      {starredItems.some((i) => i.kind === "workspace") && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {starredItems.filter((i) => i.kind === "workspace").map(renderItem)}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-1">{starredItems.map(renderItem)}</div>
+                  )}
+                </section>
+              )}
+
+              {/* Divider — only at root level */}
+              {currentFolderId === null && <hr className="border-border" />}
+
+              {/* Inline input for new folder */}
+              {creatingFolder && (
+                <div className="flex items-center gap-1.5 py-2 px-1">
+                  <Folder size={14} className="text-muted-foreground shrink-0" />
+                  <InlineNameInput
+                    onSave={(name) => {
+                      handleCreateFolder(currentFolderId, name);
+                      setCreatingFolder(false);
+                    }}
+                    onCancel={() => setCreatingFolder(false)}
+                  />
+                </div>
+              )}
+
+              {/* All Items section */}
+              {allItems.length > 0 && (
+                <section data-testid="allItemsSection">
+                  {viewMode === "grid" ? (
+                    <div data-testid="allItemsGrid" className="space-y-4">
+                      {allItems.some((i) => i.kind === "folder") && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {allItems.filter((i) => i.kind === "folder").map(renderItem)}
+                        </div>
+                      )}
+                      {allItems.some((i) => i.kind === "workspace") && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {allItems.filter((i) => i.kind === "workspace").map(renderItem)}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center px-4 py-2 text-xs font-medium text-muted-foreground border-b border-border mb-1">
+                        <div className="w-8" /> {/* star column */}
+                        <button
+                          onClick={() => setSort("title")}
+                          className="flex items-center gap-1 flex-1"
+                          data-testid="sortByTitle"
+                        >
+                          Name{" "}
+                          {sortConfig.field === "title" &&
+                            (sortConfig.direction === "asc" ? (
+                              <ChevronUp size={12} />
+                            ) : (
+                              <ChevronDown size={12} />
+                            ))}
+                        </button>
+                        <button
+                          onClick={() => setSort("createdAt")}
+                          className="flex items-center gap-1 w-[120px] shrink-0"
+                          data-testid="sortByCreated"
+                        >
+                          Created{" "}
+                          {sortConfig.field === "createdAt" &&
+                            (sortConfig.direction === "asc" ? (
+                              <ChevronUp size={12} />
+                            ) : (
+                              <ChevronDown size={12} />
+                            ))}
+                        </button>
+                        <button
+                          onClick={() => setSort("updatedAt")}
+                          className="flex items-center gap-1 w-[120px] shrink-0"
+                          data-testid="sortByModified"
+                        >
+                          Modified{" "}
+                          {sortConfig.field === "updatedAt" &&
+                            (sortConfig.direction === "asc" ? (
+                              <ChevronUp size={12} />
+                            ) : (
+                              <ChevronDown size={12} />
+                            ))}
+                        </button>
+                        <div className="w-[140px] shrink-0">Owner</div>
+                        <div className="w-8" /> {/* menu column */}
+                      </div>
+                      {allItems.map(renderItem)}
+                    </div>
+                  )}
+                </section>
+              )}
+            </div>
+          )}
+
+          {/* Dialogs */}
+          <RenameDialog
+            open={!!renameTarget}
+            onOpenChange={(open) => {
+              if (!open) setRenameTarget(null);
+            }}
+            currentTitle={renameTarget?.title ?? ""}
+            onRename={(title) => {
+              if (renameTarget) onRename(renameTarget.workspaceId, title);
+              setRenameTarget(null);
+            }}
+          />
+          <DeleteDialog
+            open={!!deleteTarget}
+            onOpenChange={(open) => {
+              if (!open) setDeleteTarget(null);
+            }}
+            workspaceTitle={deleteTarget?.title || "Untitled"}
+            onDelete={() => {
+              if (deleteTarget) onDelete(deleteTarget.workspaceId);
+              setDeleteTarget(null);
+            }}
+          />
+          <DeleteFolderDialog
+            open={!!deleteFolderTarget}
+            onOpenChange={(open) => {
+              if (!open) setDeleteFolderTarget(null);
+            }}
+            folderName={deleteFolderTarget?.name || ""}
+            onDelete={() => {
+              if (deleteFolderTarget) onDeleteFolder(deleteFolderTarget.id);
+              setDeleteFolderTarget(null);
+            }}
+          />
+        </WorkspaceGridInner>
+      </SelectionProvider>
     </DndProvider>
   );
+}
+
+/** Inner wrapper to access useSelection for deselection handlers */
+function WorkspaceGridInner({ children }: { children: React.ReactNode }) {
+  const { clearSelection, isSelectionActive } = useSelection();
+
+  const handleEmptySpaceClick = useCallback(
+    (e: React.MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        !target.closest(
+          '[data-selectable], button, a, input, [role="button"], [data-radix-dropdown-menu-content]',
+        )
+      ) {
+        clearSelection();
+      }
+    },
+    [clearSelection],
+  );
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isSelectionActive) {
+        clearSelection();
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [clearSelection, isSelectionActive]);
+
+  return <div onClick={handleEmptySpaceClick}>{children}</div>;
 }

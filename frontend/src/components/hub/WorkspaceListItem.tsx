@@ -1,11 +1,15 @@
+import { useCallback } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2, Star } from "lucide-react";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 import { useDraggable } from "@/hooks/ui/use-hub-dnd";
 import { useDndContext } from "@/contexts/DndContext";
+import { useSelection } from "@/contexts/SelectionContext";
+import { useClickHandler } from "@/hooks/ui/use-click-handler";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { MoveToFolderMenu } from "./MoveToFolderMenu";
+import { SelectionCheckbox } from "./SelectionCheckbox";
 import { OwnerAvatar } from "./OwnerAvatar";
 
 interface WorkspaceListItemProps {
@@ -33,17 +37,34 @@ export function WorkspaceListItem({
   ownerName,
   ownerAvatarUrl,
 }: WorkspaceListItemProps) {
-  const dragRef = useDraggable("workspace", workspace.workspaceId);
+  const { isSelected, isSelectionActive, handleItemClick, clearSelection, getSelectedItems } =
+    useSelection();
+  const selected = isSelected(workspace.workspaceId);
+  const dragRef = useDraggable("workspace", workspace.workspaceId, {
+    isSelected: selected,
+    getSelectedItems,
+    onClearSelection: clearSelection,
+  });
   const { dragId } = useDndContext();
   const isDragging = dragId === workspace.workspaceId;
+
+  const onSelect = useCallback(
+    (e: React.MouseEvent) => {
+      handleItemClick(workspace.workspaceId, e);
+    },
+    [handleItemClick, workspace.workspaceId],
+  );
+
+  const handleRowClick = useClickHandler(onSelect, onOpen);
 
   return (
     <div
       ref={dragRef}
       role="button"
       tabIndex={0}
-      className={`group flex items-center px-4 py-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer ${isDragging ? "opacity-50" : ""}`}
-      onClick={onOpen}
+      data-selectable
+      className={`group flex items-center px-4 py-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer ${isDragging ? "opacity-50" : ""} ${selected ? "ring-2 ring-primary bg-primary/5" : ""}`}
+      onClick={handleRowClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -52,6 +73,18 @@ export function WorkspaceListItem({
       }}
       data-testid={`workspaceListItem-${workspace.workspaceId}`}
     >
+      <SelectionCheckbox
+        checked={selected}
+        visible={isSelectionActive}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleItemClick(workspace.workspaceId, {
+            ctrlKey: !e.shiftKey,
+            metaKey: false,
+            shiftKey: e.shiftKey,
+          });
+        }}
+      />
       <button
         onClick={(e) => {
           e.stopPropagation();
