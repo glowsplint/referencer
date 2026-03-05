@@ -175,4 +175,40 @@ describe("TitleBar", () => {
       expect(screen.queryByTestId("workspaceSwitcher")).not.toBeInTheDocument();
     });
   });
+
+  describe("connection status indicator", () => {
+    it("shows green dot and 'Connected' label when connected", () => {
+      renderTitleBar({
+        wsConnected: true,
+        yjs: {
+          provider: null,
+          doc: null,
+          connected: true,
+          synced: true,
+          getFragment: () => null,
+          awareness: null,
+        },
+      });
+      const dot = screen.getByTestId("connectionStatusDot");
+      expect(dot).toHaveClass("bg-green-500");
+      expect(screen.getByTestId("connectionStatusLabel")).toHaveTextContent("Connected");
+    });
+
+    it("shows red dot and 'Disconnected' label when disconnected", () => {
+      renderTitleBar({
+        wsConnected: false,
+        yjs: {
+          provider: null,
+          doc: null,
+          connected: false,
+          synced: false,
+          getFragment: () => null,
+          awareness: null,
+        },
+      });
+      const dot = screen.getByTestId("connectionStatusDot");
+      expect(dot).toHaveClass("bg-red-500");
+      expect(screen.getByTestId("connectionStatusLabel")).toHaveTextContent("Disconnected");
+    });
+  });
 });
