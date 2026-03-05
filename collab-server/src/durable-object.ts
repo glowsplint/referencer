@@ -13,6 +13,7 @@ import { createCollabMetrics, type CollabMetrics } from "./metrics";
 const MSG_SYNC = 0;
 const MSG_AWARENESS = 1;
 const MSG_QUERY_AWARENESS = 3;
+const MSG_FORCE_SAVE = 4;
 
 interface Env {
   SUPABASE_URL: string;
@@ -179,6 +180,8 @@ export class YjsRoom extends DurableObject<Env> {
         this.handleAwarenessMessage(ws, decoder, data);
       } else if (messageType === MSG_QUERY_AWARENESS) {
         this.handleQueryAwareness(ws);
+      } else if (messageType === MSG_FORCE_SAVE) {
+        await this.handleForceSave(ws);
       }
     } catch (err) {
       this.log.error("Failed to process WebSocket message", {
@@ -481,6 +484,42 @@ export class YjsRoom extends DurableObject<Env> {
           userId,
           error: err instanceof Error ? err.message : "unknown",
         });
+      }
+    }
+  }
+
+  private async handleForceSave(ws: WebSocket): Promise<void> {
+    const room = this.roomName ?? "unknown";
+    try {
+      // Flush any pending debounced save
+      if (this.saveTimer) {
+        clearTimeout(this.saveTimer);
+        this.saveTimer = null;
+      }
+      await this.saveToStorage();
+      await this.saveToSupabase();
+
+      this.log.info("Force save completed", { roomName: room });
+
+      // Send success response
+      const encoder = encoding.createEncoder();
+      encoding.writeVarUint(encoder, MSG_FORCE_SAVE);
+      encoding.writeVarUint(encoder, 0); // 0 = success
+      ws.send(encoding.toUint8Array(encoder));
+    } catch (err) {
+      this.log.error("Force save failed", {
+        roomName: room,
+        error: err instanceof Error ? err.message : "unknown",
+      });
+
+      // Send error response
+      try {
+        const encoder = encoding.createEncoder();
+        encoding.writeVarUint(encoder, MSG_FORCE_SAVE);
+        encoding.writeVarUint(encoder, 1); // 1 = error
+        ws.send(encoding.toUint8Array(encoder));
+      } catch {
+        // Client may have disconnected
       }
     }
   }

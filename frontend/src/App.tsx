@@ -22,6 +22,7 @@ import { useHighlightMode } from "./hooks/tools/use-highlight-mode";
 import { useUnderlineMode } from "./hooks/tools/use-underline-mode";
 import { useEraserMode } from "./hooks/tools/use-eraser-mode";
 import { useStatusMessage } from "./hooks/ui/use-status-message";
+import { useForceSave } from "./hooks/ui/use-force-save";
 import { useToolShortcuts } from "./hooks/ui/use-tool-shortcuts";
 import { useToggleShortcuts } from "./hooks/ui/use-toggle-shortcuts";
 import { useCycleLayer } from "./hooks/ui/use-cycle-layer";
@@ -302,6 +303,13 @@ export function App({ workspaceId, navigate }: AppProps) {
 
   const actionConsole = useActionConsole();
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
+
+  useForceSave({
+    wsProvider: workspace.yjs.wsProvider,
+    setStatus,
+    flashStatus,
+    clearStatus,
+  });
 
   const containerRef = useRef<HTMLDivElement>(null);
   const topRowRef = useRef<HTMLDivElement>(null);

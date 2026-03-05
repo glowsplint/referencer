@@ -9,7 +9,7 @@ export const FLASH_DURATION_MS = 3000;
 
 export interface StatusMessage {
   text: ReactNode;
-  type: "info" | "success";
+  type: "info" | "success" | "error";
 }
 
 export function useStatusMessage() {

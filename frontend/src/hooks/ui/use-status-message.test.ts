@@ -122,6 +122,22 @@ describe("useStatusMessage", () => {
     expect(result.current.message).toEqual({ text: "New base", type: "info" });
   });
 
+  it("when flashStatus is called with error type, then displays error message", () => {
+    const { result } = renderHook(() => useStatusMessage());
+
+    act(() => {
+      result.current.flashStatus({ text: "Save failed.", type: "error" }, 3000);
+    });
+
+    expect(result.current.message).toEqual({ text: "Save failed.", type: "error" });
+
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+
+    expect(result.current.message).toBeNull();
+  });
+
   it("when clearStatus is called during pending flash, then cancels timer", () => {
     const { result } = renderHook(() => useStatusMessage());
 

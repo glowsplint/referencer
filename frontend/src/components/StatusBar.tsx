@@ -1,7 +1,7 @@
 // Thin bar at the top of the workspace that displays transient status messages
 // (e.g., "PDF exported successfully"). Shows a green checkmark icon for success
 // messages. Collapses to a minimal height when there is no active message.
-import { CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import type { StatusMessage } from "@/hooks/ui/use-status-message";
 
 interface StatusBarProps {
@@ -17,7 +17,14 @@ export function StatusBar({ message }: StatusBarProps) {
       {message?.type === "success" && (
         <CheckCircle2 size={14} className="text-green-600 dark:text-green-400 shrink-0" />
       )}
-      {message && <span>{message.text}</span>}
+      {message?.type === "error" && (
+        <AlertCircle size={14} className="text-red-600 dark:text-red-400 shrink-0" />
+      )}
+      {message && (
+        <span className={message.type === "error" ? "text-red-600 dark:text-red-400" : ""}>
+          {message.text}
+        </span>
+      )}
     </div>
   );
 }
