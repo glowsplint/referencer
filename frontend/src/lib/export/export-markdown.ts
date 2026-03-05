@@ -144,7 +144,8 @@ export function generateWorkspaceMarkdown(options: ExportMarkdownOptions): strin
   if (arrows.length > 0) {
     parts.push(`\n## Connections\n`);
     for (const { arrow } of arrows) {
-      const fromSection = sectionNames[arrow.from.editorIndex] ?? `Text ${arrow.from.editorIndex + 1}`;
+      const fromSection =
+        sectionNames[arrow.from.editorIndex] ?? `Text ${arrow.from.editorIndex + 1}`;
       const toSection = sectionNames[arrow.to.editorIndex] ?? `Text ${arrow.to.editorIndex + 1}`;
       parts.push(
         `\n- "${arrow.from.text}" (${fromSection}) -> "${arrow.to.text}" (${toSection}) [${arrow.arrowStyle ?? "solid"}]`,

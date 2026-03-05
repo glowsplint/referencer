@@ -106,20 +106,15 @@ export function PrintAnnotations({
         layerName: layer.name,
         fromText: a.from.text,
         toText: a.to.text,
-        fromSection:
-          sectionNames[a.from.editorIndex] ?? `Text ${a.from.editorIndex + 1}`,
-        toSection:
-          sectionNames[a.to.editorIndex] ?? `Text ${a.to.editorIndex + 1}`,
+        fromSection: sectionNames[a.from.editorIndex] ?? `Text ${a.from.editorIndex + 1}`,
+        toSection: sectionNames[a.to.editorIndex] ?? `Text ${a.to.editorIndex + 1}`,
         arrowStyle: a.arrowStyle ?? "solid",
       });
     }
   }
 
   const hasAny =
-    comments.length > 0 ||
-    highlights.length > 0 ||
-    underlines.length > 0 ||
-    arrows.length > 0;
+    comments.length > 0 || highlights.length > 0 || underlines.length > 0 || arrows.length > 0;
   if (!hasAny) return null;
 
   // Group by passage
@@ -149,8 +144,7 @@ export function PrintAnnotations({
           {[...groupedComments.entries()].map(([editorIndex, items]) => (
             <div key={editorIndex} className="mb-3">
               <div className="text-[10px] font-medium text-zinc-500 mb-1">
-                {sectionNames[editorIndex] ??
-                  t("text", { number: editorIndex + 1 })}
+                {sectionNames[editorIndex] ?? t("text", { number: editorIndex + 1 })}
               </div>
               {items.map((item, i) => (
                 <div
@@ -172,19 +166,14 @@ export function PrintAnnotations({
                   {item.replies.length > 0 && (
                     <div className="ml-4 mt-1 space-y-1">
                       {item.replies.map((reply) => (
-                        <div
-                          key={reply.id}
-                          className="text-[10px] text-zinc-600"
-                        >
+                        <div key={reply.id} className="text-[10px] text-zinc-600">
                           <span className="font-medium">
                             {t("print.replyBy", {
                               userName: reply.userName,
                               date: new Date(reply.timestamp).toLocaleDateString(),
                             })}
                           </span>
-                          <span className="block text-xs text-zinc-800">
-                            {reply.text}
-                          </span>
+                          <span className="block text-xs text-zinc-800">{reply.text}</span>
                         </div>
                       ))}
                     </div>
@@ -205,8 +194,7 @@ export function PrintAnnotations({
           {[...groupedHighlights.entries()].map(([editorIndex, items]) => (
             <div key={editorIndex} className="mb-3">
               <div className="text-[10px] font-medium text-zinc-500 mb-1">
-                {sectionNames[editorIndex] ??
-                  t("text", { number: editorIndex + 1 })}
+                {sectionNames[editorIndex] ?? t("text", { number: editorIndex + 1 })}
               </div>
               {items.map((item, i) => (
                 <div
@@ -214,9 +202,7 @@ export function PrintAnnotations({
                   className="mb-1 border-l-2 pl-2"
                   style={{ borderColor: sanitizeColor(item.layerColor) }}
                 >
-                  <div className="text-[10px] italic text-zinc-600">
-                    &ldquo;{item.text}&rdquo;
-                  </div>
+                  <div className="text-[10px] italic text-zinc-600">&ldquo;{item.text}&rdquo;</div>
                 </div>
               ))}
             </div>
@@ -233,8 +219,7 @@ export function PrintAnnotations({
           {[...groupedUnderlines.entries()].map(([editorIndex, items]) => (
             <div key={editorIndex} className="mb-3">
               <div className="text-[10px] font-medium text-zinc-500 mb-1">
-                {sectionNames[editorIndex] ??
-                  t("text", { number: editorIndex + 1 })}
+                {sectionNames[editorIndex] ?? t("text", { number: editorIndex + 1 })}
               </div>
               {items.map((item, i) => (
                 <div
@@ -242,9 +227,7 @@ export function PrintAnnotations({
                   className="mb-1 border-l-2 pl-2"
                   style={{ borderColor: sanitizeColor(item.layerColor) }}
                 >
-                  <div className="text-[10px] italic text-zinc-600">
-                    &ldquo;{item.text}&rdquo;
-                  </div>
+                  <div className="text-[10px] italic text-zinc-600">&ldquo;{item.text}&rdquo;</div>
                 </div>
               ))}
             </div>
@@ -265,9 +248,8 @@ export function PrintAnnotations({
               style={{ borderColor: sanitizeColor(arrow.layerColor) }}
             >
               <span>
-                &ldquo;{arrow.fromText}&rdquo; ({arrow.fromSection}){" "}
-                &rarr;{" "}
-                &ldquo;{arrow.toText}&rdquo; ({arrow.toSection})
+                &ldquo;{arrow.fromText}&rdquo; ({arrow.fromSection}) &rarr; &ldquo;{arrow.toText}
+                &rdquo; ({arrow.toSection})
                 {arrow.arrowStyle !== "solid" && (
                   <span className="text-zinc-400"> [{arrow.arrowStyle}]</span>
                 )}

@@ -5,7 +5,10 @@ import { ExportMenu } from "./ExportMenu";
 import { renderWithWorkspace } from "@/test/render-with-workspace";
 
 function renderExportMenu(onExportMarkdown = vi.fn()) {
-  return { onExportMarkdown, ...renderWithWorkspace(<ExportMenu onExportMarkdown={onExportMarkdown} />) };
+  return {
+    onExportMarkdown,
+    ...renderWithWorkspace(<ExportMenu onExportMarkdown={onExportMarkdown} />),
+  };
 }
 
 describe("ExportMenu", () => {

@@ -358,11 +358,7 @@ describe("PrintAnnotations", () => {
       });
 
       const { container } = render(
-        <PrintAnnotations
-          layers={[layer]}
-          sectionNames={["Text 1"]}
-          sectionVisibility={[true]}
-        />,
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
       );
 
       expect(container.textContent).toContain("[dashed]");
@@ -382,11 +378,7 @@ describe("PrintAnnotations", () => {
       });
 
       const { container } = render(
-        <PrintAnnotations
-          layers={[layer]}
-          sectionNames={["Text 1"]}
-          sectionVisibility={[true]}
-        />,
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
       );
 
       expect(container.textContent).not.toContain("[solid]");
@@ -451,11 +443,7 @@ describe("PrintAnnotations", () => {
       });
 
       const { container } = render(
-        <PrintAnnotations
-          layers={[layer]}
-          sectionNames={["Text 1"]}
-          sectionVisibility={[true]}
-        />,
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
       );
 
       expect(container.textContent).toContain("I agree!");
@@ -512,11 +500,7 @@ describe("PrintAnnotations", () => {
       });
 
       const { container } = render(
-        <PrintAnnotations
-          layers={[layer]}
-          sectionNames={["Text 1"]}
-          sectionVisibility={[true]}
-        />,
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
       );
 
       expect(screen.getByText("Comments")).toBeInTheDocument();
