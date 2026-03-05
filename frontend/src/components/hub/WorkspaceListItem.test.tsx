@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WorkspaceListItem } from "./WorkspaceListItem";
 import { DndProvider } from "@/contexts/DndContext";
@@ -71,6 +71,38 @@ describe("WorkspaceListItem", () => {
       expect(screen.getByText("Test User")).toBeInTheDocument();
       const avatar = document.querySelector("img[src='https://example.com/avatar.jpg']");
       expect(avatar).toBeInTheDocument();
+    });
+
+    it("then falls back to initials when avatar image fails to load", () => {
+      renderListItem();
+      const avatar = document.querySelector(
+        "img[src='https://example.com/avatar.jpg']",
+      ) as HTMLImageElement;
+      expect(avatar).toBeInTheDocument();
+
+      fireEvent.error(avatar);
+
+      expect(
+        document.querySelector("img[src='https://example.com/avatar.jpg']"),
+      ).not.toBeInTheDocument();
+      expect(screen.getByText("T")).toBeInTheDocument();
+    });
+
+    it("then shows initials when no avatar URL is provided", () => {
+      render(
+        <DndProvider>
+          <WorkspaceListItem
+            workspace={workspace}
+            onOpen={onOpen}
+            onRename={onRename}
+            onDuplicate={onDuplicate}
+            onDelete={onDelete}
+            ownerName="Test User"
+          />
+        </DndProvider>,
+      );
+      expect(screen.getByText("T")).toBeInTheDocument();
+      expect(document.querySelector("img")).not.toBeInTheDocument();
     });
   });
 

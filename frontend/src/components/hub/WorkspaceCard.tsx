@@ -6,6 +6,7 @@ import { useDndContext } from "@/contexts/DndContext";
 import type { WorkspaceItem } from "@/lib/workspace-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { MoveToFolderMenu } from "./MoveToFolderMenu";
+import { OwnerAvatar } from "./OwnerAvatar";
 
 interface WorkspaceCardProps {
   workspace: WorkspaceItem;
@@ -127,13 +128,7 @@ export function WorkspaceCard({
       </p>
       {ownerName && (
         <div className="flex items-center gap-1.5 mt-2">
-          {ownerAvatarUrl ? (
-            <img src={ownerAvatarUrl} alt="" className="w-5 h-5 rounded-full" />
-          ) : (
-            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium">
-              {ownerName[0]}
-            </div>
-          )}
+          <OwnerAvatar name={ownerName} avatarUrl={ownerAvatarUrl} />
           <span className="text-xs text-muted-foreground truncate">{ownerName}</span>
         </div>
       )}
