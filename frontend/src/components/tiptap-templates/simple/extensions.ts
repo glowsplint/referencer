@@ -16,6 +16,7 @@ import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { Selection } from "@tiptap/extensions";
+import { Markdown } from "@tiptap/markdown";
 import Placeholder from "@tiptap/extension-placeholder";
 import Collaboration from "@tiptap/extension-collaboration";
 import type * as Y from "yjs";
@@ -71,6 +72,7 @@ export function createSimpleEditorExtensions(opts?: EditorExtensionOptions) {
     SimilarTextHighlightsExtension,
     WordHoverExtension,
     ArrowLinesExtension,
+    Markdown,
     Placeholder.configure({
       placeholder: "Paste or type your text here\u2026",
     }),

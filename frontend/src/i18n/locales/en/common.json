@@ -14,7 +14,16 @@
     "connected": "Connected",
     "disconnected": "Disconnected"
   },
+  "export": {
+    "title": "Export",
+    "pdf": "Export as PDF",
+    "markdown": "Export as Markdown"
+  },
   "print": {
-    "comments": "Comments"
+    "comments": "Comments",
+    "highlights": "Highlights",
+    "underlines": "Underlines",
+    "connections": "Connections",
+    "replyBy": "Reply by {{userName}} ({{date}})"
   }
 }

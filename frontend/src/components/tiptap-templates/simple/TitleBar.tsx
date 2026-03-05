@@ -2,10 +2,11 @@
 // workspace switcher dropdown, and PDF export button. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Share2, Download, Home, ChevronDown, Check } from "lucide-react";
+import { Share2, Home, ChevronDown, Check } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/tiptap-ui-primitive/tooltip";
+import { ExportMenu } from "@/components/ExportMenu";
 import { ShareDialog } from "@/components/ShareDialog";
 import { CollaborationPresence } from "@/components/CollaborationPresence";
 import { LoginButton } from "@/components/LoginButton";
@@ -17,9 +18,10 @@ import { renameWorkspace, fetchWorkspace } from "@/lib/workspace-client";
 
 interface TitleBarProps {
   navigate?: (hash: string) => void;
+  onExportMarkdown?: () => void;
 }
 
-export function TitleBar({ navigate }: TitleBarProps) {
+export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
   const { t } = useTranslation();
   const { workspaceId, readOnly, yjs } = useWorkspace();
   const { isAuthenticated, isLoading } = useAuth();
@@ -215,18 +217,7 @@ export function TitleBar({ navigate }: TitleBarProps) {
           </span>
         </div>
         <CollaborationPresence provider={yjs.provider?.wsProvider ?? null} className="mr-1" />
-        <Tooltip placement="bottom" delay={300}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => window.print()}
-              className="rounded-md p-1.5 transition-colors hover:bg-accent hover:text-accent-foreground"
-              data-testid="exportPdfButton"
-            >
-              <Download size={16} />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>Export as PDF</TooltipContent>
-        </Tooltip>
+        <ExportMenu onExportMarkdown={onExportMarkdown ?? (() => {})} />
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
