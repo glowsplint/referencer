@@ -95,7 +95,8 @@
     "alignLeft": "Вирівняти ліворуч",
     "alignCenter": "Вирівняти по центру",
     "alignRight": "Вирівняти праворуч",
-    "alignJustify": "Вирівняти по ширині"
+    "alignJustify": "Вирівняти по ширині",
+    "searchAnnotations": "Пошук анотацій"
   },
   "share": {
     "title": "Поділитися робочим простором",

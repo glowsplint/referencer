@@ -95,7 +95,8 @@
     "alignLeft": "Στοίχιση αριστερά",
     "alignCenter": "Στοίχιση στο κέντρο",
     "alignRight": "Στοίχιση δεξιά",
-    "alignJustify": "Πλήρης στοίχιση"
+    "alignJustify": "Πλήρης στοίχιση",
+    "searchAnnotations": "Αναζήτηση σχολιασμών"
   },
   "share": {
     "title": "Κοινοποίηση χώρου εργασίας",

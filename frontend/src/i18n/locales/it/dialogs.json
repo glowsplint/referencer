@@ -95,7 +95,8 @@
     "alignLeft": "Allinea a sinistra",
     "alignCenter": "Allinea al centro",
     "alignRight": "Allinea a destra",
-    "alignJustify": "Giustifica"
+    "alignJustify": "Giustifica",
+    "searchAnnotations": "Cerca annotazioni"
   },
   "share": {
     "title": "Condividi spazio di lavoro",

@@ -95,7 +95,8 @@
     "alignLeft": "বামে সারিবদ্ধ",
     "alignCenter": "মাঝখানে সারিবদ্ধ",
     "alignRight": "ডানে সারিবদ্ধ",
-    "alignJustify": "সমানভাবে সারিবদ্ধ"
+    "alignJustify": "সমানভাবে সারিবদ্ধ",
+    "searchAnnotations": "টীকা অনুসন্ধান"
   },
   "share": {
     "title": "কর্মক্ষেত্র শেয়ার করুন",

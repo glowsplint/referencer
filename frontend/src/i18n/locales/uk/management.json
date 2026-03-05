@@ -47,6 +47,12 @@
     "addReaction": "Додати реакцію",
     "removeReply": "Видалити відповідь"
   },
+  "search": {
+    "placeholder": "Пошук анотацій...",
+    "noResults": "Відповідних анотацій не знайдено",
+    "resultCount_one": "{{count}} результат",
+    "resultCount_other": "{{count}} результатів"
+  },
   "actionConsole": {
     "title": "Консоль дій",
     "close": "закрити",

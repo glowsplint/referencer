@@ -47,6 +47,12 @@
     "addReaction": "প্রতিক্রিয়া যোগ করুন",
     "removeReply": "উত্তর সরান"
   },
+  "search": {
+    "placeholder": "টীকা অনুসন্ধান...",
+    "noResults": "কোনো মিলে যাওয়া টীকা নেই",
+    "resultCount_one": "{{count}}টি ফলাফল",
+    "resultCount_other": "{{count}}টি ফলাফল"
+  },
   "actionConsole": {
     "title": "অ্যাকশন কনসোল",
     "close": "বন্ধ করুন",

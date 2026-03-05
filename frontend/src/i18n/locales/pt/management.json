@@ -47,6 +47,12 @@
     "addReaction": "Adicionar reação",
     "removeReply": "Remover resposta"
   },
+  "search": {
+    "placeholder": "Pesquisar anotações...",
+    "noResults": "Nenhuma anotação encontrada",
+    "resultCount_one": "{{count}} resultado",
+    "resultCount_other": "{{count}} resultados"
+  },
   "actionConsole": {
     "title": "Console de ações",
     "close": "fechar",

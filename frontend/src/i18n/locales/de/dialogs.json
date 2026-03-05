@@ -95,7 +95,8 @@
     "alignLeft": "Linksbündig",
     "alignCenter": "Zentriert",
     "alignRight": "Rechtsbündig",
-    "alignJustify": "Blocksatz"
+    "alignJustify": "Blocksatz",
+    "searchAnnotations": "Anmerkungen durchsuchen"
   },
   "share": {
     "title": "Arbeitsbereich teilen",

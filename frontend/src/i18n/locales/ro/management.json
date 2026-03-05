@@ -47,6 +47,12 @@
     "addReaction": "Adaugă reacție",
     "removeReply": "Elimină răspunsul"
   },
+  "search": {
+    "placeholder": "Caută adnotări...",
+    "noResults": "Nicio adnotare găsită",
+    "resultCount_one": "{{count}} rezultat",
+    "resultCount_other": "{{count}} rezultate"
+  },
   "actionConsole": {
     "title": "Consola de acțiuni",
     "close": "închide",

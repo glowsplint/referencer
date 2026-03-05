@@ -47,6 +47,12 @@
     "addReaction": "Προσθήκη αντίδρασης",
     "removeReply": "Αφαίρεση απάντησης"
   },
+  "search": {
+    "placeholder": "Αναζήτηση σχολιασμών...",
+    "noResults": "Δεν βρέθηκαν σχολιασμοί",
+    "resultCount_one": "{{count}} αποτέλεσμα",
+    "resultCount_other": "{{count}} αποτελέσματα"
+  },
   "actionConsole": {
     "title": "Κονσόλα Ενεργειών",
     "close": "κλείσιμο",

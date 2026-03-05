@@ -95,7 +95,8 @@
     "alignLeft": "Aliniere la stânga",
     "alignCenter": "Aliniere la centru",
     "alignRight": "Aliniere la dreapta",
-    "alignJustify": "Aliniere justificată"
+    "alignJustify": "Aliniere justificată",
+    "searchAnnotations": "Caută adnotări"
   },
   "share": {
     "title": "Partajează spațiul de lucru",

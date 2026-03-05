@@ -47,6 +47,12 @@
     "addReaction": "Fi ìhùwàsí kún",
     "removeReply": "Yọ ìdáhùn kúrò"
   },
+  "search": {
+    "placeholder": "Wa awọn akọsilẹ...",
+    "noResults": "Ko si awọn akọsilẹ ti o baamu",
+    "resultCount_one": "abajade {{count}}",
+    "resultCount_other": "awọn abajade {{count}}"
+  },
   "actionConsole": {
     "title": "Kọ́nsólù Iṣẹ́",
     "close": "padé",

@@ -95,7 +95,8 @@
     "alignLeft": "จัดชิดซ้าย",
     "alignCenter": "จัดกึ่งกลาง",
     "alignRight": "จัดชิดขวา",
-    "alignJustify": "จัดเต็มบรรทัด"
+    "alignJustify": "จัดเต็มบรรทัด",
+    "searchAnnotations": "ค้นหาคำอธิบายประกอบ"
   },
   "share": {
     "title": "แชร์พื้นที่ทำงาน",

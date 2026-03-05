@@ -47,6 +47,12 @@
     "addReaction": "リアクションを追加",
     "removeReply": "返信を削除"
   },
+  "search": {
+    "placeholder": "注釈を検索...",
+    "noResults": "一致する注釈がありません",
+    "resultCount_one": "{{count}} 件",
+    "resultCount_other": "{{count}} 件"
+  },
   "actionConsole": {
     "title": "アクションコンソール",
     "close": "閉じる",

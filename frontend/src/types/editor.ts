@@ -126,3 +126,17 @@ export interface ActionCommand {
   undo: () => void;
   redo: () => void;
 }
+
+export type AnnotationMatchType = "highlight" | "comment" | "arrow" | "underline";
+
+export interface AnnotationSearchMatch {
+  layerId: string;
+  layerName: string;
+  layerColor: string;
+  annotationType: AnnotationMatchType;
+  annotationId: string;
+  displayText: string;
+  editorIndex: number;
+  from: number;
+  to: number;
+}

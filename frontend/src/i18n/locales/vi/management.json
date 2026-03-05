@@ -47,6 +47,12 @@
     "addReaction": "Thêm biểu cảm",
     "removeReply": "Xóa phản hồi"
   },
+  "search": {
+    "placeholder": "Tìm kiếm chú thích...",
+    "noResults": "Không tìm thấy chú thích phù hợp",
+    "resultCount_one": "{{count}} kết quả",
+    "resultCount_other": "{{count}} kết quả"
+  },
   "actionConsole": {
     "title": "Bảng điều khiển hành động",
     "close": "đóng",

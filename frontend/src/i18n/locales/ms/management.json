@@ -47,6 +47,12 @@
     "addReaction": "Tambah reaksi",
     "removeReply": "Buang balasan"
   },
+  "search": {
+    "placeholder": "Cari anotasi...",
+    "noResults": "Tiada anotasi yang sepadan",
+    "resultCount_one": "{{count}} keputusan",
+    "resultCount_other": "{{count}} keputusan"
+  },
   "actionConsole": {
     "title": "Konsol Tindakan",
     "close": "tutup",

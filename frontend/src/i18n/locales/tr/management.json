@@ -47,6 +47,12 @@
     "addReaction": "Tepki ekle",
     "removeReply": "Yaniti kaldir"
   },
+  "search": {
+    "placeholder": "Açıklamaları ara...",
+    "noResults": "Eşleşen açıklama bulunamadı",
+    "resultCount_one": "{{count}} sonuç",
+    "resultCount_other": "{{count}} sonuç"
+  },
   "actionConsole": {
     "title": "Eylem Konsolu",
     "close": "kapat",

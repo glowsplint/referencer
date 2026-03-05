@@ -95,7 +95,8 @@
     "alignLeft": "Sola hizala",
     "alignCenter": "Ortaya hizala",
     "alignRight": "Saga hizala",
-    "alignJustify": "Iki yana yasla"
+    "alignJustify": "Iki yana yasla",
+    "searchAnnotations": "Açıklamaları ara"
   },
   "share": {
     "title": "Calisma alanini paylas",

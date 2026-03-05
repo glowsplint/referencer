@@ -47,6 +47,12 @@
     "addReaction": "הוספת תגובה רגשית",
     "removeReply": "הסרת תגובה"
   },
+  "search": {
+    "placeholder": "חיפוש הערות...",
+    "noResults": "לא נמצאו הערות תואמות",
+    "resultCount_one": "תוצאה {{count}}",
+    "resultCount_other": "{{count}} תוצאות"
+  },
   "actionConsole": {
     "title": "מסוף פעולות",
     "close": "סגור",

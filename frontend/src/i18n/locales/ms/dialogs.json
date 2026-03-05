@@ -95,7 +95,8 @@
     "alignLeft": "Jajar kiri",
     "alignCenter": "Jajar tengah",
     "alignRight": "Jajar kanan",
-    "alignJustify": "Jajar penuh"
+    "alignJustify": "Jajar penuh",
+    "searchAnnotations": "Cari anotasi"
   },
   "share": {
     "title": "Kongsi ruang kerja",

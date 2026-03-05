@@ -47,6 +47,12 @@
     "addReaction": "Ongeza hisia",
     "removeReply": "Ondoa jibu"
   },
+  "search": {
+    "placeholder": "Tafuta maelezo...",
+    "noResults": "Hakuna maelezo yanayolingana",
+    "resultCount_one": "matokeo {{count}}",
+    "resultCount_other": "matokeo {{count}}"
+  },
   "actionConsole": {
     "title": "Koni ya Vitendo",
     "close": "funga",
