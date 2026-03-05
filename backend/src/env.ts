@@ -33,14 +33,6 @@ import type { Metrics } from "./lib/metrics";
 //                          Callback URL: {BASE_URL}/auth/github/callback
 //                          OAuth only works when both ID and secret are set.
 //
-// GITHUB_ISSUES_TOKEN    — GitHub personal access token for creating feedback issues (optional)
-//                          Provider: GitHub → Settings → Developer settings → Fine-grained tokens
-//                          Scope: Issues (write) on the target repo
-//                          Feedback endpoint returns 503 without this.
-//
-// GITHUB_ISSUES_REPO     — GitHub API URL for feedback issues (optional)
-//                          Default: https://api.github.com/repos/glowsplint/referencer/issues
-//
 // SESSION_MAX_AGE        — Session cookie lifetime in seconds (optional)
 //                          Default: 2592000 (30 days)
 //
@@ -69,8 +61,6 @@ export type Env = {
     GITHUB_CLIENT_ID?: string;
     GITHUB_CLIENT_SECRET?: string;
     SESSION_MAX_AGE?: string;
-    GITHUB_ISSUES_TOKEN?: string;
-    GITHUB_ISSUES_REPO?: string;
     WS_JWT_SECRET: string;
     WS_JWT_SECRET_PREV?: string;
   };
