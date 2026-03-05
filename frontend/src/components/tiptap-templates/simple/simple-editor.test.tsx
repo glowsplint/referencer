@@ -112,6 +112,15 @@ vi.mock("@/components/tiptap-icons/link-icon", () => ({
   LinkIcon: () => null,
 }));
 
+// Mock workspace context
+const mockToggleFocusedPaneLocked = vi.fn();
+vi.mock("@/contexts/WorkspaceContext", () => ({
+  useWorkspace: () => ({
+    toggleFocusedPaneLocked: mockToggleFocusedPaneLocked,
+    readOnly: false,
+  }),
+}));
+
 // Mock hooks
 vi.mock("@/hooks/ui/use-is-breakpoint", () => ({
   useIsBreakpoint: () => false,
@@ -192,15 +201,35 @@ describe("SimpleEditorToolbar", () => {
       render(<SimpleEditorToolbar isLocked={false} />);
       expect(screen.getByTestId("editorToolbar")).toBeInTheDocument();
     });
+
+    it("then shows an unlocked lock icon", () => {
+      render(<SimpleEditorToolbar isLocked={false} />);
+      const btn = screen.getByTestId("lockButton");
+      expect(btn).toBeInTheDocument();
+      expect(btn.querySelector(".lucide-lock-open")).toBeInTheDocument();
+    });
   });
 
   describe("when locked", () => {
-    it("then renders the toolbar with disabled styling", () => {
+    it("then dims the formatting controls but not the toolbar itself", () => {
       render(<SimpleEditorToolbar isLocked={true} />);
       const toolbar = screen.getByTestId("editorToolbar");
       expect(toolbar).toBeInTheDocument();
-      expect(toolbar).toHaveClass("opacity-50");
-      expect(toolbar).toHaveClass("pointer-events-none");
+      expect(toolbar).not.toHaveClass("opacity-50");
+    });
+
+    it("then shows a locked lock icon", () => {
+      render(<SimpleEditorToolbar isLocked={true} />);
+      const btn = screen.getByTestId("lockButton");
+      expect(btn.querySelector(".lucide-lock")).toBeInTheDocument();
+    });
+  });
+
+  describe("when the lock button is clicked", () => {
+    it("then calls toggleFocusedPaneLocked", () => {
+      render(<SimpleEditorToolbar isLocked={false} />);
+      fireEvent.click(screen.getByTestId("lockButton"));
+      expect(mockToggleFocusedPaneLocked).toHaveBeenCalledOnce();
     });
   });
 });

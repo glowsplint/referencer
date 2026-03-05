@@ -33,7 +33,6 @@ describe("ButtonPane", () => {
       expect(screen.getByTestId("eraserToolButton")).toBeInTheDocument();
       expect(screen.getByTestId("menuButton")).toBeInTheDocument();
       expect(screen.getByTestId("editorLayoutButton")).toBeInTheDocument();
-      expect(screen.getByTestId("lockButton")).toBeInTheDocument();
     });
 
     it("then separates button groups with dividers", () => {
@@ -226,14 +225,6 @@ describe("ButtonPane", () => {
     });
   });
 
-  describe("when the lock button is clicked", () => {
-    it("then calls toggleFocusedPaneLocked", () => {
-      const { workspace } = renderButtonPane();
-      fireEvent.click(screen.getByTestId("lockButton"));
-      expect(workspace.toggleFocusedPaneLocked).toHaveBeenCalledOnce();
-    });
-  });
-
   describe("when the keyboard shortcuts button is clicked", () => {
     it("then opens the keyboard shortcuts dialog", () => {
       renderButtonPane();
@@ -289,40 +280,6 @@ describe("ButtonPane", () => {
         const tooltip = await screen.findByRole("tooltip");
         expect(tooltip).toHaveTextContent("Arrow tool");
         expect(tooltip.querySelector("kbd")).toHaveTextContent("A");
-      });
-    });
-
-    describe("when the lock button receives focus and focused pane is unlocked", () => {
-      it("then shows a tooltip saying Switch to Annotate mode", async () => {
-        renderButtonPane({
-          isPaneLocked: vi.fn(() => false),
-          isAnyPaneLocked: false,
-          activeEditorIndex: 0,
-        });
-        const btn = screen.getByTestId("lockButton");
-
-        await act(async () => {
-          fireEvent.focus(btn);
-        });
-
-        const tooltip = await screen.findByRole("tooltip");
-        expect(tooltip).toHaveTextContent("Switch to Annotate mode");
-        expect(tooltip.querySelector("kbd")).toHaveTextContent("K");
-      });
-    });
-
-    describe("when the lock button receives focus and focused pane is locked", () => {
-      it("then shows a tooltip saying Switch to Edit mode", async () => {
-        renderButtonPane(allLocked);
-        const btn = screen.getByTestId("lockButton");
-
-        await act(async () => {
-          fireEvent.focus(btn);
-        });
-
-        const tooltip = await screen.findByRole("tooltip");
-        expect(tooltip).toHaveTextContent("Switch to Edit mode");
-        expect(tooltip.querySelector("kbd")).toHaveTextContent("K");
       });
     });
 

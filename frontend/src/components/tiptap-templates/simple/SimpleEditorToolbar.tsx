@@ -6,6 +6,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useCurrentEditor } from "@tiptap/react";
+import { useTranslation } from "react-i18next";
+import { Lock, LockOpen } from "lucide-react";
 
 import { Button } from "@/components/tiptap-ui-primitive/button";
 import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
@@ -32,6 +34,7 @@ import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 import { useIsBreakpoint } from "@/hooks/ui/use-is-breakpoint";
 import { useWindowSize } from "@/hooks/utilities/use-window-size";
 import { useCursorVisibility } from "@/hooks/ui/use-cursor-visibility";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
 // --- Toolbar content (private) ---
 
@@ -136,6 +139,8 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
   const [mobileView, setMobileView] = useState<"main" | "link">("main");
   const toolbarRef = useRef<HTMLDivElement>(null);
   const { editor: activeEditor } = useCurrentEditor();
+  const { t: tm } = useTranslation("management");
+  const { toggleFocusedPaneLocked, readOnly } = useWorkspace();
 
   const rect = useCursorVisibility({
     editor: activeEditor,
@@ -152,7 +157,6 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
     <Toolbar
       ref={toolbarRef}
       data-testid="editorToolbar"
-      className={isLocked ? "opacity-50 pointer-events-none" : undefined}
       style={
         isMobile
           ? {
@@ -161,11 +165,30 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
           : undefined
       }
     >
-      {mobileView === "main" ? (
-        <MainToolbarContent onLinkClick={() => setMobileView("link")} isMobile={isMobile} />
-      ) : (
-        <MobileToolbarContent onBack={() => setMobileView("main")} />
-      )}
+      <div
+        className={`flex items-center gap-1 flex-1 min-w-0${isLocked ? " opacity-50 pointer-events-none" : ""}`}
+      >
+        {mobileView === "main" ? (
+          <MainToolbarContent onLinkClick={() => setMobileView("link")} isMobile={isMobile} />
+        ) : (
+          <MobileToolbarContent onBack={() => setMobileView("main")} />
+        )}
+      </div>
+      <ToolbarGroup>
+        <button
+          onClick={toggleFocusedPaneLocked}
+          disabled={readOnly}
+          className={`p-2 rounded-md transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none`}
+          data-testid="lockButton"
+          title={
+            isLocked
+              ? `${tm("tooltips.switchToEditMode")} (K)`
+              : `${tm("tooltips.switchToAnnotateMode")} (K)`
+          }
+        >
+          {isLocked ? <Lock size={20} /> : <LockOpen size={20} />}
+        </button>
+      </ToolbarGroup>
     </Toolbar>
   );
 }
