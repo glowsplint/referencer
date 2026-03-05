@@ -104,7 +104,8 @@
     "alignCenter": "Align center",
     "alignRight": "Align right",
     "alignJustify": "Align justify",
-    "addText": "Add new text"
+    "addText": "Add new text",
+    "searchAnnotations": "Search annotations"
   },
   "share": {
     "title": "Share workspace",

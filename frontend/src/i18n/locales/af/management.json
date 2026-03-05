@@ -47,6 +47,12 @@
     "addReaction": "Voeg reaksie by",
     "removeReply": "Verwyder antwoord"
   },
+  "search": {
+    "placeholder": "Soek aantekeninge...",
+    "noResults": "Geen ooreenstemmende aantekeninge",
+    "resultCount_one": "{{count}} resultaat",
+    "resultCount_other": "{{count}} resultate"
+  },
   "actionConsole": {
     "title": "Aksiekonsole",
     "close": "sluit",

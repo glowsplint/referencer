@@ -95,7 +95,8 @@
     "alignLeft": "Wyrownaj do lewej",
     "alignCenter": "Wyrownaj do srodka",
     "alignRight": "Wyrownaj do prawej",
-    "alignJustify": "Wyjustuj"
+    "alignJustify": "Wyjustuj",
+    "searchAnnotations": "Szukaj adnotacji"
   },
   "share": {
     "title": "Udostepnij przestrzen robocza",

@@ -47,6 +47,12 @@
     "addReaction": "إضافة تفاعل",
     "removeReply": "إزالة الرد"
   },
+  "search": {
+    "placeholder": "البحث في التعليقات...",
+    "noResults": "لا توجد تعليقات مطابقة",
+    "resultCount_one": "نتيجة {{count}}",
+    "resultCount_other": "{{count}} نتائج"
+  },
   "actionConsole": {
     "title": "وحدة التحكم",
     "close": "إغلاق",

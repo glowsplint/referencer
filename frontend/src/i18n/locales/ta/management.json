@@ -47,6 +47,12 @@
     "addReaction": "எதிர்வினை சேர்",
     "removeReply": "பதிலை நீக்கு"
   },
+  "search": {
+    "placeholder": "குறிப்புகளைத் தேடு...",
+    "noResults": "பொருந்தும் குறிப்புகள் இல்லை",
+    "resultCount_one": "{{count}} முடிவு",
+    "resultCount_other": "{{count}} முடிவுகள்"
+  },
   "actionConsole": {
     "title": "செயல் கன்சோல்",
     "close": "மூடு",

@@ -47,6 +47,12 @@
     "addReaction": "Добавить реакцию",
     "removeReply": "Удалить ответ"
   },
+  "search": {
+    "placeholder": "Поиск аннотаций...",
+    "noResults": "Совпадающие аннотации не найдены",
+    "resultCount_one": "{{count}} результат",
+    "resultCount_other": "{{count}} результатов"
+  },
   "actionConsole": {
     "title": "Консоль действий",
     "close": "закрыть",

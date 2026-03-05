@@ -95,7 +95,8 @@
     "alignLeft": "Căn trái",
     "alignCenter": "Căn giữa",
     "alignRight": "Căn phải",
-    "alignJustify": "Căn đều"
+    "alignJustify": "Căn đều",
+    "searchAnnotations": "Tìm kiếm chú thích"
   },
   "share": {
     "title": "Chia sẻ không gian làm việc",

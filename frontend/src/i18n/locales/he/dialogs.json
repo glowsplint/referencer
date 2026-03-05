@@ -95,7 +95,8 @@
     "alignLeft": "יישור לשמאל",
     "alignCenter": "יישור למרכז",
     "alignRight": "יישור לימין",
-    "alignJustify": "יישור לשני הצדדים"
+    "alignJustify": "יישור לשני הצדדים",
+    "searchAnnotations": "חיפוש הערות"
   },
   "share": {
     "title": "שיתוף סביבת עבודה",

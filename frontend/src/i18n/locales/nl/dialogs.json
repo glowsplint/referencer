@@ -95,7 +95,8 @@
     "alignLeft": "Links uitlijnen",
     "alignCenter": "Centreren",
     "alignRight": "Rechts uitlijnen",
-    "alignJustify": "Uitvullen"
+    "alignJustify": "Uitvullen",
+    "searchAnnotations": "Annotaties zoeken"
   },
   "share": {
     "title": "Werkruimte delen",

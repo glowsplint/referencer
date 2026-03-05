@@ -47,6 +47,12 @@
     "addReaction": "반응 추가",
     "removeReply": "답글 삭제"
   },
+  "search": {
+    "placeholder": "주석 검색...",
+    "noResults": "일치하는 주석이 없습니다",
+    "resultCount_one": "{{count}}개 결과",
+    "resultCount_other": "{{count}}개 결과"
+  },
   "actionConsole": {
     "title": "액션 콘솔",
     "close": "닫기",

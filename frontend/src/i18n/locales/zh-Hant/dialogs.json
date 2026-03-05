@@ -103,7 +103,8 @@
     "alignLeft": "靠左對齊",
     "alignCenter": "置中對齊",
     "alignRight": "靠右對齊",
-    "alignJustify": "左右對齊"
+    "alignJustify": "左右對齊",
+    "searchAnnotations": "搜尋註解"
   },
   "share": {
     "title": "共享工作區",

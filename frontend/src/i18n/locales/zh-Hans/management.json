@@ -93,6 +93,12 @@
       }
     }
   },
+  "search": {
+    "placeholder": "搜索批注...",
+    "noResults": "没有匹配的批注",
+    "resultCount_one": "{{count}} 个结果",
+    "resultCount_other": "{{count}} 个结果"
+  },
   "actionConsole": {
     "title": "操作控制台",
     "close": "关闭",

@@ -47,6 +47,12 @@
     "addReaction": "Magdagdag ng reaksyon",
     "removeReply": "Alisin ang sagot"
   },
+  "search": {
+    "placeholder": "Maghanap ng anotasyon...",
+    "noResults": "Walang tumutugmang anotasyon",
+    "resultCount_one": "{{count}} resulta",
+    "resultCount_other": "{{count}} resulta"
+  },
   "actionConsole": {
     "title": "Action Console",
     "close": "isara",

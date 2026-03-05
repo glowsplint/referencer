@@ -95,7 +95,8 @@
     "alignLeft": "Belyn links",
     "alignCenter": "Belyn sentraal",
     "alignRight": "Belyn regs",
-    "alignJustify": "Belyn geregverdig"
+    "alignJustify": "Belyn geregverdig",
+    "searchAnnotations": "Soek aantekeninge"
   },
   "share": {
     "title": "Deel werkspasie",

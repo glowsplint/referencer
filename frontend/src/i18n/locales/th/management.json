@@ -47,6 +47,12 @@
     "addReaction": "เพิ่มรีแอคชัน",
     "removeReply": "ลบการตอบกลับ"
   },
+  "search": {
+    "placeholder": "ค้นหาคำอธิบายประกอบ...",
+    "noResults": "ไม่พบคำอธิบายประกอบที่ตรงกัน",
+    "resultCount_one": "{{count}} ผลลัพธ์",
+    "resultCount_other": "{{count}} ผลลัพธ์"
+  },
   "actionConsole": {
     "title": "คอนโซลการทำงาน",
     "close": "ปิด",

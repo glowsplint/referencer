@@ -375,4 +375,65 @@ describe("ManagementPane", () => {
       });
     });
   });
+
+  describe("annotation search", () => {
+    it("renders the search input", () => {
+      renderPane();
+      expect(screen.getByTestId("annotationSearchInput")).toBeInTheDocument();
+    });
+
+    it("typing a query hides layer list and shows results", () => {
+      renderPane({ layers: [layerWithItems] });
+      fireEvent.change(screen.getByTestId("annotationSearchInput"), {
+        target: { value: "hello" },
+      });
+      // "hello" matches highlight1.text
+      expect(screen.queryByText("Layers")).not.toBeInTheDocument(); // layer heading hidden
+      expect(screen.getByText(/result/i)).toBeInTheDocument(); // result count shown
+    });
+
+    it("clearing query restores layer list", () => {
+      renderPane({ layers: [layerWithItems] });
+      const input = screen.getByTestId("annotationSearchInput");
+      fireEvent.change(input, { target: { value: "hello" } });
+      expect(screen.queryByText("Layers")).not.toBeInTheDocument();
+      fireEvent.change(input, { target: { value: "" } });
+      expect(screen.getByText("Layers")).toBeInTheDocument();
+    });
+
+    it("clear button appears when query is non-empty and clears on click", () => {
+      renderPane({ layers: [layerWithItems] });
+      expect(screen.queryByTestId("clearSearchButton")).not.toBeInTheDocument();
+      fireEvent.change(screen.getByTestId("annotationSearchInput"), {
+        target: { value: "test" },
+      });
+      const clearBtn = screen.getByTestId("clearSearchButton");
+      expect(clearBtn).toBeInTheDocument();
+      fireEvent.click(clearBtn);
+      expect(screen.getByTestId("annotationSearchInput")).toHaveValue("");
+    });
+
+    it("trash bin remains visible during search", () => {
+      renderPane({ layers: [layerWithItems] });
+      fireEvent.change(screen.getByTestId("annotationSearchInput"), {
+        target: { value: "hello" },
+      });
+      expect(screen.getByTestId("trashBin")).toBeInTheDocument();
+    });
+
+    it("Ctrl+F focuses the search input", () => {
+      renderPane();
+      const input = screen.getByTestId("annotationSearchInput");
+      expect(document.activeElement).not.toBe(input);
+      // Dispatch native KeyboardEvent so the document-level listener fires
+      document.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          code: "KeyF",
+          ctrlKey: true,
+          bubbles: true,
+        }),
+      );
+      expect(document.activeElement).toBe(input);
+    });
+  });
 });

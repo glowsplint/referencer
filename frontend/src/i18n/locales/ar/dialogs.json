@@ -95,7 +95,8 @@
     "alignLeft": "محاذاة لليسار",
     "alignCenter": "محاذاة للوسط",
     "alignRight": "محاذاة لليمين",
-    "alignJustify": "محاذاة متساوية"
+    "alignJustify": "محاذاة متساوية",
+    "searchAnnotations": "البحث في التعليقات"
   },
   "share": {
     "title": "مشاركة مساحة العمل",

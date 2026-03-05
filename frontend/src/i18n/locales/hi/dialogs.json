@@ -95,7 +95,8 @@
     "alignLeft": "बाएं संरेखित करें",
     "alignCenter": "केंद्र में संरेखित करें",
     "alignRight": "दाएं संरेखित करें",
-    "alignJustify": "दोनों ओर संरेखित करें"
+    "alignJustify": "दोनों ओर संरेखित करें",
+    "searchAnnotations": "टिप्पणियाँ खोजें"
   },
   "share": {
     "title": "कार्यस्थल साझा करें",

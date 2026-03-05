@@ -47,6 +47,12 @@
     "addReaction": "प्रतिक्रिया जोड़ें",
     "removeReply": "जवाब हटाएं"
   },
+  "search": {
+    "placeholder": "टिप्पणियाँ खोजें...",
+    "noResults": "कोई मेल खाती टिप्पणी नहीं",
+    "resultCount_one": "{{count}} परिणाम",
+    "resultCount_other": "{{count}} परिणाम"
+  },
   "actionConsole": {
     "title": "एक्शन कंसोल",
     "close": "बंद करें",

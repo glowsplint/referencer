@@ -95,7 +95,8 @@
     "alignLeft": "Ihanay sa kaliwa",
     "alignCenter": "Ihanay sa gitna",
     "alignRight": "Ihanay sa kanan",
-    "alignJustify": "Ihanay nang pantay"
+    "alignJustify": "Ihanay nang pantay",
+    "searchAnnotations": "Maghanap ng anotasyon"
   },
   "share": {
     "title": "Ibahagi ang workspace",

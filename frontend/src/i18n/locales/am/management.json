@@ -47,6 +47,12 @@
     "addReaction": "ምላሽ ጨምር",
     "removeReply": "መልስ አስወግድ"
   },
+  "search": {
+    "placeholder": "ማብራሪያዎችን ፈልግ...",
+    "noResults": "ተመሳሳይ ማብራሪያዎች የሉም",
+    "resultCount_one": "{{count}} ውጤት",
+    "resultCount_other": "{{count}} ውጤቶች"
+  },
   "actionConsole": {
     "title": "የድርጊት ኮንሶል",
     "close": "ዝጋ",

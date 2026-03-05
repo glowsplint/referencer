@@ -95,7 +95,8 @@
     "alignLeft": "Vänsterjustera",
     "alignCenter": "Centrera",
     "alignRight": "Högerjustera",
-    "alignJustify": "Marginaljustera"
+    "alignJustify": "Marginaljustera",
+    "searchAnnotations": "Sök anteckningar"
   },
   "share": {
     "title": "Dela arbetsyta",

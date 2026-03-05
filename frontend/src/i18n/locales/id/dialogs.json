@@ -95,7 +95,8 @@
     "alignLeft": "Rata kiri",
     "alignCenter": "Rata tengah",
     "alignRight": "Rata kanan",
-    "alignJustify": "Rata kiri-kanan"
+    "alignJustify": "Rata kiri-kanan",
+    "searchAnnotations": "Cari anotasi"
   },
   "share": {
     "title": "Bagikan ruang kerja",

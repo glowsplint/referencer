@@ -95,7 +95,8 @@
     "alignLeft": "இடது சீரமைப்பு",
     "alignCenter": "மையச் சீரமைப்பு",
     "alignRight": "வலது சீரமைப்பு",
-    "alignJustify": "சீர் சீரமைப்பு"
+    "alignJustify": "சீர் சீரமைப்பு",
+    "searchAnnotations": "குறிப்புகளைத் தேடு"
   },
   "share": {
     "title": "பணியிடத்தைப் பகிர்",

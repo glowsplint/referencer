@@ -93,6 +93,12 @@
       }
     }
   },
+  "search": {
+    "placeholder": "搜尋註解...",
+    "noResults": "沒有符合的註解",
+    "resultCount_one": "{{count}} 個結果",
+    "resultCount_other": "{{count}} 個結果"
+  },
   "actionConsole": {
     "title": "操作控制台",
     "close": "關閉",

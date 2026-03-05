@@ -95,7 +95,8 @@
     "alignLeft": "По левому краю",
     "alignCenter": "По центру",
     "alignRight": "По правому краю",
-    "alignJustify": "По ширине"
+    "alignJustify": "По ширине",
+    "searchAnnotations": "Поиск аннотаций"
   },
   "share": {
     "title": "Поделиться рабочим пространством",

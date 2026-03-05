@@ -93,6 +93,12 @@
       }
     }
   },
+  "search": {
+    "placeholder": "Search annotations...",
+    "noResults": "No matching annotations",
+    "resultCount_one": "{{count}} result",
+    "resultCount_other": "{{count}} results"
+  },
   "actionConsole": {
     "title": "Action Console",
     "close": "close",
