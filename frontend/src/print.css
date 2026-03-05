@@ -3,6 +3,13 @@
     margin: 0.75in;
   }
 
+  /* Typography for print */
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+
   /* Force colors in print */
   * {
     print-color-adjust: exact !important;
@@ -20,6 +27,11 @@
   /* Hide toolbar and title bar actions (keep title text) */
   .simple-editor-toolbar,
   [role="toolbar"] {
+    display: none !important;
+  }
+
+  /* Hide title bar actions */
+  .flex.shrink-0.items-center.border-b {
     display: none !important;
   }
 
@@ -73,10 +85,46 @@
     display: none !important;
   }
 
+  /* Print header visible */
+  .print-header {
+    display: block !important;
+  }
+
   /* Show print-only annotations sidebar */
   .hidden.print\:block,
   .print-annotations-container {
     display: block !important;
+  }
+
+  /* Sequential passage layout — stack vertically */
+  [data-testid="editorContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  [data-testid="editorContainer"] > div {
+    flex: none !important;
+    width: 100% !important;
+  }
+
+  /* Page breaks between passages (except first) */
+  [data-testid="editorContainer"] > div + div {
+    break-before: page;
+  }
+
+  /* Print annotations: full width below content instead of narrow sidebar */
+  .print-annotations-container {
+    display: block !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    flex-shrink: initial !important;
+    break-before: page;
+  }
+
+  /* Annotation groups should not break across pages */
+  .print-annotation-group {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   /* Print annotations styling */

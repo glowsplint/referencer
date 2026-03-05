@@ -42,6 +42,7 @@ import {
   MAX_PANEL_WIDTH,
 } from "./components/AnnotationPanel";
 import { PrintAnnotations } from "./components/PrintAnnotations";
+import { PrintHeader } from "./components/PrintHeader";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
@@ -53,6 +54,7 @@ import { PlaybackBar } from "./components/PlaybackBar";
 import { EditorTour } from "./components/tour/EditorTour";
 import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annotations";
 import { useCurrentUserName } from "./hooks/data/use-current-user-name";
+import { exportWorkspaceAsMarkdown } from "@/lib/export/export-markdown";
 import { apiFetch } from "@/lib/api-client";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
 
@@ -271,6 +273,30 @@ export function App({ workspaceId, navigate }: AppProps) {
     history,
     unifiedUndo,
   } = workspace;
+
+  const [printTitle, setPrintTitle] = useState("Untitled");
+  useEffect(() => {
+    if (!workspace.yjs.doc) return;
+    const meta = workspace.yjs.doc.getMap("workspace-meta");
+    const existing = meta.get("title");
+    if (typeof existing === "string" && existing) setPrintTitle(existing);
+    const observer = () => {
+      const t = meta.get("title");
+      if (typeof t === "string" && t) setPrintTitle(t);
+    };
+    meta.observe(observer);
+    return () => meta.unobserve(observer);
+  }, [workspace.yjs.doc]);
+
+  const handleExportMarkdown = useCallback(() => {
+    exportWorkspaceAsMarkdown({
+      editors: editorsRef.current,
+      layers,
+      sectionNames: workspace.sectionNames,
+      sectionVisibility,
+      title: printTitle,
+    });
+  }, [editorsRef, layers, workspace.sectionNames, sectionVisibility, printTitle]);
 
   const currentUserName = useCurrentUserName();
   const isMobile = useIsBreakpoint("max", 768);
@@ -598,8 +624,9 @@ export function App({ workspaceId, navigate }: AppProps) {
             )}
             <EditorContext.Provider value={{ editor: activeEditor }}>
               <div className="flex flex-col flex-1 min-w-0">
-                <TitleBar navigate={navigate} />
+                <TitleBar navigate={navigate} onExportMarkdown={handleExportMarkdown} />
                 <UnsavedBanner />
+                <PrintHeader title={printTitle} layers={layers} />
                 <SimpleEditorToolbar isLocked={focusedPaneLocked} />
                 {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
                 <div className="flex flex-1 min-w-0 min-h-0">
