@@ -117,7 +117,7 @@ describe("HubPage", () => {
       expect(screen.getByTestId("newWorkspaceNameInput")).toBeInTheDocument();
     });
 
-    it("then creates workspace with name and navigates on dialog submit", async () => {
+    it("then creates workspace with name and stays in hub on dialog submit", async () => {
       const user = userEvent.setup();
       const navigate = vi.fn();
       render(<HubPage navigate={navigate} />);
@@ -130,7 +130,7 @@ describe("HubPage", () => {
       await user.click(screen.getByTestId("newWorkspaceCreateButton"));
 
       expect(mockCreate).toHaveBeenCalledWith("mock-ksuid-123", "My Bible Study");
-      expect(navigate).toHaveBeenCalledWith("#/mock-ksuid-123");
+      expect(navigate).not.toHaveBeenCalled();
     });
 
     it("then closes the dialog after creating a workspace", async () => {

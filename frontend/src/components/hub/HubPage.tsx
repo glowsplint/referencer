@@ -46,6 +46,7 @@ export function HubPage({ navigate }: HubPageProps) {
   } = useSettings();
 
   const [showNewDialog, setShowNewDialog] = useState(false);
+  const [newWorkspaceFolderId, setNewWorkspaceFolderId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const handleTryWithoutSignIn = () => {
@@ -53,7 +54,8 @@ export function HubPage({ navigate }: HubPageProps) {
     navigate(`#/${id}`);
   };
 
-  const handleNewWorkspace = () => {
+  const handleNewWorkspace = (currentFolderId: string | null) => {
+    setNewWorkspaceFolderId(currentFolderId);
     setShowNewDialog(true);
   };
 
@@ -61,7 +63,9 @@ export function HubPage({ navigate }: HubPageProps) {
     setShowNewDialog(false);
     const id = randomKSUID();
     await create(id, title);
-    navigate(`#/${id}`);
+    if (newWorkspaceFolderId) {
+      moveToFolder(id, newWorkspaceFolderId);
+    }
   };
 
   return (
