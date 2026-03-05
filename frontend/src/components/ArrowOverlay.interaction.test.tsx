@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ArrowOverlay } from "./ArrowOverlay";
 import type { Layer, ActiveTool } from "@/types/editor";
@@ -362,43 +362,18 @@ describe("ArrowOverlay editor hover tracking", () => {
     return { wrapper0, wrapper1, editorsRef };
   }
 
-  describe("when hovering over an editor that has cross-editor arrows", () => {
-    it("then clips the container SVG to the gap between editors", () => {
-      const { wrapper0, editorsRef } = createEditorsWithWrappers();
+  describe("cross-editor arrow rendering", () => {
+    it("always clips the container SVG to the gap between editors", () => {
+      const { editorsRef } = createEditorsWithWrappers();
       const layer = createLayer({ arrows: [createCrossEditorArrow()] });
 
       render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
 
       const containerSvg = screen.getByTestId("arrow-overlay");
-      expect(containerSvg.getAttribute("clip-path")).toBeNull();
-
-      act(() => {
-        fireEvent.mouseEnter(wrapper0);
-      });
-
       expect(containerSvg.getAttribute("clip-path")).toBe("url(#container-gap-clip)");
     });
 
-    it("then shows wrapper SVGs for scrolling synchronization", () => {
-      const { wrapper0, editorsRef } = createEditorsWithWrappers();
-      const layer = createLayer({ arrows: [createCrossEditorArrow()] });
-
-      render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
-
-      const wrapperSvg0 = wrapper0.querySelector(
-        "[data-testid='wrapper-arrow-svg-0']",
-      ) as SVGSVGElement;
-      expect(wrapperSvg0).toBeTruthy();
-      expect(wrapperSvg0.style.display).toBe("none");
-
-      act(() => {
-        fireEvent.mouseEnter(wrapper0);
-      });
-
-      expect(wrapperSvg0.style.display).toBe("");
-    });
-
-    it("then shows all wrapper SVGs so each clips its own portion", () => {
+    it("always shows wrapper SVGs for scrolling synchronization", () => {
       const { wrapper0, wrapper1, editorsRef } = createEditorsWithWrappers();
       const layer = createLayer({ arrows: [createCrossEditorArrow()] });
 
@@ -410,70 +385,21 @@ describe("ArrowOverlay editor hover tracking", () => {
       const wrapperSvg1 = wrapper1.querySelector(
         "[data-testid='wrapper-arrow-svg-1']",
       ) as SVGSVGElement;
-
-      act(() => {
-        fireEvent.mouseEnter(wrapper0);
-      });
-
+      expect(wrapperSvg0).toBeTruthy();
+      expect(wrapperSvg1).toBeTruthy();
       expect(wrapperSvg0.style.display).toBe("");
       expect(wrapperSvg1.style.display).toBe("");
     });
 
-    it("then keeps hit areas in the container-level interaction layer", () => {
-      const { wrapper0, editorsRef } = createEditorsWithWrappers();
+    it("keeps hit areas in the container-level interaction layer", () => {
+      const { editorsRef } = createEditorsWithWrappers();
       const layer = createLayer({ arrows: [createCrossEditorArrow()] });
 
       render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
-
-      act(() => {
-        fireEvent.mouseEnter(wrapper0);
-      });
 
       const hitArea = screen.getByTestId("arrow-hit-area");
       const interactionLayer = screen.getByTestId("arrow-interaction-layer");
       expect(interactionLayer.contains(hitArea)).toBe(true);
-    });
-  });
-
-  describe("when leaving an editor", () => {
-    it("then removes the container clip-path", () => {
-      const { wrapper0, editorsRef } = createEditorsWithWrappers();
-      const layer = createLayer({ arrows: [createCrossEditorArrow()] });
-
-      render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
-
-      const containerSvg = screen.getByTestId("arrow-overlay");
-
-      act(() => {
-        fireEvent.mouseEnter(wrapper0);
-      });
-      expect(containerSvg.getAttribute("clip-path")).toBe("url(#container-gap-clip)");
-
-      act(() => {
-        fireEvent.mouseLeave(wrapper0);
-      });
-      expect(containerSvg.getAttribute("clip-path")).toBeNull();
-    });
-
-    it("then hides wrapper SVGs", () => {
-      const { wrapper0, editorsRef } = createEditorsWithWrappers();
-      const layer = createLayer({ arrows: [createCrossEditorArrow()] });
-
-      render(<ArrowOverlay {...createDefaultProps({ layers: [layer], editorsRef })} />);
-
-      const wrapperSvg0 = wrapper0.querySelector(
-        "[data-testid='wrapper-arrow-svg-0']",
-      ) as SVGSVGElement;
-
-      act(() => {
-        fireEvent.mouseEnter(wrapper0);
-      });
-      expect(wrapperSvg0.style.display).toBe("");
-
-      act(() => {
-        fireEvent.mouseLeave(wrapper0);
-      });
-      expect(wrapperSvg0.style.display).toBe("none");
     });
   });
 });

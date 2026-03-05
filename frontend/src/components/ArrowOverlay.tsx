@@ -46,9 +46,6 @@ export function ArrowOverlay({
     }
   }, [hoveredArrowId, editorsRef]);
 
-  // Which editor the mouse is currently over (for wrapper-level arrow rendering)
-  const [hoveredEditorIndex, setHoveredEditorIndex] = useState<number | null>(null);
-
   // Refs for imperative path updates on scroll
   const visualPathRefs = useRef<Map<string, SVGPathElement>>(new Map());
   const visualPathRefs2 = useRef<Map<string, SVGPathElement>>(new Map());
@@ -100,30 +97,6 @@ export function ArrowOverlay({
     () => allVisibleArrows.filter((a) => a.arrow.from.editorIndex !== a.arrow.to.editorIndex),
     [allVisibleArrows],
   );
-
-  // Track which editor is hovered via mouseenter/mouseleave on editor wrappers
-  useEffect(() => {
-    const editors = editorsRef.current;
-    const cleanups: (() => void)[] = [];
-
-    for (const [index, editor] of editors) {
-      if (editor.isDestroyed) continue;
-      const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null;
-      if (!wrapper) continue;
-
-      const onEnter = () => setHoveredEditorIndex(index);
-      const onLeave = () => setHoveredEditorIndex((prev) => (prev === index ? null : prev));
-
-      wrapper.addEventListener("mouseenter", onEnter);
-      wrapper.addEventListener("mouseleave", onLeave);
-      cleanups.push(() => {
-        wrapper.removeEventListener("mouseenter", onEnter);
-        wrapper.removeEventListener("mouseleave", onLeave);
-      });
-    }
-
-    return () => cleanups.forEach((fn) => fn());
-  }, [editorsRef, structuralTick]);
 
   // Pre-mount per-wrapper SVGs for cross-editor arrow rendering
   useEffect(() => {
@@ -181,7 +154,6 @@ export function ArrowOverlay({
       containerRef,
       drawingState,
       drawingColor,
-      hoveredEditorIndex,
       hideOffscreenArrows,
       activeTool,
       sectionVisibility,
@@ -195,7 +167,6 @@ export function ArrowOverlay({
     containerRef,
     drawingState,
     drawingColor,
-    hoveredEditorIndex,
     drawWrapperOpts,
     hideOffscreenArrows,
     activeTool,

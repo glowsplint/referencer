@@ -241,7 +241,6 @@ export interface PositionUpdateOpts {
   containerRef: React.RefObject<HTMLDivElement | null>;
   drawingState: DrawingState | null;
   drawingColor: string | null;
-  hoveredEditorIndex: number | null;
   hideOffscreenArrows: boolean;
   activeTool: ActiveTool;
   sectionVisibility: boolean[];
@@ -291,8 +290,6 @@ export function updatePositions(refs: PositionUpdateRefs, opts: PositionUpdateOp
   const containerRect = opts.containerRef.current?.getBoundingClientRect();
   if (!containerRect) return;
 
-  const activeEditorIndex = opts.drawingState ? null : opts.hoveredEditorIndex;
-
   // Update container visual paths
   for (const data of opts.crossEditorArrows) {
     const result = computeClampedPath(data.arrow, opts.editorsRef, containerRect);
@@ -337,50 +334,45 @@ export function updatePositions(refs: PositionUpdateRefs, opts: PositionUpdateOp
     );
   }
 
-  if (activeEditorIndex !== null) {
-    // Wrapper mode: clip container SVG to the gap between editors
-    const cw = containerRect.width;
-    const ch = containerRect.height;
-    let clipD = `M 0 0 H ${cw} V ${ch} H 0 Z`;
-    for (const [, editor] of opts.editorsRef.current) {
-      if (editor.isDestroyed) continue;
-      const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null;
-      if (!wrapper) continue;
-      const wr = wrapper.getBoundingClientRect();
-      const x = wr.left - containerRect.left;
-      const y = wr.top - containerRect.top;
-      clipD += ` M ${x} ${y} H ${x + wr.width} V ${y + wr.height} H ${x} Z`;
-    }
-    refs.gapClipPathRef?.setAttribute("d", clipD);
-    refs.containerVisualSvgRef?.setAttribute("clip-path", "url(#container-gap-clip)");
+  // Always clip container SVG to the gap between editors and render
+  // arrows inside wrapper SVGs. This ensures cross-editor arrows are
+  // visible regardless of hover state (wrapper SVGs live inside each
+  // editor's scroll container and are not occluded by stacking contexts).
+  const cw = containerRect.width;
+  const ch = containerRect.height;
+  let clipD = `M 0 0 H ${cw} V ${ch} H 0 Z`;
+  for (const [, editor] of opts.editorsRef.current) {
+    if (editor.isDestroyed) continue;
+    const wrapper = editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null;
+    if (!wrapper) continue;
+    const wr = wrapper.getBoundingClientRect();
+    const x = wr.left - containerRect.left;
+    const y = wr.top - containerRect.top;
+    clipD += ` M ${x} ${y} H ${x + wr.width} V ${y + wr.height} H ${x} Z`;
+  }
+  refs.gapClipPathRef?.setAttribute("d", clipD);
+  refs.containerVisualSvgRef?.setAttribute("clip-path", "url(#container-gap-clip)");
 
-    // Show and draw into every wrapper SVG
-    for (const [index, svg] of opts.wrapperSvgState.svgs) {
-      const editor = opts.editorsRef.current.get(index);
-      const wrapper =
-        editor && !editor.isDestroyed
-          ? (editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null)
-          : null;
-      if (!wrapper) {
-        svg.style.display = "none";
-        continue;
-      }
-      svg.style.display = "";
-      drawIntoWrapperSvg(
-        svg,
-        wrapper,
-        opts.crossEditorArrows,
-        opts.drawingState,
-        opts.drawingColor,
-        opts.drawWrapperOpts,
-      );
-    }
-  } else {
-    // No hover: remove clip, hide all wrapper SVGs
-    refs.containerVisualSvgRef?.removeAttribute("clip-path");
-    for (const svg of opts.wrapperSvgState.svgs.values()) {
+  // Show and draw into every wrapper SVG
+  for (const [index, svg] of opts.wrapperSvgState.svgs) {
+    const editor = opts.editorsRef.current.get(index);
+    const wrapper =
+      editor && !editor.isDestroyed
+        ? (editor.view.dom.closest(".simple-editor-wrapper") as HTMLElement | null)
+        : null;
+    if (!wrapper) {
       svg.style.display = "none";
+      continue;
     }
+    svg.style.display = "";
+    drawIntoWrapperSvg(
+      svg,
+      wrapper,
+      opts.crossEditorArrows,
+      opts.drawingState,
+      opts.drawingColor,
+      opts.drawWrapperOpts,
+    );
   }
 
   // Update hit areas, selection rings, and X icons
