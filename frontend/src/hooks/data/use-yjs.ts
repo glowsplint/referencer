@@ -29,6 +29,15 @@ export function useYjs(workspaceId: string) {
     }
 
     async function init() {
+      // Wait for page load to avoid Firefox interrupting WebSocket connections
+      // during the loading phase ("connection was interrupted while the page was loading")
+      if (document.readyState !== "complete") {
+        await new Promise<void>((resolve) =>
+          window.addEventListener("load", () => resolve(), { once: true }),
+        );
+      }
+      if (cancelled) return;
+
       const token = await fetchTicket();
       if (cancelled) return;
 
