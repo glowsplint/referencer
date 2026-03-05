@@ -140,3 +140,20 @@ body,
     padding: 1rem 1.5rem 30vh;
   }
 }
+
+/* CJK font overrides for Chinese locales */
+html[data-cjk-font="sc"] body {
+  font-family: "Inter", "Noto Sans SC", sans-serif;
+}
+
+html[data-cjk-font="tc"] body {
+  font-family: "Inter", "Noto Sans TC", sans-serif;
+}
+
+html[data-cjk-font="sc"] .tiptap.ProseMirror {
+  font-family: "DM Sans", "Noto Sans SC", sans-serif;
+}
+
+html[data-cjk-font="tc"] .tiptap.ProseMirror {
+  font-family: "DM Sans", "Noto Sans TC", sans-serif;
+}

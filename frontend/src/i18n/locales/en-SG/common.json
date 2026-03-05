@@ -1,11 +1,11 @@
 {
-  "close": "Close",
-  "active": "Active",
+  "close": "Close lah",
+  "active": "Steady",
   "passage": "Passage {{number}}",
   "layer": "Layer {{number}}",
   "errorBoundary": {
-    "somethingWentWrong": "Something went wrong.",
-    "tryAgain": "Try again"
+    "somethingWentWrong": "Alamak, something went wrong.",
+    "tryAgain": "Try again lah"
   },
   "presence": {
     "online": "{{count}} online",

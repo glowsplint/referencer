@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Settings, TriangleAlert } from "lucide-react";
 import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
@@ -17,6 +18,7 @@ interface HubPageProps {
 }
 
 export function HubPage({ navigate }: HubPageProps) {
+  const { t } = useTranslation("management");
   const { user, isAuthenticated, isLoading: authLoading, login } = useAuth();
   const {
     workspaces,
@@ -93,11 +95,8 @@ export function HubPage({ navigate }: HubPageProps) {
           /* Guest hero */
           <div className="flex flex-col items-center justify-center h-full px-4">
             <div className="max-w-lg text-center space-y-6">
-              <h1 className="text-4xl font-bold tracking-tight">Referencer</h1>
-              <p className="text-muted-foreground text-lg">
-                Annotate, highlight, and connect passages side by side. A collaborative workspace
-                for close reading.
-              </p>
+              <h1 className="text-4xl font-bold tracking-tight">{t("hub.title")}</h1>
+              <p className="text-muted-foreground text-lg">{t("hub.tagline")}</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Button
                   size="lg"
@@ -105,10 +104,10 @@ export function HubPage({ navigate }: HubPageProps) {
                   onClick={handleTryWithoutSignIn}
                   data-testid="tryWithoutSignIn"
                 >
-                  Try without signing in
+                  {t("hub.tryWithoutSignIn")}
                 </Button>
                 <Button size="lg" onClick={() => login("google")} data-testid="heroSignIn">
-                  Sign in
+                  {t("hub.signIn")}
                 </Button>
               </div>
               <p
@@ -116,8 +115,7 @@ export function HubPage({ navigate }: HubPageProps) {
                 data-testid="guestWarningBanner"
               >
                 <TriangleAlert size={14} className="shrink-0" />
-                Data created without signing in is stored locally and may be lost. Sign in to save
-                your work.
+                {t("hub.guestWarning")}
               </p>
             </div>
           </div>

@@ -10,6 +10,14 @@
       "label": "隐藏屏幕外箭头",
       "description": "当任一端点滚动到视图外时完全隐藏箭头"
     },
+    "statusBar": {
+      "label": "状态栏",
+      "description": "在工具栏下方显示状态栏"
+    },
+    "thirdEditorFullWidth": {
+      "label": "第三编辑器全宽显示",
+      "description": "启用后，第三编辑器将横跨底部整行宽度"
+    },
     "language": {
       "label": "语言",
       "description": "选择您的首选语言"
@@ -99,15 +107,66 @@
   },
   "share": {
     "title": "共享工作区",
-    "description": "复制链接以共享此工作区。",
+    "description": "管理此工作区的链接和成员。",
     "readonlyLink": "只读链接",
     "editLink": "编辑链接",
     "linkCopied": "链接已复制到剪贴板。",
-    "copyFailed": "复制链接失败。"
+    "copyFailed": "复制链接失败。",
+    "loginRequired": "登录后可为此工作区生成共享链接。",
+    "loginGoogle": "使用 Google 登录",
+    "loginGithub": "使用 GitHub 登录",
+    "activeLinks": "活跃链接",
+    "revoke": "撤销",
+    "linkRevoked": "链接已撤销。",
+    "revokeFailed": "撤销链接失败。",
+    "members": "成员",
+    "you": "你",
+    "roleOwner": "所有者",
+    "roleEditor": "编辑者",
+    "roleViewer": "查看者",
+    "roleChanged": "角色已更新。",
+    "roleChangeFailed": "更改角色失败。",
+    "memberRemoved": "成员已移除。",
+    "removeFailed": "移除成员失败。",
+    "loading": "加载中...",
+    "edit": "编辑",
+    "readonly": "只读",
+    "copyLink": "复制链接",
+    "revokeConfirmTitle": "撤销共享链接",
+    "revokeConfirmDescription": "确定要撤销此链接吗？使用该链接的人将失去访问权限。",
+    "revokeConfirmCancel": "取消",
+    "revokeConfirmAction": "撤销",
+    "expiryNever": "永不过期",
+    "expiry7Days": "7 天",
+    "expiry30Days": "30 天",
+    "expiry90Days": "90 天",
+    "expiryLabel": "链接有效期",
+    "noExpiry": "无过期时间",
+    "expiresIn": "{{days}} 天后过期",
+    "expired": "已过期",
+    "acceptSignIn": "登录以接受此共享工作区",
+    "acceptError": "出错了，请重试。",
+    "acceptExpired": "此共享链接无效或已过期。",
+    "goToHub": "前往主页",
+    "accepting": "正在接受共享工作区..."
   },
   "mobile": {
     "title": "桌面端体验最佳",
     "description": "Referencer 专为桌面端设计，需要键盘和鼠标操作。您仍然可以在此阅读内容，但编辑和标注工具在移动端不可用。",
     "continueReading": "继续阅读"
+  },
+  "bugReport": {
+    "title": "报告问题",
+    "description": "描述您遇到的问题。您的报告将被提交到问题追踪器。",
+    "titleLabel": "标题",
+    "titlePlaceholder": "问题的简要概述",
+    "descriptionLabel": "描述",
+    "descriptionPlaceholder": "复现步骤、预期行为、实际行为...",
+    "submit": "提交报告",
+    "submitting": "提交中...",
+    "success": "问题报告已成功提交。谢谢！",
+    "error": "提交问题报告失败。请重试。",
+    "rateLimited": "提交过于频繁。请稍后再试。",
+    "reportBug": "报告问题"
   }
 }

@@ -1,14 +1,14 @@
 {
   "settings": {
     "title": "Settings",
-    "description": "Customize your workspace preferences.",
+    "description": "Customize your workspace preferences lah.",
     "darkMode": {
       "label": "Dark mode",
       "description": "Switch between light and dark themes"
     },
     "hideOffscreenArrows": {
       "label": "Hide off-screen arrows",
-      "description": "Completely hide arrows when either endpoint is scrolled out of view"
+      "description": "Completely hide arrows when endpoint scrolled out of view"
     },
     "statusBar": {
       "label": "Status bar",
@@ -16,11 +16,11 @@
     },
     "thirdEditorFullWidth": {
       "label": "Third editor full width",
-      "description": "When enabled, the third editor spans the full bottom row width"
+      "description": "Third editor take up the whole bottom row"
     },
     "language": {
       "label": "Language",
-      "description": "Choose your preferred language"
+      "description": "Choose your preferred language lah"
     }
   },
   "faq": {
@@ -110,30 +110,30 @@
     "description": "Manage links and members for this workspace.",
     "readonlyLink": "Read-only link",
     "editLink": "Edit link",
-    "linkCopied": "Link copied to clipboard.",
-    "copyFailed": "Failed to copy link.",
-    "loginRequired": "Sign in to generate a share link for this workspace.",
+    "linkCopied": "Link copied to clipboard already.",
+    "copyFailed": "Cannot copy link leh.",
+    "loginRequired": "Sign in first to generate a share link.",
     "loginGoogle": "Sign in with Google",
     "loginGithub": "Sign in with GitHub",
     "activeLinks": "Active links",
     "revoke": "Revoke",
-    "linkRevoked": "Link revoked.",
-    "revokeFailed": "Failed to revoke link.",
+    "linkRevoked": "Link revoked already.",
+    "revokeFailed": "Cannot revoke link leh.",
     "members": "Members",
     "you": "you",
     "roleOwner": "Owner",
     "roleEditor": "Editor",
     "roleViewer": "Viewer",
-    "roleChanged": "Role updated.",
-    "roleChangeFailed": "Failed to change role.",
-    "memberRemoved": "Member removed.",
-    "removeFailed": "Failed to remove member.",
+    "roleChanged": "Role updated already.",
+    "roleChangeFailed": "Cannot change role leh.",
+    "memberRemoved": "Member removed already.",
+    "removeFailed": "Cannot remove member leh.",
     "loading": "Loading...",
     "edit": "edit",
     "readonly": "read-only",
     "copyLink": "Copy link",
     "revokeConfirmTitle": "Revoke share link",
-    "revokeConfirmDescription": "Are you sure you want to revoke this link? Anyone using it will lose access.",
+    "revokeConfirmDescription": "Confirm revoke this link or not? Anyone using it will lose access.",
     "revokeConfirmCancel": "Cancel",
     "revokeConfirmAction": "Revoke",
     "expiryNever": "Never",
@@ -143,16 +143,30 @@
     "expiryLabel": "Link expiry",
     "noExpiry": "No expiry",
     "expiresIn": "Expires in {{days}} days",
-    "expired": "Expired",
+    "expired": "Expired already",
     "acceptSignIn": "Sign in to accept this shared workspace",
-    "acceptError": "Something went wrong. Please try again.",
-    "acceptExpired": "This share link is invalid or has expired.",
+    "acceptError": "Something went wrong leh. Please try again.",
+    "acceptExpired": "This share link invalid or expired already.",
     "goToHub": "Go to Hub",
     "accepting": "Accepting shared workspace..."
   },
   "mobile": {
     "title": "Best on Desktop",
-    "description": "Referencer is designed for desktop use with a keyboard and mouse. You can still read the content here, but editing and annotation tools are not available on mobile.",
+    "description": "Referencer is designed for desktop use with keyboard and mouse. You can still read here, but editing and annotation tools not available on mobile.",
     "continueReading": "Continue Reading"
+  },
+  "bugReport": {
+    "title": "Report a Bug",
+    "description": "Describe the issue you encountered. Your report will be submitted to our issue tracker.",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief summary of the issue",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Steps to reproduce, expected behavior, actual behavior...",
+    "submit": "Submit Report",
+    "submitting": "Submitting...",
+    "success": "Bug report submitted already. Thank you!",
+    "error": "Cannot submit bug report leh. Please try again.",
+    "rateLimited": "Too many reports lah. Please try again later.",
+    "reportBug": "Report a Bug"
   }
 }

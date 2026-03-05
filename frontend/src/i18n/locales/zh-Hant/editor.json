@@ -1,0 +1,82 @@
+{
+  "mark": {
+    "bold": "粗體",
+    "italic": "斜體",
+    "underline": "底線",
+    "strike": "刪除線",
+    "code": "程式碼",
+    "superscript": "上標",
+    "subscript": "下標"
+  },
+  "heading": {
+    "label": "標題 {{level}}"
+  },
+  "list": {
+    "bulletList": "無序列表",
+    "orderedList": "有序列表",
+    "taskList": "任務列表",
+    "label": "列表"
+  },
+  "blockquote": {
+    "label": "引用區塊"
+  },
+  "codeBlock": {
+    "label": "程式碼區塊"
+  },
+  "link": {
+    "label": "連結",
+    "placeholder": "輸入網址",
+    "openLink": "開啟連結",
+    "copyLink": "複製連結",
+    "removeLink": "移除連結"
+  },
+  "image": {
+    "label": "新增圖片"
+  },
+  "textAlign": {
+    "left": "靠左對齊",
+    "center": "置中對齊",
+    "right": "靠右對齊",
+    "justify": "左右對齊"
+  },
+  "history": {
+    "undo": "復原",
+    "redo": "重做"
+  },
+  "colorHighlight": {
+    "label": "顏色高亮",
+    "highlightText": "高亮文字",
+    "highlightColors": "高亮顏色",
+    "removeHighlight": "移除高亮",
+    "listOptions": "列表選項",
+    "formatHeading": "將文字格式化為標題",
+    "colors": {
+      "default": "預設背景",
+      "gray": "灰色背景",
+      "brown": "棕色背景",
+      "orange": "橙色背景",
+      "yellow": "黃色背景",
+      "green": "綠色背景",
+      "blue": "藍色背景",
+      "purple": "紫色背景",
+      "pink": "粉色背景",
+      "red": "紅色背景"
+    },
+    "toggleHighlight": "切換高亮（{{color}}）"
+  },
+  "table": {
+    "label": "表格",
+    "insertTable": "插入表格",
+    "addColumnBefore": "在前方新增欄",
+    "addColumnAfter": "在後方新增欄",
+    "deleteColumn": "刪除欄",
+    "addRowBefore": "在前方新增列",
+    "addRowAfter": "在後方新增列",
+    "deleteRow": "刪除列",
+    "deleteTable": "刪除表格",
+    "mergeCells": "合併儲存格",
+    "splitCell": "拆分儲存格",
+    "toggleHeaderRow": "切換標題列",
+    "toggleHeaderColumn": "切換標題欄"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "close": "关闭",
+  "active": "活跃",
+  "passage": "段落 {{number}}",
+  "layer": "图层 {{number}}",
+  "errorBoundary": {
+    "somethingWentWrong": "出错了。",
+    "tryAgain": "重试"
+  },
+  "presence": {
+    "online": "{{count}} 人在线",
+    "you": "你",
+    "yourName": "你的名字"
+  },
+  "print": {
+    "comments": "评论"
+  }
+}

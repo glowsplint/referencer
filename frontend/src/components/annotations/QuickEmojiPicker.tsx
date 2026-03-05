@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { QUICK_EMOJIS } from "@/constants/emojis";
 
 interface QuickEmojiPickerProps {
@@ -7,6 +8,7 @@ interface QuickEmojiPickerProps {
 
 /** Inline row of 8 quick-pick emoji buttons plus a "+" button to open the full picker. */
 export function QuickEmojiPicker({ onSelect, onOpenFull }: QuickEmojiPickerProps) {
+  const { t } = useTranslation("management");
   return (
     <div className="inline-flex items-center gap-0.5 px-2 py-0.5">
       {QUICK_EMOJIS.map((emoji) => (
@@ -27,7 +29,7 @@ export function QuickEmojiPicker({ onSelect, onOpenFull }: QuickEmojiPickerProps
           e.stopPropagation();
           onOpenFull();
         }}
-        title="More emojis"
+        title={t("annotations.moreEmojis")}
       >
         +
       </button>

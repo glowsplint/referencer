@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import i18n from "@/i18n";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -39,13 +40,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
       return (
         <div className="flex flex-col items-center justify-center gap-3 p-6 text-center h-full">
-          <p className="text-sm text-muted-foreground">Something went wrong.</p>
+          <p className="text-sm text-muted-foreground">
+            {i18n.t("errorBoundary.somethingWentWrong")}
+          </p>
           <button
             type="button"
             onClick={this.handleReset}
             className="px-3 py-1.5 text-xs rounded-md border border-border bg-background hover:bg-muted transition-colors"
           >
-            Try again
+            {i18n.t("errorBoundary.tryAgain")}
           </button>
         </div>
       );

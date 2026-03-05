@@ -89,8 +89,8 @@ export function SettingsDialog({
     },
     {
       id: "third-editor-full-width",
-      label: "Third editor full width",
-      description: "When enabled, the third editor spans the full bottom row width",
+      label: t("settings.thirdEditorFullWidth.label"),
+      description: t("settings.thirdEditorFullWidth.description"),
       checked: thirdEditorFullWidth,
       onCheckedChange: toggleThirdEditorFullWidth,
     },

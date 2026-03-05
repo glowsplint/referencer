@@ -508,7 +508,7 @@ describe("EditorTour", () => {
 
   describe("when language is non-English", () => {
     it("then renders nothing", () => {
-      mockLanguage = "zh";
+      mockLanguage = "zh-Hans";
       mockActiveTourId = "editor";
       setEngineRunning(0);
 
