@@ -458,11 +458,17 @@ export function WorkspaceGrid({
                     Star an item to pin it here
                   </p>
                 ) : viewMode === "grid" ? (
-                  <div
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                    data-testid="starredGrid"
-                  >
-                    {starredItems.map(renderItem)}
+                  <div data-testid="starredGrid" className="space-y-4">
+                    {starredItems.some((i) => i.kind === "folder") && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {starredItems.filter((i) => i.kind === "folder").map(renderItem)}
+                      </div>
+                    )}
+                    {starredItems.some((i) => i.kind === "workspace") && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {starredItems.filter((i) => i.kind === "workspace").map(renderItem)}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col gap-1">{starredItems.map(renderItem)}</div>
@@ -491,11 +497,17 @@ export function WorkspaceGrid({
             {allItems.length > 0 && (
               <section data-testid="allItemsSection">
                 {viewMode === "grid" ? (
-                  <div
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                    data-testid="allItemsGrid"
-                  >
-                    {allItems.map(renderItem)}
+                  <div data-testid="allItemsGrid" className="space-y-4">
+                    {allItems.some((i) => i.kind === "folder") && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {allItems.filter((i) => i.kind === "folder").map(renderItem)}
+                      </div>
+                    )}
+                    {allItems.some((i) => i.kind === "workspace") && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {allItems.filter((i) => i.kind === "workspace").map(renderItem)}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col gap-1">
