@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import { Lock, LockOpen } from "lucide-react";
 
 import { Button } from "@/components/tiptap-ui-primitive/button";
-import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/tiptap-ui-primitive/toolbar";
 
 import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu";
@@ -47,8 +46,6 @@ const MainToolbarContent = ({
 }) => {
   return (
     <>
-      <Spacer />
-
       <ToolbarGroup>
         <UndoRedoButton action="undo" />
         <UndoRedoButton action="redo" />
@@ -110,8 +107,6 @@ const MainToolbarContent = ({
       <ToolbarGroup>
         <TableDropdownMenu portal={isMobile} />
       </ToolbarGroup>
-
-      <Spacer />
     </>
   );
 };
@@ -166,7 +161,7 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
       }
     >
       <div
-        className={`flex items-center gap-1 flex-1 min-w-0${isLocked ? " opacity-50 pointer-events-none" : ""}`}
+        className={`flex items-center gap-1 min-w-0${isLocked ? " opacity-50 pointer-events-none" : ""}`}
       >
         {mobileView === "main" ? (
           <MainToolbarContent onLinkClick={() => setMobileView("link")} isMobile={isMobile} />
