@@ -59,11 +59,7 @@ export default defineConfig({
         test: {
           name: "node",
           environment: "node",
-          include: [
-            "src/lib/**/*.test.ts",
-            "src/constants/**/*.test.ts",
-            "src/hooks/recording/*.test.ts",
-          ],
+          include: ["src/lib/**/*.test.ts", "src/constants/**/*.test.ts"],
           exclude: [
             "src/lib/dom.test.ts",
             "src/lib/arrow/svg-helpers.test.ts",
@@ -74,7 +70,6 @@ export default defineConfig({
             "src/lib/tiptap/upload.test.ts",
             "src/lib/yjs/__tests__/annotation-visibility.test.ts",
             "src/lib/yjs/__tests__/annotations-crud.test.ts",
-            "src/hooks/recording/use-recording-manager.test.ts",
           ],
         },
       },
@@ -89,7 +84,6 @@ export default defineConfig({
             // Pure-logic files handled by the node project
             "src/lib/**/*.test.ts",
             "src/constants/**/*.test.ts",
-            "src/hooks/recording/*.test.ts",
           ],
         },
       },
@@ -107,7 +101,6 @@ export default defineConfig({
             "src/lib/tiptap/upload.test.ts",
             "src/lib/yjs/__tests__/annotation-visibility.test.ts",
             "src/lib/yjs/__tests__/annotations-crud.test.ts",
-            "src/hooks/recording/use-recording-manager.test.ts",
           ],
         },
       },

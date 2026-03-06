@@ -38,7 +38,7 @@ describe("ButtonPane", () => {
       renderButtonPane();
       const pane = screen.getByTestId("menuButton").parentElement!;
       const separators = pane.querySelectorAll('[role="separator"]');
-      expect(separators).toHaveLength(3);
+      expect(separators).toHaveLength(2);
     });
   });
 

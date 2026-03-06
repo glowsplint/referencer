@@ -36,36 +36,5 @@
     "failed": "Save failed.",
     "notConnected": "Not connected — cannot save."
   },
-  "lockHint": "Press <kbd>Esc</kbd> <kbd>K</kbd> to lock the editor once you've finalised the contents.",
-  "recording": {
-    "label": "Recording",
-    "record": "Record",
-    "stopRecording": "Stop recording",
-    "play": "Play",
-    "stop": "Stop",
-    "pause": "Pause",
-    "next": "Next step",
-    "previous": "Previous step",
-    "newRecording": "New recording",
-    "editRecording": "Edit recording",
-    "deleteRecording": "Delete recording",
-    "duplicateRecording": "Duplicate recording",
-    "noRecordings": "No recordings yet",
-    "recording": "Recording...",
-    "stepOf": "{{current}} / {{total}}",
-    "initialState": "Initial state",
-    "speed": "Speed",
-    "transition": "Transition",
-    "instant": "Instant",
-    "fade": "Fade",
-    "untitled": "Untitled Recording",
-    "showLayer": "Show {{name}}",
-    "hideLayer": "Hide {{name}}",
-    "showAnnotation": "Show annotation",
-    "hideAnnotation": "Hide annotation",
-    "showSection": "Show section {{index}}",
-    "hideSection": "Hide section {{index}}",
-    "deletedAnnotationWarning": "Some steps reference deleted annotations",
-    "statusHint": "Recording\u2026 Toggle layer/annotation visibility to capture steps. Press \u25A0 to stop."
-  }
+  "lockHint": "Press <kbd>Esc</kbd> <kbd>K</kbd> to lock the editor once you've finalised the contents."
 }

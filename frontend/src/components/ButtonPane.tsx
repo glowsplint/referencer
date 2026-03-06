@@ -35,7 +35,7 @@ import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { FAQDialog } from "./FAQDialog";
 import { ArrowStylePicker } from "./ArrowStylePicker";
-import { RecordingControls } from "./RecordingControls";
+
 import { useDocument } from "@/contexts/DocumentContext";
 import { useTour } from "@/contexts/TourContext";
 
@@ -353,9 +353,6 @@ export function ButtonPane() {
             </Tooltip>
           </div>
         ))}
-      <div className="w-6 border-t border-border" role="separator" />
-      {/* Recording controls */}
-      <RecordingControls />
       <div className="w-6 border-t border-border" role="separator" />
       {/* Settings group */}
       <Tooltip placement="right">

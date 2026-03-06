@@ -1,11 +1,9 @@
 import { render } from "@testing-library/react";
 import { vi } from "vitest";
 import { DocumentProvider } from "@/contexts/DocumentContext";
-import { RecordingProvider } from "@/contexts/RecordingContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { TourProvider } from "@/contexts/TourContext";
 import type { DocumentContextValue } from "@/contexts/DocumentContext";
-import type { RecordingContextValue } from "@/contexts/RecordingContext";
 
 export function makeMockDocument(
   overrides: Partial<DocumentContextValue> = {},
@@ -122,53 +120,16 @@ export function makeMockDocument(
   } as DocumentContextValue;
 }
 
-export function makeMockRecordingContext(): RecordingContextValue {
-  return {
-    recordings: {
-      recordings: [],
-      isRecording: false,
-      activeRecordingId: null,
-      createRecording: vi.fn(() => ""),
-      deleteRecording: vi.fn(),
-      renameRecording: vi.fn(),
-      duplicateRecording: vi.fn(() => ""),
-      startRecording: vi.fn(),
-      stopRecording: vi.fn(),
-      deleteStep: vi.fn(),
-      reorderSteps: vi.fn(),
-      updateRecordingSettings: vi.fn(),
-    },
-    playback: {
-      isPlaying: false,
-      isAutoPlaying: false,
-      activeRecordingId: null,
-      currentStepIndex: -1,
-      totalSteps: 0,
-      startPlayback: vi.fn(),
-      stopPlayback: vi.fn(),
-      nextStep: vi.fn(),
-      previousStep: vi.fn(),
-      goToStep: vi.fn(),
-      toggleAutoPlay: vi.fn(),
-      currentSnapshot: null,
-      hasWarnings: false,
-    },
-  };
-}
-
 export function renderWithDocument(
   ui: React.ReactElement,
   overrides: Partial<DocumentContextValue> = {},
 ) {
   const docCtx = makeMockDocument(overrides);
-  const recordingContext = makeMockRecordingContext();
   return {
     ...render(
       <AuthProvider>
         <TourProvider>
-          <DocumentProvider value={docCtx}>
-            <RecordingProvider value={recordingContext}>{ui}</RecordingProvider>
-          </DocumentProvider>
+          <DocumentProvider value={docCtx}>{ui}</DocumentProvider>
         </TourProvider>
       </AuthProvider>,
     ),
