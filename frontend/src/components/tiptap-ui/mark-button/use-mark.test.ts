@@ -31,9 +31,9 @@ describe("shouldShowButton", () => {
     );
   });
 
-  it("when editor is not editable, then returns false", () => {
+  it("when editor is not editable, then still returns true (visible but disabled)", () => {
     const editor = createMockEditor({ isEditable: false });
-    expect(shouldShowButton({ editor, type: "bold", hideWhenUnavailable: false })).toBe(false);
+    expect(shouldShowButton({ editor, type: "bold", hideWhenUnavailable: false })).toBe(true);
   });
 
   it("when mark is not in schema, then returns false", () => {
