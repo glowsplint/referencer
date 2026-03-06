@@ -123,7 +123,6 @@ export function ButtonPane() {
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleCommentPlacement,
-    toggleThirdEditorFullWidth,
     loadDemoContent,
     demoLoaded,
   } = useWorkspace();
@@ -443,8 +442,6 @@ export function ButtonPane() {
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}
         toggleShowStatusBar={toggleShowStatusBar}
-        thirdEditorFullWidth={settings.thirdEditorFullWidth}
-        toggleThirdEditorFullWidth={toggleThirdEditorFullWidth}
       />
     </div>
   );

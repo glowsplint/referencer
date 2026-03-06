@@ -500,7 +500,6 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     toggleReactionOnHighlight,
     toggleReactionOnReply,
     toggleCommentPlacement,
-    toggleThirdEditorFullWidth: settingsHook.toggleThirdEditorFullWidth,
     toggleHighlightVisibility,
     toggleArrowVisibility,
     toggleUnderlineVisibility,

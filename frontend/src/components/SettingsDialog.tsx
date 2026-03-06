@@ -47,8 +47,6 @@ interface SettingsDialogProps {
   toggleHideOffscreenArrows: () => void;
   showStatusBar: boolean;
   toggleShowStatusBar: () => void;
-  thirdEditorFullWidth: boolean;
-  toggleThirdEditorFullWidth: () => void;
 }
 
 export function SettingsDialog({
@@ -60,8 +58,6 @@ export function SettingsDialog({
   toggleHideOffscreenArrows,
   showStatusBar,
   toggleShowStatusBar,
-  thirdEditorFullWidth,
-  toggleThirdEditorFullWidth,
 }: SettingsDialogProps) {
   const { t } = useTranslation("dialogs");
 
@@ -86,13 +82,6 @@ export function SettingsDialog({
       description: t("settings.statusBar.description"),
       checked: showStatusBar,
       onCheckedChange: toggleShowStatusBar,
-    },
-    {
-      id: "third-editor-full-width",
-      label: t("settings.thirdEditorFullWidth.label"),
-      description: t("settings.thirdEditorFullWidth.description"),
-      checked: thirdEditorFullWidth,
-      onCheckedChange: toggleThirdEditorFullWidth,
     },
   ];
 

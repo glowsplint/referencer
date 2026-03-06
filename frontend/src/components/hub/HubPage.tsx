@@ -39,13 +39,8 @@ export function HubPage({ navigate }: HubPageProps) {
     toggleFavorite: toggleFolderFavorite,
     moveFolder,
   } = useFolders();
-  const {
-    settings,
-    toggleDarkMode,
-    toggleHideOffscreenArrows,
-    toggleShowStatusBar,
-    toggleThirdEditorFullWidth,
-  } = useSettings();
+  const { settings, toggleDarkMode, toggleHideOffscreenArrows, toggleShowStatusBar } =
+    useSettings();
 
   const [showNewDialog, setShowNewDialog] = useState(false);
   const [newWorkspaceFolderId, setNewWorkspaceFolderId] = useState<string | null>(null);
@@ -160,8 +155,6 @@ export function HubPage({ navigate }: HubPageProps) {
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}
         toggleShowStatusBar={toggleShowStatusBar}
-        thirdEditorFullWidth={settings.thirdEditorFullWidth}
-        toggleThirdEditorFullWidth={toggleThirdEditorFullWidth}
       />
     </div>
   );

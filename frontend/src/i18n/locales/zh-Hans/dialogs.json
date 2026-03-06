@@ -14,10 +14,6 @@
       "label": "状态栏",
       "description": "在工具栏下方显示状态栏"
     },
-    "thirdEditorFullWidth": {
-      "label": "第三编辑器全宽显示",
-      "description": "启用后，第三编辑器将横跨底部整行宽度"
-    },
     "language": {
       "label": "语言",
       "description": "选择您的首选语言"

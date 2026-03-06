@@ -15,7 +15,6 @@ const DEFAULT_SETTINGS: EditorSettings = {
   hideOffscreenArrows: false,
   showStatusBar: true,
   commentPlacement: "right",
-  thirdEditorFullWidth: true,
 };
 
 function loadSettings(): EditorSettings {
@@ -80,8 +79,6 @@ export function useSettings() {
       }),
     [],
   );
-  const toggleThirdEditorFullWidth = useToggle(setSettings, "thirdEditorFullWidth");
-
   const togglePaneLocked = useCallback((index: number) => {
     setSettings((prev) => ({
       ...prev,
@@ -133,7 +130,6 @@ export function useSettings() {
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleCommentPlacement,
-    toggleThirdEditorFullWidth,
     setActiveTool,
   };
 }
