@@ -12,8 +12,8 @@ export function SelectionCheckbox({ checked, visible, onClick }: SelectionCheckb
       tabIndex={-1}
       onClick={onClick}
       data-testid="selectionCheckbox"
-      className={`flex items-center justify-center w-4 h-4 rounded border shrink-0 transition-all duration-150 ${
-        visible ? "opacity-100 scale-100 mr-1.5" : "opacity-0 scale-75 w-0 mr-0 overflow-hidden"
+      className={`flex items-center justify-center w-4 h-4 rounded border shrink-0 transition-all duration-150 mr-1.5 ${
+        visible ? "opacity-100 scale-100" : "opacity-0 scale-75"
       } ${
         checked
           ? "bg-primary border-primary text-primary-foreground"
