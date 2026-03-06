@@ -205,6 +205,7 @@ describe("DocumentGrid", () => {
 
       // Navigate into folder
       await user.dblClick(screen.getByTestId("folderCard-f1"));
+      await screen.findByTestId("folderBreadcrumb");
 
       // Click new document button
       await user.click(screen.getByTestId("newDocumentButton"));
