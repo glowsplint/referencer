@@ -155,9 +155,7 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
           : undefined
       }
     >
-      <div
-        className={`flex items-center gap-1 min-w-0${isLocked ? " opacity-50 pointer-events-none" : ""}`}
-      >
+      <div className={`flex items-center gap-1 min-w-0${isLocked ? " pointer-events-none" : ""}`}>
         {mobileView === "main" ? (
           <MainToolbarContent onLinkClick={() => setMobileView("link")} isMobile={isMobile} />
         ) : (

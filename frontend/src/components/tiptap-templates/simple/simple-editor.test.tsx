@@ -211,11 +211,14 @@ describe("SimpleEditorToolbar", () => {
   });
 
   describe("when locked", () => {
-    it("then dims the formatting controls but not the toolbar itself", () => {
+    it("then disables interaction on formatting controls but keeps them visible", () => {
       render(<SimpleEditorToolbar isLocked={true} />);
       const toolbar = screen.getByTestId("editorToolbar");
       expect(toolbar).toBeInTheDocument();
-      expect(toolbar).not.toHaveClass("opacity-50");
+      // The inner wrapper should block interaction but not use opacity
+      const innerWrapper = toolbar.firstElementChild;
+      expect(innerWrapper).toHaveClass("pointer-events-none");
+      expect(innerWrapper).not.toHaveClass("opacity-50");
     });
 
     it("then shows an unlock icon (action: click to unlock)", () => {
