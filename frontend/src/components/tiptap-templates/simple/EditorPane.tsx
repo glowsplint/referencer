@@ -1,7 +1,7 @@
 // Individual editor pane component. Wraps a Tiptap editor instance with
 // all decoration hooks (highlights, underlines, word hover, selection,
 // arrows) and forwards mouse events for word-level click/drag selection
-// in locked mode. Each pane represents one text in the workspace.
+// in locked mode. Each pane represents one text in the document.
 // When a Yjs fragment is provided, enables real-time collaborative editing.
 "use client";
 

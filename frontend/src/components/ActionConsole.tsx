@@ -1,4 +1,4 @@
-// Dev-facing action console that logs workspace mutations (add/remove layers,
+// Dev-facing action console that logs document mutations (add/remove layers,
 // highlights, arrows, etc.) in a terminal-style panel at the bottom of the screen.
 // Toggled with the backtick key. Useful for debugging annotation state changes.
 import { useRef, useEffect, useCallback } from "react";

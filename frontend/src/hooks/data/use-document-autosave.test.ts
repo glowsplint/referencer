@@ -1,22 +1,22 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useWorkspaceAutosave } from "./use-workspace-autosave";
+import { useDocumentAutosave } from "./use-document-autosave";
 
 vi.mock("@/hooks/data/use-auth", () => ({
   useAuth: vi.fn(),
 }));
 
-vi.mock("@/lib/workspace-client", () => ({
-  createWorkspace: vi.fn(),
-  touchWorkspace: vi.fn(),
+vi.mock("@/lib/document-client", () => ({
+  createDocument: vi.fn(),
+  touchDocument: vi.fn(),
 }));
 
 import { useAuth } from "@/hooks/data/use-auth";
-import { createWorkspace, touchWorkspace } from "@/lib/workspace-client";
+import { createDocument, touchDocument } from "@/lib/document-client";
 
 const mockUseAuth = vi.mocked(useAuth);
-const mockCreate = vi.mocked(createWorkspace);
-const mockTouch = vi.mocked(touchWorkspace);
+const mockCreate = vi.mocked(createDocument);
+const mockTouch = vi.mocked(touchDocument);
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -30,8 +30,8 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe("useWorkspaceAutosave", () => {
-  it("when mounted with authentication, then creates workspace", () => {
+describe("useDocumentAutosave", () => {
+  it("when mounted with authentication, then creates document", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       user: { name: "Test" } as any,
@@ -40,13 +40,13 @@ describe("useWorkspaceAutosave", () => {
       logout: vi.fn(),
     });
 
-    renderHook(() => useWorkspaceAutosave("ws-1"));
+    renderHook(() => useDocumentAutosave("ws-1"));
 
     expect(mockCreate).toHaveBeenCalledWith("ws-1");
     expect(mockCreate).toHaveBeenCalledTimes(1);
   });
 
-  it("when mounted, then touches workspace every 60s", () => {
+  it("when mounted, then touches document every 60s", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       user: { name: "Test" } as any,
@@ -55,7 +55,7 @@ describe("useWorkspaceAutosave", () => {
       logout: vi.fn(),
     });
 
-    renderHook(() => useWorkspaceAutosave("ws-1"));
+    renderHook(() => useDocumentAutosave("ws-1"));
 
     expect(mockTouch).not.toHaveBeenCalled();
 
@@ -76,7 +76,7 @@ describe("useWorkspaceAutosave", () => {
       logout: vi.fn(),
     });
 
-    renderHook(() => useWorkspaceAutosave("ws-1"));
+    renderHook(() => useDocumentAutosave("ws-1"));
 
     expect(mockCreate).not.toHaveBeenCalled();
 
@@ -93,7 +93,7 @@ describe("useWorkspaceAutosave", () => {
       logout: vi.fn(),
     });
 
-    const { unmount } = renderHook(() => useWorkspaceAutosave("ws-1"));
+    const { unmount } = renderHook(() => useDocumentAutosave("ws-1"));
 
     unmount();
 

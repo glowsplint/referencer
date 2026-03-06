@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { setupWorkspace } from "./helpers";
+import { setupDocument } from "./helpers";
 
 let initialArrowCount = 0;
 let initialEndpointCount = 0;
 
 test.beforeEach(async ({ page }) => {
-  await setupWorkspace(page);
+  await setupDocument(page);
 
   // Hide default layers so their arrows/highlights don't interfere with tests
   for (let i = 0; i < 4; i++) {

@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Configuración",
-    "description": "Personaliza las preferencias de tu espacio de trabajo.",
+    "description": "Personaliza las preferencias de tu documento.",
     "darkMode": {
       "label": "Modo oscuro",
       "description": "Alternar entre temas claro y oscuro"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "¿Qué es esta aplicación?",
-        "answer": "Referencer es una herramienta colaborativa para el estudio inductivo de la Biblia. Ofrece a los grupos de estudio un espacio de trabajo compartido donde pueden leer, anotar y discutir las Escrituras juntos en tiempo real."
+        "answer": "Referencer es una herramienta colaborativa para el estudio inductivo de la Biblia. Ofrece a los grupos de estudio un documento compartido donde pueden leer, anotar y discutir las Escrituras juntos en tiempo real."
       },
       "inductiveStudy": {
         "question": "¿Qué es el estudio inductivo de la Biblia?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "¿Cómo funciona la colaboración?",
-        "answer": "Cada espacio de trabajo se puede compartir con otros mediante un enlace. Todos los participantes ven el mismo texto y pueden añadir sus propias anotaciones. Los cambios se sincronizan en tiempo real para que todos estén en la misma página."
+        "answer": "Cada documento se puede compartir con otros mediante un enlace. Todos los participantes ven el mismo texto y pueden añadir sus propias anotaciones. Los cambios se sincronizan en tiempo real para que todos estén en la misma página."
       },
       "layers": {
         "question": "¿Qué son las capas?",
@@ -44,8 +44,8 @@
         "answer": "Las flechas conectan dos anotaciones para mostrar una relación entre pasajes — por ejemplo, vincular una palabra repetida con su primera aparición, o conectar una profecía con su cumplimiento. Selecciona la herramienta de flecha (o presiona A), luego haz clic en dos anotaciones para dibujar un conector."
       },
       "sharing": {
-        "question": "¿Cómo comparto un espacio de trabajo?",
-        "answer": "Abre el panel de gestión (presiona M o haz clic en el icono del menú) y usa las opciones de compartir para generar un enlace. Cualquier persona con el enlace puede unirse al espacio de trabajo y colaborar."
+        "question": "¿Cómo comparto un documento?",
+        "answer": "Abre el panel de gestión (presiona M o haz clic en el icono del menú) y usa las opciones de compartir para generar un enlace. Cualquier persona con el enlace puede unirse al documento y colaborar."
       },
       "mobile": {
         "question": "¿Puedo usar esto en el móvil?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Atajos de teclado",
-    "description": "Atajos de teclado disponibles para el espacio de trabajo.",
-    "workspace": "Espacio de trabajo",
+    "description": "Atajos de teclado disponibles para el documento.",
+    "document": "Documento",
     "cycleNextLayer": "Cambiar a la siguiente capa",
     "cyclePrevLayer": "Cambiar a la capa anterior",
     "selectionTool": "Herramienta de selección",
@@ -81,8 +81,8 @@
     "subscript": "Subíndice",
     "colorHighlight": "Resaltado de color",
     "general": "General",
-    "undo": "Deshacer (espacio de trabajo cuando está bloqueado)",
-    "redo": "Rehacer (espacio de trabajo cuando está bloqueado)",
+    "undo": "Deshacer (documento cuando está bloqueado)",
+    "redo": "Rehacer (documento cuando está bloqueado)",
     "headings": "Encabezados",
     "heading": "Encabezado {{level}}",
     "listsAndBlocks": "Listas y bloques",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Buscar anotaciones"
   },
   "share": {
-    "title": "Compartir espacio de trabajo",
-    "description": "Copia un enlace para compartir este espacio de trabajo.",
+    "title": "Compartir documento",
+    "description": "Copia un enlace para compartir este documento.",
     "readonlyLink": "Enlace de solo lectura",
     "editLink": "Enlace de edición",
     "linkCopied": "Enlace copiado al portapapeles.",

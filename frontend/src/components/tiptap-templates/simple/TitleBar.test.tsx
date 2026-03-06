@@ -2,10 +2,10 @@ import { screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TitleBar } from "./TitleBar";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 
-const mockWorkspaces = {
-  workspaces: [] as any[],
+const mockDocuments = {
+  documents: [] as any[],
   isLoading: false,
   error: null,
   refetch: vi.fn(),
@@ -15,11 +15,11 @@ const mockWorkspaces = {
   duplicate: vi.fn(),
   toggleFavorite: vi.fn(),
   moveToFolder: vi.fn(),
-  unfileWorkspace: vi.fn(),
+  unfileDocument: vi.fn(),
 };
 
-vi.mock("@/hooks/data/use-workspaces", () => ({
-  useWorkspaces: () => mockWorkspaces,
+vi.mock("@/hooks/data/use-documents", () => ({
+  useDocuments: () => mockDocuments,
 }));
 
 const mockAuth = {
@@ -40,12 +40,12 @@ vi.mock("@/hooks/data/use-auth", () => ({
 }));
 
 function renderTitleBar(overrides = {}) {
-  return renderWithWorkspace(<TitleBar />, overrides);
+  return renderWithDocument(<TitleBar />, overrides);
 }
 
 describe("TitleBar", () => {
   beforeEach(() => {
-    mockWorkspaces.workspaces = [];
+    mockDocuments.documents = [];
     mockAuth.isAuthenticated = false;
     mockAuth.user = null;
   });
@@ -103,15 +103,15 @@ describe("TitleBar", () => {
     });
   });
 
-  describe("workspace switcher", () => {
+  describe("document switcher", () => {
     it("shows home button when navigate is provided but user is not authenticated", () => {
       const navigate = vi.fn();
-      renderWithWorkspace(<TitleBar navigate={navigate} />);
+      renderWithDocument(<TitleBar navigate={navigate} />);
       expect(screen.getByTestId("homeButton")).toBeInTheDocument();
-      expect(screen.queryByTestId("workspaceSwitcher")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("documentSwitcher")).not.toBeInTheDocument();
     });
 
-    it("shows workspace switcher when authenticated with workspaces", () => {
+    it("shows document switcher when authenticated with documents", () => {
       mockAuth.isAuthenticated = true;
       mockAuth.user = {
         id: "1",
@@ -119,18 +119,18 @@ describe("TitleBar", () => {
         name: "Test User",
         avatarUrl: "",
       };
-      mockWorkspaces.workspaces = [
+      mockDocuments.documents = [
         {
-          workspaceId: "ws-1",
-          title: "Workspace 1",
+          documentId: "ws-1",
+          title: "Document 1",
           createdAt: "2026-01-01",
           updatedAt: "2026-01-01",
           isFavorite: false,
           folderId: null,
         },
         {
-          workspaceId: "ws-2",
-          title: "Workspace 2",
+          documentId: "ws-2",
+          title: "Document 2",
           createdAt: "2026-01-02",
           updatedAt: "2026-01-02",
           isFavorite: false,
@@ -139,12 +139,12 @@ describe("TitleBar", () => {
       ];
 
       const navigate = vi.fn();
-      renderWithWorkspace(<TitleBar navigate={navigate} />);
-      expect(screen.getByTestId("workspaceSwitcher")).toBeInTheDocument();
+      renderWithDocument(<TitleBar navigate={navigate} />);
+      expect(screen.getByTestId("documentSwitcher")).toBeInTheDocument();
       expect(screen.queryByTestId("homeButton")).not.toBeInTheDocument();
     });
 
-    it("shows home button when authenticated but no workspaces exist", () => {
+    it("shows home button when authenticated but no documents exist", () => {
       mockAuth.isAuthenticated = true;
       mockAuth.user = {
         id: "1",
@@ -152,20 +152,20 @@ describe("TitleBar", () => {
         name: "Test User",
         avatarUrl: "",
       };
-      mockWorkspaces.workspaces = [];
+      mockDocuments.documents = [];
 
       const navigate = vi.fn();
-      renderWithWorkspace(<TitleBar navigate={navigate} />);
+      renderWithDocument(<TitleBar navigate={navigate} />);
       expect(screen.getByTestId("homeButton")).toBeInTheDocument();
-      expect(screen.queryByTestId("workspaceSwitcher")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("documentSwitcher")).not.toBeInTheDocument();
     });
 
     it("does not show switcher or home button when navigate is not provided", () => {
       mockAuth.isAuthenticated = true;
-      mockWorkspaces.workspaces = [
+      mockDocuments.documents = [
         {
-          workspaceId: "ws-1",
-          title: "Workspace 1",
+          documentId: "ws-1",
+          title: "Document 1",
           createdAt: "2026-01-01",
           updatedAt: "2026-01-01",
           isFavorite: false,
@@ -175,7 +175,7 @@ describe("TitleBar", () => {
 
       renderTitleBar();
       expect(screen.queryByTestId("homeButton")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("workspaceSwitcher")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("documentSwitcher")).not.toBeInTheDocument();
     });
   });
 

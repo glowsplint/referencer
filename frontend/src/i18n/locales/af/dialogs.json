@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Instellings",
-    "description": "Pas jou werkspasie-voorkeure aan.",
+    "description": "Pas jou dokument-voorkeure aan.",
     "darkMode": {
       "label": "Donker modus",
       "description": "Wissel tussen lig en donker temas"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Wat is hierdie toep?",
-        "answer": "Referencer is 'n samewerkingsinstrument vir induktiewe Bybelstudie. Dit bied studiegroepe 'n gedeelde werkspasie waar hulle die Skrif saam intyds kan lees, annoteer en bespreek."
+        "answer": "Referencer is 'n samewerkingsinstrument vir induktiewe Bybelstudie. Dit bied studiegroepe 'n gedeelde dokument waar hulle die Skrif saam intyds kan lees, annoteer en bespreek."
       },
       "inductiveStudy": {
         "question": "Wat is induktiewe Bybelstudie?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Hoe werk samewerking?",
-        "answer": "Elke werkspasie kan via 'n skakel met ander gedeel word. Alle deelnemers sien dieselfde teks en kan hul eie aantekeninge byvoeg. Veranderinge sinkroniseer intyds sodat almal op dieselfde bladsy bly."
+        "answer": "Elke dokument kan via 'n skakel met ander gedeel word. Alle deelnemers sien dieselfde teks en kan hul eie aantekeninge byvoeg. Veranderinge sinkroniseer intyds sodat almal op dieselfde bladsy bly."
       },
       "layers": {
         "question": "Wat is lae?",
@@ -44,8 +44,8 @@
         "answer": "Pyltjies verbind twee aantekeninge om 'n verhouding tussen gedeeltes te wys — byvoorbeeld om 'n herhaalde woord aan sy eerste voorkoms te koppel, of 'n profesie aan sy vervulling te verbind. Kies die pyltjie-instrument (of druk A), klik dan op twee aantekeninge om 'n verbinding te teken."
       },
       "sharing": {
-        "question": "Hoe deel ek 'n werkspasie?",
-        "answer": "Maak die bestuurspaneel oop (druk M of klik op die kieslys-ikoon) en gebruik die deelopsies om 'n skakel te genereer. Enigiemand met die skakel kan by die werkspasie aansluit en saamwerk."
+        "question": "Hoe deel ek 'n dokument?",
+        "answer": "Maak die bestuurspaneel oop (druk M of klik op die kieslys-ikoon) en gebruik die deelopsies om 'n skakel te genereer. Enigiemand met die skakel kan by die dokument aansluit en saamwerk."
       },
       "mobile": {
         "question": "Kan ek dit op 'n selfoon gebruik?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Sleutelbordkortpaaie",
-    "description": "Beskikbare sleutelbordkortpaaie vir die werkspasie.",
-    "workspace": "Werkspasie",
+    "description": "Beskikbare sleutelbordkortpaaie vir die dokument.",
+    "document": "Dokument",
     "cycleNextLayer": "Wissel na volgende laag",
     "cyclePrevLayer": "Wissel na vorige laag",
     "selectionTool": "Seleksie-instrument",
@@ -81,8 +81,8 @@
     "subscript": "Subskrif",
     "colorHighlight": "Kleuruitligting",
     "general": "Algemeen",
-    "undo": "Ontdoen (werkspasie wanneer gesluit)",
-    "redo": "Herdoen (werkspasie wanneer gesluit)",
+    "undo": "Ontdoen (dokument wanneer gesluit)",
+    "redo": "Herdoen (dokument wanneer gesluit)",
     "headings": "Opskrifte",
     "heading": "Opskrif {{level}}",
     "listsAndBlocks": "Lyste & blokke",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Soek aantekeninge"
   },
   "share": {
-    "title": "Deel werkspasie",
-    "description": "Kopieer 'n skakel om hierdie werkspasie te deel.",
+    "title": "Deel dokument",
+    "description": "Kopieer 'n skakel om hierdie dokument te deel.",
     "readonlyLink": "Leesalleen-skakel",
     "editLink": "Redigeerskakel",
     "linkCopied": "Skakel na knipbord gekopieer.",

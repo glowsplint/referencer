@@ -28,8 +28,8 @@
 ## Sprint 3 — Medium Security Fixes
 
 - [x] **S5** Rate limiter: replaced KV with in-memory Map (per-isolate, no external deps)
-- [x] **S6** Workspace cascade delete: owner delete removes workspace + share links + Yjs docs
-- [x] **S7** Rate limit CRUD endpoints (60 req/min per user on workspaces + folders)
+- [x] **S6** Document cascade delete: owner delete removes document + share links + Yjs docs
+- [x] **S7** Rate limit CRUD endpoints (60 req/min per user on documents + folders)
 - [x] **S9** Least privilege: documented restricted Supabase role recommendation
 - [x] **S10** Periodic WS permission re-validation in Durable Object (5-min alarm)
 
@@ -46,7 +46,7 @@
 
 - [x] **U15** Resizable annotation panel (drag divider, 160–400px range, localStorage persist)
 - [x] **U18** Share link UX: full URL display + revoke confirm dialog + expiry dropdown
-- [x] **U19** Workspace switcher dropdown in TitleBar (authenticated users only)
+- [x] **U19** Document switcher dropdown in TitleBar (authenticated users only)
 - [x] **U22** Mobile read-only annotation panel (bottom drawer with FAB toggle)
 
 ## Verification Log

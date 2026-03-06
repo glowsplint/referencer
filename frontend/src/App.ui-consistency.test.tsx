@@ -19,7 +19,7 @@ vi.mock("./hooks/ui/use-is-breakpoint", () => ({
   useIsBreakpoint: () => false,
 }));
 
-const mockWorkspace = {
+const mockDocument = {
   settings: {
     isDarkMode: false,
     isLayersOn: false,
@@ -29,7 +29,7 @@ const mockWorkspace = {
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   },
-  isPaneLocked: (i: number) => mockWorkspace.settings.lockedPanes[i] ?? true,
+  isPaneLocked: (i: number) => mockDocument.settings.lockedPanes[i] ?? true,
   isAnyPaneLocked: true,
   activeEditorIndex: 0,
   annotations: { activeTool: "selection" as const },
@@ -134,7 +134,7 @@ const mockWorkspace = {
     record: vi.fn(),
   },
   wsConnected: false,
-  workspaceId: "test-workspace",
+  documentId: "test-document",
   yjs: {
     provider: null,
     doc: null,
@@ -151,12 +151,12 @@ const mockWorkspace = {
   },
 };
 
-vi.mock("./hooks/data/use-editor-workspace", () => ({
-  useEditorWorkspace: () => mockWorkspace,
+vi.mock("./hooks/data/use-editor-document", () => ({
+  useEditorDocument: () => mockDocument,
 }));
 
-vi.mock("./hooks/data/use-workspace-autosave", () => ({
-  useWorkspaceAutosave: vi.fn(),
+vi.mock("./hooks/data/use-document-autosave", () => ({
+  useDocumentAutosave: vi.fn(),
 }));
 
 vi.mock("./components/UnsavedBanner", () => ({
@@ -198,7 +198,7 @@ vi.mock("./components/AnnotationPanel", () => ({
 }));
 
 const defaultProps = {
-  workspaceId: "test-workspace",
+  documentId: "test-document",
   navigate: vi.fn(),
 };
 
@@ -266,7 +266,7 @@ function makeArrow(id: string, sourceEditor: number, targetEditor: number) {
 }
 
 beforeEach(() => {
-  mockWorkspace.settings = {
+  mockDocument.settings = {
     isDarkMode: false,
     isLayersOn: false,
     isMultipleRowsLayout: false,
@@ -275,23 +275,23 @@ beforeEach(() => {
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   };
-  mockWorkspace.isAnyPaneLocked = true;
-  mockWorkspace.layers = [];
-  mockWorkspace.activeLayerId = null;
-  mockWorkspace.editorCount = 2;
-  mockWorkspace.editorWidths = [50, 50];
-  mockWorkspace.editorKeys = [1, 2];
-  mockWorkspace.sectionVisibility = [true, true];
-  mockWorkspace.sectionNames = ["Text 1", "Text 2"];
-  mockWorkspace.isManagementPaneOpen = false;
-  mockWorkspace.annotations = { activeTool: "selection" as const };
-  mockWorkspace.selectedArrow = null;
-  mockWorkspace.demoLoading = false;
+  mockDocument.isAnyPaneLocked = true;
+  mockDocument.layers = [];
+  mockDocument.activeLayerId = null;
+  mockDocument.editorCount = 2;
+  mockDocument.editorWidths = [50, 50];
+  mockDocument.editorKeys = [1, 2];
+  mockDocument.sectionVisibility = [true, true];
+  mockDocument.sectionNames = ["Text 1", "Text 2"];
+  mockDocument.isManagementPaneOpen = false;
+  mockDocument.annotations = { activeTool: "selection" as const };
+  mockDocument.selectedArrow = null;
+  mockDocument.demoLoading = false;
 });
 
 describe("App UI consistency (layer hidden)", () => {
   it("when layer is hidden, then annotation panel is removed", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: false,
         highlights: [makeComment("h1", 0, "Highlight test")],
@@ -302,7 +302,7 @@ describe("App UI consistency (layer hidden)", () => {
   });
 
   it("when layer is visible with comments, then annotation panel is present", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 0, "Highlight test")],
@@ -313,7 +313,7 @@ describe("App UI consistency (layer hidden)", () => {
   });
 
   it("when layer with arrows is hidden, then layers are still passed to panes (filtering internal)", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: false,
         arrows: [makeArrow("a1", 0, 0)],
@@ -330,25 +330,25 @@ describe("App UI consistency (layer hidden)", () => {
 
 describe("App UI consistency (text hidden)", () => {
   it("when text is hidden and only annotation is in that text, then annotation panel is removed", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 0, "Text gone note")],
       }),
     ];
-    mockWorkspace.sectionVisibility = [false, true];
+    mockDocument.sectionVisibility = [false, true];
     renderApp();
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
   });
 
   it("when destination text is hidden, then cross-editor arrow data still passed (filtering internal)", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         arrows: [makeArrow("a1", 0, 1)],
       }),
     ];
-    mockWorkspace.sectionVisibility = [true, false];
+    mockDocument.sectionVisibility = [true, false];
     renderApp();
     // ArrowOverlay handles filtering by sectionVisibility internally
     const panes = screen.getAllByTestId("editor-pane");
@@ -356,7 +356,7 @@ describe("App UI consistency (text hidden)", () => {
   });
 
   it("when text is shown again, then annotation panel reappears", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 1, "P2 note")],
@@ -364,13 +364,13 @@ describe("App UI consistency (text hidden)", () => {
     ];
 
     // First hidden
-    mockWorkspace.sectionVisibility = [true, false];
+    mockDocument.sectionVisibility = [true, false];
     const { unmount } = renderApp();
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     unmount();
 
     // Then visible
-    mockWorkspace.sectionVisibility = [true, true];
+    mockDocument.sectionVisibility = [true, true];
     renderApp();
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
   });
@@ -379,7 +379,7 @@ describe("App UI consistency (text hidden)", () => {
 describe("App UI consistency (toggling visibility with arrows, highlights, and annotations)", () => {
   it("when layer is toggled, then annotation panel appears and disappears", () => {
     // Visible: annotation panel present
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 0, "Synced note")],
@@ -391,7 +391,7 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
     unmount();
 
     // Hidden: annotation panel gone
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: false,
         highlights: [makeComment("h1", 0, "Synced note")],
@@ -403,7 +403,7 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
     unmount2();
 
     // Shown again: annotation panel reappears
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 0, "Synced note")],
@@ -415,7 +415,7 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
   });
 
   it("when layer 1 is hidden, then layer 2 elements are unaffected", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: false,
         highlights: [makeComment("h1", 0, "L1 note")],
@@ -439,7 +439,7 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
 
   it("when layer visibility is toggled multiple times (ends visible), then annotations show", () => {
     // After 6 toggles (even number) => ends visible
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 0, "Rapid test")],
@@ -452,7 +452,7 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
 
   it("when layer visibility is toggled multiple times (ends hidden), then annotations disappear", () => {
     // After 5 toggles (odd number) => ends hidden
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: false,
         highlights: [makeComment("h1", 0, "Rapid test")],
@@ -465,25 +465,25 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
 
   it("when text visibility is toggled multiple times (ends hidden), then annotations disappear", () => {
     // After 5 toggles of text (odd number) => ends hidden
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 0, "Rapid text test")],
       }),
     ];
-    mockWorkspace.sectionVisibility = [false, true];
+    mockDocument.sectionVisibility = [false, true];
     renderApp();
     expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
   });
 
   it("when text visibility is toggled back to visible, then annotations reappear", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 0, "Rapid text test")],
       }),
     ];
-    mockWorkspace.sectionVisibility = [true, true];
+    mockDocument.sectionVisibility = [true, true];
     renderApp();
     expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
   });
@@ -491,7 +491,7 @@ describe("App UI consistency (toggling visibility with arrows, highlights, and a
 
 describe("App UI consistency (all elements hidden)", () => {
   it("when all layers are hidden, then no annotation panel is visible", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: false,
         highlights: [makeComment("h1", 0, "Will hide")],
@@ -503,7 +503,7 @@ describe("App UI consistency (all elements hidden)", () => {
   });
 
   it("when all layers are hidden, then layers are still passed to panes for arrow overlay", () => {
-    mockWorkspace.layers = [
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: false,
         arrows: [makeArrow("a1", 0, 0)],
@@ -518,9 +518,9 @@ describe("App UI consistency (all elements hidden)", () => {
   });
 
   it("when unlocked, then annotation panel is never shown regardless of layers", () => {
-    mockWorkspace.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
-    mockWorkspace.isAnyPaneLocked = false;
-    mockWorkspace.layers = [
+    mockDocument.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
+    mockDocument.isAnyPaneLocked = false;
+    mockDocument.layers = [
       makeLayer("layer-1", "Layer 1", {
         visible: true,
         highlights: [makeComment("h1", 0, "note")],

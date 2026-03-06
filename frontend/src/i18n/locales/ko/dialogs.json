@@ -56,7 +56,7 @@
   "shortcuts": {
     "title": "키보드 단축키",
     "description": "작업 공간에서 사용할 수 있는 키보드 단축키입니다.",
-    "workspace": "작업 공간",
+    "document": "작업 공간",
     "cycleNextLayer": "다음 레이어로 전환",
     "cyclePrevLayer": "이전 레이어로 전환",
     "selectionTool": "선택 도구",

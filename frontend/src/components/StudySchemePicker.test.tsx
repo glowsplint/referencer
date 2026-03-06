@@ -2,12 +2,12 @@ import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { StudySchemePicker } from "./StudySchemePicker";
 import { STUDY_SCHEMES } from "@/constants/study-schemes";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 
 function renderPicker(overrides = {}, pickerProps: { open?: boolean } = {}) {
   const onOpenChange = vi.fn();
   const onBlankLayer = vi.fn();
-  const result = renderWithWorkspace(
+  const result = renderWithDocument(
     <StudySchemePicker
       open={pickerProps.open ?? true}
       onOpenChange={onOpenChange}
@@ -53,20 +53,20 @@ describe("StudySchemePicker", () => {
 
   describe("when a scheme is clicked", () => {
     it("calls addLayer for each layer in the scheme", () => {
-      const { workspace, onOpenChange } = renderPicker();
+      const { document, onOpenChange } = renderPicker();
       fireEvent.click(screen.getByTestId("scheme-inductive"));
 
       const inductiveScheme = STUDY_SCHEMES.find((s) => s.id === "inductive")!;
-      expect(workspace.addLayer).toHaveBeenCalledTimes(inductiveScheme.layers.length);
+      expect(document.addLayer).toHaveBeenCalledTimes(inductiveScheme.layers.length);
 
       // Verify first and last layer names/colors
-      expect(workspace.addLayer).toHaveBeenCalledWith(
+      expect(document.addLayer).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "Key Terms & Repeated Words",
           color: "#fcd34d",
         }),
       );
-      expect(workspace.addLayer).toHaveBeenCalledWith(
+      expect(document.addLayer).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "Questions & Application",
           color: "#f9a8d4",
@@ -77,25 +77,25 @@ describe("StudySchemePicker", () => {
     });
 
     it("calls addLayer for character study scheme", () => {
-      const { workspace } = renderPicker();
+      const { document } = renderPicker();
       fireEvent.click(screen.getByTestId("scheme-character"));
-      expect(workspace.addLayer).toHaveBeenCalledTimes(4);
-      expect(workspace.addLayer).toHaveBeenCalledWith(
+      expect(document.addLayer).toHaveBeenCalledTimes(4);
+      expect(document.addLayer).toHaveBeenCalledWith(
         expect.objectContaining({ name: "God / Christ", color: "#93c5fd" }),
       );
     });
 
     it("calls addLayer for OIA scheme", () => {
-      const { workspace } = renderPicker();
+      const { document } = renderPicker();
       fireEvent.click(screen.getByTestId("scheme-oia"));
-      expect(workspace.addLayer).toHaveBeenCalledTimes(3);
-      expect(workspace.addLayer).toHaveBeenCalledWith(
+      expect(document.addLayer).toHaveBeenCalledTimes(3);
+      expect(document.addLayer).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Observation", color: "#fcd34d" }),
       );
-      expect(workspace.addLayer).toHaveBeenCalledWith(
+      expect(document.addLayer).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Interpretation", color: "#93c5fd" }),
       );
-      expect(workspace.addLayer).toHaveBeenCalledWith(
+      expect(document.addLayer).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Application", color: "#86efac" }),
       );
     });

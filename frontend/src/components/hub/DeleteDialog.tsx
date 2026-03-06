@@ -12,20 +12,20 @@ import { Button } from "@/components/ui/button";
 interface DeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  workspaceTitle: string;
+  documentTitle: string;
   onDelete: () => void;
 }
 
-export function DeleteDialog({ open, onOpenChange, workspaceTitle, onDelete }: DeleteDialogProps) {
+export function DeleteDialog({ open, onOpenChange, documentTitle, onDelete }: DeleteDialogProps) {
   const { t } = useTranslation("management");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm" data-testid="deleteDialog">
         <DialogHeader>
-          <DialogTitle>{t("hub.deleteWorkspaceTitle")}</DialogTitle>
+          <DialogTitle>{t("hub.deleteDocumentTitle")}</DialogTitle>
           <DialogDescription>
-            {t("hub.deleteWorkspaceConfirm", { title: workspaceTitle })}
+            {t("hub.deleteDocumentConfirm", { title: documentTitle })}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

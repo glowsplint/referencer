@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Mga Setting",
-    "description": "I-customize ang iyong mga kagustuhan sa workspace.",
+    "description": "I-customize ang iyong mga kagustuhan sa document.",
     "darkMode": {
       "label": "Dark mode",
       "description": "Magpalipat-lipat sa pagitan ng maliwanag at madilim na tema"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Ano ang app na ito?",
-        "answer": "Ang Referencer ay isang kasangkapang pang-kolaborasyon para sa induktibong pag-aaral ng Bibliya. Nagbibigay ito sa mga grupo ng pag-aaral ng isang shared na workspace kung saan maaari nilang basahin, i-annotate, at talakayin ang Kasulatan nang magkasama sa real time."
+        "answer": "Ang Referencer ay isang kasangkapang pang-kolaborasyon para sa induktibong pag-aaral ng Bibliya. Nagbibigay ito sa mga grupo ng pag-aaral ng isang shared na document kung saan maaari nilang basahin, i-annotate, at talakayin ang Kasulatan nang magkasama sa real time."
       },
       "inductiveStudy": {
         "question": "Ano ang induktibong pag-aaral ng Bibliya?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Paano gumagana ang kolaborasyon?",
-        "answer": "Ang bawat workspace ay maaaring ibahagi sa iba sa pamamagitan ng isang link. Lahat ng kalahok ay makikita ang parehong teksto at maaaring magdagdag ng kanilang sariling mga anotasyon. Ang mga pagbabago ay nag-sync sa real time upang lahat ay magkakasabay."
+        "answer": "Ang bawat document ay maaaring ibahagi sa iba sa pamamagitan ng isang link. Lahat ng kalahok ay makikita ang parehong teksto at maaaring magdagdag ng kanilang sariling mga anotasyon. Ang mga pagbabago ay nag-sync sa real time upang lahat ay magkakasabay."
       },
       "layers": {
         "question": "Ano ang mga layer?",
@@ -44,8 +44,8 @@
         "answer": "Ang mga palaso ay nag-uugnay ng dalawang anotasyon upang ipakita ang relasyon sa pagitan ng mga sipi — halimbawa, pag-uugnay ng isang paulit-ulit na salita sa unang paglitaw nito, o pag-uugnay ng isang propesiya sa katuparan nito. Piliin ang kasangkapang palaso (o pindutin ang A), pagkatapos ay mag-click sa dalawang anotasyon upang gumuhit ng connector."
       },
       "sharing": {
-        "question": "Paano ko ibabahagi ang isang workspace?",
-        "answer": "Buksan ang management pane (pindutin ang M o i-click ang menu icon) at gamitin ang mga opsyon sa pagbabahagi upang makagawa ng link. Sinumang may link ay maaaring sumali sa workspace at mag-collaborate."
+        "question": "Paano ko ibabahagi ang isang document?",
+        "answer": "Buksan ang management pane (pindutin ang M o i-click ang menu icon) at gamitin ang mga opsyon sa pagbabahagi upang makagawa ng link. Sinumang may link ay maaaring sumali sa document at mag-collaborate."
       },
       "mobile": {
         "question": "Maaari ko ba itong gamitin sa mobile?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Mga Keyboard Shortcut",
-    "description": "Mga available na keyboard shortcut para sa workspace.",
-    "workspace": "Workspace",
+    "description": "Mga available na keyboard shortcut para sa document.",
+    "document": "Document",
     "cycleNextLayer": "Lumipat sa susunod na layer",
     "cyclePrevLayer": "Lumipat sa nakaraang layer",
     "selectionTool": "Kasangkapang pampili",
@@ -81,8 +81,8 @@
     "subscript": "Subscript",
     "colorHighlight": "Color highlight",
     "general": "Pangkalahatan",
-    "undo": "I-undo (workspace kapag naka-lock)",
-    "redo": "I-redo (workspace kapag naka-lock)",
+    "undo": "I-undo (document kapag naka-lock)",
+    "redo": "I-redo (document kapag naka-lock)",
     "headings": "Mga Heading",
     "heading": "Heading {{level}}",
     "listsAndBlocks": "Mga Listahan at Block",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Maghanap ng anotasyon"
   },
   "share": {
-    "title": "Ibahagi ang workspace",
-    "description": "Kopyahin ang link upang ibahagi ang workspace na ito.",
+    "title": "Ibahagi ang document",
+    "description": "Kopyahin ang link upang ibahagi ang document na ito.",
     "readonlyLink": "Link na pang-basa lamang",
     "editLink": "Link na pang-edit",
     "linkCopied": "Nakopya ang link sa clipboard.",

@@ -18,9 +18,9 @@ export function ShareAcceptPage({ code, navigate }: ShareAcceptPageProps) {
     if (authLoading || !isAuthenticated || accepting) return;
 
     setAccepting(true);
-    apiPost<{ workspaceId: string }>("/api/share/accept", { code })
+    apiPost<{ documentId: string }>("/api/share/accept", { code })
       .then((res) => {
-        navigate(`#/${res.workspaceId}`);
+        navigate(`#/${res.documentId}`);
       })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 404) {

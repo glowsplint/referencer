@@ -1,5 +1,5 @@
 // Yjs document and WebSocket provider management.
-// Creates a Y.Doc per workspace with named XmlFragments for each editor pane.
+// Creates a Y.Doc per document with named XmlFragments for each editor pane.
 // Connects to the collab server via y-websocket's WebsocketProvider.
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
@@ -8,7 +8,7 @@ const WS_URL =
   import.meta.env.VITE_COLLAB_WS_URL ??
   `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/yjs`;
 
-export interface WorkspaceProvider {
+export interface DocumentProvider {
   doc: Y.Doc;
   wsProvider: WebsocketProvider;
   /** Get or create the XmlFragment for editor pane `index` */
@@ -19,16 +19,16 @@ export interface WorkspaceProvider {
 }
 
 /**
- * Create a Yjs workspace provider for the given workspace ID.
+ * Create a Yjs document provider for the given document ID.
  * The Y.Doc contains:
  *   - XmlFragment("editor-0"), XmlFragment("editor-1"), ... for text content
  *   - Array("layers") for annotation layers (Phase 2)
  *   - Map("editors-meta") for editor metadata (Phase 2)
  */
-export function createWorkspaceProvider(workspaceId: string, token?: string): WorkspaceProvider {
+export function createDocumentProvider(documentId: string, token?: string): DocumentProvider {
   const doc = new Y.Doc();
 
-  const wsProvider = new WebsocketProvider(WS_URL, workspaceId, doc, {
+  const wsProvider = new WebsocketProvider(WS_URL, documentId, doc, {
     connect: true,
     params: token ? { token } : {},
   });

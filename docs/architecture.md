@@ -5,7 +5,7 @@
 Referencer is composed of three independently-deployed Cloudflare services:
 
 1. **Frontend** -- React 19 SPA deployed to Cloudflare Pages with a Functions middleware proxy.
-2. **Backend** -- Cloudflare Worker (Hono) handling REST API, OAuth2 auth, share links, workspaces, folders, and preferences.
+2. **Backend** -- Cloudflare Worker (Hono) handling REST API, OAuth2 auth, share links, documents, folders, and preferences.
 3. **Collab server** -- Cloudflare Worker with Durable Objects providing Yjs CRDT synchronization with DO storage + Supabase persistence.
 
 ```
@@ -82,9 +82,9 @@ Route gating is defined in `frontend/public/_routes.json`:
 
 ### State Management
 
-`WorkspaceContext` is the central React context, wrapping the return value of `useEditorWorkspace`. This hook composes:
+`DocumentContext` is the central React context, wrapping the return value of `useEditorDocument`. This hook composes:
 
-- **`useYjs`** -- Y.Doc and WebsocketProvider per workspace
+- **`useYjs`** -- Y.Doc and WebsocketProvider per document
 - **`useYjsLayers`** -- CRDT-backed layer/annotation state (reads from Y.Doc, writes mutations to Y.Doc)
 - **`useYjsUndo`** -- Y.UndoManager for collaborative undo/redo
 - **`useYjsOffline`** -- IndexedDB persistence for offline support
@@ -121,7 +121,7 @@ Custom ProseMirror plugins in `lib/tiptap/extensions/`:
 The backend is a **Cloudflare Worker** (`referencer-api`) using Hono. It serves three roles:
 
 1. **OAuth2 authentication** -- Google, GitHub via Arctic library. BFF pattern: tokens never reach the frontend.
-2. **REST API** -- share links, workspaces, folders, preferences, feedback.
+2. **REST API** -- share links, documents, folders, preferences, feedback.
 3. **Scheduled tasks** -- hourly cron for session cleanup, rate-limit key expiry.
 
 Bindings: Analytics Engine (metrics), Supabase (database). Rate limiting uses an in-memory Map (per-isolate).
@@ -132,7 +132,7 @@ See [backend.md](backend.md) for full details.
 
 The collab server is a **Cloudflare Worker** (`referencer-collab`) with **Durable Objects**:
 
-- Each workspace room maps to a `YjsRoom` Durable Object instance
+- Each document room maps to a `YjsRoom` Durable Object instance
 - Clients connect via WebSocket with JWT auth (verified by the Worker entry point)
 - Permission check against Supabase before upgrading to WebSocket
 - The `YjsRoom` DO manages the Y.Doc, syncs updates between clients using the y-websocket binary protocol

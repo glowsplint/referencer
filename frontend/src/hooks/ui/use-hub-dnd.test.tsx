@@ -32,7 +32,7 @@ vi.mock("@/contexts/DndContext", () => ({
 import { useDraggable, useDropTarget, type DragData } from "./use-hub-dnd";
 
 // Test component that attaches the ref to a real div
-function DraggableComponent({ type, id }: { type: "workspace" | "folder"; id: string }) {
+function DraggableComponent({ type, id }: { type: "document" | "folder"; id: string }) {
   const ref = useDraggable(type, id);
   return <div ref={ref} data-testid="draggable" />;
 }
@@ -58,7 +58,7 @@ describe("useDraggable", () => {
   });
 
   it("when mounted, then calls draggable with the element", () => {
-    render(<DraggableComponent type="workspace" id="ws-1" />);
+    render(<DraggableComponent type="document" id="ws-1" />);
     expect(draggableSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         element: expect.any(HTMLElement),
@@ -77,18 +77,18 @@ describe("useDraggable", () => {
   });
 
   it("when onDragStart fires, then sets drag state", () => {
-    render(<DraggableComponent type="workspace" id="ws-1" />);
+    render(<DraggableComponent type="document" id="ws-1" />);
     const config = draggableSpy.mock.calls[0][0];
     config.onDragStart();
     expect(mockSetDragState).toHaveBeenCalledWith({
       isDragging: true,
-      dragType: "workspace",
+      dragType: "document",
       dragId: "ws-1",
     });
   });
 
   it("when onDrop fires, then resets drag state", () => {
-    render(<DraggableComponent type="workspace" id="ws-1" />);
+    render(<DraggableComponent type="document" id="ws-1" />);
     const config = draggableSpy.mock.calls[0][0];
     config.onDrop();
     expect(mockResetDrag).toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe("useDropTarget", () => {
     const onDrop = vi.fn();
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} />);
     const config = dropTargetSpy.mock.calls[0][0];
-    expect(config.canDrop({ source: { data: { type: "workspace", id: "ws-1" } } })).toBe(true);
+    expect(config.canDrop({ source: { data: { type: "document", id: "ws-1" } } })).toBe(true);
   });
 
   it("when custom canDrop function is provided, then delegates to it", () => {
@@ -131,8 +131,8 @@ describe("useDropTarget", () => {
     const canDrop = vi.fn(() => false);
     render(<DropTargetComponent targetId="target-1" onDrop={onDrop} canDrop={canDrop} />);
     const config = dropTargetSpy.mock.calls[0][0];
-    const result = config.canDrop({ source: { data: { type: "workspace", id: "ws-1" } } });
-    expect(canDrop).toHaveBeenCalledWith({ type: "workspace", id: "ws-1" });
+    const result = config.canDrop({ source: { data: { type: "document", id: "ws-1" } } });
+    expect(canDrop).toHaveBeenCalledWith({ type: "document", id: "ws-1" });
     expect(result).toBe(false);
   });
 
@@ -157,10 +157,10 @@ describe("useDropTarget", () => {
     render(<DropTargetComponent targetId="target-1" onDrop={onDropCallback} />);
     const config = dropTargetSpy.mock.calls[0][0];
     config.onDrop({
-      source: { data: { type: "workspace", id: "ws-1" } },
+      source: { data: { type: "document", id: "ws-1" } },
     });
     expect(mockSetDragState).toHaveBeenCalledWith({ overTargetId: null });
-    expect(onDropCallback).toHaveBeenCalledWith({ type: "workspace", id: "ws-1" });
+    expect(onDropCallback).toHaveBeenCalledWith({ type: "document", id: "ws-1" });
   });
 
   it("when getData is called, then returns the targetId", () => {

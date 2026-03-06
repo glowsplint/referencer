@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
 
-function loadCollapsed(workspaceId: string): Set<string> {
+function loadCollapsed(documentId: string): Set<string> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.COLLAPSED_PREFIX + workspaceId);
+    const raw = localStorage.getItem(STORAGE_KEYS.COLLAPSED_PREFIX + documentId);
     if (!raw) return new Set();
     return new Set(JSON.parse(raw));
   } catch {
@@ -11,12 +11,12 @@ function loadCollapsed(workspaceId: string): Set<string> {
   }
 }
 
-function saveCollapsed(workspaceId: string, ids: Set<string>) {
-  localStorage.setItem(STORAGE_KEYS.COLLAPSED_PREFIX + workspaceId, JSON.stringify([...ids]));
+function saveCollapsed(documentId: string, ids: Set<string>) {
+  localStorage.setItem(STORAGE_KEYS.COLLAPSED_PREFIX + documentId, JSON.stringify([...ids]));
 }
 
-export function useCollapsedAnnotations(workspaceId: string) {
-  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(() => loadCollapsed(workspaceId));
+export function useCollapsedAnnotations(documentId: string) {
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(() => loadCollapsed(documentId));
 
   const toggleCollapse = useCallback(
     (id: string) => {
@@ -24,31 +24,31 @@ export function useCollapsedAnnotations(workspaceId: string) {
         const next = new Set(prev);
         if (next.has(id)) next.delete(id);
         else next.add(id);
-        saveCollapsed(workspaceId, next);
+        saveCollapsed(documentId, next);
         return next;
       });
     },
-    [workspaceId],
+    [documentId],
   );
 
   const collapseAll = useCallback(
     (ids: string[]) => {
       setCollapsedIds(() => {
         const next = new Set(ids);
-        saveCollapsed(workspaceId, next);
+        saveCollapsed(documentId, next);
         return next;
       });
     },
-    [workspaceId],
+    [documentId],
   );
 
   const expandAll = useCallback(() => {
     setCollapsedIds(() => {
       const next = new Set<string>();
-      saveCollapsed(workspaceId, next);
+      saveCollapsed(documentId, next);
       return next;
     });
-  }, [workspaceId]);
+  }, [documentId]);
 
   return { collapsedIds, toggleCollapse, collapseAll, expandAll };
 }

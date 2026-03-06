@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "設置",
-    "description": "自訂您的工作區偏好設置。",
+    "description": "自訂您的文檔偏好設置。",
     "darkMode": {
       "label": "深色模式",
       "description": "在淺色和深色主題之間切換"
@@ -25,7 +25,7 @@
     "items": {
       "whatIsApp": {
         "question": "這個應用程式是什麼？",
-        "answer": "Referencer 是一個用於歸納式聖經學習的協作工具。它為學習小組提供了一個共享工作區，可以一起即時閱讀、標註和討論經文。"
+        "answer": "Referencer 是一個用於歸納式聖經學習的協作工具。它為學習小組提供了一個共享文檔，可以一起即時閱讀、標註和討論經文。"
       },
       "inductiveStudy": {
         "question": "什麼是歸納式聖經學習？",
@@ -33,7 +33,7 @@
       },
       "collaboration": {
         "question": "協作是如何運作的？",
-        "answer": "每個工作區都可以透過連結與他人共享。所有參與者看到相同的文字，並可以新增自己的標註。變更會即時同步，確保每個人都在同一頁面上。"
+        "answer": "每個文檔都可以透過連結與他人共享。所有參與者看到相同的文字，並可以新增自己的標註。變更會即時同步，確保每個人都在同一頁面上。"
       },
       "layers": {
         "question": "什麼是圖層？",
@@ -48,8 +48,8 @@
         "answer": "箭頭連接兩個標註以顯示段落之間的關係——例如，將重複出現的詞語連結到首次出現的位置，或將預言與其應驗連接起來。選擇箭頭工具（或按 A 鍵），然後點擊兩個標註來繪製連接線。"
       },
       "sharing": {
-        "question": "如何共享工作區？",
-        "answer": "開啟管理面板（按 M 鍵或點擊選單圖示），使用共享選項產生連結。任何擁有該連結的人都可以加入工作區並進行協作。"
+        "question": "如何共享文檔？",
+        "answer": "開啟管理面板（按 M 鍵或點擊選單圖示），使用共享選項產生連結。任何擁有該連結的人都可以加入文檔並進行協作。"
       },
       "mobile": {
         "question": "可以在手機上使用嗎？",
@@ -59,8 +59,8 @@
   },
   "shortcuts": {
     "title": "鍵盤快捷鍵",
-    "description": "工作區可用的鍵盤快捷鍵。",
-    "workspace": "工作區",
+    "description": "文檔可用的鍵盤快捷鍵。",
+    "document": "文檔",
     "cycleNextLayer": "切換到下一個圖層",
     "cyclePrevLayer": "切換到上一個圖層",
     "selectionTool": "選擇工具",
@@ -85,8 +85,8 @@
     "subscript": "下標",
     "colorHighlight": "顏色高亮",
     "general": "一般",
-    "undo": "復原（鎖定時為工作區操作）",
-    "redo": "重做（鎖定時為工作區操作）",
+    "undo": "復原（鎖定時為文檔操作）",
+    "redo": "重做（鎖定時為文檔操作）",
     "headings": "標題",
     "heading": "標題 {{level}}",
     "listsAndBlocks": "列表和區塊",
@@ -103,13 +103,13 @@
     "searchAnnotations": "搜尋註解"
   },
   "share": {
-    "title": "共享工作區",
-    "description": "管理此工作區的連結和成員。",
+    "title": "共享文檔",
+    "description": "管理此文檔的連結和成員。",
     "readonlyLink": "唯讀連結",
     "editLink": "編輯連結",
     "linkCopied": "連結已複製到剪貼簿。",
     "copyFailed": "複製連結失敗。",
-    "loginRequired": "登入後可為此工作區產生共享連結。",
+    "loginRequired": "登入後可為此文檔產生共享連結。",
     "loginGoogle": "使用 Google 登入",
     "loginGithub": "使用 GitHub 登入",
     "activeLinks": "活躍連結",
@@ -141,11 +141,11 @@
     "noExpiry": "無過期時間",
     "expiresIn": "{{days}} 天後過期",
     "expired": "已過期",
-    "acceptSignIn": "登入以接受此共享工作區",
+    "acceptSignIn": "登入以接受此共享文檔",
     "acceptError": "發生錯誤，請重試。",
     "acceptExpired": "此共享連結無效或已過期。",
     "goToHub": "前往首頁",
-    "accepting": "正在接受共享工作區..."
+    "accepting": "正在接受共享文檔..."
   },
   "mobile": {
     "title": "桌面端體驗最佳",

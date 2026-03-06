@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Vad är den här appen?",
-        "answer": "Referencer är ett samarbetsverktyg för induktivt bibelstudium. Det ger studiegrupper en delad arbetsyta där de kan läsa, anteckna och diskutera Skriften tillsammans i realtid."
+        "answer": "Referencer är ett samarbetsverktyg för induktivt bibelstudium. Det ger studiegrupper en delad dokument där de kan läsa, anteckna och diskutera Skriften tillsammans i realtid."
       },
       "inductiveStudy": {
         "question": "Vad är induktivt bibelstudium?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Hur fungerar samarbete?",
-        "answer": "Varje arbetsyta kan delas med andra via en länk. Alla deltagare ser samma text och kan lägga till sina egna anteckningar. Ändringar synkroniseras i realtid så att alla hålls uppdaterade."
+        "answer": "Varje dokument kan delas med andra via en länk. Alla deltagare ser samma text och kan lägga till sina egna anteckningar. Ändringar synkroniseras i realtid så att alla hålls uppdaterade."
       },
       "layers": {
         "question": "Vad är lager?",
@@ -44,8 +44,8 @@
         "answer": "Pilar kopplar samman två anteckningar för att visa ett samband mellan avsnitt — till exempel att länka ett upprepat ord till dess första förekomst, eller koppla en profetia till dess uppfyllelse. Välj pilverktyget (eller tryck A) och klicka sedan på två anteckningar för att rita en koppling."
       },
       "sharing": {
-        "question": "Hur delar jag en arbetsyta?",
-        "answer": "Öppna hanteringspanelen (tryck M eller klicka på menyikonen) och använd delningsalternativen för att skapa en länk. Alla med länken kan gå med i arbetsytan och samarbeta."
+        "question": "Hur delar jag en dokument?",
+        "answer": "Öppna hanteringspanelen (tryck M eller klicka på menyikonen) och använd delningsalternativen för att skapa en länk. Alla med länken kan gå med i dokumentn och samarbeta."
       },
       "mobile": {
         "question": "Kan jag använda detta på mobilen?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Tangentbordsgenvägar",
-    "description": "Tillgängliga tangentbordsgenvägar för arbetsytan.",
-    "workspace": "Arbetsyta",
+    "description": "Tillgängliga tangentbordsgenvägar för dokumentn.",
+    "document": "Dokument",
     "cycleNextLayer": "Växla till nästa lager",
     "cyclePrevLayer": "Växla till föregående lager",
     "selectionTool": "Markeringsverktyg",
@@ -81,8 +81,8 @@
     "subscript": "Nedsänkt",
     "colorHighlight": "Färgmarkering",
     "general": "Allmänt",
-    "undo": "Ångra (arbetsyta när låst)",
-    "redo": "Gör om (arbetsyta när låst)",
+    "undo": "Ångra (dokument när låst)",
+    "redo": "Gör om (dokument när låst)",
     "headings": "Rubriker",
     "heading": "Rubrik {{level}}",
     "listsAndBlocks": "Listor & block",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Sök anteckningar"
   },
   "share": {
-    "title": "Dela arbetsyta",
-    "description": "Kopiera en länk för att dela denna arbetsyta.",
+    "title": "Dela dokument",
+    "description": "Kopiera en länk för att dela denna dokument.",
     "readonlyLink": "Skrivskyddad länk",
     "editLink": "Redigeringslänk",
     "linkCopied": "Länk kopierad till urklipp.",

@@ -1,5 +1,5 @@
 // Modal dialog listing all keyboard shortcuts in a two-column layout.
-// Covers workspace tools, text formatting, headings, lists, and alignment.
+// Covers document tools, text formatting, headings, lists, and alignment.
 // Auto-detects macOS to show the correct modifier key symbol.
 import { useTranslation } from "react-i18next";
 import {
@@ -78,7 +78,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
 
   const LEFT_SECTIONS: ShortcutSection[] = [
     {
-      title: t("shortcuts.workspace"),
+      title: t("shortcuts.document"),
       shortcuts: [
         { keys: ["Tab"], description: t("shortcuts.cycleNextLayer") },
         { keys: ["Shift", "Tab"], description: t("shortcuts.cyclePrevLayer") },

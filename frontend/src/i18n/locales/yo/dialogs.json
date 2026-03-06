@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Ètò",
-    "description": "Ṣàtúnṣe àwọn ìfẹ́ràn ibi iṣẹ́ rẹ.",
+    "description": "Ṣàtúnṣe àwọn ìfẹ́ràn ìwé rẹ.",
     "darkMode": {
       "label": "Ọ̀nà dúdú",
       "description": "Yí padà láàárín àwọn àwòrán ìmọ́lẹ̀ àti dúdú"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Kíni ohun èlò yìí?",
-        "answer": "Referencer jẹ́ ohun èlò àjọṣepọ̀ fún ìkẹ́kọ̀ọ́ Bíbélì alámọ̀rán. Ó fún àwọn ẹgbẹ́ ìkẹ́kọ̀ọ́ ní ibi iṣẹ́ kan tí wọ́n pín, níbi tí wọ́n ti lè kà, ṣàkọsílẹ̀, tí wọ́n sì jíròrò Ìwé Mímọ́ papọ̀ ní àkókò gidi."
+        "answer": "Referencer jẹ́ ohun èlò àjọṣepọ̀ fún ìkẹ́kọ̀ọ́ Bíbélì alámọ̀rán. Ó fún àwọn ẹgbẹ́ ìkẹ́kọ̀ọ́ ní ìwé kan tí wọ́n pín, níbi tí wọ́n ti lè kà, ṣàkọsílẹ̀, tí wọ́n sì jíròrò Ìwé Mímọ́ papọ̀ ní àkókò gidi."
       },
       "inductiveStudy": {
         "question": "Kíni ìkẹ́kọ̀ọ́ Bíbélì alámọ̀rán?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Báwo ni àjọṣepọ̀ ṣe ń ṣiṣẹ́?",
-        "answer": "A lè pín ibi iṣẹ́ kọ̀ọ̀kan pẹ̀lú àwọn ẹlòmíì nípasẹ̀ ìjápọ̀ kan. Gbogbo àwọn olùkópa rí ọ̀rọ̀ kannáà, wọ́n sì lè fi àwọn àkọsílẹ̀ tiwọn kún. Àwọn àyípadà máa ń bára mu ní àkókò gidi kí gbogbo ènìyàn lè wà lórí ojú-ìwé kannáà."
+        "answer": "A lè pín ìwé kọ̀ọ̀kan pẹ̀lú àwọn ẹlòmíì nípasẹ̀ ìjápọ̀ kan. Gbogbo àwọn olùkópa rí ọ̀rọ̀ kannáà, wọ́n sì lè fi àwọn àkọsílẹ̀ tiwọn kún. Àwọn àyípadà máa ń bára mu ní àkókò gidi kí gbogbo ènìyàn lè wà lórí ojú-ìwé kannáà."
       },
       "layers": {
         "question": "Kíni àwọn ìpele?",
@@ -44,8 +44,8 @@
         "answer": "Àwọn ọfà so àkọsílẹ̀ méjì pọ̀ láti fi ìbáṣepọ̀ hàn láàárín àwọn ẹsẹ — fún àpẹẹrẹ, ṣíṣe àsopọ̀ ọ̀rọ̀ tí a tún sọ pẹ̀lú ìhàn àkọ́kọ́ rẹ̀, tàbí ṣíṣe àsopọ̀ àsọtẹ́lẹ̀ pẹ̀lú ìmúṣẹ rẹ̀. Yan ohun èlò ọfà (tàbí tẹ A), lẹ́yìn náà tẹ àkọsílẹ̀ méjì láti fa àsopọ̀."
       },
       "sharing": {
-        "question": "Báwo ni mo ṣe lè pín ibi iṣẹ́?",
-        "answer": "Ṣí pánẹ́ẹ̀lì ìṣàkóso (tẹ M tàbí tẹ àmì àkójọ) kí o sì lo àwọn àṣàyàn pínpín láti ṣàgbéjáde ìjápọ̀ kan. Ẹnikẹ́ni tí ó ní ìjápọ̀ náà lè dara pọ̀ mọ́ ibi iṣẹ́ kí ó sì ṣàjọṣepọ̀."
+        "question": "Báwo ni mo ṣe lè pín ìwé?",
+        "answer": "Ṣí pánẹ́ẹ̀lì ìṣàkóso (tẹ M tàbí tẹ àmì àkójọ) kí o sì lo àwọn àṣàyàn pínpín láti ṣàgbéjáde ìjápọ̀ kan. Ẹnikẹ́ni tí ó ní ìjápọ̀ náà lè dara pọ̀ mọ́ ìwé kí ó sì ṣàjọṣepọ̀."
       },
       "mobile": {
         "question": "Ṣé mo lè lò ó lórí fóònù?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Àwọn Ọ̀nà Àbájáde Bọ́tìnì",
-    "description": "Àwọn ọ̀nà àbájáde bọ́tìnì tí ó wà fún ibi iṣẹ́.",
-    "workspace": "Ibi iṣẹ́",
+    "description": "Àwọn ọ̀nà àbájáde bọ́tìnì tí ó wà fún ìwé.",
+    "document": "Ìwé",
     "cycleNextLayer": "Yí sí ìpele tó kàn",
     "cyclePrevLayer": "Yí sí ìpele tí ó ṣáájú",
     "selectionTool": "Ohun èlò yíyan",
@@ -81,8 +81,8 @@
     "subscript": "Lẹ́tà ìsàlẹ̀",
     "colorHighlight": "Àmì ìtànṣán àwọ̀",
     "general": "Gbogbogbò",
-    "undo": "Mú padà (ibi iṣẹ́ nígbà tí ó tìí)",
-    "redo": "Tún ṣe (ibi iṣẹ́ nígbà tí ó tìí)",
+    "undo": "Mú padà (ìwé nígbà tí ó tìí)",
+    "redo": "Tún ṣe (ìwé nígbà tí ó tìí)",
     "headings": "Àkọlé",
     "heading": "Àkọlé {{level}}",
     "listsAndBlocks": "Àkójọ àti Àwọn Búlọ́ọ̀kì",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Wa awọn akọsilẹ"
   },
   "share": {
-    "title": "Pín ibi iṣẹ́",
-    "description": "Dà ìjápọ̀ kan láti pín ibi iṣẹ́ yìí.",
+    "title": "Pín ìwé",
+    "description": "Dà ìjápọ̀ kan láti pín ìwé yìí.",
     "readonlyLink": "Ìjápọ̀ kíkà nìkan",
     "editLink": "Ìjápọ̀ àtúnṣe",
     "linkCopied": "A ti dà ìjápọ̀ sí pátákó àkọsílẹ̀.",

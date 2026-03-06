@@ -1,5 +1,5 @@
 import type { FolderItem } from "@/lib/folder-client";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { DocumentItem } from "@/lib/document-client";
 
 export const MAX_FOLDER_DEPTH = 10;
 
@@ -36,15 +36,12 @@ export function getFolderDepth(folders: FolderItem[], folderId: string): number 
   return depth;
 }
 
-export function getWorkspacesForFolder(
-  workspaces: WorkspaceItem[],
-  folderId: string,
-): WorkspaceItem[] {
-  return workspaces.filter((ws) => ws.folderId === folderId);
+export function getDocumentsForFolder(documents: DocumentItem[], folderId: string): DocumentItem[] {
+  return documents.filter((ws) => ws.folderId === folderId);
 }
 
-export function getUnfiledWorkspaces(workspaces: WorkspaceItem[]): WorkspaceItem[] {
-  return workspaces.filter((ws) => !ws.folderId && !ws.isFavorite);
+export function getUnfiledDocuments(documents: DocumentItem[]): DocumentItem[] {
+  return documents.filter((ws) => !ws.folderId && !ws.isFavorite);
 }
 
 /** Returns all descendant folder IDs (children, grandchildren, etc.) */

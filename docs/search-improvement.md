@@ -2,21 +2,21 @@
 
 ## Context
 
-Users can't find their own annotations. Once a user has 50+ highlights and comments across multiple workspaces, there's no way to search for them — the hub only filters by workspace title. This is the #1 gap identified in the [UX brainstorm](ux-brainstorm.md). We need both:
+Users can't find their own annotations. Once a user has 50+ highlights and comments across multiple documents, there's no way to search for them — the hub only filters by document title. This is the #1 gap identified in the [UX brainstorm](ux-brainstorm.md). We need both:
 
-1. **In-workspace search** (client-side) — filter annotations within the currently open workspace
-2. **Cross-workspace search** (server-side) — search annotations across ALL workspaces from the hub
+1. **In-document search** (client-side) — filter annotations within the currently open document
+2. **Cross-document search** (server-side) — search annotations across ALL documents from the hub
 
 The challenge: all annotation data lives in opaque Yjs binary blobs (`yjs_document.state` in Supabase). There's zero server-side text indexing today.
 
 ## Architecture Decision
 
-**Hybrid approach**: client-side in-memory filtering for the current workspace, plus a server-side Postgres full-text search index for cross-workspace queries.
+**Hybrid approach**: client-side in-memory filtering for the current document, plus a server-side Postgres full-text search index for cross-document queries.
 
 - The collab server already has the full `Y.Doc` in memory — extract annotation text during `saveToSupabase()` and upsert into a new `annotation_index` table
 - Use Postgres `tsvector`/`tsquery` with weighted fields (comment text ranked highest, then selected text, then reply text)
 - ILIKE fallback when FTS returns zero results (catches partial words)
-- Full replacement per workspace on each save (simple, self-healing, no diffing)
+- Full replacement per document on each save (simple, self-healing, no diffing)
 
 ## Implementation Plan
 
@@ -29,7 +29,7 @@ Add `annotation_index` table:
 ```sql
 CREATE TABLE annotation_index (
     id TEXT NOT NULL,
-    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+    document_id TEXT NOT NULL REFERENCES document(id) ON DELETE CASCADE,
     layer_id TEXT NOT NULL,
     layer_name TEXT NOT NULL DEFAULT '',
     annotation_type TEXT NOT NULL CHECK (annotation_type IN ('highlight', 'comment', 'arrow', 'underline')),
@@ -43,7 +43,7 @@ CREATE TABLE annotation_index (
         setweight(to_tsvector('english', coalesce(reply_texts, '')), 'C')
     ) STORED,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (workspace_id, id)
+    PRIMARY KEY (document_id, id)
 );
 CREATE INDEX idx_annotation_search ON annotation_index USING GIN (search_vector);
 ALTER TABLE annotation_index ENABLE ROW LEVEL SECURITY;
@@ -53,16 +53,16 @@ Add `upsert_annotation_index` RPC — atomic delete+insert in a single transacti
 
 ```sql
 CREATE OR REPLACE FUNCTION upsert_annotation_index(
-    p_workspace_id TEXT,
+    p_document_id TEXT,
     p_rows JSONB
 ) RETURNS VOID AS $$
 BEGIN
-    DELETE FROM annotation_index WHERE workspace_id = p_workspace_id;
-    INSERT INTO annotation_index (id, workspace_id, layer_id, layer_name, annotation_type,
+    DELETE FROM annotation_index WHERE document_id = p_document_id;
+    INSERT INTO annotation_index (id, document_id, layer_id, layer_name, annotation_type,
                                    selected_text, annotation_text, reply_texts, user_name, updated_at)
     SELECT
         r->>'id',
-        p_workspace_id,
+        p_document_id,
         r->>'layer_id',
         r->>'layer_name',
         r->>'annotation_type',
@@ -76,7 +76,7 @@ END;
 $$ LANGUAGE plpgsql;
 ```
 
-Add `search_annotations` RPC — FTS with `websearch_to_tsquery`, ILIKE fallback, joined with `user_workspace` for access control:
+Add `search_annotations` RPC — FTS with `websearch_to_tsquery`, ILIKE fallback, joined with `user_document` for access control:
 
 ```sql
 CREATE OR REPLACE FUNCTION search_annotations(
@@ -94,24 +94,24 @@ BEGIN
 
     SELECT COUNT(*) INTO v_total
     FROM annotation_index ai
-    JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+    JOIN user_document uw ON uw.document_id = ai.document_id AND uw.user_id = p_user_id
     WHERE ai.search_vector @@ v_tsquery;
 
     IF v_total = 0 THEN
         -- Fallback to ILIKE for partial word matches
         SELECT COUNT(*) INTO v_total
         FROM annotation_index ai
-        JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+        JOIN user_document uw ON uw.document_id = ai.document_id AND uw.user_id = p_user_id
         WHERE ai.selected_text ILIKE '%' || p_query || '%'
            OR ai.annotation_text ILIKE '%' || p_query || '%'
            OR ai.reply_texts ILIKE '%' || p_query || '%';
 
         SELECT jsonb_agg(row_to_json(t)) INTO v_results FROM (
-            SELECT ai.id as annotation_id, ai.workspace_id, uw.title as workspace_title,
+            SELECT ai.id as annotation_id, ai.document_id, uw.title as document_title,
                    ai.layer_name, ai.annotation_type, ai.selected_text, ai.annotation_text,
                    ai.user_name, 0::float as rank
             FROM annotation_index ai
-            JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+            JOIN user_document uw ON uw.document_id = ai.document_id AND uw.user_id = p_user_id
             WHERE ai.selected_text ILIKE '%' || p_query || '%'
                OR ai.annotation_text ILIKE '%' || p_query || '%'
                OR ai.reply_texts ILIKE '%' || p_query || '%'
@@ -120,11 +120,11 @@ BEGIN
         ) t;
     ELSE
         SELECT jsonb_agg(row_to_json(t)) INTO v_results FROM (
-            SELECT ai.id as annotation_id, ai.workspace_id, uw.title as workspace_title,
+            SELECT ai.id as annotation_id, ai.document_id, uw.title as document_title,
                    ai.layer_name, ai.annotation_type, ai.selected_text, ai.annotation_text,
                    ai.user_name, ts_rank(ai.search_vector, v_tsquery) as rank
             FROM annotation_index ai
-            JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+            JOIN user_document uw ON uw.document_id = ai.document_id AND uw.user_id = p_user_id
             WHERE ai.search_vector @@ v_tsquery
             ORDER BY rank DESC
             LIMIT p_limit OFFSET p_offset
@@ -169,7 +169,7 @@ In `saveToSupabase()` (line 488), after the existing `saveSnapshot()` call, add 
 
 Mount: `app.route("/api/search", search)` alongside existing routes (around line 124).
 
-### Phase 4: In-Workspace Search (Frontend — Client-Side)
+### Phase 4: In-Document Search (Frontend — Client-Side)
 
 **New file: `frontend/src/hooks/ui/use-annotation-search.ts`**
 
@@ -185,11 +185,11 @@ Add search input (with `Search` icon from lucide) at the top of the management p
 
 **Keyboard shortcut: Ctrl+F** — override browser default to focus the management pane search input. Add a `useEffect` with a `keydown` listener that calls `e.preventDefault()` on Ctrl+F and focuses the search input ref. Only active when the management pane is visible (not on mobile, not when pane is collapsed).
 
-### Phase 5: Cross-Workspace Search (Frontend — Server-Side)
+### Phase 5: Cross-Document Search (Frontend — Server-Side)
 
 **New file: `frontend/src/lib/search-client.ts`**
 
-API client: `searchAnnotations(query, limit, offset)` → calls `GET /api/search`. Follows pattern of `workspace-client.ts`.
+API client: `searchAnnotations(query, limit, offset)` → calls `GET /api/search`. Follows pattern of `document-client.ts`.
 
 **New file: `frontend/src/hooks/data/use-annotation-search-api.ts`**
 
@@ -197,11 +197,11 @@ Hook debounces query (300ms), calls API, manages loading/error/results state.
 
 **New file: `frontend/src/components/hub/HubSearchResults.tsx`**
 
-Renders server-side results below the workspace grid search bar. Each result shows workspace title (as link), layer name with color dot, annotation type icon, text preview with query bolded. Click navigates to `#/<workspaceId>`.
+Renders server-side results below the document grid search bar. Each result shows document title (as link), layer name with color dot, annotation type icon, text preview with query bolded. Click navigates to `#/<documentId>`.
 
-**Modified file: `frontend/src/components/hub/WorkspaceGrid.tsx`**
+**Modified file: `frontend/src/components/hub/DocumentGrid.tsx`**
 
-When `searchQuery` is non-empty, render `HubSearchResults` section between the search bar and workspace grid. Existing workspace title filtering continues working alongside. Only shown for authenticated users — hide the annotation search section entirely for guests (their data is local-only in IndexedDB and never reaches Supabase).
+When `searchQuery` is non-empty, render `HubSearchResults` section between the search bar and document grid. Existing document title filtering continues working alongside. Only shown for authenticated users — hide the annotation search section entirely for guests (their data is local-only in IndexedDB and never reaches Supabase).
 
 ### Phase 6: Backfill Script
 
@@ -224,7 +224,7 @@ Standalone script: reads all `yjs_document` rows, decodes base64 → `Y.Doc`, ex
 ```
 Phase 1 (Schema) → Phase 2 (Extraction) → Phase 3 (API) → Phase 5 (Hub UI)
                                          → Phase 6 (Backfill)
-Phase 4 (In-workspace search) — independent, can run in parallel with all others
+Phase 4 (In-document search) — independent, can run in parallel with all others
 Phase 7 (Tests) — alongside each phase
 ```
 
@@ -246,7 +246,7 @@ Phase 4 (client-side) has zero backend dependencies and could ship as a standalo
 | `frontend/src/lib/search-client.ts`                    | New                                   |
 | `frontend/src/hooks/data/use-annotation-search-api.ts` | New                                   |
 | `frontend/src/components/hub/HubSearchResults.tsx`     | New                                   |
-| `frontend/src/components/hub/WorkspaceGrid.tsx`        | Add annotation results section        |
+| `frontend/src/components/hub/DocumentGrid.tsx`         | Add annotation results section        |
 | `collab-server/scripts/backfill-annotation-index.ts`   | New                                   |
 
 ## Verification
@@ -256,6 +256,6 @@ Per-phase verification before moving to the next phase:
 1. **Build**: `cd frontend && bun run build` — zero errors
 2. **Unit tests**: `cd frontend && bun run test:run` — all pass
 3. **Lint**: `cd frontend && bun run lint` — no errors
-4. **Manual test (in-workspace)**: Open a workspace with annotations, type in management pane search, verify filtering works and clicking results scrolls to annotation
-5. **Manual test (hub)**: From hub, search for annotation text, verify results appear with correct workspace links
-6. **Backfill**: Run backfill script, verify `annotation_index` table has rows matching existing workspaces
+4. **Manual test (in-document)**: Open a document with annotations, type in management pane search, verify filtering works and clicking results scrolls to annotation
+5. **Manual test (hub)**: From hub, search for annotation text, verify results appear with correct document links
+6. **Backfill**: Run backfill script, verify `annotation_index` table has rows matching existing documents

@@ -171,9 +171,9 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 
 - Modify: `frontend/src/hooks/data/use-editors.ts`
 - Modify: `frontend/src/hooks/data/use-editors.test.ts`
-- Modify: `frontend/src/hooks/data/use-editor-workspace.ts`
-- Modify: `frontend/src/hooks/data/use-editor-workspace.test.ts`
-- Modify: `frontend/src/data/default-workspace.ts`
+- Modify: `frontend/src/hooks/data/use-editor-document.ts`
+- Modify: `frontend/src/hooks/data/use-editor-document.test.ts`
+- Modify: `frontend/src/data/default-document.ts`
 
 **use-editors.ts changes:**
 
@@ -191,19 +191,19 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 - Line 377 describe text: `"passage name counter"` → `"text name counter"`
 - All assertions using passage names updated
 
-**default-workspace.ts changes:**
+**default-document.ts changes:**
 
 - Line 14: `DEFAULT_PASSAGE_CONTENTS` → `DEFAULT_TEXT_CONTENTS`
 - Line 4 comment: "passage contents" → "text contents"
 
-**use-editor-workspace.ts changes:**
+**use-editor-document.ts changes:**
 
 - Line 18: `DEFAULT_PASSAGE_CONTENTS` → `DEFAULT_TEXT_CONTENTS`
 - Lines 80-81: `DEFAULT_PASSAGE_CONTENTS[i]` → `DEFAULT_TEXT_CONTENTS[i]`
 - Line 318: `"Reordered passages"` → `"Reordered texts"`
 - Lines 342-346: `"Passage ${index + 1}"` → `"Text ${index + 1}"`, `hidePassage`/`showPassage` → `hideText`/`showText`, `"passage"` → `"text"` in descriptions
 
-**use-editor-workspace.test.ts changes:**
+**use-editor-document.test.ts changes:**
 
 - Line 13: `DEFAULT_PASSAGE_CONTENTS` → `DEFAULT_TEXT_CONTENTS`
 
@@ -223,12 +223,12 @@ export function TextHeader({ name, index, onUpdateName }: TextHeaderProps) {
 - Modify: `frontend/src/components/LayerRow.tsx` — lines 194, 274: `passageName` local var can stay (it's a local variable meaning "name of the text pane", not user-facing)
 - Modify: `frontend/src/components/PrintAnnotations.tsx` and test — if passage refs exist
 - Modify: `frontend/src/components/ActionConsole.tsx` — if passage refs exist
-- Modify: `frontend/src/test/render-with-workspace.tsx` — if passage refs exist
+- Modify: `frontend/src/test/render-with-document.tsx` — if passage refs exist
 - Modify: `frontend/src/hooks/data/use-tracked-editors.ts` and test — if passage refs exist
 - Modify: `frontend/src/hooks/selection/use-word-selection.ts` and test — if passage refs exist in comments
 - Modify: `frontend/src/components/tiptap-templates/simple/extensions.ts` — if passage refs
 - Modify: `frontend/src/components/tiptap-templates/simple/EditorPane.tsx` — if passage refs
-- Modify: `frontend/src/components/hub/WorkspaceGrid.tsx` — if passage refs
+- Modify: `frontend/src/components/hub/DocumentGrid.tsx` — if passage refs
 - Modify: `frontend/src/lib/word-navigation.ts` and test — if passage refs in comments
 
 **Strategy:** Search each file for "passage"/"Passage"/"PASSAGE" and replace appropriately. For user-facing strings change to "text"/"Text". For code comments change to "text". For test describe strings change to "text". Local variables like `passageName` in LayerRow.tsx are fine to keep since they're not user-facing identifiers — but rename if desired for consistency.
@@ -279,12 +279,12 @@ case "addText":
 In the `useToggleShortcuts` call (around line 285), add:
 
 ```ts
-addText: workspace.addEditor,
+addText: document.addEditor,
 ```
 
 **KeyboardShortcutsDialog.tsx changes:**
 
-Add to the workspace shortcuts section (LEFT_SECTIONS, first section), after the `toggleManagement` entry:
+Add to the document shortcuts section (LEFT_SECTIONS, first section), after the `toggleManagement` entry:
 
 ```ts
 { keys: ["T"], description: t("shortcuts.addText") },
@@ -292,7 +292,7 @@ Add to the workspace shortcuts section (LEFT_SECTIONS, first section), after the
 
 **KeyboardShortcutsDialog.test.tsx changes:**
 
-In the "lists all workspace shortcuts" test, add:
+In the "lists all document shortcuts" test, add:
 
 ```ts
 expect(screen.getByText("Add new text")).toBeInTheDocument();

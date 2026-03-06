@@ -16,7 +16,7 @@ describe("KeyboardShortcutsDialog", () => {
 
     it("then displays all section headers", () => {
       renderDialog();
-      expect(screen.getByText("Workspace")).toBeInTheDocument();
+      expect(screen.getByText("Document")).toBeInTheDocument();
       expect(screen.getByText("Text Formatting")).toBeInTheDocument();
       expect(screen.getByText("Headings")).toBeInTheDocument();
       expect(screen.getByText("Lists & Blocks")).toBeInTheDocument();
@@ -37,8 +37,8 @@ describe("KeyboardShortcutsDialog", () => {
     });
   });
 
-  describe("when viewing workspace shortcuts section", () => {
-    it("then lists all workspace shortcuts", () => {
+  describe("when viewing document shortcuts section", () => {
+    it("then lists all document shortcuts", () => {
       renderDialog();
       expect(screen.getByText("Cycle to next layer")).toBeInTheDocument();
       expect(screen.getByText("Cycle to previous layer")).toBeInTheDocument();
@@ -110,8 +110,8 @@ describe("KeyboardShortcutsDialog", () => {
   describe("when viewing general shortcuts section", () => {
     it("then lists undo and redo shortcuts", () => {
       renderDialog();
-      expect(screen.getByText("Undo (workspace when locked)")).toBeInTheDocument();
-      expect(screen.getByText("Redo (workspace when locked)")).toBeInTheDocument();
+      expect(screen.getByText("Undo (document when locked)")).toBeInTheDocument();
+      expect(screen.getByText("Redo (document when locked)")).toBeInTheDocument();
     });
   });
 

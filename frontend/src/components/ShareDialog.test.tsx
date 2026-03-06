@@ -1,7 +1,7 @@
 import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ShareDialog } from "./ShareDialog";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 
 const mockLogin = vi.fn();
 const mockAuth = {
@@ -41,8 +41,8 @@ vi.mock("@/hooks/data/use-share-management", () => ({
 }));
 
 function renderShareDialog(overrides = {}) {
-  return renderWithWorkspace(
-    <ShareDialog open={true} onOpenChange={vi.fn()} workspaceId="test-workspace-123" />,
+  return renderWithDocument(
+    <ShareDialog open={true} onOpenChange={vi.fn()} documentId="test-document-123" />,
     overrides,
   );
 }
@@ -71,7 +71,7 @@ describe("ShareDialog", () => {
   describe("when opened and authenticated", () => {
     it("then shows sharing options", () => {
       renderShareDialog();
-      expect(screen.getByText("Share workspace")).toBeInTheDocument();
+      expect(screen.getByText("Share document")).toBeInTheDocument();
       expect(screen.getByTestId("shareReadonlyButton")).toBeInTheDocument();
       expect(screen.getByTestId("shareEditButton")).toBeInTheDocument();
     });
@@ -85,10 +85,10 @@ describe("ShareDialog", () => {
 
   describe("when open is false", () => {
     it("then does not render the dialog", () => {
-      renderWithWorkspace(
-        <ShareDialog open={false} onOpenChange={vi.fn()} workspaceId="test-workspace-123" />,
+      renderWithDocument(
+        <ShareDialog open={false} onOpenChange={vi.fn()} documentId="test-document-123" />,
       );
-      expect(screen.queryByText("Share workspace")).not.toBeInTheDocument();
+      expect(screen.queryByText("Share document")).not.toBeInTheDocument();
     });
   });
 
@@ -107,7 +107,7 @@ describe("ShareDialog", () => {
 
       await waitFor(() => {
         expect(mockApiPost).toHaveBeenCalledWith("/api/share", {
-          workspaceId: "test-workspace-123",
+          documentId: "test-document-123",
           access: "readonly",
         });
       });
@@ -139,7 +139,7 @@ describe("ShareDialog", () => {
         expect(mockApiPost).toHaveBeenCalledWith(
           "/api/share",
           expect.objectContaining({
-            workspaceId: "test-workspace-123",
+            documentId: "test-document-123",
             access: "readonly",
             expiresAt: expect.any(String),
           }),
@@ -163,7 +163,7 @@ describe("ShareDialog", () => {
 
       await waitFor(() => {
         expect(mockApiPost).toHaveBeenCalledWith("/api/share", {
-          workspaceId: "test-workspace-123",
+          documentId: "test-document-123",
           access: "edit",
         });
       });
@@ -182,9 +182,9 @@ describe("ShareDialog", () => {
 
     it("then shows login prompt instead of share options", () => {
       renderShareDialog();
-      expect(screen.getByText("Share workspace")).toBeInTheDocument();
+      expect(screen.getByText("Share document")).toBeInTheDocument();
       expect(
-        screen.getByText("Sign in to generate a share link for this workspace."),
+        screen.getByText("Sign in to generate a share link for this document."),
       ).toBeInTheDocument();
       expect(screen.getByTestId("shareLoginPrompt")).toBeInTheDocument();
       expect(screen.queryByTestId("shareReadonlyButton")).not.toBeInTheDocument();

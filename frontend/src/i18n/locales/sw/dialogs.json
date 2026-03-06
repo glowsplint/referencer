@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Mipangilio",
-    "description": "Binafsisha mapendeleo ya eneo lako la kazi.",
+    "description": "Binafsisha mapendeleo ya nyaraka yako.",
     "darkMode": {
       "label": "Hali ya giza",
       "description": "Badilisha kati ya mandhari meupe na meusi"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Programu hii ni nini?",
-        "answer": "Referencer ni chombo cha ushirikiano kwa ajili ya utafiti wa Biblia kwa njia ya kuchunguza. Inatoa vikundi vya utafiti eneo la kazi la pamoja ambapo wanaweza kusoma, kuweka vidokezo, na kujadili Maandiko pamoja kwa wakati halisi."
+        "answer": "Referencer ni chombo cha ushirikiano kwa ajili ya utafiti wa Biblia kwa njia ya kuchunguza. Inatoa vikundi vya utafiti nyaraka la pamoja ambapo wanaweza kusoma, kuweka vidokezo, na kujadili Maandiko pamoja kwa wakati halisi."
       },
       "inductiveStudy": {
         "question": "Utafiti wa Biblia kwa njia ya kuchunguza ni nini?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Ushirikiano unafanya kazi vipi?",
-        "answer": "Kila eneo la kazi linaweza kushirikiwa na wengine kupitia kiungo. Washiriki wote wanaona maandishi yale yale na wanaweza kuongeza vidokezo vyao wenyewe. Mabadiliko yanasawazishwa kwa wakati halisi ili kila mtu awe kwenye ukurasa ule ule."
+        "answer": "Kila nyaraka linaweza kushirikiwa na wengine kupitia kiungo. Washiriki wote wanaona maandishi yale yale na wanaweza kuongeza vidokezo vyao wenyewe. Mabadiliko yanasawazishwa kwa wakati halisi ili kila mtu awe kwenye ukurasa ule ule."
       },
       "layers": {
         "question": "Tabaka ni nini?",
@@ -44,8 +44,8 @@
         "answer": "Mishale inaunganisha vidokezo viwili kuonyesha uhusiano kati ya vifungu — kwa mfano, kuunganisha neno linalorudiwa na matukio yake ya kwanza, au kuunganisha unabii na utimilifu wake. Chagua chombo cha mshale (au bonyeza A), kisha bofya vidokezo viwili ili kuchora kiunganishi."
       },
       "sharing": {
-        "question": "Ninashirikishaje eneo la kazi?",
-        "answer": "Fungua paneli ya usimamizi (bonyeza M au bofya ikoni ya menyu) na utumie chaguo za kushiriki kuunda kiungo. Mtu yeyote mwenye kiungo anaweza kujiunga na eneo la kazi na kushirikiana."
+        "question": "Ninashirikishaje nyaraka?",
+        "answer": "Fungua paneli ya usimamizi (bonyeza M au bofya ikoni ya menyu) na utumie chaguo za kushiriki kuunda kiungo. Mtu yeyote mwenye kiungo anaweza kujiunga na nyaraka na kushirikiana."
       },
       "mobile": {
         "question": "Ninaweza kutumia hii kwenye simu?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Njia za Mkato za Kibodi",
-    "description": "Njia za mkato za kibodi zinazopatikana kwa eneo la kazi.",
-    "workspace": "Eneo la Kazi",
+    "description": "Njia za mkato za kibodi zinazopatikana kwa nyaraka.",
+    "document": "Nyaraka",
     "cycleNextLayer": "Sogeza hadi tabaka linalofuata",
     "cyclePrevLayer": "Sogeza hadi tabaka lililotangulia",
     "selectionTool": "Chombo cha kuchagua",
@@ -81,8 +81,8 @@
     "subscript": "Herufi za chini",
     "colorHighlight": "Angazia kwa rangi",
     "general": "Jumla",
-    "undo": "Tendua (eneo la kazi linapofungwa)",
-    "redo": "Rudia (eneo la kazi linapofungwa)",
+    "undo": "Tendua (nyaraka linapofungwa)",
+    "redo": "Rudia (nyaraka linapofungwa)",
     "headings": "Vichwa",
     "heading": "Kichwa {{level}}",
     "listsAndBlocks": "Orodha na Vizuizi",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Tafuta maelezo"
   },
   "share": {
-    "title": "Shiriki eneo la kazi",
-    "description": "Nakili kiungo ili kushiriki eneo hili la kazi.",
+    "title": "Shiriki nyaraka",
+    "description": "Nakili kiungo ili kushiriki nyaraka hii.",
     "readonlyLink": "Kiungo cha kusoma tu",
     "editLink": "Kiungo cha kuhariri",
     "linkCopied": "Kiungo kimenakiliwa kwenye ubao wa kunakili.",

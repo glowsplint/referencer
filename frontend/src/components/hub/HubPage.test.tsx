@@ -26,9 +26,9 @@ vi.mock("@/hooks/data/use-auth", () => ({
   useAuth: () => mockAuth,
 }));
 
-vi.mock("@/hooks/data/use-workspaces", () => ({
-  useWorkspaces: () => ({
-    workspaces: [],
+vi.mock("@/hooks/data/use-documents", () => ({
+  useDocuments: () => ({
+    documents: [],
     isLoading: false,
     create: mockCreate,
     rename: vi.fn(),
@@ -36,7 +36,7 @@ vi.mock("@/hooks/data/use-workspaces", () => ({
     duplicate: vi.fn(),
     toggleFavorite: vi.fn(),
     moveToFolder: vi.fn(),
-    unfileWorkspace: vi.fn(),
+    unfileDocument: vi.fn(),
   }),
 }));
 
@@ -71,7 +71,7 @@ describe("HubPage", () => {
       expect(screen.getByTestId("tryWithoutSignIn")).toBeInTheDocument();
     });
 
-    it("then navigates to a new workspace when 'Try without signing in' is clicked", async () => {
+    it("then navigates to a new document when 'Try without signing in' is clicked", async () => {
       const user = userEvent.setup();
       const navigate = vi.fn();
       render(<HubPage navigate={navigate} />);
@@ -102,51 +102,51 @@ describe("HubPage", () => {
       mockCreate.mockClear();
     });
 
-    it("then renders the workspace grid instead of the hero", () => {
+    it("then renders the document grid instead of the hero", () => {
       render(<HubPage navigate={vi.fn()} />);
       expect(screen.queryByTestId("tryWithoutSignIn")).not.toBeInTheDocument();
       expect(screen.queryByTestId("heroSignIn")).not.toBeInTheDocument();
     });
 
-    it("then opens the new workspace dialog when 'New Workspace' is clicked", async () => {
+    it("then opens the new document dialog when 'New Document' is clicked", async () => {
       const user = userEvent.setup();
       render(<HubPage navigate={vi.fn()} />);
 
-      await user.click(screen.getByTestId("newWorkspaceButton"));
-      expect(screen.getByTestId("newWorkspaceDialog")).toBeInTheDocument();
-      expect(screen.getByTestId("newWorkspaceNameInput")).toBeInTheDocument();
+      await user.click(screen.getByTestId("newDocumentButton"));
+      expect(screen.getByTestId("newDocumentDialog")).toBeInTheDocument();
+      expect(screen.getByTestId("newDocumentNameInput")).toBeInTheDocument();
     });
 
-    it("then creates workspace with name and stays in hub on dialog submit", async () => {
+    it("then creates document with name and stays in hub on dialog submit", async () => {
       const user = userEvent.setup();
       const navigate = vi.fn();
       render(<HubPage navigate={navigate} />);
 
       // Open the dialog
-      await user.click(screen.getByTestId("newWorkspaceButton"));
+      await user.click(screen.getByTestId("newDocumentButton"));
 
-      // Type a workspace name and submit
-      await user.type(screen.getByTestId("newWorkspaceNameInput"), "My Bible Study");
-      await user.click(screen.getByTestId("newWorkspaceCreateButton"));
+      // Type a document name and submit
+      await user.type(screen.getByTestId("newDocumentNameInput"), "My Bible Study");
+      await user.click(screen.getByTestId("newDocumentCreateButton"));
 
       expect(mockCreate).toHaveBeenCalledWith("mock-ksuid-123", "My Bible Study");
       expect(navigate).not.toHaveBeenCalled();
     });
 
-    it("then closes the dialog after creating a workspace", async () => {
+    it("then closes the dialog after creating a document", async () => {
       const user = userEvent.setup();
       render(<HubPage navigate={vi.fn()} />);
 
       // Open the dialog
-      await user.click(screen.getByTestId("newWorkspaceButton"));
-      expect(screen.getByTestId("newWorkspaceDialog")).toBeInTheDocument();
+      await user.click(screen.getByTestId("newDocumentButton"));
+      expect(screen.getByTestId("newDocumentDialog")).toBeInTheDocument();
 
       // Type a name and submit
-      await user.type(screen.getByTestId("newWorkspaceNameInput"), "Test");
-      await user.click(screen.getByTestId("newWorkspaceCreateButton"));
+      await user.type(screen.getByTestId("newDocumentNameInput"), "Test");
+      await user.click(screen.getByTestId("newDocumentCreateButton"));
 
       // Dialog should close
-      expect(screen.queryByTestId("newWorkspaceDialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("newDocumentDialog")).not.toBeInTheDocument();
     });
   });
 });

@@ -7,27 +7,27 @@ import { useDraggable } from "@/hooks/ui/use-hub-dnd";
 import { useDndContext } from "@/contexts/DndContext";
 import { useSelection } from "@/contexts/SelectionContext";
 import { useClickHandler } from "@/hooks/ui/use-click-handler";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { DocumentItem } from "@/lib/document-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { MoveToFolderMenu } from "./MoveToFolderMenu";
 import { SelectionCheckbox } from "./SelectionCheckbox";
 import { OwnerAvatar } from "./OwnerAvatar";
 
-interface WorkspaceCardProps {
-  workspace: WorkspaceItem;
+interface DocumentCardProps {
+  document: DocumentItem;
   onOpen: () => void;
   onRename: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
-  onToggleFavorite?: (workspaceId: string, isFavorite: boolean) => void;
+  onToggleFavorite?: (documentId: string, isFavorite: boolean) => void;
   folders?: FolderItem[];
-  onMoveToFolder?: (workspaceId: string, folderId: string | null) => void;
+  onMoveToFolder?: (documentId: string, folderId: string | null) => void;
   ownerName?: string;
   ownerAvatarUrl?: string;
 }
 
-export function WorkspaceCard({
-  workspace,
+export function DocumentCard({
+  document,
   onOpen,
   onRename,
   onDuplicate,
@@ -37,24 +37,24 @@ export function WorkspaceCard({
   onMoveToFolder,
   ownerName,
   ownerAvatarUrl,
-}: WorkspaceCardProps) {
+}: DocumentCardProps) {
   const { t } = useTranslation("management");
   const { isSelected, isSelectionActive, handleItemClick, clearSelection, getSelectedItems } =
     useSelection();
-  const selected = isSelected(workspace.workspaceId);
-  const dragRef = useDraggable("workspace", workspace.workspaceId, {
+  const selected = isSelected(document.documentId);
+  const dragRef = useDraggable("document", document.documentId, {
     isSelected: selected,
     getSelectedItems,
     onClearSelection: clearSelection,
   });
   const { dragId } = useDndContext();
-  const isDragging = dragId === workspace.workspaceId;
+  const isDragging = dragId === document.documentId;
 
   const onSelect = useCallback(
     (e: React.MouseEvent) => {
-      handleItemClick(workspace.workspaceId, e);
+      handleItemClick(document.documentId, e);
     },
-    [handleItemClick, workspace.workspaceId],
+    [handleItemClick, document.documentId],
   );
 
   const handleCardClick = useClickHandler(onSelect, onOpen, isSelectionActive);
@@ -73,7 +73,7 @@ export function WorkspaceCard({
           onOpen();
         }
       }}
-      data-testid={`workspaceCard-${workspace.workspaceId}`}
+      data-testid={`documentCard-${document.documentId}`}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
@@ -82,8 +82,7 @@ export function WorkspaceCard({
             visible={isSelectionActive}
             onClick={(e) => {
               e.stopPropagation();
-              // Checkbox click: toggle (like Ctrl+Click), or range if Shift held
-              handleItemClick(workspace.workspaceId, {
+              handleItemClick(document.documentId, {
                 ctrlKey: !e.shiftKey,
                 metaKey: false,
                 shiftKey: e.shiftKey,
@@ -93,25 +92,25 @@ export function WorkspaceCard({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onToggleFavorite?.(workspace.workspaceId, !workspace.isFavorite);
+              onToggleFavorite?.(document.documentId, !document.isFavorite);
             }}
             className="p-1 rounded-md hover:bg-accent transition-colors shrink-0"
             data-testid="favoriteToggle"
           >
             <Star
               size={14}
-              fill={workspace.isFavorite ? "currentColor" : "none"}
-              className={workspace.isFavorite ? "text-yellow-500" : "text-muted-foreground"}
+              fill={document.isFavorite ? "currentColor" : "none"}
+              className={document.isFavorite ? "text-yellow-500" : "text-muted-foreground"}
             />
           </button>
-          <h3 className="font-medium text-sm truncate">{workspace.title || t("hub.untitled")}</h3>
+          <h3 className="font-medium text-sm truncate">{document.title || t("hub.untitled")}</h3>
         </div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button
               onClick={(e) => e.stopPropagation()}
               className="p-1 rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 hover:bg-accent transition-all shrink-0"
-              data-testid="workspaceCardMenu"
+              data-testid="documentCardMenu"
             >
               <MoreHorizontal size={14} />
             </button>
@@ -143,8 +142,8 @@ export function WorkspaceCard({
               {folders && onMoveToFolder && (
                 <MoveToFolderMenu
                   folders={folders}
-                  currentFolderId={workspace.folderId}
-                  onMove={(folderId) => onMoveToFolder(workspace.workspaceId, folderId)}
+                  currentFolderId={document.folderId}
+                  onMove={(folderId) => onMoveToFolder(document.documentId, folderId)}
                 />
               )}
               <DropdownMenu.Separator className="my-1 h-px bg-border" />
@@ -159,8 +158,8 @@ export function WorkspaceCard({
         </DropdownMenu.Root>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        Modified {formatRelativeTime(workspace.updatedAt)} · Created{" "}
-        {formatRelativeTime(workspace.createdAt)}
+        Modified {formatRelativeTime(document.updatedAt)} · Created{" "}
+        {formatRelativeTime(document.createdAt)}
       </p>
       {ownerName && (
         <div className="flex items-center gap-1.5 mt-2">

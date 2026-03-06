@@ -455,9 +455,9 @@ export class YjsRoom extends DurableObject<Env> {
 
       try {
         const { data } = await supabase
-          .from("workspace_permission")
+          .from("document_permission")
           .select("role")
-          .eq("workspace_id", room)
+          .eq("document_id", room)
           .eq("user_id", userId)
           .single();
 

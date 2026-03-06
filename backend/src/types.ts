@@ -1,5 +1,5 @@
 export interface ShareRequest {
-  workspaceId: string;
+  documentId: string;
   access: string;
 }
 
@@ -17,9 +17,9 @@ export interface User {
   updatedAt: string;
 }
 
-export interface UserWorkspace {
+export interface UserDocument {
   userId: string;
-  workspaceId: string;
+  documentId: string;
   title: string;
   createdAt: string;
   updatedAt: string;
@@ -27,7 +27,7 @@ export interface UserWorkspace {
   folderId: string | null;
 }
 
-export interface WorkspaceFolder {
+export interface DocumentFolder {
   id: string;
   userId: string;
   parentId: string | null;

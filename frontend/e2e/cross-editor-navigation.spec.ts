@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { setupWorkspace } from "./helpers";
+import { setupDocument } from "./helpers";
 
 async function editorOfSelection(page: import("@playwright/test").Page, editorCount: number) {
   for (let e = 0; e < editorCount; e++) {
@@ -15,7 +15,7 @@ async function editorOfSelection(page: import("@playwright/test").Page, editorCo
 
 test.describe("when navigating across 2 editors", () => {
   test.beforeEach(async ({ page }) => {
-    await setupWorkspace(page);
+    await setupDocument(page);
     // Hide default layers so their arrows/highlights don't interfere with tests
     for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
@@ -65,7 +65,7 @@ test.describe("when navigating across 3 editors", () => {
   test.setTimeout(90000);
 
   test.beforeEach(async ({ page }) => {
-    await setupWorkspace(page);
+    await setupDocument(page);
     // Hide default layers so their arrows/highlights don't interfere with tests
     for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();

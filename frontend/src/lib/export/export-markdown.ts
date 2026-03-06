@@ -68,7 +68,7 @@ function getVisibleArrows(
   return results;
 }
 
-export function generateWorkspaceMarkdown(options: ExportMarkdownOptions): string {
+export function generateDocumentMarkdown(options: ExportMarkdownOptions): string {
   const { editors, layers, sectionNames, sectionVisibility, title } = options;
   const parts: string[] = [];
 
@@ -157,7 +157,7 @@ export function generateWorkspaceMarkdown(options: ExportMarkdownOptions): strin
   return parts.join("\n");
 }
 
-export function exportWorkspaceAsMarkdown(options: ExportMarkdownOptions): void {
-  const markdown = generateWorkspaceMarkdown(options);
+export function exportDocumentAsMarkdown(options: ExportMarkdownOptions): void {
+  const markdown = generateDocumentMarkdown(options);
   downloadFile(markdown, `${options.title}.md`, "text/markdown");
 }

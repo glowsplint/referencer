@@ -7,7 +7,7 @@ import { optionalAuth } from "./auth/middleware";
 import { handleShare, handleResolveShare, handleAcceptShare } from "./api/share";
 
 import { rateLimiter } from "./lib/rate-limit";
-import { workspaces } from "./api/workspaces";
+import { documents } from "./api/documents";
 import { folders } from "./api/folders";
 import { preferences } from "./api/preferences";
 import { cleanExpiredSessions } from "./auth/store";
@@ -104,8 +104,8 @@ app.use("*", (c, next) => {
 // Auth routes (mounted directly so they share the main app's middleware context)
 app.route("/auth", createAuthRoutes());
 
-// CRUD write rate limiting for workspace and folder mutations
-app.use("/api/workspaces/*", async (c, next) => {
+// CRUD write rate limiting for document and folder mutations
+app.use("/api/documents/*", async (c, next) => {
   const method = c.req.method;
   if (method === "POST" || method === "PATCH" || method === "DELETE") {
     return crudWriteLimiter(c, next);
@@ -120,8 +120,8 @@ app.use("/api/folders/*", async (c, next) => {
   await next();
 });
 
-// Workspaces API
-app.route("/api/workspaces", workspaces);
+// Documents API
+app.route("/api/documents", documents);
 
 // Folders API
 app.route("/api/folders", folders);

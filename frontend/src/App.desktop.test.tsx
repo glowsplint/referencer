@@ -21,8 +21,8 @@ vi.mock("./hooks/ui/use-is-breakpoint", () => ({
   useIsBreakpoint: () => false,
 }));
 
-// Mock the editor workspace hook
-const mockWorkspace = {
+// Mock the editor document hook
+const mockDocument = {
   settings: {
     isDarkMode: false,
     isLayersOn: false,
@@ -32,7 +32,7 @@ const mockWorkspace = {
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   },
-  isPaneLocked: (i: number) => mockWorkspace.settings.lockedPanes[i] ?? true,
+  isPaneLocked: (i: number) => mockDocument.settings.lockedPanes[i] ?? true,
   isAnyPaneLocked: false,
   activeEditorIndex: 0,
   annotations: { activeTool: "selection" as const },
@@ -133,7 +133,7 @@ const mockWorkspace = {
     record: vi.fn(),
   },
   wsConnected: false,
-  workspaceId: "test-workspace",
+  documentId: "test-document",
   yjs: {
     provider: null,
     doc: null,
@@ -150,12 +150,12 @@ const mockWorkspace = {
   },
 };
 
-vi.mock("./hooks/data/use-editor-workspace", () => ({
-  useEditorWorkspace: () => mockWorkspace,
+vi.mock("./hooks/data/use-editor-document", () => ({
+  useEditorDocument: () => mockDocument,
 }));
 
-vi.mock("./hooks/data/use-workspace-autosave", () => ({
-  useWorkspaceAutosave: vi.fn(),
+vi.mock("./hooks/data/use-document-autosave", () => ({
+  useDocumentAutosave: vi.fn(),
 }));
 
 vi.mock("./components/UnsavedBanner", () => ({
@@ -212,7 +212,7 @@ vi.mock("./components/AnnotationPanel", () => ({
 }));
 
 beforeEach(() => {
-  mockWorkspace.settings = {
+  mockDocument.settings = {
     isDarkMode: false,
     isLayersOn: false,
     isMultipleRowsLayout: false,
@@ -221,21 +221,21 @@ beforeEach(() => {
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   };
-  mockWorkspace.isAnyPaneLocked = false;
-  mockWorkspace.layers = [];
-  mockWorkspace.activeLayerId = null;
-  mockWorkspace.editorCount = 1;
-  mockWorkspace.editorWidths = [100];
-  mockWorkspace.editorKeys = [1];
-  mockWorkspace.sectionVisibility = [true];
-  mockWorkspace.isManagementPaneOpen = false;
-  mockWorkspace.annotations = { activeTool: "selection" as const };
-  mockWorkspace.selectedArrow = null;
-  mockWorkspace.demoLoading = false;
+  mockDocument.isAnyPaneLocked = false;
+  mockDocument.layers = [];
+  mockDocument.activeLayerId = null;
+  mockDocument.editorCount = 1;
+  mockDocument.editorWidths = [100];
+  mockDocument.editorKeys = [1];
+  mockDocument.sectionVisibility = [true];
+  mockDocument.isManagementPaneOpen = false;
+  mockDocument.annotations = { activeTool: "selection" as const };
+  mockDocument.selectedArrow = null;
+  mockDocument.demoLoading = false;
 });
 
 const defaultProps = {
-  workspaceId: "test-workspace",
+  documentId: "test-document",
   navigate: vi.fn(),
 };
 
@@ -304,7 +304,7 @@ describe("App (desktop)", () => {
 
   describe("when the management pane is open", () => {
     it("then shows the management pane", () => {
-      mockWorkspace.isManagementPaneOpen = true;
+      mockDocument.isManagementPaneOpen = true;
       renderApp();
       expect(screen.getByTestId("managementPane")).toBeInTheDocument();
     });
@@ -312,10 +312,10 @@ describe("App (desktop)", () => {
 
   describe("when multiple editor panes are configured", () => {
     it("then renders one pane per editor width", () => {
-      mockWorkspace.editorCount = 2;
-      mockWorkspace.editorWidths = [50, 50];
-      mockWorkspace.editorKeys = [1, 2];
-      mockWorkspace.sectionVisibility = [true, true];
+      mockDocument.editorCount = 2;
+      mockDocument.editorWidths = [50, 50];
+      mockDocument.editorKeys = [1, 2];
+      mockDocument.sectionVisibility = [true, true];
       renderApp();
       expect(screen.getAllByTestId("editor-pane")).toHaveLength(2);
     });
@@ -323,17 +323,17 @@ describe("App (desktop)", () => {
 
   describe("when unlocked (editing mode)", () => {
     it("then renders editors without annotation mouse handlers", () => {
-      mockWorkspace.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
-      mockWorkspace.isAnyPaneLocked = false;
+      mockDocument.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
+      mockDocument.isAnyPaneLocked = false;
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-has-mouse-handlers", "false");
     });
 
     it("then does not show the annotation panel even with comments", () => {
-      mockWorkspace.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
-      mockWorkspace.isAnyPaneLocked = false;
-      mockWorkspace.layers = [LAYER_WITH_COMMENT];
+      mockDocument.settings.lockedPanes = { 0: false, 1: false, 2: false, 3: false };
+      mockDocument.isAnyPaneLocked = false;
+      mockDocument.layers = [LAYER_WITH_COMMENT];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     });
@@ -341,8 +341,8 @@ describe("App (desktop)", () => {
 
   describe("when locked (annotation mode)", () => {
     beforeEach(() => {
-      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
-      mockWorkspace.isAnyPaneLocked = true;
+      mockDocument.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockDocument.isAnyPaneLocked = true;
     });
 
     it("then renders editors with annotation mouse handlers", () => {
@@ -358,7 +358,7 @@ describe("App (desktop)", () => {
     });
 
     it("then does not show annotation panel when there are no comment annotations", () => {
-      mockWorkspace.layers = [];
+      mockDocument.layers = [];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     });
@@ -366,9 +366,9 @@ describe("App (desktop)", () => {
 
   describe("when locked with comment annotations", () => {
     beforeEach(() => {
-      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
-      mockWorkspace.isAnyPaneLocked = true;
-      mockWorkspace.layers = [LAYER_WITH_COMMENT];
+      mockDocument.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockDocument.isAnyPaneLocked = true;
+      mockDocument.layers = [LAYER_WITH_COMMENT];
     });
 
     it("then shows the annotation panel", () => {
@@ -389,20 +389,20 @@ describe("App (desktop)", () => {
     });
 
     it("then places the annotation panel on the left", () => {
-      mockWorkspace.settings.commentPlacement = "left";
+      mockDocument.settings.commentPlacement = "left";
       renderApp();
       const panel = screen.getByTestId("annotation-panel");
       expect(panel).toHaveAttribute("data-placement", "left");
     });
 
     it("then hides annotation panel when all annotated texts are hidden", () => {
-      mockWorkspace.sectionVisibility = [false];
+      mockDocument.sectionVisibility = [false];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     });
 
     it("then hides annotation panel when the layer is not visible", () => {
-      mockWorkspace.layers = [{ ...LAYER_WITH_COMMENT, visible: false }];
+      mockDocument.layers = [{ ...LAYER_WITH_COMMENT, visible: false }];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     });
@@ -410,33 +410,33 @@ describe("App (desktop)", () => {
 
   describe("when a tool mode is active while locked", () => {
     beforeEach(() => {
-      mockWorkspace.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
-      mockWorkspace.isAnyPaneLocked = true;
+      mockDocument.settings.lockedPanes = { 0: true, 1: true, 2: true, 3: true };
+      mockDocument.isAnyPaneLocked = true;
     });
 
     it("then applies eraser cursor class to editor container", () => {
-      mockWorkspace.annotations = { activeTool: "eraser" as const };
+      mockDocument.annotations = { activeTool: "eraser" as const };
       renderApp();
       const container = screen.getByTestId("editorContainer");
       expect(container.className).toContain("eraser-mode-container");
     });
 
     it("then applies highlight cursor class to editor container", () => {
-      mockWorkspace.annotations = { activeTool: "highlight" as const };
+      mockDocument.annotations = { activeTool: "highlight" as const };
       renderApp();
       const container = screen.getByTestId("editorContainer");
       expect(container.className).toContain("highlight-mode-container");
     });
 
     it("then applies comment cursor class to editor container", () => {
-      mockWorkspace.annotations = { activeTool: "comments" as const };
+      mockDocument.annotations = { activeTool: "comments" as const };
       renderApp();
       const container = screen.getByTestId("editorContainer");
       expect(container.className).toContain("comment-mode-container");
     });
 
     it("then does not apply tool cursor classes when using selection tool", () => {
-      mockWorkspace.annotations = { activeTool: "selection" as const };
+      mockDocument.annotations = { activeTool: "selection" as const };
       renderApp();
       const container = screen.getByTestId("editorContainer");
       expect(container.className).not.toContain("eraser-mode-container");
@@ -447,7 +447,7 @@ describe("App (desktop)", () => {
 
   describe("when layers have data", () => {
     it("then passes layer count to editor panes", () => {
-      mockWorkspace.layers = [LAYER_WITH_COMMENT];
+      mockDocument.layers = [LAYER_WITH_COMMENT];
       renderApp();
       const pane = screen.getByTestId("editor-pane");
       expect(pane).toHaveAttribute("data-layer-count", "1");
@@ -456,7 +456,7 @@ describe("App (desktop)", () => {
 
   describe("when status bar is disabled", () => {
     it("then does not show the status bar", () => {
-      mockWorkspace.settings.showStatusBar = false;
+      mockDocument.settings.showStatusBar = false;
       renderApp();
       expect(screen.queryByTestId("status-bar")).not.toBeInTheDocument();
     });
@@ -464,13 +464,13 @@ describe("App (desktop)", () => {
 
   describe("when demo is loading", () => {
     it("then shows the loading overlay", () => {
-      mockWorkspace.demoLoading = true;
+      mockDocument.demoLoading = true;
       renderApp();
       expect(screen.getByTestId("demoLoadingOverlay")).toBeInTheDocument();
     });
 
     it("then hides the loading overlay when not loading", () => {
-      mockWorkspace.demoLoading = false;
+      mockDocument.demoLoading = false;
       renderApp();
       expect(screen.queryByTestId("demoLoadingOverlay")).not.toBeInTheDocument();
     });

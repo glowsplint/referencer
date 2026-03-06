@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import { createShareLink, resolveShareLink } from "../db/share-queries";
 import { getPermission, setPermission, hasMinimumRole } from "../db/permission-queries";
-import { createUserWorkspace } from "../db/workspace-queries";
+import { createUserDocument } from "../db/document-queries";
 import type { ShareRequest, ShareResponse } from "../types";
 import type { Env } from "../env";
 import type { PermissionRole } from "../db/permission-queries";
@@ -22,26 +22,26 @@ export function handleShare() {
       const supabase = c.get("supabase");
 
       // Require owner or editor permission to share
-      const role = await getPermission(supabase, req.workspaceId, user.id);
+      const role = await getPermission(supabase, req.documentId, user.id);
       if (!role || !hasMinimumRole(role, "editor")) {
         return c.json({ error: "Forbidden" }, 403);
       }
 
-      const code = await createShareLink(supabase, req.workspaceId, req.access, user.id);
+      const code = await createShareLink(supabase, req.documentId, req.access, user.id);
       const resp: ShareResponse = {
         code,
         url: "/s/" + code,
       };
       log.info("POST /api/share", {
         userId: user.id,
-        workspaceId: req.workspaceId,
+        documentId: req.documentId,
         access: req.access,
       });
       return c.json(resp);
     } catch (err) {
       log.error("POST /api/share failed", {
         userId: user.id,
-        workspaceId: req.workspaceId,
+        documentId: req.documentId,
         error: String(err),
       });
       return c.json({ error: "Internal server error" }, 500);
@@ -87,23 +87,23 @@ export function handleAcceptShare() {
       // Map share access to permission role
       const shareRole: PermissionRole = result.access === "readonly" ? "viewer" : "editor";
 
-      const existingRole = await getPermission(supabase, result.workspaceId, user.id);
+      const existingRole = await getPermission(supabase, result.documentId, user.id);
       // Only set permission if user doesn't already have a higher role
       if (!existingRole || !hasMinimumRole(existingRole, shareRole)) {
-        await setPermission(supabase, result.workspaceId, user.id, shareRole);
+        await setPermission(supabase, result.documentId, user.id, shareRole);
       }
 
-      // Add workspace to user's hub (ignore if already exists)
+      // Add document to user's hub (ignore if already exists)
       try {
-        await createUserWorkspace(supabase, user.id, result.workspaceId, "");
+        await createUserDocument(supabase, user.id, result.documentId, "");
       } catch (err: unknown) {
         const isDuplicate =
           err instanceof Error &&
           (err.message?.includes("23505") || err.message?.includes("unique"));
         if (!isDuplicate) {
-          log.error("Failed to add workspace to hub", {
+          log.error("Failed to add document to hub", {
             userId: user.id,
-            workspaceId: result.workspaceId,
+            documentId: result.documentId,
             error: String(err),
           });
           return c.json({ error: "Internal server error" }, 500);
@@ -112,10 +112,10 @@ export function handleAcceptShare() {
 
       log.info("POST /api/share/accept resolved", {
         code: body.code,
-        workspaceId: result.workspaceId,
+        documentId: result.documentId,
         userId: user.id,
       });
-      return c.json({ workspaceId: result.workspaceId });
+      return c.json({ documentId: result.documentId });
     } catch (err) {
       log.error("POST /api/share/accept failed", {
         userId: user.id,

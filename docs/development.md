@@ -2,8 +2,8 @@
 
 ## Prerequisites
 
-- **[Bun](https://bun.sh/)** -- package management and script execution across all workspaces
-- **[Wrangler](https://developers.cloudflare.com/workers/wrangler/)** -- Cloudflare Workers CLI for local dev and deployment (installed per-workspace as devDependency)
+- **[Bun](https://bun.sh/)** -- package management and script execution across all documents
+- **[Wrangler](https://developers.cloudflare.com/workers/wrangler/)** -- Cloudflare Workers CLI for local dev and deployment (installed per-document as devDependency)
 
 ## Quick Start
 

@@ -1,4 +1,4 @@
-// Workspace settings dialog with toggle switches for dark mode, arrow
+// Document settings dialog with toggle switches for dark mode, arrow
 // visibility, and status bar.
 import { useTranslation } from "react-i18next";
 import i18n, { LANGUAGE_OPTIONS } from "@/i18n";

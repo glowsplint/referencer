@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { WorkspaceGrid } from "./WorkspaceGrid";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import { DocumentGrid } from "./DocumentGrid";
+import type { DocumentItem } from "@/lib/document-client";
 import type { FolderItem } from "@/lib/folder-client";
 
 vi.mock("@/lib/annotation/format-relative-time", () => ({
@@ -13,10 +13,10 @@ vi.mock("@/lib/ksuid", () => ({
   randomKSUID: () => "mock-ksuid-123",
 }));
 
-function makeWorkspace(overrides: Partial<WorkspaceItem> = {}): WorkspaceItem {
+function makeDocument(overrides: Partial<DocumentItem> = {}): DocumentItem {
   return {
-    workspaceId: "ws-1",
-    title: "Test Workspace",
+    documentId: "ws-1",
+    title: "Test Document",
     createdAt: "2026-01-01T00:00:00Z",
     updatedAt: "2026-01-02T00:00:00Z",
     isFavorite: false,
@@ -37,7 +37,7 @@ function makeFolder(overrides: Partial<FolderItem> = {}): FolderItem {
   };
 }
 
-describe("WorkspaceGrid", () => {
+describe("DocumentGrid", () => {
   let navigate: ReturnType<typeof vi.fn>;
   let onNew: ReturnType<typeof vi.fn>;
   let onRename: ReturnType<typeof vi.fn>;
@@ -47,8 +47,8 @@ describe("WorkspaceGrid", () => {
   let onCreateFolder: ReturnType<typeof vi.fn>;
   let onRenameFolder: ReturnType<typeof vi.fn>;
   let onDeleteFolder: ReturnType<typeof vi.fn>;
-  let onMoveWorkspaceToFolder: ReturnType<typeof vi.fn>;
-  let onUnfileWorkspace: ReturnType<typeof vi.fn>;
+  let onMoveDocumentToFolder: ReturnType<typeof vi.fn>;
+  let onUnfileDocument: ReturnType<typeof vi.fn>;
   let onToggleFolderFavorite: ReturnType<typeof vi.fn>;
   let onMoveFolder: ReturnType<typeof vi.fn>;
 
@@ -62,20 +62,20 @@ describe("WorkspaceGrid", () => {
     onCreateFolder = vi.fn();
     onRenameFolder = vi.fn();
     onDeleteFolder = vi.fn();
-    onMoveWorkspaceToFolder = vi.fn();
-    onUnfileWorkspace = vi.fn();
+    onMoveDocumentToFolder = vi.fn();
+    onUnfileDocument = vi.fn();
     onToggleFolderFavorite = vi.fn();
     onMoveFolder = vi.fn();
   });
 
   function renderGrid(
-    workspaces: WorkspaceItem[] = [],
+    documents: DocumentItem[] = [],
     folders: FolderItem[] = [],
     isLoading = false,
   ) {
     return render(
-      <WorkspaceGrid
-        workspaces={workspaces}
+      <DocumentGrid
+        documents={documents}
         isLoading={isLoading}
         navigate={navigate}
         onNew={onNew}
@@ -87,8 +87,8 @@ describe("WorkspaceGrid", () => {
         onCreateFolder={onCreateFolder}
         onRenameFolder={onRenameFolder}
         onDeleteFolder={onDeleteFolder}
-        onMoveWorkspaceToFolder={onMoveWorkspaceToFolder}
-        onUnfileWorkspace={onUnfileWorkspace}
+        onMoveDocumentToFolder={onMoveDocumentToFolder}
+        onUnfileDocument={onUnfileDocument}
         onToggleFolderFavorite={onToggleFolderFavorite}
         onMoveFolder={onMoveFolder}
         ownerName="Test User"
@@ -105,53 +105,53 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("when there are no workspaces or folders", () => {
+  describe("when there are no documents or folders", () => {
     it("then shows the empty state onboarding", () => {
       renderGrid([], [], false);
       expect(screen.getByTestId("emptyStateOnboarding")).toBeInTheDocument();
       expect(screen.getByText("Welcome to Referencer")).toBeInTheDocument();
-      expect(screen.getByText("Create your first workspace")).toBeInTheDocument();
+      expect(screen.getByText("Create your first document")).toBeInTheDocument();
     });
 
     it("then calls onNew with null when the empty state button is clicked", async () => {
       const user = userEvent.setup();
       renderGrid([], [], false);
-      await user.click(screen.getByText("Create your first workspace"));
+      await user.click(screen.getByText("Create your first document"));
       expect(onNew).toHaveBeenCalledWith(null);
     });
   });
 
-  describe("when there are workspaces", () => {
-    it("then shows the workspace title in grid view", () => {
-      renderGrid([makeWorkspace()]);
-      expect(screen.getByText("Test Workspace")).toBeInTheDocument();
+  describe("when there are documents", () => {
+    it("then shows the document title in grid view", () => {
+      renderGrid([makeDocument()]);
+      expect(screen.getByText("Test Document")).toBeInTheDocument();
     });
 
-    it("then shows the header with My Workspaces title", () => {
-      renderGrid([makeWorkspace()]);
-      expect(screen.getByText("My Workspaces")).toBeInTheDocument();
+    it("then shows the header with My Documents title", () => {
+      renderGrid([makeDocument()]);
+      expect(screen.getByText("My Documents")).toBeInTheDocument();
     });
 
     it("then shows the starred section at root level", () => {
-      renderGrid([makeWorkspace()]);
+      renderGrid([makeDocument()]);
       expect(screen.getByTestId("starredSection")).toBeInTheDocument();
     });
 
     it("then shows 'Star an item to pin it here' when no items are starred", () => {
-      renderGrid([makeWorkspace()]);
+      renderGrid([makeDocument()]);
       expect(screen.getByText("Star an item to pin it here")).toBeInTheDocument();
     });
   });
 
   describe("when starred items exist", () => {
-    it("then places starred workspaces in the starred section", () => {
-      const starred = makeWorkspace({
-        workspaceId: "ws-starred",
+    it("then places starred documents in the starred section", () => {
+      const starred = makeDocument({
+        documentId: "ws-starred",
         title: "Starred WS",
         isFavorite: true,
       });
-      const unstarred = makeWorkspace({
-        workspaceId: "ws-other",
+      const unstarred = makeDocument({
+        documentId: "ws-other",
         title: "Other WS",
         isFavorite: false,
       });
@@ -165,7 +165,7 @@ describe("WorkspaceGrid", () => {
   describe("when view mode is toggled", () => {
     it("then switches to list view when the list button is clicked", async () => {
       const user = userEvent.setup();
-      const ws = makeWorkspace();
+      const ws = makeDocument();
       renderGrid([ws]);
 
       await user.click(screen.getByTestId("listViewButton"));
@@ -178,7 +178,7 @@ describe("WorkspaceGrid", () => {
 
     it("then persists view mode to localStorage", async () => {
       const user = userEvent.setup();
-      renderGrid([makeWorkspace()]);
+      renderGrid([makeDocument()]);
 
       await user.click(screen.getByTestId("listViewButton"));
       expect(localStorage.getItem("hub-view-mode")).toBe("list");
@@ -188,26 +188,26 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("when new workspace button is clicked", () => {
+  describe("when new document button is clicked", () => {
     it("then calls onNew with null at root level", async () => {
       const user = userEvent.setup();
-      renderGrid([makeWorkspace()]);
+      renderGrid([makeDocument()]);
 
-      await user.click(screen.getByTestId("newWorkspaceButton"));
+      await user.click(screen.getByTestId("newDocumentButton"));
       expect(onNew).toHaveBeenCalledWith(null);
     });
 
     it("then calls onNew with the current folder id when inside a folder", async () => {
       const user = userEvent.setup();
       const folder = makeFolder({ id: "f1", name: "Study Notes" });
-      const ws = makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "WS in folder" });
+      const ws = makeDocument({ documentId: "ws-1", folderId: "f1", title: "WS in folder" });
       renderGrid([ws], [folder]);
 
       // Navigate into folder
       await user.dblClick(screen.getByTestId("folderCard-f1"));
 
-      // Click new workspace button
-      await user.click(screen.getByTestId("newWorkspaceButton"));
+      // Click new document button
+      await user.click(screen.getByTestId("newDocumentButton"));
       expect(onNew).toHaveBeenCalledWith("f1");
     });
   });
@@ -215,7 +215,7 @@ describe("WorkspaceGrid", () => {
   describe("when new folder button is clicked", () => {
     it("then shows inline input", async () => {
       const user = userEvent.setup();
-      renderGrid([makeWorkspace()]);
+      renderGrid([makeDocument()]);
 
       await user.click(screen.getByTestId("newFolderButton"));
       expect(screen.getByTestId("inlineNameInput")).toBeInTheDocument();
@@ -225,8 +225,8 @@ describe("WorkspaceGrid", () => {
   describe("when sort controls are used in list view", () => {
     it("then toggles sort direction when clicking the same column header", async () => {
       const user = userEvent.setup();
-      const ws1 = makeWorkspace({ workspaceId: "ws-1", title: "Alpha" });
-      const ws2 = makeWorkspace({ workspaceId: "ws-2", title: "Beta" });
+      const ws1 = makeDocument({ documentId: "ws-1", title: "Alpha" });
+      const ws2 = makeDocument({ documentId: "ws-2", title: "Beta" });
       renderGrid([ws1, ws2]);
 
       // Switch to list view to see sort controls
@@ -241,12 +241,12 @@ describe("WorkspaceGrid", () => {
     });
   });
 
-  describe("when a workspace card is double-clicked", () => {
-    it("then opens the workspace", async () => {
+  describe("when a document card is double-clicked", () => {
+    it("then opens the document", async () => {
       const user = userEvent.setup();
-      renderGrid([makeWorkspace({ workspaceId: "ws-open-test" })]);
+      renderGrid([makeDocument({ documentId: "ws-open-test" })]);
 
-      await user.dblClick(screen.getByTestId("workspaceCard-ws-open-test"));
+      await user.dblClick(screen.getByTestId("documentCard-ws-open-test"));
       expect(navigate).toHaveBeenCalledWith("#/ws-open-test");
     });
   });
@@ -254,7 +254,7 @@ describe("WorkspaceGrid", () => {
   describe("when folders exist in grid", () => {
     it("then renders a folder in the all items section", () => {
       const folder = makeFolder({ id: "f1", name: "My Folder" });
-      renderGrid([makeWorkspace({ folderId: "f1" })], [folder]);
+      renderGrid([makeDocument({ folderId: "f1" })], [folder]);
 
       expect(screen.getByText("My Folder")).toBeInTheDocument();
     });
@@ -269,15 +269,15 @@ describe("WorkspaceGrid", () => {
   });
 
   describe("when starred items are sorted", () => {
-    it("then sorts starred workspaces by updatedAt desc by default", () => {
-      const wsOld = makeWorkspace({
-        workspaceId: "ws-old",
+    it("then sorts starred documents by updatedAt desc by default", () => {
+      const wsOld = makeDocument({
+        documentId: "ws-old",
         title: "Old WS",
         isFavorite: true,
         updatedAt: "2026-01-01T00:00:00Z",
       });
-      const wsNew = makeWorkspace({
-        workspaceId: "ws-new",
+      const wsNew = makeDocument({
+        documentId: "ws-new",
         title: "New WS",
         isFavorite: true,
         updatedAt: "2026-01-10T00:00:00Z",
@@ -285,29 +285,29 @@ describe("WorkspaceGrid", () => {
       renderGrid([wsOld, wsNew]);
 
       const starredSection = screen.getByTestId("starredSection");
-      const cards = within(starredSection).getAllByTestId(/^workspaceCard-/);
+      const cards = within(starredSection).getAllByTestId(/^documentCard-/);
       // Default sort is updatedAt desc, so newer first
-      expect(cards[0]).toHaveAttribute("data-testid", "workspaceCard-ws-new");
-      expect(cards[1]).toHaveAttribute("data-testid", "workspaceCard-ws-old");
+      expect(cards[0]).toHaveAttribute("data-testid", "documentCard-ws-new");
+      expect(cards[1]).toHaveAttribute("data-testid", "documentCard-ws-old");
     });
 
-    it("then re-sorts starred workspaces when sort config changes", async () => {
+    it("then re-sorts starred documents when sort config changes", async () => {
       const user = userEvent.setup();
-      const wsAlpha = makeWorkspace({
-        workspaceId: "ws-alpha",
+      const wsAlpha = makeDocument({
+        documentId: "ws-alpha",
         title: "Alpha",
         isFavorite: true,
         updatedAt: "2026-01-01T00:00:00Z",
       });
-      const wsBeta = makeWorkspace({
-        workspaceId: "ws-beta",
+      const wsBeta = makeDocument({
+        documentId: "ws-beta",
         title: "Beta",
         isFavorite: true,
         updatedAt: "2026-01-10T00:00:00Z",
       });
-      // Also add an unstarred workspace so the all-items section renders list view controls
-      const wsUnstarred = makeWorkspace({
-        workspaceId: "ws-other",
+      // Also add an unstarred document so the all-items section renders list view controls
+      const wsUnstarred = makeDocument({
+        documentId: "ws-other",
         title: "Other",
         isFavorite: false,
       });
@@ -320,37 +320,37 @@ describe("WorkspaceGrid", () => {
       await user.click(screen.getByTestId("sortByTitle"));
 
       const starredSection = screen.getByTestId("starredSection");
-      const items = within(starredSection).getAllByTestId(/^workspaceListItem-/);
+      const items = within(starredSection).getAllByTestId(/^documentListItem-/);
       // Title asc => Alpha before Beta
-      expect(items[0]).toHaveAttribute("data-testid", "workspaceListItem-ws-alpha");
-      expect(items[1]).toHaveAttribute("data-testid", "workspaceListItem-ws-beta");
+      expect(items[0]).toHaveAttribute("data-testid", "documentListItem-ws-alpha");
+      expect(items[1]).toHaveAttribute("data-testid", "documentListItem-ws-beta");
     });
   });
 
-  describe("when folders and workspaces are mixed", () => {
-    it("then renders folders before workspaces in the starred section", () => {
+  describe("when folders and documents are mixed", () => {
+    it("then renders folders before documents in the starred section", () => {
       const starredFolder = makeFolder({
         id: "f-star",
         name: "Starred Folder",
         isFavorite: true,
       });
-      const starredWs = makeWorkspace({
-        workspaceId: "ws-starred",
+      const starredWs = makeDocument({
+        documentId: "ws-starred",
         title: "Starred WS",
         isFavorite: true,
       });
       renderGrid([starredWs], [starredFolder]);
 
       const starredSection = screen.getByTestId("starredSection");
-      const allItems = within(starredSection).getAllByTestId(/^(folderCard|workspaceCard)-/);
+      const allItems = within(starredSection).getAllByTestId(/^(folderCard|documentCard)-/);
       expect(allItems[0]).toHaveAttribute("data-testid", "folderCard-f-star");
-      expect(allItems[1]).toHaveAttribute("data-testid", "workspaceCard-ws-starred");
+      expect(allItems[1]).toHaveAttribute("data-testid", "documentCard-ws-starred");
     });
 
-    it("then renders folders before workspaces in the all items section", () => {
+    it("then renders folders before documents in the all items section", () => {
       const folder = makeFolder({ id: "f1", name: "My Folder" });
-      const ws = makeWorkspace({
-        workspaceId: "ws-unfiled",
+      const ws = makeDocument({
+        documentId: "ws-unfiled",
         title: "Unfiled WS",
         isFavorite: false,
         folderId: null,
@@ -358,16 +358,16 @@ describe("WorkspaceGrid", () => {
       renderGrid([ws], [folder]);
 
       const allItemsSection = screen.getByTestId("allItemsSection");
-      const allCards = within(allItemsSection).getAllByTestId(/^(folderCard|workspaceCard)-/);
+      const allCards = within(allItemsSection).getAllByTestId(/^(folderCard|documentCard)-/);
       expect(allCards[0]).toHaveAttribute("data-testid", "folderCard-f1");
-      expect(allCards[1]).toHaveAttribute("data-testid", "workspaceCard-ws-unfiled");
+      expect(allCards[1]).toHaveAttribute("data-testid", "documentCard-ws-unfiled");
     });
 
-    it("then renders folders before workspaces in list view too", async () => {
+    it("then renders folders before documents in list view too", async () => {
       const user = userEvent.setup();
       const folder = makeFolder({ id: "f1", name: "Zebra Folder" });
-      const ws = makeWorkspace({
-        workspaceId: "ws-unfiled",
+      const ws = makeDocument({
+        documentId: "ws-unfiled",
         title: "Alpha WS",
         isFavorite: false,
         folderId: null,
@@ -378,11 +378,11 @@ describe("WorkspaceGrid", () => {
 
       const allItemsSection = screen.getByTestId("allItemsSection");
       const allListItems = within(allItemsSection).getAllByTestId(
-        /^(folderListItem|workspaceListItem)-/,
+        /^(folderListItem|documentListItem)-/,
       );
       // Even though "Alpha WS" < "Zebra Folder" alphabetically, folder should come first
       expect(allListItems[0]).toHaveAttribute("data-testid", "folderListItem-f1");
-      expect(allListItems[1]).toHaveAttribute("data-testid", "workspaceListItem-ws-unfiled");
+      expect(allListItems[1]).toHaveAttribute("data-testid", "documentListItem-ws-unfiled");
     });
   });
 
@@ -390,9 +390,9 @@ describe("WorkspaceGrid", () => {
     it("then hides the starred section and shows breadcrumb", async () => {
       const user = userEvent.setup();
       const folder = makeFolder({ id: "f1", name: "Study Notes" });
-      const ws = makeWorkspace({ workspaceId: "ws-1", folderId: "f1", title: "WS in folder" });
-      const unfiledWs = makeWorkspace({
-        workspaceId: "ws-unfiled",
+      const ws = makeDocument({ documentId: "ws-1", folderId: "f1", title: "WS in folder" });
+      const unfiledWs = makeDocument({
+        documentId: "ws-unfiled",
         title: "Unfiled",
         folderId: null,
       });
@@ -410,20 +410,20 @@ describe("WorkspaceGrid", () => {
       expect(screen.queryByTestId("starredSection")).not.toBeInTheDocument();
       // Breadcrumb should appear
       expect(screen.getByTestId("folderBreadcrumb")).toBeInTheDocument();
-      expect(screen.getByTestId("breadcrumb-root")).toHaveTextContent("My Workspaces");
+      expect(screen.getByTestId("breadcrumb-root")).toHaveTextContent("My Documents");
       expect(screen.getByTestId("breadcrumb-f1")).toHaveTextContent("Study Notes");
 
-      // Should show workspace inside the folder
+      // Should show document inside the folder
       expect(screen.getByText("WS in folder")).toBeInTheDocument();
-      // Should NOT show unfiled workspace (it's at root level)
+      // Should NOT show unfiled document (it's at root level)
       expect(screen.queryByText("Unfiled")).not.toBeInTheDocument();
     });
 
     it("then navigates back to root when breadcrumb root is clicked", async () => {
       const user = userEvent.setup();
       const folder = makeFolder({ id: "f1", name: "Study Notes" });
-      const unfiledWs = makeWorkspace({
-        workspaceId: "ws-unfiled",
+      const unfiledWs = makeDocument({
+        documentId: "ws-unfiled",
         title: "Unfiled",
         folderId: null,
       });
@@ -440,7 +440,7 @@ describe("WorkspaceGrid", () => {
       expect(screen.getByTestId("starredSection")).toBeInTheDocument();
       // Breadcrumb disappears
       expect(screen.queryByTestId("folderBreadcrumb")).not.toBeInTheDocument();
-      // Unfiled workspace visible again
+      // Unfiled document visible again
       expect(screen.getByText("Unfiled")).toBeInTheDocument();
     });
 

@@ -5,17 +5,17 @@ import { DeleteDialog } from "./DeleteDialog";
 
 describe("DeleteDialog", () => {
   describe("when opened", () => {
-    it("then renders the workspace title in the confirmation message", () => {
+    it("then renders the document title in the confirmation message", () => {
       render(
         <DeleteDialog
           open={true}
           onOpenChange={vi.fn()}
-          workspaceTitle="My Workspace"
+          documentTitle="My Document"
           onDelete={vi.fn()}
         />,
       );
-      expect(screen.getByText(/My Workspace/)).toBeInTheDocument();
-      expect(screen.getByText("Delete Workspace")).toBeInTheDocument();
+      expect(screen.getByText(/My Document/)).toBeInTheDocument();
+      expect(screen.getByText("Delete Document")).toBeInTheDocument();
     });
   });
 
@@ -27,7 +27,7 @@ describe("DeleteDialog", () => {
         <DeleteDialog
           open={true}
           onOpenChange={vi.fn()}
-          workspaceTitle="My Workspace"
+          documentTitle="My Document"
           onDelete={onDelete}
         />,
       );
@@ -45,7 +45,7 @@ describe("DeleteDialog", () => {
         <DeleteDialog
           open={true}
           onOpenChange={onOpenChange}
-          workspaceTitle="My Workspace"
+          documentTitle="My Document"
           onDelete={vi.fn()}
         />,
       );
@@ -61,7 +61,7 @@ describe("DeleteDialog", () => {
         <DeleteDialog
           open={false}
           onOpenChange={vi.fn()}
-          workspaceTitle="My Workspace"
+          documentTitle="My Document"
           onDelete={vi.fn()}
         />,
       );

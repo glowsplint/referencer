@@ -1,4 +1,4 @@
-// Default workspace data for the Bible study demo.
+// Default document data for the Bible study demo.
 // Provides two text contents (Genesis 1:1-31, Revelation 21:1-27),
 // four pre-populated annotation layers for inductive study, and a placeholder
 // for new editors.

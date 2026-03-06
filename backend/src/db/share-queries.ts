@@ -3,7 +3,7 @@ import { generateCode } from "../lib/utils";
 
 export async function createShareLink(
   supabase: SupabaseClient,
-  workspaceId: string,
+  documentId: string,
   access: string,
   createdBy?: string,
 ): Promise<string> {
@@ -13,7 +13,7 @@ export async function createShareLink(
     const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
     const { error } = await supabase.from("share_link").insert({
       code,
-      workspace_id: workspaceId,
+      document_id: documentId,
       access,
       expires_at,
       created_by: createdBy ?? null,
@@ -26,7 +26,7 @@ export async function createShareLink(
 
 export async function listShareLinks(
   supabase: SupabaseClient,
-  workspaceId: string,
+  documentId: string,
 ): Promise<
   Array<{
     code: string;
@@ -39,7 +39,7 @@ export async function listShareLinks(
   const { data } = await supabase
     .from("share_link")
     .select("code, access, created_at, expires_at, created_by")
-    .eq("workspace_id", workspaceId);
+    .eq("document_id", documentId);
   if (!data) return [];
   const now = new Date();
   return data
@@ -56,13 +56,13 @@ export async function listShareLinks(
 export async function deleteShareLink(
   supabase: SupabaseClient,
   code: string,
-  workspaceId: string,
+  documentId: string,
 ): Promise<boolean> {
   const { data } = await supabase
     .from("share_link")
     .delete()
     .eq("code", code)
-    .eq("workspace_id", workspaceId)
+    .eq("document_id", documentId)
     .select("code");
   return Array.isArray(data) && data.length > 0;
 }
@@ -70,10 +70,10 @@ export async function deleteShareLink(
 export async function resolveShareLink(
   supabase: SupabaseClient,
   code: string,
-): Promise<{ workspaceId: string; access: string } | null> {
+): Promise<{ documentId: string; access: string } | null> {
   const { data } = await supabase
     .from("share_link")
-    .select("workspace_id, access, expires_at")
+    .select("document_id, access, expires_at")
     .eq("code", code)
     .single();
   if (!data) return null;
@@ -83,5 +83,5 @@ export async function resolveShareLink(
     return null;
   }
 
-  return { workspaceId: data.workspace_id, access: data.access };
+  return { documentId: data.document_id, access: data.access };
 }

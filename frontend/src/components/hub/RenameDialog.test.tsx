@@ -14,7 +14,7 @@ describe("RenameDialog", () => {
           onRename={vi.fn()}
         />,
       );
-      expect(screen.getByText("Rename Workspace")).toBeInTheDocument();
+      expect(screen.getByText("Rename Document")).toBeInTheDocument();
       expect(screen.getByTestId("renameInput")).toHaveValue("Old Name");
     });
   });

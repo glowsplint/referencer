@@ -1,10 +1,10 @@
 import { screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { ButtonPane } from "./ButtonPane";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 
 function renderButtonPane(overrides = {}) {
-  return renderWithWorkspace(<ButtonPane />, overrides);
+  return renderWithDocument(<ButtonPane />, overrides);
 }
 
 /** Helper: overrides that simulate all panes locked (annotation mode active) */
@@ -94,42 +94,42 @@ describe("ButtonPane", () => {
 
     describe("when the selection button is clicked", () => {
       it("then calls setActiveTool with selection", () => {
-        const { workspace } = renderButtonPane(allLocked);
+        const { document } = renderButtonPane(allLocked);
         fireEvent.click(screen.getByTestId("selectionToolButton"));
-        expect(workspace.setActiveTool).toHaveBeenCalledWith("selection");
+        expect(document.setActiveTool).toHaveBeenCalledWith("selection");
       });
     });
 
     describe("when the arrow button is clicked", () => {
       it("then calls setActiveTool with arrow", () => {
-        const { workspace } = renderButtonPane(allLocked);
+        const { document } = renderButtonPane(allLocked);
         fireEvent.click(screen.getByTestId("arrowToolButton"));
-        expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
+        expect(document.setActiveTool).toHaveBeenCalledWith("arrow");
       });
     });
 
     describe("when the comments button is clicked", () => {
       it("then calls setActiveTool with comments", () => {
-        const { workspace } = renderButtonPane(allLocked);
+        const { document } = renderButtonPane(allLocked);
         fireEvent.click(screen.getByTestId("commentsToolButton"));
-        expect(workspace.setActiveTool).toHaveBeenCalledWith("comments");
+        expect(document.setActiveTool).toHaveBeenCalledWith("comments");
       });
     });
   });
 
   describe("when the menu button is clicked", () => {
     it("then calls toggleManagementPane", () => {
-      const { workspace } = renderButtonPane();
+      const { document } = renderButtonPane();
       fireEvent.click(screen.getByTestId("menuButton"));
-      expect(workspace.toggleManagementPane).toHaveBeenCalledOnce();
+      expect(document.toggleManagementPane).toHaveBeenCalledOnce();
     });
   });
 
   describe("when the layout button is clicked", () => {
     it("then calls toggleMultipleRowsLayout", () => {
-      const { workspace } = renderButtonPane();
+      const { document } = renderButtonPane();
       fireEvent.click(screen.getByTestId("editorLayoutButton"));
-      expect(workspace.toggleMultipleRowsLayout).toHaveBeenCalledOnce();
+      expect(document.toggleMultipleRowsLayout).toHaveBeenCalledOnce();
     });
   });
 
@@ -329,11 +329,11 @@ describe("ButtonPane", () => {
 
     describe("when an arrow is selected", () => {
       it("then activates the arrow tool", () => {
-        const { workspace } = renderButtonPane({
+        const { document } = renderButtonPane({
           ...allLocked,
           selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
         });
-        expect(workspace.setActiveTool).toHaveBeenCalledWith("arrow");
+        expect(document.setActiveTool).toHaveBeenCalledWith("arrow");
       });
     });
 
@@ -360,20 +360,20 @@ describe("ButtonPane", () => {
 
     describe("when a style is selected", () => {
       it("then calls setActiveArrowStyle", () => {
-        const { workspace } = renderButtonPane({
+        const { document } = renderButtonPane({
           ...allLocked,
           arrowStylePickerOpen: true,
         });
 
         fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
 
-        expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
+        expect(document.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
       });
     });
 
     describe("when a style is selected and an arrow is selected", () => {
       it("then calls updateArrowStyle for the selected arrow", () => {
-        const { workspace } = renderButtonPane({
+        const { document } = renderButtonPane({
           ...allLocked,
           arrowStylePickerOpen: true,
           selectedArrow: { layerId: "layer-1", arrowId: "arrow-1" },
@@ -381,14 +381,14 @@ describe("ButtonPane", () => {
 
         fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
 
-        expect(workspace.updateArrowStyle).toHaveBeenCalledWith("layer-1", "arrow-1", "dashed");
-        expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
+        expect(document.updateArrowStyle).toHaveBeenCalledWith("layer-1", "arrow-1", "dashed");
+        expect(document.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
       });
     });
 
     describe("when a style is selected and no arrow is selected", () => {
       it("then does not call updateArrowStyle", () => {
-        const { workspace } = renderButtonPane({
+        const { document } = renderButtonPane({
           ...allLocked,
           arrowStylePickerOpen: true,
           selectedArrow: null,
@@ -396,8 +396,8 @@ describe("ButtonPane", () => {
 
         fireEvent.click(screen.getByTestId("arrowStyleOption-dashed"));
 
-        expect(workspace.updateArrowStyle).not.toHaveBeenCalled();
-        expect(workspace.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
+        expect(document.updateArrowStyle).not.toHaveBeenCalled();
+        expect(document.setActiveArrowStyle).toHaveBeenCalledWith("dashed");
       });
     });
 

@@ -24,7 +24,7 @@ describe("SettingsDialog", () => {
       renderDialog();
       expect(screen.getByTestId("settingsDialog")).toBeInTheDocument();
       expect(screen.getByText("Settings")).toBeInTheDocument();
-      expect(screen.getByText("Customize your workspace preferences.")).toBeInTheDocument();
+      expect(screen.getByText("Customize your document preferences.")).toBeInTheDocument();
     });
 
     it("then shows all setting rows", () => {

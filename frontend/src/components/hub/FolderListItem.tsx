@@ -4,9 +4,9 @@ import { useDndContext } from "@/contexts/DndContext";
 import { useSelection } from "@/contexts/SelectionContext";
 import { useClickHandler } from "@/hooks/ui/use-click-handler";
 import { useDraggable, useDropTarget, type DragData } from "@/hooks/ui/use-hub-dnd";
-import { getWorkspacesForFolder, canMoveFolderTo } from "@/lib/folder-tree";
+import { getDocumentsForFolder, canMoveFolderTo } from "@/lib/folder-tree";
 import type { FolderNode } from "@/lib/folder-tree";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { DocumentItem } from "@/lib/document-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { InlineNameInput } from "./InlineNameInput";
 import { SelectionCheckbox } from "./SelectionCheckbox";
@@ -14,7 +14,7 @@ import { FolderDropdownMenu } from "./FolderDropdownMenu";
 
 interface FolderListItemProps {
   node: FolderNode;
-  workspaces: WorkspaceItem[];
+  documents: DocumentItem[];
   folders: FolderItem[];
   viewMode: "grid" | "list";
   renamingFolderId: string | null;
@@ -24,13 +24,13 @@ interface FolderListItemProps {
   onRenameFolder: (id: string, name: string) => void;
   onDeleteFolder: (folder: FolderItem) => void;
   onCreateFolder: (parentId: string | null, name: string) => void;
-  onOpenWorkspace: (id: string) => void;
-  onRenameWorkspace: (ws: WorkspaceItem) => void;
-  onDuplicateWorkspace: (sourceId: string) => void;
-  onDeleteWorkspace: (ws: WorkspaceItem) => void;
-  onToggleFavorite: (workspaceId: string, isFavorite: boolean) => void;
+  onOpenDocument: (id: string) => void;
+  onRenameDocument: (ws: DocumentItem) => void;
+  onDuplicateDocument: (sourceId: string) => void;
+  onDeleteDocument: (ws: DocumentItem) => void;
+  onToggleFavorite: (documentId: string, isFavorite: boolean) => void;
   onToggleFolderFavorite: (folderId: string, isFavorite: boolean) => void;
-  onMoveToFolder: (workspaceId: string, folderId: string | null) => void;
+  onMoveToFolder: (documentId: string, folderId: string | null) => void;
   onMoveFolder: (folderId: string, parentId: string | null) => void;
   onNavigateToFolder: (folderId: string | null) => void;
   ownerName?: string;
@@ -39,7 +39,7 @@ interface FolderListItemProps {
 
 export function FolderListItem({
   node,
-  workspaces,
+  documents,
   folders,
   renamingFolderId,
   onSetRenamingFolder,
@@ -55,7 +55,7 @@ export function FolderListItem({
   const { isSelected, isSelectionActive, handleItemClick, clearSelection, getSelectedItems } =
     useSelection();
   const selected = isSelected(node.folder.id);
-  const folderWorkspaces = getWorkspacesForFolder(workspaces, node.folder.id);
+  const folderDocuments = getDocumentsForFolder(documents, node.folder.id);
   const isRenaming = renamingFolderId === node.folder.id;
 
   const dragRef = useDraggable("folder", node.folder.id, {
@@ -80,7 +80,7 @@ export function FolderListItem({
   const handleDrop = useCallback(
     (data: DragData) => {
       const items = data.selectedItems ?? [{ type: data.type, id: data.id }];
-      const wsItems = items.filter((i) => i.type === "workspace");
+      const wsItems = items.filter((i) => i.type === "document");
       const folderItems = items.filter((i) => i.type === "folder");
       for (const item of wsItems) {
         onMoveToFolder(item.id, node.folder.id);
@@ -175,7 +175,7 @@ export function FolderListItem({
         <span className="font-medium text-sm truncate flex-1 ml-1.5">
           {node.folder.name}
           <span className="text-xs text-muted-foreground font-normal ml-2">
-            {folderWorkspaces.length} items
+            {folderDocuments.length} items
           </span>
         </span>
       )}

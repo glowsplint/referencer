@@ -6,7 +6,7 @@ import { DndProvider } from "@/contexts/DndContext";
 import { SelectionProvider } from "@/contexts/SelectionContext";
 import type { FolderNode } from "@/lib/folder-tree";
 import type { FolderItem } from "@/lib/folder-client";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { DocumentItem } from "@/lib/document-client";
 
 vi.mock("@/lib/annotation/format-relative-time", () => ({
   formatRelativeTime: () => "1d ago",
@@ -23,9 +23,9 @@ function makeFolder(overrides: Partial<FolderItem> & { id: string }): FolderItem
   };
 }
 
-function makeWorkspace(overrides: Partial<WorkspaceItem> & { workspaceId: string }): WorkspaceItem {
+function makeDocument(overrides: Partial<DocumentItem> & { documentId: string }): DocumentItem {
   return {
-    title: "Workspace",
+    title: "Document",
     createdAt: "2026-01-01T00:00:00Z",
     updatedAt: "2026-01-01T00:00:00Z",
     isFavorite: false,
@@ -40,20 +40,20 @@ const folders = [folder];
 
 describe("FolderCard", () => {
   let onToggleFolderFavorite: ReturnType<typeof vi.fn>;
-  let onOpenWorkspace: ReturnType<typeof vi.fn>;
+  let onOpenDocument: ReturnType<typeof vi.fn>;
   let onNavigateToFolder: ReturnType<typeof vi.fn>;
   const noopFn = vi.fn();
 
   beforeEach(() => {
     localStorage.clear();
     onToggleFolderFavorite = vi.fn();
-    onOpenWorkspace = vi.fn();
+    onOpenDocument = vi.fn();
     onNavigateToFolder = vi.fn();
   });
 
   function renderCard(opts?: {
     node?: FolderNode;
-    workspaces?: WorkspaceItem[];
+    documents?: DocumentItem[];
     folders?: FolderItem[];
   }) {
     const n = opts?.node ?? node;
@@ -64,7 +64,7 @@ describe("FolderCard", () => {
         <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
           <FolderCard
             node={n}
-            workspaces={opts?.workspaces ?? []}
+            documents={opts?.documents ?? []}
             folders={opts?.folders ?? folders}
             viewMode="grid"
             renamingFolderId={null}
@@ -74,10 +74,10 @@ describe("FolderCard", () => {
             onRenameFolder={noopFn}
             onDeleteFolder={noopFn}
             onCreateFolder={noopFn}
-            onOpenWorkspace={onOpenWorkspace}
-            onRenameWorkspace={noopFn}
-            onDuplicateWorkspace={noopFn}
-            onDeleteWorkspace={noopFn}
+            onOpenDocument={onOpenDocument}
+            onRenameDocument={noopFn}
+            onDuplicateDocument={noopFn}
+            onDeleteDocument={noopFn}
             onToggleFavorite={noopFn}
             onToggleFolderFavorite={onToggleFolderFavorite}
             onMoveToFolder={noopFn}
@@ -101,20 +101,20 @@ describe("FolderCard", () => {
     });
   });
 
-  describe("when folder has no workspaces", () => {
-    it("then displays workspace count of 0", () => {
+  describe("when folder has no documents", () => {
+    it("then displays document count of 0", () => {
       renderCard();
       expect(screen.getByText("0 items")).toBeInTheDocument();
     });
   });
 
-  describe("when folder has workspaces", () => {
-    it("then displays the workspace count", () => {
-      const workspaces = [
-        makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
-        makeWorkspace({ workspaceId: "ws-2", folderId: "f1" }),
+  describe("when folder has documents", () => {
+    it("then displays the document count", () => {
+      const documents = [
+        makeDocument({ documentId: "ws-1", folderId: "f1" }),
+        makeDocument({ documentId: "ws-2", folderId: "f1" }),
       ];
-      renderCard({ workspaces });
+      renderCard({ documents });
       expect(screen.getByText("2 items")).toBeInTheDocument();
     });
   });

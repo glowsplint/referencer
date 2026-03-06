@@ -29,12 +29,12 @@ export async function deleteFolder(id: string): Promise<void> {
   await apiDelete(`/api/folders/${id}`);
 }
 
-export async function moveWorkspaceToFolder(folderId: string, workspaceId: string): Promise<void> {
-  await apiPatch(`/api/folders/${folderId}/move-workspace`, { workspaceId });
+export async function moveDocumentToFolder(folderId: string, documentId: string): Promise<void> {
+  await apiPatch(`/api/folders/${folderId}/move-document`, { documentId });
 }
 
-export async function unfileWorkspace(workspaceId: string): Promise<void> {
-  await apiPost("/api/folders/unfile-workspace", { workspaceId });
+export async function unfileDocument(documentId: string): Promise<void> {
+  await apiPost("/api/folders/unfile-document", { documentId });
 }
 
 export async function toggleFolderFavorite(id: string, isFavorite: boolean): Promise<void> {

@@ -1,25 +1,25 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Hono } from "hono";
 import { handleShare, handleResolveShare, handleAcceptShare } from "./share";
-import { workspaces } from "./workspaces";
+import { documents } from "./documents";
 import type { Env } from "../env";
 
 const FRONTEND_URL = "http://localhost:5173";
-const WS_ID = "test-workspace-1";
+const WS_ID = "test-document-1";
 const USER_ID = "test-user-1";
 const OTHER_USER_ID = "other-user-2";
 
 // In-memory stores to simulate Supabase tables
 let shareRows: Array<{
   code: string;
-  workspace_id: string;
+  document_id: string;
   access: string;
   expires_at?: string;
   created_by?: string | null;
 }>;
-let permissionRows: Array<{ workspace_id: string; user_id: string; role: string }>;
-let userWorkspaceRows: Array<{ user_id: string; workspace_id: string; title: string }>;
-let workspaceRows: Array<{ id: string }>;
+let permissionRows: Array<{ document_id: string; user_id: string; role: string }>;
+let userDocumentRows: Array<{ user_id: string; document_id: string; title: string }>;
+let documentRows: Array<{ id: string }>;
 let userRows: Array<{ id: string; name: string; email: string; avatar_url: string }>;
 
 function createMockSupabase() {
@@ -29,7 +29,7 @@ function createMockSupabase() {
         return {
           insert(row: {
             code: string;
-            workspace_id: string;
+            document_id: string;
             access: string;
             expires_at?: string;
             created_by?: string | null;
@@ -86,7 +86,7 @@ function createMockSupabase() {
           },
         };
       }
-      if (table === "workspace_permission") {
+      if (table === "document_permission") {
         return {
           select(_cols: string) {
             return {
@@ -105,7 +105,7 @@ function createMockSupabase() {
                       },
                     };
                   },
-                  // For listWorkspaceMembers: .select().eq() returns array (thenable)
+                  // For listDocumentMembers: .select().eq() returns array (thenable)
                   then(resolve: (v: any) => void) {
                     resolve({ data: filtered });
                   },
@@ -113,9 +113,9 @@ function createMockSupabase() {
               },
             };
           },
-          upsert(row: { workspace_id: string; user_id: string; role: string }) {
+          upsert(row: { document_id: string; user_id: string; role: string }) {
             const idx = permissionRows.findIndex(
-              (r) => r.workspace_id === row.workspace_id && r.user_id === row.user_id,
+              (r) => r.document_id === row.document_id && r.user_id === row.user_id,
             );
             if (idx >= 0) {
               permissionRows[idx] = row;
@@ -145,26 +145,26 @@ function createMockSupabase() {
           },
         };
       }
-      if (table === "user_workspace") {
+      if (table === "user_document") {
         return {
-          insert(row: { user_id: string; workspace_id: string; title: string }) {
-            const duplicate = userWorkspaceRows.find(
-              (r) => r.user_id === row.user_id && r.workspace_id === row.workspace_id,
+          insert(row: { user_id: string; document_id: string; title: string }) {
+            const duplicate = userDocumentRows.find(
+              (r) => r.user_id === row.user_id && r.document_id === row.document_id,
             );
             if (duplicate) {
               return Promise.resolve({ error: { code: "23505", message: "duplicate" } });
             }
-            userWorkspaceRows.push(row);
+            userDocumentRows.push(row);
             return Promise.resolve({ error: null });
           },
-          upsert(row: { user_id: string; workspace_id: string; title: string }, _opts?: any) {
-            const idx = userWorkspaceRows.findIndex(
-              (r) => r.user_id === row.user_id && r.workspace_id === row.workspace_id,
+          upsert(row: { user_id: string; document_id: string; title: string }, _opts?: any) {
+            const idx = userDocumentRows.findIndex(
+              (r) => r.user_id === row.user_id && r.document_id === row.document_id,
             );
             if (idx >= 0) {
-              userWorkspaceRows[idx] = { ...userWorkspaceRows[idx], ...row };
+              userDocumentRows[idx] = { ...userDocumentRows[idx], ...row };
             } else {
-              userWorkspaceRows.push(row);
+              userDocumentRows.push(row);
             }
             return Promise.resolve({ error: null });
           },
@@ -173,13 +173,13 @@ function createMockSupabase() {
               eq(column: string, value: string) {
                 return {
                   eq(column2: string, value2: string) {
-                    const idx = userWorkspaceRows.findIndex(
+                    const idx = userDocumentRows.findIndex(
                       (r) =>
                         (r as Record<string, any>)[column] === value &&
                         (r as Record<string, any>)[column2] === value2,
                     );
                     if (idx >= 0) {
-                      userWorkspaceRows.splice(idx, 1);
+                      userDocumentRows.splice(idx, 1);
                     }
                     return Promise.resolve({ error: null });
                   },
@@ -189,15 +189,15 @@ function createMockSupabase() {
           },
         };
       }
-      if (table === "workspace") {
+      if (table === "document") {
         return {
           insert(row: { id: string }) {
-            workspaceRows.push(row);
+            documentRows.push(row);
             return Promise.resolve({ error: null });
           },
           upsert(row: { id: string }) {
-            if (!workspaceRows.find((r) => r.id === row.id)) {
-              workspaceRows.push(row);
+            if (!documentRows.find((r) => r.id === row.id)) {
+              documentRows.push(row);
             }
             return Promise.resolve({ error: null });
           },
@@ -206,7 +206,7 @@ function createMockSupabase() {
               eq(column: string, value: string) {
                 return {
                   single() {
-                    const found = workspaceRows.find(
+                    const found = documentRows.find(
                       (r) => (r as Record<string, string>)[column] === value,
                     );
                     return Promise.resolve({ data: found ?? null });
@@ -263,7 +263,7 @@ function createApp(withUser = true, userId = USER_ID) {
   app.post("/api/share", handleShare());
   app.post("/api/share/accept", handleAcceptShare());
   app.get("/s/:code", handleResolveShare());
-  app.route("/api/workspaces", workspaces);
+  app.route("/api/documents", documents);
 
   return app;
 }
@@ -278,14 +278,14 @@ describe("share API routes", () => {
   beforeEach(() => {
     shareRows = [];
     permissionRows = [];
-    userWorkspaceRows = [];
-    workspaceRows = [];
+    userDocumentRows = [];
+    documentRows = [];
     userRows = [
       { id: USER_ID, name: "Test User", email: "test@test.com", avatar_url: "" },
       { id: OTHER_USER_ID, name: "Other User", email: "other@test.com", avatar_url: "" },
     ];
     // Give the test user owner permission by default
-    permissionRows.push({ workspace_id: WS_ID, user_id: USER_ID, role: "owner" });
+    permissionRows.push({ document_id: WS_ID, user_id: USER_ID, role: "owner" });
     app = createApp();
   });
 
@@ -294,7 +294,7 @@ describe("share API routes", () => {
       const res = await request(app, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: WS_ID, access: "edit" }),
+        body: JSON.stringify({ documentId: WS_ID, access: "edit" }),
       });
 
       expect(res.status).toBe(200);
@@ -308,7 +308,7 @@ describe("share API routes", () => {
       const res = await request(app, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: WS_ID, access: "readonly" }),
+        body: JSON.stringify({ documentId: WS_ID, access: "readonly" }),
       });
 
       expect(res.status).toBe(200);
@@ -320,7 +320,7 @@ describe("share API routes", () => {
       const res = await request(app, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: WS_ID, access: "invalid" }),
+        body: JSON.stringify({ documentId: WS_ID, access: "invalid" }),
       });
 
       expect(res.status).toBe(400);
@@ -333,7 +333,7 @@ describe("share API routes", () => {
       const res = await request(noAuthApp, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: WS_ID, access: "edit" }),
+        body: JSON.stringify({ documentId: WS_ID, access: "edit" }),
       });
 
       expect(res.status).toBe(401);
@@ -344,7 +344,7 @@ describe("share API routes", () => {
       const res = await request(app, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: WS_ID, access: "edit" }),
+        body: JSON.stringify({ documentId: WS_ID, access: "edit" }),
       });
 
       expect(res.status).toBe(403);
@@ -354,10 +354,10 @@ describe("share API routes", () => {
       await request(app, "/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ workspaceId: WS_ID, access: "edit" }),
+        body: JSON.stringify({ documentId: WS_ID, access: "edit" }),
       });
 
-      const link = shareRows.find((r) => r.workspace_id === WS_ID);
+      const link = shareRows.find((r) => r.document_id === WS_ID);
       expect(link).toBeDefined();
       expect(link!.created_by).toBe(USER_ID);
     });
@@ -378,8 +378,8 @@ describe("share API routes", () => {
   });
 
   describe("POST /api/share/accept", () => {
-    it("resolves share and returns workspaceId", async () => {
-      shareRows.push({ code: "ACC123", workspace_id: WS_ID, access: "edit" });
+    it("resolves share and returns documentId", async () => {
+      shareRows.push({ code: "ACC123", document_id: WS_ID, access: "edit" });
 
       const res = await request(app, "/api/share/accept", {
         method: "POST",
@@ -389,11 +389,11 @@ describe("share API routes", () => {
 
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.workspaceId).toBe(WS_ID);
+      expect(body.documentId).toBe(WS_ID);
     });
 
     it("grants editor permission for edit share", async () => {
-      shareRows.push({ code: "EDT001", workspace_id: WS_ID, access: "edit" });
+      shareRows.push({ code: "EDT001", document_id: WS_ID, access: "edit" });
       // Remove the owner permission so we can verify the share sets editor
       permissionRows.length = 0;
 
@@ -403,13 +403,13 @@ describe("share API routes", () => {
         body: JSON.stringify({ code: "EDT001" }),
       });
 
-      const perm = permissionRows.find((r) => r.workspace_id === WS_ID && r.user_id === USER_ID);
+      const perm = permissionRows.find((r) => r.document_id === WS_ID && r.user_id === USER_ID);
       expect(perm).toBeDefined();
       expect(perm!.role).toBe("editor");
     });
 
     it("grants viewer permission for readonly share", async () => {
-      shareRows.push({ code: "RDO001", workspace_id: WS_ID, access: "readonly" });
+      shareRows.push({ code: "RDO001", document_id: WS_ID, access: "readonly" });
       permissionRows.length = 0;
 
       await request(app, "/api/share/accept", {
@@ -418,13 +418,13 @@ describe("share API routes", () => {
         body: JSON.stringify({ code: "RDO001" }),
       });
 
-      const perm = permissionRows.find((r) => r.workspace_id === WS_ID && r.user_id === USER_ID);
+      const perm = permissionRows.find((r) => r.document_id === WS_ID && r.user_id === USER_ID);
       expect(perm).toBeDefined();
       expect(perm!.role).toBe("viewer");
     });
 
     it("does not downgrade existing higher permission", async () => {
-      shareRows.push({ code: "RDO002", workspace_id: WS_ID, access: "readonly" });
+      shareRows.push({ code: "RDO002", document_id: WS_ID, access: "readonly" });
       // User already has owner permission
       expect(permissionRows[0].role).toBe("owner");
 
@@ -434,7 +434,7 @@ describe("share API routes", () => {
         body: JSON.stringify({ code: "RDO002" }),
       });
 
-      const perm = permissionRows.find((r) => r.workspace_id === WS_ID && r.user_id === USER_ID);
+      const perm = permissionRows.find((r) => r.document_id === WS_ID && r.user_id === USER_ID);
       expect(perm!.role).toBe("owner");
     });
 
@@ -460,7 +460,7 @@ describe("share API routes", () => {
 
     it("returns 401 when user is not authenticated", async () => {
       const noAuthApp = createApp(false);
-      shareRows.push({ code: "ACC401", workspace_id: WS_ID, access: "edit" });
+      shareRows.push({ code: "ACC401", document_id: WS_ID, access: "edit" });
 
       const res = await request(noAuthApp, "/api/share/accept", {
         method: "POST",
@@ -471,8 +471,8 @@ describe("share API routes", () => {
       expect(res.status).toBe(401);
     });
 
-    it("adds workspace to user hub", async () => {
-      shareRows.push({ code: "HUB001", workspace_id: WS_ID, access: "edit" });
+    it("adds document to user hub", async () => {
+      shareRows.push({ code: "HUB001", document_id: WS_ID, access: "edit" });
       permissionRows.length = 0;
 
       await request(app, "/api/share/accept", {
@@ -481,47 +481,47 @@ describe("share API routes", () => {
         body: JSON.stringify({ code: "HUB001" }),
       });
 
-      const uw = userWorkspaceRows.find((r) => r.workspace_id === WS_ID && r.user_id === USER_ID);
+      const uw = userDocumentRows.find((r) => r.document_id === WS_ID && r.user_id === USER_ID);
       expect(uw).toBeDefined();
     });
   });
 });
 
-describe("workspace management API routes", () => {
+describe("document management API routes", () => {
   let app: ReturnType<typeof createApp>;
 
   beforeEach(() => {
     shareRows = [];
     permissionRows = [];
-    userWorkspaceRows = [];
-    workspaceRows = [];
+    userDocumentRows = [];
+    documentRows = [];
     userRows = [
       { id: USER_ID, name: "Test User", email: "test@test.com", avatar_url: "" },
       { id: OTHER_USER_ID, name: "Other User", email: "other@test.com", avatar_url: "" },
     ];
     // Give the test user owner permission by default
-    permissionRows.push({ workspace_id: WS_ID, user_id: USER_ID, role: "owner" });
+    permissionRows.push({ document_id: WS_ID, user_id: USER_ID, role: "owner" });
     app = createApp();
   });
 
-  describe("GET /api/workspaces/:id/links", () => {
-    it("returns active links for the workspace", async () => {
+  describe("GET /api/documents/:id/links", () => {
+    it("returns active links for the document", async () => {
       shareRows.push({
         code: "LINK001",
-        workspace_id: WS_ID,
+        document_id: WS_ID,
         access: "edit",
         expires_at: new Date(Date.now() + 86400000).toISOString(),
         created_by: USER_ID,
       });
       shareRows.push({
         code: "LINK002",
-        workspace_id: WS_ID,
+        document_id: WS_ID,
         access: "readonly",
         expires_at: new Date(Date.now() + 86400000).toISOString(),
         created_by: USER_ID,
       });
 
-      const res = await request(app, `/api/workspaces/${WS_ID}/links`);
+      const res = await request(app, `/api/documents/${WS_ID}/links`);
       expect(res.status).toBe(200);
       const body = await res.json();
       expect(body).toHaveLength(2);
@@ -531,26 +531,26 @@ describe("workspace management API routes", () => {
 
     it("returns 403 when user lacks permission", async () => {
       permissionRows.length = 0;
-      const res = await request(app, `/api/workspaces/${WS_ID}/links`);
+      const res = await request(app, `/api/documents/${WS_ID}/links`);
       expect(res.status).toBe(403);
     });
 
     it("returns 401 when not authenticated", async () => {
       const noAuthApp = createApp(false);
-      const res = await request(noAuthApp, `/api/workspaces/${WS_ID}/links`);
+      const res = await request(noAuthApp, `/api/documents/${WS_ID}/links`);
       expect(res.status).toBe(401);
     });
   });
 
-  describe("DELETE /api/workspaces/:id/links/:code", () => {
+  describe("DELETE /api/documents/:id/links/:code", () => {
     it("revokes an existing link", async () => {
       shareRows.push({
         code: "DEL001",
-        workspace_id: WS_ID,
+        document_id: WS_ID,
         access: "edit",
       });
 
-      const res = await request(app, `/api/workspaces/${WS_ID}/links/DEL001`, {
+      const res = await request(app, `/api/documents/${WS_ID}/links/DEL001`, {
         method: "DELETE",
       });
       expect(res.status).toBe(200);
@@ -559,7 +559,7 @@ describe("workspace management API routes", () => {
     });
 
     it("returns 404 for unknown code", async () => {
-      const res = await request(app, `/api/workspaces/${WS_ID}/links/NOPE`, {
+      const res = await request(app, `/api/documents/${WS_ID}/links/NOPE`, {
         method: "DELETE",
       });
       expect(res.status).toBe(404);
@@ -567,18 +567,18 @@ describe("workspace management API routes", () => {
 
     it("returns 403 when user lacks permission", async () => {
       permissionRows.length = 0;
-      const res = await request(app, `/api/workspaces/${WS_ID}/links/DEL001`, {
+      const res = await request(app, `/api/documents/${WS_ID}/links/DEL001`, {
         method: "DELETE",
       });
       expect(res.status).toBe(403);
     });
   });
 
-  describe("GET /api/workspaces/:id/members", () => {
+  describe("GET /api/documents/:id/members", () => {
     it("returns members with profile info", async () => {
-      permissionRows.push({ workspace_id: WS_ID, user_id: OTHER_USER_ID, role: "editor" });
+      permissionRows.push({ document_id: WS_ID, user_id: OTHER_USER_ID, role: "editor" });
 
-      const res = await request(app, `/api/workspaces/${WS_ID}/members`);
+      const res = await request(app, `/api/documents/${WS_ID}/members`);
       expect(res.status).toBe(200);
       const body = await res.json();
       expect(body).toHaveLength(2);
@@ -596,31 +596,31 @@ describe("workspace management API routes", () => {
 
     it("returns 403 when user lacks permission", async () => {
       permissionRows.length = 0;
-      const res = await request(app, `/api/workspaces/${WS_ID}/members`);
+      const res = await request(app, `/api/documents/${WS_ID}/members`);
       expect(res.status).toBe(403);
     });
   });
 
-  describe("PATCH /api/workspaces/:id/members/:userId", () => {
+  describe("PATCH /api/documents/:id/members/:userId", () => {
     beforeEach(() => {
-      permissionRows.push({ workspace_id: WS_ID, user_id: OTHER_USER_ID, role: "editor" });
+      permissionRows.push({ document_id: WS_ID, user_id: OTHER_USER_ID, role: "editor" });
     });
 
     it("changes a member's role", async () => {
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${OTHER_USER_ID}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${OTHER_USER_ID}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: "viewer" }),
       });
       expect(res.status).toBe(200);
       const perm = permissionRows.find(
-        (r) => r.workspace_id === WS_ID && r.user_id === OTHER_USER_ID,
+        (r) => r.document_id === WS_ID && r.user_id === OTHER_USER_ID,
       );
       expect(perm!.role).toBe("viewer");
     });
 
     it("returns 403 when trying to change own role", async () => {
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${USER_ID}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${USER_ID}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: "viewer" }),
@@ -633,9 +633,9 @@ describe("workspace management API routes", () => {
     it("returns 403 when targeting an owner", async () => {
       // Add another owner
       const anotherOwner = "owner-user-3";
-      permissionRows.push({ workspace_id: WS_ID, user_id: anotherOwner, role: "owner" });
+      permissionRows.push({ document_id: WS_ID, user_id: anotherOwner, role: "owner" });
 
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${anotherOwner}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${anotherOwner}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: "viewer" }),
@@ -646,7 +646,7 @@ describe("workspace management API routes", () => {
     });
 
     it("returns 400 for invalid role", async () => {
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${OTHER_USER_ID}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${OTHER_USER_ID}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: "admin" }),
@@ -657,7 +657,7 @@ describe("workspace management API routes", () => {
     it("returns 403 when user is not an owner", async () => {
       // Make the test user just an editor
       permissionRows[0].role = "editor";
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${OTHER_USER_ID}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${OTHER_USER_ID}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: "viewer" }),
@@ -666,13 +666,13 @@ describe("workspace management API routes", () => {
     });
   });
 
-  describe("DELETE /api/workspaces/:id/members/:userId", () => {
+  describe("DELETE /api/documents/:id/members/:userId", () => {
     beforeEach(() => {
-      permissionRows.push({ workspace_id: WS_ID, user_id: OTHER_USER_ID, role: "editor" });
+      permissionRows.push({ document_id: WS_ID, user_id: OTHER_USER_ID, role: "editor" });
     });
 
     it("removes a member", async () => {
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${OTHER_USER_ID}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${OTHER_USER_ID}`, {
         method: "DELETE",
       });
       expect(res.status).toBe(200);
@@ -680,13 +680,13 @@ describe("workspace management API routes", () => {
       expect(body.ok).toBe(true);
       // Verify the permission was removed
       const perm = permissionRows.find(
-        (r) => r.workspace_id === WS_ID && r.user_id === OTHER_USER_ID,
+        (r) => r.document_id === WS_ID && r.user_id === OTHER_USER_ID,
       );
       expect(perm).toBeUndefined();
     });
 
     it("returns 403 when trying to remove self", async () => {
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${USER_ID}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${USER_ID}`, {
         method: "DELETE",
       });
       expect(res.status).toBe(403);
@@ -696,9 +696,9 @@ describe("workspace management API routes", () => {
 
     it("returns 403 when targeting an owner", async () => {
       const anotherOwner = "owner-user-3";
-      permissionRows.push({ workspace_id: WS_ID, user_id: anotherOwner, role: "owner" });
+      permissionRows.push({ document_id: WS_ID, user_id: anotherOwner, role: "owner" });
 
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${anotherOwner}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${anotherOwner}`, {
         method: "DELETE",
       });
       expect(res.status).toBe(403);
@@ -708,7 +708,7 @@ describe("workspace management API routes", () => {
 
     it("returns 403 when user is not an owner", async () => {
       permissionRows[0].role = "editor";
-      const res = await request(app, `/api/workspaces/${WS_ID}/members/${OTHER_USER_ID}`, {
+      const res = await request(app, `/api/documents/${WS_ID}/members/${OTHER_USER_ID}`, {
         method: "DELETE",
       });
       expect(res.status).toBe(403);

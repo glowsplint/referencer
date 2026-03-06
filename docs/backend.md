@@ -1,6 +1,6 @@
 # Backend
 
-The backend is a **Cloudflare Worker** (`referencer-api`) using the Hono framework with Supabase as the database. It handles authentication, share links, workspace/folder management, user preferences, and feedback. Real-time collaboration is handled separately by the collab server (see `collab-server/`).
+The backend is a **Cloudflare Worker** (`referencer-api`) using the Hono framework with Supabase as the database. It handles authentication, share links, document/folder management, user preferences, and feedback. Real-time collaboration is handled separately by the collab server (see `collab-server/`).
 
 ## Entry Point
 
@@ -9,7 +9,7 @@ The backend is a **Cloudflare Worker** (`referencer-api`) using the Hono framewo
 1. Per-request Supabase client, logger, and metrics
 2. CORS, CSRF protection, and security headers middleware
 3. OAuth providers from environment variables (via `wrangler secret`)
-4. Hono routes (auth, workspaces, folders, preferences, share, feedback)
+4. Hono routes (auth, documents, folders, preferences, share, feedback)
 5. Scheduled handler for hourly session cleanup
 
 The Worker exports a `fetch` handler and a `scheduled` handler (cron).
@@ -27,14 +27,14 @@ The Worker exports a `fetch` handler and a `scheduled` handler (cron).
 
 Supported providers: `google`, `github`. Providers are only enabled when their required environment variables are set.
 
-### Workspaces
+### Documents
 
-| Method   | Endpoint              | Description               |
-| -------- | --------------------- | ------------------------- |
-| `GET`    | `/api/workspaces`     | List user's workspaces    |
-| `POST`   | `/api/workspaces`     | Create a workspace        |
-| `PATCH`  | `/api/workspaces/:id` | Update workspace metadata |
-| `DELETE` | `/api/workspaces/:id` | Delete a workspace        |
+| Method   | Endpoint             | Description              |
+| -------- | -------------------- | ------------------------ |
+| `GET`    | `/api/documents`     | List user's documents    |
+| `POST`   | `/api/documents`     | Create a document        |
+| `PATCH`  | `/api/documents/:id` | Update document metadata |
+| `DELETE` | `/api/documents/:id` | Delete a document        |
 
 ### Folders
 
@@ -54,11 +54,11 @@ Supported providers: `google`, `github`. Providers are only enabled when their r
 
 ### Share Links
 
-| Method | Endpoint            | Description                                                                                        |
-| ------ | ------------------- | -------------------------------------------------------------------------------------------------- |
-| `POST` | `/api/share`        | Create share link. Body: `{ workspaceId, access: "edit" \| "readonly" }`. Returns: `{ code, url }` |
-| `POST` | `/api/share/accept` | Accept a share link (grants permissions to authenticated user)                                     |
-| `GET`  | `/s/:code`          | Resolve share link. Redirects to frontend workspace URL                                            |
+| Method | Endpoint            | Description                                                                                       |
+| ------ | ------------------- | ------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/share`        | Create share link. Body: `{ documentId, access: "edit" \| "readonly" }`. Returns: `{ code, url }` |
+| `POST` | `/api/share/accept` | Accept a share link (grants permissions to authenticated user)                                    |
+| `GET`  | `/s/:code`          | Resolve share link. Redirects to frontend document URL                                            |
 
 ### Feedback
 
@@ -70,7 +70,7 @@ Supported providers: `google`, `github`. Providers are only enabled when their r
 
 The auth system follows the **Backend-for-Frontend (BFF)** pattern. OAuth tokens never reach the frontend. The frontend only sees an HttpOnly session cookie.
 
-Authentication is **optional** -- the app works fully for anonymous users. When authenticated, user identity is available for workspace ownership, sharing, and preferences.
+Authentication is **optional** -- the app works fully for anonymous users. When authenticated, user identity is available for document ownership, sharing, and preferences.
 
 ### OAuth Flow
 
@@ -112,14 +112,14 @@ The backend uses **Supabase** (PostgreSQL) for all persistent data. The schema i
 
 ### Tables
 
-- `workspace` -- workspace metadata
+- `document` -- document metadata
 - `share_link` -- short share codes with access level
 - `user` -- user profiles (email, name, avatar)
 - `user_provider` -- OAuth provider links
 - `session` -- active sessions
-- `workspace_folder` -- folder organization
-- `user_workspace` -- workspace ownership/starring
-- `workspace_permission` -- per-user workspace permissions (owner/editor/viewer)
+- `document_folder` -- folder organization
+- `user_document` -- document ownership/starring
+- `document_permission` -- per-user document permissions (owner/editor/viewer)
 - `user_preference` -- user preferences
 - `yjs_document` -- Yjs document snapshots (used by collab server for persistence)
 
@@ -141,7 +141,7 @@ backend/src/
 │   ├── folders.ts              # Folders CRUD
 │   ├── preferences.ts          # Preferences get/put
 │   ├── share.ts                # Share link create/accept/resolve
-│   └── workspaces.ts           # Workspaces CRUD
+│   └── documents.ts           # Documents CRUD
 ├── auth/
 │   ├── config.ts               # AuthConfig type and env var loading
 │   ├── cookie-domain.ts        # Domain derivation from x-forwarded-host
@@ -155,7 +155,7 @@ backend/src/
 │   ├── permission-queries.ts   # Permission queries
 │   ├── preference-queries.ts   # Preference queries
 │   ├── share-queries.ts        # Share link queries
-│   └── workspace-queries.ts    # Workspace queries
+│   └── document-queries.ts    # Document queries
 ├── lib/
 │   ├── jwt.ts                  # JWT signing for WebSocket auth
 │   ├── logger.ts               # Structured logging

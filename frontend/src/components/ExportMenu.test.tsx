@@ -2,12 +2,12 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { ExportMenu } from "./ExportMenu";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 
 function renderExportMenu(onExportMarkdown = vi.fn()) {
   return {
     onExportMarkdown,
-    ...renderWithWorkspace(<ExportMenu onExportMarkdown={onExportMarkdown} />),
+    ...renderWithDocument(<ExportMenu onExportMarkdown={onExportMarkdown} />),
   };
 }
 

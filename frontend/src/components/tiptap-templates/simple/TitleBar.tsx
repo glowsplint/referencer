@@ -1,5 +1,5 @@
 // Title bar with inline-editable document title, share dialog trigger,
-// workspace switcher dropdown, and PDF export button. Sits above the editor toolbar.
+// document switcher dropdown, and PDF export button. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Share2, Home, ChevronDown, Check, Settings } from "lucide-react";
@@ -13,9 +13,9 @@ import { CollaborationPresence } from "@/components/CollaborationPresence";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuth } from "@/hooks/data/use-auth";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { useWorkspaces } from "@/hooks/data/use-workspaces";
-import { renameWorkspace, fetchWorkspace } from "@/lib/workspace-client";
+import { useDocument } from "@/contexts/DocumentContext";
+import { useDocuments } from "@/hooks/data/use-documents";
+import { renameDocument, fetchDocument } from "@/lib/document-client";
 
 interface TitleBarProps {
   navigate?: (hash: string) => void;
@@ -25,16 +25,16 @@ interface TitleBarProps {
 export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
   const { t } = useTranslation();
   const {
-    workspaceId,
+    documentId,
     readOnly,
     yjs,
     settings,
     toggleDarkMode,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
-  } = useWorkspace();
+  } = useDocument();
   const { isAuthenticated, isLoading } = useAuth();
-  const { workspaces } = useWorkspaces();
+  const { documents } = useDocuments();
   const [title, setTitle] = useState("Title");
   const [isEditing, setIsEditing] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -46,7 +46,7 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
   // Sync title with Yjs shared map for real-time collaboration
   useEffect(() => {
     if (!yjs.doc) return;
-    const meta = yjs.doc.getMap("workspace-meta");
+    const meta = yjs.doc.getMap("document-meta");
     const existing = meta.get("title");
     if (typeof existing === "string" && existing) {
       setTitle(existing);
@@ -61,12 +61,12 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
 
   // Fetch DB title and seed Yjs once on first sync (handles hub renames)
   useEffect(() => {
-    if (!isAuthenticated || !workspaceId || !yjs.doc || !yjs.synced) return;
+    if (!isAuthenticated || !documentId || !yjs.doc || !yjs.synced) return;
     if (dbSeededRef.current) return;
     dbSeededRef.current = true;
-    fetchWorkspace(workspaceId).then((ws) => {
+    fetchDocument(documentId).then((ws) => {
       if (!ws?.title) return;
-      const meta = yjs.doc!.getMap("workspace-meta");
+      const meta = yjs.doc!.getMap("document-meta");
       const yjsTitle = meta.get("title");
       // DB is source of truth on initial load — update Yjs if they differ
       if (yjsTitle !== ws.title) {
@@ -74,7 +74,7 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
         setTitle(ws.title);
       }
     });
-  }, [isAuthenticated, workspaceId, yjs.doc, yjs.synced]);
+  }, [isAuthenticated, documentId, yjs.doc, yjs.synced]);
 
   const startEditing = useCallback(() => {
     if (readOnly) return;
@@ -89,14 +89,14 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
     }
 
     // Persist to Yjs map for real-time sync
-    const meta = yjs.doc?.getMap("workspace-meta");
+    const meta = yjs.doc?.getMap("document-meta");
     meta?.set("title", finalTitle);
 
     // Persist to database for authenticated users
-    if (isAuthenticated && workspaceId) {
-      pendingRenameRef.current = renameWorkspace(workspaceId, finalTitle).catch(() => {});
+    if (isAuthenticated && documentId) {
+      pendingRenameRef.current = renameDocument(documentId, finalTitle).catch(() => {});
     }
-  }, [title, yjs.doc, isAuthenticated, workspaceId]);
+  }, [title, yjs.doc, isAuthenticated, documentId]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === "Escape") {
@@ -112,7 +112,7 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
     }
   }, [isEditing]);
 
-  const showSwitcher = isAuthenticated && navigate && workspaces.length > 0;
+  const showSwitcher = isAuthenticated && navigate && documents.length > 0;
 
   return (
     <div className="flex shrink-0 items-center border-b border-[var(--tt-border-color-tint)] bg-[var(--tt-bg-color)] px-6 py-3">
@@ -138,7 +138,7 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
           <DropdownMenu.Trigger asChild>
             <button
               className="mr-2 flex items-center rounded-md p-1.5 transition-colors hover:bg-accent hover:text-accent-foreground"
-              data-testid="workspaceSwitcher"
+              data-testid="documentSwitcher"
             >
               <Home size={16} />
               <ChevronDown size={12} className="ml-0.5 text-muted-foreground" />
@@ -148,7 +148,7 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
             <DropdownMenu.Content
               sideOffset={4}
               className="z-50 max-h-[300px] min-w-[200px] max-w-[300px] overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-md"
-              data-testid="workspaceSwitcherMenu"
+              data-testid="documentSwitcherMenu"
             >
               <DropdownMenu.Item
                 onSelect={async () => {
@@ -156,24 +156,24 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
                   navigate("#/hub");
                 }}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
-                data-testid="workspaceSwitcherHub"
+                data-testid="documentSwitcherHub"
               >
                 <Home size={14} />
                 Hub
               </DropdownMenu.Item>
               <DropdownMenu.Separator className="my-1 h-px bg-border" />
-              {workspaces.map((ws) => {
-                const isCurrent = ws.workspaceId === workspaceId;
+              {documents.map((ws) => {
+                const isCurrent = ws.documentId === documentId;
                 return (
                   <DropdownMenu.Item
-                    key={ws.workspaceId}
+                    key={ws.documentId}
                     onSelect={async () => {
                       if (isCurrent) return;
                       await pendingRenameRef.current;
-                      navigate(`#/${ws.workspaceId}`);
+                      navigate(`#/${ws.documentId}`);
                     }}
                     className={`flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground ${isCurrent ? "bg-accent/50" : ""}`}
-                    data-testid={`workspaceSwitcherItem-${ws.workspaceId}`}
+                    data-testid={`documentSwitcherItem-${ws.documentId}`}
                   >
                     <span className="flex-1 truncate">{ws.title || "Untitled"}</span>
                     {isCurrent && <Check size={14} className="shrink-0 text-primary" />}
@@ -249,8 +249,8 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
         </button>
         {!isLoading && (isAuthenticated ? <UserMenu /> : <LoginButton />)}
       </div>
-      {workspaceId && (
-        <ShareDialog open={shareOpen} onOpenChange={setShareOpen} workspaceId={workspaceId} />
+      {documentId && (
+        <ShareDialog open={shareOpen} onOpenChange={setShareOpen} documentId={documentId} />
       )}
       <SettingsDialog
         open={settingsOpen}

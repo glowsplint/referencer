@@ -12,10 +12,10 @@ Components under `tiptap-*` directories (`tiptap-ui`, `tiptap-ui-primitive`, `ti
 
 ## Common Pitfalls
 
-- All test renders need `renderWithWorkspace()` from `test/render-with-workspace.tsx`
+- All test renders need `renderWithDocument()` from `test/render-with-document.tsx`
 - Annotations use Yjs transactions — always go through `lib/yjs/annotations.ts`
 - ProseMirror positions ≠ Yjs positions — use position mapping from `usePositionMapping`
-- Settings are localStorage; annotations are Yjs CRDTs; workspace metadata is Supabase REST
+- Settings are localStorage; annotations are Yjs CRDTs; document metadata is Supabase REST
 - In git worktrees, run `bun install` before running tests or Playwright scripts
 - Only English has the `tour` i18n namespace — other locales fall back to English
 

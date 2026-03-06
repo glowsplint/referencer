@@ -1,20 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { useWorkspaces } from "./use-workspaces";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import { useDocuments } from "./use-documents";
+import type { DocumentItem } from "@/lib/document-client";
 
-vi.mock("@/lib/workspace-client", () => ({
-  fetchWorkspaces: vi.fn(),
-  createWorkspace: vi.fn(),
-  renameWorkspace: vi.fn(),
-  deleteWorkspace: vi.fn(),
-  duplicateWorkspace: vi.fn(),
+vi.mock("@/lib/document-client", () => ({
+  fetchDocuments: vi.fn(),
+  createDocument: vi.fn(),
+  renameDocument: vi.fn(),
+  deleteDocument: vi.fn(),
+  duplicateDocument: vi.fn(),
   toggleFavorite: vi.fn(),
 }));
 
 vi.mock("@/lib/folder-client", () => ({
-  moveWorkspaceToFolder: vi.fn(),
-  unfileWorkspace: vi.fn(),
+  moveDocumentToFolder: vi.fn(),
+  unfileDocument: vi.fn(),
 }));
 
 vi.mock("sonner", () => ({
@@ -22,37 +22,37 @@ vi.mock("sonner", () => ({
 }));
 
 import {
-  fetchWorkspaces,
-  createWorkspace,
-  renameWorkspace,
-  deleteWorkspace,
-  duplicateWorkspace,
+  fetchDocuments,
+  createDocument,
+  renameDocument,
+  deleteDocument,
+  duplicateDocument,
   toggleFavorite,
-} from "@/lib/workspace-client";
-import { moveWorkspaceToFolder, unfileWorkspace } from "@/lib/folder-client";
+} from "@/lib/document-client";
+import { moveDocumentToFolder, unfileDocument } from "@/lib/folder-client";
 import { toast } from "sonner";
 
-const mockFetch = vi.mocked(fetchWorkspaces);
-const mockCreate = vi.mocked(createWorkspace);
-const mockRename = vi.mocked(renameWorkspace);
-const mockDelete = vi.mocked(deleteWorkspace);
-const mockDuplicate = vi.mocked(duplicateWorkspace);
+const mockFetch = vi.mocked(fetchDocuments);
+const mockCreate = vi.mocked(createDocument);
+const mockRename = vi.mocked(renameDocument);
+const mockDelete = vi.mocked(deleteDocument);
+const mockDuplicate = vi.mocked(duplicateDocument);
 const mockToggleFav = vi.mocked(toggleFavorite);
-const mockMoveToFolder = vi.mocked(moveWorkspaceToFolder);
-const mockUnfile = vi.mocked(unfileWorkspace);
+const mockMoveToFolder = vi.mocked(moveDocumentToFolder);
+const mockUnfile = vi.mocked(unfileDocument);
 
-const ws1: WorkspaceItem = {
-  workspaceId: "ws-1",
-  title: "Workspace 1",
+const ws1: DocumentItem = {
+  documentId: "ws-1",
+  title: "Document 1",
   createdAt: "2024-01-01",
   updatedAt: "2024-01-01",
   isFavorite: false,
   folderId: null,
 };
 
-const ws2: WorkspaceItem = {
-  workspaceId: "ws-2",
-  title: "Workspace 2",
+const ws2: DocumentItem = {
+  documentId: "ws-2",
+  title: "Document 2",
   createdAt: "2024-01-02",
   updatedAt: "2024-01-02",
   isFavorite: false,
@@ -64,26 +64,26 @@ beforeEach(() => {
   mockFetch.mockResolvedValue([ws1, ws2]);
 });
 
-describe("useWorkspaces", () => {
-  it("when mounted, then fetches workspaces", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+describe("useDocuments", () => {
+  it("when mounted, then fetches documents", async () => {
+    const { result } = renderHook(() => useDocuments());
     expect(result.current.isLoading).toBe(true);
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.workspaces).toEqual([ws1, ws2]);
+    expect(result.current.documents).toEqual([ws1, ws2]);
     expect(result.current.error).toBeNull();
   });
 
   it("when fetch fails, then sets error", async () => {
     mockFetch.mockRejectedValue(new Error("Network error"));
 
-    const { result } = renderHook(() => useWorkspaces());
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.error?.message).toBe("Network error");
   });
 
   it("when rename is called, then updates title optimistically", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockRename.mockResolvedValue(undefined);
@@ -92,12 +92,12 @@ describe("useWorkspaces", () => {
       result.current.rename("ws-1", "New Title");
     });
 
-    expect(result.current.workspaces[0].title).toBe("New Title");
+    expect(result.current.documents[0].title).toBe("New Title");
     expect(mockRename).toHaveBeenCalledWith("ws-1", "New Title");
   });
 
   it("when rename API call fails, then reverts the title", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockRename.mockRejectedValue(new Error("fail"));
@@ -109,15 +109,15 @@ describe("useWorkspaces", () => {
     });
 
     // Optimistic update applied immediately
-    expect(result.current.workspaces[0].title).toBe("New Title");
+    expect(result.current.documents[0].title).toBe("New Title");
 
     // Wait for refetch after failure
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Failed to rename workspace"));
-    await waitFor(() => expect(result.current.workspaces[0].title).toBe("Workspace 1"));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Failed to rename document"));
+    await waitFor(() => expect(result.current.documents[0].title).toBe("Document 1"));
   });
 
-  it("when remove is called, then filters workspace optimistically", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+  it("when remove is called, then filters document optimistically", async () => {
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockDelete.mockResolvedValue(undefined);
@@ -126,12 +126,12 @@ describe("useWorkspaces", () => {
       result.current.remove("ws-1");
     });
 
-    expect(result.current.workspaces).toHaveLength(1);
-    expect(result.current.workspaces[0].workspaceId).toBe("ws-2");
+    expect(result.current.documents).toHaveLength(1);
+    expect(result.current.documents[0].documentId).toBe("ws-2");
   });
 
   it("when remove API call fails, then reverts and shows toast", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockDelete.mockRejectedValue(new Error("fail"));
@@ -141,12 +141,12 @@ describe("useWorkspaces", () => {
       result.current.remove("ws-1");
     });
 
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Failed to delete workspace"));
-    await waitFor(() => expect(result.current.workspaces).toHaveLength(2));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith("Failed to delete document"));
+    await waitFor(() => expect(result.current.documents).toHaveLength(2));
   });
 
-  it("when duplicate is called, then clones source workspace optimistically", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+  it("when duplicate is called, then clones source document optimistically", async () => {
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockDuplicate.mockResolvedValue(undefined);
@@ -155,15 +155,15 @@ describe("useWorkspaces", () => {
       result.current.duplicate("ws-1", "ws-3");
     });
 
-    expect(result.current.workspaces).toHaveLength(3);
-    const duped = result.current.workspaces.find((w) => w.workspaceId === "ws-3");
+    expect(result.current.documents).toHaveLength(3);
+    const duped = result.current.documents.find((w) => w.documentId === "ws-3");
     expect(duped).toBeDefined();
-    expect(duped!.title).toBe("Workspace 1");
+    expect(duped!.title).toBe("Document 1");
     expect(duped!.isFavorite).toBe(false);
   });
 
   it("when toggleFavorite is called, then updates isFavorite optimistically", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockToggleFav.mockResolvedValue(undefined);
@@ -172,11 +172,11 @@ describe("useWorkspaces", () => {
       result.current.toggleFavorite("ws-1", true);
     });
 
-    expect(result.current.workspaces[0].isFavorite).toBe(true);
+    expect(result.current.documents[0].isFavorite).toBe(true);
   });
 
   it("when moveToFolder is called, then updates folderId optimistically", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockMoveToFolder.mockResolvedValue(undefined);
@@ -185,31 +185,31 @@ describe("useWorkspaces", () => {
       result.current.moveToFolder("ws-1", "folder-1");
     });
 
-    expect(result.current.workspaces[0].folderId).toBe("folder-1");
+    expect(result.current.documents[0].folderId).toBe("folder-1");
   });
 
-  it("when unfileWorkspace is called, then sets folderId to null optimistically", async () => {
-    // Start with workspace in a folder
+  it("when unfileDocument is called, then sets folderId to null optimistically", async () => {
+    // Start with document in a folder
     mockFetch.mockResolvedValue([{ ...ws1, folderId: "folder-1" }, ws2]);
-    const { result } = renderHook(() => useWorkspaces());
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockUnfile.mockResolvedValue(undefined);
 
     act(() => {
-      result.current.unfileWorkspace("ws-1");
+      result.current.unfileDocument("ws-1");
     });
 
-    expect(result.current.workspaces[0].folderId).toBeNull();
+    expect(result.current.documents[0].folderId).toBeNull();
   });
 
   it("when create is called, then calls API and refetches", async () => {
-    const { result } = renderHook(() => useWorkspaces());
+    const { result } = renderHook(() => useDocuments());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     mockCreate.mockResolvedValue(undefined);
-    const ws3: WorkspaceItem = {
-      workspaceId: "ws-3",
+    const ws3: DocumentItem = {
+      documentId: "ws-3",
       title: "New",
       createdAt: "2024-01-03",
       updatedAt: "2024-01-03",
@@ -223,6 +223,6 @@ describe("useWorkspaces", () => {
     });
 
     expect(mockCreate).toHaveBeenCalledWith("ws-3", "New");
-    expect(result.current.workspaces).toHaveLength(3);
+    expect(result.current.documents).toHaveLength(3);
   });
 });

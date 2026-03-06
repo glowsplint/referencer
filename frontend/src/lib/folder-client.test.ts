@@ -4,8 +4,8 @@ import {
   createFolder,
   renameFolder,
   deleteFolder,
-  moveWorkspaceToFolder,
-  unfileWorkspace,
+  moveDocumentToFolder,
+  unfileDocument,
   toggleFolderFavorite,
   moveFolderToFolder,
 } from "./folder-client";
@@ -81,24 +81,24 @@ describe("when using folder-client", () => {
     });
   });
 
-  describe("when using moveWorkspaceToFolder", () => {
-    it("then sends PATCH with workspaceId", async () => {
+  describe("when using moveDocumentToFolder", () => {
+    it("then sends PATCH with documentId", async () => {
       mockApiPatch.mockResolvedValue(undefined);
 
-      await moveWorkspaceToFolder("f1", "ws-1");
-      expect(mockApiPatch).toHaveBeenCalledWith("/api/folders/f1/move-workspace", {
-        workspaceId: "ws-1",
+      await moveDocumentToFolder("f1", "ws-1");
+      expect(mockApiPatch).toHaveBeenCalledWith("/api/folders/f1/move-document", {
+        documentId: "ws-1",
       });
     });
   });
 
-  describe("when using unfileWorkspace", () => {
-    it("then sends POST with workspaceId", async () => {
+  describe("when using unfileDocument", () => {
+    it("then sends POST with documentId", async () => {
       mockApiPost.mockResolvedValue(undefined);
 
-      await unfileWorkspace("ws-1");
-      expect(mockApiPost).toHaveBeenCalledWith("/api/folders/unfile-workspace", {
-        workspaceId: "ws-1",
+      await unfileDocument("ws-1");
+      expect(mockApiPost).toHaveBeenCalledWith("/api/folders/unfile-document", {
+        documentId: "ws-1",
       });
     });
   });
