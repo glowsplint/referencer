@@ -8,7 +8,7 @@ import { BookOpen, Eye, EyeOff, Plus, Search, Trash2, X } from "lucide-react";
 import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
 import { StudySchemePicker } from "./StudySchemePicker";
-import { RecordingStepBrowser } from "./recording/RecordingStepBrowser";
+
 import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useDocument } from "@/contexts/DocumentContext";
 import { useCustomColors } from "@/hooks/ui/use-custom-colors";
@@ -244,8 +244,6 @@ export function ManagementPane({ width }: ManagementPaneProps) {
           <Trash2 size={16} />
         </div>
       )}
-
-      <RecordingStepBrowser />
     </div>
   );
 }

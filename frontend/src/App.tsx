@@ -31,7 +31,7 @@ import { useUndoRedoKeyboard } from "./hooks/ui/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/ui/use-action-console";
 import { useIsBreakpoint } from "./hooks/ui/use-is-breakpoint";
 import { useDocumentAutosave } from "./hooks/data/use-document-autosave";
-import { useRecordingManager } from "./hooks/recording/use-recording-manager";
+
 import { useAnnotationEdit } from "./hooks/data/use-annotation-edit";
 import { useStatusHints } from "./hooks/ui/use-status-hints";
 import { ArrowOverlay } from "./components/ArrowOverlay";
@@ -49,8 +49,7 @@ import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
 import { Loader2, MessageSquare, X } from "lucide-react";
 import { DocumentProvider } from "./contexts/DocumentContext";
-import { RecordingProvider } from "./contexts/RecordingContext";
-import { PlaybackBar } from "./components/PlaybackBar";
+
 import { EditorTour } from "./components/tour/EditorTour";
 import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annotations";
 import { useCurrentUserName } from "./hooks/data/use-current-user-name";
@@ -317,15 +316,6 @@ export function App({ documentId, navigate }: AppProps) {
   });
   useUndoRedoKeyboard(unifiedUndo);
 
-  // Recording & playback
-  const recordingContextValue = useRecordingManager({
-    doc: docCtx.yjs.doc,
-    layers: docCtx.layers,
-    sectionVisibility: docCtx.sectionVisibility,
-    toggleLayerVisibility: docCtx.toggleLayerVisibility,
-    toggleSectionVisibility: docCtx.toggleSectionVisibility,
-  });
-
   const actionConsole = useActionConsole();
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
@@ -436,7 +426,6 @@ export function App({ documentId, navigate }: AppProps) {
     selectionHidden,
     setStatus,
     setSelectedArrow: docCtx.setSelectedArrow,
-    isRecording: recordingContextValue.recordings.isRecording,
   });
 
   useEffect(() => {
@@ -603,312 +592,309 @@ export function App({ documentId, navigate }: AppProps) {
 
   return (
     <DocumentProvider value={docCtx}>
-      <RecordingProvider value={recordingContextValue}>
-        <Toaster />
-        <EditorTour />
-        <div className="flex flex-col h-screen overflow-hidden">
-          <div className="flex flex-1 min-h-0">
-            {!isMobile && <ButtonPane />}
-            {!isMobile && isManagementPaneOpen && (
-              <>
-                <ManagementPane width={managementPaneWidth} />
-                <ManagementPaneDivider
-                  width={managementPaneWidth}
-                  onResize={setManagementPaneWidth}
-                  onResizeEnd={handleManagementPaneResizeEnd}
-                />
-              </>
-            )}
-            <EditorContext.Provider value={{ editor: activeEditor }}>
-              <div className="flex flex-col flex-1 min-w-0">
-                <TitleBar navigate={navigate} onExportMarkdown={handleExportMarkdown} />
-                <UnsavedBanner />
-                <PrintHeader title={printTitle} layers={layers} />
-                <SimpleEditorToolbar isLocked={focusedPaneLocked} />
-                {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
-                <div className="flex flex-1 min-w-0 min-h-0">
-                  {!isMobile &&
-                    anyPaneLocked &&
-                    ((settings.commentPlacement === "left" && hasAnyAnnotations) ||
-                      (settings.commentPlacement === "both" && hasLeftAnnotations)) && (
-                      <>
-                        <ErrorBoundary silent>
-                          <AnnotationPanel
-                            {...annotationPanelProps}
-                            placement="left"
-                            width={annotationPanelWidth}
-                            editorIndices={
-                              settings.commentPlacement === "both" ? editorColumns.left : undefined
-                            }
-                          />
-                        </ErrorBoundary>
-                        <div
-                          role="separator"
-                          data-testid="annotation-panel-divider"
-                          onMouseDown={(e) => handleAnnotationPanelDrag(e, "left")}
-                          className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
-                        >
-                          <div className="flex-1 w-px bg-gray-300" />
-                        </div>
-                      </>
-                    )}
-                  <div
-                    ref={containerRef}
-                    data-testid="editorContainer"
-                    className={`relative flex flex-1 min-w-0 min-h-0 flex-col${anyPaneLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${anyPaneLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${anyPaneLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
-                  >
-                    <ErrorBoundary silent>
-                      <ArrowOverlay
-                        layers={layers}
-                        drawingState={drawingState}
-                        drawingColor={activeLayerColor}
-                        editorsRef={editorsRef}
-                        containerRef={containerRef}
-                        removeArrow={removeArrow}
-                        selectedArrow={docCtx.selectedArrow}
-                        setSelectedArrow={handleSetSelectedArrow}
-                        activeTool={annotations.activeTool}
-                        sectionVisibility={sectionVisibility}
-                        isDarkMode={settings.isDarkMode}
-                        isLocked={anyPaneLocked || effectiveReadOnly}
-                        hideOffscreenArrows={settings.hideOffscreenArrows}
-                      />
-                    </ErrorBoundary>
-                    {docCtx.demoLoading && (
-                      <div
-                        className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm"
-                        data-testid="demoLoadingOverlay"
-                      >
-                        <Loader2 className="size-8 animate-spin text-muted-foreground" />
-                      </div>
-                    )}
-                    {!settings.isMultipleRowsLayout
-                      ? (() => {
-                          const topRowVisible =
-                            sectionVisibility[0] || (editorCount >= 2 && sectionVisibility[1]);
-                          const bottomRowVisible =
-                            editorCount > 2 &&
-                            (sectionVisibility[2] || (editorCount >= 4 && sectionVisibility[3]));
-                          const bothRowsVisible = topRowVisible && bottomRowVisible;
-                          return (
-                            <>
-                              {/* Top row */}
-                              {topRowVisible && (
-                                <div
-                                  ref={topRowRef}
-                                  className="flex flex-row min-w-0 min-h-0"
-                                  style={{
-                                    flex: bothRowsVisible ? `${rowSplit} 0 0%` : "1 0 0%",
-                                  }}
-                                >
-                                  <EditorCell key={editorKeys[0]} {...editorCellProps(0)} />
-                                  {editorCount >= 2 &&
-                                    sectionVisibility[0] &&
-                                    sectionVisibility[1] && (
-                                      <Divider
-                                        onResize={handleColumnResize}
-                                        containerRef={topRowRef}
-                                        direction="horizontal"
-                                      />
-                                    )}
-                                  {editorCount >= 2 && (
-                                    <EditorCell key={editorKeys[1]} {...editorCellProps(1)} />
-                                  )}
-                                </div>
-                              )}
-                              {/* Row divider */}
-                              {bothRowsVisible && (
-                                <Divider
-                                  onResize={handleRowResize}
-                                  containerRef={containerRef}
-                                  direction="vertical"
-                                />
-                              )}
-                              {/* Bottom row */}
-                              {bottomRowVisible && (
-                                <div
-                                  ref={bottomRowRef}
-                                  className="flex flex-row min-w-0 min-h-0"
-                                  style={{
-                                    flex: bothRowsVisible ? `${100 - rowSplit} 0 0%` : "1 0 0%",
-                                  }}
-                                >
-                                  <EditorCell key={editorKeys[2]} {...editorCellProps(2)} />
-                                  {editorCount >= 4 &&
-                                    sectionVisibility[2] &&
-                                    sectionVisibility[3] && (
-                                      <Divider
-                                        onResize={handleColumnResize}
-                                        containerRef={bottomRowRef}
-                                        direction="horizontal"
-                                      />
-                                    )}
-                                  {editorCount >= 4 && (
-                                    <EditorCell key={editorKeys[3]} {...editorCellProps(3)} />
-                                  )}
-                                </div>
-                              )}
-                            </>
-                          );
-                        })()
-                      : editorWidths.map((width, i) => {
-                          const showDivider =
-                            i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
-                          return (
-                            <Fragment key={editorKeys[i]}>
-                              {showDivider && (
-                                <Divider
-                                  onResize={(pct) => handleDividerResize(i - 1, pct)}
-                                  containerRef={containerRef}
-                                  direction="vertical"
-                                />
-                              )}
-                              <div
-                                className="min-w-0 min-h-0 overflow-hidden flex flex-col"
-                                style={{
-                                  flex: `${width} 0 0%`,
-                                  display: sectionVisibility[i] === false ? "none" : undefined,
-                                }}
-                              >
-                                <TextHeader
-                                  name={docCtx.sectionNames[i]}
-                                  index={i}
-                                  onUpdateName={(name) => docCtx.updateSectionName(i, name)}
-                                />
-                                <div className="flex-1 min-h-0 overflow-hidden">
-                                  <ErrorBoundary>
-                                    <EditorPane
-                                      isLocked={isPaneLocked(i) || effectiveReadOnly}
-                                      activeTool={annotations.activeTool}
-                                      content={PLACEHOLDER_CONTENT}
-                                      index={i}
-                                      fragment={docCtx.yjs.getFragment(i)}
-                                      onEditorMount={handleEditorMount}
-                                      onFocus={handlePaneFocus}
-                                      onMouseDown={
-                                        isPaneLocked(i) && !effectiveReadOnly
-                                          ? handleMouseDown
-                                          : undefined
-                                      }
-                                      onMouseMove={
-                                        isPaneLocked(i) && !effectiveReadOnly
-                                          ? handleMouseMove
-                                          : undefined
-                                      }
-                                      onMouseUp={
-                                        isPaneLocked(i) && !effectiveReadOnly
-                                          ? handleMouseUp
-                                          : undefined
-                                      }
-                                      layers={layers}
-                                      selection={selection}
-                                      selectionHidden={selectionHidden}
-                                      activeLayerColor={activeLayerColor}
-                                      isDarkMode={settings.isDarkMode}
-                                      removeArrow={removeArrow}
-                                      sectionVisibility={sectionVisibility}
-                                      selectedArrowId={docCtx.selectedArrow?.arrowId ?? null}
-                                      yjsSynced={docCtx.readyForSeeding}
-                                    />
-                                  </ErrorBoundary>
-                                </div>
-                              </div>
-                            </Fragment>
-                          );
-                        })}
-                  </div>
-                  {!isMobile &&
-                    anyPaneLocked &&
-                    ((settings.commentPlacement === "right" && hasAnyAnnotations) ||
-                      (settings.commentPlacement === "both" && hasRightAnnotations)) && (
-                      <>
-                        <div
-                          role="separator"
-                          data-testid="annotation-panel-divider"
-                          onMouseDown={(e) => handleAnnotationPanelDrag(e, "right")}
-                          className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
-                        >
-                          <div className="flex-1 w-px bg-gray-300" />
-                        </div>
-                        <ErrorBoundary silent>
-                          <AnnotationPanel
-                            {...annotationPanelProps}
-                            placement="right"
-                            width={annotationPanelWidth}
-                            editorIndices={
-                              settings.commentPlacement === "both" ? editorColumns.right : undefined
-                            }
-                          />
-                        </ErrorBoundary>
-                      </>
-                    )}
-                  <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
-                    <PrintAnnotations
-                      layers={layers}
-                      sectionNames={docCtx.sectionNames}
-                      sectionVisibility={sectionVisibility}
-                    />
-                  </div>
-                </div>
-              </div>
-            </EditorContext.Provider>
-          </div>
-          {!isMobile && (
-            <ActionConsole
-              log={history.log}
-              isOpen={actionConsole.isOpen}
-              onClose={() => actionConsole.setIsOpen(false)}
-              height={actionConsole.consoleHeight}
-              onHeightChange={actionConsole.setConsoleHeight}
-            />
-          )}
-          {/* Mobile annotation drawer: bottom panel with read-only annotation cards */}
-          {isMobile && anyPaneLocked && hasAnyAnnotations && (
+      <Toaster />
+      <EditorTour />
+      <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex flex-1 min-h-0">
+          {!isMobile && <ButtonPane />}
+          {!isMobile && isManagementPaneOpen && (
             <>
-              {!mobileAnnotationPanelOpen && (
-                <button
-                  data-testid="mobileAnnotationToggle"
-                  className="fixed bottom-4 right-4 z-40 flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground shadow-lg px-3 py-2 text-sm"
-                  onClick={() => setMobileAnnotationPanelOpen(true)}
-                >
-                  <MessageSquare size={16} />
-                  <span>Annotations</span>
-                </button>
-              )}
-              {mobileAnnotationPanelOpen && (
-                <div
-                  data-testid="mobileAnnotationDrawer"
-                  className="relative flex-shrink-0 border-t border-zinc-200 dark:border-zinc-700 bg-background"
-                  style={{ height: "40vh", minHeight: 200 }}
-                >
-                  <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-200 dark:border-zinc-700">
-                    <span className="text-xs font-medium text-muted-foreground">Annotations</span>
-                    <button
-                      data-testid="mobileAnnotationClose"
-                      className="p-1 rounded hover:bg-accent text-muted-foreground"
-                      onClick={() => setMobileAnnotationPanelOpen(false)}
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                  <div className="overflow-y-auto h-[calc(100%-2rem)]">
-                    <ErrorBoundary silent>
-                      <AnnotationPanel {...annotationPanelProps} placement="right" readOnly />
-                    </ErrorBoundary>
-                  </div>
-                </div>
-              )}
+              <ManagementPane width={managementPaneWidth} />
+              <ManagementPaneDivider
+                width={managementPaneWidth}
+                onResize={setManagementPaneWidth}
+                onResizeEnd={handleManagementPaneResizeEnd}
+              />
             </>
           )}
-          <MobileInfoDialog
-            open={isMobile && !mobileDialogDismissed}
-            onOpenChange={(open) => {
-              if (!open) setMobileDialogDismissed(true);
-            }}
-          />
+          <EditorContext.Provider value={{ editor: activeEditor }}>
+            <div className="flex flex-col flex-1 min-w-0">
+              <TitleBar navigate={navigate} onExportMarkdown={handleExportMarkdown} />
+              <UnsavedBanner />
+              <PrintHeader title={printTitle} layers={layers} />
+              <SimpleEditorToolbar isLocked={focusedPaneLocked} />
+              {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
+              <div className="flex flex-1 min-w-0 min-h-0">
+                {!isMobile &&
+                  anyPaneLocked &&
+                  ((settings.commentPlacement === "left" && hasAnyAnnotations) ||
+                    (settings.commentPlacement === "both" && hasLeftAnnotations)) && (
+                    <>
+                      <ErrorBoundary silent>
+                        <AnnotationPanel
+                          {...annotationPanelProps}
+                          placement="left"
+                          width={annotationPanelWidth}
+                          editorIndices={
+                            settings.commentPlacement === "both" ? editorColumns.left : undefined
+                          }
+                        />
+                      </ErrorBoundary>
+                      <div
+                        role="separator"
+                        data-testid="annotation-panel-divider"
+                        onMouseDown={(e) => handleAnnotationPanelDrag(e, "left")}
+                        className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
+                      >
+                        <div className="flex-1 w-px bg-gray-300" />
+                      </div>
+                    </>
+                  )}
+                <div
+                  ref={containerRef}
+                  data-testid="editorContainer"
+                  className={`relative flex flex-1 min-w-0 min-h-0 flex-col${anyPaneLocked && annotations.activeTool === "eraser" ? " eraser-mode-container" : ""}${anyPaneLocked && annotations.activeTool === "highlight" ? " highlight-mode-container" : ""}${anyPaneLocked && annotations.activeTool === "comments" ? " comment-mode-container" : ""}`}
+                >
+                  <ErrorBoundary silent>
+                    <ArrowOverlay
+                      layers={layers}
+                      drawingState={drawingState}
+                      drawingColor={activeLayerColor}
+                      editorsRef={editorsRef}
+                      containerRef={containerRef}
+                      removeArrow={removeArrow}
+                      selectedArrow={docCtx.selectedArrow}
+                      setSelectedArrow={handleSetSelectedArrow}
+                      activeTool={annotations.activeTool}
+                      sectionVisibility={sectionVisibility}
+                      isDarkMode={settings.isDarkMode}
+                      isLocked={anyPaneLocked || effectiveReadOnly}
+                      hideOffscreenArrows={settings.hideOffscreenArrows}
+                    />
+                  </ErrorBoundary>
+                  {docCtx.demoLoading && (
+                    <div
+                      className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm"
+                      data-testid="demoLoadingOverlay"
+                    >
+                      <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                    </div>
+                  )}
+                  {!settings.isMultipleRowsLayout
+                    ? (() => {
+                        const topRowVisible =
+                          sectionVisibility[0] || (editorCount >= 2 && sectionVisibility[1]);
+                        const bottomRowVisible =
+                          editorCount > 2 &&
+                          (sectionVisibility[2] || (editorCount >= 4 && sectionVisibility[3]));
+                        const bothRowsVisible = topRowVisible && bottomRowVisible;
+                        return (
+                          <>
+                            {/* Top row */}
+                            {topRowVisible && (
+                              <div
+                                ref={topRowRef}
+                                className="flex flex-row min-w-0 min-h-0"
+                                style={{
+                                  flex: bothRowsVisible ? `${rowSplit} 0 0%` : "1 0 0%",
+                                }}
+                              >
+                                <EditorCell key={editorKeys[0]} {...editorCellProps(0)} />
+                                {editorCount >= 2 &&
+                                  sectionVisibility[0] &&
+                                  sectionVisibility[1] && (
+                                    <Divider
+                                      onResize={handleColumnResize}
+                                      containerRef={topRowRef}
+                                      direction="horizontal"
+                                    />
+                                  )}
+                                {editorCount >= 2 && (
+                                  <EditorCell key={editorKeys[1]} {...editorCellProps(1)} />
+                                )}
+                              </div>
+                            )}
+                            {/* Row divider */}
+                            {bothRowsVisible && (
+                              <Divider
+                                onResize={handleRowResize}
+                                containerRef={containerRef}
+                                direction="vertical"
+                              />
+                            )}
+                            {/* Bottom row */}
+                            {bottomRowVisible && (
+                              <div
+                                ref={bottomRowRef}
+                                className="flex flex-row min-w-0 min-h-0"
+                                style={{
+                                  flex: bothRowsVisible ? `${100 - rowSplit} 0 0%` : "1 0 0%",
+                                }}
+                              >
+                                <EditorCell key={editorKeys[2]} {...editorCellProps(2)} />
+                                {editorCount >= 4 &&
+                                  sectionVisibility[2] &&
+                                  sectionVisibility[3] && (
+                                    <Divider
+                                      onResize={handleColumnResize}
+                                      containerRef={bottomRowRef}
+                                      direction="horizontal"
+                                    />
+                                  )}
+                                {editorCount >= 4 && (
+                                  <EditorCell key={editorKeys[3]} {...editorCellProps(3)} />
+                                )}
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()
+                    : editorWidths.map((width, i) => {
+                        const showDivider =
+                          i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
+                        return (
+                          <Fragment key={editorKeys[i]}>
+                            {showDivider && (
+                              <Divider
+                                onResize={(pct) => handleDividerResize(i - 1, pct)}
+                                containerRef={containerRef}
+                                direction="vertical"
+                              />
+                            )}
+                            <div
+                              className="min-w-0 min-h-0 overflow-hidden flex flex-col"
+                              style={{
+                                flex: `${width} 0 0%`,
+                                display: sectionVisibility[i] === false ? "none" : undefined,
+                              }}
+                            >
+                              <TextHeader
+                                name={docCtx.sectionNames[i]}
+                                index={i}
+                                onUpdateName={(name) => docCtx.updateSectionName(i, name)}
+                              />
+                              <div className="flex-1 min-h-0 overflow-hidden">
+                                <ErrorBoundary>
+                                  <EditorPane
+                                    isLocked={isPaneLocked(i) || effectiveReadOnly}
+                                    activeTool={annotations.activeTool}
+                                    content={PLACEHOLDER_CONTENT}
+                                    index={i}
+                                    fragment={docCtx.yjs.getFragment(i)}
+                                    onEditorMount={handleEditorMount}
+                                    onFocus={handlePaneFocus}
+                                    onMouseDown={
+                                      isPaneLocked(i) && !effectiveReadOnly
+                                        ? handleMouseDown
+                                        : undefined
+                                    }
+                                    onMouseMove={
+                                      isPaneLocked(i) && !effectiveReadOnly
+                                        ? handleMouseMove
+                                        : undefined
+                                    }
+                                    onMouseUp={
+                                      isPaneLocked(i) && !effectiveReadOnly
+                                        ? handleMouseUp
+                                        : undefined
+                                    }
+                                    layers={layers}
+                                    selection={selection}
+                                    selectionHidden={selectionHidden}
+                                    activeLayerColor={activeLayerColor}
+                                    isDarkMode={settings.isDarkMode}
+                                    removeArrow={removeArrow}
+                                    sectionVisibility={sectionVisibility}
+                                    selectedArrowId={docCtx.selectedArrow?.arrowId ?? null}
+                                    yjsSynced={docCtx.readyForSeeding}
+                                  />
+                                </ErrorBoundary>
+                              </div>
+                            </div>
+                          </Fragment>
+                        );
+                      })}
+                </div>
+                {!isMobile &&
+                  anyPaneLocked &&
+                  ((settings.commentPlacement === "right" && hasAnyAnnotations) ||
+                    (settings.commentPlacement === "both" && hasRightAnnotations)) && (
+                    <>
+                      <div
+                        role="separator"
+                        data-testid="annotation-panel-divider"
+                        onMouseDown={(e) => handleAnnotationPanelDrag(e, "right")}
+                        className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
+                      >
+                        <div className="flex-1 w-px bg-gray-300" />
+                      </div>
+                      <ErrorBoundary silent>
+                        <AnnotationPanel
+                          {...annotationPanelProps}
+                          placement="right"
+                          width={annotationPanelWidth}
+                          editorIndices={
+                            settings.commentPlacement === "both" ? editorColumns.right : undefined
+                          }
+                        />
+                      </ErrorBoundary>
+                    </>
+                  )}
+                <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
+                  <PrintAnnotations
+                    layers={layers}
+                    sectionNames={docCtx.sectionNames}
+                    sectionVisibility={sectionVisibility}
+                  />
+                </div>
+              </div>
+            </div>
+          </EditorContext.Provider>
         </div>
-        <PlaybackBar />
-      </RecordingProvider>
+        {!isMobile && (
+          <ActionConsole
+            log={history.log}
+            isOpen={actionConsole.isOpen}
+            onClose={() => actionConsole.setIsOpen(false)}
+            height={actionConsole.consoleHeight}
+            onHeightChange={actionConsole.setConsoleHeight}
+          />
+        )}
+        {/* Mobile annotation drawer: bottom panel with read-only annotation cards */}
+        {isMobile && anyPaneLocked && hasAnyAnnotations && (
+          <>
+            {!mobileAnnotationPanelOpen && (
+              <button
+                data-testid="mobileAnnotationToggle"
+                className="fixed bottom-4 right-4 z-40 flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground shadow-lg px-3 py-2 text-sm"
+                onClick={() => setMobileAnnotationPanelOpen(true)}
+              >
+                <MessageSquare size={16} />
+                <span>Annotations</span>
+              </button>
+            )}
+            {mobileAnnotationPanelOpen && (
+              <div
+                data-testid="mobileAnnotationDrawer"
+                className="relative flex-shrink-0 border-t border-zinc-200 dark:border-zinc-700 bg-background"
+                style={{ height: "40vh", minHeight: 200 }}
+              >
+                <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-200 dark:border-zinc-700">
+                  <span className="text-xs font-medium text-muted-foreground">Annotations</span>
+                  <button
+                    data-testid="mobileAnnotationClose"
+                    className="p-1 rounded hover:bg-accent text-muted-foreground"
+                    onClick={() => setMobileAnnotationPanelOpen(false)}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+                <div className="overflow-y-auto h-[calc(100%-2rem)]">
+                  <ErrorBoundary silent>
+                    <AnnotationPanel {...annotationPanelProps} placement="right" readOnly />
+                  </ErrorBoundary>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+        <MobileInfoDialog
+          open={isMobile && !mobileDialogDismissed}
+          onOpenChange={(open) => {
+            if (!open) setMobileDialogDismissed(true);
+          }}
+        />
+      </div>
     </DocumentProvider>
   );
 }
