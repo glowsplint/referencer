@@ -99,7 +99,7 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <ImageUploadButton text="Add" />
+        <ImageUploadButton />
       </ToolbarGroup>
 
       <ToolbarSeparator />
@@ -181,7 +181,7 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
               : `${tm("tooltips.switchToAnnotateMode")} (K)`
           }
         >
-          {isLocked ? <Lock size={20} /> : <LockOpen size={20} />}
+          {isLocked ? <Lock size={16} /> : <LockOpen size={16} />}
         </button>
       </ToolbarGroup>
     </Toolbar>

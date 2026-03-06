@@ -201,35 +201,28 @@ describe("TableDropdownMenu", () => {
     expect(container.querySelector("[data-testid='dropdown-menu']")).not.toBeInTheDocument();
   });
 
-  it("clicking the trigger opens the dropdown", async () => {
+  it("when not in table, clicking the button inserts a table directly", async () => {
+    const user = userEvent.setup();
+    renderWithWorkspace(<TableDropdownMenu />);
+
+    await user.click(screen.getByRole("button", { name: "Table" }));
+
+    expect(mockUseTableReturn.insertTable).toHaveBeenCalled();
+  });
+
+  it("when not in table, does not render a dropdown", () => {
+    renderWithWorkspace(<TableDropdownMenu />);
+    expect(screen.queryByTestId("dropdown-menu")).not.toBeInTheDocument();
+  });
+
+  it("when in table, clicking the trigger opens the dropdown", async () => {
+    mockUseTableReturn.isInTable = true;
     const user = userEvent.setup();
     renderWithWorkspace(<TableDropdownMenu />);
 
     await user.click(screen.getByRole("button", { name: "Table" }));
 
     expect(screen.getByTestId("dropdown-menu")).toHaveAttribute("data-open", "true");
-  });
-
-  it("shows 'Insert table' action in the dropdown", () => {
-    renderWithWorkspace(<TableDropdownMenu />);
-    expect(screen.getByText("Insert table")).toBeInTheDocument();
-  });
-
-  it("'Insert table' button is disabled when already in a table", () => {
-    mockUseTableReturn.isInTable = true;
-    renderWithWorkspace(<TableDropdownMenu />);
-
-    const insertBtn = screen.getByText("Insert table").closest("button");
-    expect(insertBtn).toBeDisabled();
-  });
-
-  it("clicking 'Insert table' calls the insertTable action", async () => {
-    const user = userEvent.setup();
-    renderWithWorkspace(<TableDropdownMenu />);
-
-    await user.click(screen.getByText("Insert table"));
-
-    expect(mockUseTableReturn.insertTable).toHaveBeenCalled();
   });
 
   it("when not in table, does not show table manipulation actions", () => {
