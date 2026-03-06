@@ -202,11 +202,11 @@ describe("SimpleEditorToolbar", () => {
       expect(screen.getByTestId("editorToolbar")).toBeInTheDocument();
     });
 
-    it("then shows an unlocked lock icon", () => {
+    it("then shows a lock icon (action: click to lock)", () => {
       render(<SimpleEditorToolbar isLocked={false} />);
       const btn = screen.getByTestId("lockButton");
       expect(btn).toBeInTheDocument();
-      expect(btn.querySelector(".lucide-lock-open")).toBeInTheDocument();
+      expect(btn.querySelector(".lucide-lock")).toBeInTheDocument();
     });
   });
 
@@ -218,10 +218,10 @@ describe("SimpleEditorToolbar", () => {
       expect(toolbar).not.toHaveClass("opacity-50");
     });
 
-    it("then shows a locked lock icon", () => {
+    it("then shows an unlock icon (action: click to unlock)", () => {
       render(<SimpleEditorToolbar isLocked={true} />);
       const btn = screen.getByTestId("lockButton");
-      expect(btn.querySelector(".lucide-lock")).toBeInTheDocument();
+      expect(btn.querySelector(".lucide-lock-open")).toBeInTheDocument();
     });
   });
 
