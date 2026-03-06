@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal, Pencil, FolderPlus, Trash2 } from "lucide-react";
 
@@ -14,6 +15,8 @@ export function FolderDropdownMenu({
   onNewSubfolder,
   onDelete,
 }: FolderDropdownMenuProps) {
+  const { t } = useTranslation("management");
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -35,14 +38,14 @@ export function FolderDropdownMenu({
             onSelect={onRename}
             className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"
           >
-            <Pencil size={14} /> Rename
+            <Pencil size={14} /> {t("hub.rename")}
           </DropdownMenu.Item>
           {depth < 10 && (
             <DropdownMenu.Item
               onSelect={onNewSubfolder}
               className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"
             >
-              <FolderPlus size={14} /> New Subfolder
+              <FolderPlus size={14} /> {t("hub.newSubfolder")}
             </DropdownMenu.Item>
           )}
           <DropdownMenu.Separator className="my-1 h-px bg-border" />
@@ -50,7 +53,7 @@ export function FolderDropdownMenu({
             onSelect={onDelete}
             className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none text-destructive hover:bg-destructive/10 transition-colors"
           >
-            <Trash2 size={14} /> Delete
+            <Trash2 size={14} /> {t("hub.delete")}
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

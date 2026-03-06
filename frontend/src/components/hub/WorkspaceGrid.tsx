@@ -1,20 +1,31 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { randomKSUID } from "@/lib/ksuid";
 import {
   LayoutGrid,
   List,
   Plus,
   FolderPlus,
+  FolderInput,
+  Trash2,
   ChevronUp,
   ChevronDown,
   Star,
   Folder,
-  Search,
   BookOpen,
   Highlighter,
   MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
 import { useWorkspaceSort } from "@/hooks/data/use-workspace-sort";
 import { buildFolderTree } from "@/lib/folder-tree";
@@ -59,6 +70,7 @@ interface WorkspaceGridProps {
   onMoveFolder: (folderId: string, parentId: string | null) => void;
   ownerName?: string;
   ownerAvatarUrl?: string;
+  searchQuery: string;
 }
 
 export function WorkspaceGrid({
@@ -80,11 +92,12 @@ export function WorkspaceGrid({
   onMoveFolder,
   ownerName,
   ownerAvatarUrl,
+  searchQuery,
 }: WorkspaceGridProps) {
+  const { t } = useTranslation("management");
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem(STORAGE_KEYS.HUB_VIEW_MODE) as ViewMode) || "grid";
   });
-  const [searchQuery, setSearchQuery] = useState("");
   const [renameTarget, setRenameTarget] = useState<WorkspaceItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<WorkspaceItem | null>(null);
   const [creatingFolder, setCreatingFolder] = useState(false);
@@ -360,22 +373,8 @@ export function WorkspaceGrid({
         <WorkspaceGridInner>
           {/* Header row */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold">My Workspaces</h2>
+            <h2 className="text-2xl font-semibold">{t("hub.myWorkspaces")}</h2>
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search
-                  size={14}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-                />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search workspaces..."
-                  data-testid="hubSearchInput"
-                  className="h-8 w-48 rounded-md border border-border bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                />
-              </div>
               <div className="flex items-center border border-border rounded-md">
                 <button
                   onClick={() => toggleView("grid")}
@@ -392,6 +391,14 @@ export function WorkspaceGrid({
                   <List size={16} />
                 </button>
               </div>
+              <SelectionActions
+                folders={folders}
+                onDeleteWorkspace={onDelete}
+                onDeleteFolder={onDeleteFolder}
+                onMoveWorkspaceToFolder={onMoveWorkspaceToFolder}
+                onUnfileWorkspace={onUnfileWorkspace}
+                onMoveFolder={onMoveFolder}
+              />
               <Button
                 onClick={() => setCreatingFolder(true)}
                 size="sm"
@@ -399,7 +406,7 @@ export function WorkspaceGrid({
                 data-testid="newFolderButton"
               >
                 <FolderPlus size={16} />
-                New Folder
+                {t("hub.newFolder")}
               </Button>
               <Button
                 onClick={() => onNew(currentFolderId)}
@@ -407,56 +414,55 @@ export function WorkspaceGrid({
                 data-testid="newWorkspaceButton"
               >
                 <Plus size={16} />
-                New Workspace
+                {t("hub.newWorkspace")}
               </Button>
             </div>
           </div>
 
           {/* Content */}
           {isLoading ? (
-            <div className="text-center py-12 text-muted-foreground">Loading...</div>
+            <div className="text-center py-12 text-muted-foreground">{t("hub.loading")}</div>
           ) : workspaces.length === 0 && folders.length === 0 ? (
             <div
               className="flex flex-col items-center py-16 px-4"
               data-testid="emptyStateOnboarding"
             >
-              <h2 className="text-2xl font-bold mb-2">Welcome to Referencer</h2>
+              <h2 className="text-2xl font-bold mb-2">{t("hub.welcomeTitle")}</h2>
               <p className="text-muted-foreground text-center max-w-md mb-8">
-                A collaborative workspace for close reading. Annotate, highlight, and connect texts
-                side by side.
+                {t("hub.welcomeDescription")}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-lg mb-8">
                 <div className="flex flex-col items-center text-center gap-2">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
                     <BookOpen size={20} />
                   </div>
-                  <span className="text-sm font-medium">Add texts</span>
+                  <span className="text-sm font-medium">{t("hub.onboardingAddTexts")}</span>
                   <span className="text-xs text-muted-foreground">
-                    Import or paste texts to study side by side
+                    {t("hub.onboardingAddTextsHint")}
                   </span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-2">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
                     <Highlighter size={20} />
                   </div>
-                  <span className="text-sm font-medium">Highlight & underline</span>
+                  <span className="text-sm font-medium">{t("hub.onboardingHighlight")}</span>
                   <span className="text-xs text-muted-foreground">
-                    Mark key phrases with colored layers
+                    {t("hub.onboardingHighlightHint")}
                   </span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-2">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
                     <MessageSquare size={20} />
                   </div>
-                  <span className="text-sm font-medium">Comment & discuss</span>
+                  <span className="text-sm font-medium">{t("hub.onboardingComment")}</span>
                   <span className="text-xs text-muted-foreground">
-                    Add notes, replies, and reactions
+                    {t("hub.onboardingCommentHint")}
                   </span>
                 </div>
               </div>
               <Button onClick={() => onNew(null)} size="lg">
                 <Plus size={16} />
-                Create your first workspace
+                {t("hub.createFirstWorkspace")}
               </Button>
             </div>
           ) : (
@@ -475,12 +481,10 @@ export function WorkspaceGrid({
                 <section data-testid="starredSection">
                   <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground mb-3">
                     <Star size={14} fill="currentColor" className="text-yellow-500" />
-                    Starred
+                    {t("hub.starred")}
                   </h3>
                   {starredItems.length === 0 ? (
-                    <p className="text-sm text-muted-foreground/60 px-1">
-                      Star an item to pin it here
-                    </p>
+                    <p className="text-sm text-muted-foreground/60 px-1">{t("hub.starHint")}</p>
                   ) : viewMode === "grid" ? (
                     <div data-testid="starredGrid" className="space-y-4">
                       {starredItems.some((i) => i.kind === "folder") && (
@@ -542,7 +546,7 @@ export function WorkspaceGrid({
                           className="flex items-center gap-1 flex-1"
                           data-testid="sortByTitle"
                         >
-                          Name{" "}
+                          {t("hub.name")}{" "}
                           {sortConfig.field === "title" &&
                             (sortConfig.direction === "asc" ? (
                               <ChevronUp size={12} />
@@ -555,7 +559,7 @@ export function WorkspaceGrid({
                           className="flex items-center gap-1 w-[120px] shrink-0"
                           data-testid="sortByCreated"
                         >
-                          Created{" "}
+                          {t("hub.created")}{" "}
                           {sortConfig.field === "createdAt" &&
                             (sortConfig.direction === "asc" ? (
                               <ChevronUp size={12} />
@@ -568,7 +572,7 @@ export function WorkspaceGrid({
                           className="flex items-center gap-1 w-[120px] shrink-0"
                           data-testid="sortByModified"
                         >
-                          Modified{" "}
+                          {t("hub.modified")}{" "}
                           {sortConfig.field === "updatedAt" &&
                             (sortConfig.direction === "asc" ? (
                               <ChevronUp size={12} />
@@ -576,7 +580,7 @@ export function WorkspaceGrid({
                               <ChevronDown size={12} />
                             ))}
                         </button>
-                        <div className="w-[140px] shrink-0">Owner</div>
+                        <div className="w-[140px] shrink-0">{t("hub.owner")}</div>
                         <div className="w-8" /> {/* menu column */}
                       </div>
                       {allItems.map(renderItem)}
@@ -604,7 +608,7 @@ export function WorkspaceGrid({
             onOpenChange={(open) => {
               if (!open) setDeleteTarget(null);
             }}
-            workspaceTitle={deleteTarget?.title || "Untitled"}
+            workspaceTitle={deleteTarget?.title || t("hub.untitled")}
             onDelete={() => {
               if (deleteTarget) onDelete(deleteTarget.workspaceId);
               setDeleteTarget(null);
@@ -656,4 +660,142 @@ function WorkspaceGridInner({ children }: { children: React.ReactNode }) {
   }, [clearSelection, isSelectionActive]);
 
   return <div onClick={handleEmptySpaceClick}>{children}</div>;
+}
+
+/** Folder option for the move dropdown */
+function FolderMoveOption({
+  node,
+  onMove,
+  indent,
+}: {
+  node: FolderNode;
+  onMove: (folderId: string | null) => void;
+  indent: number;
+}) {
+  return (
+    <>
+      <DropdownMenu.Item
+        onSelect={() => onMove(node.folder.id)}
+        className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"
+        style={{ paddingLeft: `${12 + indent * 16}px` }}
+      >
+        {node.folder.name}
+      </DropdownMenu.Item>
+      {node.children.map((child) => (
+        <FolderMoveOption key={child.folder.id} node={child} onMove={onMove} indent={indent + 1} />
+      ))}
+    </>
+  );
+}
+
+/** Selection action buttons (Move, Delete) — rendered when items are selected */
+function SelectionActions({
+  folders,
+  onDeleteWorkspace,
+  onDeleteFolder,
+  onMoveWorkspaceToFolder,
+  onUnfileWorkspace,
+  onMoveFolder,
+}: {
+  folders: FolderItem[];
+  onDeleteWorkspace: (id: string) => void;
+  onDeleteFolder: (id: string) => void;
+  onMoveWorkspaceToFolder: (workspaceId: string, folderId: string) => void;
+  onUnfileWorkspace: (workspaceId: string) => void;
+  onMoveFolder: (folderId: string, parentId: string | null) => void;
+}) {
+  const { t } = useTranslation("management");
+  const { selectedIds, getSelectedItems, clearSelection, isSelectionActive } = useSelection();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  if (!isSelectionActive) return null;
+
+  const handleDelete = () => {
+    for (const item of getSelectedItems()) {
+      if (item.type === "workspace") onDeleteWorkspace(item.id);
+      else onDeleteFolder(item.id);
+    }
+    clearSelection();
+    setShowDeleteConfirm(false);
+  };
+
+  const handleMove = (folderId: string | null) => {
+    for (const item of getSelectedItems()) {
+      if (item.type === "workspace") {
+        if (folderId) onMoveWorkspaceToFolder(item.id, folderId);
+        else onUnfileWorkspace(item.id);
+      } else {
+        onMoveFolder(item.id, folderId);
+      }
+    }
+    clearSelection();
+  };
+
+  const tree = buildFolderTree(folders);
+
+  return (
+    <>
+      <span className="text-sm text-muted-foreground" data-testid="selectionCount">
+        {t("hub.selectedCount", { count: selectedIds.size })}
+      </span>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
+          <Button size="sm" variant="outline" data-testid="bulkMoveButton">
+            <FolderInput size={16} />
+            {t("hub.moveTo")}
+          </Button>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content
+            sideOffset={4}
+            className="z-50 min-w-[180px] max-h-[300px] overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-md"
+          >
+            <DropdownMenu.Item
+              onSelect={() => handleMove(null)}
+              className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              {t("hub.noFolder")}
+            </DropdownMenu.Item>
+            {tree.length > 0 && <DropdownMenu.Separator className="my-1 h-px bg-border" />}
+            {tree.map((node) => (
+              <FolderMoveOption key={node.folder.id} node={node} onMove={handleMove} indent={0} />
+            ))}
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
+      </DropdownMenu.Root>
+      <Button
+        size="sm"
+        variant="outline"
+        className="text-destructive hover:bg-destructive/10"
+        onClick={() => setShowDeleteConfirm(true)}
+        data-testid="bulkDeleteButton"
+      >
+        <Trash2 size={16} />
+        {t("hub.delete")}
+      </Button>
+
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent className="sm:max-w-sm" data-testid="deleteSelectedDialog">
+          <DialogHeader>
+            <DialogTitle>{t("hub.deleteSelectedTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("hub.deleteSelectedConfirm", { count: selectedIds.size })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
+              {t("hub.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              data-testid="confirmDeleteSelected"
+            >
+              {t("hub.delete")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }

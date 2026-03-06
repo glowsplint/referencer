@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
 import { useDropTarget, type DragData } from "@/hooks/ui/use-hub-dnd";
 import { canMoveFolderTo, getFolderAncestorPath } from "@/lib/folder-tree";
@@ -81,6 +82,8 @@ export function FolderBreadcrumb({
   onMoveToFolder,
   onMoveFolder,
 }: FolderBreadcrumbProps) {
+  const { t } = useTranslation("management");
+
   if (currentFolderId === null) return null;
 
   const ancestorPath = getFolderAncestorPath(folders, currentFolderId);
@@ -88,7 +91,7 @@ export function FolderBreadcrumb({
   return (
     <nav className="flex items-center gap-1 mb-4" data-testid="folderBreadcrumb">
       <BreadcrumbDropSegment
-        label="My Workspaces"
+        label={t("hub.myWorkspaces")}
         folderId={null}
         folders={folders}
         onNavigate={onNavigate}

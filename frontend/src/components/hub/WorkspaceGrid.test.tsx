@@ -93,6 +93,7 @@ describe("WorkspaceGrid", () => {
         onMoveFolder={onMoveFolder}
         ownerName="Test User"
         ownerAvatarUrl="https://example.com/avatar.jpg"
+        searchQuery=""
       />,
     );
   }

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -16,26 +17,23 @@ interface DeleteDialogProps {
 }
 
 export function DeleteDialog({ open, onOpenChange, workspaceTitle, onDelete }: DeleteDialogProps) {
-  const handleDelete = () => {
-    onDelete();
-  };
+  const { t } = useTranslation("management");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm" data-testid="deleteDialog">
         <DialogHeader>
-          <DialogTitle>Delete Workspace</DialogTitle>
+          <DialogTitle>{t("hub.deleteWorkspaceTitle")}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete &ldquo;{workspaceTitle}&rdquo;? This action cannot be
-            undone.
+            {t("hub.deleteWorkspaceConfirm", { title: workspaceTitle })}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t("hub.cancel")}
           </Button>
-          <Button variant="destructive" onClick={handleDelete} data-testid="confirmDelete">
-            Delete
+          <Button variant="destructive" onClick={onDelete} data-testid="confirmDelete">
+            {t("hub.delete")}
           </Button>
         </DialogFooter>
       </DialogContent>

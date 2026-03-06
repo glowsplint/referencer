@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal, ExternalLink, Pencil, Copy, Trash2, Star } from "lucide-react";
 import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
@@ -37,6 +38,7 @@ export function WorkspaceCard({
   ownerName,
   ownerAvatarUrl,
 }: WorkspaceCardProps) {
+  const { t } = useTranslation("management");
   const { isSelected, isSelectionActive, handleItemClick, clearSelection, getSelectedItems } =
     useSelection();
   const selected = isSelected(workspace.workspaceId);
@@ -102,7 +104,7 @@ export function WorkspaceCard({
               className={workspace.isFavorite ? "text-yellow-500" : "text-muted-foreground"}
             />
           </button>
-          <h3 className="font-medium text-sm truncate">{workspace.title || "Untitled"}</h3>
+          <h3 className="font-medium text-sm truncate">{workspace.title || t("hub.untitled")}</h3>
         </div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
@@ -124,19 +126,19 @@ export function WorkspaceCard({
                 onSelect={onOpen}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"
               >
-                <ExternalLink size={14} /> Open
+                <ExternalLink size={14} /> {t("hub.open")}
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 onSelect={onRename}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"
               >
-                <Pencil size={14} /> Rename
+                <Pencil size={14} /> {t("hub.rename")}
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 onSelect={onDuplicate}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"
               >
-                <Copy size={14} /> Duplicate
+                <Copy size={14} /> {t("hub.duplicate")}
               </DropdownMenu.Item>
               {folders && onMoveToFolder && (
                 <MoveToFolderMenu
@@ -150,7 +152,7 @@ export function WorkspaceCard({
                 onSelect={onDelete}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none text-destructive hover:bg-destructive/10 transition-colors"
               >
-                <Trash2 size={14} /> Delete
+                <Trash2 size={14} /> {t("hub.delete")}
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>

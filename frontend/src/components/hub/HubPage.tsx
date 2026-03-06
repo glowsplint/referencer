@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Settings, TriangleAlert } from "lucide-react";
+import { Settings, TriangleAlert, Search } from "lucide-react";
 import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useWorkspaces } from "@/hooks/data/use-workspaces";
@@ -50,6 +50,7 @@ export function HubPage({ navigate }: HubPageProps) {
   const [showNewDialog, setShowNewDialog] = useState(false);
   const [newWorkspaceFolderId, setNewWorkspaceFolderId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleTryWithoutSignIn = () => {
     const id = randomKSUID();
@@ -70,6 +71,8 @@ export function HubPage({ navigate }: HubPageProps) {
     }
   };
 
+  const showSearch = isAuthenticated && !authLoading;
+
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
@@ -77,7 +80,25 @@ export function HubPage({ navigate }: HubPageProps) {
         <div className="flex items-center gap-2">
           <span className="text-lg font-semibold">Referencer</span>
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        {showSearch && (
+          <div className="flex-1 flex justify-center px-4">
+            <div className="relative w-full max-w-sm">
+              <Search
+                size={14}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("hub.search")}
+                data-testid="hubSearchInput"
+                className="h-8 w-full rounded-md border border-border bg-background pl-8 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
+          </div>
+        )}
+        <div className={`flex items-center gap-2 ${showSearch ? "" : "ml-auto"}`}>
           <button
             onClick={() => setSettingsOpen(true)}
             className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
@@ -141,6 +162,7 @@ export function HubPage({ navigate }: HubPageProps) {
               onMoveFolder={moveFolder}
               ownerName={user?.name}
               ownerAvatarUrl={user?.avatarUrl}
+              searchQuery={searchQuery}
             />
           </div>
         ) : null}
