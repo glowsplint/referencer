@@ -1,8 +1,10 @@
-// Manages the multi-pane editor layout: add/remove texts (up to 3),
+// Manages the multi-pane editor layout: add/remove texts (up to 4),
 // track split positions, section visibility/names, and active editor focus.
 // Handles divider resize with minimum pane width constraints.
-import { useRef, useState, useCallback, useMemo } from "react";
+// When a documentId is provided, layout state is persisted to localStorage.
+import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import type { Editor } from "@tiptap/react";
+import { STORAGE_KEYS } from "@/constants/storage-keys";
 
 // Minimum pane width (%) — prevents panes from collapsing entirely during resize
 const MIN_EDITOR_PCT = 10;
@@ -13,28 +15,92 @@ function computeEvenSplitPositions(count: number): number[] {
 
 const DEFAULT_EDITOR_COUNT = 1;
 
-export function useEditors() {
-  const [editorCount, setEditorCount] = useState(DEFAULT_EDITOR_COUNT);
+interface PersistedLayout {
+  editorCount: number;
+  sectionNames: string[];
+  sectionVisibility: boolean[];
+}
+
+function loadPersistedLayout(documentId: string): PersistedLayout | null {
+  try {
+    const raw = localStorage.getItem(`${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}${documentId}`);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<PersistedLayout>;
+    if (
+      typeof parsed.editorCount !== "number" ||
+      !Array.isArray(parsed.sectionNames) ||
+      !Array.isArray(parsed.sectionVisibility)
+    ) {
+      return null;
+    }
+    // Sanity: clamp to valid range
+    const count = Math.max(1, Math.min(4, parsed.editorCount));
+    return {
+      editorCount: count,
+      sectionNames: parsed.sectionNames.slice(0, count),
+      sectionVisibility: parsed.sectionVisibility.slice(0, count),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Derive the next text counter from existing section names (find max "Text N" number). */
+function deriveTextCounter(names: string[]): number {
+  let max = 0;
+  for (const name of names) {
+    const match = /^Text (\d+)$/.exec(name);
+    if (match) max = Math.max(max, Number(match[1]));
+  }
+  return max;
+}
+
+export function useEditors(documentId?: string) {
+  const persisted = documentId ? loadPersistedLayout(documentId) : null;
+  const initialCount = persisted?.editorCount ?? DEFAULT_EDITOR_COUNT;
+
+  const [editorCount, setEditorCount] = useState(initialCount);
   const [splitPositions, setSplitPositions] = useState<number[]>(() =>
-    computeEvenSplitPositions(DEFAULT_EDITOR_COUNT),
+    computeEvenSplitPositions(initialCount),
   );
-  const [sectionVisibility, setSectionVisibility] = useState<boolean[]>(() =>
-    Array.from({ length: DEFAULT_EDITOR_COUNT }, () => true),
+  const [sectionVisibility, setSectionVisibility] = useState<boolean[]>(
+    () => persisted?.sectionVisibility ?? Array.from({ length: initialCount }, () => true),
   );
-  const [sectionNames, setSectionNames] = useState<string[]>(() => ["Text 1"]);
+  const [sectionNames, setSectionNames] = useState<string[]>(
+    () =>
+      persisted?.sectionNames ?? Array.from({ length: initialCount }, (_, i) => `Text ${i + 1}`),
+  );
   const [editorKeys, setEditorKeys] = useState<number[]>(() =>
-    Array.from({ length: DEFAULT_EDITOR_COUNT }, (_, i) => i),
+    Array.from({ length: initialCount }, (_, i) => i),
   );
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const [activeEditorIndex, setActiveEditorIndex] = useState(0);
   const [mountedEditorCount, setMountedEditorCount] = useState(0);
   const editorsRef = useRef<Map<number, Editor>>(new Map());
-  const textCounterRef = useRef(DEFAULT_EDITOR_COUNT);
-  const editorCountRef = useRef(DEFAULT_EDITOR_COUNT);
-  const editorKeyCounterRef = useRef(DEFAULT_EDITOR_COUNT);
+  const textCounterRef = useRef(
+    persisted ? deriveTextCounter(persisted.sectionNames) : DEFAULT_EDITOR_COUNT,
+  );
+  const editorCountRef = useRef(initialCount);
+  const editorKeyCounterRef = useRef(initialCount);
 
   const [columnSplit, setColumnSplit] = useState(50);
   const [rowSplit, setRowSplit] = useState(50);
+
+  // Persist layout to localStorage when it changes
+  const documentIdRef = useRef(documentId);
+  documentIdRef.current = documentId;
+  useEffect(() => {
+    if (!documentIdRef.current) return;
+    try {
+      const layout: PersistedLayout = { editorCount, sectionNames, sectionVisibility };
+      localStorage.setItem(
+        `${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}${documentIdRef.current}`,
+        JSON.stringify(layout),
+      );
+    } catch {
+      /* quota exceeded or unavailable */
+    }
+  }, [editorCount, sectionNames, sectionVisibility]);
 
   const handleColumnResize = useCallback((pct: number) => {
     setColumnSplit(Math.min(100 - MIN_EDITOR_PCT, Math.max(MIN_EDITOR_PCT, pct)));

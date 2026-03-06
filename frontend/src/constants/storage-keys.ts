@@ -23,4 +23,6 @@ export const STORAGE_KEYS = {
   MANAGEMENT_PANE_WIDTH: "referencer-management-pane-width",
   /** Persisted annotation panel width in pixels. */
   ANNOTATION_PANEL_WIDTH: "referencer-annotation-panel-width",
+  /** Prefix for persisted editor layout (count, names, visibility), suffixed with documentId. */
+  EDITOR_LAYOUT_PREFIX: "referencer-editor-layout-",
 } as const;

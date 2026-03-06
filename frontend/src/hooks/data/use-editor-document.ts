@@ -22,7 +22,7 @@ import type { Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from 
 
 export function useEditorDocument(documentId?: string | null, readOnly = false) {
   const settingsHook = useSettings();
-  const rawEditorsHook = useEditors();
+  const rawEditorsHook = useEditors(documentId ?? undefined);
   const history = useActionHistory();
 
   const trackedEditorsHook = useTrackedEditors(rawEditorsHook, history);

@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useEditors } from "./use-editors";
+import { STORAGE_KEYS } from "@/constants/storage-keys";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
 });
 
 describe("useEditors", () => {
@@ -391,5 +393,83 @@ describe("useEditors", () => {
     });
     // Counter was at 3, so next auto-name is "Text 4"
     expect(result.current.sectionNames).toEqual(["Text 1", "Text 3", "Text 4"]);
+  });
+
+  // --- Persistence ---
+
+  it("when documentId is provided, then persists layout to localStorage", () => {
+    const docId = "test-doc-1";
+    const { result } = renderHook(() => useEditors(docId));
+
+    act(() => {
+      result.current.addEditor();
+    });
+
+    const stored = JSON.parse(
+      localStorage.getItem(`${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}${docId}`) ?? "null",
+    );
+    expect(stored).toEqual({
+      editorCount: 2,
+      sectionNames: ["Text 1", "Text 2"],
+      sectionVisibility: [true, true],
+    });
+  });
+
+  it("when documentId is provided and localStorage has data, then restores layout", () => {
+    const docId = "test-doc-2";
+    localStorage.setItem(
+      `${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}${docId}`,
+      JSON.stringify({
+        editorCount: 3,
+        sectionNames: ["Genesis", "Exodus", "Leviticus"],
+        sectionVisibility: [true, true, false],
+      }),
+    );
+
+    const { result } = renderHook(() => useEditors(docId));
+
+    expect(result.current.editorCount).toBe(3);
+    expect(result.current.sectionNames).toEqual(["Genesis", "Exodus", "Leviticus"]);
+    expect(result.current.sectionVisibility).toEqual([true, true, false]);
+  });
+
+  it("when restored from localStorage, then text counter continues from max name", () => {
+    const docId = "test-doc-3";
+    localStorage.setItem(
+      `${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}${docId}`,
+      JSON.stringify({
+        editorCount: 2,
+        sectionNames: ["Text 1", "Text 5"],
+        sectionVisibility: [true, true],
+      }),
+    );
+
+    const { result } = renderHook(() => useEditors(docId));
+    let name = "";
+    act(() => {
+      name = result.current.addEditor();
+    });
+    // Should continue from 5, so next is "Text 6"
+    expect(name).toBe("Text 6");
+  });
+
+  it("when no documentId, then does not persist or restore", () => {
+    const { result } = renderHook(() => useEditors());
+    act(() => {
+      result.current.addEditor();
+    });
+    // No localStorage key should be set with the prefix
+    const keys = Object.keys(localStorage);
+    const hasEditorLayout = keys.some((k) => k.startsWith(STORAGE_KEYS.EDITOR_LAYOUT_PREFIX));
+    expect(hasEditorLayout).toBe(false);
+  });
+
+  it("when localStorage has invalid data, then falls back to defaults", () => {
+    const docId = "test-doc-bad";
+    localStorage.setItem(`${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}${docId}`, "not json");
+
+    const { result } = renderHook(() => useEditors(docId));
+    expect(result.current.editorCount).toBe(1);
+    expect(result.current.sectionNames).toEqual(["Text 1"]);
   });
 });
