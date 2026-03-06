@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MoreHorizontal, Pencil, FolderPlus, Trash2 } from "lucide-react";
+import { MoreHorizontal, ExternalLink, Pencil, FolderPlus, Trash2 } from "lucide-react";
 
 interface FolderDropdownMenuProps {
   depth: number;
+  onOpen: () => void;
   onRename: () => void;
   onNewSubfolder: () => void;
   onDelete: () => void;
@@ -11,6 +12,7 @@ interface FolderDropdownMenuProps {
 
 export function FolderDropdownMenu({
   depth,
+  onOpen,
   onRename,
   onNewSubfolder,
   onDelete,
@@ -34,6 +36,12 @@ export function FolderDropdownMenu({
           className="z-50 min-w-[160px] rounded-lg border border-border bg-popover p-1 shadow-md"
           onClick={(e) => e.stopPropagation()}
         >
+          <DropdownMenu.Item
+            onSelect={onOpen}
+            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <ExternalLink size={14} /> {t("hub.open")}
+          </DropdownMenu.Item>
           <DropdownMenu.Item
             onSelect={onRename}
             className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors"

@@ -182,6 +182,7 @@ export function FolderListItem({
       <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
         <FolderDropdownMenu
           depth={node.depth}
+          onOpen={() => onNavigateToFolder(node.folder.id)}
           onRename={() => onSetRenamingFolder(node.folder.id)}
           onNewSubfolder={() => onSetCreatingSubfolder(node.folder.id)}
           onDelete={() => onDeleteFolder(node.folder)}

@@ -143,6 +143,18 @@ describe("FolderCard", () => {
     });
   });
 
+  describe("when Open is clicked in the dropdown menu", () => {
+    it("then calls onNavigateToFolder with the folder id", async () => {
+      const user = userEvent.setup();
+      renderCard();
+
+      await user.click(screen.getByTestId("folderMenu"));
+      await user.click(screen.getByText("Open"));
+
+      expect(onNavigateToFolder).toHaveBeenCalledWith("f1");
+    });
+  });
+
   describe("when the folder card is double-clicked", () => {
     it("then calls onNavigateToFolder with the folder id", async () => {
       const user = userEvent.setup();

@@ -183,6 +183,7 @@ export function FolderCard({
         >
           <FolderDropdownMenu
             depth={node.depth}
+            onOpen={() => onNavigateToFolder(node.folder.id)}
             onRename={() => onSetRenamingFolder(node.folder.id)}
             onNewSubfolder={() => onSetCreatingSubfolder(node.folder.id)}
             onDelete={() => onDeleteFolder(node.folder)}
