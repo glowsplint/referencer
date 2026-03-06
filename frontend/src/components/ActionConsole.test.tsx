@@ -211,4 +211,36 @@ describe("ActionConsole", () => {
       expect(swatches).toHaveLength(2);
     });
   });
+
+  describe("when load demo button is clicked", () => {
+    it("then shows a confirmation dialog instead of calling onLoadDemo directly", () => {
+      const onLoadDemo = vi.fn();
+      render(<ActionConsole {...defaultProps} onLoadDemo={onLoadDemo} />);
+
+      fireEvent.click(screen.getByTestId("loadDemoButton"));
+
+      expect(screen.getByTestId("demoConfirmDialog")).toBeInTheDocument();
+      expect(onLoadDemo).not.toHaveBeenCalled();
+    });
+
+    it("then calls onLoadDemo when the user confirms", () => {
+      const onLoadDemo = vi.fn();
+      render(<ActionConsole {...defaultProps} onLoadDemo={onLoadDemo} />);
+
+      fireEvent.click(screen.getByTestId("loadDemoButton"));
+      fireEvent.click(screen.getByTestId("demoConfirmLoad"));
+
+      expect(onLoadDemo).toHaveBeenCalledOnce();
+    });
+
+    it("then does not call onLoadDemo when the user cancels", () => {
+      const onLoadDemo = vi.fn();
+      render(<ActionConsole {...defaultProps} onLoadDemo={onLoadDemo} />);
+
+      fireEvent.click(screen.getByTestId("loadDemoButton"));
+      fireEvent.click(screen.getByTestId("demoConfirmCancel"));
+
+      expect(onLoadDemo).not.toHaveBeenCalled();
+    });
+  });
 });

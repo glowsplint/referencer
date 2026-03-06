@@ -12,7 +12,7 @@ import { useYjsLayers, buildEditorViewMap } from "./use-yjs-layers";
 import { useYjsUndo } from "./use-yjs-undo";
 import { useUnifiedUndo } from "./use-unified-undo";
 import { useYjsOffline } from "./use-yjs-offline";
-import { seedDefaultLayers } from "@/lib/yjs/annotations";
+import { seedDefaultLayers, getLayersArray } from "@/lib/yjs/annotations";
 import {
   createDefaultLayers,
   DEFAULT_TEXT_CONTENTS,
@@ -47,12 +47,11 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
   // data that hasn't been loaded yet (race between IDB async load and WS error).
   const readyForSeeding = yjs.synced && idbSynced;
 
-  // Load demo content on demand (single-use)
+  // Load demo content on demand
   const demoLoadRequestedRef = useRef(false);
-  const [demoLoaded, setDemoLoaded] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
   const loadDemoContent = useCallback(() => {
-    if (readOnly || demoLoaded) return;
+    if (readOnly) return;
     const count = DEFAULT_SECTION_NAMES.length;
     // Set up editor panes
     rawEditorsHook.setEditorCount(count);
@@ -63,9 +62,8 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
     );
     rawEditorsHook.setEditorKeys(Array.from({ length: count }, (_, i) => Date.now() + i));
     demoLoadRequestedRef.current = true;
-    setDemoLoaded(true);
     setDemoLoading(true);
-  }, [readOnly, demoLoaded, rawEditorsHook]);
+  }, [readOnly, rawEditorsHook]);
 
   // After editors mount from a demo load request, set content and seed layers
   useEffect(() => {
@@ -74,6 +72,10 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
     const allMounted = rawEditorsHook.mountedEditorCount >= DEFAULT_SECTION_NAMES.length;
     if (!allMounted) return;
     demoLoadRequestedRef.current = false;
+
+    // Demarcate undo boundary so everything below is one undo step
+    yjsUndo.stopCapturing();
+
     // Set editor content
     for (let i = 0; i < DEFAULT_SECTION_NAMES.length; i++) {
       const editor = trackedEditorsHook.editorsRef.current.get(i);
@@ -81,16 +83,32 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
         editor.commands.setContent(DEFAULT_TEXT_CONTENTS[i]);
       }
     }
-    // Seed annotation layers
+    // Clear existing layers and seed demo layers
     if (!yjs.doc) return;
     try {
+      const yLayers = getLayersArray(yjs.doc);
+      if (yLayers.length > 0) {
+        yjs.doc.transact(() => {
+          yLayers.delete(0, yLayers.length);
+        });
+      }
       const views = buildEditorViewMap(trackedEditorsHook.editorsRef);
       seedDefaultLayers(yjs.doc, createDefaultLayers(), views);
     } catch (err) {
       console.error("Failed to seed demo layers:", err);
     }
+
+    // Close the undo capture group so the demo load is a single undo step
+    yjsUndo.stopCapturing();
+
     setDemoLoading(false);
-  }, [rawEditorsHook.mountedEditorCount, readyForSeeding, yjs.doc, trackedEditorsHook.editorsRef]);
+  }, [
+    rawEditorsHook.mountedEditorCount,
+    readyForSeeding,
+    yjs.doc,
+    trackedEditorsHook.editorsRef,
+    yjsUndo,
+  ]);
 
   // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<TArgs extends unknown[], TReturn>(
@@ -526,7 +544,6 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
     updateSectionName,
     toggleSectionVisibility,
     loadDemoContent,
-    demoLoaded,
     demoLoading,
     documentId: documentId ?? null,
     readOnly,

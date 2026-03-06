@@ -79,7 +79,6 @@ const mockDocument = {
   toggleShowStatusBar: vi.fn(),
   toggleCommentPlacement: vi.fn(),
   loadDemoContent: vi.fn(),
-  demoLoaded: false,
   demoLoading: false,
   addLayer: vi.fn(),
   removeLayer: vi.fn(),

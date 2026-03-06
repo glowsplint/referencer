@@ -70,5 +70,9 @@ export function useYjsUndo(doc: Y.Doc | null) {
     undoManagerRef.current?.redo();
   }, []);
 
-  return { undo, redo, canUndo, canRedo };
+  const stopCapturing = useCallback(() => {
+    undoManagerRef.current?.stopCapturing();
+  }, []);
+
+  return { undo, redo, canUndo, canRedo, stopCapturing };
 }

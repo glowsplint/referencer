@@ -18,8 +18,14 @@ export async function setupDocument(page: Page) {
   // Wait for the editor to mount (empty state)
   await expect(page.getByTestId("buttonPane")).toBeVisible({ timeout: 10000 });
 
-  // Click "Load Demo" via JS to avoid tooltip overlay issues
-  await page.getByTestId("loadDemoButton").evaluate((el: HTMLButtonElement) => el.click());
+  // Open action console (backtick key) to access demo load button
+  await page.keyboard.press("`");
+  await expect(page.getByTestId("actionConsole")).toBeVisible({ timeout: 5000 });
+
+  // Click "Load Demo" and confirm the dialog
+  await page.getByTestId("loadDemoButton").click();
+  await expect(page.getByTestId("demoConfirmDialog")).toBeVisible({ timeout: 5000 });
+  await page.getByTestId("demoConfirmLoad").click();
 
   // Wait for the demo content to finish loading (editor paragraphs with text render)
   await expect(page.locator(".simple-editor p").first()).toBeVisible({ timeout: 15000 });
