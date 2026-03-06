@@ -100,11 +100,6 @@ const MainToolbarContent = ({
 
       <ToolbarGroup>
         <ImageUploadButton />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
         <TableDropdownMenu portal={isMobile} />
       </ToolbarGroup>
     </>
@@ -169,6 +164,7 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
           <MobileToolbarContent onBack={() => setMobileView("main")} />
         )}
       </div>
+      <ToolbarSeparator />
       <ToolbarGroup>
         <button
           onClick={toggleFocusedPaneLocked}
