@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { DocumentItem } from "@/lib/document-client";
 
 export type SortField = "title" | "createdAt" | "updatedAt";
 export type SortDirection = "asc" | "desc";
@@ -20,7 +20,7 @@ function loadSort(): SortConfig {
   return { field: "updatedAt", direction: "desc" };
 }
 
-export function useWorkspaceSort(workspaces: WorkspaceItem[]) {
+export function useDocumentSort(documents: DocumentItem[]) {
   const [sortConfig, setSortConfig] = useState<SortConfig>(loadSort);
 
   const setSort = useCallback((field: SortField) => {
@@ -44,7 +44,7 @@ export function useWorkspaceSort(workspaces: WorkspaceItem[]) {
   }, []);
 
   const compare = useCallback(
-    (a: WorkspaceItem, b: WorkspaceItem) => {
+    (a: DocumentItem, b: DocumentItem) => {
       const { field, direction } = sortConfig;
       let cmp = 0;
       if (field === "title") {
@@ -58,13 +58,13 @@ export function useWorkspaceSort(workspaces: WorkspaceItem[]) {
   );
 
   const favorites = useMemo(
-    () => workspaces.filter((ws) => ws.isFavorite).sort(compare),
-    [workspaces, compare],
+    () => documents.filter((ws) => ws.isFavorite).sort(compare),
+    [documents, compare],
   );
 
   const others = useMemo(
-    () => workspaces.filter((ws) => !ws.isFavorite && !ws.folderId).sort(compare),
-    [workspaces, compare],
+    () => documents.filter((ws) => !ws.isFavorite && !ws.folderId).sort(compare),
+    [documents, compare],
   );
 
   return { favorites, others, sortConfig, setSort, compare };

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 
 export interface LineHeightOption {
   label: string;
@@ -20,13 +20,13 @@ function isValidLineHeight(value: unknown): value is number {
 }
 
 export function useLineHeight() {
-  const { yjs } = useWorkspace();
+  const { yjs } = useDocument();
   const [lineHeight, setLineHeightState] = useState(DEFAULT_LINE_HEIGHT);
 
-  // Sync from Yjs workspace-meta map
+  // Sync from Yjs document-meta map
   useEffect(() => {
     if (!yjs.doc) return;
-    const meta = yjs.doc.getMap("workspace-meta");
+    const meta = yjs.doc.getMap("document-meta");
     const existing = meta.get("lineHeight");
     if (isValidLineHeight(existing)) {
       setLineHeightState(existing);
@@ -52,7 +52,7 @@ export function useLineHeight() {
   const setLineHeight = useCallback(
     (value: number) => {
       if (!isValidLineHeight(value)) return;
-      const meta = yjs.doc?.getMap("workspace-meta");
+      const meta = yjs.doc?.getMap("document-meta");
       meta?.set("lineHeight", value);
       setLineHeightState(value);
     },

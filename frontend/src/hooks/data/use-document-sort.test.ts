@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useWorkspaceSort } from "./use-workspace-sort";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import { useDocumentSort } from "./use-document-sort";
+import type { DocumentItem } from "@/lib/document-client";
 
-const mockWorkspaces: WorkspaceItem[] = [
+const mockDocuments: DocumentItem[] = [
   {
-    workspaceId: "ws-1",
+    documentId: "ws-1",
     title: "Alpha",
     createdAt: "2026-01-01T00:00:00Z",
     updatedAt: "2026-01-03T00:00:00Z",
@@ -13,7 +13,7 @@ const mockWorkspaces: WorkspaceItem[] = [
     folderId: null,
   },
   {
-    workspaceId: "ws-2",
+    documentId: "ws-2",
     title: "Beta",
     createdAt: "2026-01-02T00:00:00Z",
     updatedAt: "2026-01-01T00:00:00Z",
@@ -21,7 +21,7 @@ const mockWorkspaces: WorkspaceItem[] = [
     folderId: null,
   },
   {
-    workspaceId: "ws-3",
+    documentId: "ws-3",
     title: "Charlie",
     createdAt: "2026-01-03T00:00:00Z",
     updatedAt: "2026-01-02T00:00:00Z",
@@ -30,25 +30,25 @@ const mockWorkspaces: WorkspaceItem[] = [
   },
 ];
 
-describe("useWorkspaceSort", () => {
+describe("useDocumentSort", () => {
   beforeEach(() => {
     localStorage.clear();
   });
 
   it("when initialized, then defaults to updatedAt descending", () => {
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     expect(result.current.sortConfig).toEqual({ field: "updatedAt", direction: "desc" });
   });
 
-  it("when workspaces include favorites, then separates them from others", () => {
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+  it("when documents include favorites, then separates them from others", () => {
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     expect(result.current.favorites).toHaveLength(1);
-    expect(result.current.favorites[0].workspaceId).toBe("ws-3");
+    expect(result.current.favorites[0].documentId).toBe("ws-3");
     expect(result.current.others).toHaveLength(2);
   });
 
   it("when the same field is clicked again, then toggles direction", () => {
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     act(() => {
       result.current.setSort("updatedAt");
     });
@@ -57,7 +57,7 @@ describe("useWorkspaceSort", () => {
   });
 
   it("when title is clicked first time, then defaults to ascending", () => {
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     act(() => {
       result.current.setSort("title");
     });
@@ -65,7 +65,7 @@ describe("useWorkspaceSort", () => {
   });
 
   it("when a date field is clicked first time, then defaults to descending", () => {
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     // Switch to title first, then switch to createdAt
     act(() => {
       result.current.setSort("title");
@@ -77,7 +77,7 @@ describe("useWorkspaceSort", () => {
   });
 
   it("when sort is changed, then persists preference to localStorage", () => {
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     act(() => {
       result.current.setSort("title");
     });
@@ -87,15 +87,15 @@ describe("useWorkspaceSort", () => {
 
   it("when localStorage has sort preference, then loads it", () => {
     localStorage.setItem("hub-sort", JSON.stringify({ field: "title", direction: "desc" }));
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     expect(result.current.sortConfig).toEqual({ field: "title", direction: "desc" });
   });
 
-  it("when workspaces have folderId, then excludes them from others", () => {
-    const workspacesWithFolders: WorkspaceItem[] = [
-      ...mockWorkspaces,
+  it("when documents have folderId, then excludes them from others", () => {
+    const documentsWithFolders: DocumentItem[] = [
+      ...mockDocuments,
       {
-        workspaceId: "ws-4",
+        documentId: "ws-4",
         title: "Filed",
         createdAt: "2026-01-04T00:00:00Z",
         updatedAt: "2026-01-04T00:00:00Z",
@@ -103,18 +103,18 @@ describe("useWorkspaceSort", () => {
         folderId: "folder-1",
       },
     ];
-    const { result } = renderHook(() => useWorkspaceSort(workspacesWithFolders));
+    const { result } = renderHook(() => useDocumentSort(documentsWithFolders));
     // ws-4 has a folderId so it should NOT appear in others
-    expect(result.current.others.find((ws) => ws.workspaceId === "ws-4")).toBeUndefined();
-    // The other non-favorited, unfiled workspaces should still be there
+    expect(result.current.others.find((ws) => ws.documentId === "ws-4")).toBeUndefined();
+    // The other non-favorited, unfiled documents should still be there
     expect(result.current.others).toHaveLength(2);
   });
 
-  it("when favorited workspaces have a folderId, then still includes them", () => {
-    const workspacesWithFolders: WorkspaceItem[] = [
-      ...mockWorkspaces,
+  it("when favorited documents have a folderId, then still includes them", () => {
+    const documentsWithFolders: DocumentItem[] = [
+      ...mockDocuments,
       {
-        workspaceId: "ws-5",
+        documentId: "ws-5",
         title: "Fav+Filed",
         createdAt: "2026-01-05T00:00:00Z",
         updatedAt: "2026-01-05T00:00:00Z",
@@ -122,29 +122,29 @@ describe("useWorkspaceSort", () => {
         folderId: "folder-1",
       },
     ];
-    const { result } = renderHook(() => useWorkspaceSort(workspacesWithFolders));
+    const { result } = renderHook(() => useDocumentSort(documentsWithFolders));
     // ws-5 is favorited so it should appear in favorites regardless of folderId
-    expect(result.current.favorites.find((ws) => ws.workspaceId === "ws-5")).toBeDefined();
+    expect(result.current.favorites.find((ws) => ws.documentId === "ws-5")).toBeDefined();
   });
 
   it("when accessed, then returns a compare function", () => {
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     expect(typeof result.current.compare).toBe("function");
   });
 
   it("when compare is used, then sorts by the current sort field", () => {
-    const { result } = renderHook(() => useWorkspaceSort(mockWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(mockDocuments));
     // Default is updatedAt desc
-    const a = mockWorkspaces[0]; // updatedAt: 2026-01-03
-    const b = mockWorkspaces[1]; // updatedAt: 2026-01-01
+    const a = mockDocuments[0]; // updatedAt: 2026-01-03
+    const b = mockDocuments[1]; // updatedAt: 2026-01-01
     // desc => newer first => a should come before b => compare(a, b) < 0
     expect(result.current.compare(a, b)).toBeLessThan(0);
   });
 
   it("when favorites exist, then sorts them by the active sort config", () => {
-    const favWorkspaces: WorkspaceItem[] = [
+    const favDocuments: DocumentItem[] = [
       {
-        workspaceId: "fav-1",
+        documentId: "fav-1",
         title: "Zulu",
         createdAt: "2026-01-01T00:00:00Z",
         updatedAt: "2026-01-01T00:00:00Z",
@@ -152,7 +152,7 @@ describe("useWorkspaceSort", () => {
         folderId: null,
       },
       {
-        workspaceId: "fav-2",
+        documentId: "fav-2",
         title: "Alpha",
         createdAt: "2026-01-02T00:00:00Z",
         updatedAt: "2026-01-05T00:00:00Z",
@@ -161,15 +161,15 @@ describe("useWorkspaceSort", () => {
       },
     ];
     // Default sort is updatedAt desc — fav-2 (Jan 5) should come before fav-1 (Jan 1)
-    const { result } = renderHook(() => useWorkspaceSort(favWorkspaces));
-    expect(result.current.favorites[0].workspaceId).toBe("fav-2");
-    expect(result.current.favorites[1].workspaceId).toBe("fav-1");
+    const { result } = renderHook(() => useDocumentSort(favDocuments));
+    expect(result.current.favorites[0].documentId).toBe("fav-2");
+    expect(result.current.favorites[1].documentId).toBe("fav-1");
   });
 
   it("when sort is changed to title, then favorites reflect the new sort order", () => {
-    const favWorkspaces: WorkspaceItem[] = [
+    const favDocuments: DocumentItem[] = [
       {
-        workspaceId: "fav-1",
+        documentId: "fav-1",
         title: "Zulu",
         createdAt: "2026-01-01T00:00:00Z",
         updatedAt: "2026-01-05T00:00:00Z",
@@ -177,7 +177,7 @@ describe("useWorkspaceSort", () => {
         folderId: null,
       },
       {
-        workspaceId: "fav-2",
+        documentId: "fav-2",
         title: "Alpha",
         createdAt: "2026-01-02T00:00:00Z",
         updatedAt: "2026-01-01T00:00:00Z",
@@ -185,13 +185,13 @@ describe("useWorkspaceSort", () => {
         folderId: null,
       },
     ];
-    const { result } = renderHook(() => useWorkspaceSort(favWorkspaces));
+    const { result } = renderHook(() => useDocumentSort(favDocuments));
     // Switch to title asc
     act(() => {
       result.current.setSort("title");
     });
     // Title asc => Alpha before Zulu
-    expect(result.current.favorites[0].workspaceId).toBe("fav-2");
-    expect(result.current.favorites[1].workspaceId).toBe("fav-1");
+    expect(result.current.favorites[0].documentId).toBe("fav-2");
+    expect(result.current.favorites[1].documentId).toBe("fav-1");
   });
 });

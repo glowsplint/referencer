@@ -8,7 +8,7 @@ Referencer is a web-based online Bible study annotation tool that makes it easy 
 - **Highlights & annotations** -- select text to highlight with colors and attach inline notes
 - **Arrows** -- draw connections between words across different passages
 - **Layers** -- organize highlights and arrows into named, colored, toggleable layers
-- **PDF export** -- export the current workspace to a styled PDF
+- **PDF export** -- export the current document to a styled PDF
 - **Real-time collaboration** -- Yjs CRDT-based sync across multiple clients with offline support
 - **Share links** -- generate read-only or editable share URLs
 - **OAuth2 authentication** -- sign in with Google, Apple, or Facebook
@@ -35,7 +35,7 @@ referencer/
 │       ├── components/        # UI components + tiptap template components
 │       ├── hooks/             # Custom hooks (Yjs, annotations, layers, tools)
 │       ├── lib/               # Utilities, TipTap extensions, Yjs provider
-│       ├── contexts/          # WorkspaceContext, AuthContext
+│       ├── contexts/          # DocumentContext, AuthContext
 │       ├── types/             # TypeScript type definitions
 │       └── e2e/               # Playwright test files
 ├── backend/                   # TypeScript backend (Bun + Hono)
@@ -190,10 +190,10 @@ bun test
 
 ### REST
 
-| Method | Endpoint     | Description                                                                                                                  |
-| ------ | ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| `POST` | `/api/share` | Create a share link. Body: `{"workspaceId": "...", "access": "edit\|readonly"}`. Returns: `{"code": "...", "url": "/s/..."}` |
-| `GET`  | `/s/{code}`  | Resolve a share link. Redirects to the workspace (with `?access=readonly` if applicable)                                     |
+| Method | Endpoint     | Description                                                                                                                 |
+| ------ | ------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/share` | Create a share link. Body: `{"documentId": "...", "access": "edit\|readonly"}`. Returns: `{"code": "...", "url": "/s/..."}` |
+| `GET`  | `/s/{code}`  | Resolve a share link. Redirects to the document (with `?access=readonly` if applicable)                                     |
 
 ### Auth
 

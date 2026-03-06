@@ -9,15 +9,15 @@ referencer/
 ├── frontend/                  # React 19 SPA (Vite, TipTap 3, Tailwind CSS v4)
 │   ├── src/
 │   │   ├── components/        # UI components + tiptap template components
-│   │   ├── contexts/          # WorkspaceContext, AuthContext
+│   │   ├── contexts/          # DocumentContext, AuthContext
 │   │   ├── hooks/             # ~50 custom hooks (layers, editors, Yjs, tools)
 │   │   ├── lib/               # Yjs provider, TipTap extensions, auth client
 │   │   ├── types/             # TypeScript type definitions
-│   │   └── data/              # Default workspace data
+│   │   └── data/              # Default document data
 │   └── e2e/                   # Playwright end-to-end tests
 ├── backend/                   # Cloudflare Worker (Hono + Supabase)
 │   └── src/
-│       ├── api/               # REST handlers (share, workspaces, folders, preferences, feedback)
+│       ├── api/               # REST handlers (share, documents, folders, preferences, feedback)
 │       ├── auth/              # OAuth2 (Google, GitHub) via Arctic
 │       ├── db/                # Supabase client
 │       ├── lib/               # Utilities (rate-limit, logger, metrics, JWT)

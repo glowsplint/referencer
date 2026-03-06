@@ -27,15 +27,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
-import { useWorkspaceSort } from "@/hooks/data/use-workspace-sort";
+import { useDocumentSort } from "@/hooks/data/use-document-sort";
 import { buildFolderTree } from "@/lib/folder-tree";
 import type { FolderNode } from "@/lib/folder-tree";
 import type { FolderItem } from "@/lib/folder-client";
 import { DndProvider } from "@/contexts/DndContext";
 import { SelectionProvider, useSelection } from "@/contexts/SelectionContext";
 import type { DragItemType } from "@/hooks/ui/use-hub-dnd";
-import { WorkspaceCard } from "./WorkspaceCard";
-import { WorkspaceListItem } from "./WorkspaceListItem";
+import { DocumentCard } from "./DocumentCard";
+import { DocumentListItem } from "./DocumentListItem";
 import { FolderCard } from "./FolderCard";
 import { FolderListItem } from "./FolderListItem";
 import { FolderBreadcrumb } from "./FolderBreadcrumb";
@@ -43,29 +43,29 @@ import { RenameDialog } from "./RenameDialog";
 import { DeleteDialog } from "./DeleteDialog";
 import { DeleteFolderDialog } from "./DeleteFolderDialog";
 import { InlineNameInput } from "./InlineNameInput";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { DocumentItem } from "@/lib/document-client";
 
 type ViewMode = "grid" | "list";
 
 type MixedItem =
-  | { kind: "workspace"; workspace: WorkspaceItem }
+  | { kind: "document"; document: DocumentItem }
   | { kind: "folder"; node: FolderNode };
 
-interface WorkspaceGridProps {
-  workspaces: WorkspaceItem[];
+interface DocumentGridProps {
+  documents: DocumentItem[];
   isLoading: boolean;
   navigate: (hash: string) => void;
   onNew: (currentFolderId: string | null) => void;
-  onRename: (workspaceId: string, title: string) => void;
-  onDelete: (workspaceId: string) => void;
+  onRename: (documentId: string, title: string) => void;
+  onDelete: (documentId: string) => void;
   onDuplicate: (sourceId: string, newId: string) => void;
-  onToggleFavorite: (workspaceId: string, isFavorite: boolean) => void;
+  onToggleFavorite: (documentId: string, isFavorite: boolean) => void;
   folders: FolderItem[];
   onCreateFolder: (id: string, parentId: string | null, name: string) => void;
   onRenameFolder: (id: string, name: string) => void;
   onDeleteFolder: (id: string) => void;
-  onMoveWorkspaceToFolder: (workspaceId: string, folderId: string) => void;
-  onUnfileWorkspace: (workspaceId: string) => void;
+  onMoveDocumentToFolder: (documentId: string, folderId: string) => void;
+  onUnfileDocument: (documentId: string) => void;
   onToggleFolderFavorite: (folderId: string, isFavorite: boolean) => void;
   onMoveFolder: (folderId: string, parentId: string | null) => void;
   ownerName?: string;
@@ -73,8 +73,8 @@ interface WorkspaceGridProps {
   searchQuery: string;
 }
 
-export function WorkspaceGrid({
-  workspaces,
+export function DocumentGrid({
+  documents,
   isLoading,
   navigate,
   onNew,
@@ -86,26 +86,26 @@ export function WorkspaceGrid({
   onCreateFolder,
   onRenameFolder,
   onDeleteFolder,
-  onMoveWorkspaceToFolder,
-  onUnfileWorkspace,
+  onMoveDocumentToFolder,
+  onUnfileDocument,
   onToggleFolderFavorite,
   onMoveFolder,
   ownerName,
   ownerAvatarUrl,
   searchQuery,
-}: WorkspaceGridProps) {
+}: DocumentGridProps) {
   const { t } = useTranslation("management");
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem(STORAGE_KEYS.HUB_VIEW_MODE) as ViewMode) || "grid";
   });
-  const [renameTarget, setRenameTarget] = useState<WorkspaceItem | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<WorkspaceItem | null>(null);
+  const [renameTarget, setRenameTarget] = useState<DocumentItem | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DocumentItem | null>(null);
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
   const [creatingSubfolderId, setCreatingSubfolderId] = useState<string | null>(null);
   const [deleteFolderTarget, setDeleteFolderTarget] = useState<FolderItem | null>(null);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
-  const { sortConfig, setSort, compare } = useWorkspaceSort(workspaces);
+  const { sortConfig, setSort, compare } = useDocumentSort(documents);
 
   const folderTree = buildFolderTree(folders);
 
@@ -130,11 +130,11 @@ export function WorkspaceGrid({
     onCreateFolder(id, parentId, name);
   };
 
-  const handleMoveToFolder = (workspaceId: string, folderId: string | null) => {
+  const handleMoveToFolder = (documentId: string, folderId: string | null) => {
     if (folderId) {
-      onMoveWorkspaceToFolder(workspaceId, folderId);
+      onMoveDocumentToFolder(documentId, folderId);
     } else {
-      onUnfileWorkspace(workspaceId);
+      onUnfileDocument(documentId);
     }
   };
 
@@ -175,11 +175,11 @@ export function WorkspaceGrid({
       }
     }
 
-    // All starred workspaces
-    for (const ws of workspaces) {
+    // All starred documents
+    for (const ws of documents) {
       if (ws.isFavorite) {
         if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
-          items.push({ kind: "workspace", workspace: ws });
+          items.push({ kind: "document", document: ws });
         }
       }
     }
@@ -188,15 +188,15 @@ export function WorkspaceGrid({
     items.sort((a, b) => {
       if (a.kind !== b.kind) return a.kind === "folder" ? -1 : 1;
 
-      if (a.kind === "workspace" && b.kind === "workspace") {
-        return compare(a.workspace, b.workspace);
+      if (a.kind === "document" && b.kind === "document") {
+        return compare(a.document, b.document);
       }
 
       const { field, direction } = sortConfig;
       const getTitle = (item: MixedItem) =>
-        item.kind === "workspace" ? item.workspace.title || "Untitled" : item.node.folder.name;
+        item.kind === "document" ? item.document.title || "Untitled" : item.node.folder.name;
       const getDate = (item: MixedItem, f: "createdAt" | "updatedAt") =>
-        item.kind === "workspace" ? item.workspace[f] : item.node.folder[f];
+        item.kind === "document" ? item.document[f] : item.node.folder[f];
 
       let cmp = 0;
       if (field === "title") {
@@ -208,14 +208,14 @@ export function WorkspaceGrid({
     });
 
     return items;
-  }, [folderTree, workspaces, sortConfig, compare, searchQuery, queryLower, currentFolderId]);
+  }, [folderTree, documents, sortConfig, compare, searchQuery, queryLower, currentFolderId]);
 
   // All Items section: items at the current folder level
   const allItems = useMemo(() => {
     const items: MixedItem[] = [];
 
     if (currentFolderId === null) {
-      // Root level: unstarred root folders + unstarred unfiled workspaces
+      // Root level: unstarred root folders + unstarred unfiled documents
       for (const node of currentLevelFolderNodes) {
         if (!node.folder.isFavorite) {
           if (!searchQuery || node.folder.name.toLowerCase().includes(queryLower)) {
@@ -224,25 +224,25 @@ export function WorkspaceGrid({
         }
       }
 
-      for (const ws of workspaces) {
+      for (const ws of documents) {
         if (!ws.isFavorite && !ws.folderId) {
           if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
-            items.push({ kind: "workspace", workspace: ws });
+            items.push({ kind: "document", document: ws });
           }
         }
       }
     } else {
-      // Inside a folder: show direct child folders + workspaces in this folder
+      // Inside a folder: show direct child folders + documents in this folder
       for (const node of currentLevelFolderNodes) {
         if (!searchQuery || node.folder.name.toLowerCase().includes(queryLower)) {
           items.push({ kind: "folder", node });
         }
       }
 
-      for (const ws of workspaces) {
+      for (const ws of documents) {
         if (ws.folderId === currentFolderId) {
           if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
-            items.push({ kind: "workspace", workspace: ws });
+            items.push({ kind: "document", document: ws });
           }
         }
       }
@@ -252,15 +252,15 @@ export function WorkspaceGrid({
     items.sort((a, b) => {
       if (a.kind !== b.kind) return a.kind === "folder" ? -1 : 1;
 
-      if (a.kind === "workspace" && b.kind === "workspace") {
-        return compare(a.workspace, b.workspace);
+      if (a.kind === "document" && b.kind === "document") {
+        return compare(a.document, b.document);
       }
 
       const { field, direction } = sortConfig;
       const getTitle = (item: MixedItem) =>
-        item.kind === "workspace" ? item.workspace.title || "Untitled" : item.node.folder.name;
+        item.kind === "document" ? item.document.title || "Untitled" : item.node.folder.name;
       const getDate = (item: MixedItem, f: "createdAt" | "updatedAt") =>
-        item.kind === "workspace" ? item.workspace[f] : item.node.folder[f];
+        item.kind === "document" ? item.document[f] : item.node.folder[f];
 
       let cmp = 0;
       if (field === "title") {
@@ -275,7 +275,7 @@ export function WorkspaceGrid({
   }, [
     currentFolderId,
     currentLevelFolderNodes,
-    workspaces,
+    documents,
     sortConfig,
     compare,
     searchQuery,
@@ -287,9 +287,9 @@ export function WorkspaceGrid({
     const ids: string[] = [];
     const types = new Map<string, DragItemType>();
     const addItem = (item: MixedItem) => {
-      if (item.kind === "workspace") {
-        ids.push(item.workspace.workspaceId);
-        types.set(item.workspace.workspaceId, "workspace");
+      if (item.kind === "document") {
+        ids.push(item.document.documentId);
+        types.set(item.document.documentId, "document");
       } else {
         ids.push(item.node.folder.id);
         types.set(item.node.folder.id, "folder");
@@ -302,7 +302,7 @@ export function WorkspaceGrid({
 
   // Shared folder props for FolderCard/FolderListItem
   const folderProps = {
-    workspaces,
+    documents,
     folders,
     viewMode: viewMode as "grid" | "list",
     renamingFolderId,
@@ -312,10 +312,10 @@ export function WorkspaceGrid({
     onRenameFolder,
     onDeleteFolder: setDeleteFolderTarget,
     onCreateFolder: handleCreateFolder,
-    onOpenWorkspace: handleOpen,
-    onRenameWorkspace: setRenameTarget,
-    onDuplicateWorkspace: handleDuplicate,
-    onDeleteWorkspace: setDeleteTarget,
+    onOpenDocument: handleOpen,
+    onRenameDocument: setRenameTarget,
+    onDuplicateDocument: handleDuplicate,
+    onDeleteDocument: setDeleteTarget,
     onToggleFavorite,
     onToggleFolderFavorite,
     onMoveToFolder: handleMoveToFolder,
@@ -326,15 +326,15 @@ export function WorkspaceGrid({
   };
 
   const renderItem = (item: MixedItem) => {
-    if (item.kind === "workspace") {
-      const ws = item.workspace;
+    if (item.kind === "document") {
+      const ws = item.document;
       return viewMode === "grid" ? (
-        <WorkspaceCard
-          key={ws.workspaceId}
-          workspace={ws}
-          onOpen={() => handleOpen(ws.workspaceId)}
+        <DocumentCard
+          key={ws.documentId}
+          document={ws}
+          onOpen={() => handleOpen(ws.documentId)}
           onRename={() => setRenameTarget(ws)}
-          onDuplicate={() => handleDuplicate(ws.workspaceId)}
+          onDuplicate={() => handleDuplicate(ws.documentId)}
           onDelete={() => setDeleteTarget(ws)}
           onToggleFavorite={onToggleFavorite}
           folders={folders}
@@ -343,12 +343,12 @@ export function WorkspaceGrid({
           ownerAvatarUrl={ownerAvatarUrl}
         />
       ) : (
-        <WorkspaceListItem
-          key={ws.workspaceId}
-          workspace={ws}
-          onOpen={() => handleOpen(ws.workspaceId)}
+        <DocumentListItem
+          key={ws.documentId}
+          document={ws}
+          onOpen={() => handleOpen(ws.documentId)}
           onRename={() => setRenameTarget(ws)}
-          onDuplicate={() => handleDuplicate(ws.workspaceId)}
+          onDuplicate={() => handleDuplicate(ws.documentId)}
           onDelete={() => setDeleteTarget(ws)}
           onToggleFavorite={onToggleFavorite}
           folders={folders}
@@ -370,10 +370,10 @@ export function WorkspaceGrid({
   return (
     <DndProvider>
       <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
-        <WorkspaceGridInner>
+        <DocumentGridInner>
           {/* Header row */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold">{t("hub.myWorkspaces")}</h2>
+            <h2 className="text-2xl font-semibold">{t("hub.myDocuments")}</h2>
             <div className="flex items-center gap-2">
               <div className="flex items-center border border-border rounded-md">
                 <button
@@ -393,10 +393,10 @@ export function WorkspaceGrid({
               </div>
               <SelectionActions
                 folders={folders}
-                onDeleteWorkspace={onDelete}
+                onDeleteDocument={onDelete}
                 onDeleteFolder={onDeleteFolder}
-                onMoveWorkspaceToFolder={onMoveWorkspaceToFolder}
-                onUnfileWorkspace={onUnfileWorkspace}
+                onMoveDocumentToFolder={onMoveDocumentToFolder}
+                onUnfileDocument={onUnfileDocument}
                 onMoveFolder={onMoveFolder}
               />
               <Button
@@ -411,10 +411,10 @@ export function WorkspaceGrid({
               <Button
                 onClick={() => onNew(currentFolderId)}
                 size="sm"
-                data-testid="newWorkspaceButton"
+                data-testid="newDocumentButton"
               >
                 <Plus size={16} />
-                {t("hub.newWorkspace")}
+                {t("hub.newDocument")}
               </Button>
             </div>
           </div>
@@ -422,7 +422,7 @@ export function WorkspaceGrid({
           {/* Content */}
           {isLoading ? (
             <div className="text-center py-12 text-muted-foreground">{t("hub.loading")}</div>
-          ) : workspaces.length === 0 && folders.length === 0 ? (
+          ) : documents.length === 0 && folders.length === 0 ? (
             <div
               className="flex flex-col items-center py-16 px-4"
               data-testid="emptyStateOnboarding"
@@ -462,7 +462,7 @@ export function WorkspaceGrid({
               </div>
               <Button onClick={() => onNew(null)} size="lg">
                 <Plus size={16} />
-                {t("hub.createFirstWorkspace")}
+                {t("hub.createFirstDocument")}
               </Button>
             </div>
           ) : (
@@ -492,9 +492,9 @@ export function WorkspaceGrid({
                           {starredItems.filter((i) => i.kind === "folder").map(renderItem)}
                         </div>
                       )}
-                      {starredItems.some((i) => i.kind === "workspace") && (
+                      {starredItems.some((i) => i.kind === "document") && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {starredItems.filter((i) => i.kind === "workspace").map(renderItem)}
+                          {starredItems.filter((i) => i.kind === "document").map(renderItem)}
                         </div>
                       )}
                     </div>
@@ -531,9 +531,9 @@ export function WorkspaceGrid({
                           {allItems.filter((i) => i.kind === "folder").map(renderItem)}
                         </div>
                       )}
-                      {allItems.some((i) => i.kind === "workspace") && (
+                      {allItems.some((i) => i.kind === "document") && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {allItems.filter((i) => i.kind === "workspace").map(renderItem)}
+                          {allItems.filter((i) => i.kind === "document").map(renderItem)}
                         </div>
                       )}
                     </div>
@@ -599,7 +599,7 @@ export function WorkspaceGrid({
             }}
             currentTitle={renameTarget?.title ?? ""}
             onRename={(title) => {
-              if (renameTarget) onRename(renameTarget.workspaceId, title);
+              if (renameTarget) onRename(renameTarget.documentId, title);
               setRenameTarget(null);
             }}
           />
@@ -608,9 +608,9 @@ export function WorkspaceGrid({
             onOpenChange={(open) => {
               if (!open) setDeleteTarget(null);
             }}
-            workspaceTitle={deleteTarget?.title || t("hub.untitled")}
+            documentTitle={deleteTarget?.title || t("hub.untitled")}
             onDelete={() => {
-              if (deleteTarget) onDelete(deleteTarget.workspaceId);
+              if (deleteTarget) onDelete(deleteTarget.documentId);
               setDeleteTarget(null);
             }}
           />
@@ -625,14 +625,14 @@ export function WorkspaceGrid({
               setDeleteFolderTarget(null);
             }}
           />
-        </WorkspaceGridInner>
+        </DocumentGridInner>
       </SelectionProvider>
     </DndProvider>
   );
 }
 
 /** Inner wrapper to access useSelection for deselection handlers */
-function WorkspaceGridInner({ children }: { children: React.ReactNode }) {
+function DocumentGridInner({ children }: { children: React.ReactNode }) {
   const { clearSelection, isSelectionActive } = useSelection();
 
   const handleEmptySpaceClick = useCallback(
@@ -691,17 +691,17 @@ function FolderMoveOption({
 /** Selection action buttons (Move, Delete) — rendered when items are selected */
 function SelectionActions({
   folders,
-  onDeleteWorkspace,
+  onDeleteDocument,
   onDeleteFolder,
-  onMoveWorkspaceToFolder,
-  onUnfileWorkspace,
+  onMoveDocumentToFolder,
+  onUnfileDocument,
   onMoveFolder,
 }: {
   folders: FolderItem[];
-  onDeleteWorkspace: (id: string) => void;
+  onDeleteDocument: (id: string) => void;
   onDeleteFolder: (id: string) => void;
-  onMoveWorkspaceToFolder: (workspaceId: string, folderId: string) => void;
-  onUnfileWorkspace: (workspaceId: string) => void;
+  onMoveDocumentToFolder: (documentId: string, folderId: string) => void;
+  onUnfileDocument: (documentId: string) => void;
   onMoveFolder: (folderId: string, parentId: string | null) => void;
 }) {
   const { t } = useTranslation("management");
@@ -712,7 +712,7 @@ function SelectionActions({
 
   const handleDelete = () => {
     for (const item of getSelectedItems()) {
-      if (item.type === "workspace") onDeleteWorkspace(item.id);
+      if (item.type === "document") onDeleteDocument(item.id);
       else onDeleteFolder(item.id);
     }
     clearSelection();
@@ -721,9 +721,9 @@ function SelectionActions({
 
   const handleMove = (folderId: string | null) => {
     for (const item of getSelectedItems()) {
-      if (item.type === "workspace") {
-        if (folderId) onMoveWorkspaceToFolder(item.id, folderId);
-        else onUnfileWorkspace(item.id);
+      if (item.type === "document") {
+        if (folderId) onMoveDocumentToFolder(item.id, folderId);
+        else onUnfileDocument(item.id);
       } else {
         onMoveFolder(item.id, folderId);
       }

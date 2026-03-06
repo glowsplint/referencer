@@ -1,7 +1,7 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ManagementPane } from "./ManagementPane";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 
 import type { Highlight, Arrow, LayerUnderline } from "@/types/editor";
 
@@ -69,7 +69,7 @@ beforeEach(() => {
 });
 
 function renderPane(overrides = {}) {
-  return renderWithWorkspace(<ManagementPane />, overrides);
+  return renderWithDocument(<ManagementPane />, overrides);
 }
 
 describe("ManagementPane", () => {
@@ -98,9 +98,9 @@ describe("ManagementPane", () => {
     });
 
     it("then calls addLayer directly when layers exist", () => {
-      const { workspace } = renderPane({ layers: [layerA] });
+      const { document } = renderPane({ layers: [layerA] });
       fireEvent.click(screen.getByTestId("addLayerButton"));
-      expect(workspace.addLayer).toHaveBeenCalled();
+      expect(document.addLayer).toHaveBeenCalled();
     });
   });
 
@@ -128,36 +128,36 @@ describe("ManagementPane", () => {
 
   describe("when a layer row is clicked", () => {
     it("then calls setActiveLayer with that layer's id", () => {
-      const { workspace } = renderPane({ layers: [layerA] });
+      const { document } = renderPane({ layers: [layerA] });
       fireEvent.click(screen.getByText("Layer 1"));
-      expect(workspace.setActiveLayer).toHaveBeenCalledWith("a");
+      expect(document.setActiveLayer).toHaveBeenCalledWith("a");
     });
   });
 
   describe("when a layer colour is changed", () => {
     it("then calls updateLayerColor with the layer id and new colour", () => {
-      const { workspace } = renderPane({ layers: [layerA] });
+      const { document } = renderPane({ layers: [layerA] });
       fireEvent.click(screen.getByTestId("layerSwatch-0"));
       fireEvent.click(screen.getByTestId("colorOption-#93c5fd"));
-      expect(workspace.updateLayerColor).toHaveBeenCalledWith("a", "#93c5fd");
+      expect(document.updateLayerColor).toHaveBeenCalledWith("a", "#93c5fd");
     });
   });
 
   describe("when a layer name is changed", () => {
     it("then calls updateLayerName with the layer id and new name", () => {
-      const { workspace } = renderPane({ layers: [layerA] });
+      const { document } = renderPane({ layers: [layerA] });
       fireEvent.doubleClick(screen.getByTestId("layerName-0"));
       fireEvent.change(screen.getByTestId("layerNameInput-0"), { target: { value: "Renamed" } });
       fireEvent.keyDown(screen.getByTestId("layerNameInput-0"), { key: "Enter" });
-      expect(workspace.updateLayerName).toHaveBeenCalledWith("a", "Renamed");
+      expect(document.updateLayerName).toHaveBeenCalledWith("a", "Renamed");
     });
   });
 
   describe("when layer visibility is toggled", () => {
     it("then calls toggleLayerVisibility with the layer id", () => {
-      const { workspace } = renderPane({ layers: [layerA] });
+      const { document } = renderPane({ layers: [layerA] });
       fireEvent.click(screen.getByTestId("layerVisibility-0"));
-      expect(workspace.toggleLayerVisibility).toHaveBeenCalledWith("a");
+      expect(document.toggleLayerVisibility).toHaveBeenCalledWith("a");
     });
   });
 
@@ -175,13 +175,13 @@ describe("ManagementPane", () => {
 
   describe("when text visibility button is clicked", () => {
     it("then calls toggleSectionVisibility with the section index", () => {
-      const { workspace } = renderPane({
+      const { document } = renderPane({
         editorCount: 2,
         sectionVisibility: [true, true],
         sectionNames: ["Text 1", "Text 2"],
       });
       fireEvent.click(screen.getByTestId("sectionVisibility-1"));
-      expect(workspace.toggleSectionVisibility).toHaveBeenCalledWith(1);
+      expect(document.toggleSectionVisibility).toHaveBeenCalledWith(1);
     });
   });
 
@@ -198,9 +198,9 @@ describe("ManagementPane", () => {
 
     describe("when clicked", () => {
       it("then calls toggleAllLayerVisibility", () => {
-        const { workspace } = renderPane({ layers: [layerA] });
+        const { document } = renderPane({ layers: [layerA] });
         fireEvent.click(screen.getByTestId("toggleAllLayerVisibility"));
-        expect(workspace.toggleAllLayerVisibility).toHaveBeenCalled();
+        expect(document.toggleAllLayerVisibility).toHaveBeenCalled();
       });
     });
   });
@@ -229,25 +229,25 @@ describe("ManagementPane", () => {
 
     describe("when a layer is dropped on the trash bin", () => {
       it("then calls removeLayer with the layer id", () => {
-        const { workspace } = renderPane({ layers: [layerA] });
+        const { document } = renderPane({ layers: [layerA] });
         fireEvent.drop(screen.getByTestId("trashBin"), {
           dataTransfer: {
             getData: (type: string) => (type === "application/x-layer-id" ? "a" : ""),
           },
         });
-        expect(workspace.removeLayer).toHaveBeenCalledWith("a");
+        expect(document.removeLayer).toHaveBeenCalledWith("a");
       });
     });
 
     describe("when a section is dropped on the trash bin", () => {
       it("then calls removeEditor with the section index", () => {
-        const { workspace } = renderPane({ editorCount: 2 });
+        const { document } = renderPane({ editorCount: 2 });
         fireEvent.drop(screen.getByTestId("trashBin"), {
           dataTransfer: {
             getData: (type: string) => (type === "application/x-section-index" ? "1" : ""),
           },
         });
-        expect(workspace.removeEditor).toHaveBeenCalledWith(1);
+        expect(document.removeEditor).toHaveBeenCalledWith(1);
       });
     });
 
@@ -265,7 +265,7 @@ describe("ManagementPane", () => {
   describe("text reordering", () => {
     describe("when dragging text 0 to position 2", () => {
       it("then calls reorderEditors with the correct permutation", () => {
-        const { workspace } = renderPane({
+        const { document } = renderPane({
           editorCount: 3,
           sectionVisibility: [true, true, true],
           sectionNames: ["A", "B", "C"],
@@ -282,13 +282,13 @@ describe("ManagementPane", () => {
           },
         });
         // Moving index 0 to position 2: [B, C, A] -> permutation [1, 2, 0]
-        expect(workspace.reorderEditors).toHaveBeenCalledWith([1, 2, 0]);
+        expect(document.reorderEditors).toHaveBeenCalledWith([1, 2, 0]);
       });
     });
 
     describe("when dragging text 2 to position 0", () => {
       it("then calls reorderEditors with the correct permutation", () => {
-        const { workspace } = renderPane({
+        const { document } = renderPane({
           editorCount: 3,
           sectionVisibility: [true, true, true],
           sectionNames: ["A", "B", "C"],
@@ -305,13 +305,13 @@ describe("ManagementPane", () => {
           },
         });
         // Moving index 2 to position 0: [C, A, B] -> permutation [2, 0, 1]
-        expect(workspace.reorderEditors).toHaveBeenCalledWith([2, 0, 1]);
+        expect(document.reorderEditors).toHaveBeenCalledWith([2, 0, 1]);
       });
     });
 
     describe("when dropping on the same position", () => {
       it("then does not call reorderEditors", () => {
-        const { workspace } = renderPane({
+        const { document } = renderPane({
           editorCount: 3,
           sectionVisibility: [true, true, true],
           sectionNames: ["A", "B", "C"],
@@ -323,7 +323,7 @@ describe("ManagementPane", () => {
             types: ["application/x-section-index"],
           },
         });
-        expect(workspace.reorderEditors).not.toHaveBeenCalled();
+        expect(document.reorderEditors).not.toHaveBeenCalled();
       });
     });
 
@@ -338,31 +338,31 @@ describe("ManagementPane", () => {
 
   describe("when section names are provided", () => {
     it("then forwards names and updateSectionName to SectionList", () => {
-      const { workspace } = renderPane({ sectionNames: ["Custom Name"] });
+      const { document } = renderPane({ sectionNames: ["Custom Name"] });
       expect(screen.getByText("Custom Name")).toBeInTheDocument();
       fireEvent.doubleClick(screen.getByTestId("textName-0"));
       fireEvent.change(screen.getByTestId("textNameInput-0"), { target: { value: "Renamed" } });
       fireEvent.keyDown(screen.getByTestId("textNameInput-0"), { key: "Enter" });
-      expect(workspace.updateSectionName).toHaveBeenCalledWith(0, "Renamed");
+      expect(document.updateSectionName).toHaveBeenCalledWith(0, "Renamed");
     });
   });
 
   describe("expandable layer items", () => {
     describe("when highlight delete button is clicked", () => {
       it("then calls removeHighlight with layer and highlight ids", () => {
-        const { workspace } = renderPane({ layers: [layerWithItems] });
+        const { document } = renderPane({ layers: [layerWithItems] });
         fireEvent.click(screen.getByTestId("layerExpand-0"));
         fireEvent.click(screen.getByTestId("removeHighlight-h1"));
-        expect(workspace.removeHighlight).toHaveBeenCalledWith("a", "h1");
+        expect(document.removeHighlight).toHaveBeenCalledWith("a", "h1");
       });
     });
 
     describe("when arrow delete button is clicked", () => {
       it("then calls removeArrow with layer and arrow ids", () => {
-        const { workspace } = renderPane({ layers: [layerWithItems] });
+        const { document } = renderPane({ layers: [layerWithItems] });
         fireEvent.click(screen.getByTestId("layerExpand-0"));
         fireEvent.click(screen.getByTestId("removeArrow-a1"));
-        expect(workspace.removeArrow).toHaveBeenCalledWith("a", "a1");
+        expect(document.removeArrow).toHaveBeenCalledWith("a", "a1");
       });
     });
 

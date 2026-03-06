@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 
 interface DndState {
   isDragging: boolean;
-  dragType: "workspace" | "folder" | null;
+  dragType: "document" | "folder" | null;
   dragId: string | null;
   overTargetId: string | null;
 }

@@ -14,13 +14,13 @@ export function hasMinimumRole(userRole: PermissionRole, requiredRole: Permissio
 
 export async function getPermission(
   supabase: SupabaseClient,
-  workspaceId: string,
+  documentId: string,
   userId: string,
 ): Promise<PermissionRole | null> {
   const { data } = await supabase
-    .from("workspace_permission")
+    .from("document_permission")
     .select("role")
-    .eq("workspace_id", workspaceId)
+    .eq("document_id", documentId)
     .eq("user_id", userId)
     .single();
   return data?.role ?? null;
@@ -28,28 +28,28 @@ export async function getPermission(
 
 export async function setPermission(
   supabase: SupabaseClient,
-  workspaceId: string,
+  documentId: string,
   userId: string,
   role: PermissionRole,
 ): Promise<void> {
   await supabase
-    .from("workspace_permission")
+    .from("document_permission")
     .upsert(
-      { workspace_id: workspaceId, user_id: userId, role },
-      { onConflict: "workspace_id,user_id" },
+      { document_id: documentId, user_id: userId, role },
+      { onConflict: "document_id,user_id" },
     );
 }
 
-export async function listWorkspaceMembers(
+export async function listDocumentMembers(
   supabase: SupabaseClient,
-  workspaceId: string,
+  documentId: string,
 ): Promise<
   Array<{ userId: string; role: PermissionRole; name: string; email: string; avatarUrl: string }>
 > {
   const { data: permissions } = await supabase
-    .from("workspace_permission")
+    .from("document_permission")
     .select("user_id, role")
-    .eq("workspace_id", workspaceId);
+    .eq("document_id", documentId);
   if (!permissions || permissions.length === 0) return [];
 
   const userIds = permissions.map((p: any) => p.user_id);
@@ -73,18 +73,14 @@ export async function listWorkspaceMembers(
 
 export async function removePermission(
   supabase: SupabaseClient,
-  workspaceId: string,
+  documentId: string,
   userId: string,
 ): Promise<void> {
   await supabase
-    .from("workspace_permission")
+    .from("document_permission")
     .delete()
-    .eq("workspace_id", workspaceId)
+    .eq("document_id", documentId)
     .eq("user_id", userId);
-  // Also remove from user_workspace so it vanishes from their hub
-  await supabase
-    .from("user_workspace")
-    .delete()
-    .eq("workspace_id", workspaceId)
-    .eq("user_id", userId);
+  // Also remove from user_document so it vanishes from their hub
+  await supabase.from("user_document").delete().eq("document_id", documentId).eq("user_id", userId);
 }

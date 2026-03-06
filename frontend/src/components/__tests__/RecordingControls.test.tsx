@@ -2,8 +2,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { RecordingControls } from "../RecordingControls";
 import { RecordingProvider, type RecordingContextValue } from "@/contexts/RecordingContext";
-import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
-import { makeMockWorkspace } from "@/test/render-with-workspace";
+import { DocumentProvider } from "@/contexts/DocumentContext";
+import { makeMockDocument } from "@/test/render-with-document";
 import type { Recording } from "@/types/recording";
 
 const testRecording: Recording = {
@@ -63,10 +63,10 @@ function makeMockRecordingContext(
 
 function renderRecordingControls(
   recOverrides?: Partial<RecordingContextValue>,
-  workspaceOverrides?: Record<string, unknown>,
+  documentOverrides?: Record<string, unknown>,
 ) {
   const recCtx = makeMockRecordingContext(recOverrides);
-  const workspace = makeMockWorkspace({
+  const docCtx = makeMockDocument({
     settings: {
       isDarkMode: false,
       isLayersOn: false,
@@ -75,18 +75,18 @@ function renderRecordingControls(
       hideOffscreenArrows: false,
       showStatusBar: true,
     },
-    ...workspaceOverrides,
+    ...documentOverrides,
   });
   return {
     ...render(
-      <WorkspaceProvider value={workspace}>
+      <DocumentProvider value={docCtx}>
         <RecordingProvider value={recCtx}>
           <RecordingControls />
         </RecordingProvider>
-      </WorkspaceProvider>,
+      </DocumentProvider>,
     ),
     recCtx,
-    workspace,
+    document: docCtx,
   };
 }
 

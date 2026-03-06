@@ -2,18 +2,18 @@ import { expect, type Page } from "@playwright/test";
 import { randomUUID } from "crypto";
 
 /**
- * Navigate to a fresh workspace with demo content loaded.
- * Creates a unique workspace per call to avoid state leaking between tests.
+ * Navigate to a fresh document with demo content loaded.
+ * Creates a unique document per call to avoid state leaking between tests.
  */
-export async function setupWorkspace(page: Page) {
-  const workspaceId = randomUUID();
+export async function setupDocument(page: Page) {
+  const documentId = randomUUID();
 
   // Suppress the guided tour overlay that auto-starts for first-time users
   await page.addInitScript(() => {
     localStorage.setItem("referencer-tour-editor", "completed");
   });
 
-  await page.goto(`/#/${workspaceId}`);
+  await page.goto(`/#/${documentId}`);
 
   // Wait for the editor to mount (empty state)
   await expect(page.getByTestId("buttonPane")).toBeVisible({ timeout: 10000 });

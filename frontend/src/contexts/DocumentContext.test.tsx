@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { WorkspaceProvider, useWorkspace } from "./WorkspaceContext";
-import type { WorkspaceContextValue } from "./WorkspaceContext";
+import { DocumentProvider, useDocument } from "./DocumentContext";
+import type { DocumentContextValue } from "./DocumentContext";
 
-function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}): WorkspaceContextValue {
+function makeMockDocument(overrides: Partial<DocumentContextValue> = {}): DocumentContextValue {
   return {
     settings: {
       isDarkMode: false,
@@ -37,21 +37,21 @@ function makeMockWorkspace(overrides: Partial<WorkspaceContextValue> = {}): Work
     handleEditorMount: vi.fn(),
     handlePaneFocus: vi.fn(),
     ...overrides,
-  } as unknown as WorkspaceContextValue;
+  } as unknown as DocumentContextValue;
 }
 
-describe("WorkspaceContext", () => {
-  describe("when used outside WorkspaceProvider", () => {
+describe("DocumentContext", () => {
+  describe("when used outside DocumentProvider", () => {
     it("then throws an error", () => {
       expect(() => {
-        renderHook(() => useWorkspace());
-      }).toThrow("useWorkspace must be used within a WorkspaceProvider");
+        renderHook(() => useDocument());
+      }).toThrow("useDocument must be used within a DocumentProvider");
     });
   });
 
-  describe("when used inside WorkspaceProvider", () => {
-    it("then provides the workspace settings", () => {
-      const mockValue = makeMockWorkspace({
+  describe("when used inside DocumentProvider", () => {
+    it("then provides the document settings", () => {
+      const mockValue = makeMockDocument({
         settings: {
           isDarkMode: true,
           isLayersOn: true,
@@ -60,9 +60,9 @@ describe("WorkspaceContext", () => {
         },
       });
 
-      const { result } = renderHook(() => useWorkspace(), {
+      const { result } = renderHook(() => useDocument(), {
         wrapper: ({ children }) => (
-          <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
+          <DocumentProvider value={mockValue}>{children}</DocumentProvider>
         ),
       });
 
@@ -72,16 +72,16 @@ describe("WorkspaceContext", () => {
     });
 
     it("then provides the layers array and active layer", () => {
-      const mockValue = makeMockWorkspace({
+      const mockValue = makeMockDocument({
         layers: [
           { id: "layer-1", name: "Notes", color: "#ff0000" },
-        ] as WorkspaceContextValue["layers"],
+        ] as DocumentContextValue["layers"],
         activeLayerId: "layer-1",
       });
 
-      const { result } = renderHook(() => useWorkspace(), {
+      const { result } = renderHook(() => useDocument(), {
         wrapper: ({ children }) => (
-          <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
+          <DocumentProvider value={mockValue}>{children}</DocumentProvider>
         ),
       });
 
@@ -90,11 +90,11 @@ describe("WorkspaceContext", () => {
     });
 
     it("then provides annotation actions as callable functions", () => {
-      const mockValue = makeMockWorkspace();
+      const mockValue = makeMockDocument();
 
-      const { result } = renderHook(() => useWorkspace(), {
+      const { result } = renderHook(() => useDocument(), {
         wrapper: ({ children }) => (
-          <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
+          <DocumentProvider value={mockValue}>{children}</DocumentProvider>
         ),
       });
 
@@ -105,15 +105,15 @@ describe("WorkspaceContext", () => {
     });
 
     it("then provides the editor state", () => {
-      const mockValue = makeMockWorkspace({
+      const mockValue = makeMockDocument({
         editorCount: 2,
         editorWidths: [50, 50],
         isManagementPaneOpen: true,
       });
 
-      const { result } = renderHook(() => useWorkspace(), {
+      const { result } = renderHook(() => useDocument(), {
         wrapper: ({ children }) => (
-          <WorkspaceProvider value={mockValue}>{children}</WorkspaceProvider>
+          <DocumentProvider value={mockValue}>{children}</DocumentProvider>
         ),
       });
 

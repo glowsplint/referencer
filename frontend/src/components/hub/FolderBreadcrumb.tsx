@@ -9,7 +9,7 @@ interface FolderBreadcrumbProps {
   folders: FolderItem[];
   currentFolderId: string | null;
   onNavigate: (folderId: string | null) => void;
-  onMoveToFolder: (workspaceId: string, folderId: string | null) => void;
+  onMoveToFolder: (documentId: string, folderId: string | null) => void;
   onMoveFolder: (folderId: string, parentId: string | null) => void;
 }
 
@@ -25,13 +25,13 @@ function BreadcrumbDropSegment({
   folderId: string | null;
   folders: FolderItem[];
   onNavigate: (folderId: string | null) => void;
-  onMoveToFolder: (workspaceId: string, folderId: string | null) => void;
+  onMoveToFolder: (documentId: string, folderId: string | null) => void;
   onMoveFolder: (folderId: string, parentId: string | null) => void;
 }) {
   const handleDrop = useCallback(
     (data: DragData) => {
       const items = data.selectedItems ?? [{ type: data.type, id: data.id }];
-      const wsItems = items.filter((i) => i.type === "workspace");
+      const wsItems = items.filter((i) => i.type === "document");
       const folderItems = items.filter((i) => i.type === "folder");
       for (const item of wsItems) {
         onMoveToFolder(item.id, folderId);
@@ -91,7 +91,7 @@ export function FolderBreadcrumb({
   return (
     <nav className="flex items-center gap-1 mb-4" data-testid="folderBreadcrumb">
       <BreadcrumbDropSegment
-        label={t("hub.myWorkspaces")}
+        label={t("hub.myDocuments")}
         folderId={null}
         folders={folders}
         onNavigate={onNavigate}

@@ -17,7 +17,7 @@ export function AppRouter() {
 
   return (
     <TourProvider>
-      <App workspaceId={route.workspaceId} navigate={navigate} />
+      <App documentId={route.documentId} navigate={navigate} />
     </TourProvider>
   );
 }

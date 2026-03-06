@@ -1,7 +1,7 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { AnnotationSearchResults } from "./AnnotationSearchResults";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 import type { AnnotationSearchMatch } from "@/types/editor";
 
 const matches: AnnotationSearchMatch[] = [
@@ -42,7 +42,7 @@ const matches: AnnotationSearchMatch[] = [
 
 describe("AnnotationSearchResults", () => {
   it("renders grouped results with layer names", () => {
-    renderWithWorkspace(
+    renderWithDocument(
       <AnnotationSearchResults matches={matches} query="word" onResultClick={vi.fn()} />,
     );
     expect(screen.getByText("Observations")).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe("AnnotationSearchResults", () => {
   });
 
   it("shows color swatches for each layer group", () => {
-    const { container } = renderWithWorkspace(
+    const { container } = renderWithDocument(
       <AnnotationSearchResults matches={matches} query="word" onResultClick={vi.fn()} />,
     );
     const swatches = container.querySelectorAll(".rounded-full");
@@ -58,7 +58,7 @@ describe("AnnotationSearchResults", () => {
   });
 
   it('shows "No matching annotations" for empty matches array', () => {
-    renderWithWorkspace(
+    renderWithDocument(
       <AnnotationSearchResults matches={[]} query="xyz" onResultClick={vi.fn()} />,
     );
     expect(screen.getByText("No matching annotations")).toBeInTheDocument();
@@ -66,7 +66,7 @@ describe("AnnotationSearchResults", () => {
 
   it("calls onResultClick with correct match on click", () => {
     const onClick = vi.fn();
-    renderWithWorkspace(
+    renderWithDocument(
       <AnnotationSearchResults matches={matches} query="word" onResultClick={onClick} />,
     );
     fireEvent.click(screen.getByTestId("searchResult-h1"));
@@ -75,14 +75,14 @@ describe("AnnotationSearchResults", () => {
   });
 
   it("shows result count", () => {
-    renderWithWorkspace(
+    renderWithDocument(
       <AnnotationSearchResults matches={matches} query="word" onResultClick={vi.fn()} />,
     );
     expect(screen.getByText(/result/i)).toBeInTheDocument();
   });
 
   it("each result has correct data-testid", () => {
-    renderWithWorkspace(
+    renderWithDocument(
       <AnnotationSearchResults matches={matches} query="word" onResultClick={vi.fn()} />,
     );
     expect(screen.getByTestId("searchResult-h1")).toBeInTheDocument();

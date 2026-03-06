@@ -9,7 +9,7 @@ import {
 // In-memory store to simulate Supabase table
 let rows: Array<{
   code: string;
-  workspace_id: string;
+  document_id: string;
   access: string;
   expires_at?: string;
   created_by?: string | null;
@@ -21,7 +21,7 @@ function createMockSupabase() {
       return {
         insert(row: {
           code: string;
-          workspace_id: string;
+          document_id: string;
           access: string;
           expires_at?: string;
           created_by?: string | null;
@@ -116,11 +116,11 @@ describe("share-queries", () => {
   });
 
   describe("resolveShareLink", () => {
-    it("returns correct workspace and access for valid code", async () => {
+    it("returns correct document and access for valid code", async () => {
       const code = await createShareLink(supabase, "ws-1", "edit");
       const result = await resolveShareLink(supabase, code);
       expect(result).not.toBeNull();
-      expect(result!.workspaceId).toBe("ws-1");
+      expect(result!.documentId).toBe("ws-1");
       expect(result!.access).toBe("edit");
     });
 
@@ -138,7 +138,7 @@ describe("share-queries", () => {
   });
 
   describe("listShareLinks", () => {
-    it("returns active links for a workspace", async () => {
+    it("returns active links for a document", async () => {
       await createShareLink(supabase, "ws-1", "edit");
       await createShareLink(supabase, "ws-1", "readonly");
 
@@ -152,7 +152,7 @@ describe("share-queries", () => {
       // Manually insert an expired link
       rows.push({
         code: "EXPIRED1",
-        workspace_id: "ws-1",
+        document_id: "ws-1",
         access: "edit",
         expires_at: new Date(Date.now() - 1000).toISOString(),
         created_by: null,
@@ -173,7 +173,7 @@ describe("share-queries", () => {
     it("maps fields correctly", async () => {
       rows.push({
         code: "TESTCODE",
-        workspace_id: "ws-1",
+        document_id: "ws-1",
         access: "edit",
         expires_at: "2099-01-01T00:00:00.000Z",
         created_by: "user-123",
@@ -205,7 +205,7 @@ describe("share-queries", () => {
       expect(result).toBe(false);
     });
 
-    it("returns false when code exists but workspace does not match", async () => {
+    it("returns false when code exists but document does not match", async () => {
       const code = await createShareLink(supabase, "ws-1", "edit");
       const result = await deleteShareLink(supabase, code, "ws-other");
       expect(result).toBe(false);

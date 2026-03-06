@@ -46,8 +46,8 @@ export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: Ren
         }}
       >
         <DialogHeader>
-          <DialogTitle>{t("hub.renameWorkspaceTitle")}</DialogTitle>
-          <DialogDescription>{t("hub.renameWorkspaceDescription")}</DialogDescription>
+          <DialogTitle>{t("hub.renameDocumentTitle")}</DialogTitle>
+          <DialogDescription>{t("hub.renameDocumentDescription")}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <input
@@ -55,7 +55,7 @@ export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: Ren
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-3 py-2 rounded-md border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder={t("hub.workspaceNamePlaceholder")}
+            placeholder={t("hub.documentNamePlaceholder")}
             data-testid="renameInput"
           />
           <DialogFooter className="mt-4">

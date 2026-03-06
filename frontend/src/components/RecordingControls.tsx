@@ -9,13 +9,13 @@ import {
   TooltipContent,
 } from "@/components/tiptap-ui-primitive/tooltip/tooltip";
 import { useRecordingContext } from "@/contexts/RecordingContext";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 import { RecordingListItem } from "./recording/RecordingListItem";
 
 export function RecordingControls() {
   const { t } = useTranslation("tools");
   const { recordings: rec, playback } = useRecordingContext();
-  const { readOnly } = useWorkspace();
+  const { readOnly } = useDocument();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Plus } from "lucide-react";
 import { STUDY_SCHEMES } from "@/constants/study-schemes";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 
 interface StudySchemePickerProps {
   open: boolean;
@@ -18,7 +18,7 @@ export function StudySchemePicker({
   children,
 }: StudySchemePickerProps) {
   const { t } = useTranslation("management");
-  const { addLayer, yjs } = useWorkspace();
+  const { addLayer, yjs } = useDocument();
 
   const applyScheme = (schemeId: string) => {
     const scheme = STUDY_SCHEMES.find((s) => s.id === schemeId);

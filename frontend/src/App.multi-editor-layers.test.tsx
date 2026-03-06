@@ -19,7 +19,7 @@ vi.mock("./hooks/ui/use-is-breakpoint", () => ({
   useIsBreakpoint: () => false,
 }));
 
-const mockWorkspace = {
+const mockDocument = {
   settings: {
     isDarkMode: false,
     isLayersOn: false,
@@ -29,7 +29,7 @@ const mockWorkspace = {
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   },
-  isPaneLocked: (i: number) => mockWorkspace.settings.lockedPanes[i] ?? true,
+  isPaneLocked: (i: number) => mockDocument.settings.lockedPanes[i] ?? true,
   isAnyPaneLocked: true,
   activeEditorIndex: 0,
   annotations: { activeTool: "selection" as const },
@@ -134,7 +134,7 @@ const mockWorkspace = {
     record: vi.fn(),
   },
   wsConnected: false,
-  workspaceId: "test-workspace",
+  documentId: "test-document",
   yjs: {
     provider: null,
     doc: null,
@@ -151,12 +151,12 @@ const mockWorkspace = {
   },
 };
 
-vi.mock("./hooks/data/use-editor-workspace", () => ({
-  useEditorWorkspace: () => mockWorkspace,
+vi.mock("./hooks/data/use-editor-document", () => ({
+  useEditorDocument: () => mockDocument,
 }));
 
-vi.mock("./hooks/data/use-workspace-autosave", () => ({
-  useWorkspaceAutosave: vi.fn(),
+vi.mock("./hooks/data/use-document-autosave", () => ({
+  useDocumentAutosave: vi.fn(),
 }));
 
 vi.mock("./components/UnsavedBanner", () => ({
@@ -199,7 +199,7 @@ vi.mock("./components/AnnotationPanel", () => ({
 }));
 
 const defaultProps = {
-  workspaceId: "test-workspace",
+  documentId: "test-document",
   navigate: vi.fn(),
 };
 
@@ -267,7 +267,7 @@ function makeArrow(id: string, sourceEditor: number, targetEditor: number) {
 }
 
 beforeEach(() => {
-  mockWorkspace.settings = {
+  mockDocument.settings = {
     isDarkMode: false,
     isLayersOn: false,
     isMultipleRowsLayout: false,
@@ -276,24 +276,24 @@ beforeEach(() => {
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   };
-  mockWorkspace.isAnyPaneLocked = true;
-  mockWorkspace.layers = [];
-  mockWorkspace.activeLayerId = null;
-  mockWorkspace.editorCount = 2;
-  mockWorkspace.editorWidths = [50, 50];
-  mockWorkspace.editorKeys = [1, 2];
-  mockWorkspace.sectionVisibility = [true, true];
-  mockWorkspace.sectionNames = ["Text 1", "Text 2"];
-  mockWorkspace.isManagementPaneOpen = false;
-  mockWorkspace.annotations = { activeTool: "selection" as const };
-  mockWorkspace.selectedArrow = null;
-  mockWorkspace.demoLoading = false;
+  mockDocument.isAnyPaneLocked = true;
+  mockDocument.layers = [];
+  mockDocument.activeLayerId = null;
+  mockDocument.editorCount = 2;
+  mockDocument.editorWidths = [50, 50];
+  mockDocument.editorKeys = [1, 2];
+  mockDocument.sectionVisibility = [true, true];
+  mockDocument.sectionNames = ["Text 1", "Text 2"];
+  mockDocument.isManagementPaneOpen = false;
+  mockDocument.annotations = { activeTool: "selection" as const };
+  mockDocument.selectedArrow = null;
+  mockDocument.demoLoading = false;
 });
 
 describe("App multi-editor layers", () => {
   describe("when working with cross-editor layers", () => {
     it("then layers are passed to all editor panes", () => {
-      mockWorkspace.layers = [
+      mockDocument.layers = [
         makeLayer("layer-1", "Layer 1", {
           arrows: [makeArrow("a1", 0, 1)],
         }),
@@ -308,7 +308,7 @@ describe("App multi-editor layers", () => {
     });
 
     it("when arrows exist on different layers, then all layers are passed to panes", () => {
-      mockWorkspace.layers = [
+      mockDocument.layers = [
         makeLayer("layer-1", "Layer 1", {
           arrows: [makeArrow("a1", 0, 0)],
         }),
@@ -324,7 +324,7 @@ describe("App multi-editor layers", () => {
     });
 
     it("when one layer is hidden, then hidden layer is still passed to panes (filtering happens inside EditorPane)", () => {
-      mockWorkspace.layers = [
+      mockDocument.layers = [
         makeLayer("layer-1", "Layer 1", {
           visible: true,
           arrows: [makeArrow("a1", 0, 0)],
@@ -345,7 +345,7 @@ describe("App multi-editor layers", () => {
 
   describe("when toggling section visibility with layers", () => {
     it("when a text is hidden, then its editor pane is not displayed", () => {
-      mockWorkspace.sectionVisibility = [true, false];
+      mockDocument.sectionVisibility = [true, false];
       renderApp();
       const panes = screen.getAllByTestId("editor-pane");
       // Both panes are rendered, but the hidden one's container has display:none
@@ -357,7 +357,7 @@ describe("App multi-editor layers", () => {
     });
 
     it("when text is shown again, then its editor pane is visible", () => {
-      mockWorkspace.sectionVisibility = [true, true];
+      mockDocument.sectionVisibility = [true, true];
       renderApp();
       const panes = screen.getAllByTestId("editor-pane");
       const secondPane = panes.find((p) => p.getAttribute("data-index") === "1");
@@ -367,26 +367,26 @@ describe("App multi-editor layers", () => {
     });
 
     it("when text with annotations is hidden, then annotation panel reflects visibility", () => {
-      mockWorkspace.layers = [
+      mockDocument.layers = [
         makeLayer("layer-1", "Layer 1", {
           visible: true,
           highlights: [makeComment("h1", 1, "P2 note")],
         }),
       ];
       // Hide text 1 where the annotation is
-      mockWorkspace.sectionVisibility = [true, false];
+      mockDocument.sectionVisibility = [true, false];
       renderApp();
       expect(screen.queryByTestId("annotation-panel")).not.toBeInTheDocument();
     });
 
     it("when annotations exist in visible text only, then annotation panel shows", () => {
-      mockWorkspace.layers = [
+      mockDocument.layers = [
         makeLayer("layer-1", "Layer 1", {
           visible: true,
           highlights: [makeComment("h1", 0, "P1 note")],
         }),
       ];
-      mockWorkspace.sectionVisibility = [true, false];
+      mockDocument.sectionVisibility = [true, false];
       renderApp();
       expect(screen.getByTestId("annotation-panel")).toBeInTheDocument();
     });
@@ -394,7 +394,7 @@ describe("App multi-editor layers", () => {
 
   describe("when highlights coexist across editors", () => {
     it("when highlights exist on different layers in different editors, then all layers are passed", () => {
-      mockWorkspace.layers = [
+      mockDocument.layers = [
         makeLayer("layer-1", "Layer 1", {
           visible: true,
           highlights: [makeComment("h1", 0, "E1 note")],
@@ -414,7 +414,7 @@ describe("App multi-editor layers", () => {
     });
 
     it("when one layer is hidden, then its highlights do not contribute to annotation panel visibility", () => {
-      mockWorkspace.layers = [
+      mockDocument.layers = [
         makeLayer("layer-1", "Layer 1", {
           visible: false,
           highlights: [makeComment("h1", 0, "E1 note")],
@@ -430,7 +430,7 @@ describe("App multi-editor layers", () => {
     });
 
     it("when both layers are hidden, then annotation panel disappears", () => {
-      mockWorkspace.layers = [
+      mockDocument.layers = [
         makeLayer("layer-1", "Layer 1", {
           visible: false,
           highlights: [makeComment("h1", 0, "E1 note")],
@@ -447,7 +447,7 @@ describe("App multi-editor layers", () => {
 
   describe("when section visibility is passed to editor panes", () => {
     it("then each editor pane receives the correct sectionVisibility", () => {
-      mockWorkspace.sectionVisibility = [true, false];
+      mockDocument.sectionVisibility = [true, false];
       renderApp();
       const panes = screen.getAllByTestId("editor-pane");
       panes.forEach((pane) => {

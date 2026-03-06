@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Instellingen",
-    "description": "Pas uw werkruimtevoorkeuren aan.",
+    "description": "Pas uw documentvoorkeuren aan.",
     "darkMode": {
       "label": "Donkere modus",
       "description": "Schakel tussen licht en donker thema"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Wat is deze app?",
-        "answer": "Referencer is een samenwerkingstool voor inductieve Bijbelstudie. Het biedt studiegroepen een gedeelde werkruimte waar ze samen Bijbelteksten kunnen lezen, annoteren en in realtime bespreken."
+        "answer": "Referencer is een samenwerkingstool voor inductieve Bijbelstudie. Het biedt studiegroepen een gedeelde document waar ze samen Bijbelteksten kunnen lezen, annoteren en in realtime bespreken."
       },
       "inductiveStudy": {
         "question": "Wat is inductieve Bijbelstudie?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Hoe werkt samenwerking?",
-        "answer": "Elke werkruimte kan via een link met anderen worden gedeeld. Alle deelnemers zien dezelfde tekst en kunnen hun eigen annotaties toevoegen. Wijzigingen worden in realtime gesynchroniseerd zodat iedereen op dezelfde pagina blijft."
+        "answer": "Elke document kan via een link met anderen worden gedeeld. Alle deelnemers zien dezelfde tekst en kunnen hun eigen annotaties toevoegen. Wijzigingen worden in realtime gesynchroniseerd zodat iedereen op dezelfde pagina blijft."
       },
       "layers": {
         "question": "Wat zijn lagen?",
@@ -44,8 +44,8 @@
         "answer": "Pijlen verbinden twee annotaties om een verband tussen passages te tonen — bijvoorbeeld om een herhaald woord te koppelen aan het eerste voorkomen, of een profetie te verbinden met de vervulling ervan. Selecteer het pijlgereedschap (of druk op A) en klik vervolgens op twee annotaties om een verbinding te tekenen."
       },
       "sharing": {
-        "question": "Hoe deel ik een werkruimte?",
-        "answer": "Open het beheerpaneel (druk op M of klik op het menupictogram) en gebruik de deelopties om een link te genereren. Iedereen met de link kan deelnemen aan de werkruimte en samenwerken."
+        "question": "Hoe deel ik een document?",
+        "answer": "Open het beheerpaneel (druk op M of klik op het menupictogram) en gebruik de deelopties om een link te genereren. Iedereen met de link kan deelnemen aan de document en samenwerken."
       },
       "mobile": {
         "question": "Kan ik dit op mijn telefoon gebruiken?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Sneltoetsen",
-    "description": "Beschikbare sneltoetsen voor de werkruimte.",
-    "workspace": "Werkruimte",
+    "description": "Beschikbare sneltoetsen voor de document.",
+    "document": "Document",
     "cycleNextLayer": "Naar volgende laag wisselen",
     "cyclePrevLayer": "Naar vorige laag wisselen",
     "selectionTool": "Selectiegereedschap",
@@ -81,8 +81,8 @@
     "subscript": "Subscript",
     "colorHighlight": "Kleurmarkering",
     "general": "Algemeen",
-    "undo": "Ongedaan maken (werkruimte indien vergrendeld)",
-    "redo": "Opnieuw uitvoeren (werkruimte indien vergrendeld)",
+    "undo": "Ongedaan maken (document indien vergrendeld)",
+    "redo": "Opnieuw uitvoeren (document indien vergrendeld)",
     "headings": "Koppen",
     "heading": "Kop {{level}}",
     "listsAndBlocks": "Lijsten en blokken",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Annotaties zoeken"
   },
   "share": {
-    "title": "Werkruimte delen",
-    "description": "Kopieer een link om deze werkruimte te delen.",
+    "title": "Document delen",
+    "description": "Kopieer een link om deze document te delen.",
     "readonlyLink": "Alleen-lezen link",
     "editLink": "Bewerkingslink",
     "linkCopied": "Link gekopieerd naar klembord.",

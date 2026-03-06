@@ -1,26 +1,26 @@
 import { useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/data/use-auth";
-import { createWorkspace, touchWorkspace } from "@/lib/workspace-client";
+import { createDocument, touchDocument } from "@/lib/document-client";
 
-export function useWorkspaceAutosave(workspaceId: string) {
+export function useDocumentAutosave(documentId: string) {
   const { isAuthenticated } = useAuth();
   const registeredRef = useRef(false);
 
   useEffect(() => {
     registeredRef.current = false;
-  }, [workspaceId]);
+  }, [documentId]);
 
   useEffect(() => {
     if (!isAuthenticated || registeredRef.current) return;
     registeredRef.current = true;
-    createWorkspace(workspaceId).catch(() => {});
-  }, [isAuthenticated, workspaceId]);
+    createDocument(documentId).catch(() => {});
+  }, [isAuthenticated, documentId]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
     const interval = setInterval(() => {
-      touchWorkspace(workspaceId).catch(() => {});
+      touchDocument(documentId).catch(() => {});
     }, 60_000);
     return () => clearInterval(interval);
-  }, [isAuthenticated, workspaceId]);
+  }, [isAuthenticated, documentId]);
 }

@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Impostazioni",
-    "description": "Personalizza le preferenze del tuo spazio di lavoro.",
+    "description": "Personalizza le preferenze del tuo documento.",
     "darkMode": {
       "label": "Modalita scura",
       "description": "Passa dal tema chiaro a quello scuro"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Cos'e questa app?",
-        "answer": "Referencer e uno strumento collaborativo per lo studio induttivo della Bibbia. Offre ai gruppi di studio uno spazio di lavoro condiviso dove possono leggere, annotare e discutere le Scritture insieme in tempo reale."
+        "answer": "Referencer e uno strumento collaborativo per lo studio induttivo della Bibbia. Offre ai gruppi di studio un documento condiviso dove possono leggere, annotare e discutere le Scritture insieme in tempo reale."
       },
       "inductiveStudy": {
         "question": "Cos'e lo studio induttivo della Bibbia?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Come funziona la collaborazione?",
-        "answer": "Ogni spazio di lavoro puo essere condiviso con altri tramite un link. Tutti i partecipanti vedono lo stesso testo e possono aggiungere le proprie annotazioni. Le modifiche si sincronizzano in tempo reale cosi tutti restano aggiornati."
+        "answer": "Ogni documento puo essere condiviso con altri tramite un link. Tutti i partecipanti vedono lo stesso testo e possono aggiungere le proprie annotazioni. Le modifiche si sincronizzano in tempo reale cosi tutti restano aggiornati."
       },
       "layers": {
         "question": "Cosa sono i livelli?",
@@ -44,8 +44,8 @@
         "answer": "Le frecce collegano due annotazioni per mostrare una relazione tra i brani — per esempio, collegare una parola ripetuta alla sua prima occorrenza, o collegare una profezia al suo compimento. Seleziona lo strumento freccia (o premi A), poi clicca su due annotazioni per tracciare un connettore."
       },
       "sharing": {
-        "question": "Come condivido uno spazio di lavoro?",
-        "answer": "Apri il pannello di gestione (premi M o clicca sull'icona del menu) e usa le opzioni di condivisione per generare un link. Chiunque abbia il link puo unirsi allo spazio di lavoro e collaborare."
+        "question": "Come condivido un documento?",
+        "answer": "Apri il pannello di gestione (premi M o clicca sull'icona del menu) e usa le opzioni di condivisione per generare un link. Chiunque abbia il link puo unirsi allo documento e collaborare."
       },
       "mobile": {
         "question": "Posso usarlo sul cellulare?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Scorciatoie da Tastiera",
-    "description": "Scorciatoie da tastiera disponibili per lo spazio di lavoro.",
-    "workspace": "Spazio di lavoro",
+    "description": "Scorciatoie da tastiera disponibili per lo documento.",
+    "document": "Documento",
     "cycleNextLayer": "Passa al livello successivo",
     "cyclePrevLayer": "Passa al livello precedente",
     "selectionTool": "Strumento di selezione",
@@ -81,8 +81,8 @@
     "subscript": "Pedice",
     "colorHighlight": "Evidenziazione colore",
     "general": "Generale",
-    "undo": "Annulla (spazio di lavoro quando bloccato)",
-    "redo": "Ripristina (spazio di lavoro quando bloccato)",
+    "undo": "Annulla (documento quando bloccato)",
+    "redo": "Ripristina (documento quando bloccato)",
     "headings": "Intestazioni",
     "heading": "Intestazione {{level}}",
     "listsAndBlocks": "Elenchi e blocchi",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Cerca annotazioni"
   },
   "share": {
-    "title": "Condividi spazio di lavoro",
-    "description": "Copia un link per condividere questo spazio di lavoro.",
+    "title": "Condividi documento",
+    "description": "Copia un link per condividere questo documento.",
     "readonlyLink": "Link di sola lettura",
     "editLink": "Link di modifica",
     "linkCopied": "Link copiato negli appunti.",

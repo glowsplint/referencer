@@ -1,4 +1,4 @@
-// Vertical toolbar on the left edge of the workspace. Contains meta actions
+// Vertical toolbar on the left edge of the document. Contains meta actions
 // (management pane toggle, keyboard shortcuts, FAQ, settings), annotation tools
 // (selection, arrow, highlight, comments, underline, eraser), and layout/lock
 // toggles. Tool buttons are disabled when the editor is unlocked or read-only.
@@ -36,7 +36,7 @@ import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { FAQDialog } from "./FAQDialog";
 import { ArrowStylePicker } from "./ArrowStylePicker";
 import { RecordingControls } from "./RecordingControls";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 import { useTour } from "@/contexts/TourContext";
 
 import type { ActiveTool, ArrowStyle } from "@/types/editor";
@@ -120,7 +120,7 @@ export function ButtonPane() {
     toggleCommentPlacement,
     loadDemoContent,
     demoLoaded,
-  } = useWorkspace();
+  } = useDocument();
 
   const { startTour } = useTour();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);

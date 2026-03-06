@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Paramètres",
-    "description": "Personnalisez les préférences de votre espace de travail.",
+    "description": "Personnalisez les préférences de votre document.",
     "darkMode": {
       "label": "Mode sombre",
       "description": "Basculer entre les thèmes clair et sombre"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Qu'est-ce que cette application ?",
-        "answer": "Referencer est un outil collaboratif pour l'étude inductive de la Bible. Il offre aux groupes d'étude un espace de travail partagé où ils peuvent lire, annoter et discuter des Écritures ensemble en temps réel."
+        "answer": "Referencer est un outil collaboratif pour l'étude inductive de la Bible. Il offre aux groupes d'étude un document partagé où ils peuvent lire, annoter et discuter des Écritures ensemble en temps réel."
       },
       "inductiveStudy": {
         "question": "Qu'est-ce que l'étude inductive de la Bible ?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Comment fonctionne la collaboration ?",
-        "answer": "Chaque espace de travail peut être partagé avec d'autres via un lien. Tous les participants voient le même texte et peuvent ajouter leurs propres annotations. Les modifications sont synchronisées en temps réel pour que tout le monde reste sur la même page."
+        "answer": "Chaque document peut être partagé avec d'autres via un lien. Tous les participants voient le même texte et peuvent ajouter leurs propres annotations. Les modifications sont synchronisées en temps réel pour que tout le monde reste sur la même page."
       },
       "layers": {
         "question": "Que sont les calques ?",
@@ -44,8 +44,8 @@
         "answer": "Les flèches relient deux annotations pour montrer une relation entre des passages — par exemple, lier un mot répété à sa première occurrence, ou connecter une prophétie à son accomplissement. Sélectionnez l'outil flèche (ou appuyez sur A), puis cliquez sur deux annotations pour tracer un connecteur."
       },
       "sharing": {
-        "question": "Comment partager un espace de travail ?",
-        "answer": "Ouvrez le panneau de gestion (appuyez sur M ou cliquez sur l'icône du menu) et utilisez les options de partage pour générer un lien. Toute personne disposant du lien peut rejoindre l'espace de travail et collaborer."
+        "question": "Comment partager un document ?",
+        "answer": "Ouvrez le panneau de gestion (appuyez sur M ou cliquez sur l'icône du menu) et utilisez les options de partage pour générer un lien. Toute personne disposant du lien peut rejoindre le document et collaborer."
       },
       "mobile": {
         "question": "Puis-je l'utiliser sur mobile ?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Raccourcis Clavier",
-    "description": "Raccourcis clavier disponibles pour l'espace de travail.",
-    "workspace": "Espace de travail",
+    "description": "Raccourcis clavier disponibles pour le document.",
+    "document": "Document",
     "cycleNextLayer": "Passer au calque suivant",
     "cyclePrevLayer": "Passer au calque précédent",
     "selectionTool": "Outil de sélection",
@@ -81,8 +81,8 @@
     "subscript": "Indice",
     "colorHighlight": "Surlignage couleur",
     "general": "Général",
-    "undo": "Annuler (espace de travail quand verrouillé)",
-    "redo": "Rétablir (espace de travail quand verrouillé)",
+    "undo": "Annuler (document quand verrouillé)",
+    "redo": "Rétablir (document quand verrouillé)",
     "headings": "Titres",
     "heading": "Titre {{level}}",
     "listsAndBlocks": "Listes et blocs",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Rechercher des annotations"
   },
   "share": {
-    "title": "Partager l'espace de travail",
-    "description": "Copiez un lien pour partager cet espace de travail.",
+    "title": "Partager le document",
+    "description": "Copiez un lien pour partager cet document.",
     "readonlyLink": "Lien en lecture seule",
     "editLink": "Lien d'édition",
     "linkCopied": "Lien copié dans le presse-papiers.",

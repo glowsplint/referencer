@@ -12,7 +12,7 @@ function DndConsumer() {
       <span data-testid="overTargetId">{String(overTargetId)}</span>
       <button
         data-testid="setDragState"
-        onClick={() => setDragState({ isDragging: true, dragType: "workspace", dragId: "ws-1" })}
+        onClick={() => setDragState({ isDragging: true, dragType: "document", dragId: "ws-1" })}
       />
       <button
         data-testid="setOverTarget"
@@ -52,7 +52,7 @@ describe("DndContext", () => {
       });
 
       expect(screen.getByTestId("isDragging")).toHaveTextContent("true");
-      expect(screen.getByTestId("dragType")).toHaveTextContent("workspace");
+      expect(screen.getByTestId("dragType")).toHaveTextContent("document");
       expect(screen.getByTestId("dragId")).toHaveTextContent("ws-1");
       // overTargetId was not set, should remain null
       expect(screen.getByTestId("overTargetId")).toHaveTextContent("null");

@@ -1,5 +1,5 @@
-// Dialog for sharing the workspace via URL. Creates share links, manages
-// active links and workspace members with role management.
+// Dialog for sharing the document via URL. Creates share links, manages
+// active links and document members with role management.
 // Unauthenticated users see a login prompt instead of share options.
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,14 +17,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/data/use-auth";
 import { apiPost } from "@/lib/api-client";
-import { useShareManagement, type WorkspaceMember } from "@/hooks/data/use-share-management";
+import { useShareManagement, type DocumentMember } from "@/hooks/data/use-share-management";
 
 type ExpiryOption = "never" | "7" | "30" | "90";
 
 interface ShareDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  workspaceId: string;
+  documentId: string;
 }
 
 function RoleBadge({ role, t }: { role: string; t: TFunction<"dialogs"> }) {
@@ -80,7 +80,7 @@ function RoleSelect({
   member,
   onChangeRole,
 }: {
-  member: WorkspaceMember;
+  member: DocumentMember;
   onChangeRole: (role: "editor" | "viewer") => void;
 }) {
   return (
@@ -113,11 +113,11 @@ function expiryOptionToDate(option: ExpiryOption): string | null {
   return date.toISOString();
 }
 
-export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProps) {
+export function ShareDialog({ open, onOpenChange, documentId }: ShareDialogProps) {
   const { t } = useTranslation("dialogs");
   const { user, isAuthenticated, login } = useAuth();
   const { links, members, isLoading, refetch, revokeLink, changeMemberRole, removeMember } =
-    useShareManagement(workspaceId, open && isAuthenticated);
+    useShareManagement(documentId, open && isAuthenticated);
   const [creatingLink, setCreatingLink] = useState(false);
   const [expiryOption, setExpiryOption] = useState<ExpiryOption>("never");
   const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
@@ -129,7 +129,7 @@ export function ShareDialog({ open, onOpenChange, workspaceId }: ShareDialogProp
     try {
       const expiresAt = expiryOptionToDate(expiryOption);
       const data = await apiPost<{ url: string }>("/api/share", {
-        workspaceId,
+        documentId,
         access,
         ...(expiresAt && { expiresAt }),
       });

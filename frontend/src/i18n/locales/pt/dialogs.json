@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Configurações",
-    "description": "Personalize as preferências do seu espaço de trabalho.",
+    "description": "Personalize as preferências do seu documento.",
     "darkMode": {
       "label": "Modo escuro",
       "description": "Alternar entre temas claro e escuro"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "O que é este aplicativo?",
-        "answer": "O Referencer é uma ferramenta colaborativa para estudo indutivo da Bíblia. Ele oferece aos grupos de estudo um espaço de trabalho compartilhado onde podem ler, anotar e discutir as Escrituras juntos em tempo real."
+        "answer": "O Referencer é uma ferramenta colaborativa para estudo indutivo da Bíblia. Ele oferece aos grupos de estudo um documento compartilhado onde podem ler, anotar e discutir as Escrituras juntos em tempo real."
       },
       "inductiveStudy": {
         "question": "O que é estudo indutivo da Bíblia?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Como funciona a colaboração?",
-        "answer": "Cada espaço de trabalho pode ser compartilhado com outros por meio de um link. Todos os participantes veem o mesmo texto e podem adicionar suas próprias anotações. As alterações são sincronizadas em tempo real para que todos fiquem na mesma página."
+        "answer": "Cada documento pode ser compartilhado com outros por meio de um link. Todos os participantes veem o mesmo texto e podem adicionar suas próprias anotações. As alterações são sincronizadas em tempo real para que todos fiquem na mesma página."
       },
       "layers": {
         "question": "O que são camadas?",
@@ -44,8 +44,8 @@
         "answer": "As setas conectam duas anotações para mostrar uma relação entre passagens — por exemplo, vincular uma palavra repetida à sua primeira ocorrência ou conectar uma profecia ao seu cumprimento. Selecione a ferramenta de seta (ou pressione A) e clique em duas anotações para desenhar um conector."
       },
       "sharing": {
-        "question": "Como compartilho um espaço de trabalho?",
-        "answer": "Abra o painel de gerenciamento (pressione M ou clique no ícone do menu) e use as opções de compartilhamento para gerar um link. Qualquer pessoa com o link pode entrar no espaço de trabalho e colaborar."
+        "question": "Como compartilho um documento?",
+        "answer": "Abra o painel de gerenciamento (pressione M ou clique no ícone do menu) e use as opções de compartilhamento para gerar um link. Qualquer pessoa com o link pode entrar no documento e colaborar."
       },
       "mobile": {
         "question": "Posso usar no celular?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Atalhos de Teclado",
-    "description": "Atalhos de teclado disponíveis para o espaço de trabalho.",
-    "workspace": "Espaço de trabalho",
+    "description": "Atalhos de teclado disponíveis para o documento.",
+    "document": "Documento",
     "cycleNextLayer": "Ir para a próxima camada",
     "cyclePrevLayer": "Ir para a camada anterior",
     "selectionTool": "Ferramenta de seleção",
@@ -81,8 +81,8 @@
     "subscript": "Subscrito",
     "colorHighlight": "Destaque de cor",
     "general": "Geral",
-    "undo": "Desfazer (espaço de trabalho quando bloqueado)",
-    "redo": "Refazer (espaço de trabalho quando bloqueado)",
+    "undo": "Desfazer (documento quando bloqueado)",
+    "redo": "Refazer (documento quando bloqueado)",
     "headings": "Títulos",
     "heading": "Título {{level}}",
     "listsAndBlocks": "Listas e blocos",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Pesquisar anotações"
   },
   "share": {
-    "title": "Compartilhar espaço de trabalho",
-    "description": "Copie um link para compartilhar este espaço de trabalho.",
+    "title": "Compartilhar documento",
+    "description": "Copie um link para compartilhar este documento.",
     "readonlyLink": "Link somente leitura",
     "editLink": "Link de edição",
     "linkCopied": "Link copiado para a área de transferência.",

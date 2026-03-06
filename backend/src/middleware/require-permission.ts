@@ -7,16 +7,16 @@ export function requirePermission(minimumRole: PermissionRole) {
     const user = c.get("user");
     if (!user) return c.json({ error: "Unauthorized" }, 401);
 
-    const workspaceId = c.req.param("id");
-    if (!workspaceId) return c.json({ error: "Workspace ID required" }, 400);
+    const documentId = c.req.param("id");
+    if (!documentId) return c.json({ error: "Document ID required" }, 400);
 
     let role: PermissionRole | null;
     try {
       const supabase = c.get("supabase");
-      role = await getPermission(supabase, workspaceId, user.id);
+      role = await getPermission(supabase, documentId, user.id);
     } catch {
       const log = c.get("logger");
-      log.error("Permission check failed", { userId: user.id, workspaceId });
+      log.error("Permission check failed", { userId: user.id, documentId });
       return c.json({ error: "Internal server error" }, 500);
     }
 
@@ -24,7 +24,7 @@ export function requirePermission(minimumRole: PermissionRole) {
       const log = c.get("logger");
       log.warn("Permission denied", {
         userId: user.id,
-        workspaceId,
+        documentId,
         requiredRole: minimumRole,
         userRole: role ?? "none",
         endpoint: c.req.path,

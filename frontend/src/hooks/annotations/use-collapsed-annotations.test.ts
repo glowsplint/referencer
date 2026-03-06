@@ -94,7 +94,7 @@ describe("useCollapsedAnnotations", () => {
     expect(result.current.collapsedIds.size).toBe(0);
   });
 
-  it("when different workspaceIds are used, then each has its own localStorage key", () => {
+  it("when different documentIds are used, then each has its own localStorage key", () => {
     const { result: r1 } = renderHook(() => useCollapsedAnnotations("ws-1"));
     const { result: r2 } = renderHook(() => useCollapsedAnnotations("ws-2"));
 

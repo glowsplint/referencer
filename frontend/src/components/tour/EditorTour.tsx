@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTourEngine } from "@/hooks/ui/use-tour-engine";
 import { useTour } from "@/contexts/TourContext";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 import { useIsBreakpoint } from "@/hooks/ui/use-is-breakpoint";
 import { EDITOR_TOUR_STEPS } from "./tour-steps";
 import { TourOverlay } from "./TourOverlay";
@@ -21,7 +21,7 @@ function dispatchAction(action: string | undefined, handlers: Record<string, () 
 export function EditorTour() {
   const { t, i18n } = useTranslation("tour");
   const { activeTourId, completeTour, isTourCompleted, startTour } = useTour();
-  const { readOnly, workspaceId } = useWorkspace();
+  const { readOnly, documentId } = useDocument();
   const isMobile = useIsBreakpoint("max", 768);
   const [shareOpen, setShareOpen] = useState(false);
   const prevStepRef = useRef<number>(-1);
@@ -121,8 +121,8 @@ export function EditorTour() {
         onBack={engine.back}
         onSkip={engine.skip}
       />
-      {workspaceId && (
-        <ShareDialog open={shareOpen} onOpenChange={setShareOpen} workspaceId={workspaceId} />
+      {documentId && (
+        <ShareDialog open={shareOpen} onOpenChange={setShareOpen} documentId={documentId} />
       )}
     </>
   );

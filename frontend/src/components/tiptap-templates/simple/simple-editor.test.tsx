@@ -112,10 +112,10 @@ vi.mock("@/components/tiptap-icons/link-icon", () => ({
   LinkIcon: () => null,
 }));
 
-// Mock workspace context
+// Mock document context
 const mockToggleFocusedPaneLocked = vi.fn();
-vi.mock("@/contexts/WorkspaceContext", () => ({
-  useWorkspace: () => ({
+vi.mock("@/contexts/DocumentContext", () => ({
+  useDocument: () => ({
     toggleFocusedPaneLocked: mockToggleFocusedPaneLocked,
     readOnly: false,
   }),

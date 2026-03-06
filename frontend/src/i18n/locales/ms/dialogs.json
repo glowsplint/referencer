@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Tetapan",
-    "description": "Sesuaikan keutamaan ruang kerja anda.",
+    "description": "Sesuaikan keutamaan dokumen anda.",
     "darkMode": {
       "label": "Mod gelap",
       "description": "Tukar antara tema cerah dan gelap"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Apakah aplikasi ini?",
-        "answer": "Referencer ialah alat kolaboratif untuk kajian Alkitab secara induktif. Ia menyediakan ruang kerja dikongsi untuk kumpulan kajian membaca, menganotasi, dan membincangkan Kitab Suci bersama-sama secara masa nyata."
+        "answer": "Referencer ialah alat kolaboratif untuk kajian Alkitab secara induktif. Ia menyediakan dokumen dikongsi untuk kumpulan kajian membaca, menganotasi, dan membincangkan Kitab Suci bersama-sama secara masa nyata."
       },
       "inductiveStudy": {
         "question": "Apakah kajian Alkitab induktif?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Bagaimanakah kolaborasi berfungsi?",
-        "answer": "Setiap ruang kerja boleh dikongsi dengan orang lain melalui pautan. Semua peserta melihat teks yang sama dan boleh menambah anotasi mereka sendiri. Perubahan disegerakkan secara masa nyata supaya semua orang sentiasa pada halaman yang sama."
+        "answer": "Setiap dokumen boleh dikongsi dengan orang lain melalui pautan. Semua peserta melihat teks yang sama dan boleh menambah anotasi mereka sendiri. Perubahan disegerakkan secara masa nyata supaya semua orang sentiasa pada halaman yang sama."
       },
       "layers": {
         "question": "Apakah lapisan?",
@@ -44,8 +44,8 @@
         "answer": "Anak panah menghubungkan dua anotasi untuk menunjukkan hubungan antara petikan — contohnya, menghubungkan perkataan berulang kepada kemunculan pertamanya, atau menghubungkan nubuatan kepada penggenapannya. Pilih alat anak panah (atau tekan A), kemudian klik dua anotasi untuk melukis penyambung."
       },
       "sharing": {
-        "question": "Bagaimana saya berkongsi ruang kerja?",
-        "answer": "Buka panel pengurusan (tekan M atau klik ikon menu) dan gunakan pilihan perkongsian untuk menjana pautan. Sesiapa sahaja yang mempunyai pautan boleh menyertai ruang kerja dan berkolaborasi."
+        "question": "Bagaimana saya berkongsi dokumen?",
+        "answer": "Buka panel pengurusan (tekan M atau klik ikon menu) dan gunakan pilihan perkongsian untuk menjana pautan. Sesiapa sahaja yang mempunyai pautan boleh menyertai dokumen dan berkolaborasi."
       },
       "mobile": {
         "question": "Bolehkah saya gunakan ini pada telefon bimbit?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Pintasan Papan Kekunci",
-    "description": "Pintasan papan kekunci yang tersedia untuk ruang kerja.",
-    "workspace": "Ruang Kerja",
+    "description": "Pintasan papan kekunci yang tersedia untuk dokumen.",
+    "document": "Dokumen",
     "cycleNextLayer": "Tukar ke lapisan seterusnya",
     "cyclePrevLayer": "Tukar ke lapisan sebelumnya",
     "selectionTool": "Alat pemilihan",
@@ -81,8 +81,8 @@
     "subscript": "Subskrip",
     "colorHighlight": "Sorotan warna",
     "general": "Umum",
-    "undo": "Buat asal (ruang kerja apabila dikunci)",
-    "redo": "Buat semula (ruang kerja apabila dikunci)",
+    "undo": "Buat asal (dokumen apabila dikunci)",
+    "redo": "Buat semula (dokumen apabila dikunci)",
     "headings": "Tajuk",
     "heading": "Tajuk {{level}}",
     "listsAndBlocks": "Senarai & Blok",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Cari anotasi"
   },
   "share": {
-    "title": "Kongsi ruang kerja",
-    "description": "Salin pautan untuk berkongsi ruang kerja ini.",
+    "title": "Kongsi dokumen",
+    "description": "Salin pautan untuk berkongsi dokumen ini.",
     "readonlyLink": "Pautan baca sahaja",
     "editLink": "Pautan suntingan",
     "linkCopied": "Pautan disalin ke papan keratan.",

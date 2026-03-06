@@ -1,4 +1,4 @@
-// Root application component. Composes the multi-pane editor workspace:
+// Root application component. Composes the multi-pane editor document:
 // toolbar, management panel, editor panes with dividers, annotation panel,
 // arrow overlay, and action console. Wires together all annotation tools
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
@@ -13,8 +13,8 @@ import { ManagementPaneDivider } from "./components/ui/ManagementPaneDivider";
 import { TitleBar, SimpleEditorToolbar, EditorPane } from "./components/tiptap-templates/simple";
 import { UnsavedBanner } from "./components/UnsavedBanner";
 import { TextHeader } from "./components/TextHeader";
-import { PLACEHOLDER_CONTENT } from "./data/default-workspace";
-import { useEditorWorkspace } from "./hooks/data/use-editor-workspace";
+import { PLACEHOLDER_CONTENT } from "./data/default-document";
+import { useEditorDocument } from "./hooks/data/use-editor-document";
 import { useWordSelection } from "./hooks/selection/use-word-selection";
 import { useDrawingMode } from "./hooks/tools/use-drawing-mode";
 import { useCommentMode } from "./hooks/tools/use-comment-mode";
@@ -30,7 +30,7 @@ import { useDragSelection } from "./hooks/selection/use-drag-selection";
 import { useUndoRedoKeyboard } from "./hooks/ui/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/ui/use-action-console";
 import { useIsBreakpoint } from "./hooks/ui/use-is-breakpoint";
-import { useWorkspaceAutosave } from "./hooks/data/use-workspace-autosave";
+import { useDocumentAutosave } from "./hooks/data/use-document-autosave";
 import { useRecordingManager } from "./hooks/recording/use-recording-manager";
 import { useAnnotationEdit } from "./hooks/data/use-annotation-edit";
 import { useStatusHints } from "./hooks/ui/use-status-hints";
@@ -48,13 +48,13 @@ import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
 import { Loader2, MessageSquare, X } from "lucide-react";
-import { WorkspaceProvider } from "./contexts/WorkspaceContext";
+import { DocumentProvider } from "./contexts/DocumentContext";
 import { RecordingProvider } from "./contexts/RecordingContext";
 import { PlaybackBar } from "./components/PlaybackBar";
 import { EditorTour } from "./components/tour/EditorTour";
 import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annotations";
 import { useCurrentUserName } from "./hooks/data/use-current-user-name";
-import { exportWorkspaceAsMarkdown } from "@/lib/export/export-markdown";
+import { exportDocumentAsMarkdown } from "@/lib/export/export-markdown";
 import { apiFetch } from "@/lib/api-client";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
 
@@ -171,11 +171,11 @@ function EditorCell({
 }
 
 interface AppProps {
-  workspaceId: string;
+  documentId: string;
   navigate: (hash: string) => void;
 }
 
-export function App({ workspaceId, navigate }: AppProps) {
+export function App({ documentId, navigate }: AppProps) {
   const [managementPaneWidth, setManagementPaneWidth] = useState(() => {
     const stored = localStorage.getItem(STORAGE_KEYS.MANAGEMENT_PANE_WIDTH);
     return stored ? Number(stored) : 250;
@@ -222,7 +222,7 @@ export function App({ workspaceId, navigate }: AppProps) {
   const [permissionRole, setPermissionRole] = useState<string | null>(null);
   useEffect(() => {
     const controller = new AbortController();
-    apiFetch<{ role: string }>(`/api/workspaces/${workspaceId}/permission`, {
+    apiFetch<{ role: string }>(`/api/documents/${documentId}/permission`, {
       signal: controller.signal,
     })
       .then((data) => setPermissionRole(data?.role ?? null))
@@ -231,10 +231,10 @@ export function App({ workspaceId, navigate }: AppProps) {
         setPermissionRole(null);
       });
     return () => controller.abort();
-  }, [workspaceId]);
+  }, [documentId]);
   const readOnly = permissionRole === "viewer";
-  useWorkspaceAutosave(workspaceId);
-  const workspace = useEditorWorkspace(workspaceId, readOnly);
+  useDocumentAutosave(documentId);
+  const docCtx = useEditorDocument(documentId, readOnly);
   const {
     settings,
     layers,
@@ -270,12 +270,12 @@ export function App({ workspaceId, navigate }: AppProps) {
     setActiveTool,
     history,
     unifiedUndo,
-  } = workspace;
+  } = docCtx;
 
   const [printTitle, setPrintTitle] = useState("Untitled");
   useEffect(() => {
-    if (!workspace.yjs.doc) return;
-    const meta = workspace.yjs.doc.getMap("workspace-meta");
+    if (!docCtx.yjs.doc) return;
+    const meta = docCtx.yjs.doc.getMap("document-meta");
     const existing = meta.get("title");
     if (typeof existing === "string" && existing) setPrintTitle(existing);
     const observer = () => {
@@ -284,17 +284,17 @@ export function App({ workspaceId, navigate }: AppProps) {
     };
     meta.observe(observer);
     return () => meta.unobserve(observer);
-  }, [workspace.yjs.doc]);
+  }, [docCtx.yjs.doc]);
 
   const handleExportMarkdown = useCallback(() => {
-    exportWorkspaceAsMarkdown({
+    exportDocumentAsMarkdown({
       editors: editorsRef.current,
       layers,
-      sectionNames: workspace.sectionNames,
+      sectionNames: docCtx.sectionNames,
       sectionVisibility,
       title: printTitle,
     });
-  }, [editorsRef, layers, workspace.sectionNames, sectionVisibility, printTitle]);
+  }, [editorsRef, layers, docCtx.sectionNames, sectionVisibility, printTitle]);
 
   const currentUserName = useCurrentUserName();
   const isMobile = useIsBreakpoint("max", 768);
@@ -302,35 +302,35 @@ export function App({ workspaceId, navigate }: AppProps) {
   const [mobileDialogDismissed, setMobileDialogDismissed] = useState(false);
   const [mobileAnnotationPanelOpen, setMobileAnnotationPanelOpen] = useState(false);
 
-  const { isPaneLocked, isAnyPaneLocked, activeEditorIndex } = workspace;
+  const { isPaneLocked, isAnyPaneLocked, activeEditorIndex } = docCtx;
   const focusedPaneLocked = isPaneLocked(activeEditorIndex);
   const anyPaneLocked = isAnyPaneLocked;
 
   useToolShortcuts({ isLocked: anyPaneLocked, setActiveTool });
   useToggleShortcuts({
-    toggleDarkMode: workspace.toggleDarkMode,
-    toggleMultipleRowsLayout: workspace.toggleMultipleRowsLayout,
-    toggleLocked: workspace.toggleFocusedPaneLocked,
-    toggleManagementPane: workspace.toggleManagementPane,
-    toggleCommentPlacement: workspace.toggleCommentPlacement,
-    addText: workspace.addEditor,
+    toggleDarkMode: docCtx.toggleDarkMode,
+    toggleMultipleRowsLayout: docCtx.toggleMultipleRowsLayout,
+    toggleLocked: docCtx.toggleFocusedPaneLocked,
+    toggleManagementPane: docCtx.toggleManagementPane,
+    toggleCommentPlacement: docCtx.toggleCommentPlacement,
+    addText: docCtx.addEditor,
   });
   useUndoRedoKeyboard(unifiedUndo);
 
   // Recording & playback
   const recordingContextValue = useRecordingManager({
-    doc: workspace.yjs.doc,
-    layers: workspace.layers,
-    sectionVisibility: workspace.sectionVisibility,
-    toggleLayerVisibility: workspace.toggleLayerVisibility,
-    toggleSectionVisibility: workspace.toggleSectionVisibility,
+    doc: docCtx.yjs.doc,
+    layers: docCtx.layers,
+    sectionVisibility: docCtx.sectionVisibility,
+    toggleLayerVisibility: docCtx.toggleLayerVisibility,
+    toggleSectionVisibility: docCtx.toggleSectionVisibility,
   });
 
   const actionConsole = useActionConsole();
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
   useForceSave({
-    wsProvider: workspace.yjs.wsProvider,
+    wsProvider: docCtx.yjs.wsProvider,
     setStatus,
     flashStatus,
     clearStatus,
@@ -340,7 +340,7 @@ export function App({ workspaceId, navigate }: AppProps) {
   const topRowRef = useRef<HTMLDivElement>(null);
   const bottomRowRef = useRef<HTMLDivElement>(null);
   const { collapsedIds, toggleCollapse, collapseAll, expandAll } =
-    useCollapsedAnnotations(workspaceId);
+    useCollapsedAnnotations(documentId);
   const confirmRef = useRef<() => void>(() => {}) as RefObject<() => void>;
 
   const { editingAnnotation, handleAnnotationBlur, handleAnnotationClick, onHighlightAdded } =
@@ -355,8 +355,8 @@ export function App({ workspaceId, navigate }: AppProps) {
       onEnter: useCallback(() => confirmRef.current(), []),
       onEscape: useCallback(() => {
         setActiveTool("selection");
-        workspace.setSelectedArrow(null);
-      }, [setActiveTool, workspace]),
+        docCtx.setSelectedArrow(null);
+      }, [setActiveTool, docCtx]),
     });
 
   const { drawingState, confirmSelection } = useDrawingMode({
@@ -364,7 +364,7 @@ export function App({ workspaceId, navigate }: AppProps) {
     activeTool: annotations.activeTool,
     selection,
     activeLayerId,
-    activeArrowStyle: workspace.activeArrowStyle,
+    activeArrowStyle: docCtx.activeArrowStyle,
     addLayer,
     addArrow,
     setStatus,
@@ -435,7 +435,7 @@ export function App({ workspaceId, navigate }: AppProps) {
     selection,
     selectionHidden,
     setStatus,
-    setSelectedArrow: workspace.setSelectedArrow,
+    setSelectedArrow: docCtx.setSelectedArrow,
     isRecording: recordingContextValue.recordings.isRecording,
   });
 
@@ -479,10 +479,10 @@ export function App({ workspaceId, navigate }: AppProps) {
   // Mutual exclusivity: selecting an arrow hides word selection
   const handleSetSelectedArrow = useCallback(
     (arrow: { layerId: string; arrowId: string } | null) => {
-      workspace.setSelectedArrow(arrow);
+      docCtx.setSelectedArrow(arrow);
       if (arrow) hideSelection();
     },
-    [workspace, hideSelection],
+    [docCtx, hideSelection],
   );
 
   const activeLayerColor = activeLayerId
@@ -579,12 +579,12 @@ export function App({ workspaceId, navigate }: AppProps) {
     editorKey: editorKeys[i],
     columnSplit,
     sectionVisible: sectionVisibility[i] !== false,
-    sectionName: workspace.sectionNames[i],
-    onUpdateName: (name: string) => workspace.updateSectionName(i, name),
+    sectionName: docCtx.sectionNames[i],
+    onUpdateName: (name: string) => docCtx.updateSectionName(i, name),
     isLocked: isPaneLocked(i),
     effectiveReadOnly,
     activeTool: annotations.activeTool,
-    fragment: workspace.yjs.getFragment(i),
+    fragment: docCtx.yjs.getFragment(i),
     onEditorMount: handleEditorMount,
     onFocus: handlePaneFocus,
     onMouseDown: handleMouseDown,
@@ -597,12 +597,12 @@ export function App({ workspaceId, navigate }: AppProps) {
     isDarkMode: settings.isDarkMode,
     removeArrow,
     sectionVisibility,
-    selectedArrowId: workspace.selectedArrow?.arrowId ?? null,
-    yjsSynced: workspace.readyForSeeding,
+    selectedArrowId: docCtx.selectedArrow?.arrowId ?? null,
+    yjsSynced: docCtx.readyForSeeding,
   });
 
   return (
-    <WorkspaceProvider value={workspace}>
+    <DocumentProvider value={docCtx}>
       <RecordingProvider value={recordingContextValue}>
         <Toaster />
         <EditorTour />
@@ -665,7 +665,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                         editorsRef={editorsRef}
                         containerRef={containerRef}
                         removeArrow={removeArrow}
-                        selectedArrow={workspace.selectedArrow}
+                        selectedArrow={docCtx.selectedArrow}
                         setSelectedArrow={handleSetSelectedArrow}
                         activeTool={annotations.activeTool}
                         sectionVisibility={sectionVisibility}
@@ -674,7 +674,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                         hideOffscreenArrows={settings.hideOffscreenArrows}
                       />
                     </ErrorBoundary>
-                    {workspace.demoLoading && (
+                    {docCtx.demoLoading && (
                       <div
                         className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm"
                         data-testid="demoLoadingOverlay"
@@ -771,9 +771,9 @@ export function App({ workspaceId, navigate }: AppProps) {
                                 }}
                               >
                                 <TextHeader
-                                  name={workspace.sectionNames[i]}
+                                  name={docCtx.sectionNames[i]}
                                   index={i}
-                                  onUpdateName={(name) => workspace.updateSectionName(i, name)}
+                                  onUpdateName={(name) => docCtx.updateSectionName(i, name)}
                                 />
                                 <div className="flex-1 min-h-0 overflow-hidden">
                                   <ErrorBoundary>
@@ -782,7 +782,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                                       activeTool={annotations.activeTool}
                                       content={PLACEHOLDER_CONTENT}
                                       index={i}
-                                      fragment={workspace.yjs.getFragment(i)}
+                                      fragment={docCtx.yjs.getFragment(i)}
                                       onEditorMount={handleEditorMount}
                                       onFocus={handlePaneFocus}
                                       onMouseDown={
@@ -807,8 +807,8 @@ export function App({ workspaceId, navigate }: AppProps) {
                                       isDarkMode={settings.isDarkMode}
                                       removeArrow={removeArrow}
                                       sectionVisibility={sectionVisibility}
-                                      selectedArrowId={workspace.selectedArrow?.arrowId ?? null}
-                                      yjsSynced={workspace.readyForSeeding}
+                                      selectedArrowId={docCtx.selectedArrow?.arrowId ?? null}
+                                      yjsSynced={docCtx.readyForSeeding}
                                     />
                                   </ErrorBoundary>
                                 </div>
@@ -845,7 +845,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                   <div className="hidden print:block w-56 flex-shrink-0 pl-4 print-annotations-container">
                     <PrintAnnotations
                       layers={layers}
-                      sectionNames={workspace.sectionNames}
+                      sectionNames={docCtx.sectionNames}
                       sectionVisibility={sectionVisibility}
                     />
                   </div>
@@ -909,6 +909,6 @@ export function App({ workspaceId, navigate }: AppProps) {
         </div>
         <PlaybackBar />
       </RecordingProvider>
-    </WorkspaceProvider>
+    </DocumentProvider>
   );
 }

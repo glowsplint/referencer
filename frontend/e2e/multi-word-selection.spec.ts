@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { setupWorkspace } from "./helpers";
+import { setupDocument } from "./helpers";
 
 async function clickWordInEditor(
   page: import("@playwright/test").Page,
@@ -17,7 +17,7 @@ async function clickWordInEditor(
 
 test.describe("when using Shift+Arrow for multi-word selection", () => {
   test.beforeEach(async ({ page }) => {
-    await setupWorkspace(page);
+    await setupDocument(page);
     // Hide default layers so their arrows/highlights don't interfere with tests
     for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
@@ -146,7 +146,7 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
 
 test.describe("when dragging to select multiple words", () => {
   test.beforeEach(async ({ page }) => {
-    await setupWorkspace(page);
+    await setupDocument(page);
     // Hide default layers so their annotations don't interfere with tests
     for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();
@@ -267,7 +267,7 @@ test.describe("when dragging to select multiple words", () => {
 
 test.describe("when editor state changes", () => {
   test.beforeEach(async ({ page }) => {
-    await setupWorkspace(page);
+    await setupDocument(page);
     // Hide default layers so their arrows/highlights don't interfere with tests
     for (let i = 0; i < 4; i++) {
       await page.getByTestId(`layerVisibility-${i}`).click();

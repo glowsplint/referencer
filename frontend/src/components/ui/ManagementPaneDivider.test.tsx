@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { ManagementPaneDivider } from "./ManagementPaneDivider";
 import { ManagementPane } from "../ManagementPane";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 
 function renderDivider(width = 250, onResize = vi.fn(), onResizeEnd = vi.fn()) {
   render(<ManagementPaneDivider width={width} onResize={onResize} onResizeEnd={onResizeEnd} />);
@@ -118,7 +118,7 @@ describe("ManagementPaneDivider", () => {
 describe("ManagementPane width prop", () => {
   describe("when width prop is provided", () => {
     it("then it applies as inline style", () => {
-      renderWithWorkspace(<ManagementPane width={320} />);
+      renderWithDocument(<ManagementPane width={320} />);
       const pane = screen.getByTestId("managementPane");
       expect(pane.style.width).toBe("320px");
     });
@@ -126,7 +126,7 @@ describe("ManagementPane width prop", () => {
 
   describe("when no width prop is provided", () => {
     it("then it defaults to 250px", () => {
-      renderWithWorkspace(<ManagementPane />);
+      renderWithDocument(<ManagementPane />);
       const pane = screen.getByTestId("managementPane");
       expect(pane.style.width).toBe("250px");
     });

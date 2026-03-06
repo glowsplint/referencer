@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { WorkspaceFolder } from "../types";
+import type { DocumentFolder } from "../types";
 
 const MAX_FOLDER_DEPTH = 10;
 
@@ -14,7 +14,7 @@ export async function getFolderDepth(
   while (currentId && depth < MAX_FOLDER_DEPTH + 1) {
     const { data, error }: { data: { parent_id: string | null } | null; error: unknown } =
       await supabase
-        .from("workspace_folder")
+        .from("document_folder")
         .select("parent_id")
         .eq("id", currentId)
         .eq("user_id", userId)
@@ -31,9 +31,9 @@ export async function getFolderDepth(
 export async function listUserFolders(
   supabase: SupabaseClient,
   userId: string,
-): Promise<WorkspaceFolder[]> {
+): Promise<DocumentFolder[]> {
   const { data, error } = await supabase
-    .from("workspace_folder")
+    .from("document_folder")
     .select("id, user_id, parent_id, name, created_at, updated_at, is_favorite")
     .eq("user_id", userId)
     .order("name", { ascending: true });
@@ -66,7 +66,7 @@ export async function createFolder(
     }
   }
 
-  const { error } = await supabase.from("workspace_folder").insert({
+  const { error } = await supabase.from("document_folder").insert({
     id,
     user_id: userId,
     parent_id: parentId,
@@ -83,7 +83,7 @@ export async function renameFolder(
   name: string,
 ): Promise<void> {
   const { error } = await supabase
-    .from("workspace_folder")
+    .from("document_folder")
     .update({ name, updated_at: new Date().toISOString() })
     .eq("id", folderId)
     .eq("user_id", userId);
@@ -97,7 +97,7 @@ export async function deleteFolder(
   folderId: string,
 ): Promise<void> {
   const { error } = await supabase
-    .from("workspace_folder")
+    .from("document_folder")
     .delete()
     .eq("id", folderId)
     .eq("user_id", userId);
@@ -112,7 +112,7 @@ export async function toggleFavoriteFolder(
   isFavorite: boolean,
 ): Promise<void> {
   const { error } = await supabase
-    .from("workspace_folder")
+    .from("document_folder")
     .update({ is_favorite: isFavorite, updated_at: new Date().toISOString() })
     .eq("id", folderId)
     .eq("user_id", userId);
@@ -126,7 +126,7 @@ async function getSubtreeDepth(
   userId: string,
 ): Promise<number> {
   const { data } = await supabase
-    .from("workspace_folder")
+    .from("document_folder")
     .select("id")
     .eq("parent_id", folderId)
     .eq("user_id", userId);
@@ -163,7 +163,7 @@ export async function moveFolderToFolder(
       }
       const { data, error }: { data: { parent_id: string | null } | null; error: unknown } =
         await supabase
-          .from("workspace_folder")
+          .from("document_folder")
           .select("parent_id")
           .eq("id", currentId)
           .eq("user_id", userId)
@@ -174,7 +174,7 @@ export async function moveFolderToFolder(
   }
 
   const { error } = await supabase
-    .from("workspace_folder")
+    .from("document_folder")
     .update({ parent_id: newParentId, updated_at: new Date().toISOString() })
     .eq("id", folderId)
     .eq("user_id", userId);
@@ -182,31 +182,31 @@ export async function moveFolderToFolder(
   if (error) throw new Error(`Failed to move folder: ${error.message}`);
 }
 
-export async function moveWorkspaceToFolder(
+export async function moveDocumentToFolder(
   supabase: SupabaseClient,
   userId: string,
-  workspaceId: string,
+  documentId: string,
   folderId: string,
 ): Promise<void> {
   const { error } = await supabase
-    .from("user_workspace")
+    .from("user_document")
     .update({ folder_id: folderId })
     .eq("user_id", userId)
-    .eq("workspace_id", workspaceId);
+    .eq("document_id", documentId);
 
-  if (error) throw new Error(`Failed to move workspace to folder: ${error.message}`);
+  if (error) throw new Error(`Failed to move document to folder: ${error.message}`);
 }
 
-export async function unfileWorkspace(
+export async function unfileDocument(
   supabase: SupabaseClient,
   userId: string,
-  workspaceId: string,
+  documentId: string,
 ): Promise<void> {
   const { error } = await supabase
-    .from("user_workspace")
+    .from("user_document")
     .update({ folder_id: null })
     .eq("user_id", userId)
-    .eq("workspace_id", workspaceId);
+    .eq("document_id", documentId);
 
-  if (error) throw new Error(`Failed to unfile workspace: ${error.message}`);
+  if (error) throw new Error(`Failed to unfile document: ${error.message}`);
 }

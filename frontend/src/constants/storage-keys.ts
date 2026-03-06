@@ -7,7 +7,7 @@ export const STORAGE_KEYS = {
   HUB_VIEW_MODE: "hub-view-mode",
   /** Hub page sort configuration. */
   HUB_SORT: "hub-sort",
-  /** Prefix for collapsed annotation IDs, suffixed with workspaceId. */
+  /** Prefix for collapsed annotation IDs, suffixed with documentId. */
   COLLAPSED_PREFIX: "referencer-collapsed-",
   /** User-defined custom colors. */
   CUSTOM_COLORS: "referencer-custom-colors",

@@ -9,7 +9,7 @@ export interface ShareLink {
   createdBy: string | null;
 }
 
-export interface WorkspaceMember {
+export interface DocumentMember {
   userId: string;
   role: "owner" | "editor" | "viewer";
   name: string;
@@ -17,9 +17,9 @@ export interface WorkspaceMember {
   avatarUrl: string;
 }
 
-export function useShareManagement(workspaceId: string, enabled: boolean) {
+export function useShareManagement(documentId: string, enabled: boolean) {
   const [links, setLinks] = useState<ShareLink[]>([]);
-  const [members, setMembers] = useState<WorkspaceMember[]>([]);
+  const [members, setMembers] = useState<DocumentMember[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -27,11 +27,9 @@ export function useShareManagement(workspaceId: string, enabled: boolean) {
     setIsLoading(true);
     try {
       const [linksData, membersData] = await Promise.all([
-        apiFetch<ShareLink[]>(`/api/workspaces/${workspaceId}/links`).catch(
-          () => [] as ShareLink[],
-        ),
-        apiFetch<WorkspaceMember[]>(`/api/workspaces/${workspaceId}/members`).catch(
-          () => [] as WorkspaceMember[],
+        apiFetch<ShareLink[]>(`/api/documents/${documentId}/links`).catch(() => [] as ShareLink[]),
+        apiFetch<DocumentMember[]>(`/api/documents/${documentId}/members`).catch(
+          () => [] as DocumentMember[],
         ),
       ]);
       setLinks(linksData ?? []);
@@ -39,7 +37,7 @@ export function useShareManagement(workspaceId: string, enabled: boolean) {
     } finally {
       setIsLoading(false);
     }
-  }, [workspaceId, enabled]);
+  }, [documentId, enabled]);
 
   useEffect(() => {
     fetchData();
@@ -49,20 +47,20 @@ export function useShareManagement(workspaceId: string, enabled: boolean) {
     async (code: string) => {
       setLinks((prev) => prev.filter((l) => l.code !== code));
       try {
-        await apiDelete(`/api/workspaces/${workspaceId}/links/${code}`);
+        await apiDelete(`/api/documents/${documentId}/links/${code}`);
       } catch {
         fetchData();
         throw new Error("revoke failed");
       }
     },
-    [workspaceId, fetchData],
+    [documentId, fetchData],
   );
 
   const changeMemberRole = useCallback(
     async (userId: string, role: "editor" | "viewer") => {
       setMembers((prev) => prev.map((m) => (m.userId === userId ? { ...m, role } : m)));
       try {
-        await apiPatch(`/api/workspaces/${workspaceId}/members/${userId}`, {
+        await apiPatch(`/api/documents/${documentId}/members/${userId}`, {
           role,
         });
       } catch {
@@ -70,20 +68,20 @@ export function useShareManagement(workspaceId: string, enabled: boolean) {
         throw new Error("role change failed");
       }
     },
-    [workspaceId, fetchData],
+    [documentId, fetchData],
   );
 
   const removeMember = useCallback(
     async (userId: string) => {
       setMembers((prev) => prev.filter((m) => m.userId !== userId));
       try {
-        await apiDelete(`/api/workspaces/${workspaceId}/members/${userId}`);
+        await apiDelete(`/api/documents/${documentId}/members/${userId}`);
       } catch {
         fetchData();
         throw new Error("remove failed");
       }
     },
-    [workspaceId, fetchData],
+    [documentId, fetchData],
   );
 
   return {

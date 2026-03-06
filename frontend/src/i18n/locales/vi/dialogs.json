@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Cài đặt",
-    "description": "Tùy chỉnh các thiết lập không gian làm việc của bạn.",
+    "description": "Tùy chỉnh các thiết lập tài liệu của bạn.",
     "darkMode": {
       "label": "Chế độ tối",
       "description": "Chuyển đổi giữa giao diện sáng và tối"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Ứng dụng này là gì?",
-        "answer": "Referencer là một công cụ cộng tác để nghiên cứu Kinh Thánh theo phương pháp quy nạp. Nó cung cấp cho các nhóm học một không gian làm việc chung để đọc, chú thích và thảo luận Kinh Thánh cùng nhau trong thời gian thực."
+        "answer": "Referencer là một công cụ cộng tác để nghiên cứu Kinh Thánh theo phương pháp quy nạp. Nó cung cấp cho các nhóm học một tài liệu chung để đọc, chú thích và thảo luận Kinh Thánh cùng nhau trong thời gian thực."
       },
       "inductiveStudy": {
         "question": "Nghiên cứu Kinh Thánh quy nạp là gì?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Cộng tác hoạt động như thế nào?",
-        "answer": "Mỗi không gian làm việc có thể được chia sẻ với người khác qua liên kết. Tất cả người tham gia đều thấy cùng một văn bản và có thể thêm chú thích của riêng mình. Các thay đổi được đồng bộ trong thời gian thực để mọi người luôn cập nhật."
+        "answer": "Mỗi tài liệu có thể được chia sẻ với người khác qua liên kết. Tất cả người tham gia đều thấy cùng một văn bản và có thể thêm chú thích của riêng mình. Các thay đổi được đồng bộ trong thời gian thực để mọi người luôn cập nhật."
       },
       "layers": {
         "question": "Lớp là gì?",
@@ -44,8 +44,8 @@
         "answer": "Mũi tên kết nối hai chú thích để thể hiện mối quan hệ giữa các đoạn văn — ví dụ, liên kết một từ lặp lại với lần xuất hiện đầu tiên, hoặc kết nối một lời tiên tri với sự ứng nghiệm. Chọn công cụ mũi tên (hoặc nhấn A), sau đó nhấp vào hai chú thích để vẽ đường nối."
       },
       "sharing": {
-        "question": "Làm thế nào để chia sẻ không gian làm việc?",
-        "answer": "Mở bảng quản lý (nhấn M hoặc nhấp vào biểu tượng menu) và sử dụng tùy chọn chia sẻ để tạo liên kết. Bất kỳ ai có liên kết đều có thể tham gia không gian làm việc và cộng tác."
+        "question": "Làm thế nào để chia sẻ tài liệu?",
+        "answer": "Mở bảng quản lý (nhấn M hoặc nhấp vào biểu tượng menu) và sử dụng tùy chọn chia sẻ để tạo liên kết. Bất kỳ ai có liên kết đều có thể tham gia tài liệu và cộng tác."
       },
       "mobile": {
         "question": "Tôi có thể sử dụng trên điện thoại không?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Phím tắt",
-    "description": "Các phím tắt có sẵn trong không gian làm việc.",
-    "workspace": "Không gian làm việc",
+    "description": "Các phím tắt có sẵn trong tài liệu.",
+    "document": "Tài liệu",
     "cycleNextLayer": "Chuyển sang lớp tiếp theo",
     "cyclePrevLayer": "Chuyển sang lớp trước",
     "selectionTool": "Công cụ chọn",
@@ -81,8 +81,8 @@
     "subscript": "Chỉ số dưới",
     "colorHighlight": "Đánh dấu màu",
     "general": "Chung",
-    "undo": "Hoàn tác (không gian làm việc khi khóa)",
-    "redo": "Làm lại (không gian làm việc khi khóa)",
+    "undo": "Hoàn tác (tài liệu khi khóa)",
+    "redo": "Làm lại (tài liệu khi khóa)",
     "headings": "Tiêu đề",
     "heading": "Tiêu đề {{level}}",
     "listsAndBlocks": "Danh sách & Khối",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Tìm kiếm chú thích"
   },
   "share": {
-    "title": "Chia sẻ không gian làm việc",
-    "description": "Sao chép liên kết để chia sẻ không gian làm việc này.",
+    "title": "Chia sẻ tài liệu",
+    "description": "Sao chép liên kết để chia sẻ tài liệu này.",
     "readonlyLink": "Liên kết chỉ đọc",
     "editLink": "Liên kết chỉnh sửa",
     "linkCopied": "Đã sao chép liên kết vào bộ nhớ tạm.",

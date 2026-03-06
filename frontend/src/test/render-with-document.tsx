@@ -1,15 +1,15 @@
 import { render } from "@testing-library/react";
 import { vi } from "vitest";
-import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { DocumentProvider } from "@/contexts/DocumentContext";
 import { RecordingProvider } from "@/contexts/RecordingContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { TourProvider } from "@/contexts/TourContext";
-import type { WorkspaceContextValue } from "@/contexts/WorkspaceContext";
+import type { DocumentContextValue } from "@/contexts/DocumentContext";
 import type { RecordingContextValue } from "@/contexts/RecordingContext";
 
-export function makeMockWorkspace(
-  overrides: Partial<WorkspaceContextValue> = {},
-): WorkspaceContextValue {
+export function makeMockDocument(
+  overrides: Partial<DocumentContextValue> = {},
+): DocumentContextValue {
   return {
     settings: {
       isDarkMode: false,
@@ -26,7 +26,7 @@ export function makeMockWorkspace(
     editorCount: 1,
     activeEditor: null,
     editorWidths: [100],
-    workspaceId: "test-workspace-id",
+    documentId: "test-document-id",
     readOnly: false,
     isManagementPaneOpen: false,
     toggleDarkMode: vi.fn(),
@@ -119,7 +119,7 @@ export function makeMockWorkspace(
       canRedo: false,
     },
     ...overrides,
-  } as WorkspaceContextValue;
+  } as DocumentContextValue;
 }
 
 export function makeMockRecordingContext(): RecordingContextValue {
@@ -156,22 +156,22 @@ export function makeMockRecordingContext(): RecordingContextValue {
   };
 }
 
-export function renderWithWorkspace(
+export function renderWithDocument(
   ui: React.ReactElement,
-  overrides: Partial<WorkspaceContextValue> = {},
+  overrides: Partial<DocumentContextValue> = {},
 ) {
-  const workspace = makeMockWorkspace(overrides);
+  const docCtx = makeMockDocument(overrides);
   const recordingContext = makeMockRecordingContext();
   return {
     ...render(
       <AuthProvider>
         <TourProvider>
-          <WorkspaceProvider value={workspace}>
+          <DocumentProvider value={docCtx}>
             <RecordingProvider value={recordingContext}>{ui}</RecordingProvider>
-          </WorkspaceProvider>
+          </DocumentProvider>
         </TourProvider>
       </AuthProvider>,
     ),
-    workspace,
+    document: docCtx,
   };
 }

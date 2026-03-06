@@ -6,7 +6,7 @@ import {
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { useDndContext } from "@/contexts/DndContext";
 
-export type DragItemType = "workspace" | "folder";
+export type DragItemType = "document" | "folder";
 
 export interface DragItem {
   type: DragItemType;

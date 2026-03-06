@@ -1,5 +1,5 @@
-// React hook for managing a Yjs workspace provider.
-// Creates and tears down Y.Doc + WebsocketProvider per workspace ID.
+// React hook for managing a Yjs document provider.
+// Creates and tears down Y.Doc + WebsocketProvider per document ID.
 // Fetches a JWT ticket before connecting, and refreshes it proactively.
 //
 // KNOWN ISSUE: In production, the ws-ticket POST may fail silently when the
@@ -7,11 +7,11 @@
 // When this happens, the WebSocket connects without a token and gets 401.
 // The provider falls back to local-only mode (synced=true via connection-error).
 import { useEffect, useRef, useState, useCallback } from "react";
-import { createWorkspaceProvider, type WorkspaceProvider } from "@/lib/yjs/provider";
+import { createDocumentProvider, type DocumentProvider } from "@/lib/yjs/provider";
 import { apiPost } from "@/lib/api-client";
 
-export function useYjs(workspaceId: string) {
-  const providerRef = useRef<WorkspaceProvider | null>(null);
+export function useYjs(documentId: string) {
+  const providerRef = useRef<DocumentProvider | null>(null);
   const [connected, setConnected] = useState(false);
   const [synced, setSynced] = useState(false);
 
@@ -21,7 +21,7 @@ export function useYjs(workspaceId: string) {
 
     async function fetchTicket(): Promise<string | undefined> {
       try {
-        const res = await apiPost<{ ticket: string }>("/auth/ws-ticket", { room: workspaceId });
+        const res = await apiPost<{ ticket: string }>("/auth/ws-ticket", { room: documentId });
         return res.ticket;
       } catch {
         return undefined;
@@ -41,7 +41,7 @@ export function useYjs(workspaceId: string) {
       const token = await fetchTicket();
       if (cancelled) return;
 
-      const provider = createWorkspaceProvider(workspaceId, token);
+      const provider = createDocumentProvider(documentId, token);
       providerRef.current = provider;
 
       const onStatus = ({ status }: { status: string }) => {
@@ -87,7 +87,7 @@ export function useYjs(workspaceId: string) {
       setConnected(false);
       setSynced(false);
     };
-  }, [workspaceId]);
+  }, [documentId]);
 
   const getFragment = useCallback(
     (index: number) => providerRef.current?.getFragment(index) ?? null,

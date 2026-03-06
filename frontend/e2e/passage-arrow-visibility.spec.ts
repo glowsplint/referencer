@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { setupWorkspace } from "./helpers";
+import { setupDocument } from "./helpers";
 
 // Click near the top of the paragraph's first line to avoid the arrow style
 // picker overlay that appears when the arrow tool is activated.
@@ -67,7 +67,7 @@ function parseArrowCoords(d: string): number[] {
 
 test.describe("when toggling passage visibility with arrows (2 editors)", () => {
   test.beforeEach(async ({ page }) => {
-    await setupWorkspace(page);
+    await setupDocument(page);
 
     // Hide default layers so their arrows/highlights don't interfere with tests
     for (let i = 0; i < 4; i++) {
@@ -264,7 +264,7 @@ test.describe("when toggling passage visibility with arrows (2 editors)", () => 
 
 test.describe("when toggling passage visibility with arrows (3 editors)", () => {
   test.beforeEach(async ({ page }) => {
-    await setupWorkspace(page);
+    await setupDocument(page);
 
     // Hide default layers so their arrows/highlights don't interfere with tests
     for (let i = 0; i < 4; i++) {

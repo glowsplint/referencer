@@ -1,25 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { WorkspaceCard } from "./WorkspaceCard";
+import { DocumentListItem } from "./DocumentListItem";
 import { DndProvider } from "@/contexts/DndContext";
 import { SelectionProvider } from "@/contexts/SelectionContext";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { DocumentItem } from "@/lib/document-client";
 
 vi.mock("@/lib/annotation/format-relative-time", () => ({
-  formatRelativeTime: () => "2h ago",
+  formatRelativeTime: () => "3d ago",
 }));
 
-const workspace: WorkspaceItem = {
-  workspaceId: "ws-1",
-  title: "Test Workspace",
+const testDoc: DocumentItem = {
+  documentId: "ws-2",
+  title: "List Document",
   createdAt: "2026-01-01T00:00:00Z",
-  updatedAt: "2026-01-02T00:00:00Z",
+  updatedAt: "2026-01-03T00:00:00Z",
   isFavorite: false,
   folderId: null,
 };
 
-describe("WorkspaceCard", () => {
+describe("DocumentListItem", () => {
   let onOpen: ReturnType<typeof vi.fn>;
   let onRename: ReturnType<typeof vi.fn>;
   let onDuplicate: ReturnType<typeof vi.fn>;
@@ -34,15 +34,15 @@ describe("WorkspaceCard", () => {
     onToggleFavorite = vi.fn();
   });
 
-  function renderCard(overrides?: Partial<WorkspaceItem>) {
-    const ws = { ...workspace, ...overrides };
-    const orderedIds = [ws.workspaceId];
-    const itemTypes = new Map([[ws.workspaceId, "workspace" as const]]);
+  function renderListItem(overrides?: Partial<DocumentItem>) {
+    const ws = { ...testDoc, ...overrides };
+    const orderedIds = [ws.documentId];
+    const itemTypes = new Map([[ws.documentId, "document" as const]]);
     return render(
       <DndProvider>
         <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
-          <WorkspaceCard
-            workspace={ws}
+          <DocumentListItem
+            document={ws}
             onOpen={onOpen}
             onRename={onRename}
             onDuplicate={onDuplicate}
@@ -57,29 +57,30 @@ describe("WorkspaceCard", () => {
   }
 
   describe("when rendered", () => {
-    it("then shows the workspace title and last modified time", () => {
-      renderCard();
-      expect(screen.getByText("Test Workspace")).toBeInTheDocument();
-      expect(screen.getByText(/2h ago/)).toBeInTheDocument();
+    it("then shows the document title and relative time", () => {
+      renderListItem();
+      expect(screen.getByText("List Document")).toBeInTheDocument();
+      const dateElements = screen.getAllByText("3d ago");
+      expect(dateElements.length).toBeGreaterThanOrEqual(1);
     });
 
-    it("then shows both created and modified dates", () => {
-      renderCard();
-      expect(screen.getByText(/Modified 2h ago/)).toBeInTheDocument();
-      expect(screen.getByText(/Created 2h ago/)).toBeInTheDocument();
+    it("then shows created and modified dates", () => {
+      renderListItem();
+      const dateElements = screen.getAllByText("3d ago");
+      expect(dateElements.length).toBeGreaterThanOrEqual(2);
     });
   });
 
-  describe("when workspace has an owner", () => {
+  describe("when document has an owner", () => {
     it("then shows the owner name and avatar", () => {
-      renderCard();
+      renderListItem();
       expect(screen.getByText("Test User")).toBeInTheDocument();
       const avatar = document.querySelector("img[src='https://example.com/avatar.jpg']");
       expect(avatar).toBeInTheDocument();
     });
 
     it("then falls back to initials when avatar image fails to load", () => {
-      renderCard();
+      renderListItem();
       const avatar = document.querySelector(
         "img[src='https://example.com/avatar.jpg']",
       ) as HTMLImageElement;
@@ -94,13 +95,13 @@ describe("WorkspaceCard", () => {
     });
 
     it("then shows initials when no avatar URL is provided", () => {
-      const orderedIds = [workspace.workspaceId];
-      const itemTypes = new Map([[workspace.workspaceId, "workspace" as const]]);
+      const orderedIds = [testDoc.documentId];
+      const itemTypes = new Map([[testDoc.documentId, "document" as const]]);
       render(
         <DndProvider>
           <SelectionProvider orderedIds={orderedIds} itemTypes={itemTypes}>
-            <WorkspaceCard
-              workspace={workspace}
+            <DocumentListItem
+              document={testDoc}
               onOpen={onOpen}
               onRename={onRename}
               onDuplicate={onDuplicate}
@@ -115,12 +116,12 @@ describe("WorkspaceCard", () => {
     });
   });
 
-  describe("when the card is double-clicked", () => {
+  describe("when the list item is double-clicked", () => {
     it("then calls onOpen", async () => {
       const user = userEvent.setup();
-      renderCard();
+      renderListItem();
 
-      await user.dblClick(screen.getByTestId("workspaceCard-ws-1"));
+      await user.dblClick(screen.getByTestId("documentListItem-ws-2"));
 
       expect(onOpen).toHaveBeenCalledTimes(1);
     });
@@ -129,9 +130,9 @@ describe("WorkspaceCard", () => {
   describe("when the menu trigger is clicked", () => {
     it("then does not call onOpen", async () => {
       const user = userEvent.setup();
-      renderCard();
+      renderListItem();
 
-      await user.click(screen.getByTestId("workspaceCardMenu"));
+      await user.click(screen.getByTestId("documentListItemMenu"));
 
       expect(onOpen).not.toHaveBeenCalled();
     });
@@ -140,9 +141,9 @@ describe("WorkspaceCard", () => {
   describe("when Open is selected from the dropdown menu", () => {
     it("then calls onOpen", async () => {
       const user = userEvent.setup();
-      renderCard();
+      renderListItem();
 
-      await user.click(screen.getByTestId("workspaceCardMenu"));
+      await user.click(screen.getByTestId("documentListItemMenu"));
       const openItem = await screen.findByRole("menuitem", { name: /open/i });
       await user.click(openItem);
 
@@ -156,9 +157,9 @@ describe("WorkspaceCard", () => {
   describe("when Rename is selected from the dropdown menu", () => {
     it("then calls onRename without calling onOpen", async () => {
       const user = userEvent.setup();
-      renderCard();
+      renderListItem();
 
-      await user.click(screen.getByTestId("workspaceCardMenu"));
+      await user.click(screen.getByTestId("documentListItemMenu"));
       const renameItem = await screen.findByRole("menuitem", { name: /rename/i });
       await user.click(renameItem);
 
@@ -170,9 +171,9 @@ describe("WorkspaceCard", () => {
   describe("when Duplicate is selected from the dropdown menu", () => {
     it("then calls onDuplicate without calling onOpen", async () => {
       const user = userEvent.setup();
-      renderCard();
+      renderListItem();
 
-      await user.click(screen.getByTestId("workspaceCardMenu"));
+      await user.click(screen.getByTestId("documentListItemMenu"));
       const duplicateItem = await screen.findByRole("menuitem", { name: /duplicate/i });
       await user.click(duplicateItem);
 
@@ -184,9 +185,9 @@ describe("WorkspaceCard", () => {
   describe("when Delete is selected from the dropdown menu", () => {
     it("then calls onDelete without calling onOpen", async () => {
       const user = userEvent.setup();
-      renderCard();
+      renderListItem();
 
-      await user.click(screen.getByTestId("workspaceCardMenu"));
+      await user.click(screen.getByTestId("documentListItemMenu"));
       const deleteItem = await screen.findByRole("menuitem", { name: /delete/i });
       await user.click(deleteItem);
 
@@ -196,18 +197,18 @@ describe("WorkspaceCard", () => {
   });
 
   describe("when favorite toggle is clicked", () => {
-    it("then calls onToggleFavorite with the workspace ID and new state", async () => {
+    it("then calls onToggleFavorite with the document ID and new state", async () => {
       const user = userEvent.setup();
-      renderCard();
+      renderListItem();
 
       await user.click(screen.getByTestId("favoriteToggle"));
 
-      expect(onToggleFavorite).toHaveBeenCalledWith("ws-1", true);
+      expect(onToggleFavorite).toHaveBeenCalledWith("ws-2", true);
     });
 
     it("then does not call onOpen", async () => {
       const user = userEvent.setup();
-      renderCard();
+      renderListItem();
 
       await user.click(screen.getByTestId("favoriteToggle"));
 
@@ -215,9 +216,9 @@ describe("WorkspaceCard", () => {
     });
   });
 
-  describe("when workspace title is empty", () => {
+  describe("when document title is empty", () => {
     it("then renders 'Untitled' as the title", () => {
-      renderCard({ title: "" });
+      renderListItem({ title: "" });
       expect(screen.getByText("Untitled")).toBeInTheDocument();
     });
   });

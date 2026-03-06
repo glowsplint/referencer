@@ -1,4 +1,4 @@
-// Central workspace hook that composes settings, layers, editors, action history,
+// Central document hook that composes settings, layers, editors, action history,
 // and Yjs CRDT collaboration into a single API. All data (text, annotations,
 // layers) is synced via Yjs shared types through the collab server.
 // All collaboration uses Yjs observe/transact.
@@ -17,10 +17,10 @@ import {
   createDefaultLayers,
   DEFAULT_TEXT_CONTENTS,
   DEFAULT_SECTION_NAMES,
-} from "@/data/default-workspace";
+} from "@/data/default-document";
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
 
-export function useEditorWorkspace(workspaceId?: string | null, readOnly = false) {
+export function useEditorDocument(documentId?: string | null, readOnly = false) {
   const settingsHook = useSettings();
   const rawEditorsHook = useEditors();
   const history = useActionHistory();
@@ -28,7 +28,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const trackedEditorsHook = useTrackedEditors(rawEditorsHook, history);
 
   // Yjs provider for all CRDT collaboration (text + annotations)
-  const yjs = useYjs(workspaceId ?? "default");
+  const yjs = useYjs(documentId ?? "default");
 
   // Yjs-backed layers for annotations (pass editorsRef for proper ProseMirror<->Yjs position mapping)
   const yjsLayers = useYjsLayers(yjs.doc, trackedEditorsHook.editorsRef);
@@ -40,7 +40,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
   const unifiedUndo = useUnifiedUndo(yjsUndo, history);
 
   // Offline persistence via IndexedDB
-  const { idbSynced } = useYjsOffline(yjs.doc, workspaceId ?? "default");
+  const { idbSynced } = useYjsOffline(yjs.doc, documentId ?? "default");
 
   // True when both WebSocket (or connection-error fallback) AND IndexedDB have
   // finished loading. Seeding must wait for both to avoid overwriting persisted
@@ -528,7 +528,7 @@ export function useEditorWorkspace(workspaceId?: string | null, readOnly = false
     loadDemoContent,
     demoLoaded,
     demoLoading,
-    workspaceId: workspaceId ?? null,
+    documentId: documentId ?? null,
     readOnly,
     isManagementPaneOpen,
     toggleManagementPane,

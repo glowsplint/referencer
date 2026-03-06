@@ -33,14 +33,14 @@ vi.mock("@/contexts/TourContext", () => ({
   }),
 }));
 
-// WorkspaceContext
+// DocumentContext
 let mockReadOnly = false;
-let mockWorkspaceId: string | null = "test-workspace-id";
+let mockDocumentId: string | null = "test-document-id";
 
-vi.mock("@/contexts/WorkspaceContext", () => ({
-  useWorkspace: () => ({
+vi.mock("@/contexts/DocumentContext", () => ({
+  useDocument: () => ({
     readOnly: mockReadOnly,
-    workspaceId: mockWorkspaceId,
+    documentId: mockDocumentId,
   }),
 }));
 
@@ -95,12 +95,12 @@ vi.mock("./TourOverlay", () => ({
 vi.mock("@/components/ShareDialog", () => ({
   ShareDialog: ({
     open,
-    workspaceId,
+    documentId,
   }: {
     open: boolean;
     onOpenChange: (v: boolean) => void;
-    workspaceId: string;
-  }) => <div data-testid="shareDialog" data-open={String(open)} data-workspace-id={workspaceId} />,
+    documentId: string;
+  }) => <div data-testid="shareDialog" data-open={String(open)} data-document-id={documentId} />,
 }));
 
 // ---------------------------------------------------------------------------
@@ -112,7 +112,7 @@ const SHARE_STEP_INDEX = 6; // Index of the share step in EDITOR_TOUR_STEPS
 function resetMocks() {
   mockActiveTourId = null;
   mockReadOnly = false;
-  mockWorkspaceId = "test-workspace-id";
+  mockDocumentId = "test-document-id";
   mockIsMobile = false;
   mockLanguage = "en";
   mockIsTourCompleted.mockReturnValue(false);
@@ -433,23 +433,23 @@ describe("EditorTour", () => {
     });
   });
 
-  describe("when workspaceId is available", () => {
-    it("then passes workspaceId to ShareDialog", () => {
+  describe("when documentId is available", () => {
+    it("then passes documentId to ShareDialog", () => {
       mockActiveTourId = "editor";
-      mockWorkspaceId = "my-workspace-42";
+      mockDocumentId = "my-document-42";
       setEngineRunning(0);
 
       render(<EditorTour />);
 
       const dialog = screen.getByTestId("shareDialog");
-      expect(dialog).toHaveAttribute("data-workspace-id", "my-workspace-42");
+      expect(dialog).toHaveAttribute("data-document-id", "my-document-42");
     });
   });
 
-  describe("when workspaceId is not available", () => {
+  describe("when documentId is not available", () => {
     it("then does not render ShareDialog", () => {
       mockActiveTourId = "editor";
-      mockWorkspaceId = null;
+      mockDocumentId = null;
       setEngineRunning(0);
 
       render(<EditorTour />);

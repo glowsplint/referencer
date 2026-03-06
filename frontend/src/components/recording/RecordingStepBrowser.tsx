@@ -10,13 +10,13 @@ import {
   X,
 } from "lucide-react";
 import { useRecordingContext } from "@/contexts/RecordingContext";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 import { describeDelta } from "@/lib/recording/describe-delta";
 
 export function RecordingStepBrowser() {
   const { t } = useTranslation("tools");
   const { recordings: rec, playback } = useRecordingContext();
-  const { layers } = useWorkspace();
+  const { layers } = useDocument();
 
   const recording = rec.recordings.find((r) => r.id === playback.activeRecordingId);
   if (!playback.isPlaying || !recording) return null;

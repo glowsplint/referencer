@@ -1,6 +1,6 @@
-// Left sidebar that organizes workspace structure: annotation layers and texts.
+// Left sidebar that organizes document structure: annotation layers and texts.
 // Provides controls to add/remove/reorder layers and texts, toggle visibility,
-// and a drag-to-trash delete zone. Consumes WorkspaceContext for all state
+// and a drag-to-trash delete zone. Consumes DocumentContext for all state
 // mutations.
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -10,7 +10,7 @@ import { SectionList } from "./SectionList";
 import { StudySchemePicker } from "./StudySchemePicker";
 import { RecordingStepBrowser } from "./recording/RecordingStepBrowser";
 import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 import { useCustomColors } from "@/hooks/ui/use-custom-colors";
 import { useAnnotationSearch } from "@/hooks/ui/use-annotation-search";
 import { AnnotationSearchResults } from "./AnnotationSearchResults";
@@ -50,7 +50,7 @@ export function ManagementPane({ width }: ManagementPaneProps) {
     toggleSectionVisibility,
     toggleAllSectionVisibility,
     editorsRef,
-  } = useWorkspace();
+  } = useDocument();
 
   const { customColors, addCustomColor, removeCustomColor } = useCustomColors();
   const [dragOver, setDragOver] = useState(false);

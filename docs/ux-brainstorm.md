@@ -35,7 +35,7 @@ Referencer is a multi-pane Tiptap editor with Yjs CRDT sync, supporting:
 - **Recording/playback**: capture and replay annotation visibility sequences
 - **Share links**: role-based (owner/editor/viewer) with optional expiry
 - **Offline support**: IndexedDB persistence with sync-on-reconnect
-- **Hub with folders**: workspace grid/list view, folders, favorites, search
+- **Hub with folders**: document grid/list view, folders, favorites, search
 - **Dark mode**, keyboard shortcuts, 8+ languages, per-pane editor lock
 - **Action console**: undo/redo history with timestamps
 
@@ -152,7 +152,7 @@ Search across all comment text, replies, and layer names. Support filters:
 
 - By layer
 - By date range
-- By author (in collaborative workspaces)
+- By author (in collaborative documents)
 - By annotation type (highlight, comment, underline, arrow)
 - By tag (see 2.3)
 
@@ -163,14 +163,14 @@ This is a table-stakes feature that's currently missing.
 
 ### 2.2 Personal Concordance / "Cited By" Panel
 
-For any passage, show all your own annotations that reference it across all workspaces. A personal cross-reference index built from your study history.
+For any passage, show all your own annotations that reference it across all documents. A personal cross-reference index built from your study history.
 
 **Impact**: High
 **Inspired by**: Roam Research backlinks
 
 ### 2.3 Tag System for Annotations
 
-Add `#tags` to comments (grace, covenant, prophecy, etc.). Browse by tag across workspaces. This enables cross-workspace theme tracking without requiring a complex graph database.
+Add `#tags` to comments (grace, covenant, prophecy, etc.). Browse by tag across documents. This enables cross-document theme tracking without requiring a complex graph database.
 
 **Impact**: High
 **Inspired by**: Olive Tree, Hypothesis
@@ -239,7 +239,7 @@ Analyze the user's highlights and notes to surface related passages they haven't
 
 ### 3.5 Transclusion
 
-Embed a verse or note block in multiple workspaces. Edit in one place, reflected everywhere. "This note about justification appears in my Romans study, my Galatians study, and my theology overview."
+Embed a verse or note block in multiple documents. Edit in one place, reflected everywhere. "This note about justification appears in my Romans study, my Galatians study, and my theology overview."
 
 **Impact**: Medium
 **Inspired by**: Notion synced blocks, Roam transclusion
@@ -285,12 +285,12 @@ Let users open different resource types in different panes, all verse-synchroniz
 - Pane 1: Bible text (ESV)
 - Pane 2: Bible text (NIV) — for translation comparison
 - Pane 3: Commentary or study notes
-- Pane 4: Personal annotation workspace
+- Pane 4: Personal annotation document
 
 Logos does this on desktop but nobody has done it elegantly on web.
 
 **Impact**: Medium
-**Inspired by**: Logos workspace compositor
+**Inspired by**: Logos document compositor
 
 ### 4.5 Translation Diff Highlighting
 
@@ -301,7 +301,7 @@ In parallel translation view, auto-highlight words that differ between versions 
 
 ### 4.6 Minimap / Outline Sidebar
 
-Show a scrollable outline of passage headers for quick navigation in long documents. Especially useful when a workspace has 10+ passages.
+Show a scrollable outline of passage headers for quick navigation in long documents. Especially useful when a document has 10+ passages.
 
 **Impact**: Low
 **Inspired by**: VS Code minimap
@@ -381,7 +381,7 @@ _Get your study out of the app._
 
 ### 6.1 PDF Export
 
-Export workspace with annotations rendered inline — highlights as colored backgrounds, comments as margin notes or footnotes, arrows as numbered references.
+Export document with annotations rendered inline — highlights as colored backgrounds, comments as margin notes or footnotes, arrows as numbered references.
 
 **Impact**: Critical
 **Inspired by**: Readwise annotated PDF export
@@ -758,7 +758,7 @@ Prioritized by differentiation potential, user value, and feasibility given the 
 | 1        | Full-text annotation search     | 2.1      | Table-stakes missing feature                 |
 | 2        | PDF + Markdown export           | 6.1, 6.2 | Users can't get study out of the app         |
 | 3        | Semantic color presets + legend | 1.2      | Transforms highlights into structured study  |
-| 4        | Tag system for annotations      | 2.3      | Enables cross-workspace theme tracking       |
+| 4        | Tag system for annotations      | 2.3      | Enables cross-document theme tracking        |
 | 5        | Verse-to-verse backlinks        | 3.1      | Killer PKM feature no Bible app has natively |
 | 6        | In-context AI sidebar           | 7.1      | #1 feature competitors are racing to ship    |
 | 7        | Study group spaces              | 5.1      | Leverages existing Yjs collab infra          |
@@ -837,7 +837,7 @@ Quick reference for the tools studied:
 
 - [Exploring the UX of Web Annotations](https://tomcritchlow.com/2019/02/12/annotations/)
 - [Google Docs Comment Redesign 2024](https://9to5google.com/2024/02/15/google-docs-comment-redesign/)
-- [Google Workspace Annotation Updates](https://workspaceupdates.googleblog.com/2024/02/new-ways-to-annotate-google-docs.html)
+- [Google Document Annotation Updates](https://documentupdates.googleblog.com/2024/02/new-ways-to-annotate-google-docs.html)
 - [Hypothesis Annotation Taxonomy](https://web.hypothes.is/blog/varieties-of-hypothesis-annotations-and-their-uses/)
 - [Hypothesis vs Perusall Assessment](https://oit.colorado.edu/services/consulting-professional-services/academic-technology-initiatives-team/needs-assessments/social-annotation-tools)
 - [Perusall Active Learning](https://www.perusall.com/blog/empowering-active-learning-reseach-perusall)

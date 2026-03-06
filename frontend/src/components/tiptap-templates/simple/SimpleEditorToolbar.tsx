@@ -33,7 +33,7 @@ import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 import { useIsBreakpoint } from "@/hooks/ui/use-is-breakpoint";
 import { useWindowSize } from "@/hooks/utilities/use-window-size";
 import { useCursorVisibility } from "@/hooks/ui/use-cursor-visibility";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 
 // --- Toolbar content (private) ---
 
@@ -130,7 +130,7 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
   const toolbarRef = useRef<HTMLDivElement>(null);
   const { editor: activeEditor } = useCurrentEditor();
   const { t: tm } = useTranslation("management");
-  const { toggleFocusedPaneLocked, readOnly } = useWorkspace();
+  const { toggleFocusedPaneLocked, readOnly } = useDocument();
 
   const rect = useCursorVisibility({
     editor: activeEditor,

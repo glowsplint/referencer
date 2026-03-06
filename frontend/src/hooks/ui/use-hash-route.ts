@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 
 export type Route =
   | { type: "hub" }
-  | { type: "editor"; workspaceId: string }
+  | { type: "editor"; documentId: string }
   | { type: "share"; code: string };
 
-const WORKSPACE_ID_RE =
+const DOCUMENT_ID_RE =
   /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-zA-Z]{27})$/i;
 
 const SHARE_RE = /^share\/([a-zA-Z0-9_-]+)$/;
@@ -27,12 +27,12 @@ function parseHash(): Route {
     return { type: "share", code: shareMatch[1] };
   }
 
-  if (!WORKSPACE_ID_RE.test(hashPath)) {
+  if (!DOCUMENT_ID_RE.test(hashPath)) {
     // Non-matching path, redirect to hub
     window.location.hash = "#/hub";
     return { type: "hub" };
   }
-  return { type: "editor", workspaceId: hashPath };
+  return { type: "editor", documentId: hashPath };
 }
 
 export function useHashRoute() {

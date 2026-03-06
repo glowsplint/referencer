@@ -3,14 +3,14 @@ import { useTranslation } from "react-i18next";
 import { Settings, TriangleAlert, Search } from "lucide-react";
 import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
-import { useWorkspaces } from "@/hooks/data/use-workspaces";
+import { useDocuments } from "@/hooks/data/use-documents";
 import { useFolders } from "@/hooks/data/use-folders";
 import { useSettings } from "@/hooks/data/use-settings";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
 import { SettingsDialog } from "@/components/SettingsDialog";
-import { WorkspaceGrid } from "./WorkspaceGrid";
-import { NewWorkspaceDialog } from "./NewWorkspaceDialog";
+import { DocumentGrid } from "./DocumentGrid";
+import { NewDocumentDialog } from "./NewDocumentDialog";
 import { Button } from "@/components/ui/button";
 
 interface HubPageProps {
@@ -21,7 +21,7 @@ export function HubPage({ navigate }: HubPageProps) {
   const { t } = useTranslation("management");
   const { user, isAuthenticated, isLoading: authLoading, login } = useAuth();
   const {
-    workspaces,
+    documents,
     isLoading: wsLoading,
     create,
     rename,
@@ -29,8 +29,8 @@ export function HubPage({ navigate }: HubPageProps) {
     duplicate,
     toggleFavorite,
     moveToFolder,
-    unfileWorkspace,
-  } = useWorkspaces();
+    unfileDocument,
+  } = useDocuments();
   const {
     folders,
     create: createFolder,
@@ -43,7 +43,7 @@ export function HubPage({ navigate }: HubPageProps) {
     useSettings();
 
   const [showNewDialog, setShowNewDialog] = useState(false);
-  const [newWorkspaceFolderId, setNewWorkspaceFolderId] = useState<string | null>(null);
+  const [newDocumentFolderId, setNewDocumentFolderId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -52,17 +52,17 @@ export function HubPage({ navigate }: HubPageProps) {
     navigate(`#/${id}`);
   };
 
-  const handleNewWorkspace = (currentFolderId: string | null) => {
-    setNewWorkspaceFolderId(currentFolderId);
+  const handleNewDocument = (currentFolderId: string | null) => {
+    setNewDocumentFolderId(currentFolderId);
     setShowNewDialog(true);
   };
 
-  const handleCreateWorkspace = async (title: string) => {
+  const handleCreateDocument = async (title: string) => {
     setShowNewDialog(false);
     const id = randomKSUID();
     await create(id, title);
-    if (newWorkspaceFolderId) {
-      moveToFolder(id, newWorkspaceFolderId);
+    if (newDocumentFolderId) {
+      moveToFolder(id, newDocumentFolderId);
     }
   };
 
@@ -136,13 +136,13 @@ export function HubPage({ navigate }: HubPageProps) {
             </div>
           </div>
         ) : isAuthenticated ? (
-          /* Logged-in workspace list */
+          /* Logged-in document list */
           <div className="max-w-6xl mx-auto px-6 py-8">
-            <WorkspaceGrid
-              workspaces={workspaces}
+            <DocumentGrid
+              documents={documents}
               isLoading={wsLoading}
               navigate={navigate}
-              onNew={handleNewWorkspace}
+              onNew={handleNewDocument}
               onRename={rename}
               onDelete={remove}
               onDuplicate={duplicate}
@@ -151,8 +151,8 @@ export function HubPage({ navigate }: HubPageProps) {
               onCreateFolder={createFolder}
               onRenameFolder={renameFolder}
               onDeleteFolder={removeFolder}
-              onMoveWorkspaceToFolder={moveToFolder}
-              onUnfileWorkspace={unfileWorkspace}
+              onMoveDocumentToFolder={moveToFolder}
+              onUnfileDocument={unfileDocument}
               onToggleFolderFavorite={toggleFolderFavorite}
               onMoveFolder={moveFolder}
               ownerName={user?.name}
@@ -163,10 +163,10 @@ export function HubPage({ navigate }: HubPageProps) {
         ) : null}
       </main>
 
-      <NewWorkspaceDialog
+      <NewDocumentDialog
         open={showNewDialog}
         onOpenChange={setShowNewDialog}
-        onCreate={handleCreateWorkspace}
+        onCreate={handleCreateDocument}
       />
       <SettingsDialog
         open={settingsOpen}

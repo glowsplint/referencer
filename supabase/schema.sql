@@ -2,20 +2,20 @@
 -- Run this in the Supabase SQL editor to set up the database.
 -- Ported from the SQLite schema in backend/src/db/database.ts
 
-CREATE TABLE workspace (
+CREATE TABLE document (
     id TEXT PRIMARY KEY,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE share_link (
     code TEXT PRIMARY KEY,
-    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+    document_id TEXT NOT NULL REFERENCES document(id) ON DELETE CASCADE,
     access TEXT NOT NULL CHECK (access IN ('edit', 'readonly')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     expires_at TIMESTAMPTZ DEFAULT NULL,
     created_by TEXT REFERENCES "user"(id) ON DELETE SET NULL
 );
-CREATE INDEX idx_share_link_workspace_id ON share_link(workspace_id);
+CREATE INDEX idx_share_link_document_id ON share_link(document_id);
 
 CREATE TABLE "user" (
     id TEXT PRIMARY KEY,
@@ -73,42 +73,42 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TABLE workspace_folder (
+CREATE TABLE document_folder (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-    parent_id TEXT REFERENCES workspace_folder(id) ON DELETE CASCADE,
+    parent_id TEXT REFERENCES document_folder(id) ON DELETE CASCADE,
     name TEXT NOT NULL DEFAULT 'New Folder',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     is_favorite BOOLEAN NOT NULL DEFAULT FALSE
 );
-CREATE INDEX idx_workspace_folder_user_id ON workspace_folder(user_id);
-CREATE INDEX idx_workspace_folder_parent_id ON workspace_folder(parent_id);
-CREATE INDEX idx_workspace_folder_favorite ON workspace_folder(user_id, is_favorite DESC, name);
+CREATE INDEX idx_document_folder_user_id ON document_folder(user_id);
+CREATE INDEX idx_document_folder_parent_id ON document_folder(parent_id);
+CREATE INDEX idx_document_folder_favorite ON document_folder(user_id, is_favorite DESC, name);
 
-CREATE TABLE user_workspace (
+CREATE TABLE user_document (
     user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+    document_id TEXT NOT NULL REFERENCES document(id) ON DELETE CASCADE,
     title TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     is_favorite BOOLEAN NOT NULL DEFAULT FALSE,
-    folder_id TEXT REFERENCES workspace_folder(id) ON DELETE SET NULL,
-    PRIMARY KEY (user_id, workspace_id)
+    folder_id TEXT REFERENCES document_folder(id) ON DELETE SET NULL,
+    PRIMARY KEY (user_id, document_id)
 );
-CREATE INDEX idx_user_workspace_user_id ON user_workspace(user_id);
-CREATE INDEX idx_user_workspace_updated_at ON user_workspace(updated_at DESC);
-CREATE INDEX idx_user_workspace_favorite ON user_workspace(user_id, is_favorite DESC, updated_at DESC);
-CREATE INDEX idx_user_workspace_folder_id ON user_workspace(folder_id);
+CREATE INDEX idx_user_document_user_id ON user_document(user_id);
+CREATE INDEX idx_user_document_updated_at ON user_document(updated_at DESC);
+CREATE INDEX idx_user_document_favorite ON user_document(user_id, is_favorite DESC, updated_at DESC);
+CREATE INDEX idx_user_document_folder_id ON user_document(folder_id);
 
-CREATE TABLE workspace_permission (
-    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+CREATE TABLE document_permission (
+    document_id TEXT NOT NULL REFERENCES document(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
     role TEXT NOT NULL CHECK (role IN ('owner', 'editor', 'viewer')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (workspace_id, user_id)
+    PRIMARY KEY (document_id, user_id)
 );
-CREATE INDEX idx_workspace_permission_user ON workspace_permission(user_id);
+CREATE INDEX idx_document_permission_user ON document_permission(user_id);
 
 CREATE TABLE user_preference (
     user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
@@ -120,10 +120,10 @@ CREATE TABLE user_preference (
 
 -- Full-text search index for annotations.
 -- Annotation data lives in opaque Yjs blobs — this table mirrors text fields
--- for server-side search across workspaces.
+-- for server-side search across documents.
 CREATE TABLE annotation_index (
     id TEXT NOT NULL,
-    workspace_id TEXT NOT NULL REFERENCES workspace(id) ON DELETE CASCADE,
+    document_id TEXT NOT NULL REFERENCES document(id) ON DELETE CASCADE,
     layer_id TEXT NOT NULL,
     layer_name TEXT NOT NULL DEFAULT '',
     annotation_type TEXT NOT NULL CHECK (annotation_type IN ('highlight', 'comment', 'arrow', 'underline')),
@@ -137,14 +137,14 @@ CREATE TABLE annotation_index (
         setweight(to_tsvector('english', coalesce(reply_texts, '')), 'C')
     ) STORED,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (workspace_id, id)
+    PRIMARY KEY (document_id, id)
 );
 CREATE INDEX idx_annotation_search ON annotation_index USING GIN (search_vector);
 
--- Atomic upsert: delete all annotations for a workspace then insert fresh rows.
+-- Atomic upsert: delete all annotations for a document then insert fresh rows.
 -- Called by the collab server on each Yjs document save.
 CREATE OR REPLACE FUNCTION upsert_annotation_index(
-    p_workspace_id TEXT,
+    p_document_id TEXT,
     p_rows JSONB
 ) RETURNS VOID AS $$
 BEGIN
@@ -152,15 +152,15 @@ BEGIN
         RAISE EXCEPTION 'p_rows must not be NULL';
     END IF;
 
-    -- Serialize concurrent upserts for the same workspace
-    PERFORM pg_advisory_xact_lock(hashtext(p_workspace_id));
+    -- Serialize concurrent upserts for the same document
+    PERFORM pg_advisory_xact_lock(hashtext(p_document_id));
 
-    DELETE FROM annotation_index WHERE workspace_id = p_workspace_id;
-    INSERT INTO annotation_index (id, workspace_id, layer_id, layer_name, annotation_type,
+    DELETE FROM annotation_index WHERE document_id = p_document_id;
+    INSERT INTO annotation_index (id, document_id, layer_id, layer_name, annotation_type,
                                    selected_text, annotation_text, reply_texts, user_name, updated_at)
     SELECT
         r->>'id',
-        p_workspace_id,
+        p_document_id,
         r->>'layer_id',
         COALESCE(r->>'layer_name', ''),
         r->>'annotation_type',
@@ -173,9 +173,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Cross-workspace annotation search with access control.
+-- Cross-document annotation search with access control.
 -- Uses FTS (websearch_to_tsquery) with ILIKE fallback for partial matches.
--- Only returns annotations in workspaces the user has access to via user_workspace.
+-- Only returns annotations in documents the user has access to via user_document.
 CREATE OR REPLACE FUNCTION search_annotations(
     p_user_id TEXT,
     p_query TEXT,
@@ -204,24 +204,24 @@ BEGIN
 
     SELECT COUNT(*) INTO v_total
     FROM annotation_index ai
-    JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+    JOIN user_document uw ON uw.document_id = ai.document_id AND uw.user_id = p_user_id
     WHERE ai.search_vector @@ v_tsquery;
 
     IF v_total = 0 THEN
         -- Fallback to ILIKE for partial word matches
         SELECT COUNT(*) INTO v_total
         FROM annotation_index ai
-        JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+        JOIN user_document uw ON uw.document_id = ai.document_id AND uw.user_id = p_user_id
         WHERE ai.selected_text ILIKE '%' || v_escaped_query || '%'
            OR ai.annotation_text ILIKE '%' || v_escaped_query || '%'
            OR ai.reply_texts ILIKE '%' || v_escaped_query || '%';
 
         SELECT jsonb_agg(row_to_json(t)) INTO v_results FROM (
-            SELECT ai.id as annotation_id, ai.workspace_id, uw.title as workspace_title,
+            SELECT ai.id as annotation_id, ai.document_id, uw.title as document_title,
                    ai.layer_id, ai.layer_name, ai.annotation_type, ai.selected_text,
                    ai.annotation_text, ai.reply_texts, ai.user_name, 0::float as rank
             FROM annotation_index ai
-            JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+            JOIN user_document uw ON uw.document_id = ai.document_id AND uw.user_id = p_user_id
             WHERE ai.selected_text ILIKE '%' || v_escaped_query || '%'
                OR ai.annotation_text ILIKE '%' || v_escaped_query || '%'
                OR ai.reply_texts ILIKE '%' || v_escaped_query || '%'
@@ -230,12 +230,12 @@ BEGIN
         ) t;
     ELSE
         SELECT jsonb_agg(row_to_json(t)) INTO v_results FROM (
-            SELECT ai.id as annotation_id, ai.workspace_id, uw.title as workspace_title,
+            SELECT ai.id as annotation_id, ai.document_id, uw.title as document_title,
                    ai.layer_id, ai.layer_name, ai.annotation_type, ai.selected_text,
                    ai.annotation_text, ai.reply_texts, ai.user_name,
                    ts_rank(ai.search_vector, v_tsquery) as rank
             FROM annotation_index ai
-            JOIN user_workspace uw ON uw.workspace_id = ai.workspace_id AND uw.user_id = p_user_id
+            JOIN user_document uw ON uw.document_id = ai.document_id AND uw.user_id = p_user_id
             WHERE ai.search_vector @@ v_tsquery
             ORDER BY rank DESC
             LIMIT p_limit OFFSET p_offset
@@ -252,10 +252,10 @@ $$ LANGUAGE plpgsql;
 ALTER TABLE "user" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_provider ENABLE ROW LEVEL SECURITY;
 ALTER TABLE session ENABLE ROW LEVEL SECURITY;
-ALTER TABLE workspace ENABLE ROW LEVEL SECURITY;
-ALTER TABLE workspace_permission ENABLE ROW LEVEL SECURITY;
-ALTER TABLE workspace_folder ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_workspace ENABLE ROW LEVEL SECURITY;
+ALTER TABLE document ENABLE ROW LEVEL SECURITY;
+ALTER TABLE document_permission ENABLE ROW LEVEL SECURITY;
+ALTER TABLE document_folder ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_document ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_preference ENABLE ROW LEVEL SECURITY;
 ALTER TABLE share_link ENABLE ROW LEVEL SECURITY;
 ALTER TABLE yjs_document ENABLE ROW LEVEL SECURITY;

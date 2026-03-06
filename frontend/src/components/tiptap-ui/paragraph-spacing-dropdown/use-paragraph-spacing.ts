@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { useDocument } from "@/contexts/DocumentContext";
 
 export interface ParagraphSpacingOption {
   label: string;
@@ -19,13 +19,13 @@ function isValidParagraphSpacing(value: unknown): value is string {
 }
 
 export function useParagraphSpacing() {
-  const { yjs } = useWorkspace();
+  const { yjs } = useDocument();
   const [paragraphSpacing, setParagraphSpacingState] = useState(DEFAULT_PARAGRAPH_SPACING);
 
-  // Sync from Yjs workspace-meta map
+  // Sync from Yjs document-meta map
   useEffect(() => {
     if (!yjs.doc) return;
-    const meta = yjs.doc.getMap("workspace-meta");
+    const meta = yjs.doc.getMap("document-meta");
     const existing = meta.get("paragraphSpacing");
     if (isValidParagraphSpacing(existing)) {
       setParagraphSpacingState(existing);
@@ -51,7 +51,7 @@ export function useParagraphSpacing() {
   const setParagraphSpacing = useCallback(
     (value: string) => {
       if (!isValidParagraphSpacing(value)) return;
-      const meta = yjs.doc?.getMap("workspace-meta");
+      const meta = yjs.doc?.getMap("document-meta");
       meta?.set("paragraphSpacing", value);
       setParagraphSpacingState(value);
     },

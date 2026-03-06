@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Ayarlar",
-    "description": "Calisma alani tercihlerinizi ozellestirin.",
+    "description": "Belge tercihlerinizi ozellestirin.",
     "darkMode": {
       "label": "Karanlik mod",
       "description": "Acik ve karanlik temalar arasinda gecis yapin"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Bu uygulama nedir?",
-        "answer": "Referencer, tumevarimsal Kutsal Kitap calismasi icin isbirlikci bir aractir. Calisma gruplarina Kutsal Yazilar'i birlikte okuyabilecekleri, aciklama ekleyebilecekleri ve tartisabilecekleri ortak bir calisma alani sunar."
+        "answer": "Referencer, tumevarimsal Kutsal Kitap calismasi icin isbirlikci bir aractir. Calisma gruplarina Kutsal Yazilar'i birlikte okuyabilecekleri, aciklama ekleyebilecekleri ve tartisabilecekleri ortak bir belge sunar."
       },
       "inductiveStudy": {
         "question": "Tumevarimsal Kutsal Kitap calismasi nedir?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Isbirligi nasil calisir?",
-        "answer": "Her calisma alani bir baglanti araciligiyla baskalariyla paylasilabilir. Tum katilimcilar ayni metni gorur ve kendi aciklamalarini ekleyebilir. Degisiklikler anlik olarak senkronize edilir, boylece herkes ayni sayfada kalir."
+        "answer": "Her belge bir baglanti araciligiyla baskalariyla paylasilabilir. Tum katilimcilar ayni metni gorur ve kendi aciklamalarini ekleyebilir. Degisiklikler anlik olarak senkronize edilir, boylece herkes ayni sayfada kalir."
       },
       "layers": {
         "question": "Katmanlar nedir?",
@@ -44,8 +44,8 @@
         "answer": "Oklar, pasajlar arasindaki iliskiyi gostermek icin iki aciklamayi birbirine baglar — ornegin tekrarlanan bir kelimeyi ilk gecisine baglamak veya bir kehanetle gerceklesmesini iliskilendirmek icin. Ok aracini secin (veya A tusuna basin), ardindan bir baglayici cizmek icin iki aciklamaya tiklayin."
       },
       "sharing": {
-        "question": "Calisma alanini nasil paylasabilirim?",
-        "answer": "Yonetim panelini acin (M tusuna basin veya menu simgesine tiklayin) ve bir baglanti olusturmak icin paylasim seceneklerini kullanin. Baglantiya sahip olan herkes calisma alanina katilabilir ve isbirligi yapabilir."
+        "question": "Belgeyi nasil paylasabilirim?",
+        "answer": "Yonetim panelini acin (M tusuna basin veya menu simgesine tiklayin) ve bir baglanti olusturmak icin paylasim seceneklerini kullanin. Baglantiya sahip olan herkes belgena katilabilir ve isbirligi yapabilir."
       },
       "mobile": {
         "question": "Bunu mobil cihazda kullanabilir miyim?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Klavye Kisayollari",
-    "description": "Calisma alani icin mevcut klavye kisayollari.",
-    "workspace": "Calisma Alani",
+    "description": "Belge icin mevcut klavye kisayollari.",
+    "document": "Belge",
     "cycleNextLayer": "Sonraki katmana gec",
     "cyclePrevLayer": "Onceki katmana gec",
     "selectionTool": "Secim araci",
@@ -81,8 +81,8 @@
     "subscript": "Alt simge",
     "colorHighlight": "Renkli vurgulama",
     "general": "Genel",
-    "undo": "Geri al (kilitliyken calisma alani)",
-    "redo": "Yinele (kilitliyken calisma alani)",
+    "undo": "Geri al (kilitliyken belge)",
+    "redo": "Yinele (kilitliyken belge)",
     "headings": "Basliklar",
     "heading": "Baslik {{level}}",
     "listsAndBlocks": "Listeler ve Bloklar",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Açıklamaları ara"
   },
   "share": {
-    "title": "Calisma alanini paylas",
-    "description": "Bu calisma alanini paylasmak icin bir baglanti kopyalayin.",
+    "title": "Belgeyi paylas",
+    "description": "Bu belgeni paylasmak icin bir baglanti kopyalayin.",
     "readonlyLink": "Salt okunur baglanti",
     "editLink": "Duzenleme baglantisi",
     "linkCopied": "Baglanti panoya kopyalandi.",

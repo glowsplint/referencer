@@ -2,15 +2,15 @@ import { describe, it, expect } from "vitest";
 import {
   buildFolderTree,
   getFolderDepth,
-  getWorkspacesForFolder,
-  getUnfiledWorkspaces,
+  getDocumentsForFolder,
+  getUnfiledDocuments,
   getAllDescendantFolderIds,
   getSubtreeDepth,
   canMoveFolderTo,
   getFolderAncestorPath,
 } from "./folder-tree";
 import type { FolderItem } from "@/lib/folder-client";
-import type { WorkspaceItem } from "@/lib/workspace-client";
+import type { DocumentItem } from "@/lib/document-client";
 
 function makeFolder(overrides: Partial<FolderItem> & { id: string }): FolderItem {
   return {
@@ -23,9 +23,9 @@ function makeFolder(overrides: Partial<FolderItem> & { id: string }): FolderItem
   };
 }
 
-function makeWorkspace(overrides: Partial<WorkspaceItem> & { workspaceId: string }): WorkspaceItem {
+function makeDocument(overrides: Partial<DocumentItem> & { documentId: string }): DocumentItem {
   return {
-    title: "Workspace",
+    title: "Document",
     createdAt: "2026-01-01T00:00:00Z",
     updatedAt: "2026-01-01T00:00:00Z",
     isFavorite: false,
@@ -103,64 +103,64 @@ describe("when using getFolderDepth", () => {
   });
 });
 
-describe("when using getWorkspacesForFolder", () => {
-  const workspaces = [
-    makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
-    makeWorkspace({ workspaceId: "ws-2", folderId: "f2" }),
-    makeWorkspace({ workspaceId: "ws-3", folderId: "f1" }),
-    makeWorkspace({ workspaceId: "ws-4", folderId: null }),
+describe("when using getDocumentsForFolder", () => {
+  const documents = [
+    makeDocument({ documentId: "ws-1", folderId: "f1" }),
+    makeDocument({ documentId: "ws-2", folderId: "f2" }),
+    makeDocument({ documentId: "ws-3", folderId: "f1" }),
+    makeDocument({ documentId: "ws-4", folderId: null }),
   ];
 
-  it("then returns workspaces matching the folder id", () => {
-    const result = getWorkspacesForFolder(workspaces, "f1");
+  it("then returns documents matching the folder id", () => {
+    const result = getDocumentsForFolder(documents, "f1");
     expect(result).toHaveLength(2);
-    expect(result.map((ws) => ws.workspaceId)).toEqual(["ws-1", "ws-3"]);
+    expect(result.map((ws) => ws.documentId)).toEqual(["ws-1", "ws-3"]);
   });
 
-  it("then returns empty array when no workspaces match", () => {
-    expect(getWorkspacesForFolder(workspaces, "f99")).toEqual([]);
+  it("then returns empty array when no documents match", () => {
+    expect(getDocumentsForFolder(documents, "f99")).toEqual([]);
   });
 });
 
-describe("when using getUnfiledWorkspaces", () => {
-  it("then excludes workspaces with a folderId", () => {
-    const workspaces = [
-      makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
-      makeWorkspace({ workspaceId: "ws-2", folderId: null }),
+describe("when using getUnfiledDocuments", () => {
+  it("then excludes documents with a folderId", () => {
+    const documents = [
+      makeDocument({ documentId: "ws-1", folderId: "f1" }),
+      makeDocument({ documentId: "ws-2", folderId: null }),
     ];
-    const result = getUnfiledWorkspaces(workspaces);
+    const result = getUnfiledDocuments(documents);
     expect(result).toHaveLength(1);
-    expect(result[0].workspaceId).toBe("ws-2");
+    expect(result[0].documentId).toBe("ws-2");
   });
 
-  it("then excludes favorited workspaces", () => {
-    const workspaces = [
-      makeWorkspace({ workspaceId: "ws-1", isFavorite: true }),
-      makeWorkspace({ workspaceId: "ws-2", isFavorite: false }),
+  it("then excludes favorited documents", () => {
+    const documents = [
+      makeDocument({ documentId: "ws-1", isFavorite: true }),
+      makeDocument({ documentId: "ws-2", isFavorite: false }),
     ];
-    const result = getUnfiledWorkspaces(workspaces);
+    const result = getUnfiledDocuments(documents);
     expect(result).toHaveLength(1);
-    expect(result[0].workspaceId).toBe("ws-2");
+    expect(result[0].documentId).toBe("ws-2");
   });
 
-  it("then excludes both filed and favorited workspaces", () => {
-    const workspaces = [
-      makeWorkspace({ workspaceId: "ws-1", folderId: "f1", isFavorite: true }),
-      makeWorkspace({ workspaceId: "ws-2", folderId: "f1" }),
-      makeWorkspace({ workspaceId: "ws-3", isFavorite: true }),
-      makeWorkspace({ workspaceId: "ws-4" }),
+  it("then excludes both filed and favorited documents", () => {
+    const documents = [
+      makeDocument({ documentId: "ws-1", folderId: "f1", isFavorite: true }),
+      makeDocument({ documentId: "ws-2", folderId: "f1" }),
+      makeDocument({ documentId: "ws-3", isFavorite: true }),
+      makeDocument({ documentId: "ws-4" }),
     ];
-    const result = getUnfiledWorkspaces(workspaces);
+    const result = getUnfiledDocuments(documents);
     expect(result).toHaveLength(1);
-    expect(result[0].workspaceId).toBe("ws-4");
+    expect(result[0].documentId).toBe("ws-4");
   });
 
-  it("then returns empty array when all workspaces are filed or favorited", () => {
-    const workspaces = [
-      makeWorkspace({ workspaceId: "ws-1", folderId: "f1" }),
-      makeWorkspace({ workspaceId: "ws-2", isFavorite: true }),
+  it("then returns empty array when all documents are filed or favorited", () => {
+    const documents = [
+      makeDocument({ documentId: "ws-1", folderId: "f1" }),
+      makeDocument({ documentId: "ws-2", isFavorite: true }),
     ];
-    expect(getUnfiledWorkspaces(workspaces)).toEqual([]);
+    expect(getUnfiledDocuments(documents)).toEqual([]);
   });
 });
 

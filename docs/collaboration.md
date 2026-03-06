@@ -2,11 +2,11 @@
 
 ## Overview
 
-Referencer uses [Yjs](https://yjs.dev/) CRDTs for real-time collaboration. All shared state -- text content and annotation data (layers, highlights, arrows, underlines) -- lives in a single `Y.Doc` per workspace. The Y.Doc syncs between clients via the y-websocket binary protocol, with server-side persistence (Durable Object storage + Supabase) and client-side IndexedDB persistence for offline support.
+Referencer uses [Yjs](https://yjs.dev/) CRDTs for real-time collaboration. All shared state -- text content and annotation data (layers, highlights, arrows, underlines) -- lives in a single `Y.Doc` per document. The Y.Doc syncs between clients via the y-websocket binary protocol, with server-side persistence (Durable Object storage + Supabase) and client-side IndexedDB persistence for offline support.
 
 ## Y.Doc Structure
 
-Each workspace's `Y.Doc` contains these shared types:
+Each document's `Y.Doc` contains these shared types:
 
 ```
 Y.Doc
@@ -72,8 +72,8 @@ When a highlight or arrow is created, its positions are encoded as `Uint8Array` 
 ```
 
 1. Client creates a `WebsocketProvider` connecting to the collab server with a JWT token
-2. The Worker verifies the JWT and checks workspace permissions against Supabase
-3. The request is forwarded to a `YjsRoom` Durable Object (one per workspace)
+2. The Worker verifies the JWT and checks document permissions against Supabase
+3. The request is forwarded to a `YjsRoom` Durable Object (one per document)
 4. The DO loads the Y.Doc from DO storage (or Supabase fallback) and syncs state to the client
 5. Local edits generate Y.Doc updates, sent to the server via the y-websocket binary protocol
 6. The DO broadcasts updates to all other connected clients in the same room
@@ -81,13 +81,13 @@ When a highlight or arrow is created, its positions are encoded as `Uint8Array` 
 
 ### Connection URL
 
-The WebSocket URL is configured via `VITE_COLLAB_WS_URL` env var. In development, the Vite proxy rewrites `/yjs/{workspaceId}` to `ws://localhost:8788/{workspaceId}`. If unset, it defaults to `ws[s]://{current_host}/yjs`.
+The WebSocket URL is configured via `VITE_COLLAB_WS_URL` env var. In development, the Vite proxy rewrites `/yjs/{documentId}` to `ws://localhost:8788/{documentId}`. If unset, it defaults to `ws[s]://{current_host}/yjs`.
 
 ## Frontend Hooks
 
-### `useYjs(workspaceId)`
+### `useYjs(documentId)`
 
-Creates and manages the `Y.Doc` and `WebsocketProvider` for a workspace. Returns:
+Creates and manages the `Y.Doc` and `WebsocketProvider` for a document. Returns:
 
 - `doc` -- the `Y.Doc` instance
 - `connected` -- whether the WebSocket is connected
@@ -115,9 +115,9 @@ Merges the Yjs UndoManager with the command-pattern `useActionHistory`. Yjs undo
 
 Located in `frontend/src/hooks/use-unified-undo.ts`.
 
-### `useYjsOffline(doc, workspaceId)`
+### `useYjsOffline(doc, documentId)`
 
-Attaches IndexedDB persistence to the Y.Doc using `y-indexeddb`. The database is named `referencer-yjs-{workspaceId}`. This allows users to work offline -- changes are stored locally and merged with the server when reconnection occurs.
+Attaches IndexedDB persistence to the Y.Doc using `y-indexeddb`. The database is named `referencer-yjs-{documentId}`. This allows users to work offline -- changes are stored locally and merged with the server when reconnection occurs.
 
 Located in `frontend/src/hooks/use-yjs-offline.ts`.
 
@@ -134,7 +134,7 @@ Located in `frontend/src/components/CollaborationPresence.tsx`.
 
 ## Content Seeding
 
-When a workspace Y.Doc is first created and the initial sync completes (or connection fails), the `useEditorWorkspace` hook seeds default layers into the empty Y.Doc:
+When a document Y.Doc is first created and the initial sync completes (or connection fails), the `useEditorDocument` hook seeds default layers into the empty Y.Doc:
 
 ```typescript
 if (yjs.synced && layersArray.length === 0) {

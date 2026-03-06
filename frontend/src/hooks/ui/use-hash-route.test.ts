@@ -33,13 +33,13 @@ describe("useHashRoute", () => {
     expect(window.location.hash).toBe("#/hub");
   });
 
-  it("when hash is a UUID, then returns editor route with correct workspaceId", () => {
+  it("when hash is a UUID, then returns editor route with correct documentId", () => {
     const uuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
     window.location.hash = `#/${uuid}`;
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({
       type: "editor",
-      workspaceId: uuid,
+      documentId: uuid,
     });
   });
 
@@ -49,7 +49,7 @@ describe("useHashRoute", () => {
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({
       type: "editor",
-      workspaceId: ksuid,
+      documentId: ksuid,
     });
   });
 
@@ -59,7 +59,7 @@ describe("useHashRoute", () => {
     const { result } = renderHook(() => useHashRoute());
     expect(result.current.route).toEqual({
       type: "editor",
-      workspaceId: uuid,
+      documentId: uuid,
     });
   });
 
@@ -82,7 +82,7 @@ describe("useHashRoute", () => {
     });
     expect(result.current.route).toEqual({
       type: "editor",
-      workspaceId: uuid,
+      documentId: uuid,
     });
   });
 

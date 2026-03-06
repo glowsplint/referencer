@@ -53,7 +53,7 @@ describe("ShareAcceptPage", () => {
     it("then shows sign-in prompt", () => {
       render(<ShareAcceptPage {...defaultProps} />);
 
-      expect(screen.getByText("Sign in to accept this shared workspace")).toBeInTheDocument();
+      expect(screen.getByText("Sign in to accept this shared document")).toBeInTheDocument();
       expect(screen.getByText("Sign in with Google")).toBeInTheDocument();
       expect(screen.getByText("Sign in with GitHub")).toBeInTheDocument();
     });
@@ -84,11 +84,11 @@ describe("ShareAcceptPage", () => {
 
       render(<ShareAcceptPage {...defaultProps} />);
 
-      expect(screen.getByText("Accepting shared workspace...")).toBeInTheDocument();
+      expect(screen.getByText("Accepting shared document...")).toBeInTheDocument();
     });
 
     it("then calls apiPost with share accept endpoint", async () => {
-      mockApiPost.mockResolvedValue({ workspaceId: "ws-123" });
+      mockApiPost.mockResolvedValue({ documentId: "ws-123" });
 
       render(<ShareAcceptPage {...defaultProps} />);
 
@@ -97,8 +97,8 @@ describe("ShareAcceptPage", () => {
       });
     });
 
-    it("then navigates to workspace on success", async () => {
-      mockApiPost.mockResolvedValue({ workspaceId: "ws-123" });
+    it("then navigates to document on success", async () => {
+      mockApiPost.mockResolvedValue({ documentId: "ws-123" });
 
       render(<ShareAcceptPage {...defaultProps} />);
 

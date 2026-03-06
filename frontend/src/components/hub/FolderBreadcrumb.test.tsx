@@ -49,12 +49,12 @@ describe("FolderBreadcrumb", () => {
   });
 
   describe("when inside a root folder", () => {
-    it("then shows My Workspaces > Folder Name", () => {
+    it("then shows My Documents > Folder Name", () => {
       const folders = [makeFolder({ id: "f1", name: "Study Notes" })];
       renderBreadcrumb("f1", folders);
 
       expect(screen.getByTestId("folderBreadcrumb")).toBeInTheDocument();
-      expect(screen.getByTestId("breadcrumb-root")).toHaveTextContent("My Workspaces");
+      expect(screen.getByTestId("breadcrumb-root")).toHaveTextContent("My Documents");
       expect(screen.getByTestId("breadcrumb-f1")).toHaveTextContent("Study Notes");
     });
   });
@@ -68,14 +68,14 @@ describe("FolderBreadcrumb", () => {
       ];
       renderBreadcrumb("f3", folders);
 
-      expect(screen.getByTestId("breadcrumb-root")).toHaveTextContent("My Workspaces");
+      expect(screen.getByTestId("breadcrumb-root")).toHaveTextContent("My Documents");
       expect(screen.getByTestId("breadcrumb-f1")).toHaveTextContent("Root Folder");
       expect(screen.getByTestId("breadcrumb-f2")).toHaveTextContent("Sub Folder");
       expect(screen.getByTestId("breadcrumb-f3")).toHaveTextContent("Deep Folder");
     });
   });
 
-  describe("when clicking My Workspaces breadcrumb", () => {
+  describe("when clicking My Documents breadcrumb", () => {
     it("then navigates to root (null)", async () => {
       const user = userEvent.setup();
       const folders = [makeFolder({ id: "f1", name: "Folder" })];

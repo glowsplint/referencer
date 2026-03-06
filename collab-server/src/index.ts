@@ -106,20 +106,20 @@ app.get("/:roomName", async (c) => {
 
   log.info("JWT validation successful", { userId: payload.sub, roomName });
 
-  // Check workspace permission (DB check)
+  // Check document permission (DB check)
   /**
    * SECURITY NOTE: In production, this should use a restricted Supabase role
-   * with only SELECT permissions on workspace_permission, rather than the
+   * with only SELECT permissions on document_permission, rather than the
    * service_role key which has full database access. Create a custom role
-   * with: GRANT SELECT ON workspace_permission TO collab_reader;
+   * with: GRANT SELECT ON document_permission TO collab_reader;
    */
   const supabase = createClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_KEY);
   let permission: { role: string } | null = null;
   try {
     const { data, error } = await supabase
-      .from("workspace_permission")
+      .from("document_permission")
       .select("role")
-      .eq("workspace_id", roomName)
+      .eq("document_id", roomName)
       .eq("user_id", payload.sub)
       .single();
 

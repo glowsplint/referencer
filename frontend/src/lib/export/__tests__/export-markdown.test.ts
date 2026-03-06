@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from "vitest";
-import { generateWorkspaceMarkdown, type ExportMarkdownOptions } from "../export-markdown";
+import { generateDocumentMarkdown, type ExportMarkdownOptions } from "../export-markdown";
 import type { Layer } from "@/types/editor";
 
 function makeLayer(overrides: Partial<Layer> = {}): Layer {
@@ -34,24 +34,24 @@ function makeOptions(overrides: Partial<ExportMarkdownOptions> = {}): ExportMark
   };
 }
 
-describe("generateWorkspaceMarkdown", () => {
+describe("generateDocumentMarkdown", () => {
   it("generates a title heading", () => {
-    const result = generateWorkspaceMarkdown(makeOptions());
+    const result = generateDocumentMarkdown(makeOptions());
     expect(result).toContain("# My Study");
   });
 
   it("generates section headings for visible editors", () => {
-    const result = generateWorkspaceMarkdown(makeOptions());
+    const result = generateDocumentMarkdown(makeOptions());
     expect(result).toContain("## Text 1");
   });
 
   it("includes editor content as markdown", () => {
-    const result = generateWorkspaceMarkdown(makeOptions());
+    const result = generateDocumentMarkdown(makeOptions());
     expect(result).toContain("Hello world");
   });
 
   it("skips hidden sections", () => {
-    const result = generateWorkspaceMarkdown(
+    const result = generateDocumentMarkdown(
       makeOptions({
         editors: new Map([
           [0, makeMockEditor("Visible")],
@@ -67,7 +67,7 @@ describe("generateWorkspaceMarkdown", () => {
   });
 
   it("adds separator between visible sections", () => {
-    const result = generateWorkspaceMarkdown(
+    const result = generateDocumentMarkdown(
       makeOptions({
         editors: new Map([
           [0, makeMockEditor("First")],
@@ -82,7 +82,7 @@ describe("generateWorkspaceMarkdown", () => {
 
   describe("highlights", () => {
     it("includes visible highlights", () => {
-      const result = generateWorkspaceMarkdown(
+      const result = generateDocumentMarkdown(
         makeOptions({
           layers: [
             makeLayer({
@@ -107,7 +107,7 @@ describe("generateWorkspaceMarkdown", () => {
     });
 
     it("excludes highlights from hidden layers", () => {
-      const result = generateWorkspaceMarkdown(
+      const result = generateDocumentMarkdown(
         makeOptions({
           layers: [
             makeLayer({
@@ -135,7 +135,7 @@ describe("generateWorkspaceMarkdown", () => {
 
   describe("comments", () => {
     it("includes comments with plain-text annotation", () => {
-      const result = generateWorkspaceMarkdown(
+      const result = generateDocumentMarkdown(
         makeOptions({
           layers: [
             makeLayer({
@@ -161,7 +161,7 @@ describe("generateWorkspaceMarkdown", () => {
     });
 
     it("strips HTML from annotation text", () => {
-      const result = generateWorkspaceMarkdown(
+      const result = generateDocumentMarkdown(
         makeOptions({
           layers: [
             makeLayer({
@@ -186,7 +186,7 @@ describe("generateWorkspaceMarkdown", () => {
     });
 
     it("includes reply threads", () => {
-      const result = generateWorkspaceMarkdown(
+      const result = generateDocumentMarkdown(
         makeOptions({
           layers: [
             makeLayer({
@@ -222,7 +222,7 @@ describe("generateWorkspaceMarkdown", () => {
 
   describe("underlines", () => {
     it("includes visible underlines", () => {
-      const result = generateWorkspaceMarkdown(
+      const result = generateDocumentMarkdown(
         makeOptions({
           layers: [
             makeLayer({
@@ -247,7 +247,7 @@ describe("generateWorkspaceMarkdown", () => {
 
   describe("arrows", () => {
     it("includes connections section with arrows", () => {
-      const result = generateWorkspaceMarkdown(
+      const result = generateDocumentMarkdown(
         makeOptions({
           editors: new Map([
             [0, makeMockEditor("Source")],
@@ -275,7 +275,7 @@ describe("generateWorkspaceMarkdown", () => {
     });
 
     it("excludes arrows when either section is hidden", () => {
-      const result = generateWorkspaceMarkdown(
+      const result = generateDocumentMarkdown(
         makeOptions({
           sectionNames: ["Text 1", "Text 2"],
           sectionVisibility: [true, false],
@@ -300,7 +300,7 @@ describe("generateWorkspaceMarkdown", () => {
 
   describe("empty annotations", () => {
     it("does not include empty annotation headers", () => {
-      const result = generateWorkspaceMarkdown(makeOptions({ layers: [] }));
+      const result = generateDocumentMarkdown(makeOptions({ layers: [] }));
       expect(result).not.toContain("### Highlights");
       expect(result).not.toContain("### Comments");
       expect(result).not.toContain("### Underlines");

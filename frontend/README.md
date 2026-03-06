@@ -33,7 +33,7 @@ src/
 ├── components/       # UI components (panels, dialogs, overlays, pickers)
 ├── hooks/            # 42 custom React hooks
 ├── lib/              # Utilities, TipTap extensions, WebSocket client
-├── contexts/         # WorkspaceContext (central state)
+├── contexts/         # DocumentContext (central state)
 ├── types/            # TypeScript definitions
 ├── styles/           # SCSS for tiptap template components
 └── e2e/              # Playwright test specs

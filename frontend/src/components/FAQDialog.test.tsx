@@ -22,7 +22,7 @@ describe("FAQDialog", () => {
       expect(screen.getByText("What are layers?")).toBeInTheDocument();
       expect(screen.getByText("How do annotations work?")).toBeInTheDocument();
       expect(screen.getByText("What are arrows for?")).toBeInTheDocument();
-      expect(screen.getByText("How do I share a workspace?")).toBeInTheDocument();
+      expect(screen.getByText("How do I share a document?")).toBeInTheDocument();
       expect(screen.getByText("Can I use this on mobile?")).toBeInTheDocument();
     });
 

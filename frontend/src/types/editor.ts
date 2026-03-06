@@ -1,4 +1,4 @@
-// Core domain types for the annotation workspace: layers, highlights,
+// Core domain types for the annotation document: layers, highlights,
 // arrows, underlines, word selections, editor settings, and undo/redo
 // action commands.
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 import { TableDropdownMenu } from "./table-dropdown-menu";
 
 // Track hook return value so tests can override it
@@ -191,19 +191,19 @@ beforeEach(() => {
 
 describe("TableDropdownMenu", () => {
   it("renders the trigger button with table label", () => {
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
     expect(screen.getByRole("button", { name: "Table" })).toBeInTheDocument();
   });
 
   it("when not visible, renders nothing", () => {
     mockUseTableReturn.isVisible = false;
-    const { container } = renderWithWorkspace(<TableDropdownMenu />);
+    const { container } = renderWithDocument(<TableDropdownMenu />);
     expect(container.querySelector("[data-testid='dropdown-menu']")).not.toBeInTheDocument();
   });
 
   it("when not in table, clicking the button inserts a table directly", async () => {
     const user = userEvent.setup();
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
 
     await user.click(screen.getByRole("button", { name: "Table" }));
 
@@ -211,14 +211,14 @@ describe("TableDropdownMenu", () => {
   });
 
   it("when not in table, does not render a dropdown", () => {
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
     expect(screen.queryByTestId("dropdown-menu")).not.toBeInTheDocument();
   });
 
   it("when in table, clicking the trigger opens the dropdown", async () => {
     mockUseTableReturn.isInTable = true;
     const user = userEvent.setup();
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
 
     await user.click(screen.getByRole("button", { name: "Table" }));
 
@@ -227,7 +227,7 @@ describe("TableDropdownMenu", () => {
 
   it("when not in table, does not show table manipulation actions", () => {
     mockUseTableReturn.isInTable = false;
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
 
     expect(screen.queryByText("Add row before")).not.toBeInTheDocument();
     expect(screen.queryByText("Delete table")).not.toBeInTheDocument();
@@ -236,7 +236,7 @@ describe("TableDropdownMenu", () => {
 
   it("when in a table, shows all table manipulation actions", () => {
     mockUseTableReturn.isInTable = true;
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
 
     expect(screen.getByText("Add row before")).toBeInTheDocument();
     expect(screen.getByText("Add row after")).toBeInTheDocument();
@@ -253,7 +253,7 @@ describe("TableDropdownMenu", () => {
 
   it("trigger button has active state 'on' when in a table", () => {
     mockUseTableReturn.isInTable = true;
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
 
     expect(screen.getByRole("button", { name: "Table" })).toHaveAttribute(
       "data-active-state",
@@ -263,7 +263,7 @@ describe("TableDropdownMenu", () => {
 
   it("trigger button has active state 'off' when not in a table", () => {
     mockUseTableReturn.isInTable = false;
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
 
     expect(screen.getByRole("button", { name: "Table" })).toHaveAttribute(
       "data-active-state",
@@ -274,7 +274,7 @@ describe("TableDropdownMenu", () => {
   it("clicking a table manipulation action calls the correct handler", async () => {
     mockUseTableReturn.isInTable = true;
     const user = userEvent.setup();
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
 
     await user.click(screen.getByText("Add row before"));
     expect(mockUseTableReturn.addRowBefore).toHaveBeenCalled();
@@ -283,7 +283,7 @@ describe("TableDropdownMenu", () => {
   it("clicking 'Delete table' calls deleteTable", async () => {
     mockUseTableReturn.isInTable = true;
     const user = userEvent.setup();
-    renderWithWorkspace(<TableDropdownMenu />);
+    renderWithDocument(<TableDropdownMenu />);
 
     await user.click(screen.getByText("Delete table"));
     expect(mockUseTableReturn.deleteTable).toHaveBeenCalled();

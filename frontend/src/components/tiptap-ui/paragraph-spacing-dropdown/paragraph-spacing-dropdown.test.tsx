@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithWorkspace } from "@/test/render-with-workspace";
+import { renderWithDocument } from "@/test/render-with-document";
 import { ParagraphSpacingDropdown } from "./paragraph-spacing-dropdown";
 
-// Mock Yjs doc with a real in-memory Map to simulate workspace-meta
+// Mock Yjs doc with a real in-memory Map to simulate document-meta
 function makeYjsMap() {
   const store = new Map<string, unknown>();
   const observers = new Set<() => void>();
@@ -27,7 +27,7 @@ beforeEach(() => {
 
 function renderDropdown() {
   const mockDoc = { getMap: () => metaMap };
-  return renderWithWorkspace(<ParagraphSpacingDropdown />, {
+  return renderWithDocument(<ParagraphSpacingDropdown />, {
     yjs: {
       provider: null,
       doc: mockDoc as never,

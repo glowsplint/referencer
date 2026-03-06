@@ -1,7 +1,7 @@
 {
   "settings": {
     "title": "Einstellungen",
-    "description": "Passen Sie Ihre Arbeitsbereich-Einstellungen an.",
+    "description": "Passen Sie Ihre Dokument-Einstellungen an.",
     "darkMode": {
       "label": "Dunkelmodus",
       "description": "Zwischen hellem und dunklem Design wechseln"
@@ -21,7 +21,7 @@
     "items": {
       "whatIsApp": {
         "question": "Was ist diese App?",
-        "answer": "Referencer ist ein kollaboratives Werkzeug für induktives Bibelstudium. Es bietet Studiengruppen einen gemeinsamen Arbeitsbereich, in dem sie Schrifttexte gemeinsam lesen, annotieren und in Echtzeit diskutieren können."
+        "answer": "Referencer ist ein kollaboratives Werkzeug für induktives Bibelstudium. Es bietet Studiengruppen ein gemeinsames Dokument, in dem sie Schrifttexte gemeinsam lesen, annotieren und in Echtzeit diskutieren können."
       },
       "inductiveStudy": {
         "question": "Was ist induktives Bibelstudium?",
@@ -29,7 +29,7 @@
       },
       "collaboration": {
         "question": "Wie funktioniert die Zusammenarbeit?",
-        "answer": "Jeder Arbeitsbereich kann über einen Link mit anderen geteilt werden. Alle Teilnehmer sehen denselben Text und können eigene Anmerkungen hinzufügen. Änderungen werden in Echtzeit synchronisiert, sodass alle auf dem gleichen Stand bleiben."
+        "answer": "Jeder Dokument kann über einen Link mit anderen geteilt werden. Alle Teilnehmer sehen denselben Text und können eigene Anmerkungen hinzufügen. Änderungen werden in Echtzeit synchronisiert, sodass alle auf dem gleichen Stand bleiben."
       },
       "layers": {
         "question": "Was sind Ebenen?",
@@ -44,8 +44,8 @@
         "answer": "Pfeile verbinden zwei Anmerkungen, um eine Beziehung zwischen Textpassagen zu zeigen — zum Beispiel, um ein wiederholtes Wort mit seinem ersten Vorkommen zu verknüpfen oder eine Prophezeiung mit ihrer Erfüllung zu verbinden. Wählen Sie das Pfeilwerkzeug (oder drücken Sie A) und klicken Sie dann auf zwei Anmerkungen, um eine Verbindung zu zeichnen."
       },
       "sharing": {
-        "question": "Wie teile ich einen Arbeitsbereich?",
-        "answer": "Öffnen Sie das Verwaltungspanel (drücken Sie M oder klicken Sie auf das Menüsymbol) und verwenden Sie die Freigabeoptionen, um einen Link zu erstellen. Jeder mit dem Link kann dem Arbeitsbereich beitreten und zusammenarbeiten."
+        "question": "Wie teile ich ein Dokument?",
+        "answer": "Öffnen Sie das Verwaltungspanel (drücken Sie M oder klicken Sie auf das Menüsymbol) und verwenden Sie die Freigabeoptionen, um einen Link zu erstellen. Jeder mit dem Link kann dem Dokument beitreten und zusammenarbeiten."
       },
       "mobile": {
         "question": "Kann ich das auf dem Handy verwenden?",
@@ -55,8 +55,8 @@
   },
   "shortcuts": {
     "title": "Tastenkürzel",
-    "description": "Verfügbare Tastenkürzel für den Arbeitsbereich.",
-    "workspace": "Arbeitsbereich",
+    "description": "Verfügbare Tastenkürzel für das Dokument.",
+    "document": "Dokument",
     "cycleNextLayer": "Zur nächsten Ebene wechseln",
     "cyclePrevLayer": "Zur vorherigen Ebene wechseln",
     "selectionTool": "Auswahlwerkzeug",
@@ -81,8 +81,8 @@
     "subscript": "Tiefgestellt",
     "colorHighlight": "Farbhervorhebung",
     "general": "Allgemein",
-    "undo": "Rückgängig (Arbeitsbereich bei Sperre)",
-    "redo": "Wiederholen (Arbeitsbereich bei Sperre)",
+    "undo": "Rückgängig (Dokument bei Sperre)",
+    "redo": "Wiederholen (Dokument bei Sperre)",
     "headings": "Überschriften",
     "heading": "Überschrift {{level}}",
     "listsAndBlocks": "Listen & Blöcke",
@@ -99,8 +99,8 @@
     "searchAnnotations": "Anmerkungen durchsuchen"
   },
   "share": {
-    "title": "Arbeitsbereich teilen",
-    "description": "Kopieren Sie einen Link, um diesen Arbeitsbereich zu teilen.",
+    "title": "Dokument teilen",
+    "description": "Kopieren Sie einen Link, um dieses Dokument zu teilen.",
     "readonlyLink": "Nur-Lese-Link",
     "editLink": "Bearbeitungslink",
     "linkCopied": "Link in die Zwischenablage kopiert.",

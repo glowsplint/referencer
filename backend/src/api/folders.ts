@@ -5,8 +5,8 @@ import {
   createFolder,
   renameFolder,
   deleteFolder,
-  moveWorkspaceToFolder,
-  unfileWorkspace,
+  moveDocumentToFolder,
+  unfileDocument,
   toggleFavoriteFolder,
   moveFolderToFolder,
 } from "../db/folder-queries";
@@ -190,38 +190,38 @@ folders.delete("/:id", async (c) => {
   }
 });
 
-// PATCH /:id/move-workspace - move workspace into folder
-folders.patch("/:id/move-workspace", async (c) => {
+// PATCH /:id/move-document - move document into folder
+folders.patch("/:id/move-document", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
 
   try {
     const folderId = c.req.param("id");
-    const body = await c.req.json<{ workspaceId: string }>();
-    if (!body.workspaceId) {
-      return c.json({ error: "workspaceId is required" }, 400);
+    const body = await c.req.json<{ documentId: string }>();
+    if (!body.documentId) {
+      return c.json({ error: "documentId is required" }, 400);
     }
 
     const supabase = c.get("supabase");
-    const role = await getPermission(supabase, body.workspaceId, user.id);
+    const role = await getPermission(supabase, body.documentId, user.id);
     if (!role || !hasMinimumRole(role, "viewer")) {
-      log.warn("Permission denied for move-workspace", {
+      log.warn("Permission denied for move-document", {
         userId: user.id,
-        workspaceId: body.workspaceId,
+        documentId: body.documentId,
         folderId,
       });
       return c.json({ error: "Forbidden" }, 403);
     }
-    await moveWorkspaceToFolder(supabase, user.id, body.workspaceId, folderId);
-    log.info("PATCH /api/folders/:id/move-workspace", {
+    await moveDocumentToFolder(supabase, user.id, body.documentId, folderId);
+    log.info("PATCH /api/folders/:id/move-document", {
       userId: user.id,
       folderId,
-      workspaceId: body.workspaceId,
+      documentId: body.documentId,
     });
     return c.json({ ok: true });
   } catch (err) {
-    log.error("PATCH /api/folders/:id/move-workspace failed", {
+    log.error("PATCH /api/folders/:id/move-document failed", {
       userId: user.id,
       folderId: c.req.param("id"),
       error: String(err),
@@ -230,35 +230,35 @@ folders.patch("/:id/move-workspace", async (c) => {
   }
 });
 
-// POST /unfile-workspace - remove workspace from folder
-folders.post("/unfile-workspace", async (c) => {
+// POST /unfile-document - remove document from folder
+folders.post("/unfile-document", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
 
   try {
-    const body = await c.req.json<{ workspaceId: string }>();
-    if (!body.workspaceId) {
-      return c.json({ error: "workspaceId is required" }, 400);
+    const body = await c.req.json<{ documentId: string }>();
+    if (!body.documentId) {
+      return c.json({ error: "documentId is required" }, 400);
     }
 
     const supabase = c.get("supabase");
-    const role = await getPermission(supabase, body.workspaceId, user.id);
+    const role = await getPermission(supabase, body.documentId, user.id);
     if (!role || !hasMinimumRole(role, "viewer")) {
-      log.warn("Permission denied for unfile-workspace", {
+      log.warn("Permission denied for unfile-document", {
         userId: user.id,
-        workspaceId: body.workspaceId,
+        documentId: body.documentId,
       });
       return c.json({ error: "Forbidden" }, 403);
     }
-    await unfileWorkspace(supabase, user.id, body.workspaceId);
-    log.info("POST /api/folders/unfile-workspace", {
+    await unfileDocument(supabase, user.id, body.documentId);
+    log.info("POST /api/folders/unfile-document", {
       userId: user.id,
-      workspaceId: body.workspaceId,
+      documentId: body.documentId,
     });
     return c.json({ ok: true });
   } catch (err) {
-    log.error("POST /api/folders/unfile-workspace failed", { userId: user.id, error: String(err) });
+    log.error("POST /api/folders/unfile-document failed", { userId: user.id, error: String(err) });
     return c.json({ error: "Internal server error" }, 500);
   }
 });
