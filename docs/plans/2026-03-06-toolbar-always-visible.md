@@ -13,6 +13,7 @@
 ### Task 1: Update existing tests to expect new behavior
 
 **Files:**
+
 - Modify: `frontend/src/components/tiptap-ui/mark-button/use-mark.test.ts:34-37`
 - Modify: `frontend/src/components/tiptap-templates/simple/simple-editor.test.tsx:213-219`
 
@@ -59,10 +60,13 @@ git add -A && git commit -m "test: update expectations for always-visible toolba
 ### Task 2: Remove `!editor.isEditable` from `shouldShowButton` in 10 tiptap-ui hooks
 
 Each file has a `shouldShowButton` function with the line:
+
 ```ts
 if (!editor || !editor.isEditable) return false;
 ```
+
 Change it to:
+
 ```ts
 if (!editor) return false;
 ```
@@ -107,15 +111,19 @@ which still check isEditable. This lets the built-in :disabled CSS
 ### Task 3: Update SimpleEditorToolbar wrapper styling
 
 **Files:**
+
 - Modify: `frontend/src/components/tiptap-templates/simple/SimpleEditorToolbar.tsx:159`
 
 **Step 1: Change the wrapper class**
 
 At line 159, change:
+
 ```tsx
 className={`flex items-center gap-1 min-w-0${isLocked ? " opacity-50 pointer-events-none" : ""}`}
 ```
+
 To:
+
 ```tsx
 className={`flex items-center gap-1 min-w-0${isLocked ? " pointer-events-none" : ""}`}
 ```
@@ -141,6 +149,7 @@ theme-aware color tokens for both light and dark mode."
 ### Task 4: Add disabled state to ClearFormattingButton
 
 **Files:**
+
 - Modify: `frontend/src/components/tiptap-ui/clear-formatting-button/clear-formatting-button.tsx`
 
 **Step 1: Add disabled prop**

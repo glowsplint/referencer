@@ -29,6 +29,7 @@ export function ClearFormattingButton() {
       tabIndex={-1}
       aria-label="Clear formatting"
       tooltip="Clear formatting"
+      disabled={!editor.isEditable}
       onClick={handleClick}
     >
       <RemoveFormatting className="tiptap-button-icon" />
