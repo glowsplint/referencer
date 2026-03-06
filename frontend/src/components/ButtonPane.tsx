@@ -22,7 +22,6 @@ import {
   Keyboard,
   CircleHelp,
   GraduationCap,
-  Settings,
   BookOpen,
   PanelRightClose,
   PanelLeftClose,
@@ -35,7 +34,6 @@ import {
 import { SwitchingButtonIcon } from "./ui/SwitchingButtonIcon";
 import { KeyboardShortcutsDialog } from "./KeyboardShortcutsDialog";
 import { FAQDialog } from "./FAQDialog";
-import { SettingsDialog } from "./SettingsDialog";
 import { ArrowStylePicker } from "./ArrowStylePicker";
 import { RecordingControls } from "./RecordingControls";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
@@ -115,13 +113,10 @@ export function ButtonPane() {
     updateArrowStyle,
     isManagementPaneOpen,
     toggleManagementPane,
-    toggleDarkMode,
     editorCount,
     toggleMultipleRowsLayout,
     setActiveTool,
     isAnyPaneLocked,
-    toggleHideOffscreenArrows,
-    toggleShowStatusBar,
     toggleCommentPlacement,
     loadDemoContent,
     demoLoaded,
@@ -130,8 +125,6 @@ export function ButtonPane() {
   const { startTour } = useTour();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-
   // Activate arrow tool when an arrow is selected (derived in render)
   const prevSelectedArrowRef = useRef<typeof selectedArrow>(null);
   if (selectedArrow && selectedArrow !== prevSelectedArrowRef.current) {
@@ -241,18 +234,6 @@ export function ButtonPane() {
           </button>
         </TooltipTrigger>
         <TooltipContent>{tm("tooltips.startTour")}</TooltipContent>
-      </Tooltip>
-      <Tooltip placement="right">
-        <TooltipTrigger asChild>
-          <button
-            onClick={() => setSettingsOpen(true)}
-            className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-            data-testid="settingsButton"
-          >
-            <Settings size={20} />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>{tm("tooltips.settings")}</TooltipContent>
       </Tooltip>
       <Tooltip placement="right">
         <TooltipTrigger asChild>
@@ -433,16 +414,6 @@ export function ButtonPane() {
       </Tooltip>
       <KeyboardShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
       <FAQDialog open={faqOpen} onOpenChange={setFaqOpen} />
-      <SettingsDialog
-        open={settingsOpen}
-        onOpenChange={setSettingsOpen}
-        isDarkMode={settings.isDarkMode}
-        toggleDarkMode={toggleDarkMode}
-        hideOffscreenArrows={settings.hideOffscreenArrows}
-        toggleHideOffscreenArrows={toggleHideOffscreenArrows}
-        showStatusBar={settings.showStatusBar}
-        toggleShowStatusBar={toggleShowStatusBar}
-      />
     </div>
   );
 }
