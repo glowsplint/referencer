@@ -56,7 +56,7 @@ export function isTextColorActive(editor: Editor | null, color?: string): boolea
 
 function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props;
-  if (!editor || !editor.isEditable) return false;
+  if (!editor) return false;
   if (!isMarkInSchema("textStyle", editor)) return false;
   if (hideWhenUnavailable && !editor.isActive("code")) {
     return canSetTextColor(editor);
