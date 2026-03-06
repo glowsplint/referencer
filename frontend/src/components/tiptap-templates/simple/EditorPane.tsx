@@ -210,9 +210,10 @@ export function EditorPane({
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (!isLocked || !editor) return;
+      onFocus(index);
       onMouseDown?.(e, editor, index);
     },
-    [isLocked, editor, index, onMouseDown],
+    [isLocked, editor, index, onFocus, onMouseDown],
   );
 
   const handleMouseMove = useCallback(

@@ -327,4 +327,24 @@ describe("EditorPane", () => {
       expect(onFocus).toHaveBeenCalledWith(1);
     });
   });
+
+  describe("when locked and mouseDown fires on the wrapper", () => {
+    it("then calls onFocus with the pane index so activeEditorIndex updates", () => {
+      const onFocus = vi.fn();
+      const onMouseDown = vi.fn();
+      render(
+        <EditorPane
+          isLocked={true}
+          index={2}
+          onEditorMount={vi.fn()}
+          onFocus={onFocus}
+          onMouseDown={onMouseDown}
+          {...defaultEditorPaneProps}
+        />,
+      );
+      const wrapper = screen.getByTestId("editor-content").closest(".simple-editor-wrapper")!;
+      fireEvent.mouseDown(wrapper);
+      expect(onFocus).toHaveBeenCalledWith(2);
+    });
+  });
 });
