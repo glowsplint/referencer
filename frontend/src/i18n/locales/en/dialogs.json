@@ -14,10 +14,6 @@
       "label": "Status bar",
       "description": "Show the status bar below the toolbar"
     },
-    "thirdEditorFullWidth": {
-      "label": "Third editor full width",
-      "description": "When enabled, the third editor spans the full bottom row width"
-    },
     "language": {
       "label": "Language",
       "description": "Choose your preferred language"

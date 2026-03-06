@@ -14,10 +14,6 @@
       "label": "狀態列",
       "description": "在工具列下方顯示狀態列"
     },
-    "thirdEditorFullWidth": {
-      "label": "第三編輯器全寬顯示",
-      "description": "啟用後，第三編輯器將橫跨底部整列寬度"
-    },
     "language": {
       "label": "語言",
       "description": "選擇您的偏好語言"

@@ -10,7 +10,6 @@ export interface EditorSettings {
   hideOffscreenArrows: boolean;
   showStatusBar: boolean;
   commentPlacement: "left" | "right" | "both";
-  thirdEditorFullWidth: boolean;
 }
 
 export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline" | "eraser";

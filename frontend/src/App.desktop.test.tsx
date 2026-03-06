@@ -31,7 +31,6 @@ const mockWorkspace = {
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
-    thirdEditorFullWidth: true,
   },
   isPaneLocked: (i: number) => mockWorkspace.settings.lockedPanes[i] ?? true,
   isAnyPaneLocked: false,
@@ -82,7 +81,7 @@ const mockWorkspace = {
   toggleHideOffscreenArrows: vi.fn(),
   toggleShowStatusBar: vi.fn(),
   toggleCommentPlacement: vi.fn(),
-  toggleThirdEditorFullWidth: vi.fn(),
+
   loadDemoContent: vi.fn(),
   demoLoaded: false,
   demoLoading: false,
@@ -221,7 +220,6 @@ beforeEach(() => {
     showStatusBar: true,
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
-    thirdEditorFullWidth: true,
   };
   mockWorkspace.isAnyPaneLocked = false;
   mockWorkspace.layers = [];

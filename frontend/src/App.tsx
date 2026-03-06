@@ -69,7 +69,6 @@ function getEditorColumns(editorCount: number): { left: number[]; right: number[
 
 interface EditorCellProps {
   index: number;
-  fullWidth?: boolean;
   editorKey: number;
   columnSplit: number;
   sectionVisible: boolean;
@@ -109,7 +108,6 @@ interface EditorCellProps {
 
 function EditorCell({
   index: i,
-  fullWidth,
   columnSplit,
   sectionVisible,
   sectionName,
@@ -133,7 +131,7 @@ function EditorCell({
   selectedArrowId,
   yjsSynced,
 }: EditorCellProps) {
-  const cellFlex = fullWidth ? "1 0 0%" : `${i % 2 === 0 ? columnSplit : 100 - columnSplit} 0 0%`;
+  const cellFlex = `${i % 2 === 0 ? columnSplit : 100 - columnSplit} 0 0%`;
   return (
     <div
       className="min-w-0 min-h-0 overflow-hidden flex flex-col"
@@ -576,9 +574,8 @@ export function App({ workspaceId, navigate }: AppProps) {
     onToggleReplyReaction: handleToggleReplyReaction,
   };
 
-  const editorCellProps = (i: number, fullWidth?: boolean): EditorCellProps => ({
+  const editorCellProps = (i: number): EditorCellProps => ({
     index: i,
-    fullWidth,
     editorKey: editorKeys[i],
     columnSplit,
     sectionVisible: sectionVisibility[i] !== false,
@@ -736,13 +733,7 @@ export function App({ workspaceId, navigate }: AppProps) {
                                     flex: bothRowsVisible ? `${100 - rowSplit} 0 0%` : "1 0 0%",
                                   }}
                                 >
-                                  <EditorCell
-                                    key={editorKeys[2]}
-                                    {...editorCellProps(
-                                      2,
-                                      editorCount === 3 && settings.thirdEditorFullWidth,
-                                    )}
-                                  />
+                                  <EditorCell key={editorKeys[2]} {...editorCellProps(2)} />
                                   {editorCount >= 4 &&
                                     sectionVisibility[2] &&
                                     sectionVisibility[3] && (
