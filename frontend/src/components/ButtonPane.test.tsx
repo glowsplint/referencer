@@ -26,7 +26,6 @@ describe("ButtonPane", () => {
       renderButtonPane();
       expect(screen.getByTestId("keyboardShortcutsButton")).toBeInTheDocument();
       expect(screen.getByTestId("faqButton")).toBeInTheDocument();
-      expect(screen.getByTestId("settingsButton")).toBeInTheDocument();
       expect(screen.getByTestId("selectionToolButton")).toBeInTheDocument();
       expect(screen.getByTestId("arrowToolButton")).toBeInTheDocument();
       expect(screen.getByTestId("commentsToolButton")).toBeInTheDocument();
@@ -240,15 +239,6 @@ describe("ButtonPane", () => {
       fireEvent.click(screen.getByTestId("faqButton"));
       expect(screen.getByTestId("faqDialog")).toBeInTheDocument();
       expect(screen.getByText("Frequently Asked Questions")).toBeInTheDocument();
-    });
-  });
-
-  describe("when the settings button is clicked", () => {
-    it("then opens the settings dialog", () => {
-      renderButtonPane();
-      fireEvent.click(screen.getByTestId("settingsButton"));
-      expect(screen.getByTestId("settingsDialog")).toBeInTheDocument();
-      expect(screen.getByText("Settings")).toBeInTheDocument();
     });
   });
 

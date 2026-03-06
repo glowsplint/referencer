@@ -2,12 +2,13 @@
 // workspace switcher dropdown, and PDF export button. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Share2, Home, ChevronDown, Check } from "lucide-react";
+import { Share2, Home, ChevronDown, Check, Settings } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/tiptap-ui-primitive/tooltip";
 import { ExportMenu } from "@/components/ExportMenu";
 import { ShareDialog } from "@/components/ShareDialog";
+import { SettingsDialog } from "@/components/SettingsDialog";
 import { CollaborationPresence } from "@/components/CollaborationPresence";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
@@ -23,12 +24,21 @@ interface TitleBarProps {
 
 export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
   const { t } = useTranslation();
-  const { workspaceId, readOnly, yjs } = useWorkspace();
+  const {
+    workspaceId,
+    readOnly,
+    yjs,
+    settings,
+    toggleDarkMode,
+    toggleHideOffscreenArrows,
+    toggleShowStatusBar,
+  } = useWorkspace();
   const { isAuthenticated, isLoading } = useAuth();
   const { workspaces } = useWorkspaces();
   const [title, setTitle] = useState("Title");
   const [isEditing, setIsEditing] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dbSeededRef = useRef(false);
   const pendingRenameRef = useRef<Promise<void>>(Promise.resolve());
@@ -105,7 +115,7 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
   const showSwitcher = isAuthenticated && navigate && workspaces.length > 0;
 
   return (
-    <div className="flex shrink-0 items-center border-b border-[var(--tt-border-color-tint)] bg-[var(--tt-bg-color)] px-4 py-2">
+    <div className="flex shrink-0 items-center border-b border-[var(--tt-border-color-tint)] bg-[var(--tt-bg-color)] px-6 py-3">
       {navigate && !showSwitcher && (
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
@@ -230,11 +240,28 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
           </TooltipTrigger>
           <TooltipContent>Share</TooltipContent>
         </Tooltip>
+        <button
+          onClick={() => setSettingsOpen(true)}
+          className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          data-testid="settingsButton"
+        >
+          <Settings size={20} />
+        </button>
         {!isLoading && (isAuthenticated ? <UserMenu /> : <LoginButton />)}
       </div>
       {workspaceId && (
         <ShareDialog open={shareOpen} onOpenChange={setShareOpen} workspaceId={workspaceId} />
       )}
+      <SettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        isDarkMode={settings.isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        hideOffscreenArrows={settings.hideOffscreenArrows}
+        toggleHideOffscreenArrows={toggleHideOffscreenArrows}
+        showStatusBar={settings.showStatusBar}
+        toggleShowStatusBar={toggleShowStatusBar}
+      />
     </div>
   );
 }

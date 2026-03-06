@@ -276,7 +276,6 @@ describe("App (desktop)", () => {
       renderApp();
       expect(screen.getByTestId("buttonPane")).toBeInTheDocument();
       expect(screen.getByTestId("menuButton")).toBeInTheDocument();
-      expect(screen.getByTestId("settingsButton")).toBeInTheDocument();
     });
 
     it("then shows the title bar and editor toolbar", () => {
