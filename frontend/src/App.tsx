@@ -848,6 +848,8 @@ export function App({ documentId, navigate }: AppProps) {
             onClose={() => actionConsole.setIsOpen(false)}
             height={actionConsole.consoleHeight}
             onHeightChange={actionConsole.setConsoleHeight}
+            onLoadDemo={docCtx.loadDemoContent}
+            demoDisabled={effectiveReadOnly || docCtx.demoLoaded}
           />
         )}
         {/* Mobile annotation drawer: bottom panel with read-only annotation cards */}
