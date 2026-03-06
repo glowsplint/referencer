@@ -10,6 +10,10 @@
       "label": "Masquer les flèches hors écran",
       "description": "Masquer complètement les flèches lorsqu'une extrémité est hors de la vue"
     },
+    "overscroll": {
+      "label": "Défilement étendu",
+      "description": "Défiler au-delà de la dernière ligne de texte dans l'éditeur"
+    },
     "language": {
       "label": "Langue",
       "description": "Choisissez votre langue préférée"

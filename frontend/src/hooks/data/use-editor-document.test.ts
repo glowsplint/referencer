@@ -59,6 +59,7 @@ describe("useEditorDocument", () => {
       lockedPanes: { 0: true, 1: true, 2: true, 3: true },
       hideOffscreenArrows: false,
       showStatusBar: true,
+      overscroll: true,
       commentPlacement: "right",
     });
     expect(result.current.annotations).toEqual({ activeTool: "selection" });

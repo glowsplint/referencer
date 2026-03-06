@@ -56,6 +56,10 @@ body,
   overflow-y: auto;
 }
 
+.simple-editor-wrapper.editor-overscroll {
+  container-type: size;
+}
+
 .simple-editor-wrapper.editor-locked {
   user-select: none;
   -webkit-user-select: none;
@@ -135,9 +139,16 @@ body,
   }
 }
 
+.editor-overscroll .simple-editor-content .tiptap.ProseMirror.simple-editor {
+  padding-bottom: calc(100cqh - 1lh);
+}
+
 @media screen and (max-width: 480px) {
   .simple-editor-content .tiptap.ProseMirror.simple-editor {
-    padding: 1rem 1.5rem 30vh;
+    padding: 1rem 1.5rem 1rem;
+  }
+  .editor-overscroll .simple-editor-content .tiptap.ProseMirror.simple-editor {
+    padding-bottom: calc(100cqh - 1lh);
   }
 }
 

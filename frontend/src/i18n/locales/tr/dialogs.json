@@ -10,6 +10,10 @@
       "label": "Ekran disi oklari gizle",
       "description": "Bir uc noktasi gorunur alandan disari kaydirildiginda oklari tamamen gizle"
     },
+    "overscroll": {
+      "label": "Fazla kaydırma",
+      "description": "Düzenleyicide metnin son satırının ötesine kaydır"
+    },
     "language": {
       "label": "Dil",
       "description": "Tercih ettiginiz dili secin"

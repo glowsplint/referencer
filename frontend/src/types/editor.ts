@@ -9,6 +9,7 @@ export interface EditorSettings {
   lockedPanes: Record<number, boolean>;
   hideOffscreenArrows: boolean;
   showStatusBar: boolean;
+  overscroll: boolean;
   commentPlacement: "left" | "right" | "both";
 }
 

@@ -10,6 +10,10 @@
       "label": "Sembunyikan anak panah luar skrin",
       "description": "Sembunyikan anak panah sepenuhnya apabila salah satu titik hujung ditatal keluar dari pandangan"
     },
+    "overscroll": {
+      "label": "Tatal berlebihan",
+      "description": "Tatal melepasi baris terakhir teks dalam editor"
+    },
     "language": {
       "label": "Bahasa",
       "description": "Pilih bahasa pilihan anda"

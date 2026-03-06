@@ -14,6 +14,7 @@ const DEFAULT_SETTINGS: EditorSettings = {
   lockedPanes: DEFAULT_LOCKED_PANES,
   hideOffscreenArrows: false,
   showStatusBar: true,
+  overscroll: true,
   commentPlacement: "right",
 };
 
@@ -66,6 +67,7 @@ export function useSettings() {
   const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout");
   const toggleHideOffscreenArrows = useToggle(setSettings, "hideOffscreenArrows");
   const toggleShowStatusBar = useToggle(setSettings, "showStatusBar");
+  const toggleOverscroll = useToggle(setSettings, "overscroll");
   const toggleCommentPlacement = useCallback(
     () =>
       setSettings((prev) => {
@@ -129,6 +131,7 @@ export function useSettings() {
     reorderLockedPanes,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
+    toggleOverscroll,
     toggleCommentPlacement,
     setActiveTool,
   };

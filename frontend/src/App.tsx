@@ -103,6 +103,7 @@ interface EditorCellProps {
   sectionVisibility: boolean[];
   selectedArrowId: string | null;
   yjsSynced: boolean;
+  overscroll: boolean;
 }
 
 function EditorCell({
@@ -129,6 +130,7 @@ function EditorCell({
   sectionVisibility,
   selectedArrowId,
   yjsSynced,
+  overscroll,
 }: EditorCellProps) {
   const cellFlex = `${i % 2 === 0 ? columnSplit : 100 - columnSplit} 0 0%`;
   return (
@@ -162,6 +164,7 @@ function EditorCell({
             sectionVisibility={sectionVisibility}
             selectedArrowId={selectedArrowId}
             yjsSynced={yjsSynced}
+            overscroll={overscroll}
           />
         </ErrorBoundary>
       </div>
@@ -588,6 +591,7 @@ export function App({ documentId, navigate }: AppProps) {
     sectionVisibility,
     selectedArrowId: docCtx.selectedArrow?.arrowId ?? null,
     yjsSynced: docCtx.readyForSeeding,
+    overscroll: settings.overscroll,
   });
 
   return (
@@ -797,6 +801,7 @@ export function App({ documentId, navigate }: AppProps) {
                                     sectionVisibility={sectionVisibility}
                                     selectedArrowId={docCtx.selectedArrow?.arrowId ?? null}
                                     yjsSynced={docCtx.readyForSeeding}
+                                    overscroll={settings.overscroll}
                                   />
                                 </ErrorBoundary>
                               </div>

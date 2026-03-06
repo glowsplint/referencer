@@ -10,6 +10,10 @@
       "label": "Dölj pilar utanför skärmen",
       "description": "Dölj pilar helt när någon ändpunkt har rullats utanför synfältet"
     },
+    "overscroll": {
+      "label": "Överskrollning",
+      "description": "Skrolla förbi den sista textraden i redigeraren"
+    },
     "language": {
       "label": "Språk",
       "description": "Välj ditt föredragna språk"

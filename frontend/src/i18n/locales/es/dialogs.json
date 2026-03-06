@@ -10,6 +10,10 @@
       "label": "Ocultar flechas fuera de pantalla",
       "description": "Ocultar completamente las flechas cuando algún extremo esté fuera de la vista"
     },
+    "overscroll": {
+      "label": "Desplazamiento extra",
+      "description": "Desplazarse más allá de la última línea de texto en el editor"
+    },
     "language": {
       "label": "Idioma",
       "description": "Elige tu idioma preferido"

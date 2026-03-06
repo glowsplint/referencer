@@ -55,6 +55,7 @@ export function EditorPane({
   sectionVisibility,
   selectedArrowId,
   yjsSynced,
+  overscroll,
 }: {
   isLocked: boolean;
   activeTool?: ActiveTool;
@@ -75,6 +76,7 @@ export function EditorPane({
   sectionVisibility: boolean[];
   selectedArrowId: string | null;
   yjsSynced?: boolean;
+  overscroll?: boolean;
 }) {
   const extensions = useMemo(
     () => createSimpleEditorExtensions({ fragment: fragment ?? undefined }),
@@ -235,7 +237,7 @@ export function EditorPane({
   return (
     <div
       ref={wrapperRef}
-      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}${isLocked && activeTool === "arrow" ? " arrow-mode" : ""}${isLocked && activeTool === "eraser" ? " eraser-mode" : ""}${isLocked && activeTool === "highlight" ? " highlight-mode" : ""}${isLocked && activeTool === "comments" ? " comment-mode" : ""}`}
+      className={`simple-editor-wrapper${isLocked ? " editor-locked" : ""}${isLocked && activeTool === "arrow" ? " arrow-mode" : ""}${isLocked && activeTool === "eraser" ? " eraser-mode" : ""}${isLocked && activeTool === "highlight" ? " highlight-mode" : ""}${isLocked && activeTool === "comments" ? " comment-mode" : ""}${overscroll ? " editor-overscroll" : ""}`}
       onFocusCapture={handleFocus}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}

@@ -39,8 +39,13 @@ export function HubPage({ navigate }: HubPageProps) {
     toggleFavorite: toggleFolderFavorite,
     moveFolder,
   } = useFolders();
-  const { settings, toggleDarkMode, toggleHideOffscreenArrows, toggleShowStatusBar } =
-    useSettings();
+  const {
+    settings,
+    toggleDarkMode,
+    toggleHideOffscreenArrows,
+    toggleShowStatusBar,
+    toggleOverscroll,
+  } = useSettings();
 
   const [showNewDialog, setShowNewDialog] = useState(false);
   const [newDocumentFolderId, setNewDocumentFolderId] = useState<string | null>(null);
@@ -177,6 +182,8 @@ export function HubPage({ navigate }: HubPageProps) {
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}
         toggleShowStatusBar={toggleShowStatusBar}
+        overscroll={settings.overscroll}
+        toggleOverscroll={toggleOverscroll}
       />
     </div>
   );

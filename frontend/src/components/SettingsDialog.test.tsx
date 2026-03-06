@@ -12,6 +12,8 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
     toggleHideOffscreenArrows: vi.fn(),
     showStatusBar: true,
     toggleShowStatusBar: vi.fn(),
+    overscroll: true,
+    toggleOverscroll: vi.fn(),
     ...overrides,
   };
   render(<SettingsDialog {...props} />);
@@ -32,6 +34,7 @@ describe("SettingsDialog", () => {
       expect(screen.getByText("Dark mode")).toBeInTheDocument();
       expect(screen.getByText("Hide off-screen arrows")).toBeInTheDocument();
       expect(screen.getByText("Status bar")).toBeInTheDocument();
+      expect(screen.getByText("Overscroll")).toBeInTheDocument();
     });
 
     it("then does not show removed toast notification settings", () => {
@@ -108,6 +111,38 @@ describe("SettingsDialog", () => {
     it("then renders the status bar switch as unchecked", () => {
       renderDialog({ showStatusBar: false });
       expect(screen.getByTestId("show-status-bar-switch")).toHaveAttribute("aria-checked", "false");
+    });
+  });
+
+  describe("when opened", () => {
+    it("then shows overscroll setting row", () => {
+      renderDialog();
+      expect(screen.getByText("Overscroll")).toBeInTheDocument();
+      expect(
+        screen.getByText("Scroll past the last line of text in the editor"),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe("when the overscroll switch is clicked", () => {
+    it("then calls toggleOverscroll", () => {
+      const props = renderDialog();
+      fireEvent.click(screen.getByTestId("overscroll-switch"));
+      expect(props.toggleOverscroll).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("when overscroll is true", () => {
+    it("then renders the overscroll switch as checked", () => {
+      renderDialog({ overscroll: true });
+      expect(screen.getByTestId("overscroll-switch")).toHaveAttribute("aria-checked", "true");
+    });
+  });
+
+  describe("when overscroll is false", () => {
+    it("then renders the overscroll switch as unchecked", () => {
+      renderDialog({ overscroll: false });
+      expect(screen.getByTestId("overscroll-switch")).toHaveAttribute("aria-checked", "false");
     });
   });
 });

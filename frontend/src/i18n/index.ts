@@ -10,12 +10,6 @@ import managementEn from "./locales/en/management.json";
 import editorEn from "./locales/en/editor.json";
 import tourEn from "./locales/en/tour.json";
 
-import commonEnSg from "./locales/en-SG/common.json";
-import toolsEnSg from "./locales/en-SG/tools.json";
-import dialogsEnSg from "./locales/en-SG/dialogs.json";
-import managementEnSg from "./locales/en-SG/management.json";
-import editorEnSg from "./locales/en-SG/editor.json";
-
 import commonZhHans from "./locales/zh-Hans/common.json";
 import toolsZhHans from "./locales/zh-Hans/tools.json";
 import dialogsZhHans from "./locales/zh-Hans/dialogs.json";
@@ -206,7 +200,6 @@ import { STORAGE_KEYS } from "@/constants/storage-keys";
 
 export const LANGUAGE_OPTIONS = [
   { code: "en", label: "English" },
-  { code: "en-SG", label: "Singlish" },
   { code: "zh-Hans", label: "简体中文" },
   { code: "zh-Hant", label: "繁體中文" },
   { code: "es", label: "Español" },
@@ -258,17 +251,6 @@ const localeData: [string, Namespaces][] = [
       dialogs: dialogsEn,
       management: managementEn,
       editor: editorEn,
-      tour: tourEn,
-    },
-  ],
-  [
-    "en-SG",
-    {
-      common: commonEnSg,
-      tools: toolsEnSg,
-      dialogs: dialogsEnSg,
-      management: managementEnSg,
-      editor: editorEnSg,
       tour: tourEn,
     },
   ],
@@ -633,7 +615,6 @@ i18n
       "zh-TW": ["zh-Hant", "zh-Hans", "en"],
       "zh-HK": ["zh-Hant", "zh-Hans", "en"],
       zh: ["zh-Hans", "en"],
-      "en-SG": ["en-SG", "en"],
       default: ["en"],
     },
     defaultNS: "common",

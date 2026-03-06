@@ -14,6 +14,10 @@
       "label": "Status bar",
       "description": "Show the status bar below the toolbar"
     },
+    "overscroll": {
+      "label": "Overscroll",
+      "description": "Scroll past the last line of text in the editor"
+    },
     "language": {
       "label": "Language",
       "description": "Choose your preferred language"

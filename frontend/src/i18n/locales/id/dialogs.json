@@ -10,6 +10,10 @@
       "label": "Sembunyikan panah di luar layar",
       "description": "Sembunyikan panah sepenuhnya ketika salah satu titik ujung digulir keluar dari tampilan"
     },
+    "overscroll": {
+      "label": "Gulir berlebih",
+      "description": "Gulir melewati baris terakhir teks di editor"
+    },
     "language": {
       "label": "Bahasa",
       "description": "Pilih bahasa yang Anda inginkan"

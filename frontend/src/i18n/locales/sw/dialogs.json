@@ -10,6 +10,10 @@
       "label": "Ficha mishale nje ya skrini",
       "description": "Ficha mishale kabisa ncha moja inaposogezwa nje ya eneo linaloonekana"
     },
+    "overscroll": {
+      "label": "Kusogeza kupita",
+      "description": "Sogeza kupita mstari wa mwisho wa maandishi katika kihariri"
+    },
     "language": {
       "label": "Lugha",
       "description": "Chagua lugha unayopendelea"

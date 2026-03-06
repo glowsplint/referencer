@@ -14,6 +14,10 @@
       "label": "状态栏",
       "description": "在工具栏下方显示状态栏"
     },
+    "overscroll": {
+      "label": "过度滚动",
+      "description": "在编辑器中滚动超过文本的最后一行"
+    },
     "language": {
       "label": "语言",
       "description": "选择您的首选语言"

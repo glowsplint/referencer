@@ -10,6 +10,10 @@
       "label": "Ascunde săgețile din afara ecranului",
       "description": "Ascundeți complet săgețile când oricare capăt este derulat în afara vizualizării"
     },
+    "overscroll": {
+      "label": "Derulare extinsă",
+      "description": "Derulează dincolo de ultima linie de text din editor"
+    },
     "language": {
       "label": "Limbă",
       "description": "Alegeți limba preferată"

@@ -10,6 +10,10 @@
       "label": "Versteek pyltjies buite die skerm",
       "description": "Versteek pyltjies heeltemal wanneer enige eindpunt buite sig gerol is"
     },
+    "overscroll": {
+      "label": "Oorrol",
+      "description": "Rol verby die laaste reël teks in die redigeerder"
+    },
     "language": {
       "label": "Taal",
       "description": "Kies jou voorkeur taal"
