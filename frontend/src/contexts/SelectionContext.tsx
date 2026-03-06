@@ -100,12 +100,26 @@ export function SelectionProvider({ orderedIds, itemTypes, children }: Selection
         });
         setLastClickedId(id);
       } else {
-        // Plain click — single select
-        setSelectedIds(new Set([id]));
+        // Plain click
+        if (isSelectionActive) {
+          // Selection mode active: toggle this item
+          setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+              next.delete(id);
+            } else {
+              next.add(id);
+            }
+            return next;
+          });
+        } else {
+          // Nothing selected: select this item
+          setSelectedIds(new Set([id]));
+        }
         setLastClickedId(id);
       }
     },
-    [lastClickedId, orderedIds],
+    [lastClickedId, orderedIds, isSelectionActive],
   );
 
   const getSelectedItems = useCallback((): DragItem[] => {

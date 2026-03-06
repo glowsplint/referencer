@@ -71,7 +71,11 @@ export function FolderListItem({
     [handleItemClick, node.folder.id],
   );
 
-  const handleRowClick = useClickHandler(onSelect, () => onNavigateToFolder(node.folder.id));
+  const handleRowClick = useClickHandler(
+    onSelect,
+    () => onNavigateToFolder(node.folder.id),
+    isSelectionActive,
+  );
 
   const handleDrop = useCallback(
     (data: DragData) => {

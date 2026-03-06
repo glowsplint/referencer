@@ -57,7 +57,7 @@ export function WorkspaceListItem({
     [handleItemClick, workspace.workspaceId],
   );
 
-  const handleRowClick = useClickHandler(onSelect, onOpen);
+  const handleRowClick = useClickHandler(onSelect, onOpen, isSelectionActive);
 
   return (
     <div

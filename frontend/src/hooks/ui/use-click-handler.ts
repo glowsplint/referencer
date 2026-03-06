@@ -2,15 +2,20 @@ import { useCallback, useRef } from "react";
 
 /**
  * Disambiguates single-click (select) from double-click (open/navigate).
- * Modifier clicks (Ctrl/Cmd/Shift) fire immediately — they're always selection.
+ *
+ * Single-click fires immediately for instant feedback. A short timer detects
+ * whether a second click follows — if so, onDoubleClick fires instead.
+ *
+ * When `immediate` is true (e.g. selection mode is active), double-click
+ * detection is skipped entirely — every click fires onSingleClick instantly.
  */
 export function useClickHandler(
   onSingleClick: (e: React.MouseEvent) => void,
   onDoubleClick: (e: React.MouseEvent) => void,
+  immediate = false,
   delay = 250,
 ) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastEventRef = useRef<React.MouseEvent | null>(null);
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
@@ -24,23 +29,25 @@ export function useClickHandler(
         return;
       }
 
+      // Double-click detection: if timer is running, second click arrived
       if (timerRef.current) {
-        // Second click within delay window — it's a double-click
         clearTimeout(timerRef.current);
         timerRef.current = null;
         onDoubleClick(e);
-      } else {
-        // First click — start timer; persist event data
-        lastEventRef.current = e;
-        // Prevent React from recycling the event
-        e.persist?.();
+        return;
+      }
+
+      // Fire single-click immediately
+      onSingleClick(e);
+
+      // Start double-click detection window (unless in immediate mode)
+      if (!immediate) {
         timerRef.current = setTimeout(() => {
           timerRef.current = null;
-          onSingleClick(lastEventRef.current!);
         }, delay);
       }
     },
-    [onSingleClick, onDoubleClick, delay],
+    [onSingleClick, onDoubleClick, delay, immediate],
   );
 
   return handleClick;

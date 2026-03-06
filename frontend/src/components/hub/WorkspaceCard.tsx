@@ -57,7 +57,7 @@ export function WorkspaceCard({
     [handleItemClick, workspace.workspaceId],
   );
 
-  const handleCardClick = useClickHandler(onSelect, onOpen);
+  const handleCardClick = useClickHandler(onSelect, onOpen, isSelectionActive);
 
   return (
     <div
