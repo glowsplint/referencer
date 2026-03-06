@@ -84,13 +84,33 @@ export function TableDropdownMenu({
     return null;
   }
 
+  // When not in a table, render a simple button that inserts a table directly
+  if (!isInTable) {
+    return (
+      <Button
+        type="button"
+        data-style="ghost"
+        data-active-state="off"
+        role="button"
+        tabIndex={-1}
+        aria-label={t("table.label")}
+        tooltip={t("table.label")}
+        onClick={insertTable}
+        {...props}
+      >
+        <TableIcon className="tiptap-button-icon" />
+      </Button>
+    );
+  }
+
+  // When inside a table, show dropdown with table operations
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button
           type="button"
           data-style="ghost"
-          data-active-state={isInTable ? "on" : "off"}
+          data-active-state="on"
           role="button"
           tabIndex={-1}
           aria-label={t("table.label")}
@@ -106,128 +126,91 @@ export function TableDropdownMenu({
         <Card>
           <CardBody>
             <ButtonGroup orientation="vertical">
-              {/* Insert table — always shown */}
+              {/* Row actions */}
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(addRowBefore)}>
+                  <TableAddRowIcon className="tiptap-button-icon" />
+                  <span>{t("table.addRowBefore")}</span>
+                </Button>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(addRowAfter)}>
+                  <TableAddRowIcon className="tiptap-button-icon" />
+                  <span>{t("table.addRowAfter")}</span>
+                </Button>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(deleteRow)}>
+                  <TableDeleteRowIcon className="tiptap-button-icon" />
+                  <span>{t("table.deleteRow")}</span>
+                </Button>
+              </DropdownMenuItem>
+
+              {/* Column actions */}
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(addColumnBefore)}>
+                  <TableAddColumnIcon className="tiptap-button-icon" />
+                  <span>{t("table.addColumnBefore")}</span>
+                </Button>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(addColumnAfter)}>
+                  <TableAddColumnIcon className="tiptap-button-icon" />
+                  <span>{t("table.addColumnAfter")}</span>
+                </Button>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(deleteColumn)}>
+                  <TableDeleteColumnIcon className="tiptap-button-icon" />
+                  <span>{t("table.deleteColumn")}</span>
+                </Button>
+              </DropdownMenuItem>
+
+              {/* Cell actions */}
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(mergeCells)}>
+                  <TableMergeCellsIcon className="tiptap-button-icon" />
+                  <span>{t("table.mergeCells")}</span>
+                </Button>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(splitCell)}>
+                  <TableSplitCellIcon className="tiptap-button-icon" />
+                  <span>{t("table.splitCell")}</span>
+                </Button>
+              </DropdownMenuItem>
+
+              {/* Header toggles */}
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(toggleHeaderRow)}>
+                  <TableHeaderIcon className="tiptap-button-icon" />
+                  <span>{t("table.toggleHeaderRow")}</span>
+                </Button>
+              </DropdownMenuItem>
+
               <DropdownMenuItem asChild>
                 <Button
                   type="button"
                   data-style="ghost"
-                  onClick={() => runAction(insertTable)}
-                  disabled={isInTable}
+                  onClick={() => runAction(toggleHeaderColumn)}
                 >
-                  <TableIcon className="tiptap-button-icon" />
-                  <span>{t("table.insertTable")}</span>
+                  <TableHeaderIcon className="tiptap-button-icon" />
+                  <span>{t("table.toggleHeaderColumn")}</span>
                 </Button>
               </DropdownMenuItem>
 
-              {isInTable && (
-                <>
-                  {/* Row actions */}
-                  <DropdownMenuItem asChild>
-                    <Button
-                      type="button"
-                      data-style="ghost"
-                      onClick={() => runAction(addRowBefore)}
-                    >
-                      <TableAddRowIcon className="tiptap-button-icon" />
-                      <span>{t("table.addRowBefore")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem asChild>
-                    <Button type="button" data-style="ghost" onClick={() => runAction(addRowAfter)}>
-                      <TableAddRowIcon className="tiptap-button-icon" />
-                      <span>{t("table.addRowAfter")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem asChild>
-                    <Button type="button" data-style="ghost" onClick={() => runAction(deleteRow)}>
-                      <TableDeleteRowIcon className="tiptap-button-icon" />
-                      <span>{t("table.deleteRow")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  {/* Column actions */}
-                  <DropdownMenuItem asChild>
-                    <Button
-                      type="button"
-                      data-style="ghost"
-                      onClick={() => runAction(addColumnBefore)}
-                    >
-                      <TableAddColumnIcon className="tiptap-button-icon" />
-                      <span>{t("table.addColumnBefore")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem asChild>
-                    <Button
-                      type="button"
-                      data-style="ghost"
-                      onClick={() => runAction(addColumnAfter)}
-                    >
-                      <TableAddColumnIcon className="tiptap-button-icon" />
-                      <span>{t("table.addColumnAfter")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem asChild>
-                    <Button
-                      type="button"
-                      data-style="ghost"
-                      onClick={() => runAction(deleteColumn)}
-                    >
-                      <TableDeleteColumnIcon className="tiptap-button-icon" />
-                      <span>{t("table.deleteColumn")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  {/* Cell actions */}
-                  <DropdownMenuItem asChild>
-                    <Button type="button" data-style="ghost" onClick={() => runAction(mergeCells)}>
-                      <TableMergeCellsIcon className="tiptap-button-icon" />
-                      <span>{t("table.mergeCells")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem asChild>
-                    <Button type="button" data-style="ghost" onClick={() => runAction(splitCell)}>
-                      <TableSplitCellIcon className="tiptap-button-icon" />
-                      <span>{t("table.splitCell")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  {/* Header toggles */}
-                  <DropdownMenuItem asChild>
-                    <Button
-                      type="button"
-                      data-style="ghost"
-                      onClick={() => runAction(toggleHeaderRow)}
-                    >
-                      <TableHeaderIcon className="tiptap-button-icon" />
-                      <span>{t("table.toggleHeaderRow")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem asChild>
-                    <Button
-                      type="button"
-                      data-style="ghost"
-                      onClick={() => runAction(toggleHeaderColumn)}
-                    >
-                      <TableHeaderIcon className="tiptap-button-icon" />
-                      <span>{t("table.toggleHeaderColumn")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-
-                  {/* Delete table */}
-                  <DropdownMenuItem asChild>
-                    <Button type="button" data-style="ghost" onClick={() => runAction(deleteTable)}>
-                      <TableDeleteIcon className="tiptap-button-icon" />
-                      <span>{t("table.deleteTable")}</span>
-                    </Button>
-                  </DropdownMenuItem>
-                </>
-              )}
+              {/* Delete table */}
+              <DropdownMenuItem asChild>
+                <Button type="button" data-style="ghost" onClick={() => runAction(deleteTable)}>
+                  <TableDeleteIcon className="tiptap-button-icon" />
+                  <span>{t("table.deleteTable")}</span>
+                </Button>
+              </DropdownMenuItem>
             </ButtonGroup>
           </CardBody>
         </Card>
