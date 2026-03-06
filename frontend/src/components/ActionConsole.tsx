@@ -80,6 +80,8 @@ interface ActionConsoleProps {
   onClose: () => void;
   height: number;
   onHeightChange: (height: number) => void;
+  onLoadDemo?: () => void;
+  demoDisabled?: boolean;
 }
 
 export function ActionConsole({
@@ -88,6 +90,8 @@ export function ActionConsole({
   onClose,
   height,
   onHeightChange,
+  onLoadDemo,
+  demoDisabled,
 }: ActionConsoleProps) {
   const { t } = useTranslation("management");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -166,6 +170,18 @@ export function ActionConsole({
           </div>
         ))}
       </div>
+      {onLoadDemo && (
+        <div className="flex items-center px-3 py-1.5 border-t border-zinc-700 shrink-0">
+          <button
+            data-testid="loadDemoButton"
+            onClick={onLoadDemo}
+            disabled={demoDisabled}
+            className="text-zinc-400 hover:text-zinc-200 text-xs px-2 py-0.5 rounded hover:bg-zinc-700 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+          >
+            {t("actionConsole.loadDemo")}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -22,7 +22,6 @@ import {
   Keyboard,
   CircleHelp,
   GraduationCap,
-  BookOpen,
   PanelRightClose,
   PanelLeftClose,
 } from "lucide-react";
@@ -118,8 +117,6 @@ export function ButtonPane() {
     setActiveTool,
     isAnyPaneLocked,
     toggleCommentPlacement,
-    loadDemoContent,
-    demoLoaded,
   } = useDocument();
 
   const { startTour } = useTour();
@@ -234,19 +231,6 @@ export function ButtonPane() {
           </button>
         </TooltipTrigger>
         <TooltipContent>{tm("tooltips.startTour")}</TooltipContent>
-      </Tooltip>
-      <Tooltip placement="right">
-        <TooltipTrigger asChild>
-          <button
-            onClick={() => loadDemoContent()}
-            disabled={readOnly || demoLoaded}
-            className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
-            data-testid="loadDemoButton"
-          >
-            <BookOpen size={20} />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>{tm("tooltips.loadDemo")}</TooltipContent>
       </Tooltip>
       <div className="w-6 border-t border-border" role="separator" />
       {/* Tools group */}
