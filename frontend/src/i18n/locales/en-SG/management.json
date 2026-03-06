@@ -138,8 +138,19 @@
     "rename": "Rename",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "moveTo": "Move to...",
+    "moveTo": "Move",
     "noFolder": "No folder",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "deleteSelectedTitle": "Delete Selected",
+    "deleteSelectedConfirm_one": "Are you sure you want to delete {{count}} item? Cannot undo one.",
+    "deleteSelectedConfirm_other": "Are you sure you want to delete {{count}} items? Cannot undo one.",
+    "onboardingAddTexts": "Add texts",
+    "onboardingAddTextsHint": "Import or paste texts to study side by side",
+    "onboardingHighlight": "Highlight & underline",
+    "onboardingHighlightHint": "Mark key phrases with colored layers",
+    "onboardingComment": "Comment & discuss",
+    "onboardingCommentHint": "Add notes, replies, and reactions",
     "newSubfolder": "New subfolder",
     "itemCount_one": "{{count}} item",
     "itemCount_other": "{{count}} items",
@@ -154,6 +165,6 @@
     "deleteWorkspaceTitle": "Delete Workspace",
     "deleteWorkspaceConfirm": "Confirm want to delete \"{{title}}\" or not? Cannot undo one.",
     "deleteFolderTitle": "Delete Folder",
-    "deleteFolderConfirm": "Confirm want to delete \"{{name}}\" or not? Workspaces inside will kena moved to the root level."
+    "deleteFolderConfirm": "Confirm want to delete \"{{name}}\" or not? All subfolders also kena deleted. Workspaces inside will be moved out of the folder. Cannot undo one."
   }
 }

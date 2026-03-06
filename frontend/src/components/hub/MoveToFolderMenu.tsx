@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { FolderInput } from "lucide-react";
 import { buildFolderTree, type FolderNode } from "@/lib/folder-tree";
@@ -45,12 +46,13 @@ function FolderOption({
 }
 
 export function MoveToFolderMenu({ folders, currentFolderId, onMove }: MoveToFolderMenuProps) {
+  const { t } = useTranslation("management");
   const tree = buildFolderTree(folders);
 
   return (
     <DropdownMenu.Sub>
       <DropdownMenu.SubTrigger className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors data-[state=open]:bg-accent">
-        <FolderInput size={14} /> Move to...
+        <FolderInput size={14} /> {t("hub.moveTo")}
       </DropdownMenu.SubTrigger>
       <DropdownMenu.Portal>
         <DropdownMenu.SubContent
@@ -62,7 +64,7 @@ export function MoveToFolderMenu({ folders, currentFolderId, onMove }: MoveToFol
             disabled={!currentFolderId}
             className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors data-[disabled]:opacity-50 data-[disabled]:pointer-events-none"
           >
-            No folder
+            {t("hub.noFolder")}
           </DropdownMenu.Item>
           {tree.length > 0 && <DropdownMenu.Separator className="my-1 h-px bg-border" />}
           {tree.map((node) => (

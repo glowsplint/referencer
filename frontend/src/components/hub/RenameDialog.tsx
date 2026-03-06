@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ interface RenameDialogProps {
 }
 
 export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: RenameDialogProps) {
+  const { t } = useTranslation("management");
   const [title, setTitle] = useState(currentTitle);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -44,8 +46,8 @@ export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: Ren
         }}
       >
         <DialogHeader>
-          <DialogTitle>Rename Workspace</DialogTitle>
-          <DialogDescription>Enter a new name for this workspace.</DialogDescription>
+          <DialogTitle>{t("hub.renameWorkspaceTitle")}</DialogTitle>
+          <DialogDescription>{t("hub.renameWorkspaceDescription")}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <input
@@ -53,15 +55,15 @@ export function RenameDialog({ open, onOpenChange, currentTitle, onRename }: Ren
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-3 py-2 rounded-md border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-ring"
-            placeholder="Workspace name"
+            placeholder={t("hub.workspaceNamePlaceholder")}
             data-testid="renameInput"
           />
           <DialogFooter className="mt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t("hub.cancel")}
             </Button>
             <Button type="submit" disabled={!title.trim()}>
-              Save
+              {t("hub.save")}
             </Button>
           </DialogFooter>
         </form>
