@@ -10,6 +10,10 @@
       "label": "Ukryj strzalki poza ekranem",
       "description": "Calkowicie ukryj strzalki, gdy jeden z punktow koncowych jest przewiniety poza widoczny obszar"
     },
+    "overscroll": {
+      "label": "Przewijanie poza koniec",
+      "description": "Przewijaj poza ostatnią linię tekstu w edytorze"
+    },
     "language": {
       "label": "Jezyk",
       "description": "Wybierz preferowany jezyk"

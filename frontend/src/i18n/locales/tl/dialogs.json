@@ -10,6 +10,10 @@
       "label": "Itago ang mga palasos na wala sa screen",
       "description": "Ganap na itago ang mga palaso kapag ang alinmang dulo ay nai-scroll na palabas ng view"
     },
+    "overscroll": {
+      "label": "Overscroll",
+      "description": "Mag-scroll lampas sa huling linya ng teksto sa editor"
+    },
     "language": {
       "label": "Wika",
       "description": "Piliin ang iyong gustong wika"

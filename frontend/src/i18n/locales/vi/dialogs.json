@@ -10,6 +10,10 @@
       "label": "Ẩn mũi tên ngoài màn hình",
       "description": "Ẩn hoàn toàn mũi tên khi một trong hai điểm đầu cuối bị cuộn ra ngoài vùng hiển thị"
     },
+    "overscroll": {
+      "label": "Cuộn quá mức",
+      "description": "Cuộn qua dòng cuối cùng của văn bản trong trình soạn thảo"
+    },
     "language": {
       "label": "Ngôn ngữ",
       "description": "Chọn ngôn ngữ ưa thích của bạn"

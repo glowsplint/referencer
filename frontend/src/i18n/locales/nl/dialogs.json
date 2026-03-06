@@ -10,6 +10,10 @@
       "label": "Pijlen buiten beeld verbergen",
       "description": "Pijlen volledig verbergen wanneer een eindpunt buiten het zichtbare gebied is gescrold"
     },
+    "overscroll": {
+      "label": "Doorscrollen",
+      "description": "Scroll voorbij de laatste regel tekst in de editor"
+    },
     "language": {
       "label": "Taal",
       "description": "Kies uw voorkeurstaal"

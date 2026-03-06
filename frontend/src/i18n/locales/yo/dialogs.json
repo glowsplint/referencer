@@ -10,6 +10,10 @@
       "label": "Ìbòmọ́lẹ̀ àwọn ọfà tí kò hàn",
       "description": "Ìbòmọ́lẹ̀ àwọn ọfà pátápátá nígbà tí ẹ̀gbẹ́ kan bá ti yí jáde kúrò nínú ìwòran"
     },
+    "overscroll": {
+      "label": "Yíyí kọjá",
+      "description": "Yí kọjá ìlà tó kẹ́hìn ti ọ̀rọ̀ nínú olóòtú"
+    },
     "language": {
       "label": "Èdè",
       "description": "Yan èdè tí o fẹ́ràn jù lọ"

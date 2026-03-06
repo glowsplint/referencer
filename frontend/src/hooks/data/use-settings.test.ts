@@ -18,6 +18,7 @@ describe("useSettings", () => {
       lockedPanes: { 0: true, 1: true, 2: true, 3: true },
       hideOffscreenArrows: false,
       showStatusBar: true,
+      overscroll: true,
       commentPlacement: "right",
     });
   });
@@ -185,6 +186,7 @@ describe("useSettings", () => {
       lockedPanes: { 0: true, 1: true, 2: true, 3: true },
       hideOffscreenArrows: false,
       showStatusBar: true,
+      overscroll: true,
       commentPlacement: "right",
     });
   });
@@ -247,6 +249,27 @@ describe("useSettings", () => {
     renderHook(() => useSettings());
 
     expect(document.documentElement.classList.contains("dark")).toBe(true);
+  });
+
+  it("when initialized, then overscroll defaults to true", () => {
+    const { result } = renderHook(() => useSettings());
+    expect(result.current.settings.overscroll).toBe(true);
+  });
+
+  it("when toggleOverscroll is called, then toggles overscroll", () => {
+    const { result } = renderHook(() => useSettings());
+
+    expect(result.current.settings.overscroll).toBe(true);
+
+    act(() => {
+      result.current.toggleOverscroll();
+    });
+    expect(result.current.settings.overscroll).toBe(false);
+
+    act(() => {
+      result.current.toggleOverscroll();
+    });
+    expect(result.current.settings.overscroll).toBe(true);
   });
 
   it("when reorderLockedPanes is called, then permutes lock state", () => {

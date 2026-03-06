@@ -32,6 +32,7 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
     toggleDarkMode,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
+    toggleOverscroll,
   } = useDocument();
   const { isAuthenticated, isLoading } = useAuth();
   const { documents } = useDocuments();
@@ -261,6 +262,8 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}
         toggleShowStatusBar={toggleShowStatusBar}
+        overscroll={settings.overscroll}
+        toggleOverscroll={toggleOverscroll}
       />
     </div>
   );

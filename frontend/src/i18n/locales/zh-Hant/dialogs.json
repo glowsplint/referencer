@@ -14,6 +14,10 @@
       "label": "狀態列",
       "description": "在工具列下方顯示狀態列"
     },
+    "overscroll": {
+      "label": "過度捲動",
+      "description": "在編輯器中捲動超過文字的最後一行"
+    },
     "language": {
       "label": "語言",
       "description": "選擇您的偏好語言"

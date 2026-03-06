@@ -10,6 +10,10 @@
       "label": "Ocultar setas fora da tela",
       "description": "Ocultar completamente as setas quando alguma extremidade estiver fora da visualização"
     },
+    "overscroll": {
+      "label": "Rolagem extra",
+      "description": "Rolar além da última linha de texto no editor"
+    },
     "language": {
       "label": "Idioma",
       "description": "Escolha seu idioma preferido"
