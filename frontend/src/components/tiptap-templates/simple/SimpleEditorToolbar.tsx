@@ -21,6 +21,7 @@ import { LinkPopover, LinkContent, LinkButton } from "@/components/tiptap-ui/lin
 import { MarkButton } from "@/components/tiptap-ui/mark-button";
 import { ClearFormattingButton } from "@/components/tiptap-ui/clear-formatting-button";
 import { TextColorPopover } from "@/components/tiptap-ui/text-color-button";
+import { TextRemovalButton } from "@/components/tiptap-ui/text-removal";
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 import { LineHeightDropdown } from "@/components/tiptap-ui/line-height-dropdown";
@@ -78,6 +79,7 @@ const MainToolbarContent = ({
         <MarkButton type="subscript" />
         <TextColorPopover />
         <ClearFormattingButton />
+        <TextRemovalButton />
       </ToolbarGroup>
 
       <ToolbarSeparator />

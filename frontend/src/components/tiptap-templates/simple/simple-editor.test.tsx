@@ -103,6 +103,9 @@ vi.mock("@/components/tiptap-ui/paragraph-spacing-dropdown", () => ({
 vi.mock("@/components/tiptap-ui/table-dropdown-menu", () => ({
   TableDropdownMenu: () => null,
 }));
+vi.mock("@/components/tiptap-ui/text-removal", () => ({
+  TextRemovalButton: () => null,
+}));
 
 // Mock icons
 vi.mock("@/components/tiptap-icons/arrow-left-icon", () => ({
