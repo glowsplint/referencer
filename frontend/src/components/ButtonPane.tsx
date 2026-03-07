@@ -345,7 +345,7 @@ export function ButtonPane() {
       <Tooltip placement="right">
         <TooltipTrigger asChild>
           <SwitchingButtonIcon
-            iconTwo={
+            iconOne={
               editorCount >= 4 ? (
                 <LayoutGrid size={20} />
               ) : editorCount === 3 ? (
@@ -356,7 +356,7 @@ export function ButtonPane() {
                 <SquareRoundCorner size={20} />
               )
             }
-            iconOne={
+            iconTwo={
               editorCount >= 4 ? (
                 <Rows4 size={20} />
               ) : editorCount === 3 ? (

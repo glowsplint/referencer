@@ -177,7 +177,7 @@ export function SimpleEditorToolbar({ isLocked = false }: { isLocked?: boolean }
               : `${tm("tooltips.switchToAnnotateMode")} (K)`
           }
         >
-          {isLocked ? <LockOpen size={16} /> : <Lock size={16} />}
+          {isLocked ? <Lock size={16} /> : <LockOpen size={16} />}
         </button>
       </ToolbarGroup>
     </Toolbar>

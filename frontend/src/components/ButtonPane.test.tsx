@@ -175,23 +175,25 @@ describe("ButtonPane", () => {
     });
 
     describe("when in grid mode with 2 editors", () => {
-      it("then shows the rows-2 icon", () => {
+      it("then shows the columns-2 icon", () => {
         renderButtonPane({ editorCount: 2, settings: { isMultipleRowsLayout: false } });
-        expect(getLayoutIcon()).toHaveClass("lucide-rows-2");
+        expect(getLayoutIcon()).toHaveClass("lucide-columns-2");
       });
     });
 
     describe("when in grid mode with 3 editors", () => {
-      it("then shows the rows-3 icon", () => {
+      it("then shows the layout-panel-top icon rotated", () => {
         renderButtonPane({ editorCount: 3, settings: { isMultipleRowsLayout: false } });
-        expect(getLayoutIcon()).toHaveClass("lucide-rows-3");
+        const icon = getLayoutIcon();
+        expect(icon).toHaveClass("lucide-layout-panel-top");
+        expect(icon).toHaveClass("rotate-180");
       });
     });
 
     describe("when in grid mode with 4 editors", () => {
-      it("then shows the rows-4 icon", () => {
+      it("then shows the layout-grid icon", () => {
         renderButtonPane({ editorCount: 4, settings: { isMultipleRowsLayout: false } });
-        expect(getLayoutIcon()).toHaveClass("lucide-rows-4");
+        expect(getLayoutIcon()).toHaveClass("lucide-layout-grid");
       });
     });
 
@@ -203,25 +205,23 @@ describe("ButtonPane", () => {
     });
 
     describe("when in stack mode with 2 editors", () => {
-      it("then shows the columns-2 icon", () => {
+      it("then shows the rows-2 icon", () => {
         renderButtonPane({ editorCount: 2, settings: { isMultipleRowsLayout: true } });
-        expect(getLayoutIcon()).toHaveClass("lucide-columns-2");
+        expect(getLayoutIcon()).toHaveClass("lucide-rows-2");
       });
     });
 
     describe("when in stack mode with 3 editors", () => {
-      it("then shows the layout-panel-top icon rotated", () => {
+      it("then shows the rows-3 icon", () => {
         renderButtonPane({ editorCount: 3, settings: { isMultipleRowsLayout: true } });
-        const icon = getLayoutIcon();
-        expect(icon).toHaveClass("lucide-layout-panel-top");
-        expect(icon).toHaveClass("rotate-180");
+        expect(getLayoutIcon()).toHaveClass("lucide-rows-3");
       });
     });
 
     describe("when in stack mode with 4 editors", () => {
-      it("then shows the layout-grid icon", () => {
+      it("then shows the rows-4 icon", () => {
         renderButtonPane({ editorCount: 4, settings: { isMultipleRowsLayout: true } });
-        expect(getLayoutIcon()).toHaveClass("lucide-layout-grid");
+        expect(getLayoutIcon()).toHaveClass("lucide-rows-4");
       });
     });
   });
