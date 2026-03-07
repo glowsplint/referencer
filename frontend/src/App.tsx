@@ -308,7 +308,7 @@ export function App({ documentId, navigate }: AppProps) {
   const focusedPaneLocked = isPaneLocked(activeEditorIndex);
   const anyPaneLocked = isAnyPaneLocked;
 
-  useToolShortcuts({ isLocked: anyPaneLocked, setActiveTool });
+  useToolShortcuts({ isLocked: focusedPaneLocked, setActiveTool });
   useToggleShortcuts({
     toggleDarkMode: docCtx.toggleDarkMode,
     toggleMultipleRowsLayout: docCtx.toggleMultipleRowsLayout,
