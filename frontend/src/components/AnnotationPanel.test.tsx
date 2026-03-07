@@ -8,7 +8,7 @@ import { useAllHighlightPositions } from "@/hooks/annotations/use-all-highlight-
 // Mock hooks and libs
 vi.mock("@/hooks/annotations/use-all-highlight-positions", () => ({
   useAllHighlightPositions: vi.fn(() => [
-    { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300 },
+    { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300, leftEdge: 10 },
   ]),
 }));
 
@@ -68,7 +68,7 @@ describe("AnnotationPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useAllHighlightPositions).mockReturnValue([
-      { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300 },
+      { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300, leftEdge: 10 },
     ]);
   });
 
@@ -122,8 +122,8 @@ describe("AnnotationPanel", () => {
   describe("when multiple highlights exist across editors", () => {
     it("then draws a connector line for each highlight", () => {
       vi.mocked(useAllHighlightPositions).mockReturnValue([
-        { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300 },
-        { highlightId: "h2", layerId: "layer-1", editorIndex: 1, top: 80, rightEdge: 250 },
+        { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300, leftEdge: 10 },
+        { highlightId: "h2", layerId: "layer-1", editorIndex: 1, top: 80, rightEdge: 250, leftEdge: 10 },
       ]);
 
       const layer = createLayer({
@@ -228,6 +228,64 @@ describe("AnnotationPanel", () => {
       const props = createProps();
       render(<AnnotationPanel {...props} />);
       expect(screen.queryByTestId("toggleCollapseAll")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("when isCollapsed and onToggleCollapsed are provided", () => {
+    describe("when panel is expanded", () => {
+      it("then shows the collapse toggle button", () => {
+        const props = createProps({
+          onCollapseAll: vi.fn(),
+          onExpandAll: vi.fn(),
+          collapsedIds: new Set<string>(),
+          isCollapsed: false,
+          onToggleCollapsed: vi.fn(),
+          placement: "right",
+        });
+        render(<AnnotationPanel {...props} />);
+        expect(screen.getByTestId("togglePanelCollapse")).toBeInTheDocument();
+      });
+
+      it("then calls onToggleCollapsed when collapse button is clicked", () => {
+        const onToggleCollapsed = vi.fn();
+        const props = createProps({
+          onCollapseAll: vi.fn(),
+          onExpandAll: vi.fn(),
+          collapsedIds: new Set<string>(),
+          isCollapsed: false,
+          onToggleCollapsed,
+          placement: "right",
+        });
+        render(<AnnotationPanel {...props} />);
+        fireEvent.click(screen.getByTestId("togglePanelCollapse"));
+        expect(onToggleCollapsed).toHaveBeenCalled();
+      });
+    });
+
+    describe("when panel is collapsed", () => {
+      it("then renders only the thin strip with the expand button", () => {
+        const props = createProps({
+          isCollapsed: true,
+          onToggleCollapsed: vi.fn(),
+          placement: "right",
+        });
+        const { container } = render(<AnnotationPanel {...props} />);
+        expect(screen.getByTestId("togglePanelCollapse")).toBeInTheDocument();
+        // No SVG connector lines when collapsed (icon SVGs inside the button are fine)
+        expect(container.querySelector("line")).toBeNull();
+      });
+
+      it("then calls onToggleCollapsed when expand button is clicked", () => {
+        const onToggleCollapsed = vi.fn();
+        const props = createProps({
+          isCollapsed: true,
+          onToggleCollapsed,
+          placement: "right",
+        });
+        render(<AnnotationPanel {...props} />);
+        fireEvent.click(screen.getByTestId("togglePanelCollapse"));
+        expect(onToggleCollapsed).toHaveBeenCalled();
+      });
     });
   });
 });
