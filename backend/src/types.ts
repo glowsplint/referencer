@@ -1,6 +1,7 @@
 export interface ShareRequest {
   documentId: string;
   access: string;
+  expiresAt?: string | null;
 }
 
 export interface ShareResponse {

@@ -6,11 +6,15 @@ export async function createShareLink(
   documentId: string,
   access: string,
   createdBy?: string,
+  expiresAt?: string | null,
 ): Promise<string> {
   const maxRetries = 5;
   for (let i = 0; i < maxRetries; i++) {
     const code = generateCode();
-    const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const expires_at =
+      expiresAt === undefined
+        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        : expiresAt;
     const { error } = await supabase.from("share_link").insert({
       code,
       document_id: documentId,
@@ -19,7 +23,11 @@ export async function createShareLink(
       created_by: createdBy ?? null,
     });
     if (!error) return code;
-    // Retry on unique constraint violation
+    // Only retry on unique constraint violation (code collision)
+    const isUniqueViolation = error.code === "23505" || error.message?.includes("duplicate");
+    if (!isUniqueViolation) {
+      throw new Error(`share_link insert failed: ${error.code} ${error.message}`);
+    }
   }
   throw new Error(`failed to generate unique share code after ${maxRetries} retries`);
 }
