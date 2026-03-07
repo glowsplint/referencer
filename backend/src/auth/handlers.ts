@@ -12,7 +12,12 @@ import {
   revokeAllUserSessions,
 } from "./store";
 import { signJwt } from "../lib/jwt";
-import { getCookieDomain, deleteSessionCookie, getPreviewOrigin, isAllowedOrigin } from "./cookie-domain";
+import {
+  getCookieDomain,
+  deleteSessionCookie,
+  getPreviewOrigin,
+  isAllowedOrigin,
+} from "./cookie-domain";
 import { getClientIp } from "../lib/client-ip";
 import type { Env } from "../env";
 import type { Logger } from "../lib/logger";
