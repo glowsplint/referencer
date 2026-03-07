@@ -4,10 +4,9 @@
 // mutations.
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { BookOpen, Eye, EyeOff, Plus, Search, Trash2, X } from "lucide-react";
+import { Eye, EyeOff, Plus, Search, Trash2, X } from "lucide-react";
 import { LayerRow } from "./LayerRow";
 import { SectionList } from "./SectionList";
-import { StudySchemePicker } from "./StudySchemePicker";
 
 import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useDocument } from "@/contexts/DocumentContext";
@@ -54,7 +53,6 @@ export function ManagementPane({ width }: ManagementPaneProps) {
 
   const { customColors, addCustomColor, removeCustomColor } = useCustomColors();
   const [dragOver, setDragOver] = useState(false);
-  const [schemePickerOpen, setSchemePickerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchResults = useAnnotationSearch(layers, searchQuery);
@@ -151,33 +149,13 @@ export function ManagementPane({ width }: ManagementPaneProps) {
             <div className="flex items-center justify-between mb-2 px-1">
               <h3 className="text-xs font-medium text-muted-foreground">{t("layers.title")}</h3>
               <div className="flex items-center gap-1">
-                <StudySchemePicker
-                  open={schemePickerOpen}
-                  onOpenChange={setSchemePickerOpen}
-                  onBlankLayer={() => addLayer({ extraColors: customColors })}
-                >
-                  <button
-                    className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
-                    onClick={() => {
-                      if (layers.length === 0) {
-                        setSchemePickerOpen(true);
-                      } else {
-                        addLayer({ extraColors: customColors });
-                      }
-                    }}
-                    title={t("layers.addLayer")}
-                    data-testid="addLayerButton"
-                  >
-                    <Plus size={14} />
-                  </button>
-                </StudySchemePicker>
                 <button
                   className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
-                  onClick={() => setSchemePickerOpen(true)}
-                  title={t("schemes.applyScheme")}
-                  data-testid="applySchemeButton"
+                  onClick={() => addLayer({ extraColors: customColors })}
+                  title={t("layers.addLayer")}
+                  data-testid="addLayerButton"
                 >
-                  <BookOpen size={14} />
+                  <Plus size={14} />
                 </button>
                 <button
                   className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"

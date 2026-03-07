@@ -54,45 +54,6 @@
     "showMoreReplies_one": "显示 {{count}} 条更多回复",
     "showMoreReplies_other": "显示 {{count}} 条更多回复"
   },
-  "schemes": {
-    "title": "选择学习方案",
-    "applyScheme": "应用学习方案",
-    "blankLayer": "空白图层",
-    "layerCount": "{{count}} 个图层",
-    "layerCount_one": "{{count}} 个图层",
-    "layerCount_other": "{{count}} 个图层",
-    "inductive": {
-      "name": "归纳式圣经学习",
-      "description": "使用 OIA 方法精读",
-      "layers": {
-        "keyTerms": "关键术语与重复词语",
-        "commands": "命令与警告",
-        "promises": "应许与祝福",
-        "attributes": "上帝的属性",
-        "structure": "文学结构",
-        "questions": "问题与应用"
-      }
-    },
-    "character": {
-      "name": "人物研究",
-      "description": "在叙事中追踪人物",
-      "layers": {
-        "godChrist": "上帝 / 基督",
-        "protagonist": "主角 / 忠信者",
-        "antagonist": "对手 / 反对者",
-        "speech": "对话与讲论"
-      }
-    },
-    "oia": {
-      "name": "简约版 (OIA)",
-      "description": "观察 / 解释 / 应用",
-      "layers": {
-        "observation": "观察",
-        "interpretation": "解释",
-        "application": "应用"
-      }
-    }
-  },
   "search": {
     "placeholder": "搜索批注...",
     "noResults": "没有匹配的批注",

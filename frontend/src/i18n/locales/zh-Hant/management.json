@@ -54,45 +54,6 @@
     "showMoreReplies_one": "顯示 {{count}} 則更多回覆",
     "showMoreReplies_other": "顯示 {{count}} 則更多回覆"
   },
-  "schemes": {
-    "title": "選擇學習方案",
-    "applyScheme": "套用學習方案",
-    "blankLayer": "空白圖層",
-    "layerCount": "{{count}} 個圖層",
-    "layerCount_one": "{{count}} 個圖層",
-    "layerCount_other": "{{count}} 個圖層",
-    "inductive": {
-      "name": "歸納式聖經學習",
-      "description": "使用 OIA 方法精讀",
-      "layers": {
-        "keyTerms": "關鍵術語與重複詞語",
-        "commands": "命令與警告",
-        "promises": "應許與祝福",
-        "attributes": "上帝的屬性",
-        "structure": "文學結構",
-        "questions": "問題與應用"
-      }
-    },
-    "character": {
-      "name": "人物研究",
-      "description": "在敘事中追蹤人物",
-      "layers": {
-        "godChrist": "上帝 / 基督",
-        "protagonist": "主角 / 忠信者",
-        "antagonist": "對手 / 反對者",
-        "speech": "對話與講論"
-      }
-    },
-    "oia": {
-      "name": "簡約版 (OIA)",
-      "description": "觀察 / 解釋 / 應用",
-      "layers": {
-        "observation": "觀察",
-        "interpretation": "解釋",
-        "application": "應用"
-      }
-    }
-  },
   "search": {
     "placeholder": "搜尋註解...",
     "noResults": "沒有符合的註解",

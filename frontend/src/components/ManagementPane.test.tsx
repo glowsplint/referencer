@@ -91,24 +91,16 @@ describe("ManagementPane", () => {
   });
 
   describe("when the add layer button is clicked", () => {
-    it("then opens the scheme picker when no layers exist", () => {
-      renderPane();
+    it("then calls addLayer even when no layers exist", () => {
+      const { document } = renderPane();
       fireEvent.click(screen.getByTestId("addLayerButton"));
-      expect(screen.getByTestId("schemePickerPopover")).toBeInTheDocument();
+      expect(document.addLayer).toHaveBeenCalled();
     });
 
     it("then calls addLayer directly when layers exist", () => {
       const { document } = renderPane({ layers: [layerA] });
       fireEvent.click(screen.getByTestId("addLayerButton"));
       expect(document.addLayer).toHaveBeenCalled();
-    });
-  });
-
-  describe("when the apply scheme button is clicked", () => {
-    it("then opens the scheme picker", () => {
-      renderPane({ layers: [layerA] });
-      fireEvent.click(screen.getByTestId("applySchemeButton"));
-      expect(screen.getByTestId("schemePickerPopover")).toBeInTheDocument();
     });
   });
 
