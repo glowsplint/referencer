@@ -69,15 +69,19 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
   useEffect(() => {
     if (!demoLoadRequestedRef.current) return;
     if (!readyForSeeding) return;
-    const allMounted = rawEditorsHook.mountedEditorCount >= DEFAULT_SECTION_NAMES.length;
-    if (!allMounted) return;
+    // Verify all required editors are actually mounted and alive (not stale refs from re-keying)
+    const requiredCount = DEFAULT_SECTION_NAMES.length;
+    for (let i = 0; i < requiredCount; i++) {
+      const editor = trackedEditorsHook.editorsRef.current.get(i);
+      if (!editor || editor.isDestroyed) return;
+    }
     demoLoadRequestedRef.current = false;
 
     // Demarcate undo boundary so everything below is one undo step
     yjsUndo.stopCapturing();
 
     // Set editor content
-    for (let i = 0; i < DEFAULT_SECTION_NAMES.length; i++) {
+    for (let i = 0; i < requiredCount; i++) {
       const editor = trackedEditorsHook.editorsRef.current.get(i);
       if (editor && DEFAULT_TEXT_CONTENTS[i]) {
         editor.commands.setContent(DEFAULT_TEXT_CONTENTS[i]);

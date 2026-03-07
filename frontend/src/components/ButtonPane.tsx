@@ -2,7 +2,7 @@
 // (management pane toggle, keyboard shortcuts, FAQ, settings), annotation tools
 // (selection, arrow, highlight, comments, underline, eraser), and layout/lock
 // toggles. Tool buttons are disabled when the editor is unlocked or read-only.
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Columns2,
@@ -108,6 +108,7 @@ export function ButtonPane() {
     activeArrowStyle,
     setActiveArrowStyle,
     arrowStylePickerOpen,
+    setArrowStylePickerOpen,
     selectedArrow,
     updateArrowStyle,
     isManagementPaneOpen,
@@ -125,6 +126,19 @@ export function ButtonPane() {
   const { startTour } = useTour();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
+  const arrowPickerRef = useRef<HTMLDivElement>(null);
+
+  // Dismiss the arrow style picker on outside clicks so it doesn't overlay editor content
+  useEffect(() => {
+    if (!arrowStylePickerOpen) return;
+    const handleMouseDown = (e: MouseEvent) => {
+      if (arrowPickerRef.current && !arrowPickerRef.current.contains(e.target as Node)) {
+        setArrowStylePickerOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleMouseDown);
+    return () => document.removeEventListener("mousedown", handleMouseDown);
+  }, [arrowStylePickerOpen, setArrowStylePickerOpen]);
   // Activate arrow tool when an arrow is selected (derived in render)
   const prevSelectedArrowRef = useRef<typeof selectedArrow>(null);
   if (selectedArrow && selectedArrow !== prevSelectedArrowRef.current) {
@@ -280,7 +294,10 @@ export function ButtonPane() {
                 <Tooltip placement="right">
                   <TooltipTrigger asChild>
                     <button
-                      onClick={() => setActiveTool(tool)}
+                      onClick={() => {
+                        setActiveTool(tool);
+                        if (isArrow) setArrowStylePickerOpen(!arrowStylePickerOpen);
+                      }}
                       disabled={!isFocusedPaneLocked || readOnly}
                       className={`p-2 rounded-md transition-colors ${
                         annotations.activeTool === tool && isFocusedPaneLocked
@@ -299,6 +316,7 @@ export function ButtonPane() {
                 </Tooltip>
                 {isArrow && arrowStylePickerOpen && (
                   <div
+                    ref={arrowPickerRef}
                     className="absolute left-full top-0 ml-1 z-50"
                     data-testid="arrowStylePopover"
                   >

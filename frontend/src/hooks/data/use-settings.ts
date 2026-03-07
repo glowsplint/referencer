@@ -110,7 +110,9 @@ export function useSettings() {
 
   const setActiveTool = useCallback((tool: ActiveTool) => {
     setAnnotations({ activeTool: tool });
-    setArrowStylePickerOpen(tool === "arrow");
+    // Close picker when switching away from arrow tool;
+    // opening is handled by the arrow button click in ButtonPane
+    if (tool !== "arrow") setArrowStylePickerOpen(false);
   }, []);
 
   return {

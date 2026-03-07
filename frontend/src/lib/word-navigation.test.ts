@@ -150,34 +150,84 @@ describe("when using findHorizontalTarget", () => {
   ];
 
   it("then finds next word to the right on the same line", () => {
-    const result = findHorizontalTarget("ArrowRight", { cx: 50, cy: 100 }, candidates);
+    const result = findHorizontalTarget("ArrowRight", { cx: 50, cy: 100 }, candidates, the);
     expect(result.target?.text).toBe("quick");
     expect(result.stickyX).toBeNull();
   });
 
   it("then finds next word to the left on the same line", () => {
-    const result = findHorizontalTarget("ArrowLeft", { cx: 200, cy: 100 }, candidates);
+    const result = findHorizontalTarget("ArrowLeft", { cx: 200, cy: 100 }, candidates, brown);
     expect(result.target?.text).toBe("quick");
     expect(result.stickyX).toBeNull();
   });
 
   it("then wraps to next line when no more words in direction", () => {
-    const result = findHorizontalTarget("ArrowRight", { cx: 200, cy: 100 }, candidates);
+    const result = findHorizontalTarget("ArrowRight", { cx: 200, cy: 100 }, candidates, brown);
     // No word to the right on cy=100, wraps to next line => "fox" (leftmost on line below)
     expect(result.target?.text).toBe("fox");
     expect(result.stickyX).toBeNull();
   });
 
   it("then always returns stickyX as null", () => {
-    const result = findHorizontalTarget("ArrowLeft", { cx: 50, cy: 100 }, candidates);
+    const result = findHorizontalTarget("ArrowLeft", { cx: 50, cy: 100 }, candidates, the);
     expect(result.stickyX).toBeNull();
   });
 
   it("then returns null target when no candidate exists in the direction", () => {
-    const result = findHorizontalTarget("ArrowLeft", { cx: 60, cy: 130 }, [
-      makeCenter(fox, 60, 130),
-    ]);
+    const result = findHorizontalTarget(
+      "ArrowLeft",
+      { cx: 60, cy: 130 },
+      [makeCenter(fox, 60, 130)],
+      fox,
+    );
     expect(result.target).toBeNull();
+  });
+
+  it("then falls back to reading order to cross editor boundaries", () => {
+    // Editor 0: "alpha"(50,100) "beta"(150,100)   (cy=100)
+    // Editor 1: "gamma"(400,50) "delta"(500,50)   (cy=50, different line)
+    const alpha = makeWord(0, 1, 6, "alpha");
+    const beta = makeWord(0, 7, 11, "beta");
+    const gamma = makeWord(1, 1, 6, "gamma");
+    const delta = makeWord(1, 7, 12, "delta");
+
+    const crossEditorCandidates: WordCenter[] = [
+      makeCenter(alpha, 50, 100),
+      makeCenter(beta, 150, 100),
+      makeCenter(gamma, 400, 50),
+      makeCenter(delta, 500, 50),
+    ];
+
+    // ArrowRight from beta (last word in editor 0) — no same-line/adjacent-line match
+    // because editor 1 words are at cy=50 (above, not below)
+    const result = findHorizontalTarget(
+      "ArrowRight",
+      { cx: 150, cy: 100 },
+      crossEditorCandidates,
+      beta,
+    );
+    expect(result.target?.text).toBe("gamma");
+  });
+
+  it("then falls back to reading order for ArrowLeft across editors", () => {
+    const alpha = makeWord(0, 1, 6, "alpha");
+    const beta = makeWord(0, 7, 11, "beta");
+    const gamma = makeWord(1, 1, 6, "gamma");
+
+    const crossEditorCandidates: WordCenter[] = [
+      makeCenter(alpha, 50, 100),
+      makeCenter(beta, 150, 100),
+      makeCenter(gamma, 400, 50),
+    ];
+
+    // ArrowLeft from gamma (first word in editor 1) — no spatial match
+    const result = findHorizontalTarget(
+      "ArrowLeft",
+      { cx: 400, cy: 50 },
+      crossEditorCandidates,
+      gamma,
+    );
+    expect(result.target?.text).toBe("beta");
   });
 });
 
