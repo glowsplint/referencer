@@ -1,0 +1,44 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Text einfügen",
+        "content": "Füge zunächst deinen Text in den Editor ein oder tippe ihn direkt."
+      },
+      "lock": {
+        "title": "Dokument sperren",
+        "content": "Drücke K oder klicke auf das Schloss-Symbol, um in den Annotationsmodus zu wechseln."
+      },
+      "annotate": {
+        "title": "Text annotieren",
+        "content": "Wähle Text aus, um Pfeile (A), Hervorhebungen (H), Kommentare (C) oder Unterstreichungen (U) hinzuzufügen."
+      },
+      "layers": {
+        "title": "Ebenen verwalten",
+        "content": "Ziehe Ebenen, um sie neu anzuordnen, oder ziehe sie in den Papierkorb, um sie zu löschen. Abschnitte lassen sich auf die gleiche Weise neu anordnen."
+      },
+      "eraser": {
+        "title": "Annotationen löschen",
+        "content": "Drücke E oder klicke auf den Radierer, um Hervorhebungen, Unterstreichungen und Pfeile vom markierten Text zu entfernen."
+      },
+      "unlock": {
+        "title": "Entsperren zum Bearbeiten",
+        "content": "Drücke erneut K, um zum Bearbeiten zurückzukehren. Deine Annotationen bleiben erhalten."
+      },
+      "statusBar": {
+        "title": "Statusleiste",
+        "content": "Hier findest du Hinweise zur Nutzung der Werkzeuge sowie Benachrichtigungen."
+      },
+      "share": {
+        "title": "Mit anderen zusammenarbeiten",
+        "content": "Erstelle einen schreibgeschützten oder bearbeitbaren Link, um dein annotiertes Dokument mit anderen zu teilen."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Weiter",
+    "back": "Zurück",
+    "skip": "Überspringen",
+    "finish": "Fertig"
+  }
+}

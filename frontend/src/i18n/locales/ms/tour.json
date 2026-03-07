@@ -1,0 +1,44 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Tampal teks anda",
+        "content": "Mulakan dengan menampal atau menaip teks anda ke dalam editor."
+      },
+      "lock": {
+        "title": "Kunci dokumen",
+        "content": "Tekan K atau klik butang kunci untuk beralih ke mod anotasi."
+      },
+      "annotate": {
+        "title": "Anotasi teks anda",
+        "content": "Pilih teks untuk melukis anak panah (A), serlahan (H), komen (C), atau garis bawah (U)."
+      },
+      "layers": {
+        "title": "Urus lapisan anda",
+        "content": "Seret lapisan untuk menyusun semula, atau seret ke tong sampah untuk memadam. Anda juga boleh menyusun semula bahagian dengan cara yang sama."
+      },
+      "eraser": {
+        "title": "Padam anotasi",
+        "content": "Tekan E atau klik pemadam untuk menghapuskan serlahan, garis bawah, dan anak panah daripada teks yang dipilih."
+      },
+      "unlock": {
+        "title": "Buka kunci untuk mengedit",
+        "content": "Tekan K sekali lagi untuk kembali mengedit. Anotasi anda akan dikekalkan."
+      },
+      "statusBar": {
+        "title": "Bar status",
+        "content": "Perhatikan bahagian ini untuk arahan penggunaan alat atau pemberitahuan."
+      },
+      "share": {
+        "title": "Bekerjasama dengan orang lain",
+        "content": "Jana pautan baca sahaja atau boleh diedit untuk berkongsi dokumen beranotasi anda dengan orang lain."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Seterusnya",
+    "back": "Kembali",
+    "skip": "Langkau",
+    "finish": "Selesai"
+  }
+}

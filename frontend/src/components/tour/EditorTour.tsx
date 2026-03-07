@@ -19,13 +19,12 @@ function dispatchAction(action: string | undefined, handlers: Record<string, () 
 }
 
 export function EditorTour() {
-  const { t, i18n } = useTranslation("tour");
+  const { t } = useTranslation("tour");
   const { activeTourId, completeTour, isTourCompleted, startTour } = useTour();
   const { readOnly, documentId } = useDocument();
   const isMobile = useIsBreakpoint("max", 768);
   const [shareOpen, setShareOpen] = useState(false);
   const prevStepRef = useRef<number>(-1);
-  const isNonEnglish = !i18n.language.startsWith("en");
 
   // Translate step titles and content (keys are dynamic strings from tour-steps.ts)
   const translatedSteps: TourStep[] = EDITOR_TOUR_STEPS.map((step) => ({
@@ -108,7 +107,6 @@ export function EditorTour() {
     }
   }, [isEditorTour, engine]);
 
-  if (isNonEnglish) return null;
   if (!engine.isRunning || !engine.currentStep) return null;
 
   return (

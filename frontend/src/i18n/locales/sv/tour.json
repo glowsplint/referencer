@@ -1,0 +1,44 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Klistra in din text",
+        "content": "Börja med att klistra in eller skriva din text i redigeraren."
+      },
+      "lock": {
+        "title": "Lås dokumentet",
+        "content": "Tryck K eller klicka på låsknappen för att växla till anteckningsläge."
+      },
+      "annotate": {
+        "title": "Anteckna din text",
+        "content": "Markera text för att rita pilar (A), markera (H), kommentera (C) eller stryka under (U)."
+      },
+      "layers": {
+        "title": "Hantera dina lager",
+        "content": "Dra lager för att ändra ordning, eller dra till papperskorgen för att radera. Du kan även ordna om sektioner på samma sätt."
+      },
+      "eraser": {
+        "title": "Radera anteckningar",
+        "content": "Tryck E eller klicka på suddet för att ta bort markeringar, understrykningar och pilar från markerad text."
+      },
+      "unlock": {
+        "title": "Lås upp för att redigera",
+        "content": "Tryck K igen för att återgå till redigering. Dina anteckningar bevaras."
+      },
+      "statusBar": {
+        "title": "Statusfält",
+        "content": "Håll ett öga här för instruktioner om hur du använder verktygen eller för aviseringar."
+      },
+      "share": {
+        "title": "Samarbeta med andra",
+        "content": "Skapa en skrivskyddad eller redigerbar länk för att dela ditt antecknade dokument med andra."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Nästa",
+    "back": "Tillbaka",
+    "skip": "Hoppa över",
+    "finish": "Avsluta"
+  }
+}
