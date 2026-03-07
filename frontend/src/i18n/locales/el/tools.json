@@ -30,5 +30,11 @@
     "status": "Κάντε κλικ και σύρετε για να σβήσετε σχολιασμούς.",
     "erased": "Ο σχολιασμός διαγράφηκε."
   },
-  "lockHint": "Πατήστε <kbd>Esc</kbd> <kbd>K</kbd> για να κλειδώσετε τον επεξεργαστή αφού ολοκληρώσετε τα περιεχόμενα."
+  "lockHint": "Πατήστε <kbd>Esc</kbd> <kbd>K</kbd> για να κλειδώσετε τον επεξεργαστή αφού ολοκληρώσετε τα περιεχόμενα.",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

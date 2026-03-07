@@ -2,5 +2,28 @@
   "close": "닫기",
   "active": "활성",
   "text": "구절 {{number}}",
-  "layer": "레이어 {{number}}"
+  "layer": "레이어 {{number}}",
+  "errorBoundary": {
+    "somethingWentWrong": "Something went wrong.",
+    "tryAgain": "Try again"
+  },
+  "presence": {
+    "online": "{{count}} online",
+    "you": "You",
+    "yourName": "Your name",
+    "connected": "Connected",
+    "disconnected": "Disconnected"
+  },
+  "export": {
+    "title": "Export",
+    "pdf": "Export as PDF",
+    "markdown": "Export as Markdown"
+  },
+  "print": {
+    "comments": "Comments",
+    "highlights": "Highlights",
+    "underlines": "Underlines",
+    "connections": "Connections",
+    "replyBy": "Reply by {{userName}} ({{date}})"
+  }
 }

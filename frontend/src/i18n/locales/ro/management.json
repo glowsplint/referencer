@@ -35,7 +35,10 @@
     "toggleEditorLock": "Comutați blocarea editorului",
     "toggleCommentPlacement": "Comutați plasarea comentariilor",
     "startTour": "Tur ghidat",
-    "loadDemo": "Încarcă conținut demonstrativ"
+    "loadDemo": "Încarcă conținut demonstrativ",
+    "switchToEditMode": "Switch to Edit mode",
+    "switchToAnnotateMode": "Switch to Annotate mode",
+    "annotateModeLockHint": " — switch to Annotate mode first"
   },
   "annotations": {
     "placeholder": "Adaugă adnotare...",
@@ -45,7 +48,11 @@
     "replyPlaceholder": "Răspunde...",
     "replies": "răspunsuri",
     "addReaction": "Adaugă reacție",
-    "removeReply": "Elimină răspunsul"
+    "removeReply": "Elimină răspunsul",
+    "moreEmojis": "More emojis",
+    "sendReply": "Send reply",
+    "showMoreReplies_one": "Show {{count}} more reply",
+    "showMoreReplies_other": "Show {{count}} more replies"
   },
   "search": {
     "placeholder": "Caută adnotări...",
@@ -56,7 +63,12 @@
   "actionConsole": {
     "title": "Consola de acțiuni",
     "close": "închide",
-    "empty": "Nu au fost înregistrate acțiuni încă."
+    "empty": "Nu au fost înregistrate acțiuni încă.",
+    "loadDemo": "Load demo content",
+    "loadDemoTitle": "Load demo content",
+    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
+    "loadDemoCancel": "Cancel",
+    "loadDemoLoad": "Load"
   },
   "hub": {
     "title": "Referencer",
@@ -106,6 +118,60 @@
     "deleteDocumentTitle": "Șterge Documentul",
     "deleteDocumentConfirm": "Ești sigur că vrei să ștergi \"{{title}}\"? Această acțiune nu poate fi anulată.",
     "deleteFolderTitle": "Șterge Folderul",
-    "deleteFolderConfirm": "Ești sigur că vrei să ștergi \"{{name}}\"? Spațiile de lucru din interior vor fi mutate la nivelul principal."
+    "deleteFolderConfirm": "Ești sigur că vrei să ștergi \"{{name}}\"? Spațiile de lucru din interior vor fi mutate la nivelul principal.",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "signInGoogle": "Sign in with Google",
+    "signInGithub": "Sign in with GitHub",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "deleteSelectedTitle": "Delete Selected",
+    "deleteSelectedConfirm_one": "Are you sure you want to delete {{count}} item? This cannot be undone.",
+    "deleteSelectedConfirm_other": "Are you sure you want to delete {{count}} items? This cannot be undone.",
+    "onboardingAddTexts": "Add texts",
+    "onboardingAddTextsHint": "Import or paste texts to study side by side",
+    "onboardingHighlight": "Highlight & underline",
+    "onboardingHighlightHint": "Mark key phrases with colored layers",
+    "onboardingComment": "Comment & discuss",
+    "onboardingCommentHint": "Add notes, replies, and reactions"
+  },
+  "schemes": {
+    "title": "Start with a study scheme",
+    "applyScheme": "Apply study scheme",
+    "blankLayer": "Blank layer",
+    "layerCount": "{{count}} layers",
+    "layerCount_one": "{{count}} layer",
+    "layerCount_other": "{{count}} layers",
+    "inductive": {
+      "name": "Inductive Bible Study",
+      "description": "Close reading with OIA method",
+      "layers": {
+        "keyTerms": "Key Terms & Repeated Words",
+        "commands": "Commands & Warnings",
+        "promises": "Promises & Blessings",
+        "attributes": "Attributes of God",
+        "structure": "Literary Structure",
+        "questions": "Questions & Application"
+      }
+    },
+    "character": {
+      "name": "Character Study",
+      "description": "Trace persons through narrative",
+      "layers": {
+        "godChrist": "God / Christ",
+        "protagonist": "Protagonist / Faithful",
+        "antagonist": "Antagonist / Opposition",
+        "speech": "Speech & Dialogue"
+      }
+    },
+    "oia": {
+      "name": "Minimal (OIA)",
+      "description": "Observation / Interpretation / Application",
+      "layers": {
+        "observation": "Observation",
+        "interpretation": "Interpretation",
+        "application": "Application"
+      }
+    }
   }
 }

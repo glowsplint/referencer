@@ -35,7 +35,10 @@
     "toggleEditorLock": "エディターロックの切り替え",
     "toggleCommentPlacement": "コメント配置の切り替え",
     "startTour": "ガイドツアー",
-    "loadDemo": "デモコンテンツを読み込む"
+    "loadDemo": "デモコンテンツを読み込む",
+    "switchToEditMode": "Switch to Edit mode",
+    "switchToAnnotateMode": "Switch to Annotate mode",
+    "annotateModeLockHint": " — switch to Annotate mode first"
   },
   "annotations": {
     "placeholder": "注釈を追加...",
@@ -45,7 +48,11 @@
     "replyPlaceholder": "返信...",
     "replies": "件の返信",
     "addReaction": "リアクションを追加",
-    "removeReply": "返信を削除"
+    "removeReply": "返信を削除",
+    "moreEmojis": "More emojis",
+    "sendReply": "Send reply",
+    "showMoreReplies_one": "Show {{count}} more reply",
+    "showMoreReplies_other": "Show {{count}} more replies"
   },
   "search": {
     "placeholder": "注釈を検索...",
@@ -56,7 +63,12 @@
   "actionConsole": {
     "title": "アクションコンソール",
     "close": "閉じる",
-    "empty": "まだアクションが記録されていません。"
+    "empty": "まだアクションが記録されていません。",
+    "loadDemo": "Load demo content",
+    "loadDemoTitle": "Load demo content",
+    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
+    "loadDemoCancel": "Cancel",
+    "loadDemoLoad": "Load"
   },
   "hub": {
     "title": "Referencer",
@@ -106,6 +118,60 @@
     "deleteDocumentTitle": "ドキュメントを削除",
     "deleteDocumentConfirm": "「{{title}}」を削除してもよろしいですか？この操作は元に戻せません。",
     "deleteFolderTitle": "フォルダーを削除",
-    "deleteFolderConfirm": "「{{name}}」を削除してもよろしいですか？内部のドキュメントはルートレベルに移動されます。"
+    "deleteFolderConfirm": "「{{name}}」を削除してもよろしいですか？内部のドキュメントはルートレベルに移動されます。",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "signInGoogle": "Sign in with Google",
+    "signInGithub": "Sign in with GitHub",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "deleteSelectedTitle": "Delete Selected",
+    "deleteSelectedConfirm_one": "Are you sure you want to delete {{count}} item? This cannot be undone.",
+    "deleteSelectedConfirm_other": "Are you sure you want to delete {{count}} items? This cannot be undone.",
+    "onboardingAddTexts": "Add texts",
+    "onboardingAddTextsHint": "Import or paste texts to study side by side",
+    "onboardingHighlight": "Highlight & underline",
+    "onboardingHighlightHint": "Mark key phrases with colored layers",
+    "onboardingComment": "Comment & discuss",
+    "onboardingCommentHint": "Add notes, replies, and reactions"
+  },
+  "schemes": {
+    "title": "Start with a study scheme",
+    "applyScheme": "Apply study scheme",
+    "blankLayer": "Blank layer",
+    "layerCount": "{{count}} layers",
+    "layerCount_one": "{{count}} layer",
+    "layerCount_other": "{{count}} layers",
+    "inductive": {
+      "name": "Inductive Bible Study",
+      "description": "Close reading with OIA method",
+      "layers": {
+        "keyTerms": "Key Terms & Repeated Words",
+        "commands": "Commands & Warnings",
+        "promises": "Promises & Blessings",
+        "attributes": "Attributes of God",
+        "structure": "Literary Structure",
+        "questions": "Questions & Application"
+      }
+    },
+    "character": {
+      "name": "Character Study",
+      "description": "Trace persons through narrative",
+      "layers": {
+        "godChrist": "God / Christ",
+        "protagonist": "Protagonist / Faithful",
+        "antagonist": "Antagonist / Opposition",
+        "speech": "Speech & Dialogue"
+      }
+    },
+    "oia": {
+      "name": "Minimal (OIA)",
+      "description": "Observation / Interpretation / Application",
+      "layers": {
+        "observation": "Observation",
+        "interpretation": "Interpretation",
+        "application": "Application"
+      }
+    }
   }
 }

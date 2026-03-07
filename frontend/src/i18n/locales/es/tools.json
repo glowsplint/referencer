@@ -30,5 +30,11 @@
     "status": "Haz clic y arrastra para borrar anotaciones.",
     "erased": "Decoración borrada."
   },
-  "lockHint": "Presiona <kbd>Esc</kbd> <kbd>K</kbd> para bloquear el editor una vez que hayas finalizado el contenido."
+  "lockHint": "Presiona <kbd>Esc</kbd> <kbd>K</kbd> para bloquear el editor una vez que hayas finalizado el contenido.",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

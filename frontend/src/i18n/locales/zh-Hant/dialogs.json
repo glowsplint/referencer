@@ -104,7 +104,8 @@
     "alignCenter": "置中對齊",
     "alignRight": "靠右對齊",
     "alignJustify": "左右對齊",
-    "searchAnnotations": "搜尋註解"
+    "searchAnnotations": "搜尋註解",
+    "addText": "Add new text"
   },
   "share": {
     "title": "共享文檔",

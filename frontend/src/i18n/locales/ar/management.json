@@ -35,7 +35,10 @@
     "toggleEditorLock": "تبديل قفل المحرر",
     "toggleCommentPlacement": "تبديل موضع التعليقات",
     "startTour": "جولة إرشادية",
-    "loadDemo": "تحميل المحتوى التجريبي"
+    "loadDemo": "تحميل المحتوى التجريبي",
+    "switchToEditMode": "Switch to Edit mode",
+    "switchToAnnotateMode": "Switch to Annotate mode",
+    "annotateModeLockHint": " — switch to Annotate mode first"
   },
   "annotations": {
     "placeholder": "إضافة تعليق...",
@@ -45,7 +48,11 @@
     "replyPlaceholder": "رد...",
     "replies": "ردود",
     "addReaction": "إضافة تفاعل",
-    "removeReply": "إزالة الرد"
+    "removeReply": "إزالة الرد",
+    "moreEmojis": "More emojis",
+    "sendReply": "Send reply",
+    "showMoreReplies_one": "Show {{count}} more reply",
+    "showMoreReplies_other": "Show {{count}} more replies"
   },
   "search": {
     "placeholder": "البحث في التعليقات...",
@@ -56,7 +63,12 @@
   "actionConsole": {
     "title": "وحدة التحكم",
     "close": "إغلاق",
-    "empty": "لم يتم تسجيل أي إجراءات بعد."
+    "empty": "لم يتم تسجيل أي إجراءات بعد.",
+    "loadDemo": "Load demo content",
+    "loadDemoTitle": "Load demo content",
+    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
+    "loadDemoCancel": "Cancel",
+    "loadDemoLoad": "Load"
   },
   "hub": {
     "title": "Referencer",
@@ -106,6 +118,60 @@
     "deleteDocumentTitle": "حذف المستند",
     "deleteDocumentConfirm": "هل أنت متأكد أنك تريد حذف \"{{title}}\"؟ لا يمكن التراجع عن هذا الإجراء.",
     "deleteFolderTitle": "حذف المجلد",
-    "deleteFolderConfirm": "هل أنت متأكد أنك تريد حذف \"{{name}}\"؟ ستُنقل المستندات الموجودة بداخله إلى المستوى الرئيسي."
+    "deleteFolderConfirm": "هل أنت متأكد أنك تريد حذف \"{{name}}\"؟ ستُنقل المستندات الموجودة بداخله إلى المستوى الرئيسي.",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "signInGoogle": "Sign in with Google",
+    "signInGithub": "Sign in with GitHub",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "deleteSelectedTitle": "Delete Selected",
+    "deleteSelectedConfirm_one": "Are you sure you want to delete {{count}} item? This cannot be undone.",
+    "deleteSelectedConfirm_other": "Are you sure you want to delete {{count}} items? This cannot be undone.",
+    "onboardingAddTexts": "Add texts",
+    "onboardingAddTextsHint": "Import or paste texts to study side by side",
+    "onboardingHighlight": "Highlight & underline",
+    "onboardingHighlightHint": "Mark key phrases with colored layers",
+    "onboardingComment": "Comment & discuss",
+    "onboardingCommentHint": "Add notes, replies, and reactions"
+  },
+  "schemes": {
+    "title": "Start with a study scheme",
+    "applyScheme": "Apply study scheme",
+    "blankLayer": "Blank layer",
+    "layerCount": "{{count}} layers",
+    "layerCount_one": "{{count}} layer",
+    "layerCount_other": "{{count}} layers",
+    "inductive": {
+      "name": "Inductive Bible Study",
+      "description": "Close reading with OIA method",
+      "layers": {
+        "keyTerms": "Key Terms & Repeated Words",
+        "commands": "Commands & Warnings",
+        "promises": "Promises & Blessings",
+        "attributes": "Attributes of God",
+        "structure": "Literary Structure",
+        "questions": "Questions & Application"
+      }
+    },
+    "character": {
+      "name": "Character Study",
+      "description": "Trace persons through narrative",
+      "layers": {
+        "godChrist": "God / Christ",
+        "protagonist": "Protagonist / Faithful",
+        "antagonist": "Antagonist / Opposition",
+        "speech": "Speech & Dialogue"
+      }
+    },
+    "oia": {
+      "name": "Minimal (OIA)",
+      "description": "Observation / Interpretation / Application",
+      "layers": {
+        "observation": "Observation",
+        "interpretation": "Interpretation",
+        "application": "Application"
+      }
+    }
   }
 }

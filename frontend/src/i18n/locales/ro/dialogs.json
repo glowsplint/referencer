@@ -17,6 +17,10 @@
     "language": {
       "label": "Limbă",
       "description": "Alegeți limba preferată"
+    },
+    "statusBar": {
+      "label": "Status bar",
+      "description": "Show the status bar below the toolbar"
     }
   },
   "faq": {
@@ -100,7 +104,8 @@
     "alignCenter": "Aliniere la centru",
     "alignRight": "Aliniere la dreapta",
     "alignJustify": "Aliniere justificată",
-    "searchAnnotations": "Caută adnotări"
+    "searchAnnotations": "Caută adnotări",
+    "addText": "Add new text"
   },
   "share": {
     "title": "Partajează documentul",
@@ -108,7 +113,44 @@
     "readonlyLink": "Link doar pentru citire",
     "editLink": "Link de editare",
     "linkCopied": "Linkul a fost copiat în clipboard.",
-    "copyFailed": "Copierea linkului a eșuat."
+    "copyFailed": "Copierea linkului a eșuat.",
+    "loginRequired": "Sign in to generate a share link for this document.",
+    "loginGoogle": "Sign in with Google",
+    "loginGithub": "Sign in with GitHub",
+    "activeLinks": "Active links",
+    "revoke": "Revoke",
+    "linkRevoked": "Link revoked.",
+    "revokeFailed": "Failed to revoke link.",
+    "members": "Members",
+    "you": "you",
+    "roleOwner": "Owner",
+    "roleEditor": "Editor",
+    "roleViewer": "Viewer",
+    "roleChanged": "Role updated.",
+    "roleChangeFailed": "Failed to change role.",
+    "memberRemoved": "Member removed.",
+    "removeFailed": "Failed to remove member.",
+    "loading": "Loading...",
+    "edit": "edit",
+    "readonly": "read-only",
+    "copyLink": "Copy link",
+    "revokeConfirmTitle": "Revoke share link",
+    "revokeConfirmDescription": "Are you sure you want to revoke this link? Anyone using it will lose access.",
+    "revokeConfirmCancel": "Cancel",
+    "revokeConfirmAction": "Revoke",
+    "expiryNever": "Never",
+    "expiry7Days": "7 days",
+    "expiry30Days": "30 days",
+    "expiry90Days": "90 days",
+    "expiryLabel": "Link expiry",
+    "noExpiry": "No expiry",
+    "expiresIn": "Expires in {{days}} days",
+    "expired": "Expired",
+    "acceptSignIn": "Sign in to accept this shared document",
+    "acceptError": "Something went wrong. Please try again.",
+    "acceptExpired": "This share link is invalid or has expired.",
+    "goToHub": "Go to Hub",
+    "accepting": "Accepting shared document..."
   },
   "mobile": {
     "title": "Cel mai bine pe desktop",
