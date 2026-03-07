@@ -1,0 +1,44 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Incolla il testo",
+        "content": "Inizia incollando o digitando il testo nell'editor."
+      },
+      "lock": {
+        "title": "Blocca il documento",
+        "content": "Premi K o clicca sul pulsante del lucchetto per passare alla modalità annotazione."
+      },
+      "annotate": {
+        "title": "Annota il testo",
+        "content": "Seleziona il testo per aggiungere frecce (A), evidenziazioni (H), commenti (C) o sottolineature (U)."
+      },
+      "layers": {
+        "title": "Gestisci i tuoi livelli",
+        "content": "Trascina i livelli per riordinarli oppure trascinali nel cestino per eliminarli. Puoi riordinare anche le sezioni allo stesso modo."
+      },
+      "eraser": {
+        "title": "Cancella le annotazioni",
+        "content": "Premi E o clicca sulla gomma per rimuovere evidenziazioni, sottolineature e frecce dal testo selezionato."
+      },
+      "unlock": {
+        "title": "Sblocca per modificare",
+        "content": "Premi di nuovo K per tornare alla modifica. Le tue annotazioni vengono conservate."
+      },
+      "statusBar": {
+        "title": "Barra di stato",
+        "content": "Tieni d'occhio questa area per le istruzioni sull'uso degli strumenti e le notifiche."
+      },
+      "share": {
+        "title": "Collabora con altri",
+        "content": "Genera un link di sola lettura o modificabile per condividere il tuo documento annotato con altri."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Avanti",
+    "back": "Indietro",
+    "skip": "Salta",
+    "finish": "Fine"
+  }
+}

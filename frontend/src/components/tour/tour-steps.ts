@@ -20,6 +20,12 @@ export const EDITOR_TOUR_STEPS: TourStep[] = [
     placement: "right",
   },
   {
+    target: '[data-testid="managementPane"]',
+    title: "steps.editor.layers.title",
+    content: "steps.editor.layers.content",
+    placement: "right",
+  },
+  {
     target: '[data-testid="eraserToolButton"]',
     title: "steps.editor.eraser.title",
     content: "steps.editor.eraser.content",

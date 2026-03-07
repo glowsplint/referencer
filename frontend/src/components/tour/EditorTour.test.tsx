@@ -107,7 +107,7 @@ vi.mock("@/components/ShareDialog", () => ({
 // Helpers
 // ---------------------------------------------------------------------------
 
-const SHARE_STEP_INDEX = 6; // Index of the share step in EDITOR_TOUR_STEPS
+const SHARE_STEP_INDEX = 7; // Index of the share step in EDITOR_TOUR_STEPS
 
 function resetMocks() {
   mockActiveTourId = null;
@@ -290,7 +290,7 @@ describe("EditorTour", () => {
     it("then opens the ShareDialog", () => {
       mockActiveTourId = "editor";
       // Start on a step before share
-      setEngineRunning(5);
+      setEngineRunning(6);
 
       const { rerender } = render(<EditorTour />);
 
@@ -309,7 +309,7 @@ describe("EditorTour", () => {
       document.body.appendChild(shareBtn);
 
       mockActiveTourId = "editor";
-      setEngineRunning(5);
+      setEngineRunning(6);
 
       const { rerender } = render(<EditorTour />);
 
@@ -324,7 +324,7 @@ describe("EditorTour", () => {
     it("then closes the ShareDialog", () => {
       mockActiveTourId = "editor";
       // Start on step before share
-      setEngineRunning(5);
+      setEngineRunning(6);
 
       const { rerender } = render(<EditorTour />);
 
@@ -336,7 +336,7 @@ describe("EditorTour", () => {
       expect(screen.getByTestId("shareDialog")).toHaveAttribute("data-open", "true");
 
       // Move back to a different step to trigger onExit
-      setEngineRunning(5);
+      setEngineRunning(6);
       rerender(<EditorTour />);
 
       expect(screen.getByTestId("shareDialog")).toHaveAttribute("data-open", "false");
@@ -348,7 +348,7 @@ describe("EditorTour", () => {
       document.body.appendChild(shareBtn);
 
       mockActiveTourId = "editor";
-      setEngineRunning(5);
+      setEngineRunning(6);
 
       const { rerender } = render(<EditorTour />);
 
@@ -358,7 +358,7 @@ describe("EditorTour", () => {
       expect(shareBtn.classList.contains("tour-pulse")).toBe(true);
 
       // Move away from share step — should remove pulse class
-      setEngineRunning(5);
+      setEngineRunning(6);
       rerender(<EditorTour />);
       expect(shareBtn.classList.contains("tour-pulse")).toBe(false);
     });
@@ -367,7 +367,7 @@ describe("EditorTour", () => {
   describe("when tour is skipped while on the share step", () => {
     it("then cleans up by closing the ShareDialog", () => {
       mockActiveTourId = "editor";
-      setEngineRunning(5);
+      setEngineRunning(6);
 
       const { rerender } = render(<EditorTour />);
 
@@ -399,7 +399,7 @@ describe("EditorTour", () => {
       document.body.appendChild(shareBtn);
 
       mockActiveTourId = "editor";
-      setEngineRunning(5);
+      setEngineRunning(6);
 
       const { rerender } = render(<EditorTour />);
 
@@ -507,13 +507,13 @@ describe("EditorTour", () => {
   });
 
   describe("when language is non-English", () => {
-    it("then renders nothing", () => {
+    it("then renders the tour overlay", () => {
       mockLanguage = "zh-Hans";
       mockActiveTourId = "editor";
       setEngineRunning(0);
 
-      const { container } = render(<EditorTour />);
-      expect(container.innerHTML).toBe("");
+      render(<EditorTour />);
+      expect(screen.getByTestId("tourOverlay")).toBeInTheDocument();
     });
   });
 });

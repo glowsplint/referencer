@@ -17,7 +17,7 @@ Components under `tiptap-*` directories (`tiptap-ui`, `tiptap-ui-primitive`, `ti
 - ProseMirror positions ≠ Yjs positions — use position mapping from `usePositionMapping`
 - Settings are localStorage; annotations are Yjs CRDTs; document metadata is Supabase REST
 - In git worktrees, run `bun install` before running tests or Playwright scripts
-- Only English has the `tour` i18n namespace — other locales fall back to English
+- All locales have their own `tour` i18n namespace translations
 
 ## Testing
 

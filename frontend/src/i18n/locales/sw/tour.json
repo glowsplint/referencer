@@ -1,0 +1,44 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Bandika maandishi yako",
+        "content": "Anza kwa kubandika au kuandika maandishi yako kwenye kihariri."
+      },
+      "lock": {
+        "title": "Funga hati",
+        "content": "Bonyeza K au bofya kitufe cha kufunga ili kubadilisha hadi hali ya maelezo."
+      },
+      "annotate": {
+        "title": "Weka maelezo kwenye maandishi",
+        "content": "Chagua maandishi ili kuchora mishale (A), kuangazia (H), kutoa maoni (C), au kupiga mstari chini (U)."
+      },
+      "layers": {
+        "title": "Dhibiti tabaka zako",
+        "content": "Buruta tabaka ili kuzipanga upya, au buruta hadi kwenye tupio ili kufuta. Unaweza pia kupanga upya sehemu kwa njia ile ile."
+      },
+      "eraser": {
+        "title": "Futa maelezo",
+        "content": "Bonyeza E au bofya kifutio ili kuondoa uangaziaji, mistari ya chini, na mishale kutoka kwenye maandishi yaliyochaguliwa."
+      },
+      "unlock": {
+        "title": "Fungua ili kuhariri",
+        "content": "Bonyeza K tena ili kurudi kwenye kuhariri. Maelezo yako yamehifadhiwa."
+      },
+      "statusBar": {
+        "title": "Mwambaa wa hali",
+        "content": "Angalia hapa kwa maelekezo ya jinsi ya kutumia zana au arifa."
+      },
+      "share": {
+        "title": "Shirikiana na wengine",
+        "content": "Tengeneza kiungo cha kusoma tu au kinachoweza kuhaririwa ili kushiriki hati yako yenye maelezo na wengine."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Ifuatayo",
+    "back": "Iliyotangulia",
+    "skip": "Ruka",
+    "finish": "Maliza"
+  }
+}

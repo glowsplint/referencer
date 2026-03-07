@@ -11,7 +11,11 @@
       },
       "annotate": {
         "title": "Annotate your text",
-        "content": "Select text to highlight (H), comment (C), underline (U), or draw arrows (A)."
+        "content": "Select text to draw arrows (A), highlight (H), comment (C), or underline (U)."
+      },
+      "layers": {
+        "title": "Manage your layers",
+        "content": "Drag layers to reorder them, or drag to the trash to delete. You can also reorder sections the same way."
       },
       "eraser": {
         "title": "Erase annotations",
@@ -23,7 +27,7 @@
       },
       "statusBar": {
         "title": "Status bar",
-        "content": "Keep an eye here for feedback — export results, sync status, and other notifications appear in this bar."
+        "content": "Keep an eye here for instructions on how to use the tools or notifications."
       },
       "share": {
         "title": "Collaborate with others",

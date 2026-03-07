@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { EDITOR_TOUR_STEPS } from "./tour-steps";
 
 describe("EDITOR_TOUR_STEPS", () => {
-  it("when exported, then contains exactly 7 steps", () => {
-    expect(EDITOR_TOUR_STEPS).toHaveLength(7);
+  it("when exported, then contains exactly 8 steps", () => {
+    expect(EDITOR_TOUR_STEPS).toHaveLength(8);
   });
 
   it("when inspected, then has correct targets in order", () => {
@@ -12,6 +12,7 @@ describe("EDITOR_TOUR_STEPS", () => {
       '[data-testid="editorContainer"]',
       '[data-testid="lockButton"]',
       '[data-testid="annotationToolGroup"]',
+      '[data-testid="managementPane"]',
       '[data-testid="eraserToolButton"]',
       '[data-testid="lockButton"]',
       '[data-testid="status-bar"]',
@@ -27,7 +28,7 @@ describe("EDITOR_TOUR_STEPS", () => {
 
   describe("eraser step", () => {
     it("then targets eraserToolButton without onEnter or onExit", () => {
-      const eraserStep = EDITOR_TOUR_STEPS[3];
+      const eraserStep = EDITOR_TOUR_STEPS[4];
       expect(eraserStep.target).toBe('[data-testid="eraserToolButton"]');
       expect(eraserStep.onEnter).toBeUndefined();
       expect(eraserStep.onExit).toBeUndefined();
@@ -36,7 +37,7 @@ describe("EDITOR_TOUR_STEPS", () => {
 
   describe("share step", () => {
     it("then targets shareDialog with onEnter and onExit actions", () => {
-      const shareStep = EDITOR_TOUR_STEPS[6];
+      const shareStep = EDITOR_TOUR_STEPS[7];
       expect(shareStep.target).toBe('[data-testid="shareDialog"]');
       expect(shareStep.onEnter).toBe("openShareDialog");
       expect(shareStep.onExit).toBe("closeShareDialog");

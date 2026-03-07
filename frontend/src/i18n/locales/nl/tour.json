@@ -1,0 +1,44 @@
+{
+  "steps": {
+    "editor": {
+      "paste": {
+        "title": "Plak je tekst",
+        "content": "Begin door je tekst in de editor te plakken of te typen."
+      },
+      "lock": {
+        "title": "Vergrendel het document",
+        "content": "Druk op K of klik op de vergrendelknop om naar de annotatiemodus te schakelen."
+      },
+      "annotate": {
+        "title": "Annoteer je tekst",
+        "content": "Selecteer tekst om pijlen te tekenen (A), te markeren (H), commentaar toe te voegen (C) of te onderstrepen (U)."
+      },
+      "layers": {
+        "title": "Beheer je lagen",
+        "content": "Sleep lagen om ze te herordenen, of sleep ze naar de prullenbak om ze te verwijderen. Je kunt secties op dezelfde manier herordenen."
+      },
+      "eraser": {
+        "title": "Wis annotaties",
+        "content": "Druk op E of klik op de wisser om markeringen, onderstrepingen en pijlen uit de geselecteerde tekst te verwijderen."
+      },
+      "unlock": {
+        "title": "Ontgrendel om te bewerken",
+        "content": "Druk nogmaals op K om terug te keren naar bewerken. Je annotaties blijven behouden."
+      },
+      "statusBar": {
+        "title": "Statusbalk",
+        "content": "Houd dit gebied in de gaten voor instructies over het gebruik van de tools of meldingen."
+      },
+      "share": {
+        "title": "Werk samen met anderen",
+        "content": "Genereer een alleen-lezen of bewerkbare link om je geannoteerde document met anderen te delen."
+      }
+    }
+  },
+  "buttons": {
+    "next": "Volgende",
+    "back": "Vorige",
+    "skip": "Overslaan",
+    "finish": "Voltooien"
+  }
+}
