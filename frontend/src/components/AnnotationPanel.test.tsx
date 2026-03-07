@@ -8,7 +8,14 @@ import { useAllHighlightPositions } from "@/hooks/annotations/use-all-highlight-
 // Mock hooks and libs
 vi.mock("@/hooks/annotations/use-all-highlight-positions", () => ({
   useAllHighlightPositions: vi.fn(() => [
-    { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300, leftEdge: 10 },
+    {
+      highlightId: "h1",
+      layerId: "layer-1",
+      editorIndex: 0,
+      top: 40,
+      rightEdge: 300,
+      leftEdge: 10,
+    },
   ]),
 }));
 
@@ -68,7 +75,14 @@ describe("AnnotationPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useAllHighlightPositions).mockReturnValue([
-      { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300, leftEdge: 10 },
+      {
+        highlightId: "h1",
+        layerId: "layer-1",
+        editorIndex: 0,
+        top: 40,
+        rightEdge: 300,
+        leftEdge: 10,
+      },
     ]);
   });
 
@@ -122,8 +136,22 @@ describe("AnnotationPanel", () => {
   describe("when multiple highlights exist across editors", () => {
     it("then draws a connector line for each highlight", () => {
       vi.mocked(useAllHighlightPositions).mockReturnValue([
-        { highlightId: "h1", layerId: "layer-1", editorIndex: 0, top: 40, rightEdge: 300, leftEdge: 10 },
-        { highlightId: "h2", layerId: "layer-1", editorIndex: 1, top: 80, rightEdge: 250, leftEdge: 10 },
+        {
+          highlightId: "h1",
+          layerId: "layer-1",
+          editorIndex: 0,
+          top: 40,
+          rightEdge: 300,
+          leftEdge: 10,
+        },
+        {
+          highlightId: "h2",
+          layerId: "layer-1",
+          editorIndex: 1,
+          top: 80,
+          rightEdge: 250,
+          leftEdge: 10,
+        },
       ]);
 
       const layer = createLayer({
