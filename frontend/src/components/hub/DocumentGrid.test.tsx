@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DocumentGrid } from "./DocumentGrid";
+import { STORAGE_KEYS } from "@/constants/storage-keys";
 import type { DocumentItem } from "@/lib/document-client";
 import type { FolderItem } from "@/lib/folder-client";
 
@@ -384,6 +385,43 @@ describe("DocumentGrid", () => {
       // Even though "Alpha WS" < "Zebra Folder" alphabetically, folder should come first
       expect(allListItems[0]).toHaveAttribute("data-testid", "folderListItem-f1");
       expect(allListItems[1]).toHaveAttribute("data-testid", "documentListItem-ws-unfiled");
+    });
+  });
+
+  describe("when a document is duplicated", () => {
+    it("then copies the editor layout from source to new document in localStorage", async () => {
+      const user = userEvent.setup();
+      const sourceLayout = JSON.stringify({
+        editorCount: 2,
+        sectionNames: ["Text 1", "Text 2"],
+        sectionVisibility: [true, true],
+      });
+      localStorage.setItem(`${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}ws-1`, sourceLayout);
+      renderGrid([makeDocument()]);
+
+      // Open context menu and click Duplicate
+      await user.click(screen.getByTestId("documentCardMenu"));
+      const duplicateItem = await screen.findByRole("menuitem", { name: /duplicate/i });
+      await user.click(duplicateItem);
+
+      expect(onDuplicate).toHaveBeenCalledWith("ws-1", "mock-ksuid-123");
+      const copiedLayout = localStorage.getItem(
+        `${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}mock-ksuid-123`,
+      );
+      expect(copiedLayout).toBe(sourceLayout);
+    });
+
+    it("then does not create a layout entry when the source has no persisted layout", async () => {
+      const user = userEvent.setup();
+      // No localStorage layout set for ws-1
+      renderGrid([makeDocument()]);
+
+      await user.click(screen.getByTestId("documentCardMenu"));
+      const duplicateItem = await screen.findByRole("menuitem", { name: /duplicate/i });
+      await user.click(duplicateItem);
+
+      expect(onDuplicate).toHaveBeenCalledWith("ws-1", "mock-ksuid-123");
+      expect(localStorage.getItem(`${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}mock-ksuid-123`)).toBeNull();
     });
   });
 

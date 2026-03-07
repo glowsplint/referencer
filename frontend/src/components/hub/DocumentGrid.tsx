@@ -122,6 +122,16 @@ export function DocumentGrid({
 
   const handleDuplicate = (sourceId: string) => {
     const newId = randomKSUID();
+    // Copy editor layout (pane count, names, visibility) so the duplicate
+    // opens with the same number of texts as the source document.
+    try {
+      const layout = localStorage.getItem(`${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}${sourceId}`);
+      if (layout) {
+        localStorage.setItem(`${STORAGE_KEYS.EDITOR_LAYOUT_PREFIX}${newId}`, layout);
+      }
+    } catch {
+      /* localStorage unavailable */
+    }
     onDuplicate(sourceId, newId);
   };
 
