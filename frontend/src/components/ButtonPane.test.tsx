@@ -72,24 +72,53 @@ describe("ButtonPane", () => {
     });
   });
 
-  describe("when no panes are locked", () => {
+  describe("when focused pane is unlocked", () => {
     it("then disables tool buttons", () => {
       renderButtonPane({
         isAnyPaneLocked: false,
         isPaneLocked: vi.fn(() => false),
+        activeEditorIndex: 0,
       });
       expect(screen.getByTestId("selectionToolButton")).toBeDisabled();
       expect(screen.getByTestId("arrowToolButton")).toBeDisabled();
       expect(screen.getByTestId("commentsToolButton")).toBeDisabled();
     });
+
+    it("then disables tool buttons even when another pane is locked", () => {
+      renderButtonPane({
+        isAnyPaneLocked: true,
+        isPaneLocked: vi.fn((i: number) => i !== 0),
+        activeEditorIndex: 0,
+      });
+      expect(screen.getByTestId("selectionToolButton")).toBeDisabled();
+      expect(screen.getByTestId("arrowToolButton")).toBeDisabled();
+      expect(screen.getByTestId("highlightToolButton")).toBeDisabled();
+      expect(screen.getByTestId("commentsToolButton")).toBeDisabled();
+      expect(screen.getByTestId("underlineToolButton")).toBeDisabled();
+      expect(screen.getByTestId("eraserToolButton")).toBeDisabled();
+    });
   });
 
-  describe("when at least one pane is locked", () => {
+  describe("when focused pane is locked", () => {
     it("then enables tool buttons", () => {
       renderButtonPane(allLocked);
       expect(screen.getByTestId("selectionToolButton")).toBeEnabled();
       expect(screen.getByTestId("arrowToolButton")).toBeEnabled();
       expect(screen.getByTestId("commentsToolButton")).toBeEnabled();
+    });
+
+    it("then enables tool buttons even when other panes are unlocked", () => {
+      renderButtonPane({
+        isAnyPaneLocked: true,
+        isPaneLocked: vi.fn((i: number) => i === 0),
+        activeEditorIndex: 0,
+      });
+      expect(screen.getByTestId("selectionToolButton")).toBeEnabled();
+      expect(screen.getByTestId("arrowToolButton")).toBeEnabled();
+      expect(screen.getByTestId("highlightToolButton")).toBeEnabled();
+      expect(screen.getByTestId("commentsToolButton")).toBeEnabled();
+      expect(screen.getByTestId("underlineToolButton")).toBeEnabled();
+      expect(screen.getByTestId("eraserToolButton")).toBeEnabled();
     });
 
     describe("when the selection button is clicked", () => {

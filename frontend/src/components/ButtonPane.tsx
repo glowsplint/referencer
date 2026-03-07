@@ -115,9 +115,12 @@ export function ButtonPane() {
     editorCount,
     toggleMultipleRowsLayout,
     setActiveTool,
-    isAnyPaneLocked,
+    isPaneLocked,
+    activeEditorIndex,
     toggleCommentPlacement,
   } = useDocument();
+
+  const isFocusedPaneLocked = isPaneLocked(activeEditorIndex);
 
   const { startTour } = useTour();
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -242,9 +245,9 @@ export function ButtonPane() {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => setActiveTool(tool)}
-                  disabled={!isAnyPaneLocked || readOnly}
+                  disabled={!isFocusedPaneLocked || readOnly}
                   className={`p-2 rounded-md transition-colors ${
-                    annotations.activeTool === tool && isAnyPaneLocked
+                    annotations.activeTool === tool && isFocusedPaneLocked
                       ? "bg-accent text-accent-foreground"
                       : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
                   }`}
@@ -255,7 +258,7 @@ export function ButtonPane() {
               </TooltipTrigger>
               <TooltipContent>
                 {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
-                {!isAnyPaneLocked && tm("tooltips.annotateModeLockHint")}
+                {!isFocusedPaneLocked && tm("tooltips.annotateModeLockHint")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -278,9 +281,9 @@ export function ButtonPane() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setActiveTool(tool)}
-                      disabled={!isAnyPaneLocked || readOnly}
+                      disabled={!isFocusedPaneLocked || readOnly}
                       className={`p-2 rounded-md transition-colors ${
-                        annotations.activeTool === tool && isAnyPaneLocked
+                        annotations.activeTool === tool && isFocusedPaneLocked
                           ? "bg-accent text-accent-foreground"
                           : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
                       }`}
@@ -291,7 +294,7 @@ export function ButtonPane() {
                   </TooltipTrigger>
                   <TooltipContent>
                     {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
-                    {!isAnyPaneLocked && tm("tooltips.annotateModeLockHint")}
+                    {!isFocusedPaneLocked && tm("tooltips.annotateModeLockHint")}
                   </TooltipContent>
                 </Tooltip>
                 {isArrow && arrowStylePickerOpen && (
@@ -319,9 +322,9 @@ export function ButtonPane() {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => setActiveTool(tool)}
-                  disabled={!isAnyPaneLocked || readOnly}
+                  disabled={!isFocusedPaneLocked || readOnly}
                   className={`p-2 rounded-md transition-colors ${
-                    annotations.activeTool === tool && isAnyPaneLocked
+                    annotations.activeTool === tool && isFocusedPaneLocked
                       ? "bg-accent text-accent-foreground"
                       : "hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none"
                   }`}
@@ -332,7 +335,7 @@ export function ButtonPane() {
               </TooltipTrigger>
               <TooltipContent>
                 {label} <kbd>{TOOL_SHORTCUTS[tool]}</kbd>
-                {!isAnyPaneLocked && tm("tooltips.annotateModeLockHint")}
+                {!isFocusedPaneLocked && tm("tooltips.annotateModeLockHint")}
               </TooltipContent>
             </Tooltip>
           </div>
