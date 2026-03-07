@@ -138,7 +138,7 @@
     "onboardingStep2Hint": "Paste or type your text",
     "onboardingStep3": "Start annotating",
     "onboardingStep3Hint": "Highlight, underline, and comment",
-    "guestWarning": "Data created without signing in is stored locally and may be lost. Sign in to save your work.",
+    "guestWarning": "Your work is not being saved. Sign in to keep your changes.",
     "open": "Open",
     "rename": "Rename",
     "duplicate": "Duplicate",

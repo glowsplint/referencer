@@ -138,7 +138,7 @@
     "onboardingStep2Hint": "貼上或輸入您的段落",
     "onboardingStep3": "開始標註",
     "onboardingStep3Hint": "高亮、底線和留言",
-    "guestWarning": "未登入時建立的資料僅儲存在本機，可能會遺失。請登入以儲存您的工作。",
+    "guestWarning": "您的工作未被儲存。請登入以保留您的變更。",
     "open": "開啟",
     "rename": "重新命名",
     "duplicate": "複製",

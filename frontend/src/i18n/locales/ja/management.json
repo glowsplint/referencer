@@ -97,7 +97,7 @@
     "onboardingStep2Hint": "パッセージを貼り付けまたは入力",
     "onboardingStep3": "注釈を開始",
     "onboardingStep3Hint": "ハイライト、下線、コメント",
-    "guestWarning": "サインインせずに作成されたデータはローカルに保存され、失われる可能性があります。作業を保存するにはサインインしてください。",
+    "guestWarning": "作業内容は保存されていません。変更を保持するにはサインインしてください。",
     "open": "開く",
     "rename": "名前を変更",
     "duplicate": "複製",

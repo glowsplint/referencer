@@ -97,7 +97,7 @@
     "onboardingStep2Hint": "Klistra in eller skriv ditt avsnitt",
     "onboardingStep3": "Börja anteckna",
     "onboardingStep3Hint": "Markera, stryk under och kommentera",
-    "guestWarning": "Data som skapas utan inloggning lagras lokalt och kan gå förlorad. Logga in för att spara ditt arbete.",
+    "guestWarning": "Ditt arbete sparas inte. Logga in för att behålla dina ändringar.",
     "open": "Öppna",
     "rename": "Byt namn",
     "duplicate": "Duplicera",
