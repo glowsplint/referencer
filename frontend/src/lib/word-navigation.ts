@@ -54,12 +54,18 @@ export function findHorizontalTarget(
   key: "ArrowLeft" | "ArrowRight",
   currentCenter: { cx: number; cy: number },
   allCandidates: WordCenter[],
+  currentWord: WordSelection,
 ): NavigationResult {
   const sameLine = findNearestWordOnSameLine(currentCenter, allCandidates, key);
   if (sameLine) return { target: sameLine, stickyX: null };
 
   const wrapped = findFirstWordOnAdjacentLine(currentCenter, allCandidates, key);
-  return { target: wrapped, stickyX: null };
+  if (wrapped) return { target: wrapped, stickyX: null };
+
+  // Fall back to reading order to cross editor boundaries
+  const allWords = allCandidates.map((c) => c.word);
+  const fallback = findWordInReadingOrder(currentWord, allWords, key);
+  return { target: fallback, stickyX: null };
 }
 
 /**
@@ -115,7 +121,7 @@ export function resolveNavigationTarget(
   stickyX: number | null,
 ): NavigationResult {
   if (key === "ArrowLeft" || key === "ArrowRight") {
-    return findHorizontalTarget(key, currentCenter, allCandidates);
+    return findHorizontalTarget(key, currentCenter, allCandidates, currentWord);
   }
   return findVerticalTarget(
     key as "ArrowUp" | "ArrowDown",

@@ -29,12 +29,15 @@ test.describe("when navigating across 2 editors", () => {
   test("when ArrowRight is pressed repeatedly, then selection crosses from editor 1 to editor 2", async ({
     page,
   }) => {
+    // Click any word in editor 0, then jump to its last word with End
     const p = page.locator(".simple-editor-wrapper").nth(0).locator("p").first();
     const box = await p.boundingBox();
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
     await expect(page.locator(".word-selection").first()).toBeVisible({ timeout: 2000 });
+    await page.keyboard.press("End");
+    await page.waitForTimeout(50);
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 10; i++) {
       await page.keyboard.press("ArrowRight");
       await page.waitForTimeout(30);
       if ((await editorOfSelection(page, 2)) === 1) break;
@@ -46,12 +49,15 @@ test.describe("when navigating across 2 editors", () => {
   test("when ArrowLeft is pressed repeatedly, then selection crosses from editor 2 to editor 1", async ({
     page,
   }) => {
+    // Click any word in editor 1, then jump to its first word with Home
     const p = page.locator(".simple-editor-wrapper").nth(1).locator("p").first();
     const box = await p.boundingBox();
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
     await expect(page.locator(".word-selection").first()).toBeVisible({ timeout: 2000 });
+    await page.keyboard.press("Home");
+    await page.waitForTimeout(50);
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 10; i++) {
       await page.keyboard.press("ArrowLeft");
       await page.waitForTimeout(30);
       if ((await editorOfSelection(page, 2)) === 0) break;
@@ -97,10 +103,11 @@ test.describe("when navigating across 3 editors", () => {
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
   });
 
-  test("when ArrowDown is pressed from E1, then selection eventually reaches E2 and E3", async ({
+  test("when ArrowDown is pressed from E1, then selection eventually reaches E3 (below in grid)", async ({
     page,
   }) => {
-    // Click a word near the bottom of E1 to reduce traversal distance
+    // In grid layout, editors 0 and 1 are side-by-side in the top row,
+    // editor 2 is in the bottom row. ArrowDown from E1 goes directly to E3.
     const paragraphs = page.locator(".simple-editor-wrapper").nth(0).locator("p");
     const lastP = paragraphs.last();
     await lastP.scrollIntoViewIfNeeded();
@@ -108,21 +115,18 @@ test.describe("when navigating across 3 editors", () => {
     await page.mouse.click(box!.x + 10, box!.y + box!.height / 2);
     await expect(page.locator(".word-selection").first()).toBeVisible({ timeout: 2000 });
 
-    let reachedE2 = false,
-      reachedE3 = false;
+    let reachedE3 = false;
 
     for (let i = 0; i < 150; i++) {
       await page.keyboard.press("ArrowDown");
       await page.waitForTimeout(20);
       const ed = await editorOfSelection(page, 3);
-      if (ed === 1) reachedE2 = true;
       if (ed === 2) {
         reachedE3 = true;
         break;
       }
     }
 
-    expect(reachedE2).toBe(true);
     expect(reachedE3).toBe(true);
   });
 
