@@ -9,7 +9,7 @@ import { useAllHighlightPositions } from "@/hooks/annotations/use-all-highlight-
 import { resolveAnnotationOverlaps } from "@/lib/resolve-annotation-overlaps";
 import { blendWithBackground } from "@/lib/color";
 import { AnnotationCard } from "./AnnotationCard";
-import { ChevronsUp, ChevronsDown } from "lucide-react";
+import { ChevronsUp, ChevronsDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface AnnotationPanelProps {
   layers: Layer[];
@@ -39,6 +39,8 @@ interface AnnotationPanelProps {
     emoji: string,
   ) => void;
   readOnly?: boolean;
+  isCollapsed?: boolean;
+  onToggleCollapsed?: () => void;
 }
 
 export const DEFAULT_PANEL_WIDTH = 224; // w-56
@@ -48,6 +50,7 @@ const CONNECTOR_GAP = 8; // px between highlight right edge and connector line s
 const CONNECTOR_Y_OFFSET = 10; // vertically center connector on text line (~half line height)
 const PANEL_LEFT_PAD = 16; // left-4 (Tailwind) — connector endpoint inside panel
 const CONNECTOR_OPACITY = 0.4;
+export const COLLAPSED_STRIP_WIDTH = 24;
 
 export function AnnotationPanel({
   layers,
@@ -72,6 +75,8 @@ export function AnnotationPanel({
   onToggleReaction,
   onToggleReplyReaction,
   readOnly,
+  isCollapsed,
+  onToggleCollapsed,
 }: AnnotationPanelProps) {
   const panelWidth = Math.min(
     MAX_PANEL_WIDTH,
@@ -172,27 +177,70 @@ export function AnnotationPanel({
     return !collapsedIds || collapsedIds.size < visibleCommentCount;
   }, [layers, collapsedIds]);
 
+  // Determine caret icon based on placement and collapsed state
+  const CaretIcon = useMemo(() => {
+    if (placement === "right") {
+      return isCollapsed ? ChevronLeft : ChevronRight;
+    }
+    return isCollapsed ? ChevronRight : ChevronLeft;
+  }, [placement, isCollapsed]);
+
   // Always render the wrapper div to reserve panel width in the flex layout.
   // This ensures useLayoutEffect computes highlight positions AFTER the editor
   // container has shrunk, preventing stale coordinates on the first annotation.
+  if (isCollapsed) {
+    return (
+      <div
+        className="relative flex-shrink-0"
+        style={{
+          width: COLLAPSED_STRIP_WIDTH,
+          overflowY: "hidden",
+          transition: "width 200ms ease-out",
+        }}
+        data-testid="annotation-panel"
+      >
+        <button
+          className="cursor-pointer p-0.5 rounded hover:bg-accent text-muted-foreground transition-colors"
+          onClick={onToggleCollapsed}
+          data-testid="togglePanelCollapse"
+          aria-label="Expand annotations"
+        >
+          <CaretIcon size={14} />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div
       className="relative flex-shrink-0"
-      style={{ width: panelWidth, overflowY: "clip" }}
+      style={{ width: panelWidth, overflowY: "clip", transition: "width 200ms ease-out" }}
       data-testid="annotation-panel"
     >
       {positions.length > 0 && (
         <>
-          {(onCollapseAll || onExpandAll) && (
-            <div className="flex justify-end px-1 py-0.5">
-              <button
-                className="p-0.5 rounded hover:bg-accent text-muted-foreground transition-colors"
-                onClick={anyExpanded ? onCollapseAll : onExpandAll}
-                title={anyExpanded ? "Collapse all" : "Expand all"}
-                data-testid="toggleCollapseAll"
-              >
-                {anyExpanded ? <ChevronsUp size={14} /> : <ChevronsDown size={14} />}
-              </button>
+          {(onCollapseAll || onExpandAll || onToggleCollapsed) && (
+            <div className="flex justify-end px-1 py-0.5 gap-0.5">
+              {onToggleCollapsed && (
+                <button
+                  className="cursor-pointer p-0.5 rounded hover:bg-accent text-muted-foreground transition-colors"
+                  onClick={onToggleCollapsed}
+                  data-testid="togglePanelCollapse"
+                  aria-label="Collapse annotations"
+                >
+                  <CaretIcon size={14} />
+                </button>
+              )}
+              {(onCollapseAll || onExpandAll) && (
+                <button
+                  className="p-0.5 rounded hover:bg-accent text-muted-foreground transition-colors"
+                  onClick={anyExpanded ? onCollapseAll : onExpandAll}
+                  title={anyExpanded ? "Collapse all" : "Expand all"}
+                  data-testid="toggleCollapseAll"
+                >
+                  {anyExpanded ? <ChevronsUp size={14} /> : <ChevronsDown size={14} />}
+                </button>
+              )}
             </div>
           )}
           {/* SVG connector lines - overflow visible to extend into editor area */}

@@ -303,6 +303,8 @@ export function App({ documentId, navigate }: AppProps) {
   const effectiveReadOnly = readOnly || isMobile;
   const [mobileDialogDismissed, setMobileDialogDismissed] = useState(false);
   const [mobileAnnotationPanelOpen, setMobileAnnotationPanelOpen] = useState(false);
+  const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
+  const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
 
   const { isPaneLocked, isAnyPaneLocked, activeEditorIndex } = docCtx;
   const focusedPaneLocked = isPaneLocked(activeEditorIndex);
@@ -632,16 +634,20 @@ export function App({ documentId, navigate }: AppProps) {
                           editorIndices={
                             settings.commentPlacement === "both" ? editorColumns.left : undefined
                           }
+                          isCollapsed={leftPanelCollapsed}
+                          onToggleCollapsed={() => setLeftPanelCollapsed((v) => !v)}
                         />
                       </ErrorBoundary>
-                      <div
-                        role="separator"
-                        data-testid="annotation-panel-divider"
-                        onMouseDown={(e) => handleAnnotationPanelDrag(e, "left")}
-                        className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
-                      >
-                        <div className="flex-1 w-px bg-gray-300" />
-                      </div>
+                      {!leftPanelCollapsed && (
+                        <div
+                          role="separator"
+                          data-testid="annotation-panel-divider"
+                          onMouseDown={(e) => handleAnnotationPanelDrag(e, "left")}
+                          className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
+                        >
+                          <div className="flex-1 w-px bg-gray-300" />
+                        </div>
+                      )}
                     </>
                   )}
                 <div
@@ -815,14 +821,16 @@ export function App({ documentId, navigate }: AppProps) {
                   ((settings.commentPlacement === "right" && hasAnyAnnotations) ||
                     (settings.commentPlacement === "both" && hasRightAnnotations)) && (
                     <>
-                      <div
-                        role="separator"
-                        data-testid="annotation-panel-divider"
-                        onMouseDown={(e) => handleAnnotationPanelDrag(e, "right")}
-                        className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
-                      >
-                        <div className="flex-1 w-px bg-gray-300" />
-                      </div>
+                      {!rightPanelCollapsed && (
+                        <div
+                          role="separator"
+                          data-testid="annotation-panel-divider"
+                          onMouseDown={(e) => handleAnnotationPanelDrag(e, "right")}
+                          className="flex flex-col items-center w-1.5 h-full cursor-col-resize hover:bg-accent transition-colors shrink-0"
+                        >
+                          <div className="flex-1 w-px bg-gray-300" />
+                        </div>
+                      )}
                       <ErrorBoundary silent>
                         <AnnotationPanel
                           {...annotationPanelProps}
@@ -831,6 +839,8 @@ export function App({ documentId, navigate }: AppProps) {
                           editorIndices={
                             settings.commentPlacement === "both" ? editorColumns.right : undefined
                           }
+                          isCollapsed={rightPanelCollapsed}
+                          onToggleCollapsed={() => setRightPanelCollapsed((v) => !v)}
                         />
                       </ErrorBoundary>
                     </>
