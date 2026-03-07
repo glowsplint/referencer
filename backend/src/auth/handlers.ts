@@ -12,7 +12,7 @@ import {
   revokeAllUserSessions,
 } from "./store";
 import { signJwt } from "../lib/jwt";
-import { getCookieDomain, getPreviewOrigin, isAllowedOrigin } from "./cookie-domain";
+import { getCookieDomain, deleteSessionCookie, getPreviewOrigin, isAllowedOrigin } from "./cookie-domain";
 import { getClientIp } from "../lib/client-ip";
 import type { Env } from "../env";
 import type { Logger } from "../lib/logger";
@@ -57,8 +57,7 @@ export function createAuthRoutes() {
       const supabase = c.get("supabase");
       const user = await getSessionUser(supabase, token);
       if (!user) {
-        const cookieDomain = getCookieDomain(c);
-        deleteCookie(c, "__session", { path: "/", ...(cookieDomain && { domain: cookieDomain }) });
+        deleteSessionCookie((name, opts) => deleteCookie(c, name, opts), getCookieDomain(c));
         return c.json({ authenticated: false });
       }
 
@@ -82,8 +81,7 @@ export function createAuthRoutes() {
         log.error("POST /auth/logout session delete failed", { error: String(err) });
       }
     }
-    const cookieDomain = getCookieDomain(c);
-    deleteCookie(c, "__session", { path: "/", ...(cookieDomain && { domain: cookieDomain }) });
+    deleteSessionCookie((name, opts) => deleteCookie(c, name, opts), getCookieDomain(c));
     log.info("POST /auth/logout");
     c.get("metrics").trackAuthEvent("logout");
     return c.json({ ok: true });
@@ -99,8 +97,7 @@ export function createAuthRoutes() {
     try {
       const supabase = c.get("supabase");
       await revokeAllUserSessions(supabase, user.id);
-      const cookieDomain = getCookieDomain(c);
-      deleteCookie(c, "__session", { path: "/", ...(cookieDomain && { domain: cookieDomain }) });
+      deleteSessionCookie((name, opts) => deleteCookie(c, name, opts), getCookieDomain(c));
       log.info("POST /auth/logout-all", { userId: user.id });
       return c.json({ success: true });
     } catch (err) {
@@ -369,6 +366,11 @@ async function handleCallback(c: any, config: AuthConfig, log: Logger) {
     });
     return c.json({ error: "Internal server error" }, 500);
   }
+
+  // Clear any stale host-only __session cookie before setting the domain-scoped one.
+  // Browsers treat host-only and domain cookies as separate; a leftover host-only
+  // cookie shadows the new domain cookie and causes auth failures.
+  deleteSessionCookie((name, opts) => deleteCookie(c, name, opts), cookieDomain);
 
   setCookie(c, "__session", sessionToken, {
     httpOnly: true,

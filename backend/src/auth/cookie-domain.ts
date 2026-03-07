@@ -69,6 +69,23 @@ export function getPreviewOrigin(c: {
  * Validates that `origin` is the FRONTEND_URL or a direct subdomain of it.
  * Used to prevent open-redirect via the stored preview origin.
  */
+/**
+ * Delete a cookie ensuring both the domain-scoped and host-only variants are
+ * removed.  Browsers treat `Domain=example.com` and no-Domain as separate
+ * cookies, so a stale host-only cookie can shadow a newer domain-scoped one.
+ */
+export function deleteSessionCookie(
+  deleteFn: (name: string, opts: Record<string, unknown>) => void,
+  cookieDomain: string | undefined,
+) {
+  // Always delete the host-only variant (no domain attribute).
+  deleteFn("__session", { path: "/" });
+  // If a domain is configured, also delete the domain-scoped variant.
+  if (cookieDomain) {
+    deleteFn("__session", { path: "/", domain: cookieDomain });
+  }
+}
+
 export function isAllowedOrigin(origin: string, env: Record<string, unknown>): boolean {
   const fh = frontendHost(env);
   if (!fh) return false;
