@@ -6,24 +6,16 @@
         "content": "Inizia incollando o digitando il testo nell'editor."
       },
       "lock": {
-        "title": "Blocca il documento",
-        "content": "Premi K o clicca sul pulsante del lucchetto per passare alla modalità annotazione."
+        "title": "Blocca & sblocca",
+        "content": "Premi K per alternare tra modalità modifica e modalità annotazione. Le tue annotazioni vengono sempre conservate."
       },
       "annotate": {
-        "title": "Annota il testo",
-        "content": "Seleziona il testo per aggiungere frecce (A), evidenziazioni (H), commenti (C) o sottolineature (U)."
+        "title": "Annota & cancella",
+        "content": "Seleziona il testo per aggiungere frecce (A), evidenziazioni (H), commenti (C) o sottolineature (U). Premi E o clicca sulla gomma per rimuovere evidenziazioni, sottolineature e frecce dal testo selezionato."
       },
       "layers": {
         "title": "Gestisci i tuoi livelli",
         "content": "Trascina i livelli per riordinarli oppure trascinali nel cestino per eliminarli. Puoi riordinare anche le sezioni allo stesso modo."
-      },
-      "eraser": {
-        "title": "Cancella le annotazioni",
-        "content": "Premi E o clicca sulla gomma per rimuovere evidenziazioni, sottolineature e frecce dal testo selezionato."
-      },
-      "unlock": {
-        "title": "Sblocca per modificare",
-        "content": "Premi di nuovo K per tornare alla modifica. Le tue annotazioni vengono conservate."
       },
       "statusBar": {
         "title": "Barra di stato",

@@ -6,24 +6,16 @@
         "content": "Comienza pegando o escribiendo tu texto en el editor."
       },
       "lock": {
-        "title": "Bloquea el documento",
-        "content": "Pulsa K o haz clic en el botón de bloqueo para cambiar al modo de anotación."
+        "title": "Bloquea & desbloquea",
+        "content": "Pulsa K para alternar entre el modo de edición y el de anotación. Tus anotaciones se conservan siempre."
       },
       "annotate": {
-        "title": "Anota tu texto",
-        "content": "Selecciona texto para dibujar flechas (A), resaltar (H), comentar (C) o subrayar (U)."
+        "title": "Anota & borra",
+        "content": "Selecciona texto para dibujar flechas (A), resaltar (H), comentar (C) o subrayar (U). Pulsa E o haz clic en el borrador para eliminar resaltados, subrayados y flechas del texto seleccionado."
       },
       "layers": {
         "title": "Gestiona tus capas",
         "content": "Arrastra las capas para reordenarlas o arrástralas a la papelera para eliminarlas. También puedes reordenar las secciones de la misma manera."
-      },
-      "eraser": {
-        "title": "Borra anotaciones",
-        "content": "Pulsa E o haz clic en el borrador para eliminar resaltados, subrayados y flechas del texto seleccionado."
-      },
-      "unlock": {
-        "title": "Desbloquea para editar",
-        "content": "Pulsa K de nuevo para volver a la edición. Tus anotaciones se conservan."
       },
       "statusBar": {
         "title": "Barra de estado",

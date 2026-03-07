@@ -6,24 +6,16 @@
         "content": "Anza kwa kubandika au kuandika maandishi yako kwenye kihariri."
       },
       "lock": {
-        "title": "Funga hati",
-        "content": "Bonyeza K au bofya kitufe cha kufunga ili kubadilisha hadi hali ya maelezo."
+        "title": "Funga & fungua",
+        "content": "Bonyeza K ili kubadilisha kati ya hali ya kuhariri na hali ya maelezo. Maelezo yako daima yamehifadhiwa."
       },
       "annotate": {
-        "title": "Weka maelezo kwenye maandishi",
-        "content": "Chagua maandishi ili kuchora mishale (A), kuangazia (H), kutoa maoni (C), au kupiga mstari chini (U)."
+        "title": "Weka maelezo & futa",
+        "content": "Chagua maandishi ili kuchora mishale (A), kuangazia (H), kutoa maoni (C), au kupiga mstari chini (U). Bonyeza E au bofya kifutio ili kuondoa uangaziaji, mistari ya chini, na mishale kutoka kwenye maandishi yaliyochaguliwa."
       },
       "layers": {
         "title": "Dhibiti tabaka zako",
         "content": "Buruta tabaka ili kuzipanga upya, au buruta hadi kwenye tupio ili kufuta. Unaweza pia kupanga upya sehemu kwa njia ile ile."
-      },
-      "eraser": {
-        "title": "Futa maelezo",
-        "content": "Bonyeza E au bofya kifutio ili kuondoa uangaziaji, mistari ya chini, na mishale kutoka kwenye maandishi yaliyochaguliwa."
-      },
-      "unlock": {
-        "title": "Fungua ili kuhariri",
-        "content": "Bonyeza K tena ili kurudi kwenye kuhariri. Maelezo yako yamehifadhiwa."
       },
       "statusBar": {
         "title": "Mwambaa wa hali",

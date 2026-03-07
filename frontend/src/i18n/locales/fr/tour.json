@@ -6,24 +6,16 @@
         "content": "Commencez par coller ou saisir votre texte dans l'éditeur."
       },
       "lock": {
-        "title": "Verrouillez le document",
-        "content": "Appuyez sur K ou cliquez sur le bouton de verrouillage pour passer en mode annotation."
+        "title": "Verrouillez & déverrouillez",
+        "content": "Appuyez sur K pour basculer entre le mode édition et le mode annotation. Vos annotations sont toujours conservées."
       },
       "annotate": {
-        "title": "Annotez votre texte",
-        "content": "Sélectionnez du texte pour tracer des flèches (A), surligner (H), commenter (C) ou souligner (U)."
+        "title": "Annotez & effacez",
+        "content": "Sélectionnez du texte pour tracer des flèches (A), surligner (H), commenter (C) ou souligner (U). Appuyez sur E ou cliquez sur la gomme pour supprimer les surlignages, soulignements et flèches du texte sélectionné."
       },
       "layers": {
         "title": "Gérez vos calques",
         "content": "Faites glisser les calques pour les réorganiser, ou vers la corbeille pour les supprimer. Vous pouvez également réorganiser les sections de la même manière."
-      },
-      "eraser": {
-        "title": "Effacez les annotations",
-        "content": "Appuyez sur E ou cliquez sur la gomme pour supprimer les surlignages, soulignements et flèches du texte sélectionné."
-      },
-      "unlock": {
-        "title": "Déverrouillez pour modifier",
-        "content": "Appuyez à nouveau sur K pour revenir à l'édition. Vos annotations sont conservées."
       },
       "statusBar": {
         "title": "Barre d'état",

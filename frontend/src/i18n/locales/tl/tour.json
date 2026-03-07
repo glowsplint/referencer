@@ -6,24 +6,16 @@
         "content": "Magsimula sa pamamagitan ng pagdikit o pag-type ng iyong teksto sa editor."
       },
       "lock": {
-        "title": "I-lock ang dokumento",
-        "content": "Pindutin ang K o i-click ang lock button upang lumipat sa annotation mode."
+        "title": "I-lock & i-unlock",
+        "content": "Pindutin ang K upang lumipat sa pagitan ng editing at annotation mode. Mananatili palagi ang iyong mga anotasyon."
       },
       "annotate": {
-        "title": "I-annotate ang iyong teksto",
-        "content": "Pumili ng teksto upang gumuhit ng mga arrow (A), mag-highlight (H), magkomento (C), o mag-underline (U)."
+        "title": "I-annotate & burahin",
+        "content": "Pumili ng teksto upang gumuhit ng mga arrow (A), mag-highlight (H), magkomento (C), o mag-underline (U). Pindutin ang E o i-click ang eraser upang alisin ang mga highlight, underline, at arrow mula sa napiling teksto."
       },
       "layers": {
         "title": "Pamahalaan ang iyong mga layer",
         "content": "I-drag ang mga layer upang ayusin ang pagkakasunod, o i-drag sa basurahan upang burahin. Maaari mo ring ayusin ang mga seksyon sa parehong paraan."
-      },
-      "eraser": {
-        "title": "Burahin ang mga anotasyon",
-        "content": "Pindutin ang E o i-click ang eraser upang alisin ang mga highlight, underline, at arrow mula sa napiling teksto."
-      },
-      "unlock": {
-        "title": "I-unlock upang mag-edit",
-        "content": "Pindutin muli ang K upang bumalik sa pag-edit. Mananatili ang iyong mga anotasyon."
       },
       "statusBar": {
         "title": "Status bar",

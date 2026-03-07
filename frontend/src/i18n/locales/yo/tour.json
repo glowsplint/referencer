@@ -6,24 +6,16 @@
         "content": "Bẹ̀rẹ̀ nípa lílo ọ̀rọ̀ rẹ sínú olóòtú náà tàbí kíkọ ọ́ sí."
       },
       "lock": {
-        "title": "Tì ìwé náà pa",
-        "content": "Tẹ K tàbí tẹ bọ́tìnnì títìpa láti yí padà sí ìpele àkọsílẹ̀."
+        "title": "Tì pa & ṣí",
+        "content": "Tẹ K láti yí padà láàárín ṣíṣàtúnṣe àti ìpele àkọsílẹ̀. Àwọn àkọsílẹ̀ rẹ yóò wà ní ipò wọn nígbà gbogbo."
       },
       "annotate": {
-        "title": "Ṣe àkọsílẹ̀ lórí ọ̀rọ̀ rẹ",
-        "content": "Yan ọ̀rọ̀ láti fa ọfà (A), ṣe àfihàn (H), fi àlàyé sí (C), tàbí fa ilà sí abẹ́ (U)."
+        "title": "Ṣe àkọsílẹ̀ & pa rẹ́",
+        "content": "Yan ọ̀rọ̀ láti fa ọfà (A), ṣe àfihàn (H), fi àlàyé sí (C), tàbí fa ilà sí abẹ́ (U). Tẹ E tàbí tẹ aṣípaarẹ́ láti yọ àwọn àfihàn, àwọn ilà abẹ́, àti àwọn ọfà kúrò nínú ọ̀rọ̀ tí o yàn."
       },
       "layers": {
         "title": "Ṣàkóso àwọn ìpele rẹ",
         "content": "Fa àwọn ìpele láti tún wọn tò, tàbí fa sínú àpò ìdàlẹ̀ láti pa rẹ́. O tún lè tún àwọn abala tò ní ọ̀nà kan náà."
-      },
-      "eraser": {
-        "title": "Pa àwọn àkọsílẹ̀ rẹ́",
-        "content": "Tẹ E tàbí tẹ aṣípaarẹ́ láti yọ àwọn àfihàn, àwọn ilà abẹ́, àti àwọn ọfà kúrò nínú ọ̀rọ̀ tí o yàn."
-      },
-      "unlock": {
-        "title": "Ṣí láti ṣàtúnṣe",
-        "content": "Tẹ K lẹ́ẹ̀kan sí i láti padà sí ṣíṣàtúnṣe. Àwọn àkọsílẹ̀ rẹ yóò wà ní ipò wọn."
       },
       "statusBar": {
         "title": "Ọ̀pá ìpò",

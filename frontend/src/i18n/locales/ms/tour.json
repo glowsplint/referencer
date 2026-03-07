@@ -6,24 +6,16 @@
         "content": "Mulakan dengan menampal atau menaip teks anda ke dalam editor."
       },
       "lock": {
-        "title": "Kunci dokumen",
-        "content": "Tekan K atau klik butang kunci untuk beralih ke mod anotasi."
+        "title": "Kunci & buka kunci",
+        "content": "Tekan K untuk bertukar antara mod pengeditan dan mod anotasi. Anotasi anda sentiasa dikekalkan."
       },
       "annotate": {
-        "title": "Anotasi teks anda",
-        "content": "Pilih teks untuk melukis anak panah (A), serlahan (H), komen (C), atau garis bawah (U)."
+        "title": "Anotasi & padam",
+        "content": "Pilih teks untuk melukis anak panah (A), serlahan (H), komen (C), atau garis bawah (U). Tekan E atau klik pemadam untuk menghapuskan serlahan, garis bawah, dan anak panah daripada teks yang dipilih."
       },
       "layers": {
         "title": "Urus lapisan anda",
         "content": "Seret lapisan untuk menyusun semula, atau seret ke tong sampah untuk memadam. Anda juga boleh menyusun semula bahagian dengan cara yang sama."
-      },
-      "eraser": {
-        "title": "Padam anotasi",
-        "content": "Tekan E atau klik pemadam untuk menghapuskan serlahan, garis bawah, dan anak panah daripada teks yang dipilih."
-      },
-      "unlock": {
-        "title": "Buka kunci untuk mengedit",
-        "content": "Tekan K sekali lagi untuk kembali mengedit. Anotasi anda akan dikekalkan."
       },
       "statusBar": {
         "title": "Bar status",

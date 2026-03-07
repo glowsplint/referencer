@@ -6,24 +6,16 @@
         "content": "Bắt đầu bằng cách dán hoặc nhập văn bản vào trình soạn thảo."
       },
       "lock": {
-        "title": "Khóa tài liệu",
-        "content": "Nhấn K hoặc nhấp vào nút khóa để chuyển sang chế độ chú thích."
+        "title": "Khóa & mở khóa",
+        "content": "Nhấn K để chuyển đổi giữa chế độ chỉnh sửa và chế độ chú thích. Các chú thích của bạn luôn được giữ nguyên."
       },
       "annotate": {
-        "title": "Chú thích văn bản",
-        "content": "Chọn văn bản để vẽ mũi tên (A), tô sáng (H), bình luận (C) hoặc gạch chân (U)."
+        "title": "Chú thích & xóa",
+        "content": "Chọn văn bản để vẽ mũi tên (A), tô sáng (H), bình luận (C) hoặc gạch chân (U). Nhấn E hoặc nhấp vào cục tẩy để xóa phần tô sáng, gạch chân và mũi tên khỏi văn bản đã chọn."
       },
       "layers": {
         "title": "Quản lý các lớp",
         "content": "Kéo các lớp để sắp xếp lại thứ tự hoặc kéo vào thùng rác để xóa. Bạn cũng có thể sắp xếp lại các phần theo cách tương tự."
-      },
-      "eraser": {
-        "title": "Xóa chú thích",
-        "content": "Nhấn E hoặc nhấp vào cục tẩy để xóa phần tô sáng, gạch chân và mũi tên khỏi văn bản đã chọn."
-      },
-      "unlock": {
-        "title": "Mở khóa để chỉnh sửa",
-        "content": "Nhấn K lần nữa để quay lại chế độ chỉnh sửa. Các chú thích của bạn được giữ nguyên."
       },
       "statusBar": {
         "title": "Thanh trạng thái",

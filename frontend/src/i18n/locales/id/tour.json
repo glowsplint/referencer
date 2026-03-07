@@ -6,24 +6,16 @@
         "content": "Mulailah dengan menempel atau mengetik teks Anda ke dalam editor."
       },
       "lock": {
-        "title": "Kunci dokumen",
-        "content": "Tekan K atau klik tombol kunci untuk beralih ke mode anotasi."
+        "title": "Kunci & buka kunci",
+        "content": "Tekan K untuk beralih antara mode pengeditan dan mode anotasi. Anotasi Anda selalu tersimpan."
       },
       "annotate": {
-        "title": "Beri anotasi pada teks",
-        "content": "Pilih teks untuk menggambar panah (A), menyorot (H), memberi komentar (C), atau menggarisbawahi (U)."
+        "title": "Beri anotasi & hapus",
+        "content": "Pilih teks untuk menggambar panah (A), menyorot (H), memberi komentar (C), atau menggarisbawahi (U). Tekan E atau klik penghapus untuk menghapus sorotan, garis bawah, dan panah dari teks yang dipilih."
       },
       "layers": {
         "title": "Kelola lapisan Anda",
         "content": "Seret lapisan untuk mengubah urutannya, atau seret ke tempat sampah untuk menghapus. Anda juga dapat mengubah urutan bagian dengan cara yang sama."
-      },
-      "eraser": {
-        "title": "Hapus anotasi",
-        "content": "Tekan E atau klik penghapus untuk menghapus sorotan, garis bawah, dan panah dari teks yang dipilih."
-      },
-      "unlock": {
-        "title": "Buka kunci untuk mengedit",
-        "content": "Tekan K lagi untuk kembali ke mode pengeditan. Anotasi Anda tetap tersimpan."
       },
       "statusBar": {
         "title": "Bilah status",

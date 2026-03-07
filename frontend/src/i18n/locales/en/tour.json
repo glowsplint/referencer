@@ -6,24 +6,16 @@
         "content": "Start by pasting or typing your text into the editor."
       },
       "lock": {
-        "title": "Lock the document",
-        "content": "Press K or click the lock button to switch to annotation mode."
+        "title": "Lock & unlock",
+        "content": "Press K to toggle between editing and annotation mode. Your annotations are always preserved."
       },
       "annotate": {
-        "title": "Annotate your text",
-        "content": "Select text to draw arrows (A), highlight (H), comment (C), or underline (U)."
+        "title": "Annotate & erase",
+        "content": "Select text to draw arrows (A), highlight (H), comment (C), or underline (U). Press E or click the eraser to remove annotations from selected text."
       },
       "layers": {
         "title": "Manage your layers",
         "content": "Drag layers to reorder them, or drag to the trash to delete. You can also reorder sections the same way."
-      },
-      "eraser": {
-        "title": "Erase annotations",
-        "content": "Press E or click the eraser to remove highlights, underlines, and arrows from selected text."
-      },
-      "unlock": {
-        "title": "Unlock to edit",
-        "content": "Press K again to return to editing. Your annotations are preserved."
       },
       "statusBar": {
         "title": "Status bar",

@@ -107,7 +107,8 @@ vi.mock("@/components/ShareDialog", () => ({
 // Helpers
 // ---------------------------------------------------------------------------
 
-const SHARE_STEP_INDEX = 7; // Index of the share step in EDITOR_TOUR_STEPS
+const SHARE_STEP_INDEX = 5; // Index of the share step in EDITOR_TOUR_STEPS
+const LAYERS_STEP_INDEX = 3; // Index of the layers step in EDITOR_TOUR_STEPS
 
 function resetMocks() {
   mockActiveTourId = null;
@@ -150,8 +151,9 @@ describe("EditorTour", () => {
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    // Clean up any share button DOM element left over from tests
+    // Clean up any DOM elements left over from tests
     document.querySelector('[data-testid="shareButton"]')?.remove();
+    document.querySelector('[data-testid="trashBin"]')?.remove();
   });
 
   describe("when tour is not active", () => {
@@ -290,7 +292,7 @@ describe("EditorTour", () => {
     it("then opens the ShareDialog", () => {
       mockActiveTourId = "editor";
       // Start on a step before share
-      setEngineRunning(6);
+      setEngineRunning(4);
 
       const { rerender } = render(<EditorTour />);
 
@@ -309,7 +311,7 @@ describe("EditorTour", () => {
       document.body.appendChild(shareBtn);
 
       mockActiveTourId = "editor";
-      setEngineRunning(6);
+      setEngineRunning(4);
 
       const { rerender } = render(<EditorTour />);
 
@@ -324,7 +326,7 @@ describe("EditorTour", () => {
     it("then closes the ShareDialog", () => {
       mockActiveTourId = "editor";
       // Start on step before share
-      setEngineRunning(6);
+      setEngineRunning(4);
 
       const { rerender } = render(<EditorTour />);
 
@@ -336,7 +338,7 @@ describe("EditorTour", () => {
       expect(screen.getByTestId("shareDialog")).toHaveAttribute("data-open", "true");
 
       // Move back to a different step to trigger onExit
-      setEngineRunning(6);
+      setEngineRunning(4);
       rerender(<EditorTour />);
 
       expect(screen.getByTestId("shareDialog")).toHaveAttribute("data-open", "false");
@@ -348,7 +350,7 @@ describe("EditorTour", () => {
       document.body.appendChild(shareBtn);
 
       mockActiveTourId = "editor";
-      setEngineRunning(6);
+      setEngineRunning(4);
 
       const { rerender } = render(<EditorTour />);
 
@@ -358,7 +360,7 @@ describe("EditorTour", () => {
       expect(shareBtn.classList.contains("tour-pulse")).toBe(true);
 
       // Move away from share step — should remove pulse class
-      setEngineRunning(6);
+      setEngineRunning(4);
       rerender(<EditorTour />);
       expect(shareBtn.classList.contains("tour-pulse")).toBe(false);
     });
@@ -367,7 +369,7 @@ describe("EditorTour", () => {
   describe("when tour is skipped while on the share step", () => {
     it("then cleans up by closing the ShareDialog", () => {
       mockActiveTourId = "editor";
-      setEngineRunning(6);
+      setEngineRunning(4);
 
       const { rerender } = render(<EditorTour />);
 
@@ -399,7 +401,7 @@ describe("EditorTour", () => {
       document.body.appendChild(shareBtn);
 
       mockActiveTourId = "editor";
-      setEngineRunning(6);
+      setEngineRunning(4);
 
       const { rerender } = render(<EditorTour />);
 
@@ -414,6 +416,47 @@ describe("EditorTour", () => {
       rerender(<EditorTour />);
 
       expect(shareBtn.classList.contains("tour-pulse")).toBe(false);
+    });
+  });
+
+  describe("when stepping to the layers step", () => {
+    it("then adds tour-pulse class to the trash bin", () => {
+      const trashBin = document.createElement("div");
+      trashBin.setAttribute("data-testid", "trashBin");
+      document.body.appendChild(trashBin);
+
+      mockActiveTourId = "editor";
+      setEngineRunning(2);
+
+      const { rerender } = render(<EditorTour />);
+
+      setEngineRunning(LAYERS_STEP_INDEX);
+      rerender(<EditorTour />);
+
+      expect(trashBin.classList.contains("tour-pulse")).toBe(true);
+    });
+  });
+
+  describe("when leaving the layers step", () => {
+    it("then removes tour-pulse class from the trash bin", () => {
+      const trashBin = document.createElement("div");
+      trashBin.setAttribute("data-testid", "trashBin");
+      document.body.appendChild(trashBin);
+
+      mockActiveTourId = "editor";
+      setEngineRunning(2);
+
+      const { rerender } = render(<EditorTour />);
+
+      // Move to layers step — should add pulse class
+      setEngineRunning(LAYERS_STEP_INDEX);
+      rerender(<EditorTour />);
+      expect(trashBin.classList.contains("tour-pulse")).toBe(true);
+
+      // Move away from layers step — should remove pulse class
+      setEngineRunning(4);
+      rerender(<EditorTour />);
+      expect(trashBin.classList.contains("tour-pulse")).toBe(false);
     });
   });
 

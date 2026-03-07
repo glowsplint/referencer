@@ -6,24 +6,16 @@
         "content": "Începe prin a lipi sau a tasta textul tău în editor."
       },
       "lock": {
-        "title": "Blochează documentul",
-        "content": "Apasă K sau dă clic pe butonul de blocare pentru a comuta la modul de adnotare."
+        "title": "Blochează & deblochează",
+        "content": "Apasă K pentru a comuta între modul de editare și modul de adnotare. Adnotările tale sunt întotdeauna păstrate."
       },
       "annotate": {
-        "title": "Adnotează textul tău",
-        "content": "Selectează text pentru a desena săgeți (A), a evidenția (H), a comenta (C) sau a sublinia (U)."
+        "title": "Adnotează & șterge",
+        "content": "Selectează text pentru a desena săgeți (A), a evidenția (H), a comenta (C) sau a sublinia (U). Apasă E sau dă clic pe radieră pentru a elimina evidențierile, sublinierile și săgețile din textul selectat."
       },
       "layers": {
         "title": "Gestionează straturile tale",
         "content": "Trage straturile pentru a le reordona sau trage-le la coșul de gunoi pentru a le șterge. Poți reordona și secțiunile în același mod."
-      },
-      "eraser": {
-        "title": "Șterge adnotările",
-        "content": "Apasă E sau dă clic pe radieră pentru a elimina evidențierile, sublinierile și săgețile din textul selectat."
-      },
-      "unlock": {
-        "title": "Deblochează pentru editare",
-        "content": "Apasă K din nou pentru a reveni la editare. Adnotările tale sunt păstrate."
       },
       "statusBar": {
         "title": "Bara de stare",

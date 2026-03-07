@@ -24,18 +24,8 @@ export const EDITOR_TOUR_STEPS: TourStep[] = [
     title: "steps.editor.layers.title",
     content: "steps.editor.layers.content",
     placement: "right",
-  },
-  {
-    target: '[data-testid="eraserToolButton"]',
-    title: "steps.editor.eraser.title",
-    content: "steps.editor.eraser.content",
-    placement: "right",
-  },
-  {
-    target: '[data-testid="lockButton"]',
-    title: "steps.editor.unlock.title",
-    content: "steps.editor.unlock.content",
-    placement: "right",
+    onEnter: "pulseTrashBin",
+    onExit: "unpulseTrashBin",
   },
   {
     target: '[data-testid="status-bar"]',

@@ -6,24 +6,16 @@
         "content": "Börja med att klistra in eller skriva din text i redigeraren."
       },
       "lock": {
-        "title": "Lås dokumentet",
-        "content": "Tryck K eller klicka på låsknappen för att växla till anteckningsläge."
+        "title": "Lås & lås upp",
+        "content": "Tryck K för att växla mellan redigerings- och anteckningsläge. Dina anteckningar bevaras alltid."
       },
       "annotate": {
-        "title": "Anteckna din text",
-        "content": "Markera text för att rita pilar (A), markera (H), kommentera (C) eller stryka under (U)."
+        "title": "Anteckna & radera",
+        "content": "Markera text för att rita pilar (A), markera (H), kommentera (C) eller stryka under (U). Tryck E eller klicka på suddet för att ta bort markeringar, understrykningar och pilar från markerad text."
       },
       "layers": {
         "title": "Hantera dina lager",
         "content": "Dra lager för att ändra ordning, eller dra till papperskorgen för att radera. Du kan även ordna om sektioner på samma sätt."
-      },
-      "eraser": {
-        "title": "Radera anteckningar",
-        "content": "Tryck E eller klicka på suddet för att ta bort markeringar, understrykningar och pilar från markerad text."
-      },
-      "unlock": {
-        "title": "Lås upp för att redigera",
-        "content": "Tryck K igen för att återgå till redigering. Dina anteckningar bevaras."
       },
       "statusBar": {
         "title": "Statusfält",

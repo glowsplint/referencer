@@ -6,24 +6,16 @@
         "content": "Zacznij od wklejenia lub wpisania tekstu w edytorze."
       },
       "lock": {
-        "title": "Zablokuj dokument",
-        "content": "Naciśnij K lub kliknij przycisk blokady, aby przejść do trybu adnotacji."
+        "title": "Zablokuj & odblokuj",
+        "content": "Naciśnij K, aby przełączać między trybem edycji a trybem adnotacji. Twoje adnotacje są zawsze zachowane."
       },
       "annotate": {
-        "title": "Dodaj adnotacje do tekstu",
-        "content": "Zaznacz tekst, aby rysować strzałki (A), wyróżniać (H), komentować (C) lub podkreślać (U)."
+        "title": "Dodaj adnotacje & usuń",
+        "content": "Zaznacz tekst, aby rysować strzałki (A), wyróżniać (H), komentować (C) lub podkreślać (U). Naciśnij E lub kliknij gumkę, aby usunąć wyróżnienia, podkreślenia i strzałki z zaznaczonego tekstu."
       },
       "layers": {
         "title": "Zarządzaj warstwami",
         "content": "Przeciągnij warstwy, aby zmienić ich kolejność, lub przeciągnij do kosza, aby usunąć. W ten sam sposób możesz również zmieniać kolejność sekcji."
-      },
-      "eraser": {
-        "title": "Usuń adnotacje",
-        "content": "Naciśnij E lub kliknij gumkę, aby usunąć wyróżnienia, podkreślenia i strzałki z zaznaczonego tekstu."
-      },
-      "unlock": {
-        "title": "Odblokuj, aby edytować",
-        "content": "Naciśnij ponownie K, aby wrócić do edycji. Twoje adnotacje zostają zachowane."
       },
       "statusBar": {
         "title": "Pasek stanu",

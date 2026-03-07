@@ -54,6 +54,14 @@ export function EditorTour() {
       const btn = document.querySelector<HTMLElement>('[data-testid="shareButton"]');
       btn?.classList.remove(PULSE_CLASS);
     },
+    pulseTrashBin: () => {
+      const bin = document.querySelector<HTMLElement>('[data-testid="trashBin"]');
+      bin?.classList.add(PULSE_CLASS);
+    },
+    unpulseTrashBin: () => {
+      const bin = document.querySelector<HTMLElement>('[data-testid="trashBin"]');
+      bin?.classList.remove(PULSE_CLASS);
+    },
   };
 
   // Fire onEnter/onExit when the active step changes
