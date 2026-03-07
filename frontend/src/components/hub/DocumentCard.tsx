@@ -10,7 +10,6 @@ import { useClickHandler } from "@/hooks/ui/use-click-handler";
 import type { DocumentItem } from "@/lib/document-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { MoveToFolderMenu } from "./MoveToFolderMenu";
-import { SelectionCheckbox } from "./SelectionCheckbox";
 import { OwnerAvatar } from "./OwnerAvatar";
 
 interface DocumentCardProps {
@@ -77,18 +76,6 @@ export function DocumentCard({
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
-          <SelectionCheckbox
-            checked={selected}
-            visible={isSelectionActive}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleItemClick(document.documentId, {
-                ctrlKey: !e.shiftKey,
-                metaKey: false,
-                shiftKey: e.shiftKey,
-              });
-            }}
-          />
           <button
             onClick={(e) => {
               e.stopPropagation();

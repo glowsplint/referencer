@@ -9,7 +9,6 @@ import type { FolderNode } from "@/lib/folder-tree";
 import type { DocumentItem } from "@/lib/document-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { InlineNameInput } from "./InlineNameInput";
-import { SelectionCheckbox } from "./SelectionCheckbox";
 import { FolderDropdownMenu } from "./FolderDropdownMenu";
 
 interface FolderCardProps {
@@ -134,18 +133,6 @@ export function FolderCard({
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
-          <SelectionCheckbox
-            checked={selected}
-            visible={isSelectionActive}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleItemClick(node.folder.id, {
-                ctrlKey: !e.shiftKey,
-                metaKey: false,
-                shiftKey: e.shiftKey,
-              });
-            }}
-          />
           <button
             onClick={(e) => {
               e.stopPropagation();

@@ -170,6 +170,8 @@
     "deleteDocumentTitle": "Delete Document",
     "deleteDocumentConfirm": "Are you sure you want to delete \"{{title}}\"? This cannot be undone.",
     "deleteFolderTitle": "Delete Folder",
-    "deleteFolderConfirm": "Are you sure you want to delete \"{{name}}\"? All subfolders will also be deleted. Documents inside will be moved out of the folder. This action cannot be undone."
+    "deleteFolderConfirm": "Are you sure you want to delete \"{{name}}\"? All subfolders will also be deleted. Documents inside will be moved out of the folder. This action cannot be undone.",
+    "gridView": "Grid view",
+    "listView": "List view"
   }
 }
