@@ -62,12 +62,7 @@ vi.mock("@/components/ui/dialog", () => ({
 }));
 
 vi.mock("@/components/ui/button", () => ({
-  Button: ({
-    children,
-    onClick,
-    disabled,
-    ...props
-  }: Record<string, unknown>) => (
+  Button: ({ children, onClick, disabled, ...props }: Record<string, unknown>) => (
     <button
       onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
       disabled={disabled as boolean}
@@ -129,9 +124,7 @@ beforeEach(() => {
 describe("TextRemovalButton", () => {
   it("renders button with correct aria-label", () => {
     render(<TextRemovalButton />);
-    expect(
-      screen.getByRole("button", { name: "textRemoval.label" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "textRemoval.label" })).toBeInTheDocument();
   });
 
   it("calls openDialog when clicked", () => {
@@ -143,9 +136,7 @@ describe("TextRemovalButton", () => {
   it("is disabled when editor is not editable", () => {
     mockEditorEditable = false;
     render(<TextRemovalButton />);
-    expect(
-      screen.getByRole("button", { name: "textRemoval.label" }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: "textRemoval.label" })).toBeDisabled();
   });
 });
 
@@ -227,17 +218,13 @@ describe("TextRemovalDialog", () => {
   it("shows match count", () => {
     mockRemoval.matchCount = 5;
     render(<TextRemovalDialog editor={mockEditor} removal={mockRemoval} />);
-    expect(screen.getByTestId("matchCount")).toHaveTextContent(
-      "textRemoval.matchCount:5",
-    );
+    expect(screen.getByTestId("matchCount")).toHaveTextContent("textRemoval.matchCount:5");
   });
 
   it("shows no matches message when count is 0", () => {
     mockRemoval.matchCount = 0;
     render(<TextRemovalDialog editor={mockEditor} removal={mockRemoval} />);
-    expect(screen.getByTestId("matchCount")).toHaveTextContent(
-      "textRemoval.noMatches",
-    );
+    expect(screen.getByTestId("matchCount")).toHaveTextContent("textRemoval.noMatches");
   });
 
   it("disables Remove button when no matches", () => {
@@ -307,8 +294,6 @@ describe("TextRemovalDialog", () => {
   it("shows pattern error when patternError is set", () => {
     mockRemoval.patternError = "Invalid pattern";
     render(<TextRemovalDialog editor={mockEditor} removal={mockRemoval} />);
-    expect(
-      screen.getByText("textRemoval.invalidPattern"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("textRemoval.invalidPattern")).toBeInTheDocument();
   });
 });

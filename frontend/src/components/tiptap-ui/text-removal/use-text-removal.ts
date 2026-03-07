@@ -34,9 +34,7 @@ export function useTextRemoval(editor: Editor | null) {
 
   const clearDecorations = useCallback(() => {
     if (!editor) return;
-    editor.view.dispatch(
-      editor.state.tr.setMeta(textRemovalPreviewPluginKey, DecorationSet.empty),
-    );
+    editor.view.dispatch(editor.state.tr.setMeta(textRemovalPreviewPluginKey, DecorationSet.empty));
   }, [editor]);
 
   // --- Filter actions ---
@@ -115,9 +113,7 @@ export function useTextRemoval(editor: Editor | null) {
     setPatternError(null);
     setMatches([]);
     // Clear decorations directly since closeDialog callback may have stale editor ref
-    editor.view.dispatch(
-      editor.state.tr.setMeta(textRemovalPreviewPluginKey, DecorationSet.empty),
-    );
+    editor.view.dispatch(editor.state.tr.setMeta(textRemovalPreviewPluginKey, DecorationSet.empty));
   }, [editor, selectedMarks, pattern, isRegex]);
 
   // --- Debounced match calculation + decoration update ---
@@ -152,9 +148,7 @@ export function useTextRemoval(editor: Editor | null) {
       );
 
       const decorationSet = DecorationSet.create(editor.state.doc, decorations);
-      editor.view.dispatch(
-        editor.state.tr.setMeta(textRemovalPreviewPluginKey, decorationSet),
-      );
+      editor.view.dispatch(editor.state.tr.setMeta(textRemovalPreviewPluginKey, decorationSet));
     }, 150);
 
     return () => clearTimeout(timer);
@@ -167,9 +161,7 @@ export function useTextRemoval(editor: Editor | null) {
       const ed = editorRef.current;
       if (!ed) return;
       try {
-        ed.view.dispatch(
-          ed.state.tr.setMeta(textRemovalPreviewPluginKey, DecorationSet.empty),
-        );
+        ed.view.dispatch(ed.state.tr.setMeta(textRemovalPreviewPluginKey, DecorationSet.empty));
       } catch {
         // Editor may already be destroyed
       }
