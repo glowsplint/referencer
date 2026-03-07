@@ -30,5 +30,11 @@
     "status": "एनोटेशन मिटाने के लिए क्लिक करें और खींचें।",
     "erased": "एनोटेशन मिटाया गया।"
   },
-  "lockHint": "सामग्री को अंतिम रूप देने के बाद संपादक को लॉक करने के लिए <kbd>Esc</kbd> <kbd>K</kbd> दबाएं।"
+  "lockHint": "सामग्री को अंतिम रूप देने के बाद संपादक को लॉक करने के लिए <kbd>Esc</kbd> <kbd>K</kbd> दबाएं।",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

@@ -30,5 +30,11 @@
     "status": "Натисніть і перетягніть, щоб стерти анотації.",
     "erased": "Анотацію стерто."
   },
-  "lockHint": "Натисніть <kbd>Esc</kbd> <kbd>K</kbd>, щоб заблокувати редактор після завершення редагування вмісту."
+  "lockHint": "Натисніть <kbd>Esc</kbd> <kbd>K</kbd>, щоб заблокувати редактор після завершення редагування вмісту.",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

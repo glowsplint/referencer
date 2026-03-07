@@ -30,5 +30,11 @@
     "status": "לחצו וגררו כדי למחוק הערות.",
     "erased": "ההערה נמחקה."
   },
-  "lockHint": "לחצו <kbd>Esc</kbd> <kbd>K</kbd> כדי לנעול את העורך לאחר שסיימתם את התוכן."
+  "lockHint": "לחצו <kbd>Esc</kbd> <kbd>K</kbd> כדי לנעול את העורך לאחר שסיימתם את התוכן.",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

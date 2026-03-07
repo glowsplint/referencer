@@ -2,5 +2,28 @@
   "close": "閉じる",
   "active": "アクティブ",
   "text": "パッセージ {{number}}",
-  "layer": "レイヤー {{number}}"
+  "layer": "レイヤー {{number}}",
+  "errorBoundary": {
+    "somethingWentWrong": "Something went wrong.",
+    "tryAgain": "Try again"
+  },
+  "presence": {
+    "online": "{{count}} online",
+    "you": "You",
+    "yourName": "Your name",
+    "connected": "Connected",
+    "disconnected": "Disconnected"
+  },
+  "export": {
+    "title": "Export",
+    "pdf": "Export as PDF",
+    "markdown": "Export as Markdown"
+  },
+  "print": {
+    "comments": "Comments",
+    "highlights": "Highlights",
+    "underlines": "Underlines",
+    "connections": "Connections",
+    "replyBy": "Reply by {{userName}} ({{date}})"
+  }
 }

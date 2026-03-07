@@ -17,6 +17,10 @@
     "language": {
       "label": "言語",
       "description": "お好みの言語を選択してください"
+    },
+    "statusBar": {
+      "label": "Status bar",
+      "description": "Show the status bar below the toolbar"
     }
   },
   "faq": {
@@ -100,7 +104,8 @@
     "alignCenter": "中央揃え",
     "alignRight": "右揃え",
     "alignJustify": "両端揃え",
-    "searchAnnotations": "注釈を検索"
+    "searchAnnotations": "注釈を検索",
+    "addText": "Add new text"
   },
   "share": {
     "title": "ドキュメントを共有",
@@ -108,7 +113,44 @@
     "readonlyLink": "読み取り専用リンク",
     "editLink": "編集リンク",
     "linkCopied": "リンクをクリップボードにコピーしました。",
-    "copyFailed": "リンクのコピーに失敗しました。"
+    "copyFailed": "リンクのコピーに失敗しました。",
+    "loginRequired": "Sign in to generate a share link for this document.",
+    "loginGoogle": "Sign in with Google",
+    "loginGithub": "Sign in with GitHub",
+    "activeLinks": "Active links",
+    "revoke": "Revoke",
+    "linkRevoked": "Link revoked.",
+    "revokeFailed": "Failed to revoke link.",
+    "members": "Members",
+    "you": "you",
+    "roleOwner": "Owner",
+    "roleEditor": "Editor",
+    "roleViewer": "Viewer",
+    "roleChanged": "Role updated.",
+    "roleChangeFailed": "Failed to change role.",
+    "memberRemoved": "Member removed.",
+    "removeFailed": "Failed to remove member.",
+    "loading": "Loading...",
+    "edit": "edit",
+    "readonly": "read-only",
+    "copyLink": "Copy link",
+    "revokeConfirmTitle": "Revoke share link",
+    "revokeConfirmDescription": "Are you sure you want to revoke this link? Anyone using it will lose access.",
+    "revokeConfirmCancel": "Cancel",
+    "revokeConfirmAction": "Revoke",
+    "expiryNever": "Never",
+    "expiry7Days": "7 days",
+    "expiry30Days": "30 days",
+    "expiry90Days": "90 days",
+    "expiryLabel": "Link expiry",
+    "noExpiry": "No expiry",
+    "expiresIn": "Expires in {{days}} days",
+    "expired": "Expired",
+    "acceptSignIn": "Sign in to accept this shared document",
+    "acceptError": "Something went wrong. Please try again.",
+    "acceptExpired": "This share link is invalid or has expired.",
+    "goToHub": "Go to Hub",
+    "accepting": "Accepting shared document..."
   },
   "mobile": {
     "title": "デスクトップ推奨",

@@ -30,5 +30,11 @@
     "status": "ማብራሪያዎችን ለማጥፋት ጠቅ ያድርጉ እና ይጎትቱ።",
     "erased": "ማብራሪያ ተጠፋ።"
   },
-  "lockHint": "ይዘቱን ከጨረሱ በኋላ አርታዒውን ለመቆለፍ <kbd>Esc</kbd> <kbd>K</kbd> ይጫኑ።"
+  "lockHint": "ይዘቱን ከጨረሱ በኋላ አርታዒውን ለመቆለፍ <kbd>Esc</kbd> <kbd>K</kbd> ይጫኑ።",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

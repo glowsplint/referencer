@@ -10,9 +10,20 @@
   "presence": {
     "online": "{{count}} 人在線",
     "you": "你",
-    "yourName": "你的名字"
+    "yourName": "你的名字",
+    "connected": "Connected",
+    "disconnected": "Disconnected"
   },
   "print": {
-    "comments": "留言"
+    "comments": "留言",
+    "highlights": "Highlights",
+    "underlines": "Underlines",
+    "connections": "Connections",
+    "replyBy": "Reply by {{userName}} ({{date}})"
+  },
+  "export": {
+    "title": "Export",
+    "pdf": "Export as PDF",
+    "markdown": "Export as Markdown"
   }
 }

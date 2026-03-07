@@ -388,6 +388,7 @@ export function DocumentGrid({
               <div className="flex items-center border border-border rounded-md">
                 <button
                   onClick={() => toggleView("grid")}
+                  title={t("hub.gridView")}
                   className={`p-1.5 rounded-l-md transition-colors ${viewMode === "grid" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"}`}
                   data-testid="gridViewButton"
                 >
@@ -395,6 +396,7 @@ export function DocumentGrid({
                 </button>
                 <button
                   onClick={() => toggleView("list")}
+                  title={t("hub.listView")}
                   className={`p-1.5 rounded-r-md transition-colors ${viewMode === "list" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"}`}
                   data-testid="listViewButton"
                 >

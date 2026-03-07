@@ -30,5 +30,11 @@
     "status": "குறிப்புகளை அழிக்க கிளிக் செய்து இழுக்கவும்.",
     "erased": "குறிப்பு அழிக்கப்பட்டது."
   },
-  "lockHint": "உள்ளடக்கத்தை இறுதி செய்த பிறகு திருத்தியைப் பூட்ட <kbd>Esc</kbd> <kbd>K</kbd> அழுத்தவும்."
+  "lockHint": "உள்ளடக்கத்தை இறுதி செய்த பிறகு திருத்தியைப் பூட்ட <kbd>Esc</kbd> <kbd>K</kbd> அழுத்தவும்.",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

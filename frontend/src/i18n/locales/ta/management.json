@@ -35,7 +35,10 @@
     "toggleEditorLock": "திருத்திப் பூட்டை நிலைமாற்று",
     "toggleCommentPlacement": "கருத்து இடத்தை நிலைமாற்று",
     "startTour": "வழிகாட்டிச் சுற்றுலா",
-    "loadDemo": "டெமோ உள்ளடக்கத்தை ஏற்று"
+    "loadDemo": "டெமோ உள்ளடக்கத்தை ஏற்று",
+    "switchToEditMode": "Switch to Edit mode",
+    "switchToAnnotateMode": "Switch to Annotate mode",
+    "annotateModeLockHint": " — switch to Annotate mode first"
   },
   "annotations": {
     "placeholder": "குறிப்பைச் சேர்...",
@@ -45,7 +48,11 @@
     "replyPlaceholder": "பதிலளி...",
     "replies": "பதில்கள்",
     "addReaction": "எதிர்வினை சேர்",
-    "removeReply": "பதிலை நீக்கு"
+    "removeReply": "பதிலை நீக்கு",
+    "moreEmojis": "More emojis",
+    "sendReply": "Send reply",
+    "showMoreReplies_one": "Show {{count}} more reply",
+    "showMoreReplies_other": "Show {{count}} more replies"
   },
   "search": {
     "placeholder": "குறிப்புகளைத் தேடு...",
@@ -56,7 +63,12 @@
   "actionConsole": {
     "title": "செயல் கன்சோல்",
     "close": "மூடு",
-    "empty": "இன்னும் செயல்கள் பதிவு செய்யப்படவில்லை."
+    "empty": "இன்னும் செயல்கள் பதிவு செய்யப்படவில்லை.",
+    "loadDemo": "Load demo content",
+    "loadDemoTitle": "Load demo content",
+    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
+    "loadDemoCancel": "Cancel",
+    "loadDemoLoad": "Load"
   },
   "hub": {
     "title": "Referencer",
@@ -106,6 +118,60 @@
     "deleteDocumentTitle": "ஆவணத்தை நீக்கு",
     "deleteDocumentConfirm": "\"{{title}}\" ஐ நீக்க விரும்புகிறீர்களா? இதைச் செயல்தவிர்க்க முடியாது.",
     "deleteFolderTitle": "கோப்புறையை நீக்கு",
-    "deleteFolderConfirm": "\"{{name}}\" ஐ நீக்க விரும்புகிறீர்களா? உள்ளே உள்ள ஆவணங்கள் மூல மட்டத்திற்கு நகர்த்தப்படும்."
+    "deleteFolderConfirm": "\"{{name}}\" ஐ நீக்க விரும்புகிறீர்களா? உள்ளே உள்ள ஆவணங்கள் மூல மட்டத்திற்கு நகர்த்தப்படும்.",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "signInGoogle": "Sign in with Google",
+    "signInGithub": "Sign in with GitHub",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "deleteSelectedTitle": "Delete Selected",
+    "deleteSelectedConfirm_one": "Are you sure you want to delete {{count}} item? This cannot be undone.",
+    "deleteSelectedConfirm_other": "Are you sure you want to delete {{count}} items? This cannot be undone.",
+    "onboardingAddTexts": "Add texts",
+    "onboardingAddTextsHint": "Import or paste texts to study side by side",
+    "onboardingHighlight": "Highlight & underline",
+    "onboardingHighlightHint": "Mark key phrases with colored layers",
+    "onboardingComment": "Comment & discuss",
+    "onboardingCommentHint": "Add notes, replies, and reactions"
+  },
+  "schemes": {
+    "title": "Start with a study scheme",
+    "applyScheme": "Apply study scheme",
+    "blankLayer": "Blank layer",
+    "layerCount": "{{count}} layers",
+    "layerCount_one": "{{count}} layer",
+    "layerCount_other": "{{count}} layers",
+    "inductive": {
+      "name": "Inductive Bible Study",
+      "description": "Close reading with OIA method",
+      "layers": {
+        "keyTerms": "Key Terms & Repeated Words",
+        "commands": "Commands & Warnings",
+        "promises": "Promises & Blessings",
+        "attributes": "Attributes of God",
+        "structure": "Literary Structure",
+        "questions": "Questions & Application"
+      }
+    },
+    "character": {
+      "name": "Character Study",
+      "description": "Trace persons through narrative",
+      "layers": {
+        "godChrist": "God / Christ",
+        "protagonist": "Protagonist / Faithful",
+        "antagonist": "Antagonist / Opposition",
+        "speech": "Speech & Dialogue"
+      }
+    },
+    "oia": {
+      "name": "Minimal (OIA)",
+      "description": "Observation / Interpretation / Application",
+      "layers": {
+        "observation": "Observation",
+        "interpretation": "Interpretation",
+        "application": "Application"
+      }
+    }
   }
 }

@@ -78,5 +78,26 @@
     "splitCell": "सेल विभाजित करें",
     "toggleHeaderRow": "हेडर पंक्ति टॉगल करें",
     "toggleHeaderColumn": "हेडर कॉलम टॉगल करें"
+  },
+  "textRemoval": {
+    "label": "Remove text by filter",
+    "title": "Remove Text by Filter",
+    "description": "Select marks and text patterns to find and remove matching text",
+    "marks": "Filter by marks",
+    "pattern": "Text pattern",
+    "patternPlaceholder": "* (matches all)",
+    "regexMode": "Regex",
+    "globMode": "Glob",
+    "matchCount": "{{count}} match",
+    "matchCount_plural": "{{count}} matches",
+    "noMatches": "No matches",
+    "invalidPattern": "Invalid pattern",
+    "minimize": "Minimize",
+    "restore": "Restore",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "confirmTitle": "Confirm Removal",
+    "confirmMessage": "Remove {{count}} matching text segments? This can be undone with Ctrl+Z.",
+    "confirmRemove": "Remove"
   }
 }

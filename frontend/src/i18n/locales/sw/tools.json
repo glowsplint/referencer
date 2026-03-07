@@ -30,5 +30,11 @@
     "status": "Bofya na uburute ili kufuta vidokezo.",
     "erased": "Kidokezo kimefutwa."
   },
-  "lockHint": "Bonyeza <kbd>Esc</kbd> <kbd>K</kbd> ili kufunga kihariri baada ya kukamilisha maudhui."
+  "lockHint": "Bonyeza <kbd>Esc</kbd> <kbd>K</kbd> ili kufunga kihariri baada ya kukamilisha maudhui.",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

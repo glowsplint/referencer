@@ -30,5 +30,11 @@
     "status": "Klicken und ziehen, um Anmerkungen zu löschen.",
     "erased": "Anmerkung gelöscht."
   },
-  "lockHint": "Drücken Sie <kbd>Esc</kbd> <kbd>K</kbd>, um den Editor zu sperren, sobald Sie den Inhalt fertiggestellt haben."
+  "lockHint": "Drücken Sie <kbd>Esc</kbd> <kbd>K</kbd>, um den Editor zu sperren, sobald Sie den Inhalt fertiggestellt haben.",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

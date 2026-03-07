@@ -102,7 +102,12 @@
   "actionConsole": {
     "title": "操作控制台",
     "close": "关闭",
-    "empty": "尚未记录任何操作。"
+    "empty": "尚未记录任何操作。",
+    "loadDemo": "Load demo content",
+    "loadDemoTitle": "Load demo content",
+    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
+    "loadDemoCancel": "Cancel",
+    "loadDemoLoad": "Load"
   },
   "hub": {
     "title": "Referencer",
@@ -154,6 +159,19 @@
     "deleteDocumentTitle": "删除文档",
     "deleteDocumentConfirm": "您确定要删除「{{title}}」吗？此操作无法撤销。",
     "deleteFolderTitle": "删除文件夹",
-    "deleteFolderConfirm": "您确定要删除「{{name}}」吗？其中的文档将被移至根级别。"
+    "deleteFolderConfirm": "您确定要删除「{{name}}」吗？其中的文档将被移至根级别。",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "deleteSelectedTitle": "Delete Selected",
+    "deleteSelectedConfirm_one": "Are you sure you want to delete {{count}} item? This cannot be undone.",
+    "deleteSelectedConfirm_other": "Are you sure you want to delete {{count}} items? This cannot be undone.",
+    "onboardingAddTexts": "Add texts",
+    "onboardingAddTextsHint": "Import or paste texts to study side by side",
+    "onboardingHighlight": "Highlight & underline",
+    "onboardingHighlightHint": "Mark key phrases with colored layers",
+    "onboardingComment": "Comment & discuss",
+    "onboardingCommentHint": "Add notes, replies, and reactions"
   }
 }

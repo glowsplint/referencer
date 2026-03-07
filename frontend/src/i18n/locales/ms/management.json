@@ -35,7 +35,10 @@
     "toggleEditorLock": "Togol kunci editor",
     "toggleCommentPlacement": "Togol penempatan komen",
     "startTour": "Lawatan berpandu",
-    "loadDemo": "Muat kandungan demo"
+    "loadDemo": "Muat kandungan demo",
+    "switchToEditMode": "Switch to Edit mode",
+    "switchToAnnotateMode": "Switch to Annotate mode",
+    "annotateModeLockHint": " — switch to Annotate mode first"
   },
   "annotations": {
     "placeholder": "Tambah anotasi...",
@@ -45,7 +48,11 @@
     "replyPlaceholder": "Balas...",
     "replies": "balasan",
     "addReaction": "Tambah reaksi",
-    "removeReply": "Buang balasan"
+    "removeReply": "Buang balasan",
+    "moreEmojis": "More emojis",
+    "sendReply": "Send reply",
+    "showMoreReplies_one": "Show {{count}} more reply",
+    "showMoreReplies_other": "Show {{count}} more replies"
   },
   "search": {
     "placeholder": "Cari anotasi...",
@@ -56,7 +63,12 @@
   "actionConsole": {
     "title": "Konsol Tindakan",
     "close": "tutup",
-    "empty": "Belum ada tindakan direkodkan."
+    "empty": "Belum ada tindakan direkodkan.",
+    "loadDemo": "Load demo content",
+    "loadDemoTitle": "Load demo content",
+    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
+    "loadDemoCancel": "Cancel",
+    "loadDemoLoad": "Load"
   },
   "hub": {
     "title": "Referencer",
@@ -106,6 +118,60 @@
     "deleteDocumentTitle": "Padam Dokumen",
     "deleteDocumentConfirm": "Adakah anda pasti mahu memadam \"{{title}}\"? Tindakan ini tidak boleh dibuat asal.",
     "deleteFolderTitle": "Padam Folder",
-    "deleteFolderConfirm": "Adakah anda pasti mahu memadam \"{{name}}\"? Dokumen di dalamnya akan dialihkan ke peringkat utama."
+    "deleteFolderConfirm": "Adakah anda pasti mahu memadam \"{{name}}\"? Dokumen di dalamnya akan dialihkan ke peringkat utama.",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "signInGoogle": "Sign in with Google",
+    "signInGithub": "Sign in with GitHub",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "deleteSelectedTitle": "Delete Selected",
+    "deleteSelectedConfirm_one": "Are you sure you want to delete {{count}} item? This cannot be undone.",
+    "deleteSelectedConfirm_other": "Are you sure you want to delete {{count}} items? This cannot be undone.",
+    "onboardingAddTexts": "Add texts",
+    "onboardingAddTextsHint": "Import or paste texts to study side by side",
+    "onboardingHighlight": "Highlight & underline",
+    "onboardingHighlightHint": "Mark key phrases with colored layers",
+    "onboardingComment": "Comment & discuss",
+    "onboardingCommentHint": "Add notes, replies, and reactions"
+  },
+  "schemes": {
+    "title": "Start with a study scheme",
+    "applyScheme": "Apply study scheme",
+    "blankLayer": "Blank layer",
+    "layerCount": "{{count}} layers",
+    "layerCount_one": "{{count}} layer",
+    "layerCount_other": "{{count}} layers",
+    "inductive": {
+      "name": "Inductive Bible Study",
+      "description": "Close reading with OIA method",
+      "layers": {
+        "keyTerms": "Key Terms & Repeated Words",
+        "commands": "Commands & Warnings",
+        "promises": "Promises & Blessings",
+        "attributes": "Attributes of God",
+        "structure": "Literary Structure",
+        "questions": "Questions & Application"
+      }
+    },
+    "character": {
+      "name": "Character Study",
+      "description": "Trace persons through narrative",
+      "layers": {
+        "godChrist": "God / Christ",
+        "protagonist": "Protagonist / Faithful",
+        "antagonist": "Antagonist / Opposition",
+        "speech": "Speech & Dialogue"
+      }
+    },
+    "oia": {
+      "name": "Minimal (OIA)",
+      "description": "Observation / Interpretation / Application",
+      "layers": {
+        "observation": "Observation",
+        "interpretation": "Interpretation",
+        "application": "Application"
+      }
+    }
   }
 }

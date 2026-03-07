@@ -30,5 +30,11 @@
     "status": "Klicka och dra för att radera anteckningar.",
     "erased": "Anteckning raderad."
   },
-  "lockHint": "Tryck på <kbd>Esc</kbd> <kbd>K</kbd> för att låsa redigeraren när du är klar med innehållet."
+  "lockHint": "Tryck på <kbd>Esc</kbd> <kbd>K</kbd> för att låsa redigeraren när du är klar med innehållet.",
+  "save": {
+    "saving": "Saving...",
+    "saved": "Saved.",
+    "failed": "Save failed.",
+    "notConnected": "Not connected — cannot save."
+  }
 }

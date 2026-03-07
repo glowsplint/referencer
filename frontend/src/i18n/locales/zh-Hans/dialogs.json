@@ -104,7 +104,8 @@
     "alignCenter": "居中对齐",
     "alignRight": "右对齐",
     "alignJustify": "两端对齐",
-    "searchAnnotations": "搜索批注"
+    "searchAnnotations": "搜索批注",
+    "addText": "Add new text"
   },
   "share": {
     "title": "共享文档",
