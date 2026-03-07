@@ -1,7 +1,7 @@
 import type { Context, Next } from "hono";
-import { getCookie, setCookie } from "hono/cookie";
+import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { getSessionUser, maybeRefreshSession } from "./store";
-import { getCookieDomain } from "./cookie-domain";
+import { getCookieDomain, deleteSessionCookie } from "./cookie-domain";
 import type { AuthConfig } from "./config";
 import type { Env } from "../env";
 
@@ -19,6 +19,7 @@ export function optionalAuth(config: AuthConfig) {
             const newToken = await maybeRefreshSession(supabase, token, config.sessionMaxAge);
             if (newToken) {
               const cookieDomain = getCookieDomain(c);
+              deleteSessionCookie((name, opts) => deleteCookie(c, name, opts), cookieDomain);
               setCookie(c, "__session", newToken, {
                 httpOnly: true,
                 secure: true,
