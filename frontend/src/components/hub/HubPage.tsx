@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Settings, TriangleAlert, Search } from "lucide-react";
+import { Settings, Search } from "lucide-react";
 import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useDocuments } from "@/hooks/data/use-documents";
@@ -131,13 +131,6 @@ export function HubPage({ navigate }: HubPageProps) {
                   {t("hub.signIn")}
                 </Button>
               </div>
-              <p
-                className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-500 mt-4"
-                data-testid="guestWarningBanner"
-              >
-                <TriangleAlert size={14} className="shrink-0" />
-                {t("hub.guestWarning")}
-              </p>
             </div>
           </div>
         ) : isAuthenticated ? (

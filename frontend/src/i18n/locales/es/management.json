@@ -97,7 +97,7 @@
     "onboardingStep2Hint": "Pega o escribe tu pasaje",
     "onboardingStep3": "Comienza a anotar",
     "onboardingStep3Hint": "Resalta, subraya y comenta",
-    "guestWarning": "Los datos creados sin iniciar sesión se almacenan localmente y pueden perderse. Inicia sesión para guardar tu trabajo.",
+    "guestWarning": "Tu trabajo no se está guardando. Inicia sesión para conservar tus cambios.",
     "open": "Abrir",
     "rename": "Renombrar",
     "duplicate": "Duplicar",

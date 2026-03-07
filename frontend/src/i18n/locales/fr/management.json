@@ -97,7 +97,7 @@
     "onboardingStep2Hint": "Collez ou tapez votre passage",
     "onboardingStep3": "Commencez à annoter",
     "onboardingStep3Hint": "Surlignez, soulignez et commentez",
-    "guestWarning": "Les données créées sans connexion sont stockées localement et peuvent être perdues. Connectez-vous pour sauvegarder votre travail.",
+    "guestWarning": "Votre travail n'est pas sauvegardé. Connectez-vous pour conserver vos modifications.",
     "open": "Ouvrir",
     "rename": "Renommer",
     "duplicate": "Dupliquer",
