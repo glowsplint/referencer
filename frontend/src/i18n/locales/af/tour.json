@@ -6,24 +6,16 @@
         "content": "Begin deur jou teks in die redigeerder te plak of te tik."
       },
       "lock": {
-        "title": "Sluit die dokument",
-        "content": "Druk K of klik die sluitknoppie om na annoteermodus oor te skakel."
+        "title": "Sluit & ontsluit",
+        "content": "Druk K om tussen redigering en annoteermodus te wissel. Jou annotasies word altyd behou."
       },
       "annotate": {
-        "title": "Annoteer jou teks",
-        "content": "Kies teks om pyle te trek (A), te beklemtoon (H), kommentaar te lewer (C), of te onderstreep (U)."
+        "title": "Annoteer & vee uit",
+        "content": "Kies teks om pyle te trek (A), te beklemtoon (H), kommentaar te lewer (C), of te onderstreep (U). Druk E of klik die uitveër om beklemtonings, onderstrepings en pyle van geselekteerde teks te verwyder."
       },
       "layers": {
         "title": "Bestuur jou lae",
         "content": "Sleep lae om hulle te herrangskik, of sleep na die asblik om te verwyder. Jy kan ook afdelings op dieselfde manier herrangskik."
-      },
-      "eraser": {
-        "title": "Vee annotasies uit",
-        "content": "Druk E of klik die uitveër om beklemtonings, onderstrepings en pyle van geselekteerde teks te verwyder."
-      },
-      "unlock": {
-        "title": "Ontsluit om te redigeer",
-        "content": "Druk weer K om terug te keer na redigering. Jou annotasies word behou."
       },
       "statusBar": {
         "title": "Statusbalk",

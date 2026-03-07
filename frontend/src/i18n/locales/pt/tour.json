@@ -6,24 +6,16 @@
         "content": "Comece colando ou digitando seu texto no editor."
       },
       "lock": {
-        "title": "Bloqueie o documento",
-        "content": "Pressione K ou clique no botão de bloqueio para alternar para o modo de anotação."
+        "title": "Bloqueie & desbloqueie",
+        "content": "Pressione K para alternar entre o modo de edição e o modo de anotação. Suas anotações são sempre preservadas."
       },
       "annotate": {
-        "title": "Anote seu texto",
-        "content": "Selecione o texto para desenhar setas (A), destacar (H), comentar (C) ou sublinhar (U)."
+        "title": "Anote & apague",
+        "content": "Selecione o texto para desenhar setas (A), destacar (H), comentar (C) ou sublinhar (U). Pressione E ou clique na borracha para remover destaques, sublinhados e setas do texto selecionado."
       },
       "layers": {
         "title": "Gerencie suas camadas",
         "content": "Arraste as camadas para reordená-las ou arraste para a lixeira para excluir. Você também pode reordenar seções da mesma forma."
-      },
-      "eraser": {
-        "title": "Apague anotações",
-        "content": "Pressione E ou clique na borracha para remover destaques, sublinhados e setas do texto selecionado."
-      },
-      "unlock": {
-        "title": "Desbloqueie para editar",
-        "content": "Pressione K novamente para voltar à edição. Suas anotações serão preservadas."
       },
       "statusBar": {
         "title": "Barra de status",

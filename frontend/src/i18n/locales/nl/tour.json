@@ -6,24 +6,16 @@
         "content": "Begin door je tekst in de editor te plakken of te typen."
       },
       "lock": {
-        "title": "Vergrendel het document",
-        "content": "Druk op K of klik op de vergrendelknop om naar de annotatiemodus te schakelen."
+        "title": "Vergrendel & ontgrendel",
+        "content": "Druk op K om te schakelen tussen bewerken en annotatiemodus. Je annotaties blijven altijd behouden."
       },
       "annotate": {
-        "title": "Annoteer je tekst",
-        "content": "Selecteer tekst om pijlen te tekenen (A), te markeren (H), commentaar toe te voegen (C) of te onderstrepen (U)."
+        "title": "Annoteer & wis",
+        "content": "Selecteer tekst om pijlen te tekenen (A), te markeren (H), commentaar toe te voegen (C) of te onderstrepen (U). Druk op E of klik op de wisser om markeringen, onderstrepingen en pijlen uit de geselecteerde tekst te verwijderen."
       },
       "layers": {
         "title": "Beheer je lagen",
         "content": "Sleep lagen om ze te herordenen, of sleep ze naar de prullenbak om ze te verwijderen. Je kunt secties op dezelfde manier herordenen."
-      },
-      "eraser": {
-        "title": "Wis annotaties",
-        "content": "Druk op E of klik op de wisser om markeringen, onderstrepingen en pijlen uit de geselecteerde tekst te verwijderen."
-      },
-      "unlock": {
-        "title": "Ontgrendel om te bewerken",
-        "content": "Druk nogmaals op K om terug te keren naar bewerken. Je annotaties blijven behouden."
       },
       "statusBar": {
         "title": "Statusbalk",

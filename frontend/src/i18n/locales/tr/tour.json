@@ -6,24 +6,16 @@
         "content": "Metninizi editöre yapıştırarak veya yazarak başlayın."
       },
       "lock": {
-        "title": "Belgeyi kilitleyin",
-        "content": "Açıklama moduna geçmek için K tuşuna basın veya kilit düğmesine tıklayın."
+        "title": "Kilitleyin & kilidi açın",
+        "content": "Düzenleme ve açıklama modu arasında geçiş yapmak için K tuşuna basın. Açıklamalarınız her zaman korunur."
       },
       "annotate": {
-        "title": "Metni açıklayın",
-        "content": "Ok (A), vurgulama (H), yorum (C) veya altı çizili (U) eklemek için metin seçin."
+        "title": "Açıklayın & silin",
+        "content": "Ok (A), vurgulama (H), yorum (C) veya altı çizili (U) eklemek için metin seçin. Seçili metindeki vurguları, alt çizgileri ve okları kaldırmak için E tuşuna basın veya silgi aracına tıklayın."
       },
       "layers": {
         "title": "Katmanlarınızı yönetin",
         "content": "Katmanları sürükleyerek yeniden sıralayın veya silmek için çöp kutusuna sürükleyin. Bölümleri de aynı şekilde yeniden sıralayabilirsiniz."
-      },
-      "eraser": {
-        "title": "Açıklamaları silin",
-        "content": "Seçili metindeki vurguları, alt çizgileri ve okları kaldırmak için E tuşuna basın veya silgi aracına tıklayın."
-      },
-      "unlock": {
-        "title": "Düzenlemek için kilidi açın",
-        "content": "Düzenlemeye dönmek için tekrar K tuşuna basın. Açıklamalarınız korunur."
       },
       "statusBar": {
         "title": "Durum çubuğu",
