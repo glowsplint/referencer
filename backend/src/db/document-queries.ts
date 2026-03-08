@@ -151,12 +151,10 @@ export async function deleteDocumentCascade(
   supabase: SupabaseClient,
   documentId: string,
 ): Promise<void> {
-  // Order matters — delete dependent rows first to avoid FK violations
-  await supabase.from("share_link").delete().eq("document_id", documentId);
-  await supabase.from("document_tag").delete().eq("document_id", documentId);
-  await supabase.from("user_document").delete().eq("document_id", documentId);
-  await supabase.from("document_permission").delete().eq("document_id", documentId);
-  await supabase.from("yjs_document").delete().eq("document_id", documentId);
+  // yjs_document has no FK to document, so delete it explicitly
+  await supabase.from("yjs_document").delete().eq("room_name", documentId);
+  // Deleting the document cascades to: share_link, document_tag,
+  // user_document, document_permission, annotation_index
   await supabase.from("document").delete().eq("id", documentId);
 }
 
