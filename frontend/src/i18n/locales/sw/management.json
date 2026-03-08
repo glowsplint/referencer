@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "Koni ya Vitendo",
     "close": "funga",
-    "empty": "Hakuna vitendo vilivyorekodiwa bado.",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "Hakuna vitendo vilivyorekodiwa bado."
   },
   "hub": {
     "title": "Referencer",

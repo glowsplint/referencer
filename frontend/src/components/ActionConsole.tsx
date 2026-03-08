@@ -1,17 +1,8 @@
 // Dev-facing action console that logs document mutations (add/remove layers,
 // highlights, arrows, etc.) in a terminal-style panel at the bottom of the screen.
 // Toggled with the backtick key. Useful for debugging annotation state changes.
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import type { ActionEntry, ActionDetail } from "@/types/editor";
 
 const TYPE_COLORS: Record<string, string> = {
@@ -89,7 +80,6 @@ interface ActionConsoleProps {
   onClose: () => void;
   height: number;
   onHeightChange: (height: number) => void;
-  onLoadDemo?: () => void;
 }
 
 export function ActionConsole({
@@ -98,11 +88,9 @@ export function ActionConsole({
   onClose,
   height,
   onHeightChange,
-  onLoadDemo,
 }: ActionConsoleProps) {
   const { t } = useTranslation("management");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -178,43 +166,6 @@ export function ActionConsole({
           </div>
         ))}
       </div>
-      {onLoadDemo && (
-        <div className="flex items-center px-3 py-1.5 border-t border-zinc-700 shrink-0">
-          <button
-            data-testid="loadDemoButton"
-            onClick={() => setShowConfirmDialog(true)}
-            className="text-zinc-400 hover:text-zinc-200 text-xs px-2 py-0.5 rounded hover:bg-zinc-700 transition-colors"
-          >
-            {t("actionConsole.loadDemo")}
-          </button>
-          <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-            <DialogContent className="sm:max-w-sm" data-testid="demoConfirmDialog">
-              <DialogHeader>
-                <DialogTitle>{t("actionConsole.loadDemoTitle")}</DialogTitle>
-                <DialogDescription>{t("actionConsole.loadDemoConfirm")}</DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  data-testid="demoConfirmCancel"
-                  onClick={() => setShowConfirmDialog(false)}
-                >
-                  {t("actionConsole.loadDemoCancel")}
-                </Button>
-                <Button
-                  data-testid="demoConfirmLoad"
-                  onClick={() => {
-                    onLoadDemo();
-                    setShowConfirmDialog(false);
-                  }}
-                >
-                  {t("actionConsole.loadDemoLoad")}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      )}
     </div>
   );
 }

@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "Consola de acțiuni",
     "close": "închide",
-    "empty": "Nu au fost înregistrate acțiuni încă.",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "Nu au fost înregistrate acțiuni încă."
   },
   "hub": {
     "title": "Referencer",

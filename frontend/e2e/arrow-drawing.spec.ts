@@ -6,16 +6,11 @@ let initialArrowCount = 0;
 test.beforeEach(async ({ page }) => {
   await setupDocument(page);
 
-  // Hide default layers so their arrows/highlights don't interfere with tests
-  for (let i = 0; i < 4; i++) {
-    await page.getByTestId(`layerVisibility-${i}`).click();
-  }
-
-  // Editor starts locked with 3 default layers (some have arrows). Add a fresh layer.
+  // Add a fresh layer for tests
   await page.getByTestId("addLayerButton").click();
 
-  // Record initial arrow count from default layers
-  initialArrowCount = await page.getByTestId("arrow-line").count();
+  // No default arrows
+  initialArrowCount = 0;
 
   // Switch to arrow tool
   await page.keyboard.press("a");

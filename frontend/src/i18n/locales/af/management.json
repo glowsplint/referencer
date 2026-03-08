@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "Aksiekonsole",
     "close": "sluit",
-    "empty": "Nog geen aksies aangeteken nie.",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "Nog geen aksies aangeteken nie."
   },
   "hub": {
     "title": "Referencer",

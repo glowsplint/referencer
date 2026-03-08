@@ -82,8 +82,6 @@ const mockDocument = {
   toggleShowStatusBar: vi.fn(),
   toggleCommentPlacement: vi.fn(),
 
-  loadDemoContent: vi.fn(),
-  demoLoading: false,
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
   setActiveLayer: vi.fn(),
@@ -230,7 +228,6 @@ beforeEach(() => {
   mockDocument.isManagementPaneOpen = false;
   mockDocument.annotations = { activeTool: "selection" as const };
   mockDocument.selectedArrow = null;
-  mockDocument.demoLoading = false;
 });
 
 const defaultProps = {
@@ -458,20 +455,6 @@ describe("App (desktop)", () => {
       mockDocument.settings.showStatusBar = false;
       renderApp();
       expect(screen.queryByTestId("status-bar")).not.toBeInTheDocument();
-    });
-  });
-
-  describe("when demo is loading", () => {
-    it("then shows the loading overlay", () => {
-      mockDocument.demoLoading = true;
-      renderApp();
-      expect(screen.getByTestId("demoLoadingOverlay")).toBeInTheDocument();
-    });
-
-    it("then hides the loading overlay when not loading", () => {
-      mockDocument.demoLoading = false;
-      renderApp();
-      expect(screen.queryByTestId("demoLoadingOverlay")).not.toBeInTheDocument();
     });
   });
 });

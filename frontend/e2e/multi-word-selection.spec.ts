@@ -18,10 +18,6 @@ async function clickWordInEditor(
 test.describe("when using Shift+Arrow for multi-word selection", () => {
   test.beforeEach(async ({ page }) => {
     await setupDocument(page);
-    // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
-      await page.getByTestId(`layerVisibility-${i}`).click();
-    }
   });
 
   test("when Shift+ArrowRight is pressed, then selection expands to include next word", async ({
@@ -147,12 +143,8 @@ test.describe("when using Shift+Arrow for multi-word selection", () => {
 test.describe("when dragging to select multiple words", () => {
   test.beforeEach(async ({ page }) => {
     await setupDocument(page);
-    // Hide default layers so their annotations don't interfere with tests
-    for (let i = 0; i < 4; i++) {
-      await page.getByTestId(`layerVisibility-${i}`).click();
-    }
 
-    // Add a fresh layer for tests.
+    // Add a fresh layer for tests
     await page.getByTestId("addLayerButton").click();
 
     // Switch to comments tool for annotation creation
@@ -268,10 +260,6 @@ test.describe("when dragging to select multiple words", () => {
 test.describe("when editor state changes", () => {
   test.beforeEach(async ({ page }) => {
     await setupDocument(page);
-    // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
-      await page.getByTestId(`layerVisibility-${i}`).click();
-    }
   });
 
   test("when editor is unlocked, then multi-word selection is cleared", async ({ page }) => {

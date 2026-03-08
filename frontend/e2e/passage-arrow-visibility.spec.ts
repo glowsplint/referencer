@@ -8,8 +8,8 @@ const FIRST_LINE_Y_OFFSET = 15;
 async function drawArrowInEditor(
   page: import("@playwright/test").Page,
   editorIndex: number,
-  anchorXOffset = 30,
-  targetXOffset = 120,
+  anchorXOffset = 200,
+  targetXOffset = 350,
 ) {
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   await page.keyboard.press("a");
@@ -18,7 +18,7 @@ async function drawArrowInEditor(
   const box = await p.boundingBox();
   expect(box).not.toBeNull();
 
-  // Select and confirm anchor
+  // Select and confirm anchor (use large x offsets to avoid arrow style picker overlay)
   await page.mouse.click(box!.x + anchorXOffset, box!.y + FIRST_LINE_Y_OFFSET);
   await expect(page.locator(".word-selection")).toBeVisible({ timeout: 2000 });
   await page.keyboard.press("Enter");
@@ -34,8 +34,8 @@ async function drawArrowBetweenEditors(
   page: import("@playwright/test").Page,
   sourceEditor: number,
   targetEditor: number,
-  anchorXOffset = 30,
-  targetXOffset = 30,
+  anchorXOffset = 200,
+  targetXOffset = 200,
 ) {
   await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
   await page.keyboard.press("a");
@@ -69,12 +69,7 @@ test.describe("when toggling passage visibility with arrows (2 editors)", () => 
   test.beforeEach(async ({ page }) => {
     await setupDocument(page);
 
-    // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
-      await page.getByTestId(`layerVisibility-${i}`).click();
-    }
-
-    // Editor starts locked with 2 texts and 3 default layers. Add a fresh layer.
+    // Add a fresh layer for tests
     await page.getByTestId("addLayerButton").click();
 
     await page.getByTestId("menuButton").click();
@@ -170,8 +165,8 @@ test.describe("when toggling passage visibility with arrows (2 editors)", () => 
 
     await page.getByTestId("menuButton").click();
 
-    // Hide test layer (index 4 — the newly added layer after the 4 defaults)
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide test layer (index 0)
+    await page.getByTestId("layerVisibility-0").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -180,7 +175,7 @@ test.describe("when toggling passage visibility with arrows (2 editors)", () => 
     await page.getByTestId("sectionVisibility-0").click();
 
     // Show layer (section still hidden) — arrow should not appear
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-0").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });
@@ -266,13 +261,7 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
   test.beforeEach(async ({ page }) => {
     await setupDocument(page);
 
-    // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
-      await page.getByTestId(`layerVisibility-${i}`).click();
-    }
-
-    // Editor starts locked with 2 texts and 3 default layers.
-    // Add one more text for 3 total.
+    // Add one more text for 3 total
     await page.getByTestId("addTextButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);
 
@@ -294,15 +283,15 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     await page.keyboard.type("Alpha Beta Gamma Delta Epsilon Zeta Eta Theta");
     await page.getByTestId("lockButton").click();
 
-    // Add two fresh layers at indices 4 and 5 (demo creates 4 layers at 0-3).
+    // Add two fresh layers at indices 0 and 1
     await page.getByTestId("addLayerButton").click();
     await page.getByTestId("addLayerButton").click();
-    await expect(page.getByTestId("layerName-4")).toHaveText("Layer 1");
-    await expect(page.getByTestId("layerName-5")).toHaveText("Layer 2");
+    await expect(page.getByTestId("layerName-0")).toHaveText("Layer 1");
+    await expect(page.getByTestId("layerName-1")).toHaveText("Layer 2");
 
-    // Activate Layer 1 (index 4)
-    await page.getByTestId("layerName-4").click();
-    await expect(page.getByTestId("layerActiveTag-4")).toBeVisible();
+    // Activate Layer 1 (index 0)
+    await page.getByTestId("layerName-0").click();
+    await expect(page.getByTestId("layerActiveTag-0")).toBeVisible();
 
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
@@ -318,14 +307,14 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     });
 
     // Draw E1→E3 on Layer 1 (use offset 60 for different anchor word)
-    await drawArrowBetweenEditors(page, 0, 2, 60);
+    await drawArrowBetweenEditors(page, 0, 2, 300);
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,
     });
 
     // Switch to Layer 2, draw E2→E3
     await page.keyboard.press("Tab");
-    await drawArrowBetweenEditors(page, 1, 2, 60);
+    await drawArrowBetweenEditors(page, 1, 2, 300);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
     });
@@ -361,11 +350,11 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     await drawArrowBetweenEditors(page, 0, 1);
 
     // Draw E1→E3 on Layer 1
-    await drawArrowBetweenEditors(page, 0, 2, 60);
+    await drawArrowBetweenEditors(page, 0, 2, 300);
 
     // Draw E2→E3 on Layer 2
     await page.keyboard.press("Tab");
-    await drawArrowBetweenEditors(page, 1, 2, 60);
+    await drawArrowBetweenEditors(page, 1, 2, 300);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
     });
@@ -391,11 +380,11 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     await drawArrowBetweenEditors(page, 0, 1);
 
     // Draw E1→E3 on Layer 1
-    await drawArrowBetweenEditors(page, 0, 2, 60);
+    await drawArrowBetweenEditors(page, 0, 2, 300);
 
     // Draw E2→E3 on Layer 2
     await page.keyboard.press("Tab");
-    await drawArrowBetweenEditors(page, 1, 2, 60);
+    await drawArrowBetweenEditors(page, 1, 2, 300);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
     });
@@ -417,11 +406,11 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
   test("when E1 and E3 are hidden, then all arrows are removed", async ({ page }) => {
     // Draw E1→E2, E1→E3 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
-    await drawArrowBetweenEditors(page, 0, 2, 60);
+    await drawArrowBetweenEditors(page, 0, 2, 300);
 
     // Draw E2→E3 on Layer 2
     await page.keyboard.press("Tab");
-    await drawArrowBetweenEditors(page, 1, 2, 60);
+    await drawArrowBetweenEditors(page, 1, 2, 300);
     await expect(page.getByTestId("arrow-line")).toHaveCount(3, {
       timeout: 2000,
     });
@@ -483,22 +472,22 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     // Draw E1→E2 on Layer 1
     await drawArrowBetweenEditors(page, 0, 1);
 
-    // Switch to Layer 2 (index 5) via management pane
+    // Switch to Layer 2 (index 1) via management pane
     await page.getByTestId("menuButton").click();
-    await page.getByTestId("layerName-5").click();
-    await expect(page.getByTestId("layerActiveTag-5")).toBeVisible();
+    await page.getByTestId("layerName-1").click();
+    await expect(page.getByTestId("layerActiveTag-1")).toBeVisible();
     await page.getByTestId("menuButton").click();
 
     // Draw E2→E3 on Layer 2
-    await drawArrowBetweenEditors(page, 1, 2, 60);
+    await drawArrowBetweenEditors(page, 1, 2, 300);
     await expect(page.getByTestId("arrow-line")).toHaveCount(2, {
       timeout: 2000,
     });
 
     await page.getByTestId("menuButton").click();
 
-    // Hide Layer 1 (index 4) — only E2→E3 (Layer 2) remains
-    await page.getByTestId("layerVisibility-4").click();
+    // Hide Layer 1 (index 0) — only E2→E3 (Layer 2) remains
+    await page.getByTestId("layerVisibility-0").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(1, {
       timeout: 2000,
     });
@@ -510,7 +499,7 @@ test.describe("when toggling passage visibility with arrows (3 editors)", () => 
     });
 
     // Show Layer 1 (E2 still hidden) — E1→E2 can't show because E2 hidden
-    await page.getByTestId("layerVisibility-4").click();
+    await page.getByTestId("layerVisibility-0").click();
     await expect(page.getByTestId("arrow-line")).toHaveCount(0, {
       timeout: 2000,
     });

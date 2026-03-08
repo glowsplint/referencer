@@ -16,11 +16,7 @@ async function editorOfSelection(page: import("@playwright/test").Page, editorCo
 test.describe("when navigating across 2 editors", () => {
   test.beforeEach(async ({ page }) => {
     await setupDocument(page);
-    // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
-      await page.getByTestId(`layerVisibility-${i}`).click();
-    }
-    // Editor starts locked with 2 texts. Close management pane for more space.
+    // Close management pane for more space
     await expect(page.getByTestId("managementPane")).toBeVisible();
     await page.getByTestId("menuButton").click();
     await expect(page.getByTestId("managementPane")).not.toBeVisible();
@@ -72,11 +68,7 @@ test.describe("when navigating across 3 editors", () => {
 
   test.beforeEach(async ({ page }) => {
     await setupDocument(page);
-    // Hide default layers so their arrows/highlights don't interfere with tests
-    for (let i = 0; i < 4; i++) {
-      await page.getByTestId(`layerVisibility-${i}`).click();
-    }
-    // Editor starts locked with 2 texts. Add one more for 3 total.
+    // Add one more text for 3 total
     await expect(page.getByTestId("managementPane")).toBeVisible();
     await page.getByTestId("addTextButton").click();
     await expect(page.locator(".simple-editor-wrapper")).toHaveCount(3);

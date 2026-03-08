@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "מסוף פעולות",
     "close": "סגור",
-    "empty": "לא נרשמו פעולות עדיין.",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "לא נרשמו פעולות עדיין."
   },
   "hub": {
     "title": "Referencer",

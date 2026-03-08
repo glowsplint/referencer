@@ -84,8 +84,6 @@ const mockDocument = {
   toggleShowStatusBar: vi.fn(),
   toggleCommentPlacement: vi.fn(),
 
-  loadDemoContent: vi.fn(),
-  demoLoading: false,
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
   setActiveLayer: vi.fn(),
@@ -278,7 +276,6 @@ beforeEach(() => {
   mockDocument.isManagementPaneOpen = false;
   mockDocument.annotations = { activeTool: "selection" as const };
   mockDocument.selectedArrow = null;
-  mockDocument.demoLoading = false;
 });
 
 describe("App annotation visibility (layer toggles)", () => {
