@@ -61,7 +61,10 @@ export function buildEditorViewMap(
   return map;
 }
 
-export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map<number, Editor>>): UseYjsLayersReturn {
+export function useYjsLayers(
+  doc: Y.Doc | null,
+  editorsRef?: React.RefObject<Map<number, Editor>>,
+): UseYjsLayersReturn {
   const [layers, setLayersState] = useState<Layer[]>([]);
   const [activeLayerId, setActiveLayerId] = useState<string | null>(null);
   const layerCounterRef = useRef(0);

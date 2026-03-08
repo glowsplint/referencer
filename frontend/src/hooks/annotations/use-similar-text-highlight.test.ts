@@ -112,7 +112,9 @@ describe("useSimilarTextHighlight", () => {
 
     mockFindTextMatches.mockReturnValue([{ from: 20, to: 25 }]);
 
-    renderHook(() => useSimilarTextHighlight(asEditor(editor), selection, 0, true, "#fca5a5", false));
+    renderHook(() =>
+      useSimilarTextHighlight(asEditor(editor), selection, 0, true, "#fca5a5", false),
+    );
 
     expect(capturedDecorations).toHaveLength(1);
     const attrs = (capturedDecorations[0] as Record<string, Record<string, string>>).attrs;
