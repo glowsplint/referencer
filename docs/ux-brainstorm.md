@@ -8,7 +8,6 @@
 - [Known Gaps](#known-gaps)
 - [1. Annotation UX](#1-annotation-ux)
 - [2. Search & Discovery](#2-search--discovery)
-- [3. Knowledge Linking](#3-knowledge-linking)
 - [4. Multi-Pane & Navigation](#4-multi-pane--navigation)
 - [5. Collaboration](#5-collaboration)
 - [6. Export & Sharing](#6-export--sharing)
@@ -47,7 +46,7 @@ This is a strong foundation — most competitors don't have real-time multi-pane
 
 From codebase audit — features that are missing or incomplete:
 
-- No search across annotations/comments
+- ~~No search across annotations/comments~~ (done — see 2.1)
 - No export (PDF, Markdown, DOCX)
 - No bulk operations on annotations
 - No @mentions or notifications for collaborators
@@ -78,21 +77,11 @@ As an additional feature, allow duplication without annotations (just texts).
 
 _Find what you've studied._
 
-### 2.1 Full-Text Annotation Search
+### 2.1 Full-Text Annotation Search — DONE
 
-Search across all comment text, replies, and layer names. Support filters:
+Implemented in `92cbd7b`. Searches across comment text, replies, and layer names with filters by layer, annotation type, author, and text title.
 
-- By layer
-- By date range
-- By author (in collaborative documents)
-- By annotation type (highlight, comment, underline, arrow)
-- By tag (see 2.3)
-- By text title
-
-This is a table-stakes feature that's currently missing.
-
-**Impact**: Critical
-**Inspired by**: Logos faceted search
+~~**Impact**: Critical~~
 
 ### 2.3 Tag System for Documents
 
@@ -107,26 +96,6 @@ The app already has partial similar-text highlighting. Expand it: when you highl
 
 **Impact**: Medium
 **Inspired by**: Blue Letter Bible concordance
-
----
-
-## 3. Knowledge Linking
-
-_Build connections between passages._
-
-### 3.4 Automatic Cross-Reference Suggestions
-
-Analyze the user's highlights and notes to surface related passages they haven't studied yet. Personalized recommendations, not just a static cross-reference list. Could use embedding similarity or curated cross-reference databases.
-
-**Impact**: Medium
-**Inspired by**: Logos Passage Guide
-
-### 3.5 Transclusion
-
-Embed a verse or note block in multiple documents. Edit in one place, reflected everywhere. "This note about justification appears in my Romans study, my Galatians study, and my theology overview."
-
-**Impact**: Medium
-**Inspired by**: Notion synced blocks, Roam transclusion
 
 ---
 
@@ -148,20 +117,6 @@ Click a verse number (or heading) in any pane and all linked panes jump to that 
 **Impact**: High
 **Inspired by**: VS Code cursor follow
 
-### 4.3 Reference Panel Drawer
-
-A narrow pull-out right panel showing contextual information for the currently viewed verse:
-
-- Cross-references
-- Lexicon entries (Greek/Hebrew)
-- Maps and timelines
-- Commentary snippets
-
-Always updating based on scroll position — no manual lookup needed.
-
-**Impact**: High
-**Inspired by**: Logos Passage Guide
-
 ### 4.4 Mixed-Resource Panes
 
 Let users open different resource types in different panes, all verse-synchronized:
@@ -175,13 +130,6 @@ Logos does this on desktop but nobody has done it elegantly on web.
 
 **Impact**: Medium
 **Inspired by**: Logos document compositor
-
-### 4.5 Translation Diff Highlighting
-
-In parallel translation view, auto-highlight words that differ between versions — like a code diff. Makes translation comparison intentional rather than just layout-adjacent.
-
-**Impact**: Medium
-**Inspired by**: Code diff tools (no Bible app does this)
 
 ### 4.6 Minimap / Outline Sidebar
 
@@ -240,13 +188,6 @@ Email or in-app digest showing group annotation activity for the week:
 
 **Impact**: Low
 **Inspired by**: Newsletter/digest pattern
-
-### 5.7 "Discuss This Verse" Prompt
-
-On verses with no group annotations yet: "No one in your group has annotated this verse. Be first." Encourages breadth of coverage across a passage.
-
-**Impact**: Low
-**Inspired by**: Gamification patterns
 
 ---
 
@@ -581,13 +522,6 @@ Currently mobile is read-only. Enable annotation via:
 
 **Impact**: High
 **Inspired by**: Material Design touch patterns
-
-### 10.2 Swipe-to-Navigate
-
-On mobile single-pane view, swipe left/right to navigate forward/back by chapter. Card-reader feel, not a scrolling document.
-
-**Impact**: Medium
-**Inspired by**: YouVersion, Tinder-style card navigation
 
 ### 10.3 Half-Sheet Note Entry
 
