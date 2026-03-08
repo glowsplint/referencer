@@ -48,7 +48,7 @@ CREATE INDEX idx_session_expires_at ON session(expires_at);
 -- Yjs document persistence (replaces LevelDB).
 -- State is stored as base64-encoded text for simpler handling via Supabase JS client.
 CREATE TABLE yjs_document (
-    room_name TEXT PRIMARY KEY,
+    room_name TEXT PRIMARY KEY REFERENCES document(id) ON DELETE CASCADE,
     state TEXT NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
