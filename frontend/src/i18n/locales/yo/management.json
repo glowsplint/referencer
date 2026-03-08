@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "Kọ́nsólù Iṣẹ́",
     "close": "padé",
-    "empty": "A kò tíì ṣàkọsílẹ̀ iṣẹ́ kankan.",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "A kò tíì ṣàkọsílẹ̀ iṣẹ́ kankan."
   },
   "hub": {
     "title": "Referencer",

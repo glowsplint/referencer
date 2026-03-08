@@ -2,22 +2,16 @@
 // and Yjs CRDT collaboration into a single API. All data (text, annotations,
 // layers) is synced via Yjs shared types through the collab server.
 // All collaboration uses Yjs observe/transact.
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useSettings } from "./use-settings";
 import { useEditors } from "./use-editors";
 import { useActionHistory } from "./use-action-history";
 import { useTrackedEditors } from "./use-tracked-editors";
 import { useYjs } from "./use-yjs";
-import { useYjsLayers, buildEditorViewMap } from "./use-yjs-layers";
+import { useYjsLayers } from "./use-yjs-layers";
 import { useYjsUndo } from "./use-yjs-undo";
 import { useUnifiedUndo } from "./use-unified-undo";
 import { useYjsOffline } from "./use-yjs-offline";
-import { seedDefaultLayers, getLayersArray } from "@/lib/yjs/annotations";
-import {
-  createDefaultLayers,
-  DEFAULT_TEXT_CONTENTS,
-  DEFAULT_SECTION_NAMES,
-} from "@/data/default-document";
 import type { Highlight, Arrow, LayerUnderline, ArrowStyle, CommentReply } from "@/types/editor";
 
 export function useEditorDocument(documentId?: string | null, readOnly = false) {
@@ -46,73 +40,6 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
   // finished loading. Seeding must wait for both to avoid overwriting persisted
   // data that hasn't been loaded yet (race between IDB async load and WS error).
   const readyForSeeding = yjs.synced && idbSynced;
-
-  // Load demo content on demand
-  const demoLoadRequestedRef = useRef(false);
-  const [demoLoading, setDemoLoading] = useState(false);
-  const loadDemoContent = useCallback(() => {
-    if (readOnly) return;
-    const count = DEFAULT_SECTION_NAMES.length;
-    // Set up editor panes
-    rawEditorsHook.setEditorCount(count);
-    rawEditorsHook.setSectionNames([...DEFAULT_SECTION_NAMES]);
-    rawEditorsHook.setSectionVisibility(Array.from({ length: count }, () => true));
-    rawEditorsHook.setSplitPositions(
-      Array.from({ length: count - 1 }, (_, i) => ((i + 1) / count) * 100),
-    );
-    rawEditorsHook.setEditorKeys(Array.from({ length: count }, (_, i) => Date.now() + i));
-    demoLoadRequestedRef.current = true;
-    setDemoLoading(true);
-  }, [readOnly, rawEditorsHook]);
-
-  // After editors mount from a demo load request, set content and seed layers
-  useEffect(() => {
-    if (!demoLoadRequestedRef.current) return;
-    if (!readyForSeeding) return;
-    // Verify all required editors are actually mounted and alive (not stale refs from re-keying)
-    const requiredCount = DEFAULT_SECTION_NAMES.length;
-    for (let i = 0; i < requiredCount; i++) {
-      const editor = trackedEditorsHook.editorsRef.current.get(i);
-      if (!editor || editor.isDestroyed) return;
-    }
-    demoLoadRequestedRef.current = false;
-
-    // Demarcate undo boundary so everything below is one undo step
-    yjsUndo.stopCapturing();
-
-    // Set editor content
-    for (let i = 0; i < requiredCount; i++) {
-      const editor = trackedEditorsHook.editorsRef.current.get(i);
-      if (editor && DEFAULT_TEXT_CONTENTS[i]) {
-        editor.commands.setContent(DEFAULT_TEXT_CONTENTS[i]);
-      }
-    }
-    // Clear existing layers and seed demo layers
-    if (!yjs.doc) return;
-    try {
-      const yLayers = getLayersArray(yjs.doc);
-      if (yLayers.length > 0) {
-        yjs.doc.transact(() => {
-          yLayers.delete(0, yLayers.length);
-        });
-      }
-      const views = buildEditorViewMap(trackedEditorsHook.editorsRef);
-      seedDefaultLayers(yjs.doc, createDefaultLayers(), views);
-    } catch (err) {
-      console.error("Failed to seed demo layers:", err);
-    }
-
-    // Close the undo capture group so the demo load is a single undo step
-    yjsUndo.stopCapturing();
-
-    setDemoLoading(false);
-  }, [
-    rawEditorsHook.mountedEditorCount,
-    readyForSeeding,
-    yjs.doc,
-    trackedEditorsHook.editorsRef,
-    yjsUndo,
-  ]);
 
   // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<TArgs extends unknown[], TReturn>(
@@ -547,8 +474,6 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
     reorderEditors,
     updateSectionName,
     toggleSectionVisibility,
-    loadDemoContent,
-    demoLoading,
     documentId: documentId ?? null,
     readOnly,
     isManagementPaneOpen,

@@ -47,7 +47,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ActionConsole } from "./components/ActionConsole";
 import { MobileInfoDialog } from "./components/MobileInfoDialog";
 import { Toaster } from "./components/ui/sonner";
-import { Loader2, MessageSquare, X } from "lucide-react";
+import { MessageSquare, X } from "lucide-react";
 import { DocumentProvider } from "./contexts/DocumentContext";
 
 import { EditorTour } from "./components/tour/EditorTour";
@@ -237,6 +237,7 @@ export function App({ documentId, navigate }: AppProps) {
   const readOnly = permissionRole === "viewer";
   useDocumentAutosave(documentId);
   const docCtx = useEditorDocument(documentId, readOnly);
+
   const {
     settings,
     layers,
@@ -672,14 +673,6 @@ export function App({ documentId, navigate }: AppProps) {
                       hideOffscreenArrows={settings.hideOffscreenArrows}
                     />
                   </ErrorBoundary>
-                  {docCtx.demoLoading && (
-                    <div
-                      className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm"
-                      data-testid="demoLoadingOverlay"
-                    >
-                      <Loader2 className="size-8 animate-spin text-muted-foreground" />
-                    </div>
-                  )}
                   {!settings.isMultipleRowsLayout
                     ? (() => {
                         const topRowVisible =
@@ -863,7 +856,6 @@ export function App({ documentId, navigate }: AppProps) {
             onClose={() => actionConsole.setIsOpen(false)}
             height={actionConsole.consoleHeight}
             onHeightChange={actionConsole.setConsoleHeight}
-            onLoadDemo={docCtx.loadDemoContent}
           />
         )}
         {/* Mobile annotation drawer: bottom panel with read-only annotation cards */}

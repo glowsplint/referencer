@@ -87,8 +87,6 @@ export function makeMockDocument(
     updateSectionName: vi.fn(),
     toggleSectionVisibility: vi.fn(),
     toggleAllSectionVisibility: vi.fn(),
-    loadDemoContent: vi.fn(),
-    demoLoading: false,
     handleDividerResize: vi.fn(),
     handleEditorMount: vi.fn(),
     handlePaneFocus: vi.fn(),

@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "操作控制台",
     "close": "關閉",
-    "empty": "尚未記錄任何操作。",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "尚未記錄任何操作。"
   },
   "hub": {
     "title": "Referencer",

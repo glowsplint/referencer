@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "የድርጊት ኮንሶል",
     "close": "ዝጋ",
-    "empty": "እስካሁን ምንም ድርጊቶች አልተመዘገቡም።",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "እስካሁን ምንም ድርጊቶች አልተመዘገቡም።"
   },
   "hub": {
     "title": "Referencer",

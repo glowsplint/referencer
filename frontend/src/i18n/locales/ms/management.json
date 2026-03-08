@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "Konsol Tindakan",
     "close": "tutup",
-    "empty": "Belum ada tindakan direkodkan.",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "Belum ada tindakan direkodkan."
   },
   "hub": {
     "title": "Referencer",

@@ -2,7 +2,33 @@ import { expect, type Page } from "@playwright/test";
 import { randomUUID } from "crypto";
 
 /**
- * Navigate to a fresh document with demo content loaded.
+ * Unlock the given editor pane, type text into it, then re-lock.
+ */
+async function typeInEditor(page: Page, editorIndex: number, text: string) {
+  const wrapper = page.locator(".simple-editor-wrapper").nth(editorIndex);
+
+  // Focus the wrapper so the lock button targets this pane
+  await wrapper.evaluate((el) => {
+    el.setAttribute("tabindex", "-1");
+    el.focus();
+  });
+  await page.waitForTimeout(100);
+
+  // Unlock the focused pane
+  await page.getByTestId("lockButton").click();
+  const pm = wrapper.locator(".ProseMirror");
+  await expect(pm).toHaveAttribute("contenteditable", "true", { timeout: 5000 });
+
+  // Type content
+  await pm.click();
+  await page.keyboard.type(text);
+
+  // Re-lock
+  await page.getByTestId("lockButton").click();
+}
+
+/**
+ * Navigate to a fresh document with two editors containing typed text.
  * Creates a unique document per call to avoid state leaking between tests.
  */
 export async function setupDocument(page: Page) {
@@ -15,24 +41,19 @@ export async function setupDocument(page: Page) {
 
   await page.goto(`/#/${documentId}`);
 
-  // Wait for the editor to mount (empty state)
+  // Wait for the editor to mount
   await expect(page.getByTestId("buttonPane")).toBeVisible({ timeout: 10000 });
+  await expect(page.locator(".simple-editor-wrapper .ProseMirror").first()).toBeVisible({
+    timeout: 10000,
+  });
 
-  // Open action console (backtick key) to access demo load button
-  await page.keyboard.press("`");
-  await expect(page.getByTestId("actionConsole")).toBeVisible({ timeout: 5000 });
+  // Type content into editor 0
+  await typeInEditor(page, 0, "Alpha Beta Gamma Delta Epsilon Zeta Eta Theta Iota Kappa Lambda Mu");
 
-  // Click "Load Demo" and confirm the dialog
-  await page.getByTestId("loadDemoButton").click();
-  await expect(page.getByTestId("demoConfirmDialog")).toBeVisible({ timeout: 5000 });
-  await page.getByTestId("demoConfirmLoad").click();
+  // Add a second editor via the management pane
+  await page.getByTestId("addTextButton").click();
+  await expect(page.locator(".simple-editor-wrapper")).toHaveCount(2);
 
-  // Wait for the demo content to finish loading (editor paragraphs with text render)
-  await expect(page.locator(".simple-editor p").first()).toBeVisible({ timeout: 15000 });
-
-  // Wait for demo loading overlay to disappear
-  await expect(page.getByTestId("demoLoadingOverlay")).toHaveCount(0, { timeout: 15000 });
-
-  // Wait for layers to be seeded (management pane shows layer rows)
-  await expect(page.getByTestId("layerVisibility-0")).toBeVisible({ timeout: 15000 });
+  // Type content into editor 1
+  await typeInEditor(page, 1, "Nu Xi Omicron Pi Rho Sigma Tau Upsilon Phi Chi Psi Omega");
 }

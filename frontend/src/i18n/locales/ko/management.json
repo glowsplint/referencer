@@ -63,12 +63,7 @@
   "actionConsole": {
     "title": "액션 콘솔",
     "close": "닫기",
-    "empty": "아직 기록된 작업이 없습니다.",
-    "loadDemo": "Load demo content",
-    "loadDemoTitle": "Load demo content",
-    "loadDemoConfirm": "This will replace your current document content and annotations. You can undo this with Ctrl+Z.",
-    "loadDemoCancel": "Cancel",
-    "loadDemoLoad": "Load"
+    "empty": "아직 기록된 작업이 없습니다."
   },
   "hub": {
     "title": "Referencer",
