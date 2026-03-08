@@ -116,7 +116,6 @@ Secrets are managed via `wrangler secret put <NAME>` from `backend/`:
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret (optional)           |
 | `GITHUB_CLIENT_ID`     | GitHub OAuth client ID (optional)               |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret (optional)           |
-| `GITHUB_ISSUES_TOKEN`  | GitHub token for feedback issues (optional)     |
 | `SESSION_MAX_AGE`      | Session lifetime in seconds (default: 2592000)  |
 
 Vars are set in `backend/wrangler.toml`:

@@ -1,6 +1,6 @@
 # Referencer [![react](https://badges.aleen42.com/src/react.svg)](https://badges.aleen42.com/src/react.svg) [![typescript](https://badges.aleen42.com/src/typescript.svg)](https://badges.aleen42.com/src/typescript.svg)
 
-Referencer is a web-based online Bible study annotation tool that makes it easy to cross-reference multiple passages from different parts of the Bible. The frontend is built with React 19, TypeScript, and TipTap 3. The backend is written in TypeScript (Bun + Hono). Real-time collaboration uses Yjs CRDT with a dedicated collab server.
+Referencer is a web-based online Bible study annotation tool that makes it easy to cross-reference multiple passages from different parts of the Bible. The frontend is built with React 19, TypeScript, and TipTap 3. The backend is a Cloudflare Worker (Hono + Supabase). Real-time collaboration uses Yjs CRDTs with a Cloudflare Durable Objects collab server.
 
 ## Features
 
@@ -11,101 +11,65 @@ Referencer is a web-based online Bible study annotation tool that makes it easy 
 - **PDF export** -- export the current document to a styled PDF
 - **Real-time collaboration** -- Yjs CRDT-based sync across multiple clients with offline support
 - **Share links** -- generate read-only or editable share URLs
-- **OAuth2 authentication** -- sign in with Google, Apple, or Facebook
+- **OAuth2 authentication** -- sign in with Google or GitHub
 
 ## Tech Stack
 
-| Layer           | Technology                                    |
-| --------------- | --------------------------------------------- |
-| Frontend        | React 19, TypeScript, Vite 7, Tailwind CSS v4 |
-| Rich text       | TipTap 3 (ProseMirror) with custom extensions |
-| Backend         | Bun, Hono, SQLite                             |
-| Collab server   | y-websocket, Yjs, LevelDB persistence         |
-| Real-time       | Yjs CRDT with y-websocket + y-indexeddb       |
-| Auth            | OAuth2 (Google, Apple, Facebook) via Arctic   |
-| Testing         | Vitest + React Testing Library, Playwright    |
-| Package manager | Bun                                           |
+| Layer           | Technology                                            |
+| --------------- | ----------------------------------------------------- |
+| Frontend        | React 19, TypeScript, Vite 7, Tailwind CSS v4         |
+| Rich text       | TipTap 3 (ProseMirror) with custom extensions         |
+| CRDT sync       | Yjs with y-websocket protocol                         |
+| Backend         | Cloudflare Workers, Hono framework, Supabase          |
+| Collab server   | Cloudflare Workers + Durable Objects, Supabase        |
+| Auth            | OAuth2 (Google, GitHub) via Arctic                    |
+| Persistence     | Supabase (PostgreSQL), DO storage, IndexedDB (client) |
+| Testing         | Vitest + React Testing Library, Playwright            |
+| Package manager | Bun                                                   |
 
 ## Project Structure
 
 ```
 referencer/
-├── frontend/                  # React SPA
+├── frontend/                  # React 19 SPA (Vite, TipTap 3, Tailwind CSS v4)
+│   ├── src/
+│   │   ├── components/        # UI components + tiptap template components
+│   │   ├── contexts/          # DocumentContext, AuthContext
+│   │   ├── hooks/             # ~50 custom hooks (layers, editors, Yjs, tools)
+│   │   ├── lib/               # Yjs provider, TipTap extensions, auth client
+│   │   ├── types/             # TypeScript type definitions
+│   │   └── data/              # Default document data
+│   └── e2e/                   # Playwright end-to-end tests
+├── backend/                   # Cloudflare Worker (Hono + Supabase)
 │   └── src/
-│       ├── components/        # UI components + tiptap template components
-│       ├── hooks/             # Custom hooks (Yjs, annotations, layers, tools)
-│       ├── lib/               # Utilities, TipTap extensions, Yjs provider
-│       ├── contexts/          # DocumentContext, AuthContext
-│       ├── types/             # TypeScript type definitions
-│       └── e2e/               # Playwright test files
-├── backend/                   # TypeScript backend (Bun + Hono)
+│       ├── api/               # REST handlers (share, documents, folders, preferences, feedback)
+│       ├── auth/              # OAuth2 (Google, GitHub) via Arctic
+│       ├── db/                # Supabase client
+│       ├── lib/               # Utilities (rate-limit, logger, metrics, JWT)
+│       └── middleware/        # Permission middleware
+├── collab-server/             # Cloudflare Worker with Durable Objects (Yjs CRDT sync)
 │   └── src/
-│       ├── api/               # REST handlers (share links)
-│       ├── auth/              # OAuth2 authentication (providers, handlers, middleware)
-│       ├── db/                # SQLite database layer
-│       └── lib/               # Shared utilities
-├── collab-server/             # Yjs collaboration server
-│   └── server.mjs             # y-websocket server with LevelDB persistence
-└── Makefile                   # Build commands
+│       ├── durable-object.ts  # YjsRoom — Yjs sync via WebSocket + DO storage + Supabase persistence
+│       ├── index.ts           # Hono app, JWT auth, permission check, WebSocket upgrade
+│       └── persistence.ts     # Supabase snapshot load/save
+├── functions/                 # Cloudflare Pages middleware (proxies /auth, /api, /s to backend worker)
+├── supabase/                  # Database schema (PostgreSQL)
+└── docs/                      # Architecture documentation
 ```
 
-## Architecture
+## Documentation
 
-### System Overview
+See the [docs/](docs/README.md) directory for detailed architecture and API documentation:
 
-```
-+------------------------------------------------------+
-|                       Clients                        |
-|        +---------+  +---------+  +---------+         |
-|        |Browser 1|  |Browser 2|  |Browser N|         |
-|        +----+----+  +----+----+  +----+----+         |
-|             |            |            |              |
-|        Yjs CRDT sync via y-websocket                |
-|             |            |            |              |
-+------------------------------------------------------+
-              |                        |
-   +----------+----------+   +--------+--------+
-   |   Collab Server     |   |  Backend (Hono) |
-   |  (y-websocket)      |   |  Auth + Share   |
-   |  Port 4444          |   |  Port 5000      |
-   +----------+----------+   +--------+--------+
-              |                        |
-   +----------+----------+   +--------+--------+
-   |  LevelDB            |   |  SQLite         |
-   |  (Yjs doc state)    |   |  (users, share  |
-   |                     |   |   links)        |
-   +---------------------+   +-----------------+
-```
+- [Architecture](docs/architecture.md) -- system overview, service communication, data flow
+- [Collaboration](docs/collaboration.md) -- Yjs CRDTs, Y.Doc structure, sync protocol, presence
+- [Backend](docs/backend.md) -- REST API routes, database schema, auth system
+- [Authentication](docs/authentication.md) -- OAuth flow, session management, account linking
+- [Development](docs/development.md) -- full setup guide, environment variables, testing, deployment
 
-### Real-time Collaboration
+## Quick Start
 
-Referencer uses **Yjs CRDT** for real-time collaboration instead of a custom WebSocket protocol. This provides:
-
-- **Conflict-free editing** -- multiple users can edit the same passage simultaneously
-- **Offline support** -- changes are persisted locally via y-indexeddb and synced when reconnected
-- **Presence awareness** -- cursor positions and user info are shared via Yjs awareness protocol
-- **Automatic merging** -- Yjs handles conflict resolution without manual merge logic
-
-The collab server (`collab-server/`) runs y-websocket with LevelDB persistence so documents survive server restarts.
-
-### Authentication
-
-OAuth2 authentication via the Arctic library supports:
-
-- Google (OpenID Connect)
-- Apple (Sign in with Apple)
-- Facebook
-
-Session tokens are stored in HTTP-only cookies. The auth middleware is optional -- the app works without authentication.
-
-## Development
-
-### Requirements
-
-- [Bun](https://bun.sh/) -- package management and running the backend
-- [Node.js 20+](https://nodejs.org/) -- running Playwright e2e tests
-
-### Frontend only (hot reload)
+### Frontend only (no collaboration)
 
 ```bash
 cd frontend
@@ -113,65 +77,24 @@ bun install
 bun run dev
 ```
 
-Open [http://localhost:5173/referencer/](http://localhost:5173/referencer/).
+Open [http://localhost:5173](http://localhost:5173). The app works fully offline.
 
-### Full stack
-
-Install all dependencies, then start all three services with a single command:
+### Full stack (with collaboration)
 
 ```bash
-bun install            # install concurrently at root
-bun run install:all    # install deps for collab-server, backend, and frontend
-bun run dev            # start all three services in parallel
+bun run install:all    # install deps for all services
+bun run dev            # start backend :8787, collab :8788, frontend :5173
 ```
 
-This runs the collab server (port 4444), backend (port 5000), and frontend (port 5173) together with labeled, colored output. `Ctrl+C` stops all of them.
-
-The Vite dev server proxies `/auth` and `/api` to the backend on port 5000, and `/yjs` WebSocket connections to the collab server on port 4444.
-
-You can also start each service individually in separate terminals:
-
-1. Collab server: `cd collab-server && npm install && npm start` (port 4444)
-2. Backend: `cd backend && bun install && bun run dev` (port 5000)
-3. Frontend: `cd frontend && bun install && bun run dev` (port 5173)
-
-### Production build
-
-```bash
-make build    # cd frontend && bun run build
-```
-
-### Running tests
+### Tests
 
 ```bash
 cd frontend
-
-# Unit tests (Vitest + React Testing Library)
-bun run test:run
-
-# E2e tests (Playwright)
-bun run test:e2e
-
-# Watch mode
-bun run test
+bun run test:run       # unit tests (Vitest)
+bun run test:e2e       # e2e tests (Playwright)
 ```
 
-### Backend tests
-
-```bash
-cd backend
-bun test
-```
-
-### Environment variables
-
-| Variable             | Default                | Description                         |
-| -------------------- | ---------------------- | ----------------------------------- |
-| `PORT` (backend)     | `5000`                 | Backend server listen port          |
-| `DB_PATH` (backend)  | `./data/referencer.db` | SQLite database file path           |
-| `PORT` (collab)      | `4444`                 | Collab server listen port           |
-| `DB_DIR` (collab)    | `./data/yjs-docs`      | LevelDB directory for Yjs documents |
-| `VITE_COLLAB_WS_URL` | (auto-detected)        | Override WebSocket URL for Yjs      |
+See [docs/development.md](docs/development.md) for the full setup guide, environment variables, and deployment.
 
 ## Controls
 
@@ -188,25 +111,12 @@ bun test
 
 ## API Reference
 
-### REST
+See [docs/backend.md](docs/backend.md) for the full API reference. Key endpoints:
 
-| Method | Endpoint     | Description                                                                                                                 |
-| ------ | ------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| `POST` | `/api/share` | Create a share link. Body: `{"documentId": "...", "access": "edit\|readonly"}`. Returns: `{"code": "...", "url": "/s/..."}` |
-| `GET`  | `/s/{code}`  | Resolve a share link. Redirects to the document (with `?access=readonly` if applicable)                                     |
-
-### Auth
-
-| Method | Endpoint                   | Description           |
-| ------ | -------------------------- | --------------------- |
-| `GET`  | `/auth/:provider`          | Start OAuth flow      |
-| `GET`  | `/auth/:provider/callback` | OAuth callback        |
-| `POST` | `/auth/logout`             | End session           |
-| `GET`  | `/auth/me`                 | Get current user info |
-
-### Collab Server
-
-| Endpoint              | Description                       |
-| --------------------- | --------------------------------- |
-| `ws://host:4444/{id}` | Yjs WebSocket connection per room |
-| `GET /health`         | Health check with room count      |
+| Group     | Endpoints                                                    |
+| --------- | ------------------------------------------------------------ |
+| Auth      | `GET /auth/:provider`, `/auth/me`, `POST /auth/logout`       |
+| Documents | `GET/POST /api/documents`, `PATCH/DELETE /api/documents/:id` |
+| Folders   | `GET/POST /api/folders`, `PATCH/DELETE /api/folders/:id`     |
+| Share     | `POST /api/share`, `POST /api/share/accept`, `GET /s/:code`  |
+| Other     | `/api/preferences`, `/api/feedback`                          |
