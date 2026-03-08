@@ -16,6 +16,9 @@ const MSG_AWARENESS = 1;
 const MSG_QUERY_AWARENESS = 3;
 const MSG_FORCE_SAVE = 4;
 
+const MAX_MESSAGE_SIZE = 256 * 1024; // 256KB
+const MAX_CONNECTIONS_PER_ROOM = 50;
+
 interface Env {
   SUPABASE_URL: string;
   SUPABASE_SERVICE_KEY: string;
@@ -46,6 +49,12 @@ export class YjsRoom extends DurableObject<Env> {
     }
 
     try {
+      // Enforce connection limit per room
+      if (this.ctx.getWebSockets().length >= MAX_CONNECTIONS_PER_ROOM) {
+        this.log.warn("Connection limit reached", { roomName, limit: MAX_CONNECTIONS_PER_ROOM });
+        return new Response("Too many connections", { status: 503 });
+      }
+
       // Handle WebSocket upgrade
       const pair = new WebSocketPair();
       const [client, server] = Object.values(pair);
@@ -166,6 +175,16 @@ export class YjsRoom extends DurableObject<Env> {
     const data = new Uint8Array(message);
     if (data.length === 0) return;
 
+    if (data.length > MAX_MESSAGE_SIZE) {
+      this.log.warn("Message exceeds size limit", {
+        roomName: this.roomName,
+        size: data.length,
+        limit: MAX_MESSAGE_SIZE,
+      });
+      ws.close(1009, "Message too large");
+      return;
+    }
+
     if (!this.doc) {
       await this.initDoc();
     }
@@ -182,6 +201,10 @@ export class YjsRoom extends DurableObject<Env> {
       } else if (messageType === MSG_QUERY_AWARENESS) {
         this.handleQueryAwareness(ws);
       } else if (messageType === MSG_FORCE_SAVE) {
+        if (this.isReadOnly(ws)) {
+          this.log.warn("Read-only client attempted force save", { roomName: this.roomName });
+          return;
+        }
         await this.handleForceSave(ws);
       }
     } catch (err) {
