@@ -44,6 +44,7 @@ interface AnnotationCardProps {
     emoji: string,
   ) => void;
   readOnly?: boolean;
+  mentionSuggestions?: { id: string; label: string }[];
 }
 
 export function AnnotationCard({
@@ -69,6 +70,7 @@ export function AnnotationCard({
   onToggleReaction,
   onToggleReplyReaction,
   readOnly,
+  mentionSuggestions,
 }: AnnotationCardProps) {
   const { t } = useTranslation("management");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
@@ -207,6 +209,7 @@ export function AnnotationCard({
               onBlur={() => onBlur(layerId, highlightId, annotation)}
               placeholder={t("annotations.placeholder")}
               autoFocus
+              mentionSuggestions={mentionSuggestions}
             />
           ) : annotation ? (
             <div
@@ -282,7 +285,9 @@ export function AnnotationCard({
             />
           )}
           {/* Reply input — hidden in read-only mode */}
-          {!readOnly && onAddReply && <ReplyInput onSubmit={handleAddReply} />}
+          {!readOnly && onAddReply && (
+            <ReplyInput onSubmit={handleAddReply} mentionSuggestions={mentionSuggestions} />
+          )}
           {/* Timestamp fallback when no header */}
           {!userName && !lastEdited ? null : null}
         </>

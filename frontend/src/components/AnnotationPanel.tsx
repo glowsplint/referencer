@@ -41,6 +41,7 @@ interface AnnotationPanelProps {
   readOnly?: boolean;
   isCollapsed?: boolean;
   onToggleCollapsed?: () => void;
+  mentionSuggestions?: { id: string; label: string }[];
 }
 
 export const DEFAULT_PANEL_WIDTH = 224; // w-56
@@ -77,6 +78,7 @@ export function AnnotationPanel({
   readOnly,
   isCollapsed,
   onToggleCollapsed,
+  mentionSuggestions,
 }: AnnotationPanelProps) {
   const panelWidth = Math.min(
     MAX_PANEL_WIDTH,
@@ -326,6 +328,7 @@ export function AnnotationPanel({
                   onToggleReaction={onToggleReaction}
                   onToggleReplyReaction={onToggleReplyReaction}
                   readOnly={readOnly}
+                  mentionSuggestions={mentionSuggestions}
                 />
               );
             })}

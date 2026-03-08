@@ -9,6 +9,7 @@ export interface ExportMarkdownOptions {
   sectionVisibility: boolean[];
   title: string;
   exportDate?: Date;
+  stripAnnotations?: boolean;
 }
 
 function htmlToPlainText(html: string): string {
@@ -134,7 +135,7 @@ function buildFrontmatter(title: string, exportDate: Date, layers: Layer[]): str
 }
 
 export function generateDocumentMarkdown(options: ExportMarkdownOptions): string {
-  const { editors, layers, sectionNames, sectionVisibility, title } = options;
+  const { editors, layers, sectionNames, sectionVisibility, title, stripAnnotations } = options;
   const exportDate = options.exportDate ?? new Date();
   const parts: string[] = [];
 
@@ -163,72 +164,76 @@ export function generateDocumentMarkdown(options: ExportMarkdownOptions): string
       }
     }
 
-    // Highlights
-    const highlights = getVisibleHighlights(layers, i, "highlight");
-    if (highlights.length > 0) {
-      parts.push(`\n### Highlights\n`);
-      for (const { highlight, layerName } of highlights) {
-        const tag = layerNameToTag(layerName);
-        parts.push(`\n> "${highlight.text}" ${tag}`);
-      }
-      parts.push("");
-    }
-
-    // Comments
-    const comments = getVisibleHighlights(layers, i, "comment");
-    if (comments.length > 0) {
-      parts.push(`\n### Comments\n`);
-      for (const { highlight, layerName } of comments) {
-        const tag = layerNameToTag(layerName);
-        const plainAnnotation = htmlToPlainText(highlight.annotation);
-        parts.push(`\n> "${highlight.text}" ${tag}`);
-        if (plainAnnotation) {
-          parts.push("");
-          parts.push(`Note (${layerName}): ${plainAnnotation}`);
+    if (!stripAnnotations) {
+      // Highlights
+      const highlights = getVisibleHighlights(layers, i, "highlight");
+      if (highlights.length > 0) {
+        parts.push(`\n### Highlights\n`);
+        for (const { highlight, layerName } of highlights) {
+          const tag = layerNameToTag(layerName);
+          parts.push(`\n> "${highlight.text}" ${tag}`);
         }
-        if (highlight.replies && highlight.replies.length > 0) {
-          parts.push("");
-          for (const reply of highlight.replies) {
-            parts.push(
-              `  - *Reply by ${reply.userName} (${formatDate(reply.timestamp)}):* ${reply.text}`,
-            );
+        parts.push("");
+      }
+
+      // Comments
+      const comments = getVisibleHighlights(layers, i, "comment");
+      if (comments.length > 0) {
+        parts.push(`\n### Comments\n`);
+        for (const { highlight, layerName } of comments) {
+          const tag = layerNameToTag(layerName);
+          const plainAnnotation = htmlToPlainText(highlight.annotation);
+          parts.push(`\n> "${highlight.text}" ${tag}`);
+          if (plainAnnotation) {
+            parts.push("");
+            parts.push(`Note (${layerName}): ${plainAnnotation}`);
+          }
+          if (highlight.replies && highlight.replies.length > 0) {
+            parts.push("");
+            for (const reply of highlight.replies) {
+              parts.push(
+                `  - *Reply by ${reply.userName} (${formatDate(reply.timestamp)}):* ${reply.text}`,
+              );
+            }
           }
         }
+        parts.push("");
       }
-      parts.push("");
-    }
 
-    // Underlines
-    const underlines = getVisibleUnderlines(layers, i);
-    if (underlines.length > 0) {
-      parts.push(`\n### Underlines\n`);
-      for (const { underline, layerName } of underlines) {
-        const tag = layerNameToTag(layerName);
-        parts.push(`\n> "${underline.text}" ${tag}`);
+      // Underlines
+      const underlines = getVisibleUnderlines(layers, i);
+      if (underlines.length > 0) {
+        parts.push(`\n### Underlines\n`);
+        for (const { underline, layerName } of underlines) {
+          const tag = layerNameToTag(layerName);
+          parts.push(`\n> "${underline.text}" ${tag}`);
+        }
+        parts.push("");
       }
-      parts.push("");
     }
 
     textCount++;
   }
 
   // Arrows / Connections
-  const arrows = getVisibleArrows(layers, sectionVisibility);
-  if (arrows.length > 0) {
-    parts.push(`\n## Connections\n`);
-    const headers = ["From", "To", "Style"];
-    const rows = arrows.map(({ arrow }) => {
-      const fromSection =
-        sectionNames[arrow.from.editorIndex] ?? `Text ${arrow.from.editorIndex + 1}`;
-      const toSection = sectionNames[arrow.to.editorIndex] ?? `Text ${arrow.to.editorIndex + 1}`;
-      return [
-        `"${arrow.from.text}" (${fromSection})`,
-        `"${arrow.to.text}" (${toSection})`,
-        arrow.arrowStyle ?? "solid",
-      ];
-    });
-    parts.push(buildAlignedTable(headers, rows));
-    parts.push("");
+  if (!stripAnnotations) {
+    const arrows = getVisibleArrows(layers, sectionVisibility);
+    if (arrows.length > 0) {
+      parts.push(`\n## Connections\n`);
+      const headers = ["From", "To", "Style"];
+      const rows = arrows.map(({ arrow }) => {
+        const fromSection =
+          sectionNames[arrow.from.editorIndex] ?? `Text ${arrow.from.editorIndex + 1}`;
+        const toSection = sectionNames[arrow.to.editorIndex] ?? `Text ${arrow.to.editorIndex + 1}`;
+        return [
+          `"${arrow.from.text}" (${fromSection})`,
+          `"${arrow.to.text}" (${toSection})`,
+          arrow.arrowStyle ?? "solid",
+        ];
+      });
+      parts.push(buildAlignedTable(headers, rows));
+      parts.push("");
+    }
   }
 
   return parts.join("\n");

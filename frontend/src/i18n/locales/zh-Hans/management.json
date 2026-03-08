@@ -52,7 +52,8 @@
     "moreEmojis": "更多表情",
     "sendReply": "发送回复",
     "showMoreReplies_one": "显示 {{count}} 条更多回复",
-    "showMoreReplies_other": "显示 {{count}} 条更多回复"
+    "showMoreReplies_other": "显示 {{count}} 条更多回复",
+    "mentionNoResults": "No users found"
   },
   "search": {
     "placeholder": "搜索批注...",

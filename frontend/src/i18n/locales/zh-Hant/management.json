@@ -52,7 +52,8 @@
     "moreEmojis": "更多表情",
     "sendReply": "傳送回覆",
     "showMoreReplies_one": "顯示 {{count}} 則更多回覆",
-    "showMoreReplies_other": "顯示 {{count}} 則更多回覆"
+    "showMoreReplies_other": "顯示 {{count}} 則更多回覆",
+    "mentionNoResults": "No users found"
   },
   "search": {
     "placeholder": "搜尋註解...",

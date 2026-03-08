@@ -6,10 +6,11 @@ import { MiniCommentEditor } from "@/components/MiniCommentEditor";
 interface ReplyInputProps {
   onSubmit: (text: string) => void;
   placeholder?: string;
+  mentionSuggestions?: { id: string; label: string }[];
 }
 
 /** Collapsed "Reply..." placeholder that expands to a MiniCommentEditor + send button. */
-export function ReplyInput({ onSubmit, placeholder }: ReplyInputProps) {
+export function ReplyInput({ onSubmit, placeholder, mentionSuggestions }: ReplyInputProps) {
   const { t } = useTranslation("management");
   const [active, setActive] = useState(false);
   const [value, setValue] = useState("");
@@ -67,6 +68,7 @@ export function ReplyInput({ onSubmit, placeholder }: ReplyInputProps) {
           }}
           placeholder={resolvedPlaceholder}
           autoFocus
+          mentionSuggestions={mentionSuggestions}
         />
       </div>
       <button

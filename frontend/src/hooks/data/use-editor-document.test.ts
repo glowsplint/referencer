@@ -56,6 +56,8 @@ describe("useEditorDocument", () => {
       showStatusBar: true,
       overscroll: true,
       commentPlacement: "right",
+      reduceMotion: "auto",
+      hideAnnotations: false,
     });
     expect(result.current.annotations).toEqual({ activeTool: "selection" });
     expect(result.current.layers).toEqual([]);

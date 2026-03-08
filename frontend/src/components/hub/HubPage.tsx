@@ -43,8 +43,15 @@ export function HubPage({ navigate }: HubPageProps) {
     moveFolder,
   } = useFolders();
   const { allTags, documentTags, addTag, removeTag } = useTags();
-  const { settings, setTheme, toggleHideOffscreenArrows, toggleShowStatusBar, toggleOverscroll } =
-    useSettings();
+  const {
+    settings,
+    setTheme,
+    toggleHideOffscreenArrows,
+    toggleShowStatusBar,
+    toggleOverscroll,
+    setReduceMotion,
+    toggleHideAnnotations,
+  } = useSettings();
 
   const [showNewDialog, setShowNewDialog] = useState(false);
   const [newDocumentFolderId, setNewDocumentFolderId] = useState<string | null>(null);
@@ -197,6 +204,10 @@ export function HubPage({ navigate }: HubPageProps) {
         toggleShowStatusBar={toggleShowStatusBar}
         overscroll={settings.overscroll}
         toggleOverscroll={toggleOverscroll}
+        reduceMotion={settings.reduceMotion}
+        setReduceMotion={setReduceMotion}
+        hideAnnotations={settings.hideAnnotations}
+        toggleHideAnnotations={toggleHideAnnotations}
       />
     </div>
   );

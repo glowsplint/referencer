@@ -4,7 +4,9 @@ import Image from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useRef, useEffect } from "react";
+import Mention from "@tiptap/extension-mention";
+import { useRef, useEffect, useMemo } from "react";
+import { createMentionSuggestionRenderer } from "@/lib/mention/mention-suggestion";
 
 interface MiniCommentEditorProps {
   value: string;
@@ -12,6 +14,7 @@ interface MiniCommentEditorProps {
   onBlur: () => void;
   placeholder?: string;
   autoFocus?: boolean;
+  mentionSuggestions?: { id: string; label: string }[];
 }
 
 export function MiniCommentEditor({
@@ -20,9 +23,31 @@ export function MiniCommentEditor({
   onBlur,
   placeholder = "",
   autoFocus = false,
+  mentionSuggestions,
 }: MiniCommentEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const blurTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const mentionUsersRef = useRef(mentionSuggestions);
+  useEffect(() => {
+    mentionUsersRef.current = mentionSuggestions;
+  }, [mentionSuggestions]);
+
+  const mentionExtension = useMemo(
+    () =>
+      Mention.configure({
+        HTMLAttributes: { class: "mention" },
+        suggestion: {
+          items: ({ query }: { query: string }) => {
+            const users = mentionUsersRef.current ?? [];
+            return users
+              .filter((u) => u.label.toLowerCase().includes(query.toLowerCase()))
+              .slice(0, 5);
+          },
+          render: createMentionSuggestionRenderer,
+        },
+      }),
+    [],
+  );
 
   const editor = useEditor({
     extensions: [
@@ -44,6 +69,7 @@ export function MiniCommentEditor({
           return "";
         },
       }),
+      mentionExtension,
     ],
     content: value,
     autofocus: autoFocus,

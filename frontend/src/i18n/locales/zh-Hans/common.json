@@ -34,6 +34,11 @@
   "export": {
     "title": "Export",
     "pdf": "Export as PDF",
-    "markdown": "Export as Markdown"
+    "markdown": "Export as Markdown",
+    "cleanText": "Export clean text"
+  },
+  "status": {
+    "annotationsHidden": "Annotations hidden (press F to show)",
+    "annotationsVisible": "Annotations visible"
   }
 }

@@ -14,6 +14,10 @@ function renderDialog(overrides: Record<string, unknown> = {}) {
     toggleShowStatusBar: vi.fn(),
     overscroll: true,
     toggleOverscroll: vi.fn(),
+    reduceMotion: "auto" as const,
+    setReduceMotion: vi.fn(),
+    hideAnnotations: false,
+    toggleHideAnnotations: vi.fn(),
     ...overrides,
   };
   render(<SettingsDialog {...props} />);
@@ -158,6 +162,41 @@ describe("SettingsDialog", () => {
     it("then renders the overscroll switch as unchecked", () => {
       renderDialog({ overscroll: false });
       expect(screen.getByTestId("overscroll-switch")).toHaveAttribute("aria-checked", "false");
+    });
+  });
+
+  describe("when opened", () => {
+    it("then shows hide annotations setting row", () => {
+      renderDialog();
+      expect(screen.getByText("Hide annotations")).toBeInTheDocument();
+      expect(
+        screen.getByText("Hide all annotation markers for distraction-free reading"),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe("when the hide annotations switch is clicked", () => {
+    it("then calls toggleHideAnnotations", () => {
+      const props = renderDialog();
+      fireEvent.click(screen.getByTestId("hide-annotations-switch"));
+      expect(props.toggleHideAnnotations).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("when hideAnnotations is true", () => {
+    it("then renders the hide annotations switch as checked", () => {
+      renderDialog({ hideAnnotations: true });
+      expect(screen.getByTestId("hide-annotations-switch")).toHaveAttribute("aria-checked", "true");
+    });
+  });
+
+  describe("when hideAnnotations is false", () => {
+    it("then renders the hide annotations switch as unchecked", () => {
+      renderDialog({ hideAnnotations: false });
+      expect(screen.getByTestId("hide-annotations-switch")).toHaveAttribute(
+        "aria-checked",
+        "false",
+      );
     });
   });
 });

@@ -7,6 +7,7 @@ beforeEach(() => {
   localStorage.clear();
   document.documentElement.classList.remove("dark");
   document.documentElement.removeAttribute("data-theme");
+  document.documentElement.removeAttribute("data-reduce-motion");
 });
 
 describe("useSettings", () => {
@@ -21,6 +22,8 @@ describe("useSettings", () => {
       showStatusBar: true,
       overscroll: true,
       commentPlacement: "right",
+      reduceMotion: "auto",
+      hideAnnotations: false,
     });
   });
 
@@ -279,6 +282,8 @@ describe("useSettings", () => {
       showStatusBar: true,
       overscroll: true,
       commentPlacement: "right",
+      reduceMotion: "auto",
+      hideAnnotations: false,
     });
   });
 
@@ -387,5 +392,48 @@ describe("useSettings", () => {
     expect(result.current.settings.theme).toBe("auto");
     // resolvedTheme should be either "light" or "dark" based on OS
     expect(["light", "dark"]).toContain(result.current.resolvedTheme);
+  });
+
+  it("when initialized, then reduceMotion defaults to auto", () => {
+    const { result } = renderHook(() => useSettings());
+    expect(result.current.settings.reduceMotion).toBe("auto");
+  });
+
+  it("when setReduceMotion is called, then updates reduceMotion and applies to DOM", () => {
+    const { result } = renderHook(() => useSettings());
+    act(() => {
+      result.current.setReduceMotion("on");
+    });
+    expect(result.current.settings.reduceMotion).toBe("on");
+    expect(document.documentElement.getAttribute("data-reduce-motion")).toBe("reduce");
+  });
+
+  it("when reduceMotion is off, then DOM has no-preference", () => {
+    const { result } = renderHook(() => useSettings());
+    act(() => {
+      result.current.setReduceMotion("off");
+    });
+    expect(document.documentElement.getAttribute("data-reduce-motion")).toBe("no-preference");
+  });
+
+  it("when initialized, then hideAnnotations defaults to false", () => {
+    const { result } = renderHook(() => useSettings());
+    expect(result.current.settings.hideAnnotations).toBe(false);
+  });
+
+  it("when toggleHideAnnotations is called, then toggles hideAnnotations", () => {
+    const { result } = renderHook(() => useSettings());
+
+    expect(result.current.settings.hideAnnotations).toBe(false);
+
+    act(() => {
+      result.current.toggleHideAnnotations();
+    });
+    expect(result.current.settings.hideAnnotations).toBe(true);
+
+    act(() => {
+      result.current.toggleHideAnnotations();
+    });
+    expect(result.current.settings.hideAnnotations).toBe(false);
   });
 });

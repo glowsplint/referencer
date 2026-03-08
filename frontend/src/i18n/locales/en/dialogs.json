@@ -26,6 +26,17 @@
     "language": {
       "label": "Language",
       "description": "Choose your preferred language"
+    },
+    "reduceMotion": {
+      "label": "Reduce motion",
+      "description": "Minimize animations and transitions",
+      "auto": "Auto (system)",
+      "on": "On",
+      "off": "Off"
+    },
+    "hideAnnotations": {
+      "label": "Hide annotations",
+      "description": "Hide all annotation markers for distraction-free reading"
     }
   },
   "faq": {
@@ -110,6 +121,7 @@
     "alignRight": "Align right",
     "alignJustify": "Align justify",
     "addText": "Add new text",
+    "toggleAnnotations": "Toggle annotations",
     "searchAnnotations": "Search annotations"
   },
   "share": {

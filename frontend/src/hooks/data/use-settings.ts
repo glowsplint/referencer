@@ -24,10 +24,23 @@ const DEFAULT_SETTINGS: EditorSettings = {
   showStatusBar: true,
   overscroll: true,
   commentPlacement: "right",
+  reduceMotion: "auto",
+  hideAnnotations: false,
 };
 
 function getSystemDark(): boolean {
   return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+function getSystemReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+function applyReduceMotionToDOM(reduceMotion: "auto" | "on" | "off", systemReduced: boolean) {
+  const reduced = reduceMotion === "on" || (reduceMotion === "auto" && systemReduced);
+  document.documentElement.setAttribute("data-reduce-motion", reduced ? "reduce" : "no-preference");
 }
 
 /** Resolve what theme "auto" actually maps to based on OS preference. */
@@ -85,6 +98,8 @@ export function useSettings() {
   );
   // Track OS-level dark preference changes for auto theme
   const [systemDark, setSystemDark] = useState(getSystemDark);
+  // Track OS-level reduced motion preference
+  const [systemReducedMotion, setSystemReducedMotion] = useState(getSystemReducedMotion);
 
   useEffect(() => {
     try {
@@ -106,6 +121,19 @@ export function useSettings() {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
+  // Listen for OS prefers-reduced-motion changes
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handler = (e: MediaQueryListEvent) => setSystemReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Apply reduce motion to DOM whenever setting or system preference changes
+  useEffect(() => {
+    applyReduceMotionToDOM(settings.reduceMotion, systemReducedMotion);
+  }, [settings.reduceMotion, systemReducedMotion]);
 
   // Computed: resolved theme (what auto actually resolves to).
   // `systemDark` is intentionally included — when theme is "auto", a change in
@@ -136,6 +164,7 @@ export function useSettings() {
   const toggleHideOffscreenArrows = useToggle(setSettings, "hideOffscreenArrows");
   const toggleShowStatusBar = useToggle(setSettings, "showStatusBar");
   const toggleOverscroll = useToggle(setSettings, "overscroll");
+  const toggleHideAnnotations = useToggle(setSettings, "hideAnnotations");
   const toggleCommentPlacement = useCallback(
     () =>
       setSettings((prev) => {
@@ -176,6 +205,11 @@ export function useSettings() {
     });
   }, []);
 
+  const setReduceMotion = useCallback(
+    (value: "auto" | "on" | "off") => setSettings((prev) => ({ ...prev, reduceMotion: value })),
+    [],
+  );
+
   const setActiveTool = useCallback((tool: ActiveTool) => {
     setAnnotations({ activeTool: tool });
     // Close picker when switching away from arrow tool;
@@ -206,6 +240,8 @@ export function useSettings() {
     toggleShowStatusBar,
     toggleOverscroll,
     toggleCommentPlacement,
+    setReduceMotion,
+    toggleHideAnnotations,
     setActiveTool,
   };
 }

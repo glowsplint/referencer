@@ -196,6 +196,16 @@
     translate 0.15s ease !important;
 }
 
+/* Reduce motion: kills animations/transitions for users who prefer reduced motion */
+[data-reduce-motion="reduce"] *,
+[data-reduce-motion="reduce"] *::before,
+[data-reduce-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 [data-sonner-toaster] *,
 [data-sonner-toaster] *::before,
 [data-sonner-toaster] *::after {
@@ -221,6 +231,16 @@
 .react-colorful__pointer {
   width: 16px !important;
   height: 16px !important;
+}
+
+/* Mention styling in comments */
+.mention {
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.dark .mention {
+  color: #60a5fa;
 }
 
 /* Tour: pulse animation for the share button */

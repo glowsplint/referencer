@@ -52,7 +52,8 @@
     "moreEmojis": "More emojis",
     "sendReply": "Send reply",
     "showMoreReplies_one": "Show {{count}} more reply",
-    "showMoreReplies_other": "Show {{count}} more replies"
+    "showMoreReplies_other": "Show {{count}} more replies",
+    "mentionNoResults": "No users found"
   },
   "search": {
     "placeholder": "Buscar anotaciones...",
