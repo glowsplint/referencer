@@ -46,7 +46,7 @@ describe("KeyboardShortcutsDialog", () => {
       expect(screen.getByText("Arrow tool")).toBeInTheDocument();
       expect(screen.getByText("Comments tool")).toBeInTheDocument();
       expect(screen.getByText("Navigate between words")).toBeInTheDocument();
-      expect(screen.getByText("Toggle dark mode")).toBeInTheDocument();
+      expect(screen.getByText("Cycle theme")).toBeInTheDocument();
       expect(screen.getByText("Toggle editor layout")).toBeInTheDocument();
       expect(screen.getByText("Toggle editor lock")).toBeInTheDocument();
       expect(screen.getByText("Toggle management pane")).toBeInTheDocument();

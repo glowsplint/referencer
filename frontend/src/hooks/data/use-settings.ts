@@ -1,14 +1,22 @@
-// Manages all UI settings (dark mode, layout, lock state) persisted to
+// Manages all UI settings (theme, layout, lock state) persisted to
 // localStorage. Also tracks transient annotation state like the active tool,
 // arrow style picker, and selected arrow.
 import { useEffect, useState, useCallback, useMemo } from "react";
-import type { EditorSettings, AnnotationSettings, ActiveTool, ArrowStyle } from "@/types/editor";
+import type {
+  EditorSettings,
+  AnnotationSettings,
+  ActiveTool,
+  ArrowStyle,
+  Theme,
+} from "@/types/editor";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
+
+const THEME_ORDER: Theme[] = ["auto", "light", "dark", "sepia", "high-contrast"];
 
 const DEFAULT_LOCKED_PANES: Record<number, boolean> = { 0: true, 1: true, 2: true, 3: true };
 
 const DEFAULT_SETTINGS: EditorSettings = {
-  isDarkMode: false,
+  theme: "auto",
   isLayersOn: false,
   isMultipleRowsLayout: false,
   lockedPanes: DEFAULT_LOCKED_PANES,
@@ -17,6 +25,21 @@ const DEFAULT_SETTINGS: EditorSettings = {
   overscroll: true,
   commentPlacement: "right",
 };
+
+function getSystemDark(): boolean {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+/** Resolve what theme "auto" actually maps to based on OS preference. */
+function resolveTheme(theme: Theme): Exclude<Theme, "auto"> {
+  if (theme === "auto") return getSystemDark() ? "dark" : "light";
+  return theme;
+}
+
+/** Determine whether this resolved theme should use the `.dark` CSS class. */
+function isDarkVariant(resolved: Exclude<Theme, "auto">): boolean {
+  return resolved === "dark" || resolved === "high-contrast";
+}
 
 function loadSettings(): EditorSettings {
   try {
@@ -29,10 +52,21 @@ function loadSettings(): EditorSettings {
       parsed.lockedPanes = { 0: locked, 1: locked, 2: locked, 3: locked };
       delete parsed.isLocked;
     }
+    // Migrate old `isDarkMode: boolean` to `theme`
+    if ("isDarkMode" in parsed && !("theme" in parsed)) {
+      parsed.theme = parsed.isDarkMode ? "dark" : "auto";
+      delete parsed.isDarkMode;
+    }
     return { ...DEFAULT_SETTINGS, ...parsed };
   } catch {
     return DEFAULT_SETTINGS;
   }
+}
+
+function applyThemeToDOM(theme: Theme) {
+  const resolved = resolveTheme(theme);
+  document.documentElement.classList.toggle("dark", isDarkVariant(resolved));
+  document.documentElement.setAttribute("data-theme", resolved);
 }
 
 function useToggle<T>(setter: React.Dispatch<React.SetStateAction<T>>, key: keyof T) {
@@ -49,6 +83,8 @@ export function useSettings() {
   const [selectedArrow, setSelectedArrow] = useState<{ layerId: string; arrowId: string } | null>(
     null,
   );
+  // Track OS-level dark preference changes for auto theme
+  const [systemDark, setSystemDark] = useState(getSystemDark);
 
   useEffect(() => {
     try {
@@ -58,11 +94,43 @@ export function useSettings() {
     }
   }, [settings]);
 
+  // Apply theme to DOM whenever it changes or system preference changes
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", settings.isDarkMode);
-  }, [settings.isDarkMode]);
+    applyThemeToDOM(settings.theme);
+  }, [settings.theme, systemDark]);
 
-  const toggleDarkMode = useToggle(setSettings, "isDarkMode");
+  // Listen for OS prefers-color-scheme changes
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Computed: resolved theme (what auto actually resolves to).
+  // `systemDark` is intentionally included — when theme is "auto", a change in
+  // OS preference must trigger re-resolution.
+  const resolvedTheme = useMemo(
+    () => resolveTheme(settings.theme),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [settings.theme, systemDark],
+  );
+
+  // Computed: backward-compat isDarkMode
+  const isDarkMode = useMemo(() => isDarkVariant(resolvedTheme), [resolvedTheme]);
+
+  const setTheme = useCallback((theme: Theme) => setSettings((prev) => ({ ...prev, theme })), []);
+
+  const cycleTheme = useCallback(
+    () =>
+      setSettings((prev) => {
+        const idx = THEME_ORDER.indexOf(prev.theme);
+        const next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];
+        return { ...prev, theme: next };
+      }),
+    [],
+  );
+
   const toggleLayersOn = useToggle(setSettings, "isLayersOn");
   const toggleMultipleRowsLayout = useToggle(setSettings, "isMultipleRowsLayout");
   const toggleHideOffscreenArrows = useToggle(setSettings, "hideOffscreenArrows");
@@ -117,6 +185,8 @@ export function useSettings() {
 
   return {
     settings,
+    isDarkMode,
+    resolvedTheme,
     annotations,
     activeArrowStyle,
     setActiveArrowStyle,
@@ -124,7 +194,8 @@ export function useSettings() {
     setArrowStylePickerOpen,
     selectedArrow,
     setSelectedArrow,
-    toggleDarkMode,
+    setTheme,
+    cycleTheme,
     toggleLayersOn,
     toggleMultipleRowsLayout,
     togglePaneLocked,

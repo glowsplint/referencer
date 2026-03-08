@@ -2,9 +2,14 @@
   "settings": {
     "title": "Mga Setting",
     "description": "I-customize ang iyong mga kagustuhan sa document.",
-    "darkMode": {
-      "label": "Dark mode",
-      "description": "Magpalipat-lipat sa pagitan ng maliwanag at madilim na tema"
+    "theme": {
+      "label": "Tema",
+      "description": "Pumili ng tema sa pagbabasa",
+      "auto": "Awtomatiko",
+      "light": "Maliwanag",
+      "dark": "Madilim",
+      "sepia": "Sepia",
+      "high-contrast": "Mataas na Contrast"
     },
     "hideOffscreenArrows": {
       "label": "Itago ang mga palasos na wala sa screen",
@@ -75,7 +80,7 @@
     "eraserTool": "Pambura",
     "navigateWords": "Mag-navigate sa pagitan ng mga salita",
     "toggleConsole": "I-toggle ang action console",
-    "toggleDarkMode": "I-toggle ang dark mode",
+    "cycleTheme": "Palitan ang tema",
     "toggleLayout": "I-toggle ang layout ng editor",
     "toggleLock": "I-toggle ang lock ng editor",
     "toggleManagement": "I-toggle ang management pane",

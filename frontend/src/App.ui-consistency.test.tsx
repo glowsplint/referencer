@@ -21,7 +21,7 @@ vi.mock("./hooks/ui/use-is-breakpoint", () => ({
 
 const mockDocument = {
   settings: {
-    isDarkMode: false,
+    theme: "auto" as const,
     isLayersOn: false,
     isMultipleRowsLayout: false,
     lockedPanes: { 0: true, 1: true, 2: true, 3: true } as Record<number, boolean>,
@@ -29,6 +29,10 @@ const mockDocument = {
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   },
+  isDarkMode: false,
+  resolvedTheme: "light" as const,
+  cycleTheme: vi.fn(),
+  setTheme: vi.fn(),
   isPaneLocked: (i: number) => mockDocument.settings.lockedPanes[i] ?? true,
   isAnyPaneLocked: true,
   activeEditorIndex: 0,
@@ -61,7 +65,6 @@ const mockDocument = {
   activeEditor: null,
   editorWidths: [50, 50],
   isManagementPaneOpen: false,
-  toggleDarkMode: vi.fn(),
   toggleLayersOn: vi.fn(),
   toggleMultipleRowsLayout: vi.fn(),
   toggleLocked: vi.fn(),
@@ -264,7 +267,7 @@ function makeArrow(id: string, sourceEditor: number, targetEditor: number) {
 
 beforeEach(() => {
   mockDocument.settings = {
-    isDarkMode: false,
+    theme: "auto" as const,
     isLayersOn: false,
     isMultipleRowsLayout: false,
     lockedPanes: { 0: true, 1: true, 2: true, 3: true } as Record<number, boolean>,

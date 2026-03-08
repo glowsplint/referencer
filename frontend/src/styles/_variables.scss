@@ -202,6 +202,33 @@
     0px 6px 8px 0px rgba(0, 0, 0, 0.22), 0px 2px 3px 0px rgba(0, 0, 0, 0.12);
 }
 
+/* Sepia theme — tiptap variable overrides (light variant with warm tints) */
+[data-theme="sepia"] {
+  --tt-bg-color: #f5f0e8;
+  --tt-border-color: rgba(120, 100, 70, 0.15);
+  --tt-border-color-tint: rgba(120, 100, 70, 0.08);
+  --tt-sidebar-bg-color: #ebe5d8;
+  --tt-scrollbar-color: rgba(120, 100, 70, 0.15);
+  --tt-card-bg-color: #f5f0e8;
+  --tt-card-border-color: rgba(120, 100, 70, 0.08);
+}
+
+/* High contrast theme — tiptap variable overrides (dark variant with max contrast) */
+[data-theme="high-contrast"] {
+  --tt-bg-color: #000000;
+  --tt-border-color: rgba(255, 255, 255, 0.3);
+  --tt-border-color-tint: rgba(255, 255, 255, 0.15);
+  --tt-sidebar-bg-color: #0a0a0a;
+  --tt-scrollbar-color: rgba(255, 255, 255, 0.3);
+  --tt-cursor-color: #ffffff;
+  --tt-selection-color: rgba(255, 255, 255, 0.25);
+  --tt-card-bg-color: #0a0a0a;
+  --tt-card-border-color: rgba(255, 255, 255, 0.15);
+
+  --tt-shadow-elevated-md:
+    0px 16px 48px 0px rgba(255, 255, 255, 0.08), 0px 6px 8px 0px rgba(255, 255, 255, 0.04);
+}
+
 /* Text colors */
 :root {
   --tt-color-text-gray: hsl(45, 2%, 46%);

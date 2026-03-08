@@ -2,9 +2,14 @@
   "settings": {
     "title": "設置",
     "description": "自訂您的文檔偏好設置。",
-    "darkMode": {
-      "label": "深色模式",
-      "description": "在淺色和深色主題之間切換"
+    "theme": {
+      "label": "主題",
+      "description": "選擇您的閱讀主題",
+      "auto": "自動",
+      "light": "淺色",
+      "dark": "深色",
+      "sepia": "護眼",
+      "high-contrast": "高對比度"
     },
     "hideOffscreenArrows": {
       "label": "隱藏螢幕外箭頭",
@@ -75,7 +80,7 @@
     "eraserTool": "橡皮擦工具",
     "navigateWords": "在詞語之間導覽",
     "toggleConsole": "切換操作控制台",
-    "toggleDarkMode": "切換深色模式",
+    "cycleTheme": "切換主題",
     "toggleLayout": "切換編輯器版面配置",
     "toggleLock": "切換編輯器鎖定",
     "toggleManagement": "切換管理面板",

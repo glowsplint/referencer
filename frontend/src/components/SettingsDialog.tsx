@@ -1,7 +1,8 @@
-// Document settings dialog with toggle switches for dark mode, arrow
-// visibility, and status bar.
+// Document settings dialog with theme preview cards and toggle switches for
+// arrow visibility, status bar, and overscroll.
 import { useTranslation } from "react-i18next";
 import i18n, { LANGUAGE_OPTIONS } from "@/i18n";
+import type { Theme } from "@/types/editor";
 import {
   Dialog,
   DialogContent,
@@ -38,11 +39,81 @@ function SettingRow({ row }: { row: SettingsRow }) {
   );
 }
 
+const THEME_OPTIONS: {
+  value: Theme;
+  bg: string;
+  text: string;
+  split?: boolean;
+  bgRight?: string;
+  textRight?: string;
+}[] = [
+  {
+    value: "auto",
+    bg: "#ffffff",
+    text: "#1a1a2e",
+    split: true,
+    bgRight: "#1e1e2e",
+    textRight: "#e4e4e7",
+  },
+  { value: "light", bg: "#ffffff", text: "#1a1a2e" },
+  { value: "dark", bg: "#1e1e2e", text: "#e4e4e7" },
+  { value: "sepia", bg: "#f5f0e8", text: "#3d3229" },
+  { value: "high-contrast", bg: "#000000", text: "#ffffff" },
+];
+
+interface ThemeCardProps {
+  option: (typeof THEME_OPTIONS)[number];
+  selected: boolean;
+  label: string;
+  onSelect: () => void;
+}
+
+function ThemeCard({ option, selected, label, onSelect }: ThemeCardProps) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      data-testid={`theme-card-${option.value}`}
+      className={`flex flex-col items-center gap-1.5 rounded-lg p-2 transition-colors ${
+        selected ? "ring-2 ring-primary bg-accent" : "hover:bg-accent/50"
+      }`}
+    >
+      <div
+        className="flex w-14 h-10 rounded-md border border-border overflow-hidden"
+        style={option.split ? undefined : { backgroundColor: option.bg, color: option.text }}
+      >
+        {option.split ? (
+          <>
+            <div
+              className="flex-1 flex items-center justify-center text-xs font-bold"
+              style={{ backgroundColor: option.bg, color: option.text }}
+            >
+              Aa
+            </div>
+            <div
+              className="flex-1 flex items-center justify-center text-xs font-bold"
+              style={{
+                backgroundColor: option.bgRight,
+                color: option.textRight,
+              }}
+            >
+              Aa
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-xs font-bold">Aa</div>
+        )}
+      </div>
+      <span className="text-[10px] leading-tight text-center text-muted-foreground">{label}</span>
+    </button>
+  );
+}
+
 interface SettingsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  isDarkMode: boolean;
-  toggleDarkMode: () => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   hideOffscreenArrows: boolean;
   toggleHideOffscreenArrows: () => void;
   showStatusBar: boolean;
@@ -54,8 +125,8 @@ interface SettingsDialogProps {
 export function SettingsDialog({
   open,
   onOpenChange,
-  isDarkMode,
-  toggleDarkMode,
+  theme,
+  setTheme,
   hideOffscreenArrows,
   toggleHideOffscreenArrows,
   showStatusBar,
@@ -66,13 +137,6 @@ export function SettingsDialog({
   const { t } = useTranslation("dialogs");
 
   const rows: SettingsRow[] = [
-    {
-      id: "dark-mode",
-      label: t("settings.darkMode.label"),
-      description: t("settings.darkMode.description"),
-      checked: isDarkMode,
-      onCheckedChange: toggleDarkMode,
-    },
     {
       id: "hide-offscreen-arrows",
       label: t("settings.hideOffscreenArrows.label"),
@@ -104,6 +168,22 @@ export function SettingsDialog({
           <DialogDescription>{t("settings.description")}</DialogDescription>
         </DialogHeader>
         <div className="px-6 pb-4 space-y-4">
+          {/* Theme selector */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">{t("settings.theme.label")}</label>
+            <p className="text-xs text-muted-foreground">{t("settings.theme.description")}</p>
+            <div className="flex gap-1 justify-between" data-testid="theme-selector">
+              {THEME_OPTIONS.map((option) => (
+                <ThemeCard
+                  key={option.value}
+                  option={option}
+                  selected={theme === option.value}
+                  label={t(`settings.theme.${option.value}`)}
+                  onSelect={() => setTheme(option.value)}
+                />
+              ))}
+            </div>
+          </div>
           {rows.map((row) => (
             <SettingRow key={row.id} row={row} />
           ))}

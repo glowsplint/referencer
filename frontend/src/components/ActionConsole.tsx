@@ -24,7 +24,8 @@ const TYPE_COLORS: Record<string, string> = {
   lock: "text-yellow-400",
   unlock: "text-yellow-400",
   setActiveTool: "text-blue-400",
-  toggleDarkMode: "text-zinc-300",
+  cycleTheme: "text-zinc-300",
+  setTheme: "text-zinc-300",
   toggleLayout: "text-zinc-300",
 };
 

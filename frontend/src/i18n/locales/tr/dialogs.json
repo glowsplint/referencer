@@ -2,9 +2,14 @@
   "settings": {
     "title": "Ayarlar",
     "description": "Belge tercihlerinizi ozellestirin.",
-    "darkMode": {
-      "label": "Karanlik mod",
-      "description": "Acik ve karanlik temalar arasinda gecis yapin"
+    "theme": {
+      "label": "Tema",
+      "description": "Okuma temanızı seçin",
+      "auto": "Otomatik",
+      "light": "Açık",
+      "dark": "Koyu",
+      "sepia": "Sepya",
+      "high-contrast": "Yüksek Kontrast"
     },
     "hideOffscreenArrows": {
       "label": "Ekran disi oklari gizle",
@@ -75,7 +80,7 @@
     "eraserTool": "Silgi araci",
     "navigateWords": "Kelimeler arasinda gezin",
     "toggleConsole": "Eylem konsolunu ac/kapat",
-    "toggleDarkMode": "Karanlik modu ac/kapat",
+    "cycleTheme": "Tema değiştir",
     "toggleLayout": "Duzenleyici yerlesimini degistir",
     "toggleLock": "Duzenleyici kilidini ac/kapat",
     "toggleManagement": "Yonetim panelini ac/kapat",

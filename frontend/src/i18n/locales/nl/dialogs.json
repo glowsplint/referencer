@@ -2,9 +2,14 @@
   "settings": {
     "title": "Instellingen",
     "description": "Pas uw documentvoorkeuren aan.",
-    "darkMode": {
-      "label": "Donkere modus",
-      "description": "Schakel tussen licht en donker thema"
+    "theme": {
+      "label": "Thema",
+      "description": "Kies je leesthema",
+      "auto": "Automatisch",
+      "light": "Licht",
+      "dark": "Donker",
+      "sepia": "Sepia",
+      "high-contrast": "Hoog Contrast"
     },
     "hideOffscreenArrows": {
       "label": "Pijlen buiten beeld verbergen",
@@ -75,7 +80,7 @@
     "eraserTool": "Gumgereedschap",
     "navigateWords": "Tussen woorden navigeren",
     "toggleConsole": "Actieconsole in-/uitschakelen",
-    "toggleDarkMode": "Donkere modus in-/uitschakelen",
+    "cycleTheme": "Thema wisselen",
     "toggleLayout": "Editorindeling wisselen",
     "toggleLock": "Editorvergrendeling in-/uitschakelen",
     "toggleManagement": "Beheerpaneel in-/uitschakelen",

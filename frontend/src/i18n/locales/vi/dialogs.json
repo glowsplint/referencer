@@ -2,9 +2,14 @@
   "settings": {
     "title": "Cài đặt",
     "description": "Tùy chỉnh các thiết lập tài liệu của bạn.",
-    "darkMode": {
-      "label": "Chế độ tối",
-      "description": "Chuyển đổi giữa giao diện sáng và tối"
+    "theme": {
+      "label": "Chủ đề",
+      "description": "Chọn chủ đề đọc của bạn",
+      "auto": "Tự động",
+      "light": "Sáng",
+      "dark": "Tối",
+      "sepia": "Sepia",
+      "high-contrast": "Tương phản cao"
     },
     "hideOffscreenArrows": {
       "label": "Ẩn mũi tên ngoài màn hình",
@@ -75,7 +80,7 @@
     "eraserTool": "Công cụ tẩy",
     "navigateWords": "Di chuyển giữa các từ",
     "toggleConsole": "Bật/tắt bảng điều khiển hành động",
-    "toggleDarkMode": "Bật/tắt chế độ tối",
+    "cycleTheme": "Chuyển chủ đề",
     "toggleLayout": "Bật/tắt bố cục trình soạn thảo",
     "toggleLock": "Bật/tắt khóa trình soạn thảo",
     "toggleManagement": "Bật/tắt bảng quản lý",

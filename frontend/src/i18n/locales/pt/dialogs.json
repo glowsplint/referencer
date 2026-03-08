@@ -2,9 +2,14 @@
   "settings": {
     "title": "Configurações",
     "description": "Personalize as preferências do seu documento.",
-    "darkMode": {
-      "label": "Modo escuro",
-      "description": "Alternar entre temas claro e escuro"
+    "theme": {
+      "label": "Tema",
+      "description": "Escolha o seu tema de leitura",
+      "auto": "Automático",
+      "light": "Claro",
+      "dark": "Escuro",
+      "sepia": "Sépia",
+      "high-contrast": "Alto Contraste"
     },
     "hideOffscreenArrows": {
       "label": "Ocultar setas fora da tela",
@@ -75,7 +80,7 @@
     "eraserTool": "Ferramenta de borracha",
     "navigateWords": "Navegar entre palavras",
     "toggleConsole": "Alternar console de ações",
-    "toggleDarkMode": "Alternar modo escuro",
+    "cycleTheme": "Alternar tema",
     "toggleLayout": "Alternar layout do editor",
     "toggleLock": "Alternar bloqueio do editor",
     "toggleManagement": "Alternar painel de gerenciamento",

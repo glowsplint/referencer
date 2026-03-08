@@ -338,7 +338,7 @@ export function App({ documentId, navigate }: AppProps) {
 
   useToolShortcuts({ isLocked: focusedPaneLocked, setActiveTool });
   useToggleShortcuts({
-    toggleDarkMode: docCtx.toggleDarkMode,
+    toggleDarkMode: docCtx.cycleTheme,
     toggleMultipleRowsLayout: docCtx.toggleMultipleRowsLayout,
     toggleLocked: docCtx.toggleFocusedPaneLocked,
     toggleManagementPane: docCtx.toggleManagementPane,
@@ -581,7 +581,7 @@ export function App({ documentId, navigate }: AppProps) {
     onAnnotationChange: updateHighlightAnnotation,
     onAnnotationBlur: handleAnnotationBlur,
     onAnnotationClick: handleAnnotationClick,
-    isDarkMode: settings.isDarkMode,
+    isDarkMode: docCtx.isDarkMode,
     sectionVisibility,
     collapsedIds,
     onToggleCollapse: toggleCollapse,
@@ -614,7 +614,7 @@ export function App({ documentId, navigate }: AppProps) {
     selection,
     selectionHidden,
     activeLayerColor,
-    isDarkMode: settings.isDarkMode,
+    isDarkMode: docCtx.isDarkMode,
     removeArrow,
     sectionVisibility,
     selectedArrowId: docCtx.selectedArrow?.arrowId ?? null,
@@ -693,7 +693,7 @@ export function App({ documentId, navigate }: AppProps) {
                       setSelectedArrow={handleSetSelectedArrow}
                       activeTool={annotations.activeTool}
                       sectionVisibility={sectionVisibility}
-                      isDarkMode={settings.isDarkMode}
+                      isDarkMode={docCtx.isDarkMode}
                       isLocked={anyPaneLocked || effectiveReadOnly}
                       hideOffscreenArrows={settings.hideOffscreenArrows}
                     />
@@ -820,7 +820,7 @@ export function App({ documentId, navigate }: AppProps) {
                                     selection={selection}
                                     selectionHidden={selectionHidden}
                                     activeLayerColor={activeLayerColor}
-                                    isDarkMode={settings.isDarkMode}
+                                    isDarkMode={docCtx.isDarkMode}
                                     removeArrow={removeArrow}
                                     sectionVisibility={sectionVisibility}
                                     selectedArrowId={docCtx.selectedArrow?.arrowId ?? null}

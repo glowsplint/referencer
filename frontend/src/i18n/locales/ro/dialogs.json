@@ -2,9 +2,14 @@
   "settings": {
     "title": "Setări",
     "description": "Personalizați preferințele documentului.",
-    "darkMode": {
-      "label": "Mod întunecat",
-      "description": "Comutați între temele luminoasă și întunecată"
+    "theme": {
+      "label": "Temă",
+      "description": "Alege tema de citire",
+      "auto": "Automat",
+      "light": "Deschis",
+      "dark": "Întunecat",
+      "sepia": "Sepia",
+      "high-contrast": "Contrast Ridicat"
     },
     "hideOffscreenArrows": {
       "label": "Ascunde săgețile din afara ecranului",
@@ -75,7 +80,7 @@
     "eraserTool": "Radiera",
     "navigateWords": "Navigați între cuvinte",
     "toggleConsole": "Comutați consola de acțiuni",
-    "toggleDarkMode": "Comutați modul întunecat",
+    "cycleTheme": "Schimbă tema",
     "toggleLayout": "Comutați aspectul editorului",
     "toggleLock": "Comutați blocarea editorului",
     "toggleManagement": "Comutați panoul de gestionare",

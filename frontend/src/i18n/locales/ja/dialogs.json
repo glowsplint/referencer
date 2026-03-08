@@ -2,9 +2,14 @@
   "settings": {
     "title": "設定",
     "description": "ドキュメントの設定をカスタマイズします。",
-    "darkMode": {
-      "label": "ダークモード",
-      "description": "ライトテーマとダークテーマを切り替えます"
+    "theme": {
+      "label": "テーマ",
+      "description": "読書テーマを選択",
+      "auto": "自動",
+      "light": "ライト",
+      "dark": "ダーク",
+      "sepia": "セピア",
+      "high-contrast": "ハイコントラスト"
     },
     "hideOffscreenArrows": {
       "label": "画面外の矢印を非表示",
@@ -75,7 +80,7 @@
     "eraserTool": "消しゴムツール",
     "navigateWords": "単語間を移動",
     "toggleConsole": "アクションコンソールの切り替え",
-    "toggleDarkMode": "ダークモードの切り替え",
+    "cycleTheme": "テーマを切り替え",
     "toggleLayout": "エディターレイアウトの切り替え",
     "toggleLock": "エディターロックの切り替え",
     "toggleManagement": "管理パネルの切り替え",

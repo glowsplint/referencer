@@ -13,6 +13,8 @@ function makeCallbacks() {
     toggleMultipleRowsLayout: vi.fn(),
     toggleLocked: vi.fn(),
     toggleManagementPane: vi.fn(),
+    toggleCommentPlacement: vi.fn(),
+    addText: vi.fn(),
   };
 }
 

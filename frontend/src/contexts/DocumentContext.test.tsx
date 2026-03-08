@@ -6,7 +6,7 @@ import type { DocumentContextValue } from "./DocumentContext";
 function makeMockDocument(overrides: Partial<DocumentContextValue> = {}): DocumentContextValue {
   return {
     settings: {
-      isDarkMode: false,
+      theme: "auto" as const,
       isLayersOn: false,
       isMultipleRowsLayout: false,
       lockedPanes: { 0: false, 1: false, 2: false, 3: false },
@@ -53,7 +53,7 @@ describe("DocumentContext", () => {
     it("then provides the document settings", () => {
       const mockValue = makeMockDocument({
         settings: {
-          isDarkMode: true,
+          theme: "dark" as const,
           isLayersOn: true,
           isMultipleRowsLayout: false,
           lockedPanes: { 0: false, 1: false, 2: false, 3: false },
@@ -66,7 +66,7 @@ describe("DocumentContext", () => {
         ),
       });
 
-      expect(result.current.settings.isDarkMode).toBe(true);
+      expect(result.current.settings.theme).toBe("dark");
       expect(result.current.settings.isLayersOn).toBe(true);
       expect(result.current.settings.isMultipleRowsLayout).toBe(false);
     });

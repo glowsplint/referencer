@@ -2,9 +2,14 @@
   "settings": {
     "title": "Mipangilio",
     "description": "Binafsisha mapendeleo ya nyaraka yako.",
-    "darkMode": {
-      "label": "Hali ya giza",
-      "description": "Badilisha kati ya mandhari meupe na meusi"
+    "theme": {
+      "label": "Mandhari",
+      "description": "Chagua mandhari yako ya kusoma",
+      "auto": "Kiotomatiki",
+      "light": "Mwanga",
+      "dark": "Giza",
+      "sepia": "Sepia",
+      "high-contrast": "Utofautishaji Mkubwa"
     },
     "hideOffscreenArrows": {
       "label": "Ficha mishale nje ya skrini",
@@ -75,7 +80,7 @@
     "eraserTool": "Chombo cha kufuta",
     "navigateWords": "Vinjari kati ya maneno",
     "toggleConsole": "Geuza koni ya vitendo",
-    "toggleDarkMode": "Geuza hali ya giza",
+    "cycleTheme": "Badilisha mandhari",
     "toggleLayout": "Geuza mpangilio wa kihariri",
     "toggleLock": "Geuza kufuli ya kihariri",
     "toggleManagement": "Geuza paneli ya usimamizi",

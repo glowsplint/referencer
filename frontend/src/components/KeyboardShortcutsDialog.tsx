@@ -90,7 +90,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
         { keys: ["E"], description: t("shortcuts.eraserTool") },
         { keys: ["Arrow keys"], description: t("shortcuts.navigateWords") },
         { keys: ["`"], description: t("shortcuts.toggleConsole") },
-        { keys: ["D"], description: t("shortcuts.toggleDarkMode") },
+        { keys: ["D"], description: t("shortcuts.cycleTheme") },
         { keys: ["R"], description: t("shortcuts.toggleLayout") },
         { keys: ["K"], description: t("shortcuts.toggleLock") },
         { keys: ["M"], description: t("shortcuts.toggleManagement") },

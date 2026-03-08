@@ -48,7 +48,7 @@ describe("useEditorDocument", () => {
     const { result } = renderHook(() => useEditorDocument());
 
     expect(result.current.settings).toEqual({
-      isDarkMode: false,
+      theme: "auto",
       isLayersOn: false,
       isMultipleRowsLayout: false,
       lockedPanes: { 0: true, 1: true, 2: true, 3: true },
@@ -65,22 +65,32 @@ describe("useEditorDocument", () => {
     expect(result.current.isManagementPaneOpen).toBe(true);
   });
 
-  it("when toggleDarkMode is called, then toggles isDarkMode", () => {
+  it("when cycleTheme is called, then cycles through themes", () => {
     const { result } = renderHook(() => useEditorDocument());
 
     act(() => {
-      result.current.toggleDarkMode();
+      result.current.cycleTheme();
     });
 
-    expect(result.current.settings.isDarkMode).toBe(true);
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    expect(result.current.settings.theme).toBe("light");
 
     act(() => {
-      result.current.toggleDarkMode();
+      result.current.cycleTheme();
     });
 
-    expect(result.current.settings.isDarkMode).toBe(false);
-    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    expect(result.current.settings.theme).toBe("dark");
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+  });
+
+  it("when setTheme is called, then sets the theme directly", () => {
+    const { result } = renderHook(() => useEditorDocument());
+
+    act(() => {
+      result.current.setTheme("sepia");
+    });
+
+    expect(result.current.settings.theme).toBe("sepia");
+    expect(result.current.isDarkMode).toBe(false);
   });
 
   it("when toggleFocusedPaneLocked is called, then toggles the focused pane", () => {
@@ -882,25 +892,25 @@ describe("useEditorDocument", () => {
     expect(result.current.isPaneLocked(0)).toBe(false);
   });
 
-  it("when toggleDarkMode is called, then it is undoable", () => {
+  it("when cycleTheme is called, then it is undoable", () => {
     const { result } = renderHook(() => useEditorDocument());
 
-    expect(result.current.settings.isDarkMode).toBe(false);
+    expect(result.current.settings.theme).toBe("auto");
 
     act(() => {
-      result.current.toggleDarkMode();
+      result.current.cycleTheme();
     });
-    expect(result.current.settings.isDarkMode).toBe(true);
+    expect(result.current.settings.theme).toBe("light");
 
     act(() => {
       result.current.history.undo();
     });
-    expect(result.current.settings.isDarkMode).toBe(false);
+    expect(result.current.settings.theme).toBe("auto");
 
     act(() => {
       result.current.history.redo();
     });
-    expect(result.current.settings.isDarkMode).toBe(true);
+    expect(result.current.settings.theme).toBe("light");
   });
 
   it("when toggleMultipleRowsLayout is called, then it is undoable", () => {
@@ -992,7 +1002,7 @@ describe("useEditorDocument", () => {
 
     act(() => {
       result.current.toggleFocusedPaneLocked();
-      result.current.toggleDarkMode();
+      result.current.cycleTheme();
       result.current.toggleMultipleRowsLayout();
       result.current.toggleSectionVisibility(0);
       result.current.setActiveTool("arrow");

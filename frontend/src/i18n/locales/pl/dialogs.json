@@ -2,9 +2,14 @@
   "settings": {
     "title": "Ustawienia",
     "description": "Dostosuj preferencje dokumentu.",
-    "darkMode": {
-      "label": "Tryb ciemny",
-      "description": "Przelaczaj miedzy jasnym a ciemnym motywem"
+    "theme": {
+      "label": "Motyw",
+      "description": "Wybierz motyw czytania",
+      "auto": "Automatyczny",
+      "light": "Jasny",
+      "dark": "Ciemny",
+      "sepia": "Sepia",
+      "high-contrast": "Wysoki Kontrast"
     },
     "hideOffscreenArrows": {
       "label": "Ukryj strzalki poza ekranem",
@@ -75,7 +80,7 @@
     "eraserTool": "Gumka",
     "navigateWords": "Nawiguj miedzy slowami",
     "toggleConsole": "Przelacz konsole akcji",
-    "toggleDarkMode": "Przelacz tryb ciemny",
+    "cycleTheme": "Zmień motyw",
     "toggleLayout": "Przelacz uklad edytora",
     "toggleLock": "Przelacz blokade edytora",
     "toggleManagement": "Przelacz panel zarzadzania",

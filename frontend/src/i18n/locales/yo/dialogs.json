@@ -2,9 +2,14 @@
   "settings": {
     "title": "Ètò",
     "description": "Ṣàtúnṣe àwọn ìfẹ́ràn ìwé rẹ.",
-    "darkMode": {
-      "label": "Ọ̀nà dúdú",
-      "description": "Yí padà láàárín àwọn àwòrán ìmọ́lẹ̀ àti dúdú"
+    "theme": {
+      "label": "Àpẹrẹ",
+      "description": "Yan àpẹrẹ kíkà rẹ",
+      "auto": "Aládàámí",
+      "light": "Ìmọ́lẹ̀",
+      "dark": "Òkùnkùn",
+      "sepia": "Sepia",
+      "high-contrast": "Ìyàtọ̀ Gíga"
     },
     "hideOffscreenArrows": {
       "label": "Ìbòmọ́lẹ̀ àwọn ọfà tí kò hàn",
@@ -75,7 +80,7 @@
     "eraserTool": "Ohun èlò ìparẹ́",
     "navigateWords": "Lọ kiri láàárín àwọn ọ̀rọ̀",
     "toggleConsole": "Yí kọ́nsólù iṣẹ́ padà",
-    "toggleDarkMode": "Yí ọ̀nà dúdú padà",
+    "cycleTheme": "Yí àpẹrẹ padà",
     "toggleLayout": "Yí ètò olóòtú padà",
     "toggleLock": "Yí títìí olóòtú padà",
     "toggleManagement": "Yí pánẹ́ẹ̀lì ìṣàkóso padà",

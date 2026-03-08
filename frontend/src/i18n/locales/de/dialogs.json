@@ -2,9 +2,14 @@
   "settings": {
     "title": "Einstellungen",
     "description": "Passen Sie Ihre Dokument-Einstellungen an.",
-    "darkMode": {
-      "label": "Dunkelmodus",
-      "description": "Zwischen hellem und dunklem Design wechseln"
+    "theme": {
+      "label": "Design",
+      "description": "Wähle dein Lesethema",
+      "auto": "Automatisch",
+      "light": "Hell",
+      "dark": "Dunkel",
+      "sepia": "Sepia",
+      "high-contrast": "Hoher Kontrast"
     },
     "hideOffscreenArrows": {
       "label": "Pfeile außerhalb des Bildschirms ausblenden",
@@ -75,7 +80,7 @@
     "eraserTool": "Radierwerkzeug",
     "navigateWords": "Zwischen Wörtern navigieren",
     "toggleConsole": "Aktionskonsole ein-/ausblenden",
-    "toggleDarkMode": "Dunkelmodus ein-/ausschalten",
+    "cycleTheme": "Design wechseln",
     "toggleLayout": "Editorlayout umschalten",
     "toggleLock": "Editorsperre umschalten",
     "toggleManagement": "Verwaltungspanel ein-/ausblenden",

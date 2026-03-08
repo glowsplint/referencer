@@ -2,9 +2,14 @@
   "settings": {
     "title": "Settings",
     "description": "Customize your document preferences.",
-    "darkMode": {
-      "label": "Dark mode",
-      "description": "Switch between light and dark themes"
+    "theme": {
+      "label": "Theme",
+      "description": "Choose your reading theme",
+      "auto": "Auto",
+      "light": "Light",
+      "dark": "Dark",
+      "sepia": "Sepia",
+      "high-contrast": "High Contrast"
     },
     "hideOffscreenArrows": {
       "label": "Hide off-screen arrows",
@@ -75,7 +80,7 @@
     "eraserTool": "Eraser tool",
     "navigateWords": "Navigate between words",
     "toggleConsole": "Toggle action console",
-    "toggleDarkMode": "Toggle dark mode",
+    "cycleTheme": "Cycle theme",
     "toggleLayout": "Toggle editor layout",
     "toggleLock": "Toggle editor lock",
     "toggleManagement": "Toggle management pane",

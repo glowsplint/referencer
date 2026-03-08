@@ -2,9 +2,14 @@
   "settings": {
     "title": "सेटिंग्स",
     "description": "अपने दस्तावेज़ की प्राथमिकताएं अनुकूलित करें।",
-    "darkMode": {
-      "label": "डार्क मोड",
-      "description": "लाइट और डार्क थीम के बीच स्विच करें"
+    "theme": {
+      "label": "थीम",
+      "description": "अपनी पढ़ने की थीम चुनें",
+      "auto": "स्वचालित",
+      "light": "हल्का",
+      "dark": "गहरा",
+      "sepia": "सीपिया",
+      "high-contrast": "उच्च कंट्रास्ट"
     },
     "hideOffscreenArrows": {
       "label": "ऑफ-स्क्रीन तीर छुपाएं",
@@ -75,7 +80,7 @@
     "eraserTool": "इरेज़र उपकरण",
     "navigateWords": "शब्दों के बीच नेविगेट करें",
     "toggleConsole": "एक्शन कंसोल टॉगल करें",
-    "toggleDarkMode": "डार्क मोड टॉगल करें",
+    "cycleTheme": "थीम बदलें",
     "toggleLayout": "संपादक लेआउट टॉगल करें",
     "toggleLock": "संपादक लॉक टॉगल करें",
     "toggleManagement": "प्रबंधन पैनल टॉगल करें",

@@ -2,9 +2,14 @@
   "settings": {
     "title": "การตั้งค่า",
     "description": "ปรับแต่งการตั้งค่าเอกสารของคุณ",
-    "darkMode": {
-      "label": "โหมดมืด",
-      "description": "สลับระหว่างธีมสว่างและมืด"
+    "theme": {
+      "label": "ธีม",
+      "description": "เลือกธีมการอ่านของคุณ",
+      "auto": "อัตโนมัติ",
+      "light": "สว่าง",
+      "dark": "มืด",
+      "sepia": "ซีเปีย",
+      "high-contrast": "คอนทราสต์สูง"
     },
     "hideOffscreenArrows": {
       "label": "ซ่อนลูกศรนอกหน้าจอ",
@@ -75,7 +80,7 @@
     "eraserTool": "เครื่องมือลบ",
     "navigateWords": "นำทางระหว่างคำ",
     "toggleConsole": "สลับคอนโซลการทำงาน",
-    "toggleDarkMode": "สลับโหมดมืด",
+    "cycleTheme": "เปลี่ยนธีม",
     "toggleLayout": "สลับรูปแบบตัวแก้ไข",
     "toggleLock": "สลับการล็อกตัวแก้ไข",
     "toggleManagement": "สลับแผงจัดการ",
