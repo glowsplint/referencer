@@ -31,10 +31,11 @@ Open [http://localhost:5173](http://localhost:5173).
 ```
 src/
 ├── components/       # UI components (panels, dialogs, overlays, pickers)
-├── hooks/            # 42 custom React hooks
-├── lib/              # Utilities, TipTap extensions, WebSocket client
+├── hooks/            # ~50 custom React hooks
+├── lib/              # Utilities, TipTap extensions, Yjs provider, auth client
 ├── contexts/         # DocumentContext (central state)
 ├── types/            # TypeScript definitions
+├── data/             # Default document data
 ├── styles/           # SCSS for tiptap template components
 └── e2e/              # Playwright test specs
 ```
