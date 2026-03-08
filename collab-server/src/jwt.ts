@@ -17,6 +17,15 @@ async function verifyWithSecret(token: string, secret: string): Promise<WsJwtPay
   if (parts.length !== 3) return null;
 
   const [header, body, sig] = parts;
+
+  // Validate algorithm
+  try {
+    const hdr = JSON.parse(base64urlDecode(header));
+    if (hdr.alg !== "HS256") return null;
+  } catch {
+    return null;
+  }
+
   const data = new TextEncoder().encode(`${header}.${body}`);
 
   const key = await crypto.subtle.importKey(
@@ -39,6 +48,9 @@ async function verifyWithSecret(token: string, secret: string): Promise<WsJwtPay
 
   // Check expiry
   if (payload.exp < Math.floor(Date.now() / 1000)) return null;
+
+  // Validate issuer and audience
+  if (payload.iss !== "referencer" || payload.aud !== "collab") return null;
 
   return payload;
 }

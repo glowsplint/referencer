@@ -21,8 +21,8 @@ import { createCollabMetrics } from "./metrics";
 // WS_JWT_SECRET_PREV     — Previous JWT secret for key rotation (optional)
 //                          Also set in: backend
 //
-// ALLOWED_ORIGIN         — CORS origin for WebSocket connections (optional)
-//                          Default: "" (allows all origins)
+// ALLOWED_ORIGIN         — CORS origin for WebSocket connections (required in production)
+//                          Denied by default if not set.
 //
 // Bindings — configured in collab-server/wrangler.toml
 //
@@ -57,7 +57,11 @@ app.use("*", async (c, next) => {
 app.use(
   "*",
   cors({
-    origin: (origin, c) => c.env.ALLOWED_ORIGIN || "",
+    origin: (origin, c) => {
+      const allowed = c.env.ALLOWED_ORIGIN;
+      if (!allowed) return null; // deny by default
+      return origin === allowed ? allowed : null;
+    },
     credentials: true,
   }),
 );
@@ -83,6 +87,14 @@ app.get("/:roomName", async (c) => {
   const token = c.req.query("token");
   if (!token) {
     return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  // Validate Origin header for WebSocket upgrade (CORS doesn't protect WS upgrades)
+  const origin = c.req.header("origin");
+  const allowedOrigin = c.env.ALLOWED_ORIGIN;
+  if (allowedOrigin && origin && origin !== allowedOrigin) {
+    log.warn("GET /:roomName rejected — origin mismatch", { roomName, origin });
+    return c.json({ error: "Forbidden" }, 403);
   }
 
   // Verify JWT signature + expiry (no DB hit)

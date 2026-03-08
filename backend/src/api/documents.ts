@@ -110,7 +110,7 @@ documents.get("/:id", async (c) => {
   const log = c.get("logger");
 
   try {
-    const documentId = c.req.param("id");
+    const documentId = c.req.param("id")!;
     const supabase = c.get("supabase");
     const document = await getUserDocument(supabase, user.id, documentId);
     if (!document) return c.json({ error: "Not found" }, 404);
@@ -133,7 +133,7 @@ documents.patch("/:id", requirePermission("editor"), async (c) => {
   const log = c.get("logger");
 
   try {
-    const documentId = c.req.param("id");
+    const documentId = c.req.param("id")!;
     const body = await c.req.json<{ title: string }>();
     if (typeof body.title !== "string") {
       return c.json({ error: "title is required" }, 400);
@@ -163,7 +163,7 @@ documents.patch("/:id/touch", requirePermission("viewer"), async (c) => {
   const log = c.get("logger");
 
   try {
-    const documentId = c.req.param("id");
+    const documentId = c.req.param("id")!;
     const supabase = c.get("supabase");
     await touchUserDocument(supabase, user.id, documentId);
     log.info("PATCH /api/documents/:id/touch", { userId: user.id, documentId });
@@ -185,7 +185,7 @@ documents.patch("/:id/favorite", requirePermission("viewer"), async (c) => {
   const log = c.get("logger");
 
   try {
-    const documentId = c.req.param("id");
+    const documentId = c.req.param("id")!;
     const body = await c.req.json<{ isFavorite: boolean }>();
     if (typeof body.isFavorite !== "boolean") {
       return c.json({ error: "isFavorite is required" }, 400);
@@ -218,7 +218,7 @@ documents.delete("/:id", requirePermission("editor"), async (c) => {
   const log = c.get("logger");
 
   try {
-    const documentId = c.req.param("id");
+    const documentId = c.req.param("id")!;
     const supabase = c.get("supabase");
     const role = await getPermission(supabase, documentId, user.id);
 
@@ -250,7 +250,7 @@ documents.post("/:id/duplicate", requirePermission("editor"), async (c) => {
   const log = c.get("logger");
 
   try {
-    const sourceId = c.req.param("id");
+    const sourceId = c.req.param("id")!;
     const body = await c.req.json<{ newDocumentId: string }>();
     if (!body.newDocumentId) {
       return c.json({ error: "newDocumentId is required" }, 400);
@@ -290,7 +290,7 @@ documents.get("/:id/permission", async (c) => {
   const log = c.get("logger");
 
   try {
-    const documentId = c.req.param("id");
+    const documentId = c.req.param("id")!;
     const supabase = c.get("supabase");
     const role = await getPermission(supabase, documentId, user.id);
     if (!role) return c.json({ error: "No permission" }, 404);
@@ -312,7 +312,7 @@ documents.get("/:id/links", requirePermission("editor"), async (c) => {
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
   try {
-    const documentId = c.req.param("id");
+    const documentId = c.req.param("id")!;
     const supabase = c.get("supabase");
     const links = await listShareLinks(supabase, documentId);
     log.info("GET /api/documents/:id/links", {
@@ -337,8 +337,8 @@ documents.delete("/:id/links/:code", requirePermission("editor"), async (c) => {
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
   try {
-    const documentId = c.req.param("id");
-    const code = c.req.param("code");
+    const documentId = c.req.param("id")!;
+    const code = c.req.param("code")!;
     const supabase = c.get("supabase");
     const deleted = await deleteShareLink(supabase, code, documentId);
     if (!deleted) return c.json({ error: "Not found" }, 404);
@@ -360,7 +360,7 @@ documents.get("/:id/members", requirePermission("editor"), async (c) => {
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
   try {
-    const documentId = c.req.param("id");
+    const documentId = c.req.param("id")!;
     const supabase = c.get("supabase");
     const members = await listDocumentMembers(supabase, documentId);
     log.info("GET /api/documents/:id/members", {
@@ -385,8 +385,8 @@ documents.patch("/:id/members/:userId", requirePermission("owner"), async (c) =>
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
   try {
-    const documentId = c.req.param("id");
-    const targetUserId = c.req.param("userId");
+    const documentId = c.req.param("id")!;
+    const targetUserId = c.req.param("userId")!;
     if (targetUserId === user.id) return c.json({ error: "Cannot change your own role" }, 403);
     const supabase = c.get("supabase");
     const targetRole = await getPermission(supabase, documentId, targetUserId);
@@ -420,8 +420,8 @@ documents.delete("/:id/members/:userId", requirePermission("owner"), async (c) =
   if (!user) return c.json({ error: "Unauthorized" }, 401);
   const log = c.get("logger");
   try {
-    const documentId = c.req.param("id");
-    const targetUserId = c.req.param("userId");
+    const documentId = c.req.param("id")!;
+    const targetUserId = c.req.param("userId")!;
     if (targetUserId === user.id) return c.json({ error: "Cannot remove yourself" }, 403);
     const supabase = c.get("supabase");
     const targetRole = await getPermission(supabase, documentId, targetUserId);
