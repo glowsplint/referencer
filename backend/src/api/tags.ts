@@ -85,6 +85,16 @@ tags.delete("/:documentId/:tag", async (c) => {
     const documentId = c.req.param("documentId");
     const tag = decodeURIComponent(c.req.param("tag"));
     const supabase = c.get("supabase");
+
+    const role = await getPermission(supabase, documentId, user.id);
+    if (!role || !hasMinimumRole(role, "viewer")) {
+      log.warn("Permission denied for remove tag", {
+        userId: user.id,
+        documentId,
+      });
+      return c.json({ error: "Forbidden" }, 403);
+    }
+
     await removeTag(supabase, user.id, documentId, tag);
     log.info("DELETE /api/tags/:documentId/:tag", {
       userId: user.id,
