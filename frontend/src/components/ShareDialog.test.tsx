@@ -2,6 +2,7 @@ import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ShareDialog } from "./ShareDialog";
 import { renderWithDocument } from "@/test/render-with-document";
+import type { ShareLink, DocumentMember } from "@/hooks/data/use-share-management";
 
 const mockLogin = vi.fn();
 const mockAuth = {
@@ -27,8 +28,8 @@ vi.mock("@/lib/api-client", () => ({
 }));
 
 const mockShareManagement = {
-  links: [] as any[],
-  members: [] as any[],
+  links: [] as ShareLink[],
+  members: [] as DocumentMember[],
   isLoading: false,
   refetch: vi.fn(),
   revokeLink: vi.fn(),

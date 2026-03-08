@@ -29,6 +29,8 @@ export function EditorTour() {
   // Translate step titles and content (keys are dynamic strings from tour-steps.ts)
   const translatedSteps: TourStep[] = EDITOR_TOUR_STEPS.map((step) => ({
     ...step,
+    // Dynamic i18n keys from tour-steps.ts are valid "tour" namespace keys at runtime,
+    // but TypeScript can't statically verify them against the namespace union type.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     title: t(step.title as any),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

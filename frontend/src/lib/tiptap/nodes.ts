@@ -105,9 +105,11 @@ export function findNodePosition(props: {
 
   // If we have a valid position, use findNodeAtPosition
   if (hasValidPos) {
-    const nodeAtPos = findNodeAtPosition(editor, nodePos!);
+    // SAFETY: isValidPosition guarantees nodePos is a finite number
+    const validPos = nodePos as number;
+    const nodeAtPos = findNodeAtPosition(editor, validPos);
     if (nodeAtPos) {
-      return { pos: nodePos!, node: nodeAtPos };
+      return { pos: validPos, node: nodeAtPos };
     }
   }
 

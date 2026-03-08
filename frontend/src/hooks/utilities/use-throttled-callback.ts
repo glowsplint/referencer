@@ -22,6 +22,8 @@ const defaultOptions: ThrottleSettings = {
  * @param dependencies The dependencies to watch for changes
  * @param options The throttle options
  */
+// `any` in the generic constraint is the standard TS pattern for "any function" —
+// using `unknown` here would prevent callers from passing functions with specific signatures.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useThrottledCallback<T extends (...args: any[]) => any>(
   fn: T,

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useSelectionHighlight } from "./use-selection-highlight";
+import { asEditor, createMockEditor as createBaseMockEditor } from "@/test/mocks";
 
 // Mock the plugin key and DecorationSet
 vi.mock("@/lib/tiptap/extensions/word-selection", () => ({
@@ -18,21 +19,8 @@ vi.mock("@/constants/colors", () => ({
 }));
 
 function createMockEditor() {
-  const dispatched: any[] = [];
-  const mockDoc = {};
-  return {
-    isDestroyed: false,
-    state: {
-      doc: mockDoc,
-      tr: {
-        setMeta: vi.fn().mockReturnThis(),
-      },
-    },
-    view: {
-      dispatch: vi.fn((tr: any) => dispatched.push(tr)),
-    },
-    _dispatched: dispatched,
-  } as any;
+  const mock = createBaseMockEditor();
+  return asEditor(mock);
 }
 
 describe("useSelectionHighlight", () => {
@@ -69,7 +57,7 @@ describe("useSelectionHighlight", () => {
   });
 
   it("when editor is destroyed, then does nothing", () => {
-    const editor = { isDestroyed: true } as any;
+    const editor = asEditor(createBaseMockEditor({ isDestroyed: true }));
 
     renderHook(() => useSelectionHighlight(editor, null, 0, false, null, false));
     // No error thrown - dispatch not called on destroyed editor

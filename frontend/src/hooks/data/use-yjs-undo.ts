@@ -14,8 +14,7 @@ export function useYjsUndo(doc: Y.Doc | null) {
     if (!doc) return;
 
     // Track all shared types for undo: XmlFragments (text) + layers array
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const trackedTypes: Y.AbstractType<any>[] = [];
+    const trackedTypes: (Y.Array<Y.Map<unknown>> | Y.XmlFragment)[] = [];
 
     // Track the layers array (annotations)
     trackedTypes.push(getLayersArray(doc));

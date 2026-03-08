@@ -1,6 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
+import type { Editor } from "@tiptap/react";
 import { useCursorVisibility } from "./use-cursor-visibility";
+
+/** Minimal mock shape for cursor-visibility tests */
+interface MockCursorEditor {
+  isDestroyed: boolean;
+  isFocused: boolean;
+  state: { selection?: { from: number } };
+  view?: { coordsAtPos: ReturnType<typeof vi.fn> };
+}
+
+function asCursorEditor(mock: MockCursorEditor): Editor {
+  return mock as unknown as Editor;
+}
 
 // Mock the dependency hooks
 vi.mock("@/hooks/utilities/use-window-size", () => ({
@@ -43,18 +56,18 @@ describe("useCursorVisibility", () => {
   });
 
   it("when editor is destroyed, then does not scroll", () => {
-    const editor = { isDestroyed: true, isFocused: true, state: {}, view: {} } as any;
+    const editor = asCursorEditor({ isDestroyed: true, isFocused: true, state: {} });
     renderHook(() => useCursorVisibility({ editor }));
     expect(scrollToSpy).not.toHaveBeenCalled();
   });
 
   it("when editor is not focused, then does not scroll", () => {
-    const editor = {
+    const editor = asCursorEditor({
       isDestroyed: false,
       isFocused: false,
       state: { selection: { from: 0 } },
       view: { coordsAtPos: vi.fn(() => ({ top: 100 })) },
-    } as any;
+    });
     renderHook(() => useCursorVisibility({ editor }));
     expect(scrollToSpy).not.toHaveBeenCalled();
   });
@@ -62,12 +75,12 @@ describe("useCursorVisibility", () => {
   it("when cursor is behind the overlay, then scrolls", () => {
     // windowHeight (768) < body height (2000) -- passes first check
     // cursor at y=750, overlayHeight=100 => availableSpace = 768-750 = 18 < 100
-    const editor = {
+    const editor = asCursorEditor({
       isDestroyed: false,
       isFocused: true,
       state: { selection: { from: 5 } },
       view: { coordsAtPos: vi.fn(() => ({ top: 750 })) },
-    } as any;
+    });
 
     renderHook(() => useCursorVisibility({ editor, overlayHeight: 100 }));
     expect(scrollToSpy).toHaveBeenCalledWith(expect.objectContaining({ behavior: "smooth" }));
@@ -75,12 +88,12 @@ describe("useCursorVisibility", () => {
 
   it("when there is enough space, then does not scroll", () => {
     // cursor at y=100, overlayHeight=50 => availableSpace = 768-100 = 668 > 50
-    const editor = {
+    const editor = asCursorEditor({
       isDestroyed: false,
       isFocused: true,
       state: { selection: { from: 5 } },
       view: { coordsAtPos: vi.fn(() => ({ top: 100 })) },
-    } as any;
+    });
 
     renderHook(() => useCursorVisibility({ editor, overlayHeight: 50 }));
     expect(scrollToSpy).not.toHaveBeenCalled();
@@ -99,12 +112,12 @@ describe("useCursorVisibility", () => {
       left: 0,
     });
 
-    const editor = {
+    const editor = asCursorEditor({
       isDestroyed: false,
       isFocused: true,
       state: { selection: { from: 5 } },
       view: { coordsAtPos: vi.fn(() => ({ top: 400 })) },
-    } as any;
+    });
 
     renderHook(() => useCursorVisibility({ editor, overlayHeight: 100 }));
     expect(scrollToSpy).not.toHaveBeenCalled();

@@ -1,7 +1,7 @@
 // Keyboard navigation for dropdown menus and command palettes.
 // Handles arrow keys, Tab, Home/End, Enter for selection, and Escape to close.
 import type { Editor } from "@tiptap/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
 type Orientation = "horizontal" | "vertical" | "both";
 
@@ -60,7 +60,10 @@ export function useMenuNavigation<T>({
   onClose,
   orientation = "vertical",
   autoSelectFirstItem = true,
-}: MenuNavigationOptions<T>) {
+}: MenuNavigationOptions<T>): {
+  selectedIndex: number | undefined;
+  setSelectedIndex: Dispatch<SetStateAction<number>>;
+} {
   const [selectedIndex, setSelectedIndex] = useState<number>(autoSelectFirstItem ? 0 : -1);
 
   useEffect(() => {

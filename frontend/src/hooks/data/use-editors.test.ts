@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useEditors } from "./use-editors";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
+import { asEditor } from "@/test/mocks";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -86,9 +87,9 @@ describe("useEditors", () => {
 
   it("when removeEditor is called, then sets activeEditor to first remaining editor", () => {
     const { result } = renderHook(() => useEditors());
-    const editor0 = { id: "e0" } as any;
-    const editor1 = { id: "e1" } as any;
-    const editor2 = { id: "e2" } as any;
+    const editor0 = asEditor({ id: "e0", isDestroyed: false, state: { doc: {} } });
+    const editor1 = asEditor({ id: "e1", isDestroyed: false, state: { doc: {} } });
+    const editor2 = asEditor({ id: "e2", isDestroyed: false, state: { doc: {} } });
 
     act(() => {
       result.current.addEditor();
@@ -166,7 +167,7 @@ describe("useEditors", () => {
 
   it("when handleEditorMount is called for index 0, then sets activeEditor", () => {
     const { result } = renderHook(() => useEditors());
-    const editor = { id: "e0" } as any;
+    const editor = asEditor({ id: "e0", isDestroyed: false, state: { doc: {} } });
 
     act(() => {
       result.current.handleEditorMount(0, editor);
@@ -176,7 +177,7 @@ describe("useEditors", () => {
 
   it("when handleEditorMount is called for non-zero index, then does not set activeEditor", () => {
     const { result } = renderHook(() => useEditors());
-    const editor = { id: "e1" } as any;
+    const editor = asEditor({ id: "e1", isDestroyed: false, state: { doc: {} } });
 
     act(() => {
       result.current.handleEditorMount(1, editor);
@@ -186,8 +187,8 @@ describe("useEditors", () => {
 
   it("when handlePaneFocus is called, then switches activeEditor", () => {
     const { result } = renderHook(() => useEditors());
-    const editor0 = { id: "e0" } as any;
-    const editor1 = { id: "e1" } as any;
+    const editor0 = asEditor({ id: "e0", isDestroyed: false, state: { doc: {} } });
+    const editor1 = asEditor({ id: "e1", isDestroyed: false, state: { doc: {} } });
 
     act(() => {
       result.current.handleEditorMount(0, editor0);
@@ -203,7 +204,7 @@ describe("useEditors", () => {
 
   it("when handlePaneFocus is called with unmounted index, then does nothing", () => {
     const { result } = renderHook(() => useEditors());
-    const editor = { id: "e0" } as any;
+    const editor = asEditor({ id: "e0", isDestroyed: false, state: { doc: {} } });
 
     act(() => {
       result.current.handleEditorMount(0, editor);

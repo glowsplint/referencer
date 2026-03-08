@@ -3,6 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { useWordHover } from "./use-word-hover";
 import { wordHoverPluginKey } from "@/lib/tiptap/extensions/word-hover";
 import { DecorationSet } from "@tiptap/pm/view";
+import type { Editor } from "@tiptap/react";
 
 vi.mock("@/lib/tiptap/word-boundaries", () => ({
   getWordBoundaries: vi.fn(),
@@ -52,7 +53,7 @@ function createMockEditor(isDestroyed = false) {
     },
   };
 
-  return { editor: editor as any, listeners, dispatch, tr, dom };
+  return { editor: editor as unknown as Editor, listeners, dispatch, tr, dom };
 }
 
 describe("useWordHover", () => {

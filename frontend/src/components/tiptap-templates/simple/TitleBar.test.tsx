@@ -3,9 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TitleBar } from "./TitleBar";
 import { renderWithDocument } from "@/test/render-with-document";
+import type { DocumentItem } from "@/lib/document-client";
 
 const mockDocuments = {
-  documents: [] as any[],
+  documents: [] as DocumentItem[],
   isLoading: false,
   error: null,
   refetch: vi.fn(),

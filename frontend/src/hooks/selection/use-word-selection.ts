@@ -250,7 +250,8 @@ export function useWordSelection({
           headRef.current = selection;
         }
 
-        const head = headRef.current!;
+        // SAFETY: headRef.current is guaranteed non-null — either set above or from a prior shift+arrow
+        const head = headRef.current as WordSelection;
         const currentCenter = getWordCenter(head, editorsRef, containerRect);
         if (!currentCenter) return;
 
@@ -312,7 +313,8 @@ export function useWordSelection({
           anchorRef.current = sel;
           headRef.current = sel;
         }
-        const head = headRef.current!;
+        // SAFETY: headRef.current is guaranteed non-null — either set above or from a prior shift+arrow
+        const head = headRef.current as WordSelection;
         const headCenter = getWordCenter(head, eRef, containerRect);
         if (!headCenter) return;
 
@@ -366,7 +368,8 @@ export function useWordSelection({
         anchorRef.current = sel;
         headRef.current = sel;
       }
-      const head = headRef.current!;
+      // SAFETY: headRef.current is guaranteed non-null — either set above or from a prior shift+arrow
+      const head = headRef.current as WordSelection;
       const headCenter = getWordCenter(head, eRef, containerRect);
       if (!headCenter) return;
 

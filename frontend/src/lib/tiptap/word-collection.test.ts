@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import type { Editor } from "@tiptap/react";
 import { collectAllWords } from "./word-collection";
 
 function mockEditor(blocks: string[]) {
@@ -20,7 +21,7 @@ function mockEditor(blocks: string[]) {
     },
   };
 
-  return { state: { doc } } as any;
+  return { state: { doc } } as unknown as Editor;
 }
 
 describe("when using collectAllWords", () => {
@@ -127,7 +128,7 @@ function mockEditorWithNodes(nodes: MockNode[]) {
       }
     },
   };
-  return { state: { doc } } as any;
+  return { state: { doc } } as unknown as Editor;
 }
 
 function textBlock(text: string): MockNode {

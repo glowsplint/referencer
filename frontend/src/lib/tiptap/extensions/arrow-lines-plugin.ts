@@ -126,7 +126,8 @@ export class ArrowLinesView {
     this.updateSvgSize();
 
     const editorView = this.view;
-    const wrapper = this.wrapper!;
+    // SAFETY: ensureWrapper() returned true above, guaranteeing this.wrapper is set
+    const wrapper = this.wrapper as HTMLElement;
     const defs = document.createElementNS(SVG_NS, "defs");
 
     for (const arrow of this.arrows) {
