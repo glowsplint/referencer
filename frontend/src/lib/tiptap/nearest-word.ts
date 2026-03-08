@@ -339,7 +339,8 @@ export function getWordRectRelativeToWrapper(
     }
 
     const startCoords = editor.view.coordsAtPos(word.from);
-    const endCoords = editor.view.coordsAtPos(word.to);
+    // Use side=-1 to resolve inside the word at decoration boundaries
+    const endCoords = editor.view.coordsAtPos(word.to, -1);
     return {
       x: startCoords.left - wrapperRect.left + targetWrapper.scrollLeft,
       y: startCoords.top - wrapperRect.top + targetWrapper.scrollTop,
@@ -377,7 +378,8 @@ export function getWordCenterContentRelative(
     }
 
     const startCoords = editorView.coordsAtPos(word.from);
-    const endCoords = editorView.coordsAtPos(word.to);
+    // Use side=-1 to resolve inside the word at decoration boundaries
+    const endCoords = editorView.coordsAtPos(word.to, -1);
     return {
       cx: (startCoords.left + endCoords.right) / 2 - wrapperRect.left + wrapper.scrollLeft,
       cy: (startCoords.top + startCoords.bottom) / 2 - wrapperRect.top + wrapper.scrollTop,
@@ -405,7 +407,10 @@ function getWordViewportCoords(
       return { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
     }
     const s = editor.view.coordsAtPos(word.from);
-    const e = editor.view.coordsAtPos(word.to);
+    // Use side=-1 so ProseMirror resolves inside the word when at a
+    // decoration boundary (inline highlight spans end at word.to and
+    // the default side can return right=0).
+    const e = editor.view.coordsAtPos(word.to, -1);
     return { left: s.left, right: e.right, top: s.top, bottom: s.bottom };
   } catch {
     return null;
