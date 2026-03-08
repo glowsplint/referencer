@@ -106,7 +106,6 @@ export function DocumentGrid({
   const [deleteFolderTarget, setDeleteFolderTarget] = useState<FolderItem | null>(null);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const { sortConfig, setSort, compare } = useDocumentSort(documents);
-
   const folderTree = buildFolderTree(folders);
 
   const toggleView = (mode: ViewMode) => {
