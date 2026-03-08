@@ -14,12 +14,6 @@
     "connected": "Connected",
     "disconnected": "Disconnected"
   },
-  "export": {
-    "title": "Export",
-    "pdf": "Export as PDF",
-    "markdown": "Export as Markdown",
-    "cleanText": "Export clean text"
-  },
   "print": {
     "comments": "Comments",
     "highlights": "Highlights",

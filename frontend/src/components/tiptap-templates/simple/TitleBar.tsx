@@ -1,12 +1,11 @@
 // Title bar with inline-editable document title, share dialog trigger,
-// document switcher dropdown, and PDF export button. Sits above the editor toolbar.
+// and document switcher dropdown. Sits above the editor toolbar.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Share2, Home, ChevronDown, Check, Settings } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/tiptap-ui-primitive/tooltip";
-import { ExportMenu } from "@/components/ExportMenu";
 import { ShareDialog } from "@/components/ShareDialog";
 import { SettingsDialog } from "@/components/SettingsDialog";
 import { CollaborationPresence } from "@/components/CollaborationPresence";
@@ -19,11 +18,9 @@ import { renameDocument, fetchDocument } from "@/lib/document-client";
 
 interface TitleBarProps {
   navigate?: (hash: string) => void;
-  onExportMarkdown?: () => void;
-  onExportCleanText?: () => void;
 }
 
-export function TitleBar({ navigate, onExportMarkdown, onExportCleanText }: TitleBarProps) {
+export function TitleBar({ navigate }: TitleBarProps) {
   const { t } = useTranslation();
   const {
     documentId,
@@ -231,10 +228,6 @@ export function TitleBar({ navigate, onExportMarkdown, onExportCleanText }: Titl
           </span>
         </div>
         <CollaborationPresence provider={yjs.provider?.wsProvider ?? null} className="mr-1" />
-        <ExportMenu
-          onExportMarkdown={onExportMarkdown ?? (() => {})}
-          onExportCleanText={onExportCleanText ?? (() => {})}
-        />
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
