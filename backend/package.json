@@ -10,7 +10,7 @@
     "@oslojs/encoding": "^1.1.0",
     "@supabase/supabase-js": "^2.47.0",
     "arctic": "^3.5.0",
-    "hono": "^4.7.0",
+    "hono": "^4.12.5",
     "ksuid": "^3.0.0"
   },
   "devDependencies": {
