@@ -29,6 +29,7 @@ import { WordHoverExtension } from "@/lib/tiptap/extensions/word-hover";
 import { ArrowLinesExtension } from "@/lib/tiptap/extensions/arrow-lines-plugin";
 import { TextRemovalPreviewExtension } from "@/lib/tiptap/extensions/text-removal-preview";
 import { PrintRefDecorationsExtension } from "@/lib/tiptap/extensions/print-ref-decorations";
+import { PasteCleanerExtension } from "@/lib/tiptap/extensions/paste-cleaner";
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension";
 import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap/upload";
@@ -76,6 +77,7 @@ export function createSimpleEditorExtensions(opts?: EditorExtensionOptions) {
     ArrowLinesExtension,
     TextRemovalPreviewExtension,
     PrintRefDecorationsExtension,
+    PasteCleanerExtension,
     Markdown,
     Placeholder.configure({
       placeholder: "Paste or type your text here\u2026",

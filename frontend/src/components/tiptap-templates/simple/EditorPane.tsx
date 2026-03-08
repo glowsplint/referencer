@@ -105,6 +105,29 @@ export function EditorPane({
         handlePaste: (view, event) => {
           const items = event.clipboardData?.items;
           if (!items) return false;
+          // Handle .docx file paste
+          for (const item of items) {
+            if (
+              item.type ===
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ) {
+              event.preventDefault();
+              const file = item.getAsFile();
+              if (!file) return false;
+              file.arrayBuffer().then(async (buffer) => {
+                const mammoth = await import("mammoth");
+                const result = await mammoth.convertToHtml({ arrayBuffer: buffer });
+                const { cleanPastedHtml } = await import("@/lib/tiptap/paste-html-cleaner");
+                const cleaned = cleanPastedHtml(result.value);
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = cleaned;
+                const { DOMParser: PmDOMParser } = await import("@tiptap/pm/model");
+                const slice = PmDOMParser.fromSchema(view.state.schema).parseSlice(tempDiv);
+                view.dispatch(view.state.tr.replaceSelection(slice));
+              });
+              return true;
+            }
+          }
           for (const item of items) {
             if (item.type.startsWith("image/")) {
               event.preventDefault();
@@ -127,6 +150,36 @@ export function EditorPane({
         handleDrop: (view, event) => {
           const files = event.dataTransfer?.files;
           if (!files?.length) return false;
+          // Handle .docx file drop
+          for (const file of files) {
+            if (
+              file.name.endsWith(".docx") ||
+              file.type ===
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ) {
+              event.preventDefault();
+              file.arrayBuffer().then(async (buffer) => {
+                const mammoth = await import("mammoth");
+                const result = await mammoth.convertToHtml({ arrayBuffer: buffer });
+                const { cleanPastedHtml } = await import("@/lib/tiptap/paste-html-cleaner");
+                const cleaned = cleanPastedHtml(result.value);
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = cleaned;
+                const { DOMParser: PmDOMParser } = await import("@tiptap/pm/model");
+                const slice = PmDOMParser.fromSchema(view.state.schema).parseSlice(tempDiv);
+                const pos = view.posAtCoords({
+                  left: event.clientX,
+                  top: event.clientY,
+                });
+                if (pos) {
+                  view.dispatch(view.state.tr.insert(pos.pos, slice.content));
+                } else {
+                  view.dispatch(view.state.tr.replaceSelection(slice));
+                }
+              });
+              return true;
+            }
+          }
           for (const file of files) {
             if (file.type.startsWith("image/")) {
               event.preventDefault();

@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "وحدة التحكم",
     "close": "إغلاق",
-    "empty": "لم يتم تسجيل أي إجراءات بعد."
+    "empty": "لم يتم تسجيل أي إجراءات بعد.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

@@ -208,3 +208,11 @@ export interface UseYjsLayersReturn {
   ) => void;
   setActiveLayerId: React.Dispatch<React.SetStateAction<string | null>>;
 }
+
+export type PaneContentType = "text" | "pdf";
+
+export interface PaneMetadata {
+  type: PaneContentType;
+  storageKey?: string;
+  filename?: string;
+}

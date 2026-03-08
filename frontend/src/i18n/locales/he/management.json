@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "מסוף פעולות",
     "close": "סגור",
-    "empty": "לא נרשמו פעולות עדיין."
+    "empty": "לא נרשמו פעולות עדיין.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

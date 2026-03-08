@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Action Console",
     "close": "isara",
-    "empty": "Wala pang mga naitatalang aksyon."
+    "empty": "Wala pang mga naitatalang aksyon.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

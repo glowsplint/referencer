@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Kọ́nsólù Iṣẹ́",
     "close": "padé",
-    "empty": "A kò tíì ṣàkọsílẹ̀ iṣẹ́ kankan."
+    "empty": "A kò tíì ṣàkọsílẹ̀ iṣẹ́ kankan.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

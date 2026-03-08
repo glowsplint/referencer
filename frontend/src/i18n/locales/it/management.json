@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Console azioni",
     "close": "Chiudi",
-    "empty": "Nessuna azione registrata."
+    "empty": "Nessuna azione registrata.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

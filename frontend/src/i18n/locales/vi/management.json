@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Bảng điều khiển hành động",
     "close": "đóng",
-    "empty": "Chưa có hành động nào được ghi nhận."
+    "empty": "Chưa có hành động nào được ghi nhận.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

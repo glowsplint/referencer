@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "คอนโซลการทำงาน",
     "close": "ปิด",
-    "empty": "ยังไม่มีการบันทึกการทำงาน"
+    "empty": "ยังไม่มีการบันทึกการทำงาน",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

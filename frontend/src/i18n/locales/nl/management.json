@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Actieconsole",
     "close": "Sluiten",
-    "empty": "Nog geen acties vastgelegd."
+    "empty": "Nog geen acties vastgelegd.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

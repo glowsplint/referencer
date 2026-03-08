@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Åtgärdskonsol",
     "close": "stäng",
-    "empty": "Inga åtgärder registrerade ännu."
+    "empty": "Inga åtgärder registrerade ännu.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

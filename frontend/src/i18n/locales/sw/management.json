@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Koni ya Vitendo",
     "close": "funga",
-    "empty": "Hakuna vitendo vilivyorekodiwa bado."
+    "empty": "Hakuna vitendo vilivyorekodiwa bado.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Aktionskonsole",
     "close": "Schließen",
-    "empty": "Noch keine Aktionen aufgezeichnet."
+    "empty": "Noch keine Aktionen aufgezeichnet.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

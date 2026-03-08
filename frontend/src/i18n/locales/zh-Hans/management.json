@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "操作控制台",
     "close": "关闭",
-    "empty": "尚未记录任何操作。"
+    "empty": "尚未记录任何操作。",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

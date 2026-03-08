@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "অ্যাকশন কনসোল",
     "close": "বন্ধ করুন",
-    "empty": "এখনও কোনো কার্যক্রম রেকর্ড হয়নি।"
+    "empty": "এখনও কোনো কার্যক্রম রেকর্ড হয়নি।",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

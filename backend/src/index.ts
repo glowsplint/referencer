@@ -8,6 +8,7 @@ import { handleShare, handleResolveShare, handleAcceptShare } from "./api/share"
 
 import { rateLimiter } from "./lib/rate-limit";
 import { documents } from "./api/documents";
+import { pdf } from "./api/pdf";
 import { folders } from "./api/folders";
 import { tags } from "./api/tags";
 import { preferences } from "./api/preferences";
@@ -131,6 +132,9 @@ app.use("/api/tags/*", async (c, next) => {
 
 // Documents API
 app.route("/api/documents", documents);
+
+// PDF API (nested under documents)
+app.route("/api/documents", pdf);
 
 // Folders API
 app.route("/api/folders", folders);

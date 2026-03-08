@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Konsol Tindakan",
     "close": "tutup",
-    "empty": "Belum ada tindakan direkodkan."
+    "empty": "Belum ada tindakan direkodkan.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "アクションコンソール",
     "close": "閉じる",
-    "empty": "まだアクションが記録されていません。"
+    "empty": "まだアクションが記録されていません。",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",
