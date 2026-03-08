@@ -213,6 +213,22 @@ folders.patch("/:id/move-document", async (c) => {
       });
       return c.json({ error: "Forbidden" }, 403);
     }
+
+    // Verify the target folder belongs to the user
+    const { data: folder } = await supabase
+      .from("document_folder")
+      .select("id")
+      .eq("id", folderId)
+      .eq("user_id", user.id)
+      .single();
+    if (!folder) {
+      log.warn("Permission denied for move-document — folder not owned", {
+        userId: user.id,
+        folderId,
+      });
+      return c.json({ error: "Folder not found" }, 404);
+    }
+
     await moveDocumentToFolder(supabase, user.id, body.documentId, folderId);
     log.info("PATCH /api/folders/:id/move-document", {
       userId: user.id,
