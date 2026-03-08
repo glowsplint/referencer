@@ -45,9 +45,11 @@ export function useYjs(documentId: string) {
       providerRef.current = provider;
 
       const onStatus = ({ status }: { status: string }) => {
+        console.log(`[yjs] status: ${status} (${new Date().toISOString()})`);
         setConnected(status === "connected");
       };
       const onSync = (isSynced: boolean) => {
+        console.log(`[yjs] sync: ${isSynced}`);
         setSynced(isSynced);
       };
       provider.wsProvider.on("status", onStatus);
@@ -61,8 +63,19 @@ export function useYjs(documentId: string) {
         connectionAttempted = true;
         setSynced(true);
       };
-      provider.wsProvider.on("connection-error", onConnectionError);
-      provider.wsProvider.on("connection-close", onConnectionError);
+      provider.wsProvider.on("connection-error", (event: Event) => {
+        console.warn(`[yjs] connection-error`, event);
+        onConnectionError();
+      });
+      provider.wsProvider.on(
+        "connection-close",
+        (event: CloseEvent | null) => {
+          console.warn(
+            `[yjs] connection-close: code=${event?.code} reason=${event?.reason}`,
+          );
+          onConnectionError();
+        },
+      );
 
       // Proactive token refresh every 40s (JWT lifetime is 60s)
       if (token) {
