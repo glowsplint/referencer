@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
+import type { AnnotationIndexRow } from "./extract-annotations";
 
-function base64ToUint8(b64: string): Uint8Array {
+export function base64ToUint8(b64: string): Uint8Array {
   const binary = atob(b64);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) {
@@ -53,4 +54,18 @@ export async function saveSnapshot(
   if (error) {
     throw new Error(`Supabase upsert failed for room ${roomName}: ${error.message}`);
   }
+}
+
+export async function updateAnnotationIndex(
+  url: string,
+  key: string,
+  documentId: string,
+  rows: AnnotationIndexRow[],
+): Promise<void> {
+  const supabase = createClient(url, key);
+  const { error } = await supabase.rpc("upsert_annotation_index", {
+    p_document_id: documentId,
+    p_rows: rows,
+  });
+  if (error) throw new Error(`Annotation index update failed: ${error.message}`);
 }

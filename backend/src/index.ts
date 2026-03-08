@@ -10,6 +10,7 @@ import { rateLimiter } from "./lib/rate-limit";
 import { documents } from "./api/documents";
 import { folders } from "./api/folders";
 import { preferences } from "./api/preferences";
+import { search } from "./api/search";
 import { cleanExpiredSessions } from "./auth/store";
 import { createLogger } from "./lib/logger";
 import { createMetrics } from "./lib/metrics";
@@ -128,6 +129,17 @@ app.route("/api/folders", folders);
 
 // Preferences API
 app.route("/api/preferences", preferences);
+
+// Search rate limiter (30 req/min per user)
+const searchLimiter = rateLimiter({
+  windowMs: 60_000,
+  limit: 30,
+  keyGenerator: (c) => `search:${c.get("user")?.id ?? getClientIp(c)}`,
+});
+app.use("/api/search/*", searchLimiter);
+
+// Search API
+app.route("/api/search", search);
 
 // Share API
 app.post("/api/share", handleShare());

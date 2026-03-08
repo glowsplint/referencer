@@ -5,7 +5,8 @@ import * as decoding from "lib0/decoding";
 import * as syncProtocol from "y-protocols/sync";
 import * as awarenessProtocol from "y-protocols/awareness";
 import { createClient } from "@supabase/supabase-js";
-import { loadSnapshot, saveSnapshot } from "./persistence";
+import { loadSnapshot, saveSnapshot, updateAnnotationIndex } from "./persistence";
+import { extractAnnotations } from "./extract-annotations";
 import { createLogger, type Logger } from "./logger";
 import { createCollabMetrics, type CollabMetrics } from "./metrics";
 
@@ -555,6 +556,25 @@ export class YjsRoom extends DurableObject<Env> {
         this.roomName,
         err instanceof Error ? err.name : "unknown",
       );
+    }
+
+    try {
+      const rows = extractAnnotations(this.doc);
+      if (rows.length > 0) {
+        await updateAnnotationIndex(
+          this.env.SUPABASE_URL,
+          this.env.SUPABASE_SERVICE_KEY,
+          this.roomName,
+          rows,
+        );
+      }
+      this.metrics.trackPersistence("annotation_index", this.roomName, rows.length, true);
+    } catch (err) {
+      this.log.error("Annotation indexing failed", {
+        roomName: this.roomName,
+        error: err instanceof Error ? err.message : "unknown",
+      });
+      this.metrics.trackPersistence("annotation_index", this.roomName, 0, false);
     }
   }
 }

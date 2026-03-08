@@ -128,6 +128,10 @@
     "onboardingHighlight": "Highlight & underline",
     "onboardingHighlightHint": "Mark key phrases with colored layers",
     "onboardingComment": "Comment & discuss",
-    "onboardingCommentHint": "Add notes, replies, and reactions"
+    "onboardingCommentHint": "Add notes, replies, and reactions",
+    "searchAnnotationCount_one": "{{count}} annotation found",
+    "searchAnnotationCount_other": "{{count}} annotations found",
+    "searchAnnotationsLoading": "Searching annotations...",
+    "searchAnnotationsEmpty": "No annotations match your search"
   }
 }

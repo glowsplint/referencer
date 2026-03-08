@@ -63,47 +63,6 @@ From codebase audit — features that are missing or incomplete:
 
 ## 1. Annotation UX
 
-_Make marking up Scripture frictionless._
-
-### 1.1 Highlight = Note Unification
-
-Clicking any highlight opens an inline note editor — no separate "create comment" step. Logos proved this reduces friction dramatically. A highlight _is_ a note; the text content is just optional.
-
-**Impact**: High
-**Inspired by**: Logos Bible Software
-
-### 1.2 Semantic Color Presets
-
-Assign meaning to highlight colors with a configurable legend:
-
-| Color  | Default Meaning |
-| ------ | --------------- |
-| Yellow | Key theme       |
-| Green  | Promise         |
-| Red    | Command         |
-| Blue   | Prophecy        |
-| Purple | Personal        |
-| Orange | Cross-reference |
-
-Show the legend in the management pane. Users can rename meanings. This transforms highlights from random colors into a structured inductive study system.
-
-**Impact**: High
-**Inspired by**: Logos inductive markup, Precept/Kay Arthur method
-
-### 1.3 Hover-to-Peek Margin Notes
-
-Show a tiny icon in the margin for each annotation. Hovering reveals a preview tooltip; clicking expands to the full sidebar panel. Keeps the reading surface clean while making notes discoverable.
-
-**Impact**: High
-**Inspired by**: Hypothesis, Google Docs
-
-### 1.4 Inline Pop-over Toolbar on Selection
-
-On text selection, show a compact floating toolbar with color swatches + note icon + share icon. No need to switch tools first. This is the dominant pattern in modern annotation tools.
-
-**Impact**: High
-**Inspired by**: Genius, Readwise Reader
-
 ### 1.5 Clutter-Free Toggle
 
 One keystroke to hide ALL annotation markers and show clean text for distraction-free reading. Analogous to Google Docs' 2024 "hide comments" option.
@@ -111,34 +70,7 @@ One keystroke to hide ALL annotation markers and show clean text for distraction
 **Impact**: Medium
 **Inspired by**: Google Docs
 
-### 1.6 Arrow Annotations with Text
-
-Let arrows carry a label or comment, not just connect two spans. When you draw an arrow from Genesis 22 to John 3:16, you should be able to label it "typological fulfillment."
-
-**Impact**: Medium
-**Addresses**: Existing gap
-
-### 1.7 Annotation Templates
-
-Preset comment starters for common inductive study patterns:
-
-- "Observation: ..."
-- "Application: ..."
-- "Cross-reference: ..."
-- "Question: ..."
-- "Historical context: ..."
-
-Reduces blank-page friction, especially for new users.
-
-**Impact**: Medium
-**Inspired by**: Inductive Bible study method
-
-### 1.8 Auto-Highlight on Select
-
-Selected text immediately becomes a highlight with no extra click (Readwise pattern). One fewer step in the most common annotation workflow.
-
-**Impact**: Low
-**Inspired by**: Readwise Reader
+As an additional feature, allow duplication without annotations (just texts).
 
 ---
 
@@ -155,22 +87,16 @@ Search across all comment text, replies, and layer names. Support filters:
 - By author (in collaborative documents)
 - By annotation type (highlight, comment, underline, arrow)
 - By tag (see 2.3)
+- By text title
 
 This is a table-stakes feature that's currently missing.
 
 **Impact**: Critical
 **Inspired by**: Logos faceted search
 
-### 2.2 Personal Concordance / "Cited By" Panel
+### 2.3 Tag System for Documents
 
-For any passage, show all your own annotations that reference it across all documents. A personal cross-reference index built from your study history.
-
-**Impact**: High
-**Inspired by**: Roam Research backlinks
-
-### 2.3 Tag System for Annotations
-
-Add `#tags` to comments (grace, covenant, prophecy, etc.). Browse by tag across documents. This enables cross-document theme tracking without requiring a complex graph database.
+Add `#tags` to documents (grace, covenant, prophecy, etc.). Browse by tag across documents in the hub. This enables cross-document theme tracking without requiring a complex graph database.
 
 **Impact**: High
 **Inspired by**: Olive Tree, Hypothesis
@@ -182,53 +108,11 @@ The app already has partial similar-text highlighting. Expand it: when you highl
 **Impact**: Medium
 **Inspired by**: Blue Letter Bible concordance
 
-### 2.5 Study Timeline
-
-Chronological view of all your annotations on a passage, showing how your understanding evolved over multiple study sessions. "You first studied Romans 8:28 on Jan 15. You added 3 more notes on Feb 2."
-
-**Impact**: Medium
-**Inspired by**: Roam daily notes pattern
-
 ---
 
 ## 3. Knowledge Linking
 
 _Build connections between passages._
-
-### 3.1 Verse-to-Verse Backlinks
-
-Annotating Matt 5:17 with a reference to Isaiah 53 auto-creates a bidirectional link. Both passages show "linked from X." This is the killer PKM feature that no Bible app does natively — Roam/Obsidian users build this manually.
-
-**Impact**: High
-**Inspired by**: Roam block references, Obsidian backlinks
-
-### 3.2 Thematic Tag Graph
-
-Visualize how tagged annotations cluster and connect across books. Options:
-
-- Force-directed graph (Obsidian-style)
-- Chord diagram (showing inter-book connections)
-- Arc diagram (linear, showing connections along a canonical book timeline)
-
-Filter by tag, date range, or layer.
-
-**Impact**: High
-**Inspired by**: Obsidian graph view, InfraNodus
-
-### 3.3 Passage Map Canvas
-
-A separate canvas view where users can:
-
-- Drag passages as cards
-- Draw typed connections: fulfillment, parallel, contrast, typology, quotation
-- Add free-text labels on edges
-- Cluster related passages spatially
-- Export as image
-
-This extends the existing arrow feature into a spatial thinking tool.
-
-**Impact**: High
-**Inspired by**: Scrintal, Obsidian Canvas
 
 ### 3.4 Automatic Cross-Reference Suggestions
 
@@ -316,8 +200,6 @@ _Study together in real-time or async._
 
 Annotations are private by default. Users can:
 
-- Create named study groups
-- Share specific annotations or entire sessions with a group
 - See group members' highlights overlaid with distinct colors or initials
 - Filter view: "my annotations only" / "group annotations" / "all"
 
@@ -325,13 +207,6 @@ This leverages the existing Yjs collaboration infrastructure.
 
 **Impact**: High
 **Inspired by**: Perusall, Hypothesis
-
-### 5.2 Passage Engagement Heatmap
-
-Within a study group, visually tint verses where multiple members have annotated. Warmer color = more group discussion. A passive social signal that draws attention to active study areas without creating notification noise.
-
-**Impact**: High
-**Inspired by**: Perusall confusion/engagement reports
 
 ### 5.3 @Mentions in Comments
 
@@ -746,51 +621,6 @@ Full offline-capable PWA with:
 
 **Impact**: Medium
 **Inspired by**: Modern PWA patterns
-
----
-
-## Top 10 Highest-Impact Recommendations
-
-Prioritized by differentiation potential, user value, and feasibility given the existing architecture:
-
-| Priority | Idea                            | Section  | Why                                          |
-| -------- | ------------------------------- | -------- | -------------------------------------------- |
-| 1        | Full-text annotation search     | 2.1      | Table-stakes missing feature                 |
-| 2        | PDF + Markdown export           | 6.1, 6.2 | Users can't get study out of the app         |
-| 3        | Semantic color presets + legend | 1.2      | Transforms highlights into structured study  |
-| 4        | Tag system for annotations      | 2.3      | Enables cross-document theme tracking        |
-| 5        | Verse-to-verse backlinks        | 3.1      | Killer PKM feature no Bible app has natively |
-| 6        | In-context AI sidebar           | 7.1      | #1 feature competitors are racing to ship    |
-| 7        | Study group spaces              | 5.1      | Leverages existing Yjs collab infra          |
-| 8        | Passage engagement heatmap      | 5.2      | Unique social feature — nobody has this      |
-| 9        | Linked-scroll per pane          | 4.1      | Makes multi-pane actually useful             |
-| 10       | Reading themes + typography     | 8.1, 8.2 | Essential for extended reading sessions      |
-
----
-
-## Blue-Ocean Opportunities
-
-Features where **no existing tool excels** — genuine differentiation potential:
-
-### Multi-Passage Relationship Annotation
-
-Annotating the _relationship between_ two verses (typology, fulfillment, contrast, quotation). The existing arrow feature is the closest any tool has. Adding typed relationship labels and a relationship browser would be unique in the market.
-
-### Collaborative Small-Group Annotation
-
-YouVersion's social features are shallow. Perusall is designed for classrooms. Nobody owns the 5-15 person Bible study group use case — shared annotations, group discussion on passages, leader notes layers, engagement heatmaps.
-
-### Spaced Repetition for Scripture Annotations
-
-Readwise does this for general reading highlights. No Bible app has native spaced repetition: "You highlighted Romans 8:28 three weeks ago. Here's your note. Do you want to revisit this passage?"
-
-### Translation Diff View
-
-Showing word-level differences between Bible translations side-by-side, like a code diff. Trivial to implement with diff algorithms; no Bible tool does it. Instant value for translation comparison study.
-
-### Visual Theme Threading
-
-Tracing a theme (temple, covenant, redemption) across the entire Bible with a visual thread connecting annotations. BibleProject teaches themes narratively in videos — no tool lets users _build_ their own theme map from their annotations.
 
 ---
 
