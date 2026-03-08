@@ -128,6 +128,10 @@
     "deleteFolderTitle": "Delete Folder",
     "deleteFolderConfirm": "Are you sure you want to delete \"{{name}}\"? All subfolders will also be deleted. Documents inside will be moved out of the folder. This action cannot be undone.",
     "gridView": "Grid view",
-    "listView": "List view"
+    "listView": "List view",
+    "searchAnnotationCount_one": "{{count}} annotation found",
+    "searchAnnotationCount_other": "{{count}} annotations found",
+    "searchAnnotationsLoading": "Searching annotations...",
+    "searchAnnotationsEmpty": "No annotations match your search"
   }
 }

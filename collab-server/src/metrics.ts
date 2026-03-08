@@ -6,7 +6,7 @@ export interface CollabMetrics {
   ): void;
   trackConnection(event: "connect" | "disconnect", room: string, concurrentCount: number): void;
   trackPersistence(
-    event: "snapshot_save" | "snapshot_load",
+    event: "snapshot_save" | "snapshot_load" | "annotation_index",
     room: string,
     bytes: number,
     success: boolean,

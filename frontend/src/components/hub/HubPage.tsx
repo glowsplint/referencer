@@ -11,7 +11,9 @@ import { UserMenu } from "@/components/UserMenu";
 import { SettingsDialog } from "@/components/SettingsDialog";
 import { DocumentGrid } from "./DocumentGrid";
 import { NewDocumentDialog } from "./NewDocumentDialog";
+import { HubSearchResults } from "./HubSearchResults";
 import { Button } from "@/components/ui/button";
+import { useAnnotationSearchApi } from "@/hooks/data/use-annotation-search-api";
 
 interface HubPageProps {
   navigate: (hash: string) => void;
@@ -70,6 +72,13 @@ export function HubPage({ navigate }: HubPageProps) {
       moveToFolder(id, newDocumentFolderId);
     }
   };
+
+  const {
+    results: searchResults,
+    total: searchTotal,
+    isLoading: searchLoading,
+    error: searchError,
+  } = useAnnotationSearchApi(searchQuery);
 
   const showSearch = isAuthenticated && !authLoading;
 
@@ -136,6 +145,16 @@ export function HubPage({ navigate }: HubPageProps) {
         ) : isAuthenticated ? (
           /* Logged-in document list */
           <div className="max-w-6xl mx-auto px-6 py-8">
+            {searchQuery.trim().length >= 2 && (
+              <HubSearchResults
+                results={searchResults}
+                total={searchTotal}
+                query={searchQuery}
+                isLoading={searchLoading}
+                error={searchError}
+                navigate={navigate}
+              />
+            )}
             <DocumentGrid
               documents={documents}
               isLoading={wsLoading}
