@@ -2,7 +2,17 @@
 // toolbar, management panel, editor panes with dividers, annotation panel,
 // arrow overlay, and action console. Wires together all annotation tools
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
-import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
+import {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  Fragment,
+  Suspense,
+  lazy,
+  type RefObject,
+} from "react";
 import { useTranslation } from "react-i18next";
 import type * as Y from "yjs";
 import { EditorContext } from "@tiptap/react";
@@ -16,6 +26,8 @@ import { UnsavedBanner } from "./components/UnsavedBanner";
 import { TextHeader } from "./components/TextHeader";
 import { PLACEHOLDER_CONTENT } from "./data/default-document";
 import { useEditorDocument } from "./hooks/data/use-editor-document";
+import { usePaneTypes } from "./hooks/data/use-pane-types";
+import { uploadPdf } from "./lib/pdf/pdf-storage";
 import { useWordSelection } from "./hooks/selection/use-word-selection";
 import { useDrawingMode } from "./hooks/tools/use-drawing-mode";
 import { useCommentMode } from "./hooks/tools/use-comment-mode";
@@ -30,6 +42,7 @@ import { useCycleLayer } from "./hooks/ui/use-cycle-layer";
 import { useDragSelection } from "./hooks/selection/use-drag-selection";
 import { useUndoRedoKeyboard } from "./hooks/ui/use-undo-redo-keyboard";
 import { useActionConsole } from "./hooks/ui/use-action-console";
+import { useZenMode } from "./hooks/ui/use-zen-mode";
 import { useIsBreakpoint } from "./hooks/ui/use-is-breakpoint";
 import { useDocumentAutosave } from "./hooks/data/use-document-autosave";
 
@@ -58,6 +71,11 @@ import { useMentionableUsers } from "./hooks/data/use-mentionable-users";
 import { exportDocumentAsMarkdown } from "@/lib/export/export-markdown";
 import { apiFetch } from "@/lib/api-client";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
+import type { PaneMetadata } from "@/types/editor";
+
+const LazyPdfPane = lazy(() =>
+  import("./components/PdfPane").then((m) => ({ default: m.PdfPane })),
+);
 
 function getEditorColumns(editorCount: number): { left: number[]; right: number[] } {
   const left: number[] = [];
@@ -106,6 +124,11 @@ interface EditorCellProps {
   selectedArrowId: string | null;
   yjsSynced: boolean;
   overscroll: boolean;
+  isZenMode?: boolean;
+  paneMetadata?: PaneMetadata;
+  onUploadPdf?: (file: File) => void;
+  onRemovePdf?: () => void;
+  documentId: string;
 }
 
 function EditorCell({
@@ -133,8 +156,14 @@ function EditorCell({
   selectedArrowId,
   yjsSynced,
   overscroll,
+  isZenMode,
+  paneMetadata,
+  onUploadPdf,
+  onRemovePdf,
+  documentId,
 }: EditorCellProps) {
   const cellFlex = `${i % 2 === 0 ? columnSplit : 100 - columnSplit} 0 0%`;
+  const isPdf = paneMetadata?.type === "pdf" && paneMetadata.storageKey && paneMetadata.filename;
   return (
     <div
       className="min-w-0 min-h-0 overflow-hidden flex flex-col"
@@ -143,33 +172,60 @@ function EditorCell({
         display: sectionVisible === false ? "none" : undefined,
       }}
     >
-      <TextHeader name={sectionName} index={i} onUpdateName={onUpdateName} />
-      <div className="flex-1 min-h-0 overflow-hidden">
-        <ErrorBoundary>
-          <EditorPane
-            isLocked={isLocked || effectiveReadOnly}
-            activeTool={activeTool}
-            content={PLACEHOLDER_CONTENT}
-            index={i}
-            fragment={fragment}
-            onEditorMount={onEditorMount}
-            onFocus={handlePaneFocus}
-            onMouseDown={isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
-            onMouseMove={isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
-            onMouseUp={isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
-            layers={layers}
-            selection={selection}
-            selectionHidden={selectionHidden}
-            activeLayerColor={activeLayerColor}
-            isDarkMode={isDarkMode}
-            removeArrow={removeArrow}
-            sectionVisibility={sectionVisibility}
-            selectedArrowId={selectedArrowId}
-            yjsSynced={yjsSynced}
-            overscroll={overscroll}
-          />
-        </ErrorBoundary>
-      </div>
+      {!isZenMode && (
+        <TextHeader
+          name={sectionName}
+          index={i}
+          onUpdateName={onUpdateName}
+          onUploadPdf={onUploadPdf}
+        />
+      )}
+      {isPdf ? (
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                Loading...
+              </div>
+            }
+          >
+            <LazyPdfPane
+              documentId={documentId}
+              paneIndex={i}
+              storageKey={paneMetadata.storageKey!}
+              filename={paneMetadata.filename!}
+              onRemove={onRemovePdf!}
+            />
+          </Suspense>
+        </div>
+      ) : (
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <ErrorBoundary>
+            <EditorPane
+              isLocked={isLocked || effectiveReadOnly}
+              activeTool={activeTool}
+              content={PLACEHOLDER_CONTENT}
+              index={i}
+              fragment={fragment}
+              onEditorMount={onEditorMount}
+              onFocus={handlePaneFocus}
+              onMouseDown={isLocked && !effectiveReadOnly ? handleMouseDown : undefined}
+              onMouseMove={isLocked && !effectiveReadOnly ? handleMouseMove : undefined}
+              onMouseUp={isLocked && !effectiveReadOnly ? handleMouseUp : undefined}
+              layers={layers}
+              selection={selection}
+              selectionHidden={selectionHidden}
+              activeLayerColor={activeLayerColor}
+              isDarkMode={isDarkMode}
+              removeArrow={removeArrow}
+              sectionVisibility={sectionVisibility}
+              selectedArrowId={selectedArrowId}
+              yjsSynced={yjsSynced}
+              overscroll={overscroll}
+            />
+          </ErrorBoundary>
+        </div>
+      )}
     </div>
   );
 }
@@ -277,6 +333,28 @@ export function App({ documentId, navigate }: AppProps) {
     unifiedUndo,
   } = docCtx;
 
+  const { paneTypes, setPaneType, clearPaneType } = usePaneTypes(docCtx.yjs.doc);
+
+  const handleUploadPdf = useCallback(
+    async (index: number, file: File) => {
+      if (!documentId) return;
+      try {
+        const { storageKey } = await uploadPdf(documentId, index, file);
+        setPaneType(index, "pdf", { storageKey, filename: file.name });
+      } catch (err) {
+        console.error("PDF upload failed:", err);
+      }
+    },
+    [documentId, setPaneType],
+  );
+
+  const handleRemovePdf = useCallback(
+    (index: number) => {
+      clearPaneType(index);
+    },
+    [clearPaneType],
+  );
+
   const [printTitle, setPrintTitle] = useState("Untitled");
   useEffect(() => {
     if (!docCtx.yjs.doc) return;
@@ -372,6 +450,13 @@ export function App({ documentId, navigate }: AppProps) {
 
   const { t } = useTranslation();
   const actionConsole = useActionConsole();
+  const zenMode = useZenMode();
+
+  const handleEnterZenMode = useCallback(() => {
+    actionConsole.setIsOpen(false);
+    zenMode.enterZenMode();
+  }, [actionConsole, zenMode]);
+
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
   useForceSave({
@@ -661,6 +746,11 @@ export function App({ documentId, navigate }: AppProps) {
     selectedArrowId: docCtx.selectedArrow?.arrowId ?? null,
     yjsSynced: docCtx.readyForSeeding,
     overscroll: settings.overscroll,
+    isZenMode: zenMode.isZenMode,
+    paneMetadata: paneTypes[i],
+    onUploadPdf: (file: File) => handleUploadPdf(i, file),
+    onRemovePdf: () => handleRemovePdf(i),
+    documentId,
   });
 
   return (
@@ -669,8 +759,8 @@ export function App({ documentId, navigate }: AppProps) {
       <EditorTour />
       <div className="flex flex-col h-screen overflow-hidden">
         <div className="flex flex-1 min-h-0">
-          {!isMobile && <ButtonPane />}
-          {!isMobile && isManagementPaneOpen && (
+          {!isMobile && !zenMode.isZenMode && <ButtonPane />}
+          {!isMobile && !zenMode.isZenMode && isManagementPaneOpen && (
             <>
               <ManagementPane width={managementPaneWidth} />
               <ManagementPaneDivider
@@ -682,17 +772,28 @@ export function App({ documentId, navigate }: AppProps) {
           )}
           <EditorContext.Provider value={{ editor: activeEditor }}>
             <div className="flex flex-col flex-1 min-w-0">
-              <TitleBar
-                navigate={navigate}
-                onExportMarkdown={handleExportMarkdown}
-                onExportCleanText={handleExportCleanText}
-              />
-              <UnsavedBanner />
-              <PrintHeader title={printTitle} layers={layers} annotationCounts={annotationCounts} />
-              <SimpleEditorToolbar isLocked={focusedPaneLocked} />
-              {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
+              {!zenMode.isZenMode && (
+                <TitleBar
+                  navigate={navigate}
+                  onExportMarkdown={handleExportMarkdown}
+                  onExportCleanText={handleExportCleanText}
+                />
+              )}
+              {!zenMode.isZenMode && <UnsavedBanner />}
+              {!zenMode.isZenMode && (
+                <PrintHeader
+                  title={printTitle}
+                  layers={layers}
+                  annotationCounts={annotationCounts}
+                />
+              )}
+              {!zenMode.isZenMode && <SimpleEditorToolbar isLocked={focusedPaneLocked} />}
+              {!isMobile && !zenMode.isZenMode && settings.showStatusBar && (
+                <StatusBar message={statusMessage} />
+              )}
               <div className="flex flex-1 min-w-0 min-h-0">
                 {!isMobile &&
+                  !zenMode.isZenMode &&
                   anyPaneLocked &&
                   ((settings.commentPlacement === "left" && hasAnyAnnotations) ||
                     (settings.commentPlacement === "both" && hasLeftAnnotations)) && (
@@ -763,7 +864,8 @@ export function App({ documentId, navigate }: AppProps) {
                                 }}
                               >
                                 <EditorCell key={editorKeys[0]} {...editorCellProps(0)} />
-                                {editorCount >= 2 &&
+                                {!zenMode.isZenMode &&
+                                  editorCount >= 2 &&
                                   sectionVisibility[0] &&
                                   sectionVisibility[1] && (
                                     <Divider
@@ -778,7 +880,7 @@ export function App({ documentId, navigate }: AppProps) {
                               </div>
                             )}
                             {/* Row divider */}
-                            {bothRowsVisible && (
+                            {!zenMode.isZenMode && bothRowsVisible && (
                               <Divider
                                 onResize={handleRowResize}
                                 containerRef={containerRef}
@@ -795,7 +897,8 @@ export function App({ documentId, navigate }: AppProps) {
                                 }}
                               >
                                 <EditorCell key={editorKeys[2]} {...editorCellProps(2)} />
-                                {editorCount >= 4 &&
+                                {!zenMode.isZenMode &&
+                                  editorCount >= 4 &&
                                   sectionVisibility[2] &&
                                   sectionVisibility[3] && (
                                     <Divider
@@ -815,9 +918,13 @@ export function App({ documentId, navigate }: AppProps) {
                     : editorWidths.map((width, i) => {
                         const showDivider =
                           i > 0 && sectionVisibility[i - 1] && sectionVisibility[i];
+                        const isPdf =
+                          paneTypes[i]?.type === "pdf" &&
+                          paneTypes[i]?.storageKey &&
+                          paneTypes[i]?.filename;
                         return (
                           <Fragment key={editorKeys[i]}>
-                            {showDivider && (
+                            {showDivider && !zenMode.isZenMode && (
                               <Divider
                                 onResize={(pct) => handleDividerResize(i - 1, pct)}
                                 containerRef={containerRef}
@@ -831,55 +938,79 @@ export function App({ documentId, navigate }: AppProps) {
                                 display: sectionVisibility[i] === false ? "none" : undefined,
                               }}
                             >
-                              <TextHeader
-                                name={docCtx.sectionNames[i]}
-                                index={i}
-                                onUpdateName={(name) => docCtx.updateSectionName(i, name)}
-                              />
-                              <div className="flex-1 min-h-0 overflow-hidden">
-                                <ErrorBoundary>
-                                  <EditorPane
-                                    isLocked={isPaneLocked(i) || effectiveReadOnly}
-                                    activeTool={annotations.activeTool}
-                                    content={PLACEHOLDER_CONTENT}
-                                    index={i}
-                                    fragment={docCtx.yjs.getFragment(i)}
-                                    onEditorMount={handleEditorMount}
-                                    onFocus={handlePaneFocus}
-                                    onMouseDown={
-                                      isPaneLocked(i) && !effectiveReadOnly
-                                        ? handleMouseDown
-                                        : undefined
+                              {!zenMode.isZenMode && (
+                                <TextHeader
+                                  name={docCtx.sectionNames[i]}
+                                  index={i}
+                                  onUpdateName={(name) => docCtx.updateSectionName(i, name)}
+                                  onUploadPdf={(file) => handleUploadPdf(i, file)}
+                                />
+                              )}
+                              {isPdf ? (
+                                <div className="flex-1 min-h-0 overflow-hidden">
+                                  <Suspense
+                                    fallback={
+                                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                                        Loading...
+                                      </div>
                                     }
-                                    onMouseMove={
-                                      isPaneLocked(i) && !effectiveReadOnly
-                                        ? handleMouseMove
-                                        : undefined
-                                    }
-                                    onMouseUp={
-                                      isPaneLocked(i) && !effectiveReadOnly
-                                        ? handleMouseUp
-                                        : undefined
-                                    }
-                                    layers={displayLayers}
-                                    selection={selection}
-                                    selectionHidden={selectionHidden}
-                                    activeLayerColor={activeLayerColor}
-                                    isDarkMode={docCtx.isDarkMode}
-                                    removeArrow={removeArrow}
-                                    sectionVisibility={sectionVisibility}
-                                    selectedArrowId={docCtx.selectedArrow?.arrowId ?? null}
-                                    yjsSynced={docCtx.readyForSeeding}
-                                    overscroll={settings.overscroll}
-                                  />
-                                </ErrorBoundary>
-                              </div>
+                                  >
+                                    <LazyPdfPane
+                                      documentId={documentId}
+                                      paneIndex={i}
+                                      storageKey={paneTypes[i].storageKey!}
+                                      filename={paneTypes[i].filename!}
+                                      onRemove={() => handleRemovePdf(i)}
+                                    />
+                                  </Suspense>
+                                </div>
+                              ) : (
+                                <div className="flex-1 min-h-0 overflow-hidden">
+                                  <ErrorBoundary>
+                                    <EditorPane
+                                      isLocked={isPaneLocked(i) || effectiveReadOnly}
+                                      activeTool={annotations.activeTool}
+                                      content={PLACEHOLDER_CONTENT}
+                                      index={i}
+                                      fragment={docCtx.yjs.getFragment(i)}
+                                      onEditorMount={handleEditorMount}
+                                      onFocus={handlePaneFocus}
+                                      onMouseDown={
+                                        isPaneLocked(i) && !effectiveReadOnly
+                                          ? handleMouseDown
+                                          : undefined
+                                      }
+                                      onMouseMove={
+                                        isPaneLocked(i) && !effectiveReadOnly
+                                          ? handleMouseMove
+                                          : undefined
+                                      }
+                                      onMouseUp={
+                                        isPaneLocked(i) && !effectiveReadOnly
+                                          ? handleMouseUp
+                                          : undefined
+                                      }
+                                      layers={displayLayers}
+                                      selection={selection}
+                                      selectionHidden={selectionHidden}
+                                      activeLayerColor={activeLayerColor}
+                                      isDarkMode={docCtx.isDarkMode}
+                                      removeArrow={removeArrow}
+                                      sectionVisibility={sectionVisibility}
+                                      selectedArrowId={docCtx.selectedArrow?.arrowId ?? null}
+                                      yjsSynced={docCtx.readyForSeeding}
+                                      overscroll={settings.overscroll}
+                                    />
+                                  </ErrorBoundary>
+                                </div>
+                              )}
                             </div>
                           </Fragment>
                         );
                       })}
                 </div>
                 {!isMobile &&
+                  !zenMode.isZenMode &&
                   anyPaneLocked &&
                   ((settings.commentPlacement === "right" && hasAnyAnnotations) ||
                     (settings.commentPlacement === "both" && hasRightAnnotations)) && (
@@ -926,6 +1057,7 @@ export function App({ documentId, navigate }: AppProps) {
             onClose={() => actionConsole.setIsOpen(false)}
             height={actionConsole.consoleHeight}
             onHeightChange={actionConsole.setConsoleHeight}
+            onEnterZenMode={handleEnterZenMode}
           />
         )}
         {/* Mobile annotation drawer: bottom panel with read-only annotation cards */}

@@ -81,6 +81,7 @@ interface ActionConsoleProps {
   onClose: () => void;
   height: number;
   onHeightChange: (height: number) => void;
+  onEnterZenMode?: () => void;
 }
 
 export function ActionConsole({
@@ -89,6 +90,7 @@ export function ActionConsole({
   onClose,
   height,
   onHeightChange,
+  onEnterZenMode,
 }: ActionConsoleProps) {
   const { t } = useTranslation("management");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -142,6 +144,15 @@ export function ActionConsole({
       />
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-700">
         <span className="text-zinc-400 text-xs font-medium">{t("actionConsole.title")}</span>
+        {onEnterZenMode && (
+          <button
+            data-testid="zenModeButton"
+            onClick={onEnterZenMode}
+            className="text-zinc-500 hover:text-zinc-300 text-xs px-1"
+          >
+            {t("actionConsole.zenMode")}
+          </button>
+        )}
         <button
           data-testid="actionConsoleClose"
           onClick={onClose}

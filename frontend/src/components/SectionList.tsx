@@ -1,7 +1,7 @@
 // Text list in the management pane. Each text row has an inline-editable
 // name and visibility toggle. Supports drag-and-drop reordering between texts
 // (builds a permutation array on drop and calls onReorder).
-import { Eye, EyeOff, Plus } from "lucide-react";
+import { Eye, EyeOff, FileText, Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DRAG_TYPE_SECTION } from "@/constants/drag-types";
@@ -16,6 +16,7 @@ interface SectionListProps {
   onReorder: (permutation: number[]) => void;
   toggleSectionVisibility: (index: number) => void;
   toggleAllSectionVisibility: () => void;
+  paneTypes?: Record<number, import("@/types/editor").PaneMetadata>;
 }
 
 export function SectionList({
@@ -27,6 +28,7 @@ export function SectionList({
   onReorder,
   toggleSectionVisibility,
   toggleAllSectionVisibility,
+  paneTypes,
 }: SectionListProps) {
   const { t } = useTranslation("management");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -141,11 +143,14 @@ export function SectionList({
               />
             ) : (
               <div
-                className="text-sm flex-1 bg-transparent border-0 rounded px-1 py-0 truncate cursor-text hover:bg-muted/50 hover:underline decoration-muted-foreground/30"
+                className="text-sm flex-1 bg-transparent border-0 rounded px-1 py-0 truncate cursor-text hover:bg-muted/50 hover:underline decoration-muted-foreground/30 flex items-center gap-1"
                 onDoubleClick={() => handleStartEditing(i)}
                 data-testid={`textName-${i}`}
               >
                 {sectionNames[i]}
+                {paneTypes?.[i]?.type === "pdf" && (
+                  <FileText size={12} className="text-muted-foreground shrink-0" />
+                )}
               </div>
             )}
             <button

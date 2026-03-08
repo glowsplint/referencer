@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "የድርጊት ኮንሶል",
     "close": "ዝጋ",
-    "empty": "እስካሁን ምንም ድርጊቶች አልተመዘገቡም።"
+    "empty": "እስካሁን ምንም ድርጊቶች አልተመዘገቡም።",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

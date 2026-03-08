@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Eylem Konsolu",
     "close": "kapat",
-    "empty": "Henuz kaydedilmis eylem yok."
+    "empty": "Henuz kaydedilmis eylem yok.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

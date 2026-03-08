@@ -11,6 +11,7 @@ import { SectionList } from "./SectionList";
 import { DRAG_TYPE_LAYER, DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useDocument } from "@/contexts/DocumentContext";
 import { useCustomColors } from "@/hooks/ui/use-custom-colors";
+import { usePaneTypes } from "@/hooks/data/use-pane-types";
 import { useAnnotationSearch } from "@/hooks/ui/use-annotation-search";
 import { AnnotationSearchResults } from "./AnnotationSearchResults";
 import { scrollToKeepInView } from "@/hooks/selection/use-selection-decoration";
@@ -49,8 +50,10 @@ export function ManagementPane({ width }: ManagementPaneProps) {
     toggleSectionVisibility,
     toggleAllSectionVisibility,
     editorsRef,
+    yjs,
   } = useDocument();
 
+  const { paneTypes } = usePaneTypes(yjs.doc);
   const { customColors, addCustomColor, removeCustomColor } = useCustomColors();
   const [dragOver, setDragOver] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -202,6 +205,7 @@ export function ManagementPane({ width }: ManagementPaneProps) {
             onReorder={reorderEditors}
             toggleSectionVisibility={toggleSectionVisibility}
             toggleAllSectionVisibility={toggleAllSectionVisibility}
+            paneTypes={paneTypes}
           />
         </>
       )}

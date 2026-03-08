@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "Консоль дій",
     "close": "закрити",
-    "empty": "Дій ще не зафіксовано."
+    "empty": "Дій ще не зафіксовано.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",

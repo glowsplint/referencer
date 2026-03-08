@@ -64,7 +64,8 @@
   "actionConsole": {
     "title": "액션 콘솔",
     "close": "닫기",
-    "empty": "아직 기록된 작업이 없습니다."
+    "empty": "아직 기록된 작업이 없습니다.",
+    "zenMode": "zen"
   },
   "hub": {
     "title": "Referencer",
