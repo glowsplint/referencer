@@ -25,7 +25,11 @@ pdf.post("/:id/pdf", requirePermission("editor"), async (c) => {
   }
 
   // Validate paneIndex is a non-negative integer
-  if (typeof body.paneIndex !== "number" || !Number.isInteger(body.paneIndex) || body.paneIndex < 0) {
+  if (
+    typeof body.paneIndex !== "number" ||
+    !Number.isInteger(body.paneIndex) ||
+    body.paneIndex < 0
+  ) {
     return c.json({ error: "paneIndex must be a non-negative integer" }, 400);
   }
 

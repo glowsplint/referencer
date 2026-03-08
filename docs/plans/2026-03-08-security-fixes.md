@@ -15,6 +15,7 @@
 ### Task 1: Fix `yjs_document` deletion bug (C3)
 
 **Files:**
+
 - Modify: `backend/src/db/document-queries.ts:159`
 
 **Step 1: Fix the column name**
@@ -62,6 +63,7 @@ deletion. Also simplified cascade to rely on DB-level ON DELETE CASCADE.
 ### Task 2: Add FK to `yjs_document` schema (H3)
 
 **Files:**
+
 - Modify: `supabase/schema.sql:50-54`
 
 **Step 1: Add foreign key constraint**
@@ -92,6 +94,7 @@ from documents deleted outside the application layer.
 ### Task 3: Add permission checks to PDF endpoints (C1, C2) + path traversal fix (H1) + size limit (H2)
 
 **Files:**
+
 - Modify: `backend/src/api/pdf.ts`
 
 **Step 1: Rewrite pdf.ts with all fixes**
@@ -124,7 +127,11 @@ pdf.post("/:id/pdf", requirePermission("editor"), async (c) => {
   }
 
   // Validate paneIndex is a non-negative integer
-  if (typeof body.paneIndex !== "number" || !Number.isInteger(body.paneIndex) || body.paneIndex < 0) {
+  if (
+    typeof body.paneIndex !== "number" ||
+    !Number.isInteger(body.paneIndex) ||
+    body.paneIndex < 0
+  ) {
     return c.json({ error: "paneIndex must be a non-negative integer" }, 400);
   }
 
@@ -214,6 +221,7 @@ fix: add permission checks, path traversal protection, and size limits to PDF en
 ### Task 4: Add permission check to ws-ticket endpoint (M4)
 
 **Files:**
+
 - Modify: `backend/src/auth/handlers.ts:121-151`
 
 **Step 1: Add permission check before issuing JWT**
@@ -235,6 +243,7 @@ if (!role) {
 Actually, to avoid dynamic import, add the import at the top of handlers.ts and inline the check. The full change to the ws-ticket handler:
 
 At the top of `handlers.ts`, add to imports:
+
 ```typescript
 import { getPermission } from "../db/permission-queries";
 ```
@@ -242,16 +251,16 @@ import { getPermission } from "../db/permission-queries";
 Then modify the ws-ticket handler body (inside the try block, after `if (!body.room)` check):
 
 ```typescript
-      // Verify user has permission on this document before issuing a ticket
-      const supabase = c.get("supabase");
-      const role = await getPermission(supabase, body.room, user.id);
-      if (!role) {
-        log.warn("POST /auth/ws-ticket denied — no permission", {
-          userId: user.id,
-          room: body.room,
-        });
-        return c.json({ error: "Forbidden" }, 403);
-      }
+// Verify user has permission on this document before issuing a ticket
+const supabase = c.get("supabase");
+const role = await getPermission(supabase, body.room, user.id);
+if (!role) {
+  log.warn("POST /auth/ws-ticket denied — no permission", {
+    userId: user.id,
+    room: body.room,
+  });
+  return c.json({ error: "Forbidden" }, 403);
+}
 ```
 
 **Step 2: Run backend build**
@@ -272,6 +281,7 @@ document room. Now the endpoint checks document_permission first.
 ### Task 5: Add permission check to tag DELETE (M10)
 
 **Files:**
+
 - Modify: `backend/src/api/tags.ts:79-103`
 
 **Step 1: Add permission check to DELETE handler**
@@ -335,6 +345,7 @@ permission. Prevents tag deletion after document permission is revoked.
 ### Task 6: Validate folder ownership on move-document (M11)
 
 **Files:**
+
 - Modify: `backend/src/api/folders.ts:194-231`
 
 **Step 1: Add folder ownership check**
@@ -342,20 +353,20 @@ permission. Prevents tag deletion after document permission is revoked.
 In the `PATCH /:id/move-document` handler, after the document permission check and before calling `moveDocumentToFolder`, add:
 
 ```typescript
-    // Verify the target folder belongs to the user
-    const { data: folder } = await supabase
-      .from("document_folder")
-      .select("id")
-      .eq("id", folderId)
-      .eq("user_id", user.id)
-      .single();
-    if (!folder) {
-      log.warn("Permission denied for move-document — folder not owned", {
-        userId: user.id,
-        folderId,
-      });
-      return c.json({ error: "Folder not found" }, 404);
-    }
+// Verify the target folder belongs to the user
+const { data: folder } = await supabase
+  .from("document_folder")
+  .select("id")
+  .eq("id", folderId)
+  .eq("user_id", user.id)
+  .single();
+if (!folder) {
+  log.warn("Permission denied for move-document — folder not owned", {
+    userId: user.id,
+    folderId,
+  });
+  return c.json({ error: "Folder not found" }, 404);
+}
 ```
 
 **Step 2: Run backend build**
@@ -376,6 +387,7 @@ belonging to another user.
 ### Task 7: Fix share link `expiresAt: null` bypass (M9)
 
 **Files:**
+
 - Modify: `backend/src/db/share-queries.ts:14-17`
 
 **Step 1: Enforce maximum expiry and reject null**
@@ -383,18 +395,18 @@ belonging to another user.
 Replace the `expires_at` logic in `createShareLink`:
 
 ```typescript
-    const MAX_SHARE_DAYS = 90;
-    let expires_at: string;
-    if (expiresAt && typeof expiresAt === "string") {
-      const parsed = new Date(expiresAt);
-      const maxDate = new Date(Date.now() + MAX_SHARE_DAYS * 24 * 60 * 60 * 1000);
-      if (isNaN(parsed.getTime()) || parsed <= new Date()) {
-        throw new Error("expiresAt must be a valid future date");
-      }
-      expires_at = parsed > maxDate ? maxDate.toISOString() : parsed.toISOString();
-    } else {
-      expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-    }
+const MAX_SHARE_DAYS = 90;
+let expires_at: string;
+if (expiresAt && typeof expiresAt === "string") {
+  const parsed = new Date(expiresAt);
+  const maxDate = new Date(Date.now() + MAX_SHARE_DAYS * 24 * 60 * 60 * 1000);
+  if (isNaN(parsed.getTime()) || parsed <= new Date()) {
+    throw new Error("expiresAt must be a valid future date");
+  }
+  expires_at = parsed > maxDate ? maxDate.toISOString() : parsed.toISOString();
+} else {
+  expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+}
 ```
 
 **Step 2: Run backend build**
@@ -426,6 +438,7 @@ No additional work needed.
 ### Task 9: Add JWT `alg` header validation (M1)
 
 **Files:**
+
 - Modify: `collab-server/src/jwt.ts:15-43`
 
 **Step 1: Add algorithm validation**
@@ -456,15 +469,15 @@ async function verifyWithSecret(token: string, secret: string): Promise<WsJwtPay
 After parsing the payload and checking expiry, add:
 
 ```typescript
-  const payload: WsJwtPayload = JSON.parse(base64urlDecode(body));
+const payload: WsJwtPayload = JSON.parse(base64urlDecode(body));
 
-  // Check expiry
-  if (payload.exp < Math.floor(Date.now() / 1000)) return null;
+// Check expiry
+if (payload.exp < Math.floor(Date.now() / 1000)) return null;
 
-  // Validate issuer and audience
-  if (payload.iss !== "referencer" || payload.aud !== "collab") return null;
+// Validate issuer and audience
+if (payload.iss !== "referencer" || payload.aud !== "collab") return null;
 
-  return payload;
+return payload;
 ```
 
 Note: The collab-server `index.ts` already checks `iss`/`aud` at line 96-99. Adding it to the JWT verification function provides defense-in-depth. The duplicate check in `index.ts` can be kept or removed — keeping it is fine for clarity.
@@ -487,6 +500,7 @@ issuer/audience at the crypto layer, not just the route handler.
 ### Task 10: Fix CORS default to deny on collab server (H5)
 
 **Files:**
+
 - Modify: `collab-server/src/index.ts:57-63`
 
 **Step 1: Change CORS to deny by default**
@@ -517,13 +531,13 @@ app.use(
 In the `GET /:roomName` handler, after the token check, add Origin validation:
 
 ```typescript
-  // Validate Origin header for WebSocket upgrade (CORS doesn't protect WS upgrades)
-  const origin = c.req.header("origin");
-  const allowedOrigin = c.env.ALLOWED_ORIGIN;
-  if (allowedOrigin && origin && origin !== allowedOrigin) {
-    log.warn("GET /:roomName rejected — origin mismatch", { roomName, origin });
-    return c.json({ error: "Forbidden" }, 403);
-  }
+// Validate Origin header for WebSocket upgrade (CORS doesn't protect WS upgrades)
+const origin = c.req.header("origin");
+const allowedOrigin = c.env.ALLOWED_ORIGIN;
+if (allowedOrigin && origin && origin !== allowedOrigin) {
+  log.warn("GET /:roomName rejected — origin mismatch", { roomName, origin });
+  return c.json({ error: "Forbidden" }, 403);
+}
 ```
 
 **Step 4: Run collab-server tests**
@@ -544,6 +558,7 @@ not protected by CORS preflight.
 ### Task 11: Add WebSocket message size limit (M5) and connection limit (M6)
 
 **Files:**
+
 - Modify: `collab-server/src/durable-object.ts`
 
 **Step 1: Add constants at the top**
@@ -558,11 +573,11 @@ const MAX_CONNECTIONS_PER_ROOM = 50;
 Before `const pair = new WebSocketPair()`, add:
 
 ```typescript
-      // Enforce connection limit per room
-      if (this.ctx.getWebSockets().length >= MAX_CONNECTIONS_PER_ROOM) {
-        this.log.warn("Connection limit reached", { roomName, limit: MAX_CONNECTIONS_PER_ROOM });
-        return new Response("Too many connections", { status: 503 });
-      }
+// Enforce connection limit per room
+if (this.ctx.getWebSockets().length >= MAX_CONNECTIONS_PER_ROOM) {
+  this.log.warn("Connection limit reached", { roomName, limit: MAX_CONNECTIONS_PER_ROOM });
+  return new Response("Too many connections", { status: 503 });
+}
 ```
 
 **Step 3: Add message size check in `webSocketMessage`**
@@ -570,15 +585,15 @@ Before `const pair = new WebSocketPair()`, add:
 After `if (data.length === 0) return;`, add:
 
 ```typescript
-    if (data.length > MAX_MESSAGE_SIZE) {
-      this.log.warn("Message exceeds size limit", {
-        roomName: this.roomName,
-        size: data.length,
-        limit: MAX_MESSAGE_SIZE,
-      });
-      ws.close(1009, "Message too large");
-      return;
-    }
+if (data.length > MAX_MESSAGE_SIZE) {
+  this.log.warn("Message exceeds size limit", {
+    roomName: this.roomName,
+    size: data.length,
+    limit: MAX_MESSAGE_SIZE,
+  });
+  ws.close(1009, "Message too large");
+  return;
+}
 ```
 
 **Step 4: Add read-only check to force save (M17)**
@@ -650,15 +665,16 @@ fix: update dompurify and hono to patch known CVEs
 ### Task 13: Fix frontend CSP — remove `ws:`, tighten `connect-src` (M14)
 
 **Files:**
+
 - Modify: `frontend/index.html:9`
 
 **Step 1: Remove `ws:` from connect-src**
 
 ```html
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.googleusercontent.com https://avatars.githubusercontent.com; connect-src 'self' wss:; font-src 'self' https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self';"
-    />
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.googleusercontent.com https://avatars.githubusercontent.com; connect-src 'self' wss:; font-src 'self' https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+/>
 ```
 
 (Changed `wss: ws:` to just `wss:`)
@@ -681,6 +697,7 @@ Dev uses same-origin proxy so ws: is not needed.
 ### Task 14: Self-host PDF.js worker (M18)
 
 **Files:**
+
 - Modify: `frontend/src/components/PdfPane.tsx:8`
 
 **Step 1: Copy the worker to public/**
@@ -718,6 +735,7 @@ from the same origin, consistent with the script-src 'self' CSP.
 ### Task 15: Add permissions blocks to GitHub Actions (H6)
 
 **Files:**
+
 - Modify: `.github/workflows/ci.yml`
 - Modify: `.github/workflows/deploy.yml`
 
@@ -753,12 +771,14 @@ chain attack surface if any third-party action is compromised.
 ### Task 16: Pin GitHub Actions to commit SHAs (M13)
 
 **Files:**
+
 - Modify: `.github/workflows/ci.yml`
 - Modify: `.github/workflows/deploy.yml`
 
 **Step 1: Look up current SHAs for each action**
 
 Use `gh` CLI or web to find the commit SHAs for:
+
 - `actions/checkout@v4`
 - `oven-sh/setup-bun@v2`
 - `cloudflare/wrangler-action@v3`
@@ -766,6 +786,7 @@ Use `gh` CLI or web to find the commit SHAs for:
 **Step 2: Replace version tags with SHAs in both files**
 
 Example (SHAs should be verified at implementation time):
+
 ```yaml
 - uses: actions/checkout@<sha> # v4
 - uses: oven-sh/setup-bun@<sha> # v2
@@ -785,6 +806,7 @@ Prevents supply chain attacks via compromised mutable version tags.
 ### Task 17: Expand .gitignore for .env variants (M12)
 
 **Files:**
+
 - Modify: `.gitignore`
 
 **Step 1: Replace `.env` line with comprehensive patterns**
