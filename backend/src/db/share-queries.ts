@@ -11,10 +11,18 @@ export async function createShareLink(
   const maxRetries = 5;
   for (let i = 0; i < maxRetries; i++) {
     const code = generateCode();
-    const expires_at =
-      expiresAt === undefined
-        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-        : expiresAt;
+    const MAX_SHARE_DAYS = 90;
+    let expires_at: string;
+    if (expiresAt && typeof expiresAt === "string") {
+      const parsed = new Date(expiresAt);
+      const maxDate = new Date(Date.now() + MAX_SHARE_DAYS * 24 * 60 * 60 * 1000);
+      if (isNaN(parsed.getTime()) || parsed <= new Date()) {
+        throw new Error("expiresAt must be a valid future date");
+      }
+      expires_at = parsed > maxDate ? maxDate.toISOString() : parsed.toISOString();
+    } else {
+      expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    }
     const { error } = await supabase.from("share_link").insert({
       code,
       document_id: documentId,
