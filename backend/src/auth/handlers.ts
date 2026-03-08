@@ -12,6 +12,7 @@ import {
   revokeAllUserSessions,
 } from "./store";
 import { signJwt } from "../lib/jwt";
+import { getPermission } from "../db/permission-queries";
 import {
   getCookieDomain,
   deleteSessionCookie,
@@ -129,6 +130,17 @@ export function createAuthRoutes() {
       const body = await c.req.json<{ room?: string }>();
       if (!body.room) {
         return c.json({ error: "Missing room" }, 400);
+      }
+
+      // Verify user has permission on this document before issuing a ticket
+      const supabase = c.get("supabase");
+      const role = await getPermission(supabase, body.room, user.id);
+      if (!role) {
+        log.warn("POST /auth/ws-ticket denied — no permission", {
+          userId: user.id,
+          room: body.room,
+        });
+        return c.json({ error: "Forbidden" }, 403);
       }
 
       const ticket = await signJwt(
