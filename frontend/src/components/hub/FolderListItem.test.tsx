@@ -156,12 +156,12 @@ describe("FolderListItem", () => {
     });
   });
 
-  describe("when the folder list item is double-clicked", () => {
+  describe("when the folder list item is clicked", () => {
     it("then calls onNavigateToFolder with the folder id", async () => {
       const user = userEvent.setup();
       renderListItem();
 
-      await user.dblClick(screen.getByTestId("folderListItem-f1"));
+      await user.click(screen.getByTestId("folderListItem-f1"));
 
       expect(onNavigateToFolder).toHaveBeenCalledWith("f1");
     });

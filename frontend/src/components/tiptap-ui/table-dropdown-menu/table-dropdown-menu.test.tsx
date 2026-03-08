@@ -26,8 +26,10 @@ vi.mock("./use-table-dropdown-menu", () => ({
   useTableDropdownMenu: () => mockUseTableReturn,
 }));
 
+let mockEditor: { isEditable: boolean } | null = { isEditable: true };
+
 vi.mock("@/hooks/ui/use-tiptap-editor", () => ({
-  useTiptapEditor: () => ({ editor: null }),
+  useTiptapEditor: () => ({ editor: mockEditor }),
 }));
 
 // Mock dropdown primitives to avoid Radix portal/pointer issues in jsdom
@@ -171,6 +173,7 @@ vi.mock("@/components/tiptap-icons/table-header-icon", () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockEditor = { isEditable: true };
   mockUseTableReturn = {
     isVisible: true,
     isInTable: false,
@@ -287,5 +290,20 @@ describe("TableDropdownMenu", () => {
 
     await user.click(screen.getByText("Delete table"));
     expect(mockUseTableReturn.deleteTable).toHaveBeenCalled();
+  });
+
+  it("when editor is not editable, the insert button is disabled", () => {
+    mockEditor = { isEditable: false };
+    renderWithDocument(<TableDropdownMenu />);
+
+    expect(screen.getByRole("button", { name: "Table" })).toBeDisabled();
+  });
+
+  it("when editor is not editable, the dropdown trigger button is disabled", () => {
+    mockEditor = { isEditable: false };
+    mockUseTableReturn.isInTable = true;
+    renderWithDocument(<TableDropdownMenu />);
+
+    expect(screen.getByRole("button", { name: "Table" })).toBeDisabled();
   });
 });

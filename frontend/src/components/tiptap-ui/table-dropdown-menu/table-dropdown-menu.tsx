@@ -95,6 +95,7 @@ export function TableDropdownMenu({
         tabIndex={-1}
         aria-label={t("table.label")}
         tooltip={t("table.label")}
+        disabled={!editor?.isEditable}
         onClick={insertTable}
         {...props}
       >
@@ -115,6 +116,7 @@ export function TableDropdownMenu({
           tabIndex={-1}
           aria-label={t("table.label")}
           tooltip={t("table.label")}
+          disabled={!editor?.isEditable}
           {...props}
         >
           <TableIcon className="tiptap-button-icon" />

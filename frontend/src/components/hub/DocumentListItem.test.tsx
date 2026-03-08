@@ -116,12 +116,12 @@ describe("DocumentListItem", () => {
     });
   });
 
-  describe("when the list item is double-clicked", () => {
+  describe("when the list item is clicked", () => {
     it("then calls onOpen", async () => {
       const user = userEvent.setup();
       renderListItem();
 
-      await user.dblClick(screen.getByTestId("documentListItem-ws-2"));
+      await user.click(screen.getByTestId("documentListItem-ws-2"));
 
       expect(onOpen).toHaveBeenCalledTimes(1);
     });

@@ -11,17 +11,22 @@ interface UseArrowCleanupOptions {
   editorIndex: number;
   layers: Layer[];
   removeArrow: (layerId: string, arrowId: string) => void;
+  isLocked: boolean;
 }
 
 /**
  * Watches for editor content changes and removes arrows whose endpoint
  * text no longer matches the document content at the stored positions.
+ * Only runs when the editor is in locked (annotation) mode — during
+ * unlocked editing, Yjs RelativePositions track correct positions so
+ * cleanup is deferred until re-locking.
  */
 export function useArrowCleanup({
   editor,
   editorIndex,
   layers,
   removeArrow,
+  isLocked,
 }: UseArrowCleanupOptions) {
   const layersRef = useRef(layers);
   layersRef.current = layers;
@@ -33,7 +38,7 @@ export function useArrowCleanup({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || !isLocked) return;
 
     const handleTransaction = ({ transaction }: { transaction: { docChanged: boolean } }) => {
       if (!transaction.docChanged) return;
@@ -50,7 +55,7 @@ export function useArrowCleanup({
       editor.off("transaction", handleTransaction);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [editor, editorIndex]);
+  }, [editor, editorIndex, isLocked]);
 }
 
 /**

@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import { Folder, Star } from "lucide-react";
 import { useDndContext } from "@/contexts/DndContext";
 import { useSelection } from "@/contexts/SelectionContext";
-import { useClickHandler } from "@/hooks/ui/use-click-handler";
 import { useDraggable, useDropTarget, type DragData } from "@/hooks/ui/use-hub-dnd";
 import { getDocumentsForFolder, canMoveFolderTo } from "@/lib/folder-tree";
 import type { FolderNode } from "@/lib/folder-tree";
@@ -63,17 +62,15 @@ export function FolderCard({
     onClearSelection: clearSelection,
   });
 
-  const onSelect = useCallback(
+  const handleCardClick = useCallback(
     (e: React.MouseEvent) => {
-      handleItemClick(node.folder.id, e);
+      if (e.ctrlKey || e.metaKey || e.shiftKey || isSelectionActive) {
+        handleItemClick(node.folder.id, e);
+        return;
+      }
+      onNavigateToFolder(node.folder.id);
     },
-    [handleItemClick, node.folder.id],
-  );
-
-  const handleCardClick = useClickHandler(
-    onSelect,
-    () => onNavigateToFolder(node.folder.id),
-    isSelectionActive,
+    [handleItemClick, node.folder.id, isSelectionActive, onNavigateToFolder],
   );
 
   const handleDrop = useCallback(

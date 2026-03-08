@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: lo * láti bá ọ̀rọ̀ èyíkéyìí mu, ? fún lẹ́tà kan. Yí padà sí Regex fún àwọn àpẹẹrẹ ìlọsíwájú.",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

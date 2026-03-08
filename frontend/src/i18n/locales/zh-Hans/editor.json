@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob：用 * 匹配任意文本，? 匹配单个字符。切换到正则以使用高级模式。",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

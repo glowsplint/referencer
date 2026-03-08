@@ -304,12 +304,20 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
   const togglePaneLocked = useCallback(
     (index: number) => {
       const wasLocked = settingsHook.isPaneLocked(index);
+      const oldTool = settingsHook.annotations.activeTool;
       settingsHook.togglePaneLocked(index);
+      settingsHook.setActiveTool("selection");
       history.record({
         type: wasLocked ? "unlock" : "lock",
         description: wasLocked ? `Unlocked pane ${index + 1}` : `Locked pane ${index + 1}`,
-        undo: () => settingsHook.togglePaneLocked(index),
-        redo: () => settingsHook.togglePaneLocked(index),
+        undo: () => {
+          settingsHook.togglePaneLocked(index);
+          settingsHook.setActiveTool(oldTool);
+        },
+        redo: () => {
+          settingsHook.togglePaneLocked(index);
+          settingsHook.setActiveTool("selection");
+        },
       });
     },
     [settingsHook, history],

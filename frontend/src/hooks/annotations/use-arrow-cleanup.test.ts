@@ -193,6 +193,7 @@ describe("useArrowCleanup", () => {
         editorIndex: 0,
         layers: [layer],
         removeArrow,
+        isLocked: true,
       }),
     );
 
@@ -224,6 +225,7 @@ describe("useArrowCleanup", () => {
         editorIndex: 0,
         layers: [layer],
         removeArrow,
+        isLocked: true,
       }),
     );
 
@@ -250,6 +252,7 @@ describe("useArrowCleanup", () => {
         editorIndex: 0,
         layers: [layer],
         removeArrow,
+        isLocked: true,
       }),
     );
 
@@ -294,6 +297,7 @@ describe("useArrowCleanup", () => {
         editorIndex: 0,
         layers: [layer],
         removeArrow,
+        isLocked: true,
       }),
     );
 
@@ -320,6 +324,7 @@ describe("useArrowCleanup", () => {
         editorIndex: 0,
         layers: [layer],
         removeArrow,
+        isLocked: true,
       }),
     );
 
@@ -349,8 +354,36 @@ describe("useArrowCleanup", () => {
         editorIndex: 0,
         layers: [layer],
         removeArrow,
+        isLocked: true,
       }),
     );
+
+    expect(removeArrow).not.toHaveBeenCalled();
+  });
+
+  it("when isLocked is false, then does not run cleanup even with mismatched text", () => {
+    const editor = createMockEditorWithEvents("XXXXX world testing");
+    const removeArrow = vi.fn();
+    const arrow = createArrow();
+    const layer = createLayer({ arrows: [arrow] });
+
+    renderHook(() =>
+      useArrowCleanup({
+        editor: asEditor(editor),
+        editorIndex: 0,
+        layers: [layer],
+        removeArrow,
+        isLocked: false,
+      }),
+    );
+
+    act(() => {
+      editor.emit("transaction", { transaction: { docChanged: true } });
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(350);
+    });
 
     expect(removeArrow).not.toHaveBeenCalled();
   });

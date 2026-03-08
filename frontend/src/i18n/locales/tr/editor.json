@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: herhangi bir metin için *, tek karakter için ? kullanın. Gelişmiş kalıplar için Regex'e geçin.",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",
