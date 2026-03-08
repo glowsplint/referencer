@@ -28,8 +28,8 @@ jobs:
     name: Deploy to Cloudflare
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: oven-sh/setup-bun@ecf28ddc73e819eb6fa29df6b34ef8921c743461 # v2
 
       - name: Install backend dependencies
         working-directory: backend
@@ -40,14 +40,14 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Deploy referencer-api
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@da0e0dfe58b7a431659754fdf3f186c529afbe65 # v3
         with:
           workingDirectory: backend
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy referencer-collab
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@da0e0dfe58b7a431659754fdf3f186c529afbe65 # v3
         with:
           workingDirectory: collab-server
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
