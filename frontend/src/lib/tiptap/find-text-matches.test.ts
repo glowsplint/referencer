@@ -1,14 +1,15 @@
 import { describe, it, expect } from "vitest";
+import type { Node as PMNode } from "@tiptap/pm/model";
 import { findTextMatches } from "./find-text-matches";
 
-function mockDoc(blocks: string[]) {
+function mockDoc(blocks: string[]): PMNode {
   const children = blocks.map((text) => ({
     isTextblock: true,
     textContent: text,
   }));
 
   return {
-    descendants(callback: (node: any, pos: number) => boolean | void) {
+    descendants(callback: (node: Record<string, unknown>, pos: number) => boolean | void) {
       let pos = 0;
       for (const child of children) {
         callback(child, pos);
@@ -16,7 +17,7 @@ function mockDoc(blocks: string[]) {
         pos += 1 + child.textContent.length + 1;
       }
     },
-  } as any;
+  } as unknown as PMNode;
 }
 
 describe("when using findTextMatches", () => {

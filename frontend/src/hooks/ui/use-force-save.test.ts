@@ -3,6 +3,8 @@ import { renderHook, act } from "@testing-library/react";
 import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
 import { useForceSave } from "./use-force-save";
+import type { WebsocketProvider } from "y-websocket";
+import { createMockWsProvider, type MockWsProvider } from "@/test/mocks";
 
 const MSG_FORCE_SAVE = 4;
 
@@ -19,18 +21,6 @@ vi.mock("react-i18next", () => ({
     },
   }),
 }));
-
-function createMockWsProvider(readyState = WebSocket.OPEN) {
-  const sent: Uint8Array[] = [];
-  return {
-    ws: {
-      readyState,
-      send: vi.fn((data: Uint8Array) => sent.push(data)),
-    },
-    messageHandlers: {} as Record<number, (...args: unknown[]) => void>,
-    _sent: sent,
-  };
-}
 
 function fireCtrlS() {
   const event = new KeyboardEvent("keydown", {
@@ -53,7 +43,7 @@ function fireCmdS() {
   document.dispatchEvent(event);
 }
 
-function simulateResponse(provider: ReturnType<typeof createMockWsProvider>, status: number) {
+function simulateResponse(provider: MockWsProvider, status: number) {
   const handler = provider.messageHandlers[MSG_FORCE_SAVE];
   if (!handler) throw new Error("No handler registered for MSG_FORCE_SAVE");
 
@@ -87,7 +77,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider();
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,
@@ -112,7 +102,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider();
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,
@@ -130,7 +120,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider();
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,
@@ -148,7 +138,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider();
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,
@@ -169,7 +159,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider();
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,
@@ -190,7 +180,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider();
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,
@@ -212,7 +202,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider(WebSocket.CLOSED);
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,
@@ -254,7 +244,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider();
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,
@@ -278,7 +268,7 @@ describe("useForceSave", () => {
     const provider = createMockWsProvider();
     renderHook(() =>
       useForceSave({
-        wsProvider: provider as any,
+        wsProvider: provider as unknown as WebsocketProvider,
         setStatus,
         flashStatus,
         clearStatus,

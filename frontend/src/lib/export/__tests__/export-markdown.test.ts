@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from "vitest";
+import type { Editor } from "@tiptap/react";
 import { generateDocumentMarkdown, type ExportMarkdownOptions } from "../export-markdown";
 import type { Layer } from "@/types/editor";
 
@@ -16,11 +17,11 @@ function makeLayer(overrides: Partial<Layer> = {}): Layer {
   };
 }
 
-function makeMockEditor(text: string) {
+function makeMockEditor(text: string): Editor {
   return {
     getMarkdown: () => text,
     getText: () => text,
-  } as any;
+  } as unknown as Editor;
 }
 
 function makeOptions(overrides: Partial<ExportMarkdownOptions> = {}): ExportMarkdownOptions {

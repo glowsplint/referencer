@@ -48,6 +48,8 @@ export type EditorViewMap = Map<number, EditorView>;
  * Get the y-prosemirror sync state (type + mapping) from an EditorView.
  * Returns null if the sync plugin is not active.
  */
+// `mapping` uses Map<any, any> because y-prosemirror's ProsemirrorBinding.mapping
+// is typed as Map<any, any> upstream — we must match the library's type signature.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getSyncState(view: EditorView): { type: Y.XmlFragment; mapping: Map<any, any> } | null {
   const syncState = ySyncPluginKey.getState(view.state);

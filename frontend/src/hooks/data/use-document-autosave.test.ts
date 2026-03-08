@@ -13,6 +13,7 @@ vi.mock("@/lib/document-client", () => ({
 
 import { useAuth } from "@/hooks/data/use-auth";
 import { createDocument, touchDocument } from "@/lib/document-client";
+import type { AuthUser } from "@/lib/auth-client";
 
 const mockUseAuth = vi.mocked(useAuth);
 const mockCreate = vi.mocked(createDocument);
@@ -34,7 +35,7 @@ describe("useDocumentAutosave", () => {
   it("when mounted with authentication, then creates document", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
-      user: { name: "Test" } as any,
+      user: { name: "Test" } as unknown as AuthUser,
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
@@ -49,7 +50,7 @@ describe("useDocumentAutosave", () => {
   it("when mounted, then touches document every 60s", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
-      user: { name: "Test" } as any,
+      user: { name: "Test" } as unknown as AuthUser,
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
@@ -87,7 +88,7 @@ describe("useDocumentAutosave", () => {
   it("when unmounted, then cleans up interval", () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
-      user: { name: "Test" } as any,
+      user: { name: "Test" } as unknown as AuthUser,
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),

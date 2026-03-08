@@ -14,7 +14,7 @@ export function useClickHandler(
   onDoubleClick: (e: React.MouseEvent) => void,
   immediate = false,
   delay = 250,
-) {
+): (e: React.MouseEvent) => void {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleClick = useCallback(

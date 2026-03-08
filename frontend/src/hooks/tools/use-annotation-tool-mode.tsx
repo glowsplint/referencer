@@ -42,6 +42,8 @@ export interface UseAnnotationToolModeOptions<TLayer> {
   activeLayerId: string | null;
   addLayer: () => string;
   layers: TLayer[];
+  // `any` is required here: concrete callers (addHighlight, addUnderline) pass
+  // typed payloads that aren't assignable to `unknown` due to contravariance.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addItem: (layerId: string, payload: any) => string;
   removeItem: (layerId: string, itemId: string) => void;
@@ -110,6 +112,7 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
         text: (
           <Trans
             ns="tools"
+            // Dynamic i18n key built from config; valid at runtime but not statically verifiable
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             i18nKey={`${configRef.current.i18nKey}.selectWords` as any}
             components={{ kbd: <ToastKbd>_</ToastKbd> }}
@@ -137,12 +140,14 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
       layerId = id;
       activeLayerIdRef.current = id;
     }
+    // layerId is guaranteed non-null after the guard above
+    const resolvedLayerId: string = layerId;
 
-    const layer = layersRef.current.find((l) => l.id === layerId);
+    const layer = layersRef.current.find((l) => l.id === resolvedLayerId);
 
     // Optional pre-confirm cleanup
     if (layer && cfg.preConfirm) {
-      cfg.preConfirm(layerId!, layer);
+      cfg.preConfirm(resolvedLayerId, layer);
     }
 
     // Check for toggle: same word = remove existing item
@@ -150,7 +155,7 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
       const items = cfg.getItems(layer);
       const existing = cfg.findExisting(items, sel);
       if (existing) {
-        removeItemRef.current(layerId!, existing.id);
+        removeItemRef.current(resolvedLayerId, existing.id);
         if (removedTextRef.current) {
           flashStatusRef.current(
             { text: removedTextRef.current, type: "success" },
@@ -163,11 +168,11 @@ export function useAnnotationToolMode<TLayer extends LayerWithId>({
 
     // Create new item
     const payload = cfg.buildPayload(sel);
-    const itemId = addItemRef.current(layerId!, payload);
+    const itemId = addItemRef.current(resolvedLayerId, payload);
     if (addedTextRef.current) {
       flashStatusRef.current({ text: addedTextRef.current, type: "success" }, FLASH_DURATION_MS);
     }
-    onItemAddedRef.current?.(layerId!, itemId);
+    onItemAddedRef.current?.(resolvedLayerId, itemId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

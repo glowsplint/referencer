@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import type { Node as PMNode } from "@tiptap/pm/model";
 import { getWordBoundaries } from "./word-boundaries";
 
 function makeMockDoc(textContent: string) {
@@ -35,43 +36,43 @@ function makeMockDocNonTextblock() {
 describe("when using getWordBoundaries", () => {
   it("then returns word boundaries for a position inside a word", () => {
     const doc = makeMockDoc("hello world");
-    const result = getWordBoundaries(doc as any, 3); // offset 2 -> inside "hello"
+    const result = getWordBoundaries(doc as unknown as PMNode, 3); // offset 2 -> inside "hello"
     expect(result).toEqual({ from: 1, to: 6, text: "hello" });
   });
 
   it("then returns word at start of text", () => {
     const doc = makeMockDoc("hello world");
-    const result = getWordBoundaries(doc as any, 1); // offset 0 -> start of "hello"
+    const result = getWordBoundaries(doc as unknown as PMNode, 1); // offset 0 -> start of "hello"
     expect(result).toEqual({ from: 1, to: 6, text: "hello" });
   });
 
   it("then returns second word", () => {
     const doc = makeMockDoc("hello world");
-    const result = getWordBoundaries(doc as any, 8); // offset 7 -> inside "world"
+    const result = getWordBoundaries(doc as unknown as PMNode, 8); // offset 7 -> inside "world"
     expect(result).toEqual({ from: 7, to: 12, text: "world" });
   });
 
   it("then returns null for non-textblock parent", () => {
     const doc = makeMockDocNonTextblock();
-    expect(getWordBoundaries(doc as any, 1)).toBeNull();
+    expect(getWordBoundaries(doc as unknown as PMNode, 1)).toBeNull();
   });
 
   it("then returns adjacent word when position is at a space boundary", () => {
     const doc = makeMockDoc("hello world");
     // offset 5 is the space — backward walk finds "hello"
-    const result = getWordBoundaries(doc as any, 6);
+    const result = getWordBoundaries(doc as unknown as PMNode, 6);
     expect(result).toEqual({ from: 1, to: 6, text: "hello" });
   });
 
   it("then includes apostrophes in word boundaries", () => {
     const doc = makeMockDoc("don't stop");
-    const result = getWordBoundaries(doc as any, 3); // inside "don't"
+    const result = getWordBoundaries(doc as unknown as PMNode, 3); // inside "don't"
     expect(result).toEqual({ from: 1, to: 6, text: "don't" });
   });
 
   it("then includes hyphens in word boundaries", () => {
     const doc = makeMockDoc("well-known");
-    const result = getWordBoundaries(doc as any, 4); // inside "well-known"
+    const result = getWordBoundaries(doc as unknown as PMNode, 4); // inside "well-known"
     expect(result).toEqual({ from: 1, to: 11, text: "well-known" });
   });
 
@@ -87,6 +88,6 @@ describe("when using getWordBoundaries", () => {
         };
       },
     };
-    expect(getWordBoundaries(doc as any, 0)).toBeNull();
+    expect(getWordBoundaries(doc as unknown as PMNode, 0)).toBeNull();
   });
 });

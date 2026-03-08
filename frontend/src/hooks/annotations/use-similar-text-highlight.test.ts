@@ -4,6 +4,7 @@ import { useSimilarTextHighlight } from "./use-similar-text-highlight";
 import { DecorationSet } from "@tiptap/pm/view";
 import { similarTextPluginKey } from "@/lib/tiptap/extensions/similar-text-highlights";
 import type { WordSelection } from "@/types/editor";
+import { createMockEditor, asEditor } from "@/test/mocks";
 
 let capturedDecorations: unknown[] = [];
 
@@ -12,8 +13,8 @@ vi.mock("@tiptap/pm/view", async () => {
   return {
     ...actual,
     DecorationSet: {
-      ...(actual as any).DecorationSet,
-      empty: (actual as any).DecorationSet.empty,
+      ...(actual as Record<string, unknown>).DecorationSet,
+      empty: ((actual as Record<string, unknown>).DecorationSet as Record<string, unknown>).empty,
       create: vi.fn((_doc: unknown, decorations: unknown[]) => {
         capturedDecorations = decorations;
         return { __decorationCount: decorations.length };
@@ -36,17 +37,6 @@ vi.mock("@/lib/tiptap/find-text-matches", () => ({
 import { findTextMatches } from "@/lib/tiptap/find-text-matches";
 const mockFindTextMatches = vi.mocked(findTextMatches);
 
-function createMockEditor() {
-  const mockTr = {
-    setMeta: vi.fn(() => mockTr),
-  };
-  return {
-    isDestroyed: false,
-    state: { doc: {}, tr: mockTr },
-    view: { dispatch: vi.fn() },
-  };
-}
-
 describe("useSimilarTextHighlight", () => {
   beforeEach(() => {
     capturedDecorations = [];
@@ -57,7 +47,7 @@ describe("useSimilarTextHighlight", () => {
     const editor = createMockEditor();
     const selection: WordSelection = { editorIndex: 0, from: 1, to: 6, text: "hello" };
 
-    renderHook(() => useSimilarTextHighlight(editor as any, selection, 0, false, null, false));
+    renderHook(() => useSimilarTextHighlight(asEditor(editor), selection, 0, false, null, false));
 
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(similarTextPluginKey, DecorationSet.empty);
   });
@@ -65,7 +55,7 @@ describe("useSimilarTextHighlight", () => {
   it("when there is no selection, then dispatches empty decorations", () => {
     const editor = createMockEditor();
 
-    renderHook(() => useSimilarTextHighlight(editor as any, null, 0, true, null, false));
+    renderHook(() => useSimilarTextHighlight(asEditor(editor), null, 0, true, null, false));
 
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(similarTextPluginKey, DecorationSet.empty);
   });
@@ -80,7 +70,7 @@ describe("useSimilarTextHighlight", () => {
       { from: 40, to: 45 },
     ]);
 
-    renderHook(() => useSimilarTextHighlight(editor as any, selection, 0, true, null, false));
+    renderHook(() => useSimilarTextHighlight(asEditor(editor), selection, 0, true, null, false));
 
     // Primary selection (from:1, to:6) should be filtered out
     expect(capturedDecorations).toHaveLength(2);
@@ -94,7 +84,7 @@ describe("useSimilarTextHighlight", () => {
 
     mockFindTextMatches.mockReturnValue([{ from: 10, to: 15 }]);
 
-    renderHook(() => useSimilarTextHighlight(editor as any, selection, 0, true, null, false));
+    renderHook(() => useSimilarTextHighlight(asEditor(editor), selection, 0, true, null, false));
 
     // Only match is the primary selection, so empty
     expect(editor.state.tr.setMeta).toHaveBeenCalledWith(similarTextPluginKey, DecorationSet.empty);
@@ -110,7 +100,7 @@ describe("useSimilarTextHighlight", () => {
       { from: 20, to: 25 },
     ]);
 
-    renderHook(() => useSimilarTextHighlight(editor as any, selection, 0, true, null, false));
+    renderHook(() => useSimilarTextHighlight(asEditor(editor), selection, 0, true, null, false));
 
     // In a different editor, no match is filtered out
     expect(capturedDecorations).toHaveLength(2);
@@ -122,10 +112,12 @@ describe("useSimilarTextHighlight", () => {
 
     mockFindTextMatches.mockReturnValue([{ from: 20, to: 25 }]);
 
-    renderHook(() => useSimilarTextHighlight(editor as any, selection, 0, true, "#fca5a5", false));
+    renderHook(() =>
+      useSimilarTextHighlight(asEditor(editor), selection, 0, true, "#fca5a5", false),
+    );
 
     expect(capturedDecorations).toHaveLength(1);
-    const attrs = (capturedDecorations[0] as any).attrs;
+    const attrs = (capturedDecorations[0] as Record<string, Record<string, string>>).attrs;
     // blendWithBackground("#fca5a5", 0.15, false) on light bg:
     // r: round(252*0.15 + 255*0.85) = round(37.8+216.75) = round(254.55) = 255
     // g: round(165*0.15 + 255*0.85) = round(24.75+216.75) = round(241.5) = 242

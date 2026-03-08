@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useAllHighlightPositions } from "./use-all-highlight-positions";
+import type { Editor } from "@tiptap/react";
 import type { Layer } from "@/types/editor";
 
 // This hook uses useLayoutEffect with ResizeObserver, MutationObserver, and
@@ -11,7 +12,7 @@ function makeContainerWithLayers(_layers: Layer[]) {
   const container = document.createElement("div");
   document.body.appendChild(container);
   const containerRef = { current: container } as React.RefObject<HTMLDivElement | null>;
-  const editorsRef = { current: new Map() } as React.RefObject<Map<number, any>>;
+  const editorsRef = { current: new Map() } as React.RefObject<Map<number, Editor>>;
   return {
     container,
     containerRef,
@@ -34,7 +35,7 @@ describe("useAllHighlightPositions", () => {
         ],
         underlines: [],
         comments: [],
-      } as any,
+      } as unknown as Layer,
     ];
 
     const { result } = renderHook(() => useAllHighlightPositions(editorsRef, layers, containerRef));
@@ -56,7 +57,7 @@ describe("useAllHighlightPositions", () => {
         ],
         underlines: [],
         comments: [],
-      } as any,
+      } as unknown as Layer,
     ];
 
     const { result } = renderHook(() => useAllHighlightPositions(editorsRef, layers, containerRef));
@@ -78,7 +79,7 @@ describe("useAllHighlightPositions", () => {
         ],
         underlines: [],
         comments: [],
-      } as any,
+      } as unknown as Layer,
     ];
 
     const { result } = renderHook(() => useAllHighlightPositions(editorsRef, layers, containerRef));

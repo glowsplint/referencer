@@ -13,6 +13,7 @@ import type {
   LayerUnderline,
   ArrowStyle,
   CommentReply,
+  UseYjsLayersReturn,
 } from "@/types/editor";
 import { TAILWIND_300_COLORS } from "@/constants/colors";
 import {
@@ -60,7 +61,10 @@ export function buildEditorViewMap(
   return map;
 }
 
-export function useYjsLayers(doc: Y.Doc | null, editorsRef?: React.RefObject<Map<number, Editor>>) {
+export function useYjsLayers(
+  doc: Y.Doc | null,
+  editorsRef?: React.RefObject<Map<number, Editor>>,
+): UseYjsLayersReturn {
   const [layers, setLayersState] = useState<Layer[]>([]);
   const [activeLayerId, setActiveLayerId] = useState<string | null>(null);
   const layerCounterRef = useRef(0);

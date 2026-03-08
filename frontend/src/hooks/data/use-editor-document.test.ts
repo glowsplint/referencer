@@ -4,7 +4,7 @@ import * as Y from "yjs";
 
 // Ref accessible in hoisted vi.mock factories
 const { testDocRef } = vi.hoisted(() => ({
-  testDocRef: { current: null as any },
+  testDocRef: { current: null as Y.Doc | null },
 }));
 
 // Mock Yjs provider — return a real Y.Doc without WebSocket
@@ -25,6 +25,7 @@ vi.mock("./use-yjs-offline", () => ({
 
 import { useEditorDocument } from "./use-editor-document";
 import { TAILWIND_300_COLORS } from "@/constants/colors";
+import { asEditor } from "@/test/mocks";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -355,7 +356,7 @@ describe("useEditorDocument", () => {
 
   it("when handleEditorMount is called for index 0, then sets activeEditor", () => {
     const { result } = renderHook(() => useEditorDocument());
-    const mockEditor = { id: "editor-0" } as any;
+    const mockEditor = asEditor({ id: "editor-0", isDestroyed: false, state: { doc: {} } });
 
     act(() => {
       result.current.handleEditorMount(0, mockEditor);
@@ -366,7 +367,7 @@ describe("useEditorDocument", () => {
 
   it("when handleEditorMount is called for non-zero index, then does not set activeEditor", () => {
     const { result } = renderHook(() => useEditorDocument());
-    const mockEditor = { id: "editor-1" } as any;
+    const mockEditor = asEditor({ id: "editor-1", isDestroyed: false, state: { doc: {} } });
 
     act(() => {
       result.current.handleEditorMount(1, mockEditor);
@@ -377,8 +378,8 @@ describe("useEditorDocument", () => {
 
   it("when handlePaneFocus is called, then switches activeEditor", () => {
     const { result } = renderHook(() => useEditorDocument());
-    const editor0 = { id: "editor-0" } as any;
-    const editor1 = { id: "editor-1" } as any;
+    const editor0 = asEditor({ id: "editor-0", isDestroyed: false, state: { doc: {} } });
+    const editor1 = asEditor({ id: "editor-1", isDestroyed: false, state: { doc: {} } });
 
     act(() => {
       result.current.handleEditorMount(0, editor0);

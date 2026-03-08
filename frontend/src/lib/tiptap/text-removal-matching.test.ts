@@ -1,4 +1,6 @@
 import { describe, it, expect } from "vitest";
+import type { Node as PMNode } from "@tiptap/pm/model";
+import type { Editor } from "@tiptap/react";
 import {
   globToRegex,
   compilePattern,
@@ -25,7 +27,7 @@ function createMockDoc(nodes: Array<{ text: string; marks: string[]; pos: number
         );
       }
     },
-  } as any;
+  } as unknown as PMNode;
 }
 
 function createMockEditor() {
@@ -44,7 +46,7 @@ function createMockEditor() {
       },
     }),
   };
-  return { editor: editor as any, deleteCalls };
+  return { editor: editor as unknown as Editor, deleteCalls };
 }
 
 // ---------------------------------------------------------------------------

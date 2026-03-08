@@ -98,9 +98,14 @@ export function SelectionRingOverlay({
       return;
     }
 
+    // Capture narrowed values before closure — all are guaranteed non-null by the guard above
+    const validEditor = editor;
+    const validSelection = selection;
+    const validWrapper = wrapper;
+
     function compute() {
       try {
-        setRects(getSelectionRects(editor!, selection!, wrapper!));
+        setRects(getSelectionRects(validEditor, validSelection, validWrapper));
       } catch {
         setRects([]);
       }

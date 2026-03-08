@@ -16,7 +16,11 @@ function saveColors(colors: string[]) {
   localStorage.setItem(STORAGE_KEYS.CUSTOM_COLORS, JSON.stringify(colors));
 }
 
-export function useCustomColors() {
+export function useCustomColors(): {
+  customColors: string[];
+  addCustomColor: (hex: string) => void;
+  removeCustomColor: (hex: string) => void;
+} {
   const [customColors, setCustomColors] = useState<string[]>(loadColors);
 
   const addCustomColor = useCallback((hex: string) => {

@@ -7,6 +7,7 @@ vi.mock("@/contexts/AuthContext", () => ({
   useAuth: vi.fn(),
 }));
 
+import type { AuthUser } from "@/lib/auth-client";
 import { useAuth } from "@/contexts/AuthContext";
 const mockUseAuth = vi.mocked(useAuth);
 
@@ -18,7 +19,7 @@ beforeEach(() => {
 describe("useCurrentUserName", () => {
   it("when OAuth user name is available, then returns it", () => {
     mockUseAuth.mockReturnValue({
-      user: { name: "John Doe" } as any,
+      user: { name: "John Doe" } as unknown as AuthUser,
       isAuthenticated: true,
       isLoading: false,
       login: vi.fn(),
@@ -58,7 +59,7 @@ describe("useCurrentUserName", () => {
 
   it("when both OAuth name and localStorage exist, then prefers OAuth name", () => {
     mockUseAuth.mockReturnValue({
-      user: { name: "OAuth User" } as any,
+      user: { name: "OAuth User" } as unknown as AuthUser,
       isAuthenticated: true,
       isLoading: false,
       login: vi.fn(),
