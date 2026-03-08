@@ -115,12 +115,12 @@ describe("DocumentCard", () => {
     });
   });
 
-  describe("when the card is double-clicked", () => {
+  describe("when the card is clicked", () => {
     it("then calls onOpen", async () => {
       const user = userEvent.setup();
       renderCard();
 
-      await user.dblClick(screen.getByTestId("documentCard-ws-1"));
+      await user.click(screen.getByTestId("documentCard-ws-1"));
 
       expect(onOpen).toHaveBeenCalledTimes(1);
     });

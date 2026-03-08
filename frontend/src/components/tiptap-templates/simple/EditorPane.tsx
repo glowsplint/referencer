@@ -256,7 +256,7 @@ export function EditorPane({
     removeArrow,
     selectedArrowId,
   );
-  useArrowCleanup({ editor, editorIndex: index, layers, removeArrow });
+  useArrowCleanup({ editor, editorIndex: index, layers, removeArrow, isLocked });
   usePrintRefDecorations(editor, layers, index, sectionVisibility);
   useSelectionScroll(editor, visibleSelection, index, wrapperRef);
 

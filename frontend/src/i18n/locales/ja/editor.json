@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: * は任意のテキスト、? は1文字に一致します。高度なパターンにはRegexに切り替えてください。",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

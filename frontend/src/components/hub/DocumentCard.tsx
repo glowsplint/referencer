@@ -6,7 +6,6 @@ import { formatRelativeTime } from "@/lib/annotation/format-relative-time";
 import { useDraggable } from "@/hooks/ui/use-hub-dnd";
 import { useDndContext } from "@/contexts/DndContext";
 import { useSelection } from "@/contexts/SelectionContext";
-import { useClickHandler } from "@/hooks/ui/use-click-handler";
 import type { DocumentItem } from "@/lib/document-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { MoveToFolderMenu } from "./MoveToFolderMenu";
@@ -58,14 +57,16 @@ export function DocumentCard({
   const { dragId } = useDndContext();
   const isDragging = dragId === document.documentId;
 
-  const onSelect = useCallback(
+  const handleCardClick = useCallback(
     (e: React.MouseEvent) => {
-      handleItemClick(document.documentId, e);
+      if (e.ctrlKey || e.metaKey || e.shiftKey || isSelectionActive) {
+        handleItemClick(document.documentId, e);
+        return;
+      }
+      onOpen();
     },
-    [handleItemClick, document.documentId],
+    [handleItemClick, document.documentId, isSelectionActive, onOpen],
   );
-
-  const handleCardClick = useClickHandler(onSelect, onOpen, isSelectionActive);
 
   return (
     <div

@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: ማንኛውንም ጽሑፍ ለማገናኘት * ይጠቀሙ፣ አንድ ቁምፊ ለማገናኘት ? ይጠቀሙ። ለረቀቁ ቅጦች ወደ Regex ይቀይሩ።",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

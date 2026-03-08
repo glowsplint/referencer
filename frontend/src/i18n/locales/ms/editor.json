@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: guna * untuk sebarang teks, ? untuk satu aksara. Tukar ke Regex untuk corak lanjutan.",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: usa * per qualsiasi testo, ? per un carattere. Passa a Regex per pattern avanzati.",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

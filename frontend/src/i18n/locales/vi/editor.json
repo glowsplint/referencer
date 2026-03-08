@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: dùng * để khớp mọi văn bản, ? khớp một ký tự. Chuyển sang Regex cho mẫu nâng cao.",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

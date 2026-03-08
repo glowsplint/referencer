@@ -155,12 +155,12 @@ describe("FolderCard", () => {
     });
   });
 
-  describe("when the folder card is double-clicked", () => {
+  describe("when the folder card is clicked", () => {
     it("then calls onNavigateToFolder with the folder id", async () => {
       const user = userEvent.setup();
       renderCard();
 
-      await user.dblClick(screen.getByTestId("folderCard-f1"));
+      await user.click(screen.getByTestId("folderCard-f1"));
 
       expect(onNavigateToFolder).toHaveBeenCalledWith("f1");
     });

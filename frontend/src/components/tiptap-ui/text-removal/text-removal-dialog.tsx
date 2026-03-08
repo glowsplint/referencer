@@ -12,10 +12,12 @@ import {
   Subscript,
   Link,
   Eraser,
+  HelpCircle,
 } from "lucide-react";
 
 import { useTiptapEditor } from "@/hooks/ui/use-tiptap-editor";
 import { Button } from "@/components/tiptap-ui-primitive/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/tiptap-ui-primitive/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -128,7 +130,17 @@ export function TextRemovalDialog({
 
           {/* Pattern input */}
           <div>
-            <label className="text-sm font-medium">{t("textRemoval.pattern")}</label>
+            <label className="text-sm font-medium inline-flex items-center gap-1">
+              {t("textRemoval.pattern")}
+              <Tooltip placement="top" delay={300}>
+                <TooltipTrigger asChild>
+                  <span>
+                    <HelpCircle size={14} className="text-muted-foreground cursor-help" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>{t("textRemoval.patternHelp")}</TooltipContent>
+              </Tooltip>
+            </label>
             <div className="flex gap-2 mt-2">
               <input
                 type="text"

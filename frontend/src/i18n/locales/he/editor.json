@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: השתמשו ב-* להתאמת כל טקסט, ו-? לתו בודד. עברו ל-Regex עבור תבניות מתקדמות.",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

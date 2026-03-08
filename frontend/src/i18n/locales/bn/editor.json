@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: যেকোনো টেক্সটের জন্য * এবং একটি অক্ষরের জন্য ? ব্যবহার করুন। উন্নত প্যাটার্নের জন্য Regex-এ স্যুইচ করুন।",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",

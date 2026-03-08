@@ -86,6 +86,7 @@
     "marks": "Filter by marks",
     "pattern": "Text pattern",
     "patternPlaceholder": "* (matches all)",
+    "patternHelp": "Glob: * — будь-який текст, ? — один символ. Перемкніться на Regex для складних шаблонів.",
     "regexMode": "Regex",
     "globMode": "Glob",
     "matchCount": "{{count}} match",
