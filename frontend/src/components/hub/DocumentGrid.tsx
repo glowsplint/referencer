@@ -43,6 +43,7 @@ import { RenameDialog } from "./RenameDialog";
 import { DeleteDialog } from "./DeleteDialog";
 import { DeleteFolderDialog } from "./DeleteFolderDialog";
 import { InlineNameInput } from "./InlineNameInput";
+import { TagFilterBar } from "./TagFilterBar";
 import type { DocumentItem } from "@/lib/document-client";
 
 type ViewMode = "grid" | "list";
@@ -71,6 +72,10 @@ interface DocumentGridProps {
   ownerName?: string;
   ownerAvatarUrl?: string;
   searchQuery: string;
+  allTags?: string[];
+  documentTags?: Record<string, string[]>;
+  onAddTag?: (documentId: string, tag: string) => void;
+  onRemoveTag?: (documentId: string, tag: string) => void;
 }
 
 export function DocumentGrid({
@@ -93,6 +98,10 @@ export function DocumentGrid({
   ownerName,
   ownerAvatarUrl,
   searchQuery,
+  allTags = [],
+  documentTags = {},
+  onAddTag,
+  onRemoveTag,
 }: DocumentGridProps) {
   const { t } = useTranslation("management");
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
@@ -105,8 +114,19 @@ export function DocumentGrid({
   const [creatingSubfolderId, setCreatingSubfolderId] = useState<string | null>(null);
   const [deleteFolderTarget, setDeleteFolderTarget] = useState<FolderItem | null>(null);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+  const [activeTagFilters, setActiveTagFilters] = useState<string[]>([]);
   const { sortConfig, setSort, compare } = useDocumentSort(documents);
   const folderTree = buildFolderTree(folders);
+
+  const handleToggleTagFilter = useCallback((tag: string) => {
+    setActiveTagFilters((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
+  }, []);
+
+  const handleClearTagFilters = useCallback(() => {
+    setActiveTagFilters([]);
+  }, []);
 
   const toggleView = (mode: ViewMode) => {
     setViewMode(mode);
@@ -188,7 +208,12 @@ export function DocumentGrid({
     for (const ws of documents) {
       if (ws.isFavorite) {
         if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
-          items.push({ kind: "document", document: ws });
+          if (
+            activeTagFilters.length === 0 ||
+            activeTagFilters.every((t) => (documentTags[ws.documentId] ?? []).includes(t))
+          ) {
+            items.push({ kind: "document", document: ws });
+          }
         }
       }
     }
@@ -217,7 +242,17 @@ export function DocumentGrid({
     });
 
     return items;
-  }, [folderTree, documents, sortConfig, compare, searchQuery, queryLower, currentFolderId]);
+  }, [
+    folderTree,
+    documents,
+    sortConfig,
+    compare,
+    searchQuery,
+    queryLower,
+    currentFolderId,
+    activeTagFilters,
+    documentTags,
+  ]);
 
   // All Items section: items at the current folder level
   const allItems = useMemo(() => {
@@ -236,7 +271,12 @@ export function DocumentGrid({
       for (const ws of documents) {
         if (!ws.isFavorite && !ws.folderId) {
           if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
-            items.push({ kind: "document", document: ws });
+            if (
+              activeTagFilters.length === 0 ||
+              activeTagFilters.every((t) => (documentTags[ws.documentId] ?? []).includes(t))
+            ) {
+              items.push({ kind: "document", document: ws });
+            }
           }
         }
       }
@@ -251,7 +291,12 @@ export function DocumentGrid({
       for (const ws of documents) {
         if (ws.folderId === currentFolderId) {
           if (!searchQuery || (ws.title || "Untitled").toLowerCase().includes(queryLower)) {
-            items.push({ kind: "document", document: ws });
+            if (
+              activeTagFilters.length === 0 ||
+              activeTagFilters.every((t) => (documentTags[ws.documentId] ?? []).includes(t))
+            ) {
+              items.push({ kind: "document", document: ws });
+            }
           }
         }
       }
@@ -289,6 +334,8 @@ export function DocumentGrid({
     compare,
     searchQuery,
     queryLower,
+    activeTagFilters,
+    documentTags,
   ]);
 
   // Compute orderedIds and itemTypes for SelectionProvider
@@ -350,6 +397,10 @@ export function DocumentGrid({
           onMoveToFolder={handleMoveToFolder}
           ownerName={ownerName}
           ownerAvatarUrl={ownerAvatarUrl}
+          tags={documentTags[ws.documentId]}
+          allTags={allTags}
+          onAddTag={onAddTag}
+          onRemoveTag={onRemoveTag}
         />
       ) : (
         <DocumentListItem
@@ -364,6 +415,10 @@ export function DocumentGrid({
           onMoveToFolder={handleMoveToFolder}
           ownerName={ownerName}
           ownerAvatarUrl={ownerAvatarUrl}
+          tags={documentTags[ws.documentId]}
+          allTags={allTags}
+          onAddTag={onAddTag}
+          onRemoveTag={onRemoveTag}
         />
       );
     } else {
@@ -485,6 +540,14 @@ export function DocumentGrid({
                 onNavigate={handleNavigateToFolder}
                 onMoveToFolder={handleMoveToFolder}
                 onMoveFolder={onMoveFolder}
+              />
+
+              {/* Tag filter bar */}
+              <TagFilterBar
+                allTags={allTags}
+                activeTags={activeTagFilters}
+                onToggleTag={handleToggleTagFilter}
+                onClearFilters={handleClearTagFilters}
               />
 
               {/* Starred section — only at root level */}

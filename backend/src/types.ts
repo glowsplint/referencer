@@ -37,3 +37,10 @@ export interface DocumentFolder {
   updatedAt: string;
   isFavorite: boolean;
 }
+
+export interface DocumentTag {
+  userId: string;
+  documentId: string;
+  tag: string;
+  createdAt: string;
+}

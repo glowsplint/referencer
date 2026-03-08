@@ -5,6 +5,7 @@ import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useDocuments } from "@/hooks/data/use-documents";
 import { useFolders } from "@/hooks/data/use-folders";
+import { useTags } from "@/hooks/data/use-tags";
 import { useSettings } from "@/hooks/data/use-settings";
 import { LoginButton } from "@/components/LoginButton";
 import { UserMenu } from "@/components/UserMenu";
@@ -41,6 +42,7 @@ export function HubPage({ navigate }: HubPageProps) {
     toggleFavorite: toggleFolderFavorite,
     moveFolder,
   } = useFolders();
+  const { allTags, documentTags, addTag, removeTag } = useTags();
   const { settings, setTheme, toggleHideOffscreenArrows, toggleShowStatusBar, toggleOverscroll } =
     useSettings();
 
@@ -170,6 +172,10 @@ export function HubPage({ navigate }: HubPageProps) {
               ownerName={user?.name}
               ownerAvatarUrl={user?.avatarUrl}
               searchQuery={searchQuery}
+              allTags={allTags}
+              documentTags={documentTags}
+              onAddTag={addTag}
+              onRemoveTag={removeTag}
             />
           </div>
         ) : null}

@@ -132,6 +132,14 @@
     "searchAnnotationCount_one": "{{count}} annotation found",
     "searchAnnotationCount_other": "{{count}} annotations found",
     "searchAnnotationsLoading": "Searching annotations...",
-    "searchAnnotationsEmpty": "No annotations match your search"
+    "searchAnnotationsEmpty": "No annotations match your search",
+    "tags": "Tags",
+    "addTag": "Add tag...",
+    "removeTag": "Remove tag",
+    "tagFilter": "Filter by tags",
+    "clearTagFilters": "Clear filters",
+    "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
+    "maxTagsReached": "Maximum {{max}} tags per document",
+    "noTagsYet": "No tags yet"
   }
 }

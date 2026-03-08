@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { UserDocument } from "../types";
+import { copyTags } from "./tag-queries";
 
 export async function listUserDocuments(
   supabase: SupabaseClient,
@@ -152,6 +153,7 @@ export async function deleteDocumentCascade(
 ): Promise<void> {
   // Order matters — delete dependent rows first to avoid FK violations
   await supabase.from("share_link").delete().eq("document_id", documentId);
+  await supabase.from("document_tag").delete().eq("document_id", documentId);
   await supabase.from("user_document").delete().eq("document_id", documentId);
   await supabase.from("document_permission").delete().eq("document_id", documentId);
   await supabase.from("yjs_document").delete().eq("document_id", documentId);
@@ -187,4 +189,7 @@ export async function duplicateDocument(
 
   // Create the user_document entry
   await createUserDocument(supabase, userId, newDocumentId);
+
+  // Copy tags from source to duplicate
+  await copyTags(supabase, userId, sourceDocumentId, newDocumentId);
 }
