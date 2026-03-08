@@ -4,10 +4,13 @@ import { describe, it, expect, vi } from "vitest";
 import { ExportMenu } from "./ExportMenu";
 import { renderWithDocument } from "@/test/render-with-document";
 
-function renderExportMenu(onExportMarkdown = vi.fn()) {
+function renderExportMenu(onExportMarkdown = vi.fn(), onExportCleanText = vi.fn()) {
   return {
     onExportMarkdown,
-    ...renderWithDocument(<ExportMenu onExportMarkdown={onExportMarkdown} />),
+    onExportCleanText,
+    ...renderWithDocument(
+      <ExportMenu onExportMarkdown={onExportMarkdown} onExportCleanText={onExportCleanText} />,
+    ),
   };
 }
 
@@ -23,6 +26,7 @@ describe("ExportMenu", () => {
     await user.click(screen.getByTestId("exportMenuButton"));
     expect(screen.getByTestId("exportPdfButton")).toBeInTheDocument();
     expect(screen.getByTestId("exportMarkdownButton")).toBeInTheDocument();
+    expect(screen.getByTestId("exportCleanTextButton")).toBeInTheDocument();
   });
 
   it("calls window.print when PDF item is clicked", async () => {
@@ -42,5 +46,15 @@ describe("ExportMenu", () => {
     await user.click(screen.getByTestId("exportMenuButton"));
     await user.click(screen.getByTestId("exportMarkdownButton"));
     expect(onExportMarkdown).toHaveBeenCalledOnce();
+  });
+
+  it("calls onExportCleanText when clean text item is clicked", async () => {
+    const user = userEvent.setup();
+    const onExportMarkdown = vi.fn();
+    const onExportCleanText = vi.fn();
+    renderExportMenu(onExportMarkdown, onExportCleanText);
+    await user.click(screen.getByTestId("exportMenuButton"));
+    await user.click(screen.getByTestId("exportCleanTextButton"));
+    expect(onExportCleanText).toHaveBeenCalledOnce();
   });
 });

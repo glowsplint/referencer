@@ -6,9 +6,10 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/tiptap-ui-
 
 interface ExportMenuProps {
   onExportMarkdown: () => void;
+  onExportCleanText: () => void;
 }
 
-export function ExportMenu({ onExportMarkdown }: ExportMenuProps) {
+export function ExportMenu({ onExportMarkdown, onExportCleanText }: ExportMenuProps) {
   const { t } = useTranslation();
 
   return (
@@ -45,6 +46,13 @@ export function ExportMenu({ onExportMarkdown }: ExportMenuProps) {
             data-testid="exportMarkdownButton"
           >
             {t("export.markdown")}
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            onSelect={onExportCleanText}
+            className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+            data-testid="exportCleanTextButton"
+          >
+            {t("export.cleanText")}
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

@@ -120,6 +120,10 @@ interface SettingsDialogProps {
   toggleShowStatusBar: () => void;
   overscroll: boolean;
   toggleOverscroll: () => void;
+  reduceMotion: "auto" | "on" | "off";
+  setReduceMotion: (value: "auto" | "on" | "off") => void;
+  hideAnnotations: boolean;
+  toggleHideAnnotations: () => void;
 }
 
 export function SettingsDialog({
@@ -133,6 +137,10 @@ export function SettingsDialog({
   toggleShowStatusBar,
   overscroll,
   toggleOverscroll,
+  reduceMotion,
+  setReduceMotion,
+  hideAnnotations,
+  toggleHideAnnotations,
 }: SettingsDialogProps) {
   const { t } = useTranslation("dialogs");
 
@@ -157,6 +165,13 @@ export function SettingsDialog({
       description: t("settings.overscroll.description"),
       checked: overscroll,
       onCheckedChange: toggleOverscroll,
+    },
+    {
+      id: "hide-annotations",
+      label: t("settings.hideAnnotations.label"),
+      description: t("settings.hideAnnotations.description"),
+      checked: hideAnnotations,
+      onCheckedChange: toggleHideAnnotations,
     },
   ];
 
@@ -206,6 +221,27 @@ export function SettingsDialog({
                   {lang.label}
                 </option>
               ))}
+            </select>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <label htmlFor="reduce-motion" className="text-sm font-medium cursor-pointer">
+                {t("settings.reduceMotion.label")}
+              </label>
+              <p className="text-xs text-muted-foreground">
+                {t("settings.reduceMotion.description")}
+              </p>
+            </div>
+            <select
+              id="reduce-motion"
+              value={reduceMotion}
+              onChange={(e) => setReduceMotion(e.target.value as "auto" | "on" | "off")}
+              className="rounded-md border border-input bg-background px-2 py-1 text-sm"
+              data-testid="reduce-motion-select"
+            >
+              <option value="auto">{t("settings.reduceMotion.auto")}</option>
+              <option value="on">{t("settings.reduceMotion.on")}</option>
+              <option value="off">{t("settings.reduceMotion.off")}</option>
             </select>
           </div>
         </div>

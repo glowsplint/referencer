@@ -17,7 +17,8 @@
   "export": {
     "title": "Export",
     "pdf": "Export as PDF",
-    "markdown": "Export as Markdown"
+    "markdown": "Export as Markdown",
+    "cleanText": "Export clean text"
   },
   "print": {
     "comments": "Comments",
@@ -35,5 +36,9 @@
     "connectionCount_one": "{{count}} connection",
     "connectionCount_other": "{{count}} connections",
     "crossReferences": "Cross-References"
+  },
+  "status": {
+    "annotationsHidden": "Annotations hidden (press F to show)",
+    "annotationsVisible": "Annotations visible"
   }
 }

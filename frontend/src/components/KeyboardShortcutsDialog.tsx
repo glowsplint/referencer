@@ -95,6 +95,7 @@ export function KeyboardShortcutsDialog({ open, onOpenChange }: KeyboardShortcut
         { keys: ["K"], description: t("shortcuts.toggleLock") },
         { keys: ["M"], description: t("shortcuts.toggleManagement") },
         { keys: ["T"], description: t("shortcuts.addText") },
+        { keys: ["F"], description: t("shortcuts.toggleAnnotations") },
         { keys: [CMD, "F"], description: t("shortcuts.searchAnnotations") },
       ],
     },

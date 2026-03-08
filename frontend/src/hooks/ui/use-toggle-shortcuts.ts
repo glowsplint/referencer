@@ -4,7 +4,14 @@
 import { useEffect, useRef } from "react";
 import { isEditableElement } from "@/lib/dom";
 
-type ToggleAction = "darkMode" | "layout" | "lock" | "menu" | "commentPlacement" | "addText";
+type ToggleAction =
+  | "darkMode"
+  | "layout"
+  | "lock"
+  | "menu"
+  | "commentPlacement"
+  | "addText"
+  | "hideAnnotations";
 
 const KEY_MAP: Record<string, ToggleAction> = {
   KeyD: "darkMode",
@@ -13,6 +20,7 @@ const KEY_MAP: Record<string, ToggleAction> = {
   KeyM: "menu",
   KeyP: "commentPlacement",
   KeyT: "addText",
+  KeyF: "hideAnnotations",
 };
 
 interface UseToggleShortcutsOptions {
@@ -22,6 +30,7 @@ interface UseToggleShortcutsOptions {
   toggleManagementPane: () => void;
   toggleCommentPlacement: () => void;
   addText: () => void;
+  toggleHideAnnotations: () => void;
 }
 
 export function useToggleShortcuts({
@@ -31,6 +40,7 @@ export function useToggleShortcuts({
   toggleManagementPane,
   toggleCommentPlacement,
   addText,
+  toggleHideAnnotations,
 }: UseToggleShortcutsOptions) {
   const callbacksRef = useRef({
     toggleDarkMode,
@@ -39,6 +49,7 @@ export function useToggleShortcuts({
     toggleManagementPane,
     toggleCommentPlacement,
     addText,
+    toggleHideAnnotations,
   });
   useEffect(() => {
     callbacksRef.current = {
@@ -48,6 +59,7 @@ export function useToggleShortcuts({
       toggleManagementPane,
       toggleCommentPlacement,
       addText,
+      toggleHideAnnotations,
     };
   });
 
@@ -75,6 +87,7 @@ export function useToggleShortcuts({
         toggleManagementPane,
         toggleCommentPlacement,
         addText,
+        toggleHideAnnotations,
       } = callbacksRef.current;
       switch (action) {
         case "darkMode":
@@ -95,6 +108,9 @@ export function useToggleShortcuts({
           break;
         case "addText":
           addText();
+          break;
+        case "hideAnnotations":
+          toggleHideAnnotations();
           break;
       }
     };

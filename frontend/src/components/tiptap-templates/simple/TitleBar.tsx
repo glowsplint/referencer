@@ -20,9 +20,10 @@ import { renameDocument, fetchDocument } from "@/lib/document-client";
 interface TitleBarProps {
   navigate?: (hash: string) => void;
   onExportMarkdown?: () => void;
+  onExportCleanText?: () => void;
 }
 
-export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
+export function TitleBar({ navigate, onExportMarkdown, onExportCleanText }: TitleBarProps) {
   const { t } = useTranslation();
   const {
     documentId,
@@ -33,6 +34,8 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleOverscroll,
+    setReduceMotion,
+    toggleHideAnnotations,
   } = useDocument();
   const { isAuthenticated, isLoading } = useAuth();
   const { documents } = useDocuments();
@@ -228,7 +231,10 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
           </span>
         </div>
         <CollaborationPresence provider={yjs.provider?.wsProvider ?? null} className="mr-1" />
-        <ExportMenu onExportMarkdown={onExportMarkdown ?? (() => {})} />
+        <ExportMenu
+          onExportMarkdown={onExportMarkdown ?? (() => {})}
+          onExportCleanText={onExportCleanText ?? (() => {})}
+        />
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
             <button
@@ -264,6 +270,10 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
         toggleShowStatusBar={toggleShowStatusBar}
         overscroll={settings.overscroll}
         toggleOverscroll={toggleOverscroll}
+        reduceMotion={settings.reduceMotion}
+        setReduceMotion={setReduceMotion}
+        hideAnnotations={settings.hideAnnotations}
+        toggleHideAnnotations={toggleHideAnnotations}
       />
     </div>
   );

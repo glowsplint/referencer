@@ -19,6 +19,7 @@ import { useSelectionScroll } from "@/hooks/selection/use-selection-decoration";
 import { useWordHover } from "@/hooks/selection/use-word-hover";
 import { useEditorArrows } from "@/hooks/annotations/use-editor-arrows";
 import { useArrowCleanup } from "@/hooks/annotations/use-arrow-cleanup";
+import { usePrintRefDecorations } from "@/hooks/annotations/use-print-ref-decorations";
 import { SelectionRingOverlay } from "@/components/SelectionRingOverlay";
 import type { ActiveTool, Layer, WordSelection } from "@/types/editor";
 
@@ -203,6 +204,7 @@ export function EditorPane({
     selectedArrowId,
   );
   useArrowCleanup({ editor, editorIndex: index, layers, removeArrow });
+  usePrintRefDecorations(editor, layers, index, sectionVisibility);
   useSelectionScroll(editor, visibleSelection, index, wrapperRef);
 
   const handleFocus = useCallback(() => {

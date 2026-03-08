@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import type { Layer } from "@/types/editor";
 import { migrateAnnotation } from "@/lib/annotation/migrate-annotation";
 import { sanitizeColor } from "@/lib/sanitize-color";
+import { buildPrintRefMap } from "@/lib/print/build-print-ref-map";
 
 interface PrintAnnotationsProps {
   layers: Layer[];
@@ -15,6 +16,7 @@ interface CollectedComment {
   text: string;
   annotation: string;
   editorIndex: number;
+  refNumber?: number;
   replies: {
     id: string;
     text: string;
@@ -57,12 +59,12 @@ export function PrintAnnotations({
 }: PrintAnnotationsProps) {
   const { t } = useTranslation();
 
+  const refMap = buildPrintRefMap(layers, sectionVisibility);
+
   const comments: CollectedComment[] = [];
   const highlights: CollectedHighlight[] = [];
   const underlines: CollectedUnderline[] = [];
   const arrows: CollectedArrow[] = [];
-
-  let arrowCounter = 0;
 
   for (const layer of layers) {
     if (!layer.visible) continue;
@@ -76,6 +78,7 @@ export function PrintAnnotations({
           text: h.text,
           annotation: h.annotation,
           editorIndex: h.editorIndex,
+          refNumber: refMap.commentRefs.get(h.id),
           replies: (h.replies ?? []).map((r) => ({
             id: r.id,
             text: r.text,
@@ -106,7 +109,7 @@ export function PrintAnnotations({
     for (const a of layer.arrows) {
       if (sectionVisibility[a.from.editorIndex] === false) continue;
       if (sectionVisibility[a.to.editorIndex] === false) continue;
-      arrowCounter++;
+      const arrowNum = refMap.arrowRefs.get(a.id) ?? 0;
       arrows.push({
         layerColor: layer.color,
         layerName: layer.name,
@@ -117,7 +120,7 @@ export function PrintAnnotations({
         fromEditorIndex: a.from.editorIndex,
         toEditorIndex: a.to.editorIndex,
         arrowStyle: a.arrowStyle ?? "solid",
-        arrowNumber: arrowCounter,
+        arrowNumber: arrowNum,
       });
     }
   }
@@ -195,6 +198,11 @@ export function PrintAnnotations({
                     style={{ borderColor: sanitizeColor(item.layerColor) }}
                   >
                     <div className="text-[10px] font-bold italic text-zinc-600 mb-0.5">
+                      {item.refNumber && (
+                        <span className="print-cross-ref-number font-bold text-blue-500 text-[0.625rem]">
+                          [c{item.refNumber}]
+                        </span>
+                      )}{" "}
                       &ldquo;{item.text}&rdquo;
                     </div>
                     {item.annotation && (
@@ -278,7 +286,7 @@ export function PrintAnnotations({
                     style={{ borderColor: sanitizeColor(arrow.layerColor) }}
                   >
                     <span className="print-cross-ref-number font-bold text-blue-500 text-[0.625rem]">
-                      [{arrow.arrowNumber}]
+                      [a{arrow.arrowNumber}]
                     </span>{" "}
                     <span>
                       &ldquo;{arrow.fromText}&rdquo; &rarr; &ldquo;{arrow.toText}&rdquo; (
@@ -304,7 +312,7 @@ export function PrintAnnotations({
           {arrows.map((arrow) => (
             <div key={`xref-${arrow.arrowNumber}`} className="mb-1 text-[10px] text-zinc-600 pl-2">
               <span className="print-cross-ref-number font-bold text-blue-500 text-[0.625rem]">
-                [{arrow.arrowNumber}]
+                [a{arrow.arrowNumber}]
               </span>{" "}
               &ldquo;{arrow.fromText}&rdquo; ({arrow.fromSection}) &rarr; &ldquo;{arrow.toText}
               &rdquo; ({arrow.toSection})

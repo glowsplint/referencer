@@ -410,7 +410,7 @@ describe("PrintAnnotations", () => {
       );
 
       expect(screen.getByText("Connections")).toBeInTheDocument();
-      expect(container.textContent).toContain("[1]");
+      expect(container.textContent).toContain("[a1]");
       expect(container.textContent).toContain("source");
       expect(container.textContent).toContain("target");
       expect(container.textContent).toContain("Exodus");
@@ -444,8 +444,8 @@ describe("PrintAnnotations", () => {
         />,
       );
 
-      expect(container.textContent).toContain("[1]");
-      expect(container.textContent).toContain("[2]");
+      expect(container.textContent).toContain("[a1]");
+      expect(container.textContent).toContain("[a2]");
     });
 
     it("shows arrow style when not solid", () => {
@@ -567,8 +567,8 @@ describe("PrintAnnotations", () => {
       );
 
       const crossRefSection = screen.getByText("Cross-References").parentElement!;
-      expect(crossRefSection.textContent).toContain("[1]");
-      expect(crossRefSection.textContent).toContain("[2]");
+      expect(crossRefSection.textContent).toContain("[a1]");
+      expect(crossRefSection.textContent).toContain("[a2]");
       expect(crossRefSection.textContent).toContain("alpha");
       expect(crossRefSection.textContent).toContain("gamma");
     });

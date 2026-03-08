@@ -3,6 +3,7 @@
 // arrow overlay, and action console. Wires together all annotation tools
 // (highlight, comment, underline, arrow, eraser) and keyboard navigation.
 import { useRef, useState, useCallback, useEffect, useMemo, Fragment, type RefObject } from "react";
+import { useTranslation } from "react-i18next";
 import type * as Y from "yjs";
 import { EditorContext } from "@tiptap/react";
 import { ButtonPane } from "./components/ButtonPane";
@@ -53,6 +54,7 @@ import { DocumentProvider } from "./contexts/DocumentContext";
 import { EditorTour } from "./components/tour/EditorTour";
 import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annotations";
 import { useCurrentUserName } from "./hooks/data/use-current-user-name";
+import { useMentionableUsers } from "./hooks/data/use-mentionable-users";
 import { exportDocumentAsMarkdown } from "@/lib/export/export-markdown";
 import { apiFetch } from "@/lib/api-client";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
@@ -324,7 +326,27 @@ export function App({ documentId, navigate }: AppProps) {
     });
   }, [editorsRef, layers, docCtx.sectionNames, sectionVisibility, printTitle]);
 
+  const handleExportCleanText = useCallback(() => {
+    exportDocumentAsMarkdown({
+      editors: editorsRef.current,
+      layers,
+      sectionNames: docCtx.sectionNames,
+      sectionVisibility,
+      title: printTitle,
+      stripAnnotations: true,
+    });
+  }, [editorsRef, layers, docCtx.sectionNames, sectionVisibility, printTitle]);
+
+  const displayLayers = useMemo(
+    () =>
+      settings.hideAnnotations
+        ? layers.map((l) => ({ ...l, highlights: [], arrows: [], underlines: [] }))
+        : layers,
+    [settings.hideAnnotations, layers],
+  );
+
   const currentUserName = useCurrentUserName();
+  const mentionSuggestions = useMentionableUsers(docCtx.yjs.wsProvider, documentId);
   const isMobile = useIsBreakpoint("max", 768);
   const effectiveReadOnly = readOnly || isMobile;
   const [mobileDialogDismissed, setMobileDialogDismissed] = useState(false);
@@ -344,9 +366,11 @@ export function App({ documentId, navigate }: AppProps) {
     toggleManagementPane: docCtx.toggleManagementPane,
     toggleCommentPlacement: docCtx.toggleCommentPlacement,
     addText: docCtx.addEditor,
+    toggleHideAnnotations: docCtx.toggleHideAnnotations,
   });
   useUndoRedoKeyboard(unifiedUndo);
 
+  const { t } = useTranslation();
   const actionConsole = useActionConsole();
   const { message: statusMessage, setStatus, flashStatus, clearStatus } = useStatusMessage();
 
@@ -356,6 +380,22 @@ export function App({ documentId, navigate }: AppProps) {
     flashStatus,
     clearStatus,
   });
+
+  const prevHideAnnotations = useRef(settings.hideAnnotations);
+  useEffect(() => {
+    if (prevHideAnnotations.current !== settings.hideAnnotations) {
+      prevHideAnnotations.current = settings.hideAnnotations;
+      flashStatus(
+        {
+          text: settings.hideAnnotations
+            ? t("status.annotationsHidden")
+            : t("status.annotationsVisible"),
+          type: "info",
+        },
+        2000,
+      );
+    }
+  }, [settings.hideAnnotations, flashStatus, t]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const topRowRef = useRef<HTMLDivElement>(null);
@@ -513,7 +553,7 @@ export function App({ documentId, navigate }: AppProps) {
 
   const hasAnnotationsForEditors = useCallback(
     (indices: number[]) =>
-      layers.some(
+      displayLayers.some(
         (l) =>
           l.visible &&
           l.highlights.some(
@@ -523,7 +563,7 @@ export function App({ documentId, navigate }: AppProps) {
               sectionVisibility[h.editorIndex] !== false,
           ),
       ),
-    [layers, sectionVisibility],
+    [displayLayers, sectionVisibility],
   );
 
   const hasAnyAnnotations = useMemo(
@@ -574,7 +614,7 @@ export function App({ documentId, navigate }: AppProps) {
   );
 
   const annotationPanelProps = {
-    layers,
+    layers: displayLayers,
     editorsRef,
     containerRef,
     editingAnnotation,
@@ -592,6 +632,7 @@ export function App({ documentId, navigate }: AppProps) {
     onRemoveReply: removeReply,
     onToggleReaction: handleToggleReaction,
     onToggleReplyReaction: handleToggleReplyReaction,
+    mentionSuggestions,
   };
 
   const editorCellProps = (i: number): EditorCellProps => ({
@@ -610,7 +651,7 @@ export function App({ documentId, navigate }: AppProps) {
     onMouseDown: handleMouseDown,
     onMouseMove: handleMouseMove,
     onMouseUp: handleMouseUp,
-    layers,
+    layers: displayLayers,
     selection,
     selectionHidden,
     activeLayerColor,
@@ -641,7 +682,11 @@ export function App({ documentId, navigate }: AppProps) {
           )}
           <EditorContext.Provider value={{ editor: activeEditor }}>
             <div className="flex flex-col flex-1 min-w-0">
-              <TitleBar navigate={navigate} onExportMarkdown={handleExportMarkdown} />
+              <TitleBar
+                navigate={navigate}
+                onExportMarkdown={handleExportMarkdown}
+                onExportCleanText={handleExportCleanText}
+              />
               <UnsavedBanner />
               <PrintHeader title={printTitle} layers={layers} annotationCounts={annotationCounts} />
               <SimpleEditorToolbar isLocked={focusedPaneLocked} />
@@ -683,7 +728,7 @@ export function App({ documentId, navigate }: AppProps) {
                 >
                   <ErrorBoundary silent>
                     <ArrowOverlay
-                      layers={layers}
+                      layers={displayLayers}
                       drawingState={drawingState}
                       drawingColor={activeLayerColor}
                       editorsRef={editorsRef}
@@ -816,7 +861,7 @@ export function App({ documentId, navigate }: AppProps) {
                                         ? handleMouseUp
                                         : undefined
                                     }
-                                    layers={layers}
+                                    layers={displayLayers}
                                     selection={selection}
                                     selectionHidden={selectionHidden}
                                     activeLayerColor={activeLayerColor}

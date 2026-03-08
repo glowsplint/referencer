@@ -492,6 +492,64 @@ describe("generateDocumentMarkdown", () => {
       expect(result).toMatch(/exported: \d{4}-\d{2}-\d{2}/);
     });
 
+    it("when stripAnnotations is true, then omits highlights, comments, underlines, and connections", () => {
+      const result = generateDocumentMarkdown(
+        makeOptions({
+          stripAnnotations: true,
+          layers: [
+            makeLayer({
+              highlights: [
+                {
+                  id: "h1",
+                  editorIndex: 0,
+                  from: 0,
+                  to: 5,
+                  text: "important",
+                  annotation: "<p>note</p>",
+                  type: "highlight",
+                  visible: true,
+                },
+                {
+                  id: "h2",
+                  editorIndex: 0,
+                  from: 0,
+                  to: 5,
+                  text: "commented",
+                  annotation: "<p>a comment</p>",
+                  type: "comment",
+                  visible: true,
+                },
+              ],
+              underlines: [
+                {
+                  id: "u1",
+                  editorIndex: 0,
+                  from: 0,
+                  to: 5,
+                  text: "underlined",
+                  visible: true,
+                },
+              ],
+              arrows: [
+                {
+                  id: "a1",
+                  from: { editorIndex: 0, from: 0, to: 5, text: "from" },
+                  to: { editorIndex: 0, from: 10, to: 15, text: "to" },
+                  arrowStyle: "solid",
+                  visible: true,
+                },
+              ],
+            }),
+          ],
+        }),
+      );
+      expect(result).toContain("Hello world");
+      expect(result).not.toContain("### Highlights");
+      expect(result).not.toContain("### Comments");
+      expect(result).not.toContain("### Underlines");
+      expect(result).not.toContain("## Connections");
+    });
+
     it("connection table aligns columns for multiple arrows", () => {
       const result = generateDocumentMarkdown(
         makeOptions({

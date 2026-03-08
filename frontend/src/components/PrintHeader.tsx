@@ -51,7 +51,7 @@ export function PrintHeader({ title, layers, annotationCounts }: PrintHeaderProp
           {visibleLayers.map((layer) => (
             <div key={layer.id} className="flex items-center gap-1.5 text-xs">
               <span
-                className="inline-block w-3 h-3 rounded-full"
+                className="inline-block w-3 h-3 rounded-full border border-zinc-400"
                 style={{ backgroundColor: sanitizeColor(layer.color) }}
               />
               <span>{layer.name}</span>

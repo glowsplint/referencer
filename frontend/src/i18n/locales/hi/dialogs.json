@@ -26,6 +26,17 @@
     "statusBar": {
       "label": "Status bar",
       "description": "Show the status bar below the toolbar"
+    },
+    "reduceMotion": {
+      "label": "Reduce motion",
+      "description": "Minimize animations and transitions",
+      "auto": "Auto (system)",
+      "on": "On",
+      "off": "Off"
+    },
+    "hideAnnotations": {
+      "label": "Hide annotations",
+      "description": "Hide all annotation markers for distraction-free reading"
     }
   },
   "faq": {
@@ -110,7 +121,8 @@
     "alignRight": "दाएं संरेखित करें",
     "alignJustify": "दोनों ओर संरेखित करें",
     "searchAnnotations": "टिप्पणियाँ खोजें",
-    "addText": "Add new text"
+    "addText": "Add new text",
+    "toggleAnnotations": "Toggle annotations"
   },
   "share": {
     "title": "दस्तावेज़ साझा करें",

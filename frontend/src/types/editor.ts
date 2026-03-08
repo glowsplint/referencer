@@ -13,6 +13,8 @@ export interface EditorSettings {
   showStatusBar: boolean;
   overscroll: boolean;
   commentPlacement: "left" | "right" | "both";
+  hideAnnotations: boolean;
+  reduceMotion: "auto" | "on" | "off";
 }
 
 export type ActiveTool = "selection" | "arrow" | "comments" | "highlight" | "underline" | "eraser";
