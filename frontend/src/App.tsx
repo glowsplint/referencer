@@ -289,6 +289,31 @@ export function App({ documentId, navigate }: AppProps) {
     return () => meta.unobserve(observer);
   }, [docCtx.yjs.doc]);
 
+  const annotationCounts = useMemo(() => {
+    let comments = 0,
+      highlights = 0,
+      underlines = 0,
+      connections = 0;
+    for (const layer of layers) {
+      if (!layer.visible) continue;
+      for (const h of layer.highlights) {
+        if (sectionVisibility[h.editorIndex] === false) continue;
+        if (h.type === "comment") comments++;
+        else if (h.type === "highlight") highlights++;
+      }
+      for (const u of layer.underlines) {
+        if (sectionVisibility[u.editorIndex] === false) continue;
+        underlines++;
+      }
+      for (const a of layer.arrows) {
+        if (sectionVisibility[a.from.editorIndex] === false) continue;
+        if (sectionVisibility[a.to.editorIndex] === false) continue;
+        connections++;
+      }
+    }
+    return { comments, highlights, underlines, connections };
+  }, [layers, sectionVisibility]);
+
   const handleExportMarkdown = useCallback(() => {
     exportDocumentAsMarkdown({
       editors: editorsRef.current,
@@ -618,7 +643,7 @@ export function App({ documentId, navigate }: AppProps) {
             <div className="flex flex-col flex-1 min-w-0">
               <TitleBar navigate={navigate} onExportMarkdown={handleExportMarkdown} />
               <UnsavedBanner />
-              <PrintHeader title={printTitle} layers={layers} />
+              <PrintHeader title={printTitle} layers={layers} annotationCounts={annotationCounts} />
               <SimpleEditorToolbar isLocked={focusedPaneLocked} />
               {!isMobile && settings.showStatusBar && <StatusBar message={statusMessage} />}
               <div className="flex flex-1 min-w-0 min-h-0">

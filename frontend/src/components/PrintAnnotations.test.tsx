@@ -17,7 +17,7 @@ function makeLayer(overrides: Partial<Layer> = {}): Layer {
 }
 
 describe("PrintAnnotations", () => {
-  describe("when no visible comments exist", () => {
+  describe("when no visible annotations exist", () => {
     it("then renders nothing", () => {
       const { container } = render(
         <PrintAnnotations
@@ -54,6 +54,76 @@ describe("PrintAnnotations", () => {
     });
   });
 
+  describe("section-first grouping", () => {
+    it("groups annotations by section with section headings appearing first", () => {
+      const layer = makeLayer({
+        highlights: [
+          {
+            id: "h1",
+            editorIndex: 0,
+            from: 0,
+            to: 5,
+            text: "hello",
+            annotation: "note",
+            type: "comment",
+            visible: true,
+          },
+          {
+            id: "h2",
+            editorIndex: 1,
+            from: 0,
+            to: 5,
+            text: "highlighted text",
+            annotation: "",
+            type: "highlight",
+            visible: true,
+          },
+          {
+            id: "h3",
+            editorIndex: 0,
+            from: 10,
+            to: 15,
+            text: "important phrase",
+            annotation: "",
+            type: "highlight",
+            visible: true,
+          },
+        ],
+      });
+
+      const { container } = render(
+        <PrintAnnotations
+          layers={[layer]}
+          sectionNames={["Intro", "Body"]}
+          sectionVisibility={[true, true]}
+        />,
+      );
+
+      // Section headings should appear
+      const sectionHeadings = container.querySelectorAll(".print-section-heading");
+      expect(sectionHeadings).toHaveLength(2);
+      expect(sectionHeadings[0].textContent).toBe("Intro");
+      expect(sectionHeadings[1].textContent).toBe("Body");
+
+      // Under Intro, we should have Comments and Highlights sub-headings
+      const textContent = container.textContent!;
+      const introPos = textContent.indexOf("Intro");
+      const bodyPos = textContent.indexOf("Body");
+      const helloPos = textContent.indexOf("hello");
+      const importantPos = textContent.indexOf("important phrase");
+      const highlightedPos = textContent.indexOf("highlighted text");
+
+      // "hello" and "important phrase" should appear between Intro and Body
+      expect(helloPos).toBeGreaterThan(introPos);
+      expect(helloPos).toBeLessThan(bodyPos);
+      expect(importantPos).toBeGreaterThan(introPos);
+      expect(importantPos).toBeLessThan(bodyPos);
+
+      // "highlighted text" should appear after Body
+      expect(highlightedPos).toBeGreaterThan(bodyPos);
+    });
+  });
+
   describe("when highlights are type 'highlight' (not comments)", () => {
     it("then renders them in the Highlights section", () => {
       const layer = makeLayer({
@@ -79,7 +149,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("when comments exist across multiple texts", () => {
-    it("then groups annotations by text", () => {
+    it("then groups annotations by section", () => {
       const layer = makeLayer({
         highlights: [
           {
@@ -113,9 +183,11 @@ describe("PrintAnnotations", () => {
         />,
       );
 
-      expect(screen.getByText("Comments")).toBeInTheDocument();
-      expect(screen.getByText("Intro")).toBeInTheDocument();
-      expect(screen.getByText("Body")).toBeInTheDocument();
+      // Section names appear as section headings
+      const sectionHeadings = document.querySelectorAll(".print-section-heading");
+      expect(sectionHeadings.length).toBe(2);
+      expect(sectionHeadings[0].textContent).toBe("Intro");
+      expect(sectionHeadings[1].textContent).toBe("Body");
     });
   });
 
@@ -245,7 +317,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("underlines rendering", () => {
-    it("renders underlines with quoted text grouped by passage", () => {
+    it("renders underlines with quoted text grouped by section", () => {
       const layer = makeLayer({
         underlines: [
           {
@@ -275,7 +347,7 @@ describe("PrintAnnotations", () => {
         />,
       );
 
-      expect(screen.getByText("Underlines")).toBeInTheDocument();
+      expect(screen.getAllByText("Underlines")).toHaveLength(2);
       expect(container.textContent).toContain("underlined word");
       expect(container.textContent).toContain("another underline");
     });
@@ -316,7 +388,7 @@ describe("PrintAnnotations", () => {
   });
 
   describe("arrow connections rendering", () => {
-    it("renders arrows as connections with from/to text and sections", () => {
+    it("renders arrows with numbered cross-references", () => {
       const layer = makeLayer({
         arrows: [
           {
@@ -338,10 +410,42 @@ describe("PrintAnnotations", () => {
       );
 
       expect(screen.getByText("Connections")).toBeInTheDocument();
+      expect(container.textContent).toContain("[1]");
       expect(container.textContent).toContain("source");
-      expect(container.textContent).toContain("Genesis");
       expect(container.textContent).toContain("target");
       expect(container.textContent).toContain("Exodus");
+    });
+
+    it("assigns sequential numbers [1], [2] to multiple arrows", () => {
+      const layer = makeLayer({
+        arrows: [
+          {
+            id: "a1",
+            from: { editorIndex: 0, from: 0, to: 5, text: "first from" },
+            to: { editorIndex: 1, from: 0, to: 5, text: "first to" },
+            arrowStyle: "solid",
+            visible: true,
+          },
+          {
+            id: "a2",
+            from: { editorIndex: 0, from: 10, to: 15, text: "second from" },
+            to: { editorIndex: 1, from: 10, to: 15, text: "second to" },
+            arrowStyle: "solid",
+            visible: true,
+          },
+        ],
+      });
+
+      const { container } = render(
+        <PrintAnnotations
+          layers={[layer]}
+          sectionNames={["Genesis", "Exodus"]}
+          sectionVisibility={[true, true]}
+        />,
+      );
+
+      expect(container.textContent).toContain("[1]");
+      expect(container.textContent).toContain("[2]");
     });
 
     it("shows arrow style when not solid", () => {
@@ -406,6 +510,67 @@ describe("PrintAnnotations", () => {
       );
 
       expect(container.innerHTML).toBe("");
+    });
+  });
+
+  describe("cross-references summary", () => {
+    it("renders a Cross-References section at the end when arrows exist", () => {
+      const layer = makeLayer({
+        arrows: [
+          {
+            id: "a1",
+            from: { editorIndex: 0, from: 0, to: 5, text: "source" },
+            to: { editorIndex: 1, from: 0, to: 5, text: "target" },
+            arrowStyle: "solid",
+            visible: true,
+          },
+        ],
+      });
+
+      render(
+        <PrintAnnotations
+          layers={[layer]}
+          sectionNames={["Genesis", "Exodus"]}
+          sectionVisibility={[true, true]}
+        />,
+      );
+
+      expect(screen.getByText("Cross-References")).toBeInTheDocument();
+    });
+
+    it("lists all arrows with their numbers in the cross-references", () => {
+      const layer = makeLayer({
+        arrows: [
+          {
+            id: "a1",
+            from: { editorIndex: 0, from: 0, to: 5, text: "alpha" },
+            to: { editorIndex: 1, from: 0, to: 5, text: "beta" },
+            arrowStyle: "solid",
+            visible: true,
+          },
+          {
+            id: "a2",
+            from: { editorIndex: 1, from: 10, to: 15, text: "gamma" },
+            to: { editorIndex: 0, from: 10, to: 15, text: "delta" },
+            arrowStyle: "dashed",
+            visible: true,
+          },
+        ],
+      });
+
+      render(
+        <PrintAnnotations
+          layers={[layer]}
+          sectionNames={["Section A", "Section B"]}
+          sectionVisibility={[true, true]}
+        />,
+      );
+
+      const crossRefSection = screen.getByText("Cross-References").parentElement!;
+      expect(crossRefSection.textContent).toContain("[1]");
+      expect(crossRefSection.textContent).toContain("[2]");
+      expect(crossRefSection.textContent).toContain("alpha");
+      expect(crossRefSection.textContent).toContain("gamma");
     });
   });
 
@@ -511,6 +676,34 @@ describe("PrintAnnotations", () => {
       expect(container.textContent).toContain("highlight text");
       expect(container.textContent).toContain("underline text");
       expect(container.textContent).toContain("arrow from");
+    });
+  });
+
+  describe("layer color borders", () => {
+    it("applies the layer color as border color to annotations", () => {
+      const layer = makeLayer({
+        color: "#ff0000",
+        highlights: [
+          {
+            id: "h1",
+            editorIndex: 0,
+            from: 0,
+            to: 5,
+            text: "red bordered",
+            annotation: "",
+            type: "highlight",
+            visible: true,
+          },
+        ],
+      });
+
+      const { container } = render(
+        <PrintAnnotations layers={[layer]} sectionNames={["Text 1"]} sectionVisibility={[true]} />,
+      );
+
+      const borderEl = container.querySelector(".border-l-2");
+      expect(borderEl).toBeTruthy();
+      expect((borderEl as HTMLElement).style.borderColor).toBe("rgb(255, 0, 0)");
     });
   });
 });

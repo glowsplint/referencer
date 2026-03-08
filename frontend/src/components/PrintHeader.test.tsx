@@ -64,4 +64,63 @@ describe("PrintHeader", () => {
     const { container } = render(<PrintHeader title="Test" layers={layers} />);
     expect(container.querySelectorAll(".rounded-full")).toHaveLength(0);
   });
+
+  it("renders annotation counts when provided", () => {
+    const counts = { comments: 3, highlights: 5, underlines: 0, connections: 2 };
+    const { container } = render(
+      <PrintHeader title="Test" layers={[]} annotationCounts={counts} />,
+    );
+
+    const summaryEl = container.querySelector(".print-annotation-counts");
+    expect(summaryEl).toBeTruthy();
+    expect(summaryEl!.textContent).toContain("3 comments");
+    expect(summaryEl!.textContent).toContain("5 highlights");
+    expect(summaryEl!.textContent).toContain("2 connections");
+  });
+
+  it("omits zero-count types from the summary", () => {
+    const counts = { comments: 1, highlights: 0, underlines: 0, connections: 0 };
+    const { container } = render(
+      <PrintHeader title="Test" layers={[]} annotationCounts={counts} />,
+    );
+
+    const summaryEl = container.querySelector(".print-annotation-counts");
+    expect(summaryEl).toBeTruthy();
+    expect(summaryEl!.textContent).toContain("1 comment");
+    expect(summaryEl!.textContent).not.toContain("highlight");
+    expect(summaryEl!.textContent).not.toContain("underline");
+    expect(summaryEl!.textContent).not.toContain("connection");
+  });
+
+  it("does not render annotation counts when all are zero", () => {
+    const counts = { comments: 0, highlights: 0, underlines: 0, connections: 0 };
+    const { container } = render(
+      <PrintHeader title="Test" layers={[]} annotationCounts={counts} />,
+    );
+
+    expect(container.querySelector(".print-annotation-counts")).toBeNull();
+  });
+
+  it("does not render annotation counts when not provided", () => {
+    const { container } = render(<PrintHeader title="Test" layers={[]} />);
+    expect(container.querySelector(".print-annotation-counts")).toBeNull();
+  });
+
+  it("uses singular form for count of 1", () => {
+    const counts = { comments: 1, highlights: 1, underlines: 1, connections: 1 };
+    const { container } = render(
+      <PrintHeader title="Test" layers={[]} annotationCounts={counts} />,
+    );
+
+    const summaryEl = container.querySelector(".print-annotation-counts");
+    expect(summaryEl!.textContent).toContain("1 comment");
+    expect(summaryEl!.textContent).toContain("1 highlight");
+    expect(summaryEl!.textContent).toContain("1 underline");
+    expect(summaryEl!.textContent).toContain("1 connection");
+    // Ensure no plural forms
+    expect(summaryEl!.textContent).not.toContain("comments");
+    expect(summaryEl!.textContent).not.toContain("highlights");
+    expect(summaryEl!.textContent).not.toContain("underlines");
+    expect(summaryEl!.textContent).not.toContain("connections");
+  });
 });

@@ -24,6 +24,16 @@
     "highlights": "Highlights",
     "underlines": "Underlines",
     "connections": "Connections",
-    "replyBy": "Reply by {{userName}} ({{date}})"
+    "replyBy": "Reply by {{userName}} ({{date}})",
+    "annotationSummary": "{{summary}}",
+    "commentCount_one": "{{count}} comment",
+    "commentCount_other": "{{count}} comments",
+    "highlightCount_one": "{{count}} highlight",
+    "highlightCount_other": "{{count}} highlights",
+    "underlineCount_one": "{{count}} underline",
+    "underlineCount_other": "{{count}} underlines",
+    "connectionCount_one": "{{count}} connection",
+    "connectionCount_other": "{{count}} connections",
+    "crossReferences": "Cross-References"
   }
 }
