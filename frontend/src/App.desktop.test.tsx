@@ -24,7 +24,7 @@ vi.mock("./hooks/ui/use-is-breakpoint", () => ({
 // Mock the editor document hook
 const mockDocument = {
   settings: {
-    isDarkMode: false,
+    theme: "auto" as const,
     isLayersOn: false,
     isMultipleRowsLayout: false,
     lockedPanes: { 0: false, 1: false, 2: false, 3: false } as Record<number, boolean>,
@@ -32,6 +32,10 @@ const mockDocument = {
     hideOffscreenArrows: false,
     commentPlacement: "right" as const,
   },
+  isDarkMode: false,
+  resolvedTheme: "light" as const,
+  cycleTheme: vi.fn(),
+  setTheme: vi.fn(),
   isPaneLocked: (i: number) => mockDocument.settings.lockedPanes[i] ?? true,
   isAnyPaneLocked: false,
   activeEditorIndex: 0,
@@ -59,7 +63,6 @@ const mockDocument = {
   activeEditor: null,
   editorWidths: [100],
   isManagementPaneOpen: false,
-  toggleDarkMode: vi.fn(),
   toggleLayersOn: vi.fn(),
   toggleMultipleRowsLayout: vi.fn(),
   togglePaneLocked: vi.fn(),
@@ -210,7 +213,7 @@ vi.mock("./components/AnnotationPanel", () => ({
 
 beforeEach(() => {
   mockDocument.settings = {
-    isDarkMode: false,
+    theme: "auto" as const,
     isLayersOn: false,
     isMultipleRowsLayout: false,
     lockedPanes: { 0: false, 1: false, 2: false, 3: false },

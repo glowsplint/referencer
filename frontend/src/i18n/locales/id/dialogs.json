@@ -2,9 +2,14 @@
   "settings": {
     "title": "Pengaturan",
     "description": "Sesuaikan preferensi dokumen Anda.",
-    "darkMode": {
-      "label": "Mode gelap",
-      "description": "Beralih antara tema terang dan gelap"
+    "theme": {
+      "label": "Tema",
+      "description": "Pilih tema bacaan Anda",
+      "auto": "Otomatis",
+      "light": "Terang",
+      "dark": "Gelap",
+      "sepia": "Sepia",
+      "high-contrast": "Kontras Tinggi"
     },
     "hideOffscreenArrows": {
       "label": "Sembunyikan panah di luar layar",
@@ -75,7 +80,7 @@
     "eraserTool": "Alat penghapus",
     "navigateWords": "Navigasi antar kata",
     "toggleConsole": "Alihkan konsol tindakan",
-    "toggleDarkMode": "Alihkan mode gelap",
+    "cycleTheme": "Ganti tema",
     "toggleLayout": "Alihkan tata letak editor",
     "toggleLock": "Alihkan kunci editor",
     "toggleManagement": "Alihkan panel manajemen",

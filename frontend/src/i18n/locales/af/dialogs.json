@@ -2,9 +2,14 @@
   "settings": {
     "title": "Instellings",
     "description": "Pas jou dokument-voorkeure aan.",
-    "darkMode": {
-      "label": "Donker modus",
-      "description": "Wissel tussen lig en donker temas"
+    "theme": {
+      "label": "Tema",
+      "description": "Kies jou leestema",
+      "auto": "Outo",
+      "light": "Lig",
+      "dark": "Donker",
+      "sepia": "Sepia",
+      "high-contrast": "Hoë Kontras"
     },
     "hideOffscreenArrows": {
       "label": "Versteek pyltjies buite die skerm",
@@ -75,7 +80,7 @@
     "eraserTool": "Uitveër-instrument",
     "navigateWords": "Navigeer tussen woorde",
     "toggleConsole": "Wissel aksiekonsole",
-    "toggleDarkMode": "Wissel donker modus",
+    "cycleTheme": "Wissel tema",
     "toggleLayout": "Wissel redigeerder-uitleg",
     "toggleLock": "Wissel redigeerder-slot",
     "toggleManagement": "Wissel bestuurspaneel",

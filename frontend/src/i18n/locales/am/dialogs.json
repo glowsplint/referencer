@@ -2,9 +2,14 @@
   "settings": {
     "title": "ቅንብሮች",
     "description": "ሰነድ ምርጫዎችዎን ያብጁ።",
-    "darkMode": {
-      "label": "ጨለማ ሁነታ",
-      "description": "በብርሃን እና ጨለማ ገጽታዎች መካከል ይቀያይሩ"
+    "theme": {
+      "label": "ገጽታ",
+      "description": "የንባብ ገጽታዎን ይምረጡ",
+      "auto": "ራስ-ሰር",
+      "light": "ብርሃን",
+      "dark": "ጨለማ",
+      "sepia": "ሴፒያ",
+      "high-contrast": "ከፍተኛ ንፅፅር"
     },
     "hideOffscreenArrows": {
       "label": "ከማያ ገጽ ውጪ ያሉ ቀስቶችን ደብቅ",
@@ -75,7 +80,7 @@
     "eraserTool": "ማጥፊያ",
     "navigateWords": "በቃላት መካከል ይዳስሱ",
     "toggleConsole": "የድርጊት ኮንሶልን ቀያይር",
-    "toggleDarkMode": "ጨለማ ሁነታን ቀያይር",
+    "cycleTheme": "ገጽታ ቀያይር",
     "toggleLayout": "የአርታዒ አቀማመጥን ቀያይር",
     "toggleLock": "የአርታዒ መቆለፊያን ቀያይር",
     "toggleManagement": "የአስተዳደር ሰሌዳን ቀያይር",

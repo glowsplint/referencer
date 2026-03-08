@@ -335,19 +335,38 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
     [settingsHook, history],
   );
 
-  const toggleDarkMode = useCallback(() => {
-    const wasDark = settingsHook.settings.isDarkMode;
-    settingsHook.toggleDarkMode();
+  const cycleTheme = useCallback(() => {
+    const prevTheme = settingsHook.settings.theme;
+    settingsHook.cycleTheme();
+    // We need to capture the new theme after cycling for undo/redo
+    // cycleTheme is synchronous on the setter, so read next value from the order
+    const order = ["auto", "light", "dark", "sepia", "high-contrast"] as const;
+    const idx = order.indexOf(prevTheme);
+    const nextTheme = order[(idx + 1) % order.length];
     history.record({
-      type: "toggleDarkMode",
-      description: `Switched to ${wasDark ? "light" : "dark"} mode`,
-      details: [
-        { label: "mode", before: wasDark ? "dark" : "light", after: wasDark ? "light" : "dark" },
-      ],
-      undo: () => settingsHook.toggleDarkMode(),
-      redo: () => settingsHook.toggleDarkMode(),
+      type: "cycleTheme",
+      description: `Switched theme to ${nextTheme}`,
+      details: [{ label: "theme", before: prevTheme, after: nextTheme }],
+      undo: () => settingsHook.setTheme(prevTheme),
+      redo: () => settingsHook.setTheme(nextTheme),
     });
   }, [settingsHook, history]);
+
+  const setTheme = useCallback(
+    (theme: Parameters<typeof settingsHook.setTheme>[0]) => {
+      const prevTheme = settingsHook.settings.theme;
+      if (theme === prevTheme) return;
+      settingsHook.setTheme(theme);
+      history.record({
+        type: "setTheme",
+        description: `Switched theme to ${theme}`,
+        details: [{ label: "theme", before: prevTheme, after: theme }],
+        undo: () => settingsHook.setTheme(prevTheme),
+        redo: () => settingsHook.setTheme(theme),
+      });
+    },
+    [settingsHook, history],
+  );
 
   const toggleMultipleRowsLayout = useCallback(() => {
     const wasRows = settingsHook.settings.isMultipleRowsLayout;
@@ -420,7 +439,8 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
     togglePaneLocked,
     toggleFocusedPaneLocked,
     setActiveTool,
-    toggleDarkMode,
+    cycleTheme,
+    setTheme,
     toggleMultipleRowsLayout,
     // Layers from Yjs CRDT
     layers: yjsLayers.layers,

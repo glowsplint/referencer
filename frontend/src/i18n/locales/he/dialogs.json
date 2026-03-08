@@ -2,9 +2,14 @@
   "settings": {
     "title": "הגדרות",
     "description": "התאימו את העדפות המסמך שלכם.",
-    "darkMode": {
-      "label": "מצב כהה",
-      "description": "מעבר בין ערכת נושא בהירה לכהה"
+    "theme": {
+      "label": "ערכת נושא",
+      "description": "בחר את ערכת הנושא לקריאה",
+      "auto": "אוטומטי",
+      "light": "בהיר",
+      "dark": "כהה",
+      "sepia": "ספיה",
+      "high-contrast": "ניגודיות גבוהה"
     },
     "hideOffscreenArrows": {
       "label": "הסתרת חצים מחוץ למסך",
@@ -75,7 +80,7 @@
     "eraserTool": "כלי מחיקה",
     "navigateWords": "ניווט בין מילים",
     "toggleConsole": "הצג/הסתר מסוף פעולות",
-    "toggleDarkMode": "הצג/הסתר מצב כהה",
+    "cycleTheme": "החלף ערכת נושא",
     "toggleLayout": "הצג/הסתר פריסת עורך",
     "toggleLock": "הצג/הסתר נעילת עורך",
     "toggleManagement": "הצג/הסתר חלונית ניהול",

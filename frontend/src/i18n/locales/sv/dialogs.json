@@ -2,9 +2,14 @@
   "settings": {
     "title": "Inställningar",
     "description": "Anpassa dina arbetsyteinställningar.",
-    "darkMode": {
-      "label": "Mörkt läge",
-      "description": "Växla mellan ljust och mörkt tema"
+    "theme": {
+      "label": "Tema",
+      "description": "Välj ditt lästema",
+      "auto": "Automatiskt",
+      "light": "Ljust",
+      "dark": "Mörkt",
+      "sepia": "Sepia",
+      "high-contrast": "Hög Kontrast"
     },
     "hideOffscreenArrows": {
       "label": "Dölj pilar utanför skärmen",
@@ -75,7 +80,7 @@
     "eraserTool": "Suddverktyg",
     "navigateWords": "Navigera mellan ord",
     "toggleConsole": "Växla åtgärdskonsol",
-    "toggleDarkMode": "Växla mörkt läge",
+    "cycleTheme": "Byt tema",
     "toggleLayout": "Växla redigeringslayout",
     "toggleLock": "Växla redigeringslås",
     "toggleManagement": "Växla hanteringspanel",

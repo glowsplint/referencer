@@ -2,9 +2,14 @@
   "settings": {
     "title": "설정",
     "description": "작업 공간 환경설정을 맞춤 설정합니다.",
-    "darkMode": {
-      "label": "다크 모드",
-      "description": "라이트 테마와 다크 테마를 전환합니다"
+    "theme": {
+      "label": "테마",
+      "description": "읽기 테마를 선택하세요",
+      "auto": "자동",
+      "light": "라이트",
+      "dark": "다크",
+      "sepia": "세피아",
+      "high-contrast": "고대비"
     },
     "hideOffscreenArrows": {
       "label": "화면 밖 화살표 숨기기",
@@ -75,7 +80,7 @@
     "eraserTool": "지우개 도구",
     "navigateWords": "단어 간 이동",
     "toggleConsole": "액션 콘솔 전환",
-    "toggleDarkMode": "다크 모드 전환",
+    "cycleTheme": "테마 전환",
     "toggleLayout": "편집기 레이아웃 전환",
     "toggleLock": "편집기 잠금 전환",
     "toggleManagement": "관리 패널 전환",

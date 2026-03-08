@@ -6,13 +6,14 @@ beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
   document.documentElement.classList.remove("dark");
+  document.documentElement.removeAttribute("data-theme");
 });
 
 describe("useSettings", () => {
   it("when initialized, then returns default settings state", () => {
     const { result } = renderHook(() => useSettings());
     expect(result.current.settings).toEqual({
-      isDarkMode: false,
+      theme: "auto",
       isLayersOn: false,
       isMultipleRowsLayout: false,
       lockedPanes: { 0: true, 1: true, 2: true, 3: true },
@@ -28,20 +29,86 @@ describe("useSettings", () => {
     expect(result.current.annotations).toEqual({ activeTool: "selection" });
   });
 
-  it("when toggleDarkMode is called, then toggles isDarkMode and updates classList", () => {
+  it("when setTheme is called with dark, then applies .dark class and data-theme", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
-      result.current.toggleDarkMode();
+      result.current.setTheme("dark");
     });
-    expect(result.current.settings.isDarkMode).toBe(true);
+    expect(result.current.settings.theme).toBe("dark");
+    expect(result.current.isDarkMode).toBe(true);
     expect(document.documentElement.classList.contains("dark")).toBe(true);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+  });
+
+  it("when setTheme is called with light, then removes .dark class", () => {
+    const { result } = renderHook(() => useSettings());
 
     act(() => {
-      result.current.toggleDarkMode();
+      result.current.setTheme("dark");
     });
-    expect(result.current.settings.isDarkMode).toBe(false);
+    act(() => {
+      result.current.setTheme("light");
+    });
+    expect(result.current.settings.theme).toBe("light");
+    expect(result.current.isDarkMode).toBe(false);
     expect(document.documentElement.classList.contains("dark")).toBe(false);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+  });
+
+  it("when setTheme is called with sepia, then sets data-theme without .dark class", () => {
+    const { result } = renderHook(() => useSettings());
+
+    act(() => {
+      result.current.setTheme("sepia");
+    });
+    expect(result.current.settings.theme).toBe("sepia");
+    expect(result.current.isDarkMode).toBe(false);
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("sepia");
+  });
+
+  it("when setTheme is called with high-contrast, then sets .dark class", () => {
+    const { result } = renderHook(() => useSettings());
+
+    act(() => {
+      result.current.setTheme("high-contrast");
+    });
+    expect(result.current.settings.theme).toBe("high-contrast");
+    expect(result.current.isDarkMode).toBe(true);
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("high-contrast");
+  });
+
+  it("when cycleTheme is called, then cycles through all 5 themes", () => {
+    const { result } = renderHook(() => useSettings());
+
+    expect(result.current.settings.theme).toBe("auto");
+
+    act(() => {
+      result.current.cycleTheme();
+    });
+    expect(result.current.settings.theme).toBe("light");
+
+    act(() => {
+      result.current.cycleTheme();
+    });
+    expect(result.current.settings.theme).toBe("dark");
+
+    act(() => {
+      result.current.cycleTheme();
+    });
+    expect(result.current.settings.theme).toBe("sepia");
+
+    act(() => {
+      result.current.cycleTheme();
+    });
+    expect(result.current.settings.theme).toBe("high-contrast");
+
+    act(() => {
+      result.current.cycleTheme();
+    });
+    expect(result.current.settings.theme).toBe("auto");
   });
 
   it("when toggleLayersOn is called, then toggles isLayersOn", () => {
@@ -99,7 +166,7 @@ describe("useSettings", () => {
     localStorage.setItem(
       "referencer-settings",
       JSON.stringify({
-        isDarkMode: false,
+        theme: "auto",
         isLocked: false,
       }),
     );
@@ -112,6 +179,30 @@ describe("useSettings", () => {
       3: false,
     });
     expect(result.current.isPaneLocked(0)).toBe(false);
+  });
+
+  it("when old isDarkMode format is in localStorage, then migrates to theme", () => {
+    localStorage.setItem(
+      "referencer-settings",
+      JSON.stringify({
+        isDarkMode: true,
+      }),
+    );
+
+    const { result } = renderHook(() => useSettings());
+    expect(result.current.settings.theme).toBe("dark");
+  });
+
+  it("when old isDarkMode=false is in localStorage, then migrates to auto", () => {
+    localStorage.setItem(
+      "referencer-settings",
+      JSON.stringify({
+        isDarkMode: false,
+      }),
+    );
+
+    const { result } = renderHook(() => useSettings());
+    expect(result.current.settings.theme).toBe("auto");
   });
 
   it("when setActiveTool is called, then changes the active tool", () => {
@@ -137,7 +228,7 @@ describe("useSettings", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
-      result.current.toggleDarkMode();
+      result.current.setTheme("dark");
     });
 
     expect(result.current.settings.isLayersOn).toBe(false);
@@ -150,18 +241,18 @@ describe("useSettings", () => {
     const { result } = renderHook(() => useSettings());
 
     act(() => {
-      result.current.toggleDarkMode();
+      result.current.setTheme("dark");
     });
 
     const stored = JSON.parse(localStorage.getItem("referencer-settings")!);
-    expect(stored.isDarkMode).toBe(true);
+    expect(stored.theme).toBe("dark");
   });
 
   it("when localStorage has saved settings, then restores them on init", () => {
     localStorage.setItem(
       "referencer-settings",
       JSON.stringify({
-        isDarkMode: true,
+        theme: "sepia",
         isLayersOn: true,
         isMultipleRowsLayout: false,
         lockedPanes: { 0: false, 1: true, 2: true, 3: true },
@@ -170,7 +261,7 @@ describe("useSettings", () => {
 
     const { result } = renderHook(() => useSettings());
 
-    expect(result.current.settings.isDarkMode).toBe(true);
+    expect(result.current.settings.theme).toBe("sepia");
     expect(result.current.settings.isLayersOn).toBe(true);
   });
 
@@ -180,7 +271,7 @@ describe("useSettings", () => {
     const { result } = renderHook(() => useSettings());
 
     expect(result.current.settings).toEqual({
-      isDarkMode: false,
+      theme: "auto",
       isLayersOn: false,
       isMultipleRowsLayout: false,
       lockedPanes: { 0: true, 1: true, 2: true, 3: true },
@@ -195,13 +286,13 @@ describe("useSettings", () => {
     localStorage.setItem(
       "referencer-settings",
       JSON.stringify({
-        isDarkMode: true,
+        theme: "dark",
       }),
     );
 
     const { result } = renderHook(() => useSettings());
 
-    expect(result.current.settings.isDarkMode).toBe(true);
+    expect(result.current.settings.theme).toBe("dark");
     expect(result.current.settings.isLayersOn).toBe(false);
     expect(result.current.settings.hideOffscreenArrows).toBe(false);
   });
@@ -238,11 +329,11 @@ describe("useSettings", () => {
     expect(result.current.settings.showStatusBar).toBe(true);
   });
 
-  it("when persisted settings have dark mode enabled, then applies dark class on mount", () => {
+  it("when persisted settings have dark theme, then applies dark class on mount", () => {
     localStorage.setItem(
       "referencer-settings",
       JSON.stringify({
-        isDarkMode: true,
+        theme: "dark",
       }),
     );
 
@@ -289,5 +380,12 @@ describe("useSettings", () => {
     // After swap: pane 0 gets old pane 1's state (true), pane 1 gets old pane 0's state (false)
     expect(result.current.isPaneLocked(0)).toBe(true);
     expect(result.current.isPaneLocked(1)).toBe(false);
+  });
+
+  it("when auto theme, then resolvedTheme reflects OS preference", () => {
+    const { result } = renderHook(() => useSettings());
+    expect(result.current.settings.theme).toBe("auto");
+    // resolvedTheme should be either "light" or "dark" based on OS
+    expect(["light", "dark"]).toContain(result.current.resolvedTheme);
   });
 });

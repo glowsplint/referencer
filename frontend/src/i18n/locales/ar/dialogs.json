@@ -2,9 +2,14 @@
   "settings": {
     "title": "الإعدادات",
     "description": "تخصيص تفضيلات المستند الخاصة بك.",
-    "darkMode": {
-      "label": "الوضع الداكن",
-      "description": "التبديل بين السمة الفاتحة والداكنة"
+    "theme": {
+      "label": "السمة",
+      "description": "اختر سمة القراءة",
+      "auto": "تلقائي",
+      "light": "فاتح",
+      "dark": "داكن",
+      "sepia": "بني داكن",
+      "high-contrast": "تباين عالٍ"
     },
     "hideOffscreenArrows": {
       "label": "إخفاء الأسهم خارج الشاشة",
@@ -75,7 +80,7 @@
     "eraserTool": "أداة المسح",
     "navigateWords": "التنقل بين الكلمات",
     "toggleConsole": "تبديل وحدة التحكم",
-    "toggleDarkMode": "تبديل الوضع الداكن",
+    "cycleTheme": "تبديل السمة",
     "toggleLayout": "تبديل تخطيط المحرر",
     "toggleLock": "تبديل قفل المحرر",
     "toggleManagement": "تبديل لوحة الإدارة",

@@ -29,7 +29,7 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
     readOnly,
     yjs,
     settings,
-    toggleDarkMode,
+    setTheme,
     toggleHideOffscreenArrows,
     toggleShowStatusBar,
     toggleOverscroll,
@@ -256,8 +256,8 @@ export function TitleBar({ navigate, onExportMarkdown }: TitleBarProps) {
       <SettingsDialog
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
-        isDarkMode={settings.isDarkMode}
-        toggleDarkMode={toggleDarkMode}
+        theme={settings.theme}
+        setTheme={setTheme}
         hideOffscreenArrows={settings.hideOffscreenArrows}
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}

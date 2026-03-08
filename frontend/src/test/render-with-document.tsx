@@ -10,7 +10,7 @@ export function makeMockDocument(
 ): DocumentContextValue {
   return {
     settings: {
-      isDarkMode: false,
+      theme: "auto" as const,
       isLayersOn: false,
       isMultipleRowsLayout: false,
       lockedPanes: { 0: false, 1: false, 2: false, 3: false },
@@ -18,6 +18,8 @@ export function makeMockDocument(
       showStatusBar: true,
       commentPlacement: "right" as const,
     },
+    isDarkMode: false,
+    resolvedTheme: "light" as const,
     annotations: { activeTool: "selection" as const },
     layers: [],
     activeLayerId: null,
@@ -27,7 +29,8 @@ export function makeMockDocument(
     documentId: "test-document-id",
     readOnly: false,
     isManagementPaneOpen: false,
-    toggleDarkMode: vi.fn(),
+    setTheme: vi.fn(),
+    cycleTheme: vi.fn(),
     toggleLayersOn: vi.fn(),
     toggleMultipleRowsLayout: vi.fn(),
     togglePaneLocked: vi.fn(),

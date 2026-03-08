@@ -41,13 +41,8 @@ export function HubPage({ navigate }: HubPageProps) {
     toggleFavorite: toggleFolderFavorite,
     moveFolder,
   } = useFolders();
-  const {
-    settings,
-    toggleDarkMode,
-    toggleHideOffscreenArrows,
-    toggleShowStatusBar,
-    toggleOverscroll,
-  } = useSettings();
+  const { settings, setTheme, toggleHideOffscreenArrows, toggleShowStatusBar, toggleOverscroll } =
+    useSettings();
 
   const [showNewDialog, setShowNewDialog] = useState(false);
   const [newDocumentFolderId, setNewDocumentFolderId] = useState<string | null>(null);
@@ -188,8 +183,8 @@ export function HubPage({ navigate }: HubPageProps) {
       <SettingsDialog
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
-        isDarkMode={settings.isDarkMode}
-        toggleDarkMode={toggleDarkMode}
+        theme={settings.theme}
+        setTheme={setTheme}
         hideOffscreenArrows={settings.hideOffscreenArrows}
         toggleHideOffscreenArrows={toggleHideOffscreenArrows}
         showStatusBar={settings.showStatusBar}

@@ -2,9 +2,14 @@
   "settings": {
     "title": "সেটিংস",
     "description": "আপনার নথির পছন্দগুলি কাস্টমাইজ করুন।",
-    "darkMode": {
-      "label": "ডার্ক মোড",
-      "description": "হালকা এবং অন্ধকার থিমের মধ্যে পরিবর্তন করুন"
+    "theme": {
+      "label": "থিম",
+      "description": "আপনার পড়ার থিম বেছে নিন",
+      "auto": "স্বয়ংক্রিয়",
+      "light": "হালকা",
+      "dark": "গাঢ়",
+      "sepia": "সেপিয়া",
+      "high-contrast": "উচ্চ কন্ট্রাস্ট"
     },
     "hideOffscreenArrows": {
       "label": "অফ-স্ক্রিন তীর লুকান",
@@ -75,7 +80,7 @@
     "eraserTool": "ইরেজার টুল",
     "navigateWords": "শব্দগুলির মধ্যে নেভিগেট করুন",
     "toggleConsole": "অ্যাকশন কনসোল টগল করুন",
-    "toggleDarkMode": "ডার্ক মোড টগল করুন",
+    "cycleTheme": "থিম পরিবর্তন",
     "toggleLayout": "সম্পাদক লেআউট টগল করুন",
     "toggleLock": "সম্পাদক লক টগল করুন",
     "toggleManagement": "ব্যবস্থাপনা প্যানেল টগল করুন",

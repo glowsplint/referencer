@@ -2,9 +2,14 @@
   "settings": {
     "title": "Налаштування",
     "description": "Налаштуйте параметри документа.",
-    "darkMode": {
-      "label": "Темна тема",
-      "description": "Перемикання між світлою та темною темами"
+    "theme": {
+      "label": "Тема",
+      "description": "Оберіть тему для читання",
+      "auto": "Авто",
+      "light": "Світла",
+      "dark": "Темна",
+      "sepia": "Сепія",
+      "high-contrast": "Високий контраст"
     },
     "hideOffscreenArrows": {
       "label": "Приховати стрілки за межами екрана",
@@ -75,7 +80,7 @@
     "eraserTool": "Гумка",
     "navigateWords": "Навігація між словами",
     "toggleConsole": "Перемкнути консоль дій",
-    "toggleDarkMode": "Перемкнути темну тему",
+    "cycleTheme": "Змінити тему",
     "toggleLayout": "Перемкнути макет редактора",
     "toggleLock": "Перемкнути блокування редактора",
     "toggleManagement": "Перемкнути панель керування",

@@ -2,8 +2,10 @@
 // arrows, underlines, word selections, editor settings, and undo/redo
 // action commands.
 
+export type Theme = "auto" | "light" | "dark" | "sepia" | "high-contrast";
+
 export interface EditorSettings {
-  isDarkMode: boolean;
+  theme: Theme;
   isLayersOn: boolean;
   isMultipleRowsLayout: boolean;
   lockedPanes: Record<number, boolean>;
