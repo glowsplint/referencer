@@ -246,6 +246,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE TABLE document_tag (
+  user_id     TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+  document_id TEXT NOT NULL REFERENCES document(id) ON DELETE CASCADE,
+  tag         TEXT NOT NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, document_id, tag)
+);
+CREATE INDEX idx_document_tag_user_tag ON document_tag(user_id, tag);
+CREATE INDEX idx_document_tag_user_doc ON document_tag(user_id, document_id);
+
 -- Row-Level Security: defense-in-depth.
 -- The app uses the service key (bypasses RLS), but enabling RLS ensures
 -- that non-service keys get zero access by default.
@@ -260,3 +270,4 @@ ALTER TABLE user_preference ENABLE ROW LEVEL SECURITY;
 ALTER TABLE share_link ENABLE ROW LEVEL SECURITY;
 ALTER TABLE yjs_document ENABLE ROW LEVEL SECURITY;
 ALTER TABLE annotation_index ENABLE ROW LEVEL SECURITY;
+ALTER TABLE document_tag ENABLE ROW LEVEL SECURITY;

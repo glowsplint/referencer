@@ -9,6 +9,7 @@ import { handleShare, handleResolveShare, handleAcceptShare } from "./api/share"
 import { rateLimiter } from "./lib/rate-limit";
 import { documents } from "./api/documents";
 import { folders } from "./api/folders";
+import { tags } from "./api/tags";
 import { preferences } from "./api/preferences";
 import { search } from "./api/search";
 import { cleanExpiredSessions } from "./auth/store";
@@ -120,12 +121,22 @@ app.use("/api/folders/*", async (c, next) => {
   }
   await next();
 });
+app.use("/api/tags/*", async (c, next) => {
+  const method = c.req.method;
+  if (method === "POST" || method === "PATCH" || method === "DELETE") {
+    return crudWriteLimiter(c, next);
+  }
+  await next();
+});
 
 // Documents API
 app.route("/api/documents", documents);
 
 // Folders API
 app.route("/api/folders", folders);
+
+// Tags API
+app.route("/api/tags", tags);
 
 // Preferences API
 app.route("/api/preferences", preferences);

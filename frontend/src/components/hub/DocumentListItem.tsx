@@ -10,6 +10,7 @@ import { useClickHandler } from "@/hooks/ui/use-click-handler";
 import type { DocumentItem } from "@/lib/document-client";
 import type { FolderItem } from "@/lib/folder-client";
 import { MoveToFolderMenu } from "./MoveToFolderMenu";
+import { TagMenu } from "./TagMenu";
 import { SelectionCheckbox } from "./SelectionCheckbox";
 import { OwnerAvatar } from "./OwnerAvatar";
 
@@ -24,6 +25,10 @@ interface DocumentListItemProps {
   onMoveToFolder?: (documentId: string, folderId: string | null) => void;
   ownerName?: string;
   ownerAvatarUrl?: string;
+  tags?: string[];
+  allTags?: string[];
+  onAddTag?: (documentId: string, tag: string) => void;
+  onRemoveTag?: (documentId: string, tag: string) => void;
 }
 
 export function DocumentListItem({
@@ -37,6 +42,10 @@ export function DocumentListItem({
   onMoveToFolder,
   ownerName,
   ownerAvatarUrl,
+  tags = [],
+  allTags = [],
+  onAddTag,
+  onRemoveTag,
 }: DocumentListItemProps) {
   const { t } = useTranslation("management");
   const { isSelected, isSelectionActive, handleItemClick, clearSelection, getSelectedItems } =
@@ -104,6 +113,21 @@ export function DocumentListItem({
       <span className="font-medium text-sm truncate flex-1 ml-1">
         {document.title || t("hub.untitled")}
       </span>
+      {tags.length > 0 && (
+        <div className="flex gap-1 shrink-0 mr-2" data-testid="documentListItemTags">
+          {tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="inline-flex items-center px-1.5 py-0.5 rounded-full bg-muted text-[10px]"
+            >
+              #{tag}
+            </span>
+          ))}
+          {tags.length > 3 && (
+            <span className="text-[10px] text-muted-foreground">+{tags.length - 3}</span>
+          )}
+        </div>
+      )}
       <span className="text-xs text-muted-foreground w-[120px] shrink-0">
         {formatRelativeTime(document.createdAt)}
       </span>
@@ -153,6 +177,15 @@ export function DocumentListItem({
                 folders={folders}
                 currentFolderId={document.folderId}
                 onMove={(folderId) => onMoveToFolder(document.documentId, folderId)}
+              />
+            )}
+            {onAddTag && onRemoveTag && (
+              <TagMenu
+                documentId={document.documentId}
+                currentTags={tags}
+                allTags={allTags}
+                onAddTag={onAddTag}
+                onRemoveTag={onRemoveTag}
               />
             )}
             <DropdownMenu.Separator className="my-1 h-px bg-border" />
