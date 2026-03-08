@@ -1,5 +1,4 @@
 import { screen, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TitleBar } from "./TitleBar";
 import { renderWithDocument } from "@/test/render-with-document";
@@ -60,23 +59,6 @@ describe("TitleBar", () => {
     it("then shows the title text", () => {
       renderTitleBar();
       expect(screen.getByText("Title")).toBeInTheDocument();
-    });
-
-    it("then shows the export menu button", () => {
-      renderTitleBar();
-      expect(screen.getByTestId("exportMenuButton")).toBeInTheDocument();
-    });
-  });
-
-  describe("when the export PDF button is clicked via dropdown", () => {
-    it("then calls window.print", async () => {
-      const user = userEvent.setup();
-      const printSpy = vi.spyOn(window, "print").mockImplementation(() => {});
-      renderTitleBar();
-      await user.click(screen.getByTestId("exportMenuButton"));
-      await user.click(screen.getByTestId("exportPdfButton"));
-      expect(printSpy).toHaveBeenCalledOnce();
-      printSpy.mockRestore();
     });
   });
 

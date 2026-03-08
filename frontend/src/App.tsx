@@ -68,7 +68,6 @@ import { EditorTour } from "./components/tour/EditorTour";
 import { useCollapsedAnnotations } from "./hooks/annotations/use-collapsed-annotations";
 import { useCurrentUserName } from "./hooks/data/use-current-user-name";
 import { useMentionableUsers } from "./hooks/data/use-mentionable-users";
-import { exportDocumentAsMarkdown } from "@/lib/export/export-markdown";
 import { apiFetch } from "@/lib/api-client";
 import { STORAGE_KEYS } from "@/constants/storage-keys";
 import type { PaneMetadata } from "@/types/editor";
@@ -393,27 +392,6 @@ export function App({ documentId, navigate }: AppProps) {
     }
     return { comments, highlights, underlines, connections };
   }, [layers, sectionVisibility]);
-
-  const handleExportMarkdown = useCallback(() => {
-    exportDocumentAsMarkdown({
-      editors: editorsRef.current,
-      layers,
-      sectionNames: docCtx.sectionNames,
-      sectionVisibility,
-      title: printTitle,
-    });
-  }, [editorsRef, layers, docCtx.sectionNames, sectionVisibility, printTitle]);
-
-  const handleExportCleanText = useCallback(() => {
-    exportDocumentAsMarkdown({
-      editors: editorsRef.current,
-      layers,
-      sectionNames: docCtx.sectionNames,
-      sectionVisibility,
-      title: printTitle,
-      stripAnnotations: true,
-    });
-  }, [editorsRef, layers, docCtx.sectionNames, sectionVisibility, printTitle]);
 
   const displayLayers = useMemo(
     () =>
@@ -772,13 +750,7 @@ export function App({ documentId, navigate }: AppProps) {
           )}
           <EditorContext.Provider value={{ editor: activeEditor }}>
             <div className="flex flex-col flex-1 min-w-0">
-              {!zenMode.isZenMode && (
-                <TitleBar
-                  navigate={navigate}
-                  onExportMarkdown={handleExportMarkdown}
-                  onExportCleanText={handleExportCleanText}
-                />
-              )}
+              {!zenMode.isZenMode && <TitleBar navigate={navigate} />}
               {!zenMode.isZenMode && <UnsavedBanner />}
               {!zenMode.isZenMode && (
                 <PrintHeader
