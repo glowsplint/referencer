@@ -75,7 +75,7 @@ pdf.get("/:id/pdf/:key{.+}", requirePermission("viewer"), async (c) => {
   const storageKey = c.req.param("key");
 
   // Validate the key belongs to this document (prevent path traversal)
-  if (!storageKey.startsWith(`${id}/`)) {
+  if (!storageKey || !storageKey.startsWith(`${id}/`)) {
     return c.json({ error: "Forbidden" }, 403);
   }
 
