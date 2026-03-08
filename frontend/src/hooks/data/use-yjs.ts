@@ -10,10 +10,17 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createDocumentProvider, type DocumentProvider } from "@/lib/yjs/provider";
 import { apiPost } from "@/lib/api-client";
 
+// Delay before showing "disconnected" in the UI. Prevents flickering on brief
+// network hiccups — y-websocket reconnects aggressively (100ms backoff after a
+// successful connection), so transient drops would otherwise cause rapid
+// green/red cycling in the status indicator.
+const DISCONNECT_GRACE_MS = 4000;
+
 export function useYjs(documentId: string) {
   const providerRef = useRef<DocumentProvider | null>(null);
   const [connected, setConnected] = useState(false);
   const [synced, setSynced] = useState(false);
+  const disconnectTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,7 +52,23 @@ export function useYjs(documentId: string) {
       providerRef.current = provider;
 
       const onStatus = ({ status }: { status: string }) => {
-        setConnected(status === "connected");
+        if (status === "connected") {
+          // Connected: cancel any pending disconnect grace timer and show immediately
+          if (disconnectTimerRef.current) {
+            clearTimeout(disconnectTimerRef.current);
+            disconnectTimerRef.current = undefined;
+          }
+          setConnected(true);
+        } else if (status === "disconnected") {
+          // Disconnected: wait before updating UI so brief network blips don't
+          // cause the indicator to flicker between green and red.
+          if (!disconnectTimerRef.current) {
+            disconnectTimerRef.current = setTimeout(() => {
+              disconnectTimerRef.current = undefined;
+              setConnected(false);
+            }, DISCONNECT_GRACE_MS);
+          }
+        }
       };
       const onSync = (isSynced: boolean) => {
         setSynced(isSynced);
@@ -80,6 +103,10 @@ export function useYjs(documentId: string) {
     return () => {
       cancelled = true;
       if (refreshTimer) clearInterval(refreshTimer);
+      if (disconnectTimerRef.current) {
+        clearTimeout(disconnectTimerRef.current);
+        disconnectTimerRef.current = undefined;
+      }
       if (providerRef.current) {
         providerRef.current.destroy();
         providerRef.current = null;
