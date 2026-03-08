@@ -157,4 +157,26 @@
     max-width: 100%;
     margin: 0.25rem 0;
   }
+
+  /* Annotation count summary below layer legend */
+  .print-annotation-counts {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  /* Section heading within annotation groups */
+  .print-section-heading {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Cross-reference number badge */
+  .print-cross-ref-number {
+    font-weight: 700;
+    color: #3b82f6;
+    font-size: 0.625rem;
+  }
 }

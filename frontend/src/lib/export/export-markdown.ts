@@ -8,6 +8,7 @@ export interface ExportMarkdownOptions {
   sectionNames: string[];
   sectionVisibility: boolean[];
   title: string;
+  exportDate?: Date;
 }
 
 function htmlToPlainText(html: string): string {
@@ -17,6 +18,34 @@ function htmlToPlainText(html: string): string {
 
 function formatDate(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString();
+}
+
+export function layerNameToTag(name: string): string {
+  const hyphenated = name.replace(/\s+/g, "-");
+  const stripped = hyphenated.replace(/[^a-zA-Z0-9\-_]/g, "");
+  return `#${stripped}`;
+}
+
+export function formatIsoDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+export function buildAlignedTable(headers: string[], rows: string[][]): string {
+  const colWidths = headers.map((h, i) => {
+    const cellWidths = rows.map((r) => (r[i] ?? "").length);
+    return Math.max(h.length, ...cellWidths);
+  });
+
+  const headerLine = `| ${headers.map((h, i) => h.padEnd(colWidths[i])).join(" | ")} |`;
+  const separatorLine = `|${colWidths.map((w) => "-".repeat(w + 2)).join("|")}|`;
+  const bodyLines = rows.map(
+    (row) => `| ${row.map((cell, i) => (cell ?? "").padEnd(colWidths[i])).join(" | ")} |`,
+  );
+
+  return [headerLine, separatorLine, ...bodyLines].join("\n");
 }
 
 function getVisibleHighlights(
@@ -68,10 +97,49 @@ function getVisibleArrows(
   return results;
 }
 
+function getVisibleLayerNames(layers: Layer[]): string[] {
+  const names: string[] = [];
+  for (const layer of layers) {
+    if (layer.visible) {
+      names.push(layer.name);
+    }
+  }
+  return names;
+}
+
+function yamlQuoteTitle(title: string): string {
+  if (/[:#]/.test(title)) {
+    const escaped = title.replace(/"/g, '\\"');
+    return `"${escaped}"`;
+  }
+  return title;
+}
+
+function buildFrontmatter(title: string, exportDate: Date, layers: Layer[]): string {
+  const lines: string[] = [];
+  lines.push("---");
+  lines.push(`title: ${yamlQuoteTitle(title)}`);
+  lines.push(`exported: ${formatIsoDate(exportDate)}`);
+
+  const visibleNames = getVisibleLayerNames(layers);
+  if (visibleNames.length > 0) {
+    lines.push("layers:");
+    for (const name of visibleNames) {
+      lines.push(`  - ${name}`);
+    }
+  }
+
+  lines.push("---");
+  return lines.join("\n");
+}
+
 export function generateDocumentMarkdown(options: ExportMarkdownOptions): string {
   const { editors, layers, sectionNames, sectionVisibility, title } = options;
+  const exportDate = options.exportDate ?? new Date();
   const parts: string[] = [];
 
+  parts.push(buildFrontmatter(title, exportDate, layers));
+  parts.push("");
   parts.push(`# ${title}\n`);
 
   let textCount = 0;
@@ -100,7 +168,8 @@ export function generateDocumentMarkdown(options: ExportMarkdownOptions): string
     if (highlights.length > 0) {
       parts.push(`\n### Highlights\n`);
       for (const { highlight, layerName } of highlights) {
-        parts.push(`\n- "${highlight.text}" -- Layer: ${layerName}`);
+        const tag = layerNameToTag(layerName);
+        parts.push(`\n> "${highlight.text}" ${tag}`);
       }
       parts.push("");
     }
@@ -110,12 +179,15 @@ export function generateDocumentMarkdown(options: ExportMarkdownOptions): string
     if (comments.length > 0) {
       parts.push(`\n### Comments\n`);
       for (const { highlight, layerName } of comments) {
+        const tag = layerNameToTag(layerName);
         const plainAnnotation = htmlToPlainText(highlight.annotation);
-        parts.push(`\n- "${highlight.text}" -- Layer: ${layerName}`);
+        parts.push(`\n> "${highlight.text}" ${tag}`);
         if (plainAnnotation) {
-          parts.push(`  > ${plainAnnotation}`);
+          parts.push("");
+          parts.push(`Note (${layerName}): ${plainAnnotation}`);
         }
         if (highlight.replies && highlight.replies.length > 0) {
+          parts.push("");
           for (const reply of highlight.replies) {
             parts.push(
               `  - *Reply by ${reply.userName} (${formatDate(reply.timestamp)}):* ${reply.text}`,
@@ -131,7 +203,8 @@ export function generateDocumentMarkdown(options: ExportMarkdownOptions): string
     if (underlines.length > 0) {
       parts.push(`\n### Underlines\n`);
       for (const { underline, layerName } of underlines) {
-        parts.push(`\n- "${underline.text}" -- Layer: ${layerName}`);
+        const tag = layerNameToTag(layerName);
+        parts.push(`\n> "${underline.text}" ${tag}`);
       }
       parts.push("");
     }
@@ -143,14 +216,18 @@ export function generateDocumentMarkdown(options: ExportMarkdownOptions): string
   const arrows = getVisibleArrows(layers, sectionVisibility);
   if (arrows.length > 0) {
     parts.push(`\n## Connections\n`);
-    for (const { arrow } of arrows) {
+    const headers = ["From", "To", "Style"];
+    const rows = arrows.map(({ arrow }) => {
       const fromSection =
         sectionNames[arrow.from.editorIndex] ?? `Text ${arrow.from.editorIndex + 1}`;
       const toSection = sectionNames[arrow.to.editorIndex] ?? `Text ${arrow.to.editorIndex + 1}`;
-      parts.push(
-        `\n- "${arrow.from.text}" (${fromSection}) -> "${arrow.to.text}" (${toSection}) [${arrow.arrowStyle ?? "solid"}]`,
-      );
-    }
+      return [
+        `"${arrow.from.text}" (${fromSection})`,
+        `"${arrow.to.text}" (${toSection})`,
+        arrow.arrowStyle ?? "solid",
+      ];
+    });
+    parts.push(buildAlignedTable(headers, rows));
     parts.push("");
   }
 
