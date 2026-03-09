@@ -271,3 +271,8 @@ ALTER TABLE share_link ENABLE ROW LEVEL SECURITY;
 ALTER TABLE yjs_document ENABLE ROW LEVEL SECURITY;
 ALTER TABLE annotation_index ENABLE ROW LEVEL SECURITY;
 ALTER TABLE document_tag ENABLE ROW LEVEL SECURITY;
+
+-- Storage bucket for uploaded PDFs (private — accessed via signed URLs).
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('document-pdfs', 'document-pdfs', false)
+ON CONFLICT (id) DO NOTHING;
