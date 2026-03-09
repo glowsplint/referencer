@@ -54,7 +54,7 @@ export function ColorPicker({
       className="p-2 mt-1 rounded border border-border bg-popover"
       data-testid={`colorPicker-${index}`}
     >
-      <div className="grid grid-cols-6 gap-1">
+      <div className="grid grid-cols-5 gap-1">
         {TAILWIND_300_COLORS.map((color) => (
           <button
             key={color}

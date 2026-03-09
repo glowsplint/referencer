@@ -2,7 +2,7 @@
 // and Yjs CRDT collaboration into a single API. All data (text, annotations,
 // layers) is synced via Yjs shared types through the collab server.
 // All collaboration uses Yjs observe/transact.
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useSettings } from "./use-settings";
 import { useEditors } from "./use-editors";
 import { useActionHistory } from "./use-action-history";
@@ -40,6 +40,33 @@ export function useEditorDocument(documentId?: string | null, readOnly = false) 
   // finished loading. Seeding must wait for both to avoid overwriting persisted
   // data that hasn't been loaded yet (race between IDB async load and WS error).
   const readyForSeeding = yjs.synced && idbSynced;
+
+  // Auto-detect editor count from Yjs fragments after sync.
+  // Handles cases where localStorage doesn't have layout info (e.g., duplicated
+  // docs opened for the first time, cleared storage, different device).
+  // Only scales UP — never reduces (user may have intentionally emptied a pane).
+  const didReconcileEditorsRef = useRef(false);
+  useEffect(() => {
+    if (!readyForSeeding || didReconcileEditorsRef.current || !yjs.doc) return;
+    didReconcileEditorsRef.current = true;
+
+    let highestNonEmpty = -1;
+    for (let i = 0; i < 4; i++) {
+      const fragment = yjs.doc.getXmlFragment(`editor-${i}`);
+      if (fragment.length > 0) {
+        highestNonEmpty = i;
+      }
+    }
+
+    const detectedCount = highestNonEmpty + 1;
+    if (detectedCount <= rawEditorsHook.editorCount) return;
+
+    const toAdd = detectedCount - rawEditorsHook.editorCount;
+    for (let i = 0; i < toAdd; i++) {
+      rawEditorsHook.addEditor();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readyForSeeding, yjs.doc, rawEditorsHook.editorCount, rawEditorsHook.addEditor]);
 
   // Wraps mutation callbacks to no-op when in read-only mode
   function guarded<TArgs extends unknown[], TReturn>(
