@@ -21,6 +21,8 @@
   "texts": {
     "title": "Avsnitt",
     "addText": "Lägg till avsnitt",
+    "addNewText": "Lägg till ny text",
+    "addPdf": "Lägg till PDF-fil",
     "hideAll": "Dölj alla avsnitt",
     "showAll": "Visa alla avsnitt",
     "hideText": "Dölj avsnitt",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Denna app är i alfafas. Ditt arbete kan gå förlorat."
   }
 }

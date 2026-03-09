@@ -21,6 +21,8 @@
   "texts": {
     "title": "Đoạn văn",
     "addText": "Thêm đoạn văn",
+    "addNewText": "Thêm văn bản mới",
+    "addPdf": "Thêm tệp PDF",
     "hideAll": "Ẩn tất cả đoạn văn",
     "showAll": "Hiện tất cả đoạn văn",
     "hideText": "Ẩn đoạn văn",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Ứng dụng này đang ở giai đoạn alpha. Công việc của bạn có thể bị mất."
   }
 }

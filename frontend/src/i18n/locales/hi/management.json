@@ -21,6 +21,8 @@
   "texts": {
     "title": "अनुच्छेद",
     "addText": "अनुच्छेद जोड़ें",
+    "addNewText": "नया टेक्स्ट जोड़ें",
+    "addPdf": "PDF फ़ाइल जोड़ें",
     "hideAll": "सभी अनुच्छेद छिपाएं",
     "showAll": "सभी अनुच्छेद दिखाएं",
     "hideText": "अनुच्छेद छिपाएं",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "यह ऐप अल्फा चरण में है। आपका काम खो सकता है।"
   }
 }

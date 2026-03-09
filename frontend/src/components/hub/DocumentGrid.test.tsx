@@ -114,6 +114,11 @@ describe("DocumentGrid", () => {
       expect(screen.getByText("Create your first document")).toBeInTheDocument();
     });
 
+    it("then shows the alpha warning in the empty state", () => {
+      renderGrid([], [], false);
+      expect(screen.getByText(/alpha/i)).toBeInTheDocument();
+    });
+
     it("then calls onNew with null when the empty state button is clicked", async () => {
       const user = userEvent.setup();
       renderGrid([], [], false);

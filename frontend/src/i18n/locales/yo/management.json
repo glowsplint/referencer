@@ -21,6 +21,8 @@
   "texts": {
     "title": "Àwọn Ẹsẹ",
     "addText": "Fi ẹsẹ kún",
+    "addNewText": "Ṣafikun ọ̀rọ̀ tuntun",
+    "addPdf": "Ṣafikun fáìlì PDF",
     "hideAll": "Ìbòmọ́lẹ̀ gbogbo ẹsẹ",
     "showAll": "Fi gbogbo ẹsẹ hàn",
     "hideText": "Ìbòmọ́lẹ̀ ẹsẹ",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Ohun elo yii wa ni ipele alfa. Iṣẹ rẹ le sọnù."
   }
 }

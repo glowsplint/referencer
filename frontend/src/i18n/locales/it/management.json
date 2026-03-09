@@ -21,6 +21,8 @@
   "texts": {
     "title": "Brani",
     "addText": "Aggiungi brano",
+    "addNewText": "Aggiungi nuovo testo",
+    "addPdf": "Aggiungi file PDF",
     "hideAll": "Nascondi tutti i brani",
     "showAll": "Mostra tutti i brani",
     "hideText": "Nascondi brano",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Questa app è in fase alpha. Il tuo lavoro potrebbe andare perso."
   }
 }

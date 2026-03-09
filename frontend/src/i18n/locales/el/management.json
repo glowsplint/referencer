@@ -21,6 +21,8 @@
   "texts": {
     "title": "Αποσπάσματα",
     "addText": "Προσθήκη αποσπάσματος",
+    "addNewText": "Προσθήκη νέου κειμένου",
+    "addPdf": "Προσθήκη αρχείου PDF",
     "hideAll": "Απόκρυψη όλων των αποσπασμάτων",
     "showAll": "Εμφάνιση όλων των αποσπασμάτων",
     "hideText": "Απόκρυψη αποσπάσματος",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Αυτή η εφαρμογή είναι σε φάση alpha. Η εργασία σας μπορεί να χαθεί."
   }
 }

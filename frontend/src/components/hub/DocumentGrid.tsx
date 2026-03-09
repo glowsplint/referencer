@@ -16,6 +16,7 @@ import {
   BookOpen,
   Highlighter,
   MessageSquare,
+  TriangleAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -494,9 +495,13 @@ export function DocumentGrid({
               data-testid="emptyStateOnboarding"
             >
               <h2 className="text-2xl font-bold mb-2">{t("hub.welcomeTitle")}</h2>
-              <p className="text-muted-foreground text-center max-w-md mb-8">
+              <p className="text-muted-foreground text-center max-w-md mb-4">
                 {t("hub.welcomeDescription")}
               </p>
+              <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 text-sm bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2 mb-8">
+                <TriangleAlert size={16} className="shrink-0" />
+                <span>{t("hub.alphaWarning")}</span>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-lg mb-8">
                 <div className="flex flex-col items-center text-center gap-2">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">

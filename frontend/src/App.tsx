@@ -125,7 +125,6 @@ interface EditorCellProps {
   overscroll: boolean;
   isZenMode?: boolean;
   paneMetadata?: PaneMetadata;
-  onUploadPdf?: (file: File) => void;
   onRemovePdf?: () => void;
   documentId: string;
 }
@@ -157,7 +156,6 @@ function EditorCell({
   overscroll,
   isZenMode,
   paneMetadata,
-  onUploadPdf,
   onRemovePdf,
   documentId,
 }: EditorCellProps) {
@@ -171,14 +169,7 @@ function EditorCell({
         display: sectionVisible === false ? "none" : undefined,
       }}
     >
-      {!isZenMode && (
-        <TextHeader
-          name={sectionName}
-          index={i}
-          onUpdateName={onUpdateName}
-          onUploadPdf={onUploadPdf}
-        />
-      )}
+      {!isZenMode && <TextHeader name={sectionName} index={i} onUpdateName={onUpdateName} />}
       {isPdf ? (
         <div className="flex-1 min-h-0 overflow-hidden">
           <Suspense
@@ -727,7 +718,6 @@ export function App({ documentId, navigate }: AppProps) {
     overscroll: settings.overscroll,
     isZenMode: zenMode.isZenMode,
     paneMetadata: paneTypes[i],
-    onUploadPdf: (file: File) => handleUploadPdf(i, file),
     onRemovePdf: () => handleRemovePdf(i),
     documentId,
   });
@@ -741,7 +731,7 @@ export function App({ documentId, navigate }: AppProps) {
           {!isMobile && !zenMode.isZenMode && <ButtonPane />}
           {!isMobile && !zenMode.isZenMode && isManagementPaneOpen && (
             <>
-              <ManagementPane width={managementPaneWidth} />
+              <ManagementPane width={managementPaneWidth} onUploadPdf={handleUploadPdf} />
               <ManagementPaneDivider
                 width={managementPaneWidth}
                 onResize={setManagementPaneWidth}
@@ -916,7 +906,6 @@ export function App({ documentId, navigate }: AppProps) {
                                   name={docCtx.sectionNames[i]}
                                   index={i}
                                   onUpdateName={(name) => docCtx.updateSectionName(i, name)}
-                                  onUploadPdf={(file) => handleUploadPdf(i, file)}
                                 />
                               )}
                               {isPdf ? (

@@ -21,6 +21,8 @@
   "texts": {
     "title": "Pasaje",
     "addText": "Adaugă pasaj",
+    "addNewText": "Adaugă text nou",
+    "addPdf": "Adaugă fișier PDF",
     "hideAll": "Ascunde toate pasajele",
     "showAll": "Afișează toate pasajele",
     "hideText": "Ascunde pasajul",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Această aplicație este în fază alfa. Munca ta ar putea fi pierdută."
   }
 }

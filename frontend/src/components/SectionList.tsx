@@ -1,9 +1,10 @@
 // Text list in the management pane. Each text row has an inline-editable
 // name and visibility toggle. Supports drag-and-drop reordering between texts
 // (builds a permutation array on drop and calls onReorder).
-import { Eye, EyeOff, FileText, Plus } from "lucide-react";
+import { Eye, EyeOff, FileText, FileUp, Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { DRAG_TYPE_SECTION } from "@/constants/drag-types";
 import { useInlineEdit } from "@/hooks/ui/use-inline-edit";
 
@@ -12,6 +13,7 @@ interface SectionListProps {
   sectionVisibility: boolean[];
   sectionNames: string[];
   addEditor: () => void;
+  onAddPdf?: (file: File) => void;
   onUpdateName: (index: number, name: string) => void;
   onReorder: (permutation: number[]) => void;
   toggleSectionVisibility: (index: number) => void;
@@ -24,6 +26,7 @@ export function SectionList({
   sectionVisibility,
   sectionNames,
   addEditor,
+  onAddPdf,
   onUpdateName,
   onReorder,
   toggleSectionVisibility,
@@ -34,6 +37,7 @@ export function SectionList({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [dragFromIndex, setDragFromIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset drag state when editorCount changes (e.g., text deleted via trash
   // drop). The browser skips the dragend event when the source element is removed
@@ -69,14 +73,52 @@ export function SectionList({
       <div className="flex items-center justify-between mb-2 px-1">
         <h3 className="text-xs font-medium text-muted-foreground">{t("texts.title")}</h3>
         <div className="flex items-center gap-1">
-          <button
-            className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
-            onClick={addEditor}
-            title={t("texts.addText")}
-            data-testid="addTextButton"
-          >
-            <Plus size={14} />
-          </button>
+          {onAddPdf ? (
+            <DropdownMenuPrimitive.Root modal={false}>
+              <DropdownMenuPrimitive.Trigger asChild>
+                <button
+                  className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
+                  title={t("texts.addText")}
+                  data-testid="addTextButton"
+                >
+                  <Plus size={14} />
+                </button>
+              </DropdownMenuPrimitive.Trigger>
+              <DropdownMenuPrimitive.Portal>
+                <DropdownMenuPrimitive.Content
+                  align="end"
+                  sideOffset={4}
+                  className="z-50 min-w-[160px] rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+                >
+                  <DropdownMenuPrimitive.Item
+                    className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-xs cursor-pointer outline-none hover:bg-accent focus:bg-accent"
+                    onSelect={addEditor}
+                    data-testid="addNewTextOption"
+                  >
+                    <Plus size={14} />
+                    {t("texts.addNewText")}
+                  </DropdownMenuPrimitive.Item>
+                  <DropdownMenuPrimitive.Item
+                    className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-xs cursor-pointer outline-none hover:bg-accent focus:bg-accent"
+                    onSelect={() => fileInputRef.current?.click()}
+                    data-testid="addPdfOption"
+                  >
+                    <FileUp size={14} />
+                    {t("texts.addPdf")}
+                  </DropdownMenuPrimitive.Item>
+                </DropdownMenuPrimitive.Content>
+              </DropdownMenuPrimitive.Portal>
+            </DropdownMenuPrimitive.Root>
+          ) : (
+            <button
+              className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
+              onClick={addEditor}
+              title={t("texts.addText")}
+              data-testid="addTextButton"
+            >
+              <Plus size={14} />
+            </button>
+          )}
           <button
             className="p-0.5 rounded hover:bg-accent text-muted-foreground shrink-0 cursor-pointer"
             onClick={toggleAllSectionVisibility}
@@ -87,6 +129,20 @@ export function SectionList({
           </button>
         </div>
       </div>
+      {onAddPdf && (
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf"
+          className="hidden"
+          data-testid="pdfFileInput"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) onAddPdf(file);
+            e.target.value = "";
+          }}
+        />
+      )}
       <div className="flex flex-col gap-1">
         {Array.from({ length: editorCount }, (_, i) => (
           <div

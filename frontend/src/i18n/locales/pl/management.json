@@ -21,6 +21,8 @@
   "texts": {
     "title": "Fragmenty",
     "addText": "Dodaj fragment",
+    "addNewText": "Dodaj nowy tekst",
+    "addPdf": "Dodaj plik PDF",
     "hideAll": "Ukryj wszystkie fragmenty",
     "showAll": "Pokaz wszystkie fragmenty",
     "hideText": "Ukryj fragment",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Ta aplikacja jest w fazie alfa. Twoja praca może zostać utracona."
   }
 }

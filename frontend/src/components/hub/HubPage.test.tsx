@@ -66,6 +66,11 @@ describe("HubPage", () => {
       expect(screen.getByText(/Annotate, highlight, and connect/)).toBeInTheDocument();
     });
 
+    it("then renders the alpha warning", () => {
+      render(<HubPage navigate={vi.fn()} />);
+      expect(screen.getByText(/alpha/i)).toBeInTheDocument();
+    });
+
     it("then renders the 'Try without signing in' button", () => {
       render(<HubPage navigate={vi.fn()} />);
       expect(screen.getByTestId("tryWithoutSignIn")).toBeInTheDocument();

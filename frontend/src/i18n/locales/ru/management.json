@@ -21,6 +21,8 @@
   "texts": {
     "title": "Отрывки",
     "addText": "Добавить отрывок",
+    "addNewText": "Добавить новый текст",
+    "addPdf": "Добавить PDF-файл",
     "hideAll": "Скрыть все отрывки",
     "showAll": "Показать все отрывки",
     "hideText": "Скрыть отрывок",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Это приложение находится в стадии альфа. Ваша работа может быть потеряна."
   }
 }

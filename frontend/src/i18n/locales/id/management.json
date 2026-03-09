@@ -21,6 +21,8 @@
   "texts": {
     "title": "Bagian",
     "addText": "Tambah bagian",
+    "addNewText": "Tambahkan teks baru",
+    "addPdf": "Tambahkan file PDF",
     "hideAll": "Sembunyikan semua bagian",
     "showAll": "Tampilkan semua bagian",
     "hideText": "Sembunyikan bagian",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Aplikasi ini dalam tahap alfa. Pekerjaan Anda mungkin hilang."
   }
 }

@@ -21,6 +21,8 @@
   "texts": {
     "title": "ข้อความ",
     "addText": "เพิ่มข้อความ",
+    "addNewText": "เพิ่มข้อความใหม่",
+    "addPdf": "เพิ่มไฟล์ PDF",
     "hideAll": "ซ่อนข้อความทั้งหมด",
     "showAll": "แสดงข้อความทั้งหมด",
     "hideText": "ซ่อนข้อความ",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "แอปนี้อยู่ในช่วงอัลฟา งานของคุณอาจสูญหาย"
   }
 }
