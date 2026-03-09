@@ -4,6 +4,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import type { WebsocketProvider } from "y-websocket";
+import type { ConnectionManager } from "@/lib/yjs/connection-manager";
 import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
 import type { StatusMessage } from "./use-status-message";
@@ -14,6 +15,7 @@ const SAVE_TIMEOUT_MS = 5000;
 
 interface UseForceSaveOptions {
   wsProvider: WebsocketProvider | null;
+  connectionManager: ConnectionManager | null;
   setStatus: (msg: StatusMessage) => void;
   flashStatus: (msg: StatusMessage, duration: number) => void;
   clearStatus: () => void;
@@ -21,6 +23,7 @@ interface UseForceSaveOptions {
 
 export function useForceSave({
   wsProvider,
+  connectionManager,
   setStatus,
   flashStatus,
   clearStatus,
@@ -72,9 +75,10 @@ export function useForceSave({
       // Guard: already saving
       if (savingRef.current) return;
 
-      // Guard: not connected
+      // Guard: not connected — also trigger reconnect attempt
       if (!wsProvider || wsProvider.ws?.readyState !== WebSocket.OPEN) {
         flashStatus({ text: t("save.notConnected"), type: "error" }, 3000);
+        connectionManager?.forceReconnect();
         return;
       }
 
@@ -102,5 +106,5 @@ export function useForceSave({
       document.removeEventListener("keydown", handleKeyDown);
       cleanup();
     };
-  }, [wsProvider, setStatus, flashStatus, clearStatus, cleanup, t]);
+  }, [wsProvider, connectionManager, setStatus, flashStatus, clearStatus, cleanup, t]);
 }

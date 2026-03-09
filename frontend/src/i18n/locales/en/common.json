@@ -12,7 +12,10 @@
     "you": "You",
     "yourName": "Your name",
     "connected": "Connected",
-    "disconnected": "Disconnected"
+    "disconnected": "Disconnected",
+    "reconnecting": "Reconnecting...",
+    "offline": "Offline — changes saved locally",
+    "unstable": "Unstable connection — try a different network"
   },
   "status": {
     "annotationsHidden": "Annotations hidden (press F to show)",

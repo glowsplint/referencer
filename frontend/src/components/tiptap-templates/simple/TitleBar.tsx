@@ -209,24 +209,42 @@ export function TitleBar({ navigate }: TitleBarProps) {
         </Tooltip>
       )}
       <div className="ml-auto flex items-center gap-2">
-        <div className="flex items-center gap-1.5">
-          <span
-            className={`h-2 w-2 shrink-0 rounded-full ${
-              yjs.connected ? "animate-[pulse_3s_ease-in-out_infinite] bg-green-500" : "bg-red-500"
-            }`}
-            data-testid="connectionStatusDot"
-          />
-          <span
-            className={`text-xs ${
-              yjs.connected
-                ? "text-green-600 dark:text-green-400"
-                : "text-red-600 dark:text-red-400"
-            }`}
-            data-testid="connectionStatusLabel"
-          >
-            {yjs.connected ? t("presence.connected") : t("presence.disconnected")}
-          </span>
-        </div>
+        {(() => {
+          const state = yjs.connectionState ?? (yjs.connected ? "connected" : "reconnecting");
+          const config = {
+            connected: {
+              dot: "animate-[pulse_3s_ease-in-out_infinite] bg-green-500",
+              text: "text-green-600 dark:text-green-400",
+              label: t("presence.connected"),
+            },
+            reconnecting: {
+              dot: "animate-pulse bg-amber-500",
+              text: "text-amber-600 dark:text-amber-400",
+              label: t("presence.reconnecting"),
+            },
+            offline: {
+              dot: "bg-gray-400",
+              text: "text-gray-500 dark:text-gray-400",
+              label: t("presence.offline"),
+            },
+            unstable: {
+              dot: "bg-red-500",
+              text: "text-red-600 dark:text-red-400",
+              label: t("presence.unstable"),
+            },
+          }[state];
+          return (
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`h-2 w-2 shrink-0 rounded-full ${config.dot}`}
+                data-testid="connectionStatusDot"
+              />
+              <span className={`text-xs ${config.text}`} data-testid="connectionStatusLabel">
+                {config.label}
+              </span>
+            </div>
+          );
+        })()}
         <CollaborationPresence provider={yjs.provider?.wsProvider ?? null} className="mr-1" />
         <Tooltip placement="bottom" delay={300}>
           <TooltipTrigger asChild>
