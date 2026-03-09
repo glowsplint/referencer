@@ -21,6 +21,8 @@
   "texts": {
     "title": "Mga Sipi",
     "addText": "Magdagdag ng sipi",
+    "addNewText": "Magdagdag ng bagong teksto",
+    "addPdf": "Magdagdag ng PDF file",
     "hideAll": "Itago lahat ng sipi",
     "showAll": "Ipakita lahat ng sipi",
     "hideText": "Itago ang sipi",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Ang app na ito ay nasa alpha pa. Maaaring mawala ang iyong trabaho."
   }
 }

@@ -21,6 +21,8 @@
   "texts": {
     "title": "קטעים",
     "addText": "הוספת קטע",
+    "addNewText": "הוסף טקסט חדש",
+    "addPdf": "הוסף קובץ PDF",
     "hideAll": "הסתרת כל הקטעים",
     "showAll": "הצגת כל הקטעים",
     "hideText": "הסתרת קטע",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "אפליקציה זו בשלב אלפא. העבודה שלך עלולה לאבד."
   }
 }

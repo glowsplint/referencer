@@ -21,6 +21,8 @@
   "texts": {
     "title": "Уривки",
     "addText": "Додати уривок",
+    "addNewText": "Додати новий текст",
+    "addPdf": "Додати PDF-файл",
     "hideAll": "Сховати всі уривки",
     "showAll": "Показати всі уривки",
     "hideText": "Сховати уривок",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Цей додаток перебуває на стадії альфа. Ваша робота може бути втрачена."
   }
 }

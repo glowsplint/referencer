@@ -21,6 +21,8 @@
   "texts": {
     "title": "구절",
     "addText": "구절 추가",
+    "addNewText": "새 텍스트 추가",
+    "addPdf": "PDF 파일 추가",
     "hideAll": "모든 구절 숨기기",
     "showAll": "모든 구절 표시",
     "hideText": "구절 숨기기",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "이 앱은 알파 단계입니다. 작업 내용이 손실될 수 있습니다."
   }
 }

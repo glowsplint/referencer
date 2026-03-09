@@ -21,6 +21,8 @@
   "texts": {
     "title": "Texts",
     "addText": "Add text",
+    "addNewText": "Add new text",
+    "addPdf": "Add a PDF file",
     "hideAll": "Hide all texts",
     "showAll": "Show all texts",
     "hideText": "Hide text",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "This app is in alpha. Your work may be lost."
   }
 }

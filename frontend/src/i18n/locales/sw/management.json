@@ -21,6 +21,8 @@
   "texts": {
     "title": "Vifungu",
     "addText": "Ongeza kifungu",
+    "addNewText": "Ongeza maandishi mapya",
+    "addPdf": "Ongeza faili ya PDF",
     "hideAll": "Ficha vifungu vyote",
     "showAll": "Onyesha vifungu vyote",
     "hideText": "Ficha kifungu",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Programu hii iko katika hatua ya alfa. Kazi yako inaweza kupotea."
   }
 }

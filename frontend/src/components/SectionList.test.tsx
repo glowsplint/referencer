@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { SectionList } from "./SectionList";
 
@@ -175,11 +176,35 @@ describe("SectionList", () => {
     });
   });
 
-  describe("when the add text button is clicked", () => {
-    it("then calls addEditor", () => {
+  describe("when the add text button is clicked without onAddPdf", () => {
+    it("then calls addEditor directly", () => {
       const { props } = renderList();
       fireEvent.click(screen.getByTestId("addTextButton"));
       expect(props.addEditor).toHaveBeenCalled();
+    });
+  });
+
+  describe("when onAddPdf is provided", () => {
+    it("then the add button opens a dropdown menu", async () => {
+      const user = userEvent.setup();
+      renderList({ onAddPdf: vi.fn() });
+      await user.click(screen.getByTestId("addTextButton"));
+      expect(screen.getByTestId("addNewTextOption")).toBeInTheDocument();
+      expect(screen.getByTestId("addPdfOption")).toBeInTheDocument();
+    });
+
+    it("then clicking Add new text calls addEditor", async () => {
+      const user = userEvent.setup();
+      const { props } = renderList({ onAddPdf: vi.fn() });
+      await user.click(screen.getByTestId("addTextButton"));
+      await user.click(screen.getByTestId("addNewTextOption"));
+      expect(props.addEditor).toHaveBeenCalled();
+    });
+
+    it("then renders a hidden file input for PDF", () => {
+      renderList({ onAddPdf: vi.fn() });
+      expect(screen.getByTestId("pdfFileInput")).toBeInTheDocument();
+      expect(screen.getByTestId("pdfFileInput")).toHaveAttribute("accept", ".pdf");
     });
   });
 

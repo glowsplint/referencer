@@ -21,6 +21,8 @@
   "texts": {
     "title": "パッセージ",
     "addText": "パッセージを追加",
+    "addNewText": "新しいテキストを追加",
+    "addPdf": "PDFファイルを追加",
     "hideAll": "すべてのパッセージを非表示",
     "showAll": "すべてのパッセージを表示",
     "hideText": "パッセージを非表示",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "このアプリはアルファ版です。作業内容が失われる可能性があります。"
   }
 }

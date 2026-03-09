@@ -21,6 +21,8 @@
   "texts": {
     "title": "Petikan",
     "addText": "Tambah petikan",
+    "addNewText": "Tambah teks baharu",
+    "addPdf": "Tambah fail PDF",
     "hideAll": "Sembunyikan semua petikan",
     "showAll": "Tunjukkan semua petikan",
     "hideText": "Sembunyikan petikan",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Aplikasi ini dalam fasa alfa. Kerja anda mungkin hilang."
   }
 }

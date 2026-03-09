@@ -21,6 +21,8 @@
   "texts": {
     "title": "Abschnitte",
     "addText": "Abschnitt hinzufügen",
+    "addNewText": "Neuen Text hinzufügen",
+    "addPdf": "PDF-Datei hinzufügen",
     "hideAll": "Alle Abschnitte ausblenden",
     "showAll": "Alle Abschnitte anzeigen",
     "hideText": "Abschnitt ausblenden",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Diese App ist in der Alpha-Phase. Ihre Arbeit könnte verloren gehen."
   }
 }

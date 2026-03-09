@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Settings, Search } from "lucide-react";
+import { Settings, Search, TriangleAlert } from "lucide-react";
 import { randomKSUID } from "@/lib/ksuid";
 import { useAuth } from "@/hooks/data/use-auth";
 import { useDocuments } from "@/hooks/data/use-documents";
@@ -131,6 +131,10 @@ export function HubPage({ navigate }: HubPageProps) {
             <div className="max-w-lg text-center space-y-6">
               <h1 className="text-4xl font-bold tracking-tight">{t("hub.title")}</h1>
               <p className="text-muted-foreground text-lg">{t("hub.tagline")}</p>
+              <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 text-sm bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
+                <TriangleAlert size={16} className="shrink-0" />
+                <span>{t("hub.alphaWarning")}</span>
+              </div>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Button
                   size="lg"

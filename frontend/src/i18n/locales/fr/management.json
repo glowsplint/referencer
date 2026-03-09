@@ -21,6 +21,8 @@
   "texts": {
     "title": "Passages",
     "addText": "Ajouter un passage",
+    "addNewText": "Ajouter un nouveau texte",
+    "addPdf": "Ajouter un fichier PDF",
     "hideAll": "Masquer tous les passages",
     "showAll": "Afficher tous les passages",
     "hideText": "Masquer le passage",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Cette application est en phase alpha. Votre travail pourrait être perdu."
   }
 }

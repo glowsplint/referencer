@@ -21,6 +21,8 @@
   "texts": {
     "title": "Pasajlar",
     "addText": "Pasaj ekle",
+    "addNewText": "Yeni metin ekle",
+    "addPdf": "PDF dosyası ekle",
     "hideAll": "Tum pasajlari gizle",
     "showAll": "Tum pasajlari goster",
     "hideText": "Pasaji gizle",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Bu uygulama alfa aşamasındadır. Çalışmanız kaybolabilir."
   }
 }

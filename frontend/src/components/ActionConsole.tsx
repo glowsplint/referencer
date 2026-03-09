@@ -144,22 +144,24 @@ export function ActionConsole({
       />
       <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-700">
         <span className="text-zinc-400 text-xs font-medium">{t("actionConsole.title")}</span>
-        {onEnterZenMode && (
+        <div className="flex items-center gap-1">
+          {onEnterZenMode && (
+            <button
+              data-testid="zenModeButton"
+              onClick={onEnterZenMode}
+              className="text-zinc-500 hover:text-zinc-300 text-xs px-1"
+            >
+              {t("actionConsole.zenMode")}
+            </button>
+          )}
           <button
-            data-testid="zenModeButton"
-            onClick={onEnterZenMode}
+            data-testid="actionConsoleClose"
+            onClick={onClose}
             className="text-zinc-500 hover:text-zinc-300 text-xs px-1"
           >
-            {t("actionConsole.zenMode")}
+            {t("actionConsole.close")}
           </button>
-        )}
-        <button
-          data-testid="actionConsoleClose"
-          onClick={onClose}
-          className="text-zinc-500 hover:text-zinc-300 text-xs px-1"
-        >
-          {t("actionConsole.close")}
-        </button>
+        </div>
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-1">
         {log.length === 0 && <div className="text-zinc-600 py-2">{t("actionConsole.empty")}</div>}

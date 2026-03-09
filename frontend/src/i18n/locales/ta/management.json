@@ -21,6 +21,8 @@
   "texts": {
     "title": "பகுதிகள்",
     "addText": "பகுதியைச் சேர்",
+    "addNewText": "புதிய உரையைச் சேர்",
+    "addPdf": "PDF கோப்பைச் சேர்",
     "hideAll": "அனைத்து பகுதிகளையும் மறை",
     "showAll": "அனைத்து பகுதிகளையும் காட்டு",
     "hideText": "பகுதியை மறை",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "இந்த செயலி ஆல்ஃபா நிலையில் உள்ளது. உங்கள் பணி இழக்கப்படலாம்."
   }
 }

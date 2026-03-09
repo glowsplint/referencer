@@ -21,6 +21,8 @@
   "texts": {
     "title": "অনুচ্ছেদ",
     "addText": "অনুচ্ছেদ যোগ করুন",
+    "addNewText": "নতুন টেক্সট যোগ করুন",
+    "addPdf": "একটি PDF ফাইল যোগ করুন",
     "hideAll": "সমস্ত অনুচ্ছেদ লুকান",
     "showAll": "সমস্ত অনুচ্ছেদ দেখান",
     "hideText": "অনুচ্ছেদ লুকান",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "এই অ্যাপটি আলফা পর্যায়ে আছে। আপনার কাজ হারিয়ে যেতে পারে।"
   }
 }

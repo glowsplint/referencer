@@ -21,6 +21,8 @@
   "texts": {
     "title": "段落",
     "addText": "添加段落",
+    "addNewText": "添加新文本",
+    "addPdf": "添加PDF文件",
     "hideAll": "隐藏所有段落",
     "showAll": "显示所有段落",
     "hideText": "隐藏段落",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "此应用处于 Alpha 阶段。您的工作可能会丢失。"
   }
 }

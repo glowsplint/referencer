@@ -21,6 +21,8 @@
   "texts": {
     "title": "Pasajes",
     "addText": "Añadir pasaje",
+    "addNewText": "Agregar texto nuevo",
+    "addPdf": "Agregar archivo PDF",
     "hideAll": "Ocultar todos los pasajes",
     "showAll": "Mostrar todos los pasajes",
     "hideText": "Ocultar pasaje",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Esta aplicación está en fase alfa. Tu trabajo podría perderse."
   }
 }

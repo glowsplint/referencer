@@ -21,6 +21,8 @@
   "texts": {
     "title": "Passages",
     "addText": "Passage toevoegen",
+    "addNewText": "Nieuwe tekst toevoegen",
+    "addPdf": "PDF-bestand toevoegen",
     "hideAll": "Alle passages verbergen",
     "showAll": "Alle passages tonen",
     "hideText": "Passage verbergen",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Deze app is in alfafase. Je werk kan verloren gaan."
   }
 }

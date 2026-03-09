@@ -19,9 +19,10 @@ import type { AnnotationSearchMatch } from "@/types/editor";
 
 interface ManagementPaneProps {
   width?: number;
+  onUploadPdf?: (index: number, file: File) => void;
 }
 
-export function ManagementPane({ width }: ManagementPaneProps) {
+export function ManagementPane({ width, onUploadPdf }: ManagementPaneProps) {
   const { t } = useTranslation("management");
 
   const {
@@ -59,6 +60,15 @@ export function ManagementPane({ width }: ManagementPaneProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchResults = useAnnotationSearch(layers, searchQuery);
+
+  const handleAddPdf = useCallback(
+    (file: File) => {
+      addEditor();
+      // The new pane is at the current editorCount index (before addEditor increments it)
+      onUploadPdf?.(editorCount, file);
+    },
+    [addEditor, editorCount, onUploadPdf],
+  );
 
   const hasVisibleLayers = layers.some((l) => l.visible);
 
@@ -201,6 +211,7 @@ export function ManagementPane({ width }: ManagementPaneProps) {
             sectionVisibility={sectionVisibility}
             sectionNames={sectionNames}
             addEditor={addEditor}
+            onAddPdf={onUploadPdf ? handleAddPdf : undefined}
             onUpdateName={updateSectionName}
             onReorder={reorderEditors}
             toggleSectionVisibility={toggleSectionVisibility}

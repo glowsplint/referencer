@@ -21,6 +21,8 @@
   "texts": {
     "title": "Gedeeltes",
     "addText": "Voeg gedeelte by",
+    "addNewText": "Voeg nuwe teks by",
+    "addPdf": "Voeg 'n PDF-lêer by",
     "hideAll": "Versteek alle gedeeltes",
     "showAll": "Wys alle gedeeltes",
     "hideText": "Versteek gedeelte",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "Hierdie toepassing is in alfa. Jou werk kan verlore gaan."
   }
 }

@@ -21,6 +21,8 @@
   "texts": {
     "title": "ክፍሎች",
     "addText": "ክፍል ጨምር",
+    "addNewText": "አዲስ ጽሑፍ ጨምር",
+    "addPdf": "የPDF ፋይል ጨምር",
     "hideAll": "ሁሉንም ክፍሎች ደብቅ",
     "showAll": "ሁሉንም ክፍሎች አሳይ",
     "hideText": "ክፍል ደብቅ",
@@ -142,6 +144,7 @@
     "clearTagFilters": "Clear filters",
     "invalidTag": "Tags: lowercase letters, numbers, hyphens only",
     "maxTagsReached": "Maximum {{max}} tags per document",
-    "noTagsYet": "No tags yet"
+    "noTagsYet": "No tags yet",
+    "alphaWarning": "ይህ መተግበሪያ በአልፋ ደረጃ ነው። ሥራዎ ሊጠፋ ይችላል።"
   }
 }
