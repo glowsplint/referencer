@@ -3,8 +3,9 @@ import { renderHook, act } from "@testing-library/react";
 import * as Y from "yjs";
 
 // Ref accessible in hoisted vi.mock factories
-const { testDocRef } = vi.hoisted(() => ({
+const { testDocRef, syncedRef } = vi.hoisted(() => ({
   testDocRef: { current: null as Y.Doc | null },
+  syncedRef: { current: false },
 }));
 
 // Mock Yjs provider — return a real Y.Doc without WebSocket
@@ -13,6 +14,7 @@ vi.mock("./use-yjs", () => ({
     provider: null,
     doc: testDocRef.current,
     connected: false,
+    synced: syncedRef.current,
     getFragment: (index: number) => testDocRef.current?.getXmlFragment(`editor-${index}`) ?? null,
     awareness: null,
   }),
@@ -31,6 +33,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   document.documentElement.classList.remove("dark");
   localStorage.clear();
+  syncedRef.current = false;
 
   // Fresh Y.Doc with pre-populated XmlFragments for position resolution
   const doc = new Y.Doc();
@@ -1024,5 +1027,92 @@ describe("useEditorDocument", () => {
     }
 
     expect(result.current.history.canUndo).toBe(false);
+  });
+
+  // --- Yjs fragment auto-detection (editor count reconciliation) ---
+
+  describe("Yjs fragment auto-detection", () => {
+    it("when Yjs has more non-empty fragments than editorCount, then reconciles upward", () => {
+      const doc = new Y.Doc();
+      doc.getXmlFragment("editor-0").insert(0, [new Y.XmlText("content")]);
+      doc.getXmlFragment("editor-1").insert(0, [new Y.XmlText("content")]);
+      testDocRef.current = doc;
+      syncedRef.current = true;
+
+      const { result } = renderHook(() => useEditorDocument("test-doc"));
+
+      expect(result.current.editorCount).toBe(2);
+      expect(result.current.sectionNames).toEqual(["Text 1", "Text 2"]);
+    });
+
+    it("when Yjs has fewer fragments than editorCount, then does not reduce", () => {
+      const doc = new Y.Doc();
+      doc.getXmlFragment("editor-0").insert(0, [new Y.XmlText("content")]);
+      testDocRef.current = doc;
+      syncedRef.current = true;
+
+      // Seed localStorage with 3 editors
+      localStorage.setItem(
+        "referencer-editor-layout-test-doc",
+        JSON.stringify({
+          editorCount: 3,
+          sectionNames: ["Text 1", "Text 2", "Text 3"],
+          sectionVisibility: [true, true, true],
+        }),
+      );
+
+      const { result } = renderHook(() => useEditorDocument("test-doc"));
+
+      expect(result.current.editorCount).toBe(3);
+    });
+
+    it("when localStorage matches Yjs count, then no-op", () => {
+      const doc = new Y.Doc();
+      doc.getXmlFragment("editor-0").insert(0, [new Y.XmlText("content")]);
+      doc.getXmlFragment("editor-1").insert(0, [new Y.XmlText("content")]);
+      testDocRef.current = doc;
+      syncedRef.current = true;
+
+      localStorage.setItem(
+        "referencer-editor-layout-test-doc",
+        JSON.stringify({
+          editorCount: 2,
+          sectionNames: ["Intro", "Body"],
+          sectionVisibility: [true, true],
+        }),
+      );
+
+      const { result } = renderHook(() => useEditorDocument("test-doc"));
+
+      expect(result.current.editorCount).toBe(2);
+      // Preserves existing names from localStorage
+      expect(result.current.sectionNames).toEqual(["Intro", "Body"]);
+    });
+
+    it("when all fragments are empty, then keeps default 1", () => {
+      const doc = new Y.Doc();
+      // Create fragments but don't add content
+      doc.getXmlFragment("editor-0");
+      doc.getXmlFragment("editor-1");
+      testDocRef.current = doc;
+      syncedRef.current = true;
+
+      const { result } = renderHook(() => useEditorDocument("test-doc"));
+
+      expect(result.current.editorCount).toBe(1);
+    });
+
+    it("when fragments are non-contiguous (gap), then uses highest index + 1", () => {
+      const doc = new Y.Doc();
+      // editor-0 is empty, editor-1 has content
+      doc.getXmlFragment("editor-0");
+      doc.getXmlFragment("editor-1").insert(0, [new Y.XmlText("content")]);
+      testDocRef.current = doc;
+      syncedRef.current = true;
+
+      const { result } = renderHook(() => useEditorDocument("test-doc"));
+
+      expect(result.current.editorCount).toBe(2);
+    });
   });
 });
