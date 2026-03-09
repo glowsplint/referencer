@@ -170,6 +170,7 @@ describe("TitleBar", () => {
           provider: null,
           doc: null,
           connected: true,
+          connectionState: "connected" as const,
           synced: true,
           getFragment: () => null,
           awareness: null,
@@ -180,13 +181,50 @@ describe("TitleBar", () => {
       expect(screen.getByTestId("connectionStatusLabel")).toHaveTextContent("Connected");
     });
 
-    it("shows red dot and 'Disconnected' label when disconnected", () => {
+    it("shows amber dot and 'Reconnecting...' label when reconnecting", () => {
       renderTitleBar({
         wsConnected: false,
         yjs: {
           provider: null,
           doc: null,
           connected: false,
+          connectionState: "reconnecting" as const,
+          synced: false,
+          getFragment: () => null,
+          awareness: null,
+        },
+      });
+      const dot = screen.getByTestId("connectionStatusDot");
+      expect(dot).toHaveClass("bg-amber-500");
+      expect(screen.getByTestId("connectionStatusLabel")).toHaveTextContent("Reconnecting...");
+    });
+
+    it("shows gray dot and 'Offline' label when offline", () => {
+      renderTitleBar({
+        wsConnected: false,
+        yjs: {
+          provider: null,
+          doc: null,
+          connected: false,
+          connectionState: "offline" as const,
+          synced: false,
+          getFragment: () => null,
+          awareness: null,
+        },
+      });
+      const dot = screen.getByTestId("connectionStatusDot");
+      expect(dot).toHaveClass("bg-gray-400");
+      expect(screen.getByTestId("connectionStatusLabel")).toHaveTextContent("Offline");
+    });
+
+    it("shows red dot and 'Unstable connection' label when unstable", () => {
+      renderTitleBar({
+        wsConnected: false,
+        yjs: {
+          provider: null,
+          doc: null,
+          connected: false,
+          connectionState: "unstable" as const,
           synced: false,
           getFragment: () => null,
           awareness: null,
@@ -194,7 +232,7 @@ describe("TitleBar", () => {
       });
       const dot = screen.getByTestId("connectionStatusDot");
       expect(dot).toHaveClass("bg-red-500");
-      expect(screen.getByTestId("connectionStatusLabel")).toHaveTextContent("Disconnected");
+      expect(screen.getByTestId("connectionStatusLabel")).toHaveTextContent("Unstable connection");
     });
   });
 });

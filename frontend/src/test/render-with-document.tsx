@@ -106,6 +106,7 @@ export function makeMockDocument(
       provider: null,
       doc: null,
       connected: false,
+      connectionState: "reconnecting" as const,
       synced: false,
       getFragment: () => null,
       awareness: null,

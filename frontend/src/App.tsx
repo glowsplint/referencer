@@ -439,6 +439,7 @@ export function App({ documentId, navigate }: AppProps) {
 
   useForceSave({
     wsProvider: docCtx.yjs.wsProvider,
+    connectionManager: docCtx.yjs.provider?.connectionManager ?? null,
     setStatus,
     flashStatus,
     clearStatus,

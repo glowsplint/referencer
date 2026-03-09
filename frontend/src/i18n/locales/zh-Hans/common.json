@@ -12,7 +12,10 @@
     "you": "你",
     "yourName": "你的名字",
     "connected": "Connected",
-    "disconnected": "Disconnected"
+    "disconnected": "Disconnected",
+    "reconnecting": "Reconnecting...",
+    "offline": "Offline — changes saved locally",
+    "unstable": "Unstable connection — try a different network"
   },
   "print": {
     "comments": "评论",
